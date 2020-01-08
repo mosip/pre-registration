@@ -284,9 +284,9 @@ public class LoginService {
 				headersMap.put("Cookie", authHeader);
 			}
 
-			String url = sendOtpResourceUrl + "/authorize/invalidateToken";
+			String url = sendOtpResourceUrl + "/authorize/logout/user";
 			userId = loginCommonUtil.getUserDetailsFromToken(headersMap);
-			responseEntity = (ResponseEntity<String>) loginCommonUtil.callAuthService(url, HttpMethod.POST,
+			responseEntity = (ResponseEntity<String>) loginCommonUtil.callAuthService(url, HttpMethod.DELETE,
 					MediaType.APPLICATION_JSON, null, headersMap, String.class);
 			log.info("sessionId", "idType", "id", "Kernel response: \n" + responseEntity.getBody());
 			List<ServiceError> validationErrorList = null;
