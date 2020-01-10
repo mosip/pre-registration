@@ -126,7 +126,7 @@
 		<module>pre-registration-batchjob</module>
 		<module>pre-registration-translitration-service</module>
 		<module>pre-registration-notification-service</module>
-		<module>pre-registration-generateqrcode-service</module>
+		<!-- <module>pre-registration-generateqrcode-service</module> -->
 	</modules>
 	<build>
 		<pluginManagement>
