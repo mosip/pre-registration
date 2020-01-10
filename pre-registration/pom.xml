@@ -260,6 +260,9 @@
 						</goals>
 					</execution>
 				</executions>
+				<configuration>
+                         		<additionalJOption>-Xdoclint:none</additionalJOption>
+                	  	</configuration>
                 	</plugin>
 			
 			<plugin>
