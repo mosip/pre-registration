@@ -33,8 +33,9 @@ ENV is_glowroot_env=${is_glowroot}
 # environment variable to pass artifactory url, at docker runtime
 ENV artifactory_url_env=${artifactory_url}
 
-copy ./target/pre-registration-batchjob-*.jar pre-registration-batchjob.jar
-
+#copy ./target/pre-registration-batchjob-*.jar pre-registration-batchjob.jar
+#[^d]*
+copy ./target/pre-registration-batchjob-[^javadoc | ^sources]*.jar pre-registration-batchjob.jar
 EXPOSE 9097
 
 CMD if [ "$is_glowroot_env" = "present" ]; then \
