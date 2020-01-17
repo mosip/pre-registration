@@ -1,4 +1,4 @@
-## MOSIP Database scripts inventory and deployment guidelines on postgresql database. 
+## MOSIP Pre Registration Module Database scripts inventory and deployment guidelines on postgresql database. 
 
 #### The details disclosed below gives a clear information on complete database script structure with the instructions for database scripts deployments.
 
@@ -57,7 +57,7 @@
 Once we complete with sourcing the database files, we need to follow the below DB deployment process with the modifying the properties file according the requirement.
 
 ## Deployment can be performed in two ways based on the requirement and they are as follows:
-1) DB Deployment for all the databases
+1) DB Deployment for all Pre Registration Module databases
 2) DB Deployment for single or selected databases
 
 ### Properties file variable details and description: Properties file has to be updated with the required details before proceeding with deployment steps for each databases.
@@ -104,11 +104,11 @@ Once we complete with sourcing the database files, we need to follow the below D
 
 **Note - Make sure, There is a single empty line at end of the .properties files content and No spaces in beggining and end of the parameter values**
 
-## DB Deployment for all the mosip databases with single click deployment:
+## DB Deployment for all Pre registration Module databases with single click deployment:
 		
 **Step 1** -> Make prior modification to all the respective database properties files **(mosip_<schema_name>_deploy.properties)** in the respective database directories. Path of properties file and variables list remains same as explained above. Once the properties files are ready then access the directory where the deployment script is kept.
 
-**Step 2** -> Deployment on all databases, run the **"mosip_pre-registration_db_deployment.sh"** script which is avialble in the /database directory.  To access **"mosip_all_db_deployment.sh"** script, follow the below given commands:
+**Step 2** -> Deployment on all databases, run the **"mosip_pre-registration_db_deployment.sh"** script which is avialble in the /database directory.  To access **"mosip_pre-registration_db_deployment.sh"** script, follow the below given commands:
 
 <em> **Enter:-bash-4.2$** cd /home/madmin/database/ </em>
 
