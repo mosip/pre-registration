@@ -27,6 +27,7 @@ import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.service.DemographicServiceIntf;
 import io.mosip.preregistration.document.service.DocumentServiceIntf;
 import io.mosip.preregistration.notification.NotificationApplicationTest;
@@ -51,20 +52,22 @@ public class NotificationControllerTest {
 
 	@Autowired
 	private ObjectMapper mapper;
-	
 
 	@Mock
 	private RequestValidator requestValidator;
 
 	@MockBean
+	private ValidationUtil validationUtil;
+
+	@MockBean
 	private DemographicServiceIntf preRegistrationService;
-	
+
 	/**
 	 * Creating Mock Bean for DocumentUploadService
 	 */
 	@MockBean
 	private DocumentServiceIntf demoservice;
-	
+
 	@MockBean
 	private BookingServiceIntf bookingServiceIntf;
 	/**
@@ -81,7 +84,8 @@ public class NotificationControllerTest {
 	MainResponseDTO<ResponseDTO> responseDTO = new MainResponseDTO<>();
 
 	MainResponseDTO<Map<String, String>> configRes = new MainResponseDTO<>();
-        ResponseDTO respDTO=new ResponseDTO();
+	ResponseDTO respDTO = new ResponseDTO();
+
 	@Before
 	public void setUp() {
 		notificationDTO = new NotificationDTO();
@@ -93,7 +97,7 @@ public class NotificationControllerTest {
 		notificationDTO.setAppointmentTime("22:57");
 		respDTO.setMessage("Email and sms request successfully submitted");
 		responseDTO.setResponse(respDTO);
-		responseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
+		responseDTO.setResponsetime(validationUtil.getCurrentResponseTime());
 
 	}
 
@@ -119,19 +123,3 @@ public class NotificationControllerTest {
 
 	}
 }
-	// /**
-	// * This test method is for success qrCodeGeneration
-	// * @throws Exception
-	// */
-	// @WithUserDetails("individual")
-	// @Test
-	// public void qrCodeGenerationTest() throws Exception {
-	// String stringjson = mapper.writeValueAsString(notificationDTO);
-	// Mockito.when(service.sendNotification(stringjson, "eng",
-	// null)).thenReturn(responseDTO);
-	//
-	// mockMvc.perform(post("/generateQRCode").contentType(MediaType.APPLICATION_JSON)
-	// .content(stringjson)).andExpect(status().isOk());
-	//
-	// }
-

@@ -2,6 +2,7 @@ package io.mosip.preregistration.core.util;
 
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
@@ -58,7 +59,6 @@ public class ValidationUtil {
 	private ValidationUtil() {
 	}
 
-
 	@Value("${mosip.id.validation.identity.email}")
 	public void setEmailRegex(String value) {
 		ValidationUtil.emailRegex = value;
@@ -93,14 +93,14 @@ public class ValidationUtil {
 	public void setDocType(String value) {
 		ValidationUtil.documentTypeUri = value;
 	}
-	
+
 	@Value("${mosip.kernel.masterdata.validdoc.rest.uri}")
 	public void setDocCatTypeCode(String value) {
 		ValidationUtil.masterdataUri = value;
 	}
 
 	/** The validDocsMap. */
-	private static SetValuedMap<String, String> validDocsMap= new HashSetValuedHashMap<>();
+	private static SetValuedMap<String, String> validDocsMap = new HashSetValuedHashMap<>();
 
 	@Autowired
 	RestTemplate restTemplate;
@@ -226,7 +226,8 @@ public class ValidationUtil {
 	/**
 	 * This method is used as Null checker for different input keys.
 	 *
-	 * @param key pass the key
+	 * @param key
+	 *            pass the key
 	 * @return true if key not null and return false if key is null.
 	 */
 	public static boolean isNull(Object key) {
@@ -263,8 +264,8 @@ public class ValidationUtil {
 	public boolean validateDocuments(String langCode, String catCode, String typeCode, String preRegistrationId) {
 		log.debug("sessionId", "idType", "id", "beforegetAllDocCategories preRegistrationId " + preRegistrationId);
 		log.debug("sessionId", "idType", "id", "aftergetAllDocCategories preRegistrationId " + preRegistrationId);
-		log.debug("sessionId", "idType", "id",
-				"In validateDocuments method with docCatMap " + validDocsMap + " preRegistrationId " + preRegistrationId);
+		log.debug("sessionId", "idType", "id", "In validateDocuments method with docCatMap " + validDocsMap
+				+ " preRegistrationId " + preRegistrationId);
 		log.debug("sessionId", "idType", "id", "In validateDocuments method with langCode " + langCode + " and catCode "
 				+ catCode + " preRegistrationId " + preRegistrationId);
 		if (validDocsMap.containsKey(catCode)) {
@@ -337,17 +338,18 @@ public class ValidationUtil {
 			String uri = UriComponentsBuilder.fromUriString(ValidationUtil.masterdataUri).buildAndExpand(langcode)
 					.toUriString();
 			HttpEntity entity = new HttpEntity<>(headers);
-			log.info("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes with url "+uri );
-			
+			log.info("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes with url " + uri);
+
 			@SuppressWarnings("unchecked")
-			
+
 			ResponseEntity<ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>>> response = restTemplate
 					.exchange(uri, HttpMethod.GET, entity,
 							new ParameterizedTypeReference<ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>>>() {
 							});
 
 			if (Objects.isNull(response.getBody().getErrors()) || response.getBody().getErrors().isEmpty()) {
-				log.debug("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes inside if preRegistrationId ");
+				log.debug("sessionId", "idType", "id",
+						"inside getAllDocCategoriesAndTypes inside if preRegistrationId ");
 				ArrayList<LinkedHashMap<String, Object>> resp = response.getBody().getResponse()
 						.get(DOCUMENTCATEGORIES);
 				ArrayList<Object> typeList = new ArrayList<>();
@@ -376,5 +378,24 @@ public class ValidationUtil {
 			throw new MasterDataNotAvailableException(ErrorCodes.PRG_CORE_REQ_022.toString(),
 					ErrorMessages.MASTERDATA_SERVICE_CALL_FAIL.toString(), e.getCause());
 		}
+	}
+
+	public Map<String, String> prepareRequestMap(MainRequestDTO<?> requestDto) {
+		log.info("sessionId", "idType", "id", "In prepareRequestMap method of Login Service Util");
+		Map<String, String> requestMap = new HashMap<>();
+		requestMap.put("id", requestDto.getId());
+		requestMap.put("version", requestDto.getVersion());
+		if (!(requestDto.getRequesttime() == null || requestDto.getRequesttime().toString().isEmpty())) {
+			LocalDate date = requestDto.getRequesttime().toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
+			requestMap.put("requesttime", date.toString());
+		} else {
+			requestMap.put("requesttime", null);
+		}
+		requestMap.put("request", requestDto.getRequest().toString());
+		return requestMap;
+	}
+
+	public String getCurrentResponseTime() {
+		return LocalDateTime.now(ZoneId.of("UTC")).toString();
 	}
 }

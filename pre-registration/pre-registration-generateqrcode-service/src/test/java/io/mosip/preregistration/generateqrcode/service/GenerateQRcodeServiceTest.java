@@ -6,11 +6,8 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.TimeZone;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,11 +30,10 @@ import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.generateqrcode.GenerateQRcodeApplicationTests;
 import io.mosip.preregistration.generateqrcode.dto.QRCodeResponseDTO;
 import io.mosip.preregistration.generateqrcode.exception.IllegalParamException;
-import io.mosip.preregistration.generateqrcode.service.GenerateQRcodeService;
-import io.mosip.preregistration.generateqrcode.service.util.GenerateQRcodeServiceUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { GenerateQRcodeApplicationTests.class })
@@ -48,7 +44,7 @@ public class GenerateQRcodeServiceTest {
 	private GenerateQRcodeService service;
 
 	@Autowired
-	private GenerateQRcodeServiceUtil serviceUtil;
+	private ValidationUtil serviceUtil;
 
 	@Autowired
 	private ObjectMapper mapper;
