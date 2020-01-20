@@ -241,7 +241,7 @@ public class LoginService {
 
 			response.setResponse(responseEntity);
 			isSuccess = true;
-		} catch (Exception ex) {
+		} catch (RuntimeException  ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In calluserIdOtp method of login service- " + ex.getMessage());
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
