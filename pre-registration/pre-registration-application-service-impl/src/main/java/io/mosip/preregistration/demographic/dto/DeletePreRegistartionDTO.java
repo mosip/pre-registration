@@ -7,9 +7,7 @@ package io.mosip.preregistration.demographic.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -19,8 +17,6 @@ import lombok.ToString;
  * @author Tapaswini Behera
  * @since 1.0.0
  */
-@Getter
-@Setter
 @NoArgsConstructor
 @ToString
 public class DeletePreRegistartionDTO implements Serializable {
@@ -35,4 +31,16 @@ public class DeletePreRegistartionDTO implements Serializable {
 
 	/** The create date time. */
 	private Date deletedDateTime;
+	
+	public void setPreRegistrationId(String preRegistrationId) {
+		this.preRegistrationId = preRegistrationId;
+	}
+
+	public void setDeletedBy(String deletedBy) {
+		this.deletedBy = deletedBy;
+	}
+
+	public void setDeletedDateTime(Date deletedDateTime) {
+		this.deletedDateTime =deletedDateTime !=null ? new Date(deletedDateTime.getTime()) : null;
+	}
 }
