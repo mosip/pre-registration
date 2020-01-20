@@ -485,7 +485,7 @@ public class DemographicService implements DemographicServiceIntf {
 				}
 			}
 			isRetrieveSuccess = true;
-		} catch (Exception ex) {
+		} catch (RuntimeException | JsonProcessingException | ParseException | IOException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getAllApplicationDetails method of pre-registration service - " + ex.getMessage());
