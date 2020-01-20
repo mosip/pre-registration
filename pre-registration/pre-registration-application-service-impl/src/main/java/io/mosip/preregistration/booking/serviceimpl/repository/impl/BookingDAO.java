@@ -151,25 +151,6 @@ public class BookingDAO {
 	}
 
 	/**
-	 * @param bookingEnity
-	 * @return RegistrationBookingEntity
-	 */
-	public RegistrationBookingEntity saveRegistrationEntityForCancel(RegistrationBookingEntity bookingEnity) {
-		RegistrationBookingEntity entity = null;
-		try {
-			entity = registrationBookingRepository.save(bookingEnity);
-			if (entity == null) {
-				throw new CancelAppointmentFailedException(ErrorCodes.PRG_BOOK_RCI_019.getCode(),
-						ErrorMessages.APPOINTMENT_CANCEL_FAILED.getMessage());
-			}
-		} catch (DataAccessLayerException e) {
-			throw new TableNotAccessibleException(ErrorCodes.PRG_BOOK_RCI_016.getCode(),
-					ErrorMessages.BOOKING_TABLE_NOT_ACCESSIBLE.getMessage());
-		}
-		return entity;
-	}
-
-	/**
 	 * @param availibityEntity
 	 * @return AvailibityEntity
 	 */
@@ -196,10 +177,6 @@ public class BookingDAO {
 		RegistrationBookingEntity entity = null;
 		try {
 			entity = registrationBookingRepository.save(bookingEntity);
-			if (entity == null) {
-				throw new AppointmentBookingFailedException(ErrorCodes.PRG_BOOK_RCI_005.getCode(),
-						ErrorMessages.APPOINTMENT_BOOKING_FAILED.getMessage());
-			}
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_BOOK_RCI_016.getCode(),
 					ErrorMessages.BOOKING_TABLE_NOT_ACCESSIBLE.getMessage());
@@ -312,7 +289,7 @@ public class BookingDAO {
 	 * @return list of regCenter
 	 */
 	public List<String> findRegCenter(LocalDate regDate) {
-		List<String> regCenterList = new ArrayList<>();
+		List<String> regCenterList = null;
 		try {
 			regCenterList = bookingAvailabilityRepository.findAvaialableRegCenter(regDate);
 		} catch (DataAccessLayerException e) {
