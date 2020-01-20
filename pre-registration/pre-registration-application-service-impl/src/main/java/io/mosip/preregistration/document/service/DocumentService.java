@@ -290,27 +290,22 @@ public class DocumentService implements DocumentServiceIntf {
 			byte[] encryptedDocument = cryptoUtil.encrypt(file.getBytes(), encryptedTimestamp);
 			documentEntity.setDocHash(HashUtill.hashUtill(encryptedDocument));
 			documentEntity = documnetDAO.saveDocument(documentEntity);
-			if (documentEntity != null) {
-				String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
+			String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 
-				boolean isStoreSuccess = fs.storeFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key,
-						new ByteArrayInputStream(encryptedDocument));
+			boolean isStoreSuccess = fs.storeFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key,
+					new ByteArrayInputStream(encryptedDocument));
 
-				if (!isStoreSuccess) {
-					throw new FSServerException(ErrorCodes.PRG_PAM_DOC_009.toString(),
-							ErrorMessages.DOCUMENT_FAILED_TO_UPLOAD.getMessage());
-				}
-				docResponseDto.setPreRegistrationId(documentEntity.getDemographicEntity().getPreRegistrationId());
-				docResponseDto.setDocId(String.valueOf(documentEntity.getDocumentId()));
-				docResponseDto.setDocName(documentEntity.getDocName());
-				docResponseDto.setDocCatCode(documentEntity.getDocCatCode());
-				docResponseDto.setDocTypCode(documentEntity.getDocTypeCode());
-				docResponseDto.setDocFileFormat(FilenameUtils.getExtension(documentEntity.getDocName()));
-
-			} else {
-				throw new DocumentFailedToUploadException(ErrorCodes.PRG_PAM_DOC_009.toString(),
+			if (!isStoreSuccess) {
+				throw new FSServerException(ErrorCodes.PRG_PAM_DOC_009.toString(),
 						ErrorMessages.DOCUMENT_FAILED_TO_UPLOAD.getMessage());
 			}
+			docResponseDto.setPreRegistrationId(documentEntity.getDemographicEntity().getPreRegistrationId());
+			docResponseDto.setDocId(String.valueOf(documentEntity.getDocumentId()));
+			docResponseDto.setDocName(documentEntity.getDocName());
+			docResponseDto.setDocCatCode(documentEntity.getDocCatCode());
+			docResponseDto.setDocTypCode(documentEntity.getDocTypeCode());
+			docResponseDto.setDocFileFormat(FilenameUtils.getExtension(documentEntity.getDocName()));
+
 		}
 		return docResponseDto;
 	}
