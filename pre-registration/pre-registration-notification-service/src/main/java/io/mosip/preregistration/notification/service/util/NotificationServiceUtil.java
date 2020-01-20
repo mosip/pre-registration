@@ -42,30 +42,28 @@ public class NotificationServiceUtil {
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
 
-
-
 	private Logger log = LoggerConfiguration.logConfig(NotificationServiceUtil.class);
 
 	/**
 	 * Autowired reference for {@link #RestTemplateBuilder}
 	 */
-	
-
 
 	/**
-	 * Method to generate currentresponsetime.
 	 * 
-	 * @return the string.
+	 * @param jsonString
+	 * @return
+	 * @throws JsonParseException
+	 * @throws JsonMappingException
+	 * @throws io.mosip.kernel.core.exception.IOException
+	 * @throws JSONException
+	 * @throws ParseException
 	 */
-	public String getCurrentResponseTime() {
-		return LocalDateTime.now(ZoneId.of("UTC")).toString();
-	}
 
-	
 	public MainRequestDTO<NotificationDTO> createNotificationDetails(String jsonString) throws JsonParseException,
 			JsonMappingException, io.mosip.kernel.core.exception.IOException, JSONException, ParseException {
-		
-		log.info("sessionId", "idType", "id", "In createUploadDto method of notification service util with body " +jsonString);
+
+		log.info("sessionId", "idType", "id",
+				"In createUploadDto method of notification service util with body " + jsonString);
 		MainRequestDTO<NotificationDTO> notificationReqDto = new MainRequestDTO<>();
 		JSONObject notificationData = new JSONObject(jsonString);
 		JSONObject notificationDtoData = (JSONObject) notificationData.get("request");
@@ -73,32 +71,15 @@ public class NotificationServiceUtil {
 				notificationDtoData.toString());
 		notificationReqDto.setId(notificationData.get("id").toString());
 		notificationReqDto.setVersion(notificationData.get("version").toString());
-		if(!(notificationData.get("requesttime")==null ||notificationData.get("requesttime").toString().isEmpty())) {
+		if (!(notificationData.get("requesttime") == null
+				|| notificationData.get("requesttime").toString().isEmpty())) {
 			notificationReqDto.setRequesttime(
 					new SimpleDateFormat(utcDateTimePattern).parse(notificationData.get("requesttime").toString()));
-		}
-		else
-		{
+		} else {
 			notificationReqDto.setRequesttime(null);
 		}
 		notificationReqDto.setRequest(notificationDTO);
 		return notificationReqDto;
 
-	}
-
-	public Map<String, String> createRequestMap(MainRequestDTO<?> requestDto) {
-		log.info("sessionId", "idType", "id", "In prepareRequestMap method of notification Service Util with requestDto "+requestDto);
-		Map<String, String> requestMap = new HashMap<>();
-		requestMap.put("id", requestDto.getId());
-		requestMap.put("version", requestDto.getVersion());
-		if(!(requestDto.getRequesttime()==null || requestDto.getRequesttime().toString().isEmpty())) {
-			LocalDate date = requestDto.getRequesttime().toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
-			requestMap.put("requesttime", date.toString());
-		}
-		else {
-		requestMap.put("requesttime",null);
-		}
-		requestMap.put("request", requestDto.getRequest().toString());
-		return requestMap;
 	}
 }

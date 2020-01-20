@@ -3,9 +3,6 @@ package io.mosip.preregistration.generateqrcode.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.util.Map;
-
-import org.json.simple.JSONObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,10 +23,10 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.generateqrcode.GenerateQRcodeApplicationTests;
 import io.mosip.preregistration.generateqrcode.dto.QRCodeResponseDTO;
 import io.mosip.preregistration.generateqrcode.service.GenerateQRcodeService;
-import io.mosip.preregistration.generateqrcode.service.util.GenerateQRcodeServiceUtil;
 
 
 @SpringBootTest(classes = { GenerateQRcodeApplicationTests.class })
@@ -54,7 +51,7 @@ public class GenerateQRcodeControllerTest {
 	private GenerateQRcodeService service;
 
 	@MockBean
-	private GenerateQRcodeServiceUtil serviceUtil;
+	private ValidationUtil serviceUtil;
 	
 	@Mock
 	private RequestValidator requestValidator;

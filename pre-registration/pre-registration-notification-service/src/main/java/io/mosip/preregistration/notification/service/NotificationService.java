@@ -85,16 +85,16 @@ public class NotificationService {
 	 */
 	@Autowired
 	private NotificationServiceUtil serviceUtil;
-	
+
 	@Autowired
 	private DemographicServiceIntf demographicServiceIntf;
 
 	@Autowired
 	private DemographicServiceIntf demogrphicServiceIntf;
-	
+
 	@Autowired
 	private BookingServiceIntf bookingServiceIntf;
-	
+
 	/**
 	 * Reference for ${appointmentResourse.url} from property file
 	 */
@@ -103,7 +103,7 @@ public class NotificationService {
 
 	private Logger log = LoggerConfiguration.logConfig(NotificationService.class);
 
-	Map<String,String> requiredRequestMap = new HashMap<>();
+	Map<String, String> requiredRequestMap = new HashMap<>();
 	/**
 	 * Autowired reference for {@link #restTemplateBuilder}
 	 */
@@ -116,7 +116,6 @@ public class NotificationService {
 	@Value("${version}")
 	private String version;
 
-	
 	/**
 	 * 
 	 */
@@ -142,7 +141,7 @@ public class NotificationService {
 
 	@Value("${preregistartion.identity.phone}")
 	private String phone;
-	
+
 	@Value("#{'${mosip.notificationtype}'.split('\\|')}")
 	private List<String> notificationTypeList;
 
@@ -182,7 +181,8 @@ public class NotificationService {
 		response = new MainResponseDTO<>();
 
 		ResponseDTO notificationResponse = new ResponseDTO();
-		log.info("sessionId", "idType", "id", "In notification service of sendNotification with request  "+jsonString +" and langCode "+langCode);
+		log.info("sessionId", "idType", "id", "In notification service of sendNotification with request  " + jsonString
+				+ " and langCode " + langCode);
 		requiredRequestMap.put("id", Id);
 		response.setId(Id);
 		response.setVersion(version);
@@ -193,11 +193,13 @@ public class NotificationService {
 			response.setId(notificationReqDTO.getId());
 			response.setVersion(notificationReqDTO.getVersion());
 			NotificationDTO notificationDto = notificationReqDTO.getRequest();
-			if (ValidationUtil.requestValidator(serviceUtil.createRequestMap(notificationReqDTO), requiredRequestMap)
-					&& validationUtil.langvalidation(langCode)) {
+			if (ValidationUtil.requestValidator(validationUtil.prepareRequestMap(notificationReqDTO),
+					requiredRequestMap) && validationUtil.langvalidation(langCode)) {
 				MainResponseDTO<DemographicResponseDTO> demoDetail = notificationDtoValidation(notificationDto);
 				if (notificationDto.isAdditionalRecipient()) {
-					log.info("sessionId", "idType", "id", "In notification service of sendNotification if additionalRecipient is"+ notificationDto.isAdditionalRecipient());
+					log.info("sessionId", "idType", "id",
+							"In notification service of sendNotification if additionalRecipient is"
+									+ notificationDto.isAdditionalRecipient());
 					if (notificationDto.getMobNum() != null && !notificationDto.getMobNum().isEmpty()) {
 						if (ValidationUtil.phoneValidator(notificationDto.getMobNum())) {
 							notificationUtil.notify(RequestCodes.SMS.getCode(), notificationDto, langCode, file);
@@ -224,8 +226,10 @@ public class NotificationService {
 					}
 					notificationResponse.setMessage(RequestCodes.MESSAGE.getCode());
 				} else {
-					log.info("sessionId", "idType", "id", "In notification service of sendNotification if additionalRecipient is"+ notificationDto.isAdditionalRecipient());
-					resp = getDemographicDetailsWithPreId(demoDetail,notificationDto, langCode, file);
+					log.info("sessionId", "idType", "id",
+							"In notification service of sendNotification if additionalRecipient is"
+									+ notificationDto.isAdditionalRecipient());
+					resp = getDemographicDetailsWithPreId(demoDetail, notificationDto, langCode, file);
 					notificationResponse.setMessage(resp);
 				}
 			}
@@ -237,7 +241,7 @@ public class NotificationService {
 			log.error("sessionId", "idType", "id", "In notification service of sendNotification " + ex.getMessage());
 			new NotificationExceptionCatcher().handle(ex, response);
 		} finally {
-			response.setResponsetime(serviceUtil.getCurrentResponseTime());
+			response.setResponsetime(validationUtil.getCurrentResponseTime());
 			if (isSuccess) {
 				setAuditValues(EventId.PRE_411.toString(), EventName.NOTIFICATION.toString(),
 						EventType.SYSTEM.toString(),
@@ -263,11 +267,12 @@ public class NotificationService {
 	 * @return
 	 * @throws IOException
 	 */
-	private String getDemographicDetailsWithPreId(MainResponseDTO<DemographicResponseDTO> responseEntity,NotificationDTO notificationDto, String langCode, MultipartFile file)
-			throws IOException {
+	private String getDemographicDetailsWithPreId(MainResponseDTO<DemographicResponseDTO> responseEntity,
+			NotificationDTO notificationDto, String langCode, MultipartFile file) throws IOException {
 		try {
-			ObjectMapper mapper = new ObjectMapper();	
-			JsonNode responseNode = mapper.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
+			ObjectMapper mapper = new ObjectMapper();
+			JsonNode responseNode = mapper
+					.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
 			responseNode = responseNode.get(identity);
 
@@ -324,13 +329,14 @@ public class NotificationService {
 		auditLogUtil.saveAuditDetails(auditRequestDto);
 	}
 
-	public MainResponseDTO<DemographicResponseDTO> notificationDtoValidation(NotificationDTO dto) throws IOException, ParseException {
-		MainResponseDTO<DemographicResponseDTO> demoDetail= getDemographicDetails(dto);
+	public MainResponseDTO<DemographicResponseDTO> notificationDtoValidation(NotificationDTO dto)
+			throws IOException, ParseException {
+		MainResponseDTO<DemographicResponseDTO> demoDetail = getDemographicDetails(dto);
 		if (!dto.getIsBatch()) {
 			BookingRegistrationDTO bookingDTO = getAppointmentDetailsRestService(dto.getPreRegistrationId());
 			String time = LocalTime.parse(bookingDTO.getSlotFromTime(), DateTimeFormatter.ofPattern("HH:mm"))
 					.format(DateTimeFormatter.ofPattern("hh:mm a"));
-			log.info("sessionId", "idType", "id", "In notificationDtoValidation with bookingDTO "+bookingDTO);
+			log.info("sessionId", "idType", "id", "In notificationDtoValidation with bookingDTO " + bookingDTO);
 			if (dto.getAppointmentDate() != null && !dto.getAppointmentDate().trim().equals("")) {
 				if (bookingDTO.getRegDate().equals(dto.getAppointmentDate())) {
 					if (dto.getAppointmentTime() != null && !dto.getAppointmentTime().trim().equals("")) {
@@ -356,7 +362,7 @@ public class NotificationService {
 				throw new MandatoryFieldException(ErrorCodes.PRG_PAM_ACK_002.getCode(),
 						ErrorMessages.INCORRECT_MANDATORY_FIELDS.getMessage(), response);
 			}
-			
+
 		}
 		return demoDetail;
 	}
@@ -370,12 +376,14 @@ public class NotificationService {
 	 * @throws ParseException
 	 */
 
-	public MainResponseDTO<DemographicResponseDTO> getDemographicDetails(NotificationDTO notificationDto) throws IOException, ParseException {
+	public MainResponseDTO<DemographicResponseDTO> getDemographicDetails(NotificationDTO notificationDto)
+			throws IOException, ParseException {
 		try {
-			MainResponseDTO<DemographicResponseDTO> responseEntity=demogrphicServiceIntf.getDemographicData(notificationDto.getPreRegistrationId());
+			MainResponseDTO<DemographicResponseDTO> responseEntity = demogrphicServiceIntf
+					.getDemographicData(notificationDto.getPreRegistrationId());
 			System.out.println(responseEntity.getResponse());
 			ObjectMapper mapper = new ObjectMapper();
-			
+
 			if (responseEntity.getErrors() != null) {
 				throw new DemographicDetailsNotFoundException(responseEntity.getErrors(), response);
 			}
@@ -402,7 +410,7 @@ public class NotificationService {
 					ErrorMessages.DEMOGRAPHIC_CALL_FAILED.getMessage());
 
 		}
-		
+
 	}
 
 	/**

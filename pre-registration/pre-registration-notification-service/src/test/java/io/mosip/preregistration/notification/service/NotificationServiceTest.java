@@ -14,7 +14,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.TimeZone;
 
-import org.apache.hadoop.fs.InvalidRequestException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Before;
@@ -25,7 +24,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -36,7 +34,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -61,6 +58,7 @@ import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.NotificationUtil;
+import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.service.DemographicServiceIntf;
 import io.mosip.preregistration.notification.NotificationApplicationTest;
 import io.mosip.preregistration.notification.dto.QRCodeResponseDTO;
@@ -68,7 +66,6 @@ import io.mosip.preregistration.notification.dto.ResponseDTO;
 import io.mosip.preregistration.notification.exception.DemographicDetailsNotFoundException;
 import io.mosip.preregistration.notification.exception.MandatoryFieldException;
 import io.mosip.preregistration.notification.exception.RestCallException;
-import io.mosip.preregistration.notification.service.util.NotificationServiceUtil;
 
 /**
  * @author Sanober Noor
@@ -82,7 +79,7 @@ public class NotificationServiceTest {
 	private NotificationService service;
 
 	@Autowired
-	private NotificationServiceUtil serviceUtil;
+	private ValidationUtil serviceUtil;
 	
 	@MockBean
 	private DemographicServiceIntf demographicServiceIntf;
@@ -237,7 +234,6 @@ public class NotificationServiceTest {
 	@Test
 	public void callGetDemographicDetailsWithPreIdTest()
 			throws JsonParseException, JsonMappingException, IOException, java.io.IOException {
-		// String responsejson = mapper.writeValueAsString(jsonTestObject);
 		ResponseEntity<String> respEntity = new ResponseEntity<String>(jsonTestObject.toString(), HttpStatus.OK);
 		notificationDTO.setAdditionalRecipient(false);
 
@@ -245,8 +241,6 @@ public class NotificationServiceTest {
 		String stringjson = mapper.writeValueAsString(mainReqDto);
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		ResponseEntity<MainResponseDTO<DemographicResponseDTO>> demores = new ResponseEntity<>(demographicdto, HttpStatus.OK);
-		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> bookingres = new ResponseEntity<>(bookingResultDto, HttpStatus.OK);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demographicdto);
 		Mockito.when(bookingServiceIntf.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -364,12 +358,10 @@ public class NotificationServiceTest {
 		responseDTO.setResponse(response);
 		responseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
 		String stringjson = mapper.writeValueAsString(mainReqDto);
-		ResponseEntity<MainResponseDTO<DemographicResponseDTO>> demores = new ResponseEntity<>(demographicdto, HttpStatus.OK);
-		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> bookingres = new ResponseEntity<>(bookingResultDto, HttpStatus.OK);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demographicdto);
 		Mockito.when(bookingServiceIntf.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		MainResponseDTO<ResponseDTO> response = service.sendNotification(stringjson, "fra", file);
+        service.sendNotification(stringjson, "fra", file);
 
 	}
 
@@ -390,13 +382,11 @@ public class NotificationServiceTest {
 		responseDTO.setResponse(response);
 		responseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
 		String stringjson = mapper.writeValueAsString(mainReqDto);
-		ResponseEntity<MainResponseDTO<DemographicResponseDTO>> demores = new ResponseEntity<>(demographicdto, HttpStatus.OK);
-		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> bookingres = new ResponseEntity<>(bookingResultDto, HttpStatus.OK);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demographicdto);
 		Mockito.when(bookingServiceIntf.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		MainResponseDTO<ResponseDTO> response = service.sendNotification(stringjson, "fra", file);
+		service.sendNotification(stringjson, "fra", file);
 
 	}
 	
@@ -417,13 +407,11 @@ public class NotificationServiceTest {
 		responseDTO.setResponse(response);
 		responseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
 		String stringjson = mapper.writeValueAsString(mainReqDto);
-		ResponseEntity<MainResponseDTO<DemographicResponseDTO>> demores = new ResponseEntity<>(demographicdto, HttpStatus.OK);
-		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> bookingres = new ResponseEntity<>(bookingResultDto, HttpStatus.OK);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demographicdto);
 		Mockito.when(bookingServiceIntf.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		MainResponseDTO<ResponseDTO> response = service.sendNotification(stringjson, "fra", file);
+		service.sendNotification(stringjson, "fra", file);
 
 	}
 	@Test(expected = MandatoryFieldException.class)
