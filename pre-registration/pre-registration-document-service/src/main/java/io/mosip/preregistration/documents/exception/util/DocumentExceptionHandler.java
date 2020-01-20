@@ -209,6 +209,7 @@ public class DocumentExceptionHandler {
 				DocumentStatusMessages.DOCUMENT_EXCEEDING_PERMITTED_SIZE.toString());
 		MainResponseDTO<?> errorRes = new MainResponseDTO<>();
 		List<ExceptionJSONInfoDTO> errorList= new ArrayList<>();
+		errorList.add(errorDetails);
 		errorRes.setErrors(errorList);
 		errorRes.setResponsetime(getCurrentResponseTime());
 		errorRes.setId(uploadId);
