@@ -191,14 +191,6 @@ public class BookingDAO {
 		return entityList;
 	}
 
-	/**
-	 * @param entity
-	 * @return boolean
-	 */
-	public boolean saveAvailability(AvailibityEntity entity) {
-		return bookingAvailabilityRepository.save(entity) != null;
-	}
-
 	public List<RegistrationBookingEntity> findByPreregistrationId(String preId) {
 		List<RegistrationBookingEntity> entityList = null;
 		try {
@@ -224,7 +216,6 @@ public class BookingDAO {
 		return count;
 	}
 
-	
 	/**
 	 * @param fromLocaldate
 	 * @param toLocaldate
@@ -398,11 +389,13 @@ public class BookingDAO {
 	 * @param regDate
 	 * @return List of AvailibityEntity
 	 */
-	public List<AvailibityEntity> findAvailability(String regcntrId,LocalDate starteDate,LocalDate endDate ) {
+	public List<AvailibityEntity> findAvailability(String regcntrId, LocalDate starteDate, LocalDate endDate) {
 
 		List<AvailibityEntity> entityList = null;
 		try {
-			entityList = bookingAvailabilityRepository.findByRegcntrIdAndRegDateGreaterThanEqualAndRegDateLessThanEqualOrderByFromTimeAsc(regcntrId,starteDate,endDate);
+			entityList = bookingAvailabilityRepository
+					.findByRegcntrIdAndRegDateGreaterThanEqualAndRegDateLessThanEqualOrderByFromTimeAsc(regcntrId,
+							starteDate, endDate);
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_BOOK_RCI_016.getCode(),
 					ErrorMessages.AVAILABILITY_TABLE_NOT_ACCESSABLE.getMessage());
