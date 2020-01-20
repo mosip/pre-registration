@@ -118,7 +118,7 @@
 	<modules>
 		<module>pre-registration-core</module>
 		<module>pre-registration-login-service</module>
-		<module>pre-registration-demographic-service-impl</module>
+		<module>pre-registration-application-service-impl</module>
 		<module>pre-registration-demographic-service</module>
 		<module>pre-registration-document-service</module>
 		<module>pre-registration-booking-service</module>
