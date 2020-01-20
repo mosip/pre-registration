@@ -266,7 +266,7 @@ public class BatchJpaRepositoryImpl {
 	 * @return list of regCenter
 	 */
 	public List<String> findRegCenter(LocalDate regDate) {
-		List<String> regCenterList = new ArrayList<>();
+		List<String> regCenterList = null;
 		try {
 			regCenterList = availabilityRepository.findAvaialableRegCenter(regDate);
 		} catch (DataAccessLayerException e) {
