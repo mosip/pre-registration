@@ -1,5 +1,6 @@
 package io.mosip.preregistration.login.exception.util;
 
+import org.springframework.lang.NonNull;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
@@ -24,25 +25,26 @@ import io.mosip.preregistration.login.exception.UserIdOtpFaliedException;
  * @since 1.0.0
  */
 public class LoginExceptionCatcher {
+	
 
-	public void handle(Exception ex, String serviceType, MainResponseDTO<?> mainResponsedto) {
+	public void handle(Exception ex,@NonNull String serviceType, MainResponseDTO<?> mainResponsedto) {
 		if ((ex instanceof RestClientException || ex instanceof HttpClientErrorException
-				|| ex instanceof HttpServerErrorException) && (serviceType != null && serviceType.equals("sendOtp"))) {
+				|| ex instanceof HttpServerErrorException) && ( serviceType.equals("sendOtp"))) {
 			throw new SendOtpFailedException(ErrorCodes.PRG_AUTH_001.name(),
 					(ErrorMessages.SEND_OTP_FAILED.getMessage()), mainResponsedto);
-		} else if (ex instanceof RestClientException && (serviceType != null && serviceType.equals("userIdOtp"))) {
+		} else if (ex instanceof RestClientException && (serviceType.equals("userIdOtp"))) {
 			throw new UserIdOtpFaliedException(ErrorCodes.PRG_AUTH_002.name(),
 					(ErrorMessages.USERID_OTP_VALIDATION_FAILED.getMessage()), mainResponsedto);
 		} else if (ex instanceof RestClientException
-				&& (serviceType != null && serviceType.equals("invalidateToken"))) {
+				&& (serviceType.equals("invalidateToken"))) {
 			throw new InvalidateTokenException(ErrorCodes.PRG_AUTH_003.getCode(),
 					(ErrorMessages.INVALIDATE_TOKEN_FAILED.getMessage()), mainResponsedto);
 		} else if (ex instanceof InvalidRequestParameterException
-				&& (serviceType != null && serviceType.equals("sendOtp"))) {
+				&& (serviceType.equals("sendOtp"))) {
 			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
 					((InvalidRequestParameterException) ex).getErrorText(), mainResponsedto);
 		} else if (ex instanceof InvalidRequestParameterException
-				&& (serviceType != null && serviceType.equals("userIdOtp"))) {
+				&& (serviceType.equals("userIdOtp"))) {
 			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
 					((InvalidRequestParameterException) ex).getErrorText(), mainResponsedto);
 		} else if (ex instanceof LoginServiceException) {
@@ -60,11 +62,11 @@ public class LoginExceptionCatcher {
 			throw new NoAuthTokenException(((NoAuthTokenException) ex).getErrorCode(),
 					((NoAuthTokenException) ex).getErrorText(), mainResponsedto);
 		} else if ((ex instanceof HttpClientErrorException || ex instanceof HttpServerErrorException)
-				&& serviceType == "refreshConfig") {
+				&& serviceType.equals("refreshConfig")) {
 			throw new ConfigFileNotFoundException(ErrorCodes.PRG_AUTH_012.getCode(),
 					ErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), mainResponsedto);
 		} else if ((ex instanceof HttpClientErrorException || ex instanceof HttpServerErrorException)
-				&& serviceType == "postconstruct") {
+				&& serviceType.equals("postconstruct")) {
 			throw new ConfigFileNotFoundException(ErrorCodes.PRG_AUTH_012.getCode(),
 					ErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), new MainResponseDTO<>());
 		}
