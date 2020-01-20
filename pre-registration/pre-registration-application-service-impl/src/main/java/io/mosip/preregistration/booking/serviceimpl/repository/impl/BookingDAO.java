@@ -17,11 +17,9 @@ import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.preregistration.booking.serviceimpl.entity.AvailibityEntity;
 import io.mosip.preregistration.booking.serviceimpl.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.serviceimpl.errorcodes.ErrorMessages;
-import io.mosip.preregistration.booking.serviceimpl.exception.AppointmentBookingFailedException;
 import io.mosip.preregistration.booking.serviceimpl.exception.AvailabilityUpdationFailedException;
 import io.mosip.preregistration.booking.serviceimpl.exception.AvailablityNotFoundException;
 import io.mosip.preregistration.booking.serviceimpl.exception.BookingDataNotFoundException;
-import io.mosip.preregistration.booking.serviceimpl.exception.CancelAppointmentFailedException;
 import io.mosip.preregistration.booking.serviceimpl.exception.RecordNotFoundException;
 import io.mosip.preregistration.booking.serviceimpl.repository.BookingAvailabilityRepository;
 import io.mosip.preregistration.booking.serviceimpl.repository.DemographicRepository;
@@ -74,14 +72,6 @@ public class BookingDAO {
 		}
 		return availabilityList;
 
-	}
-
-	/**
-	 * @param entity
-	 * @return boolean
-	 */
-	public boolean saveBookAppointment(RegistrationBookingEntity entity) {
-		return registrationBookingRepository.save(entity) != null;
 	}
 
 	/**
