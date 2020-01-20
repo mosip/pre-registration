@@ -72,7 +72,7 @@
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
-			<artifactId>pre-registration-demographic-service-impl</artifactId>
+			<artifactId>pre-registration-application-service-impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
