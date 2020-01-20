@@ -9,32 +9,21 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import org.json.JSONException;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ExceptionUtils;
-import io.mosip.kernel.core.exception.ServiceError;
-import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -59,7 +48,6 @@ import io.mosip.preregistration.notification.error.ErrorMessages;
 import io.mosip.preregistration.notification.exception.BookingDetailsNotFoundException;
 import io.mosip.preregistration.notification.exception.DemographicDetailsNotFoundException;
 import io.mosip.preregistration.notification.exception.MandatoryFieldException;
-import io.mosip.preregistration.notification.exception.NotificationSeriveException;
 import io.mosip.preregistration.notification.exception.RestCallException;
 import io.mosip.preregistration.notification.exception.util.NotificationExceptionCatcher;
 import io.mosip.preregistration.notification.service.util.NotificationServiceUtil;
@@ -88,9 +76,6 @@ public class NotificationService {
 
 	@Autowired
 	private DemographicServiceIntf demographicServiceIntf;
-
-	@Autowired
-	private DemographicServiceIntf demogrphicServiceIntf;
 
 	@Autowired
 	private BookingServiceIntf bookingServiceIntf;
@@ -236,7 +221,7 @@ public class NotificationService {
 
 			response.setResponse(notificationResponse);
 			isSuccess = true;
-		} catch (Exception ex) {
+		} catch (RuntimeException | IOException | ParseException | io.mosip.kernel.core.util.exception.JsonParseException | io.mosip.kernel.core.util.exception.JsonMappingException | io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In notification service of sendNotification " + ex.getMessage());
 			new NotificationExceptionCatcher().handle(ex, response);
@@ -379,9 +364,8 @@ public class NotificationService {
 	public MainResponseDTO<DemographicResponseDTO> getDemographicDetails(NotificationDTO notificationDto)
 			throws IOException, ParseException {
 		try {
-			MainResponseDTO<DemographicResponseDTO> responseEntity = demogrphicServiceIntf
+			MainResponseDTO<DemographicResponseDTO> responseEntity = demographicServiceIntf
 					.getDemographicData(notificationDto.getPreRegistrationId());
-			System.out.println(responseEntity.getResponse());
 			ObjectMapper mapper = new ObjectMapper();
 
 			if (responseEntity.getErrors() != null) {
