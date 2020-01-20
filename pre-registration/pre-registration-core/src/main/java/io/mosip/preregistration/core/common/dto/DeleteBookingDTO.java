@@ -2,8 +2,8 @@ package io.mosip.preregistration.core.common.dto;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +31,17 @@ public class DeleteBookingDTO implements Serializable {
 	private String deletedBy;
 
 	/** The create date time. */
+	@Setter(AccessLevel.NONE)
+	@Getter(AccessLevel.NONE)
 	private Date deletedDateTime;
+
+	public Date getDeletedDateTime() {
+		return deletedDateTime!=null? new Date(deletedDateTime.getTime()):null;
+	}
+
+	public void setDeletedDateTime(Date deletedDateTime) {
+		this.deletedDateTime =deletedDateTime !=null ? new Date(deletedDateTime.getTime()):null;
+	}
+	
 }
 
