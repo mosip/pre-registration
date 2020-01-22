@@ -5,8 +5,10 @@
 package io.mosip.preregistration.batchjob.exception.util;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.batchjob.exception.NoPreIdAvailableException;
 import io.mosip.preregistration.batchjob.exception.NoValidPreIdFoundException;
+import io.mosip.preregistration.batchjob.exception.RestCallException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 
 /**
@@ -40,6 +42,10 @@ public class BatchServiceExceptionCatcher {
 		else if (ex instanceof TableNotAccessibleException) {
 			throw new TableNotAccessibleException(((TableNotAccessibleException) ex).getErrorCode(),
 					((TableNotAccessibleException) ex).getErrorText());
+		}
+		else if (ex instanceof RestCallException) {
+			throw new RestCallException(((RestCallException) ex).getErrorCode(),
+					((RestCallException) ex).getErrorText());
 		}
 	}
 
