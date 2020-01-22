@@ -9,19 +9,17 @@ import java.util.Date;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
  * This DTO class is used to define the values for request parameters when
  * performing deletion operarion.
  * 
- * @author Tapaswini Behera
+ * @author Kishan Rathore
  * @since 1.0.0
  */
-@Getter
-@Setter
 @NoArgsConstructor
+@Getter
 @ToString
 public class DeletePreRegistartionDTO implements Serializable {
 	/** The Constant serialVersionUID. */
@@ -35,4 +33,16 @@ public class DeletePreRegistartionDTO implements Serializable {
 
 	/** The create date time. */
 	private Date deletedDateTime;
+	
+	public void setPreRegistrationId(String preRegistrationId) {
+		this.preRegistrationId = preRegistrationId;
+	}
+
+	public void setDeletedBy(String deletedBy) {
+		this.deletedBy = deletedBy;
+	}
+
+	public void setDeletedDateTime(Date deletedDateTime) {
+		this.deletedDateTime =deletedDateTime !=null ? new Date(deletedDateTime.getTime()) : null;
+	}
 }

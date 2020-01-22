@@ -17,11 +17,9 @@ import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.preregistration.booking.serviceimpl.entity.AvailibityEntity;
 import io.mosip.preregistration.booking.serviceimpl.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.serviceimpl.errorcodes.ErrorMessages;
-import io.mosip.preregistration.booking.serviceimpl.exception.AppointmentBookingFailedException;
 import io.mosip.preregistration.booking.serviceimpl.exception.AvailabilityUpdationFailedException;
 import io.mosip.preregistration.booking.serviceimpl.exception.AvailablityNotFoundException;
 import io.mosip.preregistration.booking.serviceimpl.exception.BookingDataNotFoundException;
-import io.mosip.preregistration.booking.serviceimpl.exception.CancelAppointmentFailedException;
 import io.mosip.preregistration.booking.serviceimpl.exception.RecordNotFoundException;
 import io.mosip.preregistration.booking.serviceimpl.repository.BookingAvailabilityRepository;
 import io.mosip.preregistration.booking.serviceimpl.repository.DemographicRepository;
@@ -74,14 +72,6 @@ public class BookingDAO {
 		}
 		return availabilityList;
 
-	}
-
-	/**
-	 * @param entity
-	 * @return boolean
-	 */
-	public boolean saveBookAppointment(RegistrationBookingEntity entity) {
-		return registrationBookingRepository.save(entity) != null;
 	}
 
 	/**
@@ -151,25 +141,6 @@ public class BookingDAO {
 	}
 
 	/**
-	 * @param bookingEnity
-	 * @return RegistrationBookingEntity
-	 */
-	public RegistrationBookingEntity saveRegistrationEntityForCancel(RegistrationBookingEntity bookingEnity) {
-		RegistrationBookingEntity entity = null;
-		try {
-			entity = registrationBookingRepository.save(bookingEnity);
-			if (entity == null) {
-				throw new CancelAppointmentFailedException(ErrorCodes.PRG_BOOK_RCI_019.getCode(),
-						ErrorMessages.APPOINTMENT_CANCEL_FAILED.getMessage());
-			}
-		} catch (DataAccessLayerException e) {
-			throw new TableNotAccessibleException(ErrorCodes.PRG_BOOK_RCI_016.getCode(),
-					ErrorMessages.BOOKING_TABLE_NOT_ACCESSIBLE.getMessage());
-		}
-		return entity;
-	}
-
-	/**
 	 * @param availibityEntity
 	 * @return AvailibityEntity
 	 */
@@ -196,10 +167,6 @@ public class BookingDAO {
 		RegistrationBookingEntity entity = null;
 		try {
 			entity = registrationBookingRepository.save(bookingEntity);
-			if (entity == null) {
-				throw new AppointmentBookingFailedException(ErrorCodes.PRG_BOOK_RCI_005.getCode(),
-						ErrorMessages.APPOINTMENT_BOOKING_FAILED.getMessage());
-			}
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_BOOK_RCI_016.getCode(),
 					ErrorMessages.BOOKING_TABLE_NOT_ACCESSIBLE.getMessage());
@@ -222,14 +189,6 @@ public class BookingDAO {
 					ErrorMessages.AVAILABILITY_TABLE_NOT_ACCESSABLE.getMessage());
 		}
 		return entityList;
-	}
-
-	/**
-	 * @param entity
-	 * @return boolean
-	 */
-	public boolean saveAvailability(AvailibityEntity entity) {
-		return bookingAvailabilityRepository.save(entity) != null;
 	}
 
 	public List<RegistrationBookingEntity> findByPreregistrationId(String preId) {
@@ -257,7 +216,6 @@ public class BookingDAO {
 		return count;
 	}
 
-	
 	/**
 	 * @param fromLocaldate
 	 * @param toLocaldate
@@ -312,7 +270,7 @@ public class BookingDAO {
 	 * @return list of regCenter
 	 */
 	public List<String> findRegCenter(LocalDate regDate) {
-		List<String> regCenterList = new ArrayList<>();
+		List<String> regCenterList = null;
 		try {
 			regCenterList = bookingAvailabilityRepository.findAvaialableRegCenter(regDate);
 		} catch (DataAccessLayerException e) {
@@ -431,11 +389,13 @@ public class BookingDAO {
 	 * @param regDate
 	 * @return List of AvailibityEntity
 	 */
-	public List<AvailibityEntity> findAvailability(String regcntrId,LocalDate starteDate,LocalDate endDate ) {
+	public List<AvailibityEntity> findAvailability(String regcntrId, LocalDate starteDate, LocalDate endDate) {
 
 		List<AvailibityEntity> entityList = null;
 		try {
-			entityList = bookingAvailabilityRepository.findByRegcntrIdAndRegDateGreaterThanEqualAndRegDateLessThanEqualOrderByFromTimeAsc(regcntrId,starteDate,endDate);
+			entityList = bookingAvailabilityRepository
+					.findByRegcntrIdAndRegDateGreaterThanEqualAndRegDateLessThanEqualOrderByFromTimeAsc(regcntrId,
+							starteDate, endDate);
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_BOOK_RCI_016.getCode(),
 					ErrorMessages.AVAILABILITY_TABLE_NOT_ACCESSABLE.getMessage());

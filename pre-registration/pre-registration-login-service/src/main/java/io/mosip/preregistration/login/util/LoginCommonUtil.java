@@ -139,7 +139,7 @@ public class LoginCommonUtil {
 			}
 			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
 			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
-		} catch (Exception ex) {
+		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
 			log.debug("sessionId", "idType", "id", "Kernel rest call exception "+ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}

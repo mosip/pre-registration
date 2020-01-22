@@ -3,8 +3,6 @@ package io.mosip.preregistration.datasync.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
 
 
 public class PreRegArchiveDTO {
@@ -85,11 +83,11 @@ public class PreRegArchiveDTO {
 	}
 
 	public byte[] getZipBytes() {
-		return zipBytes;
+		return zipBytes!=null ? zipBytes.clone():null;
 	}
 
 	public void setZipBytes(byte[] zipBytes) {
-		this.zipBytes = zipBytes.clone() ;
+		this.zipBytes =zipBytes!=null ? zipBytes.clone():null ;
 	}
 	
 	

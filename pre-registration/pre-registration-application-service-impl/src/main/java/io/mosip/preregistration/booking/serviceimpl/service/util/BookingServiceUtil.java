@@ -4,6 +4,7 @@
  */
 package io.mosip.preregistration.booking.serviceimpl.service.util;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -583,7 +584,7 @@ public class BookingServiceUtil {
 					}
 				}
 			}
-		} catch (Exception ex) {
+		} catch (RuntimeException | ParseException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			throw new InvalidDateTimeFormatException(ErrorCodes.PRG_BOOK_RCI_031.getCode(),
 					ErrorMessages.INVALID_BOOKING_DATE_TIME.getMessage() + " found for preregistration id - "

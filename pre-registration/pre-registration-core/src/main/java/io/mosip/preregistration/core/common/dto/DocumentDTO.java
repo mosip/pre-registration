@@ -2,9 +2,7 @@ package io.mosip.preregistration.core.common.dto;
 
 import java.io.Serializable;
 
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * This DTO class is used to accept the response values for document upload.
@@ -12,8 +10,6 @@ import lombok.Setter;
  * @author Rajath Kumar
  * @since 1.0.0
  */
-@Getter
-@Setter
 @NoArgsConstructor
 public class DocumentDTO implements Serializable {
 
@@ -24,5 +20,13 @@ public class DocumentDTO implements Serializable {
 	 * File content
 	 */
 	private byte[] document;
+	
+	public byte[] getDocument() {
+		return document !=null ? document.clone():null;
+	}
+
+	public void setDocument(byte[] document) {
+		this.document =document!=null ? document.clone():null;
+	}
 
 }

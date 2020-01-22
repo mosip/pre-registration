@@ -100,7 +100,7 @@ public class GenerateQRcodeServiceTest {
 		Mockito.when(qrCodeGenerator.generateQrCode(stringjson, QrVersion.V25)).thenReturn(qrCode);
 		MainResponseDTO<QRCodeResponseDTO> response = service.generateQRCode(qrcodedto);
 
-		assertEquals(qrCodeResponseDTO.getResponse(), response.getResponse());
+		assertEquals(qrCodeResponseDTO.getResponse().getQrcode(), response.getResponse().getQrcode());
 	}
 
 	@Test(expected = InvalidRequestParameterException.class)

@@ -21,6 +21,7 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
+import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -54,7 +55,12 @@ public class DemographicEntityConsumed implements Serializable {
 
 	/** The JSON */
 	@Column(name = "demog_detail")
+	@Setter(AccessLevel.NONE)
 	private byte[] applicantDetailJson;
+	
+	public void setApplicantDetailJson(byte[] applicantDetailJson) {
+		this.applicantDetailJson =applicantDetailJson !=null ? applicantDetailJson.clone():null;
+	}
 
 	/** The status_code */
 	@Column(name = "status_code", nullable = false)
