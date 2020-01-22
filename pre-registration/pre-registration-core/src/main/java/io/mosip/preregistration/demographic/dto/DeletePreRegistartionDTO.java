@@ -7,6 +7,7 @@ package io.mosip.preregistration.demographic.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -18,6 +19,7 @@ import lombok.ToString;
  * @since 1.0.0
  */
 @NoArgsConstructor
+@Getter
 @ToString
 public class DeletePreRegistartionDTO implements Serializable {
 	/** The Constant serialVersionUID. */
