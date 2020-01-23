@@ -68,7 +68,7 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.NotificationException;
 
 /**
- * @author Kishan Rathore
+ * @author Rajath Kr
  * @since 1.0.0
  *
  */
@@ -168,8 +168,7 @@ public class AvailabilityUtil {
 					List<AvailibityEntity> regSlots = batchServiceDAO.findSlots(sDate, regDto.getId());
 					if (insertedDate.isEmpty()) {
 						timeSlotCalculator(regDto, holidaylist, sDate);
-					} 
-					else if (regSlots.size() == 1) {
+					} else if (regSlots.size() == 1) {
 						batchServiceDAO.deleteSlots(regDto.getId(), sDate);
 						timeSlotCalculator(regDto, holidaylist, sDate);
 					} else {
@@ -177,27 +176,30 @@ public class AvailabilityUtil {
 						LocalTime newStartTime = regDto.getCenterStartTime();
 						int index = 0;
 						while (index < regSlots.size() - 1) {
-							LocalTime timeDiff=regSlots.get(index + 1).getFromTime()
+							LocalTime timeDiff = regSlots.get(index + 1).getFromTime()
 									.minusHours(regSlots.get(index).getFromTime().getHour())
 									.minusMinutes(regSlots.get(index).getFromTime().getMinute());
 							if (!timeDiff.equals(regDto.getPerKioskProcessTime())) {
 								break;
-							} else index++;
+							} else
+								index++;
 						}
-						LocalTime lunchstartTime=regSlots.get(index).getToTime();
-						LocalTime lunchEndTime = regSlots.get(index+1).getFromTime();
+						LocalTime lunchstartTime = regSlots.get(index).getToTime();
+						LocalTime lunchEndTime = regSlots.get(index + 1).getFromTime();
 						LocalTime newEndTime = regDto.getCenterEndTime();
 
 						if (!regSlots.get(0).getFromTime().equals(newStartTime)) {
 							if (regSlots.get(0).getFromTime().isAfter(newStartTime)) {
-								//create appointment on hourly basis
+								// create appointment on hourly basis
 								workingHoursCalculator(newStartTime, regSlots.get(0).getFromTime(), regDto, sDate);
 							} else {
-								//cancel appointment
-								LocalTime lastfromTime=newStartTime.minusHours(regDto.getPerKioskProcessTime().getHour())
+								// cancel appointment
+								LocalTime lastfromTime = newStartTime
+										.minusHours(regDto.getPerKioskProcessTime().getHour())
 										.minusMinutes(regDto.getPerKioskProcessTime().getMinute());
-								List<RegistrationBookingEntity> regBookingEntityList=batchServiceDAO.
-										findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate,regSlots.get(0).getFromTime(),lastfromTime);
+								List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO
+										.findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate,
+												regSlots.get(0).getFromTime(), lastfromTime);
 								if (!regBookingEntityList.isEmpty()) {
 									for (int i = 0; i < regBookingEntityList.size(); i++) {
 										if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
@@ -208,17 +210,20 @@ public class AvailabilityUtil {
 										}
 									}
 								}
-								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate,regSlots.get(0).getFromTime(),lastfromTime);
+								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate,
+										regSlots.get(0).getFromTime(), lastfromTime);
 							}
 
-						} 
-						if(!lunchstartTime.equals(regDto.getLunchStartTime())) {
-							if(lunchstartTime.isAfter(regDto.getLunchStartTime())) {
-								//cancel appointment
-								LocalTime lastfromTime=lunchstartTime.minusHours(regDto.getPerKioskProcessTime().getHour())
+						}
+						if (!lunchstartTime.equals(regDto.getLunchStartTime())) {
+							if (lunchstartTime.isAfter(regDto.getLunchStartTime())) {
+								// cancel appointment
+								LocalTime lastfromTime = lunchstartTime
+										.minusHours(regDto.getPerKioskProcessTime().getHour())
 										.minusMinutes(regDto.getPerKioskProcessTime().getMinute());
-								List<RegistrationBookingEntity> regBookingEntityList=batchServiceDAO.
-										findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate,regDto.getLunchStartTime(),lastfromTime);
+								List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO
+										.findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate,
+												regDto.getLunchStartTime(), lastfromTime);
 								if (!regBookingEntityList.isEmpty()) {
 									for (int i = 0; i < regBookingEntityList.size(); i++) {
 										if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
@@ -229,26 +234,27 @@ public class AvailabilityUtil {
 										}
 									}
 								}
-								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate,regDto.getLunchStartTime(),lastfromTime);
-							}
-							else {
+								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate,
+										regDto.getLunchStartTime(), lastfromTime);
+							} else {
 								// create appointment slots on hourly basis
 								workingHoursCalculator(lunchstartTime, regDto.getLunchStartTime(), regDto, sDate);
-								
+
 							}
-							
+
 						}
-						if(!lunchEndTime.equals(regDto.getLunchEndTime())) {
-							if(lunchEndTime.isAfter(regDto.getLunchEndTime())) {
-								//create appointment slots on hourly basis
+						if (!lunchEndTime.equals(regDto.getLunchEndTime())) {
+							if (lunchEndTime.isAfter(regDto.getLunchEndTime())) {
+								// create appointment slots on hourly basis
 								workingHoursCalculator(regDto.getLunchEndTime(), lunchEndTime, regDto, sDate);
-							}
-							else {
+							} else {
 								// cancel appointment
-								LocalTime lastfromTime=regDto.getLunchEndTime().minusHours(regDto.getPerKioskProcessTime().getHour())
+								LocalTime lastfromTime = regDto.getLunchEndTime()
+										.minusHours(regDto.getPerKioskProcessTime().getHour())
 										.minusMinutes(regDto.getPerKioskProcessTime().getMinute());
-								List<RegistrationBookingEntity> regBookingEntityList=batchServiceDAO.
-										findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate,lunchEndTime,lastfromTime);
+								List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO
+										.findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate, lunchEndTime,
+												lastfromTime);
 								if (!regBookingEntityList.isEmpty()) {
 									for (int i = 0; i < regBookingEntityList.size(); i++) {
 										if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
@@ -259,17 +265,19 @@ public class AvailabilityUtil {
 										}
 									}
 								}
-								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate,lunchEndTime,lastfromTime);
-								
+								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate, lunchEndTime,
+										lastfromTime);
+
 							}
-							
+
 						}
-						if(!regSlots.get(regSlots.size()-1).getToTime().equals(newEndTime)) {
-							if(regSlots.get(regSlots.size()-1).getToTime().isAfter(newEndTime)) {
+						if (!regSlots.get(regSlots.size() - 1).getToTime().equals(newEndTime)) {
+							if (regSlots.get(regSlots.size() - 1).getToTime().isAfter(newEndTime)) {
 								// cancel appointment
-								LocalTime lastfromTime=regSlots.get(regSlots.size()-1).getFromTime();
-								List<RegistrationBookingEntity> regBookingEntityList=batchServiceDAO.
-										findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate,newEndTime,lastfromTime);
+								LocalTime lastfromTime = regSlots.get(regSlots.size() - 1).getFromTime();
+								List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO
+										.findAllPreIdsBydateAndBetweenHours(regDto.getId(), sDate, newEndTime,
+												lastfromTime);
 								if (!regBookingEntityList.isEmpty()) {
 									for (int i = 0; i < regBookingEntityList.size(); i++) {
 										if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
@@ -280,14 +288,14 @@ public class AvailabilityUtil {
 										}
 									}
 								}
-								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate,newEndTime,lastfromTime);
-							}
-							else {
+								batchServiceDAO.deleteSlotsBetweenHours(regDto.getId(), sDate, newEndTime,
+										lastfromTime);
+							} else {
 								// create appointment on hourly basis
-								workingHoursCalculator(regSlots.get(regSlots.size()-1).getToTime(), newEndTime, regDto, sDate);
+								workingHoursCalculator(regSlots.get(regSlots.size() - 1).getToTime(), newEndTime,
+										regDto, sDate);
 							}
-						}
-						else if (holidaylist.contains(sDate.toString())) {
+						} else if (holidaylist.contains(sDate.toString())) {
 							List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO
 									.findAllPreIds(regDto.getId(), sDate);
 							if (!regBookingEntityList.isEmpty()) {
@@ -481,11 +489,13 @@ public class AvailabilityUtil {
 					uriBuilder2, HttpMethod.GET, httpExceptionalHolidayEntity,
 					new ParameterizedTypeReference<ResponseWrapper<ExceptionalHolidayResponseDto>>() {
 					});
-			/*if (responseEntity2.getBody().getErrors() != null && !responseEntity2.getBody().getErrors().isEmpty()) {
-				throw new NoRecordFoundException(responseEntity2.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity2.getBody().getErrors().get(0).getMessage());
-			}*/
-			if (!responseEntity2.getBody().getResponse().getExceptionalHolidayList().isEmpty()) {
+			if (responseEntity2.getBody().getErrors() != null && !responseEntity2.getBody().getErrors().isEmpty()) {
+				log.error("sessionId", "idType", "id",
+						"In get exceptional holiday fetch call of Booking Service Util for HttpClientErrorException- "
+								+ responseEntity2.getBody().getErrors().get(0).getErrorCode()
+								+ responseEntity2.getBody().getErrors().get(0).getMessage());
+			} else if (responseEntity2.getBody().getResponse().getExceptionalHolidayList() != null
+					&& !responseEntity2.getBody().getResponse().getExceptionalHolidayList().isEmpty()) {
 				for (ExceptionalHolidayDto exceptionalHoliday : responseEntity2.getBody().getResponse()
 						.getExceptionalHolidayList()) {
 					holidaylist.add(exceptionalHoliday.getHolidayDate().toString());

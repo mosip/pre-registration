@@ -360,34 +360,7 @@ public class DocumentUploadServiceTest {
 		documentUploadService.uploadDocument(mockMultipartFileExtnCheck, docJson, preRegistrationId);
 	}
 
-	@Test(expected = DocumentFailedToUploadException.class)
-	public void DocumentFailedToUploadExceptionTest() throws IOException {
-		List<DocumentResponseDTO> responseUploadList = new ArrayList<>();
-		MainResponseDTO restRes = new MainResponseDTO<>();
-		responseUpload.setResponse(null);
-		ResponseEntity<MainResponseDTO<DemographicResponseDTO>> rescenter = new ResponseEntity<>(restRes,
-				HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
-				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
-		demodto.setPreRegistrationId("48690172097498");
-		demoresponse.setResponse(demodto);
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
-		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenReturn(true);
-		Mockito.doReturn(true).when(fs).storeFile(Mockito.any(), Mockito.any(), Mockito.any());
-		Mockito.when(documentRepository.findSingleDocument(Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(entity);
-		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any()))
-				.thenReturn(mockMultipartFileSizeCheck.toString().getBytes());
-		Mockito.when(documentRepository.save(Mockito.any())).thenReturn(null);
 
-		Mockito.when(validationutil.langvalidation(Mockito.anyString())).thenReturn(true);
-		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(true);
-		documentUploadService.uploadDocument(mockMultipartFile, docJson, preRegistrationId);
-	}
 
 	@Test(expected = TableNotAccessibleException.class)
 	public void uploadDocumentRepoFailurTest1() throws IOException {
