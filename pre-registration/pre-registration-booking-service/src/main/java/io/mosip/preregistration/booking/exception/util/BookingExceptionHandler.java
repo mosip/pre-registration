@@ -64,6 +64,7 @@ import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 import io.mosip.preregistration.core.exception.NotificationException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
@@ -79,15 +80,14 @@ import io.mosip.preregistration.core.util.GenericUtil;
  */
 @RestControllerAdvice
 public class BookingExceptionHandler {
-	
-	/**  The Environment. */
+
+	/** The Environment. */
 	@Autowired
-	protected  Environment env;
-	
+	protected Environment env;
+
 	/** The id. */
 	@Resource
 	protected Map<String, String> id;
-
 
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
@@ -284,7 +284,8 @@ public class BookingExceptionHandler {
 	 */
 
 	@ExceptionHandler(CancelAppointmentFailedException.class)
-	public ResponseEntity<MainResponseDTO<?>> appointmentCancelFailedException(final CancelAppointmentFailedException e) {
+	public ResponseEntity<MainResponseDTO<?>> appointmentCancelFailedException(
+			final CancelAppointmentFailedException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
 	}
 
@@ -293,7 +294,7 @@ public class BookingExceptionHandler {
 	 * @param request
 	 * @return error response
 	 */
-	
+
 	@ExceptionHandler(AppointmentReBookingFailedException.class)
 	public ResponseEntity<MainResponseDTO<?>> appointmentReBookingFailedException(
 			final AppointmentReBookingFailedException e) {
@@ -305,7 +306,7 @@ public class BookingExceptionHandler {
 	 * @param request
 	 * @return error response
 	 */
-	
+
 	@ExceptionHandler(DocumentNotFoundException.class)
 	public ResponseEntity<MainResponseDTO<?>> documentNotFound(final DocumentNotFoundException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
@@ -316,7 +317,7 @@ public class BookingExceptionHandler {
 	 * @param request
 	 * @return error response
 	 */
-	
+
 	@ExceptionHandler(AvailablityNotFoundException.class)
 	public ResponseEntity<MainResponseDTO<?>> availablityNotFound(final AvailablityNotFoundException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
@@ -327,7 +328,7 @@ public class BookingExceptionHandler {
 	 * @param request
 	 * @return error response
 	 */
-	
+
 	@ExceptionHandler(TableNotAccessibleException.class)
 
 	public ResponseEntity<MainResponseDTO<?>> tablenotAccessible(final TableNotAccessibleException e) {
@@ -339,7 +340,7 @@ public class BookingExceptionHandler {
 	 * @param request
 	 * @return error response
 	 */
-	
+
 	@ExceptionHandler(AppointmentBookingFailedException.class)
 	public ResponseEntity<MainResponseDTO<?>> appointmentBookingFailed(final AppointmentBookingFailedException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
@@ -362,7 +363,7 @@ public class BookingExceptionHandler {
 		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
 
 	}
-	
+
 	@ExceptionHandler(JsonException.class)
 	public ResponseEntity<MainResponseDTO<?>> jsonException(final JsonException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
@@ -383,14 +384,15 @@ public class BookingExceptionHandler {
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 
 	}
-	
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ResponseWrapper<ServiceError>> methodArgumentNotValidException(
 			final HttpServletRequest httpServletRequest, final MethodArgumentNotValidException e) throws IOException {
 		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
 		final List<FieldError> fieldErrors = e.getBindingResult().getFieldErrors();
 		fieldErrors.forEach(x -> {
-			ServiceError error = new ServiceError(io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_015.getCode(),
+			ServiceError error = new ServiceError(
+					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_015.getCode(),
 					x.getField() + ": " + x.getDefaultMessage());
 			errorResponse.getErrors().add(error);
 		});
@@ -401,26 +403,25 @@ public class BookingExceptionHandler {
 	public ResponseEntity<ResponseWrapper<ServiceError>> onHttpMessageNotReadable(
 			final HttpServletRequest httpServletRequest, final HttpMessageNotReadableException e) throws IOException {
 		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
-		ServiceError error = new ServiceError(io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_015.getCode(), e.getMessage());
+		ServiceError error = new ServiceError(
+				io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_015.getCode(), e.getMessage());
 		errorResponse.getErrors().add(error);
 		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
 	}
-	
-	
-
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })
 	public ResponseEntity<ResponseWrapper<ServiceError>> defaultErrorHandler(
 			final HttpServletRequest httpServletRequest, Exception e) throws IOException {
 		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
-		ServiceError error = new ServiceError(io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(), e.getMessage());
+		ServiceError error = new ServiceError(
+				io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(), e.getMessage());
 		errorResponse.getErrors().add(error);
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	private ResponseWrapper<ServiceError> setErrors(HttpServletRequest httpServletRequest) throws IOException {
 		ResponseWrapper<ServiceError> responseWrapper = new ResponseWrapper<>();
 		responseWrapper.setResponsetime(LocalDateTime.now(ZoneId.of("UTC")));
@@ -437,15 +438,21 @@ public class BookingExceptionHandler {
 		responseWrapper.setVersion(reqNode.path("version").asText());
 		return responseWrapper;
 	}
-	
+
 	@ExceptionHandler(NotificationException.class)
-	public ResponseEntity<MainResponseDTO<?>> authServiceException(final NotificationException e,WebRequest request){
+	public ResponseEntity<MainResponseDTO<?>> authServiceException(final NotificationException e, WebRequest request) {
 		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
-		e.getValidationErrorList().stream().forEach(serviceError->errorList.add(new ExceptionJSONInfoDTO(serviceError.getErrorCode(),serviceError.getMessage())));
+		e.getValidationErrorList().stream().forEach(serviceError -> errorList
+				.add(new ExceptionJSONInfoDTO(serviceError.getErrorCode(), serviceError.getMessage())));
 		MainResponseDTO<?> errorRes = e.getMainResposneDTO();
 		errorRes.setErrors(errorList);
 		errorRes.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
+	}
+
+	@ExceptionHandler(PreRegistrationException.class)
+	public ResponseEntity<MainResponseDTO<?>> commonException(final PreRegistrationException e) {
+		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
 	}
 
 }

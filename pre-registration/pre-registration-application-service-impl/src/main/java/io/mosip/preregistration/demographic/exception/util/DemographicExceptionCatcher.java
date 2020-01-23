@@ -16,6 +16,8 @@ import io.mosip.kernel.core.crypto.exception.NullKeyException;
 import io.mosip.kernel.core.crypto.exception.NullMethodException;
 import io.mosip.kernel.core.crypto.exception.SignatureException;
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
+import io.mosip.kernel.core.exception.BaseCheckedException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.IOException;
 import io.mosip.kernel.core.exception.NoSuchAlgorithmException;
 import io.mosip.kernel.core.exception.ParseException;
@@ -28,6 +30,7 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
@@ -184,6 +187,16 @@ public class DemographicExceptionCatcher {
 			throw new DuplicatePridKeyException(ErrorCodes.PRG_PAM_APP_021.getCode(),ErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
 		}else if (ex instanceof ConstraintViolationException ) {
 			throw new DuplicatePridKeyException(ErrorCodes.PRG_PAM_APP_021.getCode(),ErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
+		}
+		else {
+			if(ex instanceof BaseUncheckedException) {
+				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+						((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
+			}
+			else if(ex instanceof BaseCheckedException) {
+				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+						((BaseCheckedException) ex).getErrorText(), mainResponsedto);
+			}
 		}
 
 	}

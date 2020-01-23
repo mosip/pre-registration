@@ -10,6 +10,8 @@ import java.time.format.DateTimeParseException;
 import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
+import io.mosip.kernel.core.exception.BaseCheckedException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.ParseException;
 import io.mosip.preregistration.booking.serviceimpl.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.serviceimpl.errorcodes.ErrorMessages;
@@ -40,6 +42,7 @@ import io.mosip.preregistration.core.exception.AppointmentCancelException;
 import io.mosip.preregistration.core.exception.AppointmentReBookException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.NotificationException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
@@ -162,6 +165,16 @@ public class BookingExceptionCatcher {
 		} else if (ex instanceof JsonProcessingException) {
 			throw new JsonException(ErrorCodes.PRG_BOOK_RCI_034.getCode(),
 					ErrorMessages.JSON_PROCESSING_EXCEPTION.getMessage(), mainResponseDTO);
+		}
+		else {
+			if(ex instanceof BaseUncheckedException) {
+				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+						((BaseUncheckedException) ex).getErrorText(), mainResponseDTO);
+			}
+			else if(ex instanceof BaseCheckedException) {
+				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+						((BaseCheckedException) ex).getErrorText(), mainResponseDTO);
+			}
 		}
 
 	}
