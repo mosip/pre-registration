@@ -124,8 +124,8 @@ public class LoginService {
 	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate;
 
-	private static String globalConfig;
-	private static String preregConfig;
+	private String globalConfig;
+	private String preregConfig;
 
 	@PostConstruct
 	public void setupLoginService() {
