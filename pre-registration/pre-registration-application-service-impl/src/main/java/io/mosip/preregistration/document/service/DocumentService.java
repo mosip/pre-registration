@@ -221,7 +221,7 @@ public class DocumentService implements DocumentServiceIntf {
 			responseDto.setId(docReqDto.getId());
 			responseDto.setVersion(docReqDto.getVersion());
 			requiredRequestMap.put("id", uploadId);
-			if (ValidationUtil.requestValidator(prepareRequestParamMap(docReqDto), requiredRequestMap)) {
+			if (validationUtil.requestValidator(prepareRequestParamMap(docReqDto), requiredRequestMap)) {
 				if (scanDocument) {
 					serviceUtil.isVirusScanSuccess(file);
 				}
@@ -426,7 +426,7 @@ public class DocumentService implements DocumentServiceIntf {
 		Map<String, String> requestParamMap = new HashMap<>();
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preId);
-			if (ValidationUtil.requstParamValidator(requestParamMap) && serviceUtil.getPreRegInfoRestService(preId)) {
+			if (validationUtil.requstParamValidator(requestParamMap) && serviceUtil.getPreRegInfoRestService(preId)) {
 				List<DocumentEntity> documentEntities = documnetDAO.findBypreregId(preId);
 				responseDto.setResponse(createDocumentResponse(documentEntities));
 				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
@@ -480,7 +480,7 @@ public class DocumentService implements DocumentServiceIntf {
 		Map<String, String> requestParamMap = new HashMap<>();
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preId);
-			if (ValidationUtil.requstParamValidator(requestParamMap) && serviceUtil.getPreRegInfoRestService(preId)) {
+			if (validationUtil.requstParamValidator(requestParamMap) && serviceUtil.getPreRegInfoRestService(preId)) {
 				DocumentEntity documentEntity = documnetDAO.findBydocumentId(docId);
 				if (!documentEntity.getDemographicEntity().getPreRegistrationId().equals(preId)) {
 					throw new InvalidDocumentIdExcepion(ErrorCodes.PRG_PAM_DOC_022.name(),
@@ -580,7 +580,7 @@ public class DocumentService implements DocumentServiceIntf {
 		Map<String, String> requestParamMap = new HashMap<>();
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preRegistrationId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)
+			if (validationUtil.requstParamValidator(requestParamMap)
 					&& serviceUtil.getPreRegInfoRestService(preRegistrationId)) {
 				DocumentEntity documentEntity = documnetDAO.findBydocumentId(documentId);
 				if (!documentEntity.getDemographicEntity().getPreRegistrationId().equals(preRegistrationId)) {
@@ -649,7 +649,7 @@ public class DocumentService implements DocumentServiceIntf {
 		Map<String, String> requestParamMap = new HashMap<>();
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preregId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)
+			if (validationUtil.requstParamValidator(requestParamMap)
 					&& serviceUtil.getPreRegInfoRestService(preregId)) {
 				List<DocumentEntity> documentEntityList = documnetDAO.findBypreregId(preregId);
 				DocumentDeleteResponseDTO deleteDTO = deleteFile(documentEntityList, preregId);

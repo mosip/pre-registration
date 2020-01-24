@@ -35,6 +35,9 @@ public class GenerateQRcodeService {
 	 */
 	@Autowired
 	private ValidationUtil serviceUtil;
+	
+	@Autowired
+	private ValidationUtil validationUtil;
 
 	private Logger log = LoggerConfiguration.logConfig(GenerateQRcodeService.class);
 
@@ -84,7 +87,7 @@ public class GenerateQRcodeService {
 			if (data.getRequest() == null || data.getRequest().isEmpty()) {
 				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_004.getCode(),
 						ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null);
-			} else if (ValidationUtil.requestValidator(serviceUtil.prepareRequestMap(data), requiredRequestMap)) {
+			} else if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(data), requiredRequestMap)) {
 
 				qrCode = qrCodeGenerator.generateQrCode(data.getRequest(), QrVersion.valueOf(qrversion));
 				responsedto = new QRCodeResponseDTO();

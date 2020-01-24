@@ -44,59 +44,37 @@ import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 @Component
 public class ValidationUtil {
 
-	private static String emailRegex;
+	@Value("${mosip.id.validation.identity.email}")
+	private  String emailRegex;
 
-	private static String phoneRegex;
+	@Value("${mosip.id.validation.identity.phone}")
+	private  String phoneRegex;
 
-	private static String langCodes;
+	@Value("${mosip.supported-languages}")
+	private  String langCodes;
 
-	private static String documentTypeUri;
+	@Value("${mosip.kernel.idobjectvalidator.masterdata.documenttypes.rest.uri}")
+	private  String documentTypeUri;
 
-	private static String masterdataUri;
+	@Value("${mosip.kernel.masterdata.validdoc.rest.uri}")
+	private  String masterdataUri;
 
 	private static Logger log = LoggerConfiguration.logConfig(ValidationUtil.class);
 
-	private ValidationUtil() {
-	}
 
-	@Value("${mosip.id.validation.identity.email}")
-	public void setEmailRegex(String value) {
-		ValidationUtil.emailRegex = value;
-	}
-
-	@Value("${mosip.id.validation.identity.phone}")
-	public void setPhoneRegex(String value) {
-		ValidationUtil.phoneRegex = value;
-	}
-
-	@Value("${mosip.supported-languages}")
-	public void setLanCode(String value) {
-		ValidationUtil.langCodes = value;
-	}
-
-	public static boolean emailValidator(String email) {
+	public  boolean emailValidator(String email) {
 		return email.matches(emailRegex);
 	}
 
-	public static boolean phoneValidator(String phone) {
+	public  boolean phoneValidator(String phone) {
 		return phone.matches(phoneRegex);
 	}
 
-	public static boolean idValidation(String value, String regex) {
+	public  boolean idValidation(String value, String regex) {
 		if (!isNull(value)) {
 			return value.matches(regex);
 		}
 		return false;
-	}
-
-	@Value("${mosip.kernel.idobjectvalidator.masterdata.documenttypes.rest.uri}")
-	public void setDocType(String value) {
-		ValidationUtil.documentTypeUri = value;
-	}
-
-	@Value("${mosip.kernel.masterdata.validdoc.rest.uri}")
-	public void setDocCatTypeCode(String value) {
-		ValidationUtil.masterdataUri = value;
 	}
 
 	/** The validDocsMap. */
@@ -117,7 +95,7 @@ public class ValidationUtil {
 
 	private static final String NAME = "name";
 
-	public static boolean requestValidator(MainRequestDTO<?> mainRequest) {
+	public  boolean requestValidator(MainRequestDTO<?> mainRequest) {
 		log.info("sessionId", "idType", "id",
 				"In requestValidator method of pre-registration core with mainRequest " + mainRequest);
 		if (mainRequest.getId() == null) {
@@ -136,7 +114,7 @@ public class ValidationUtil {
 		return true;
 	}
 
-	public static boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
+	public  boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
 		log.debug("sessionId", "idType", "id", "In requestValidator");
 		log.info("sessionId", "idType", "id", "In requestValidator method of pre-registration core with requestMap "
 				+ requestMap + " againt requiredRequestMap " + requiredRequestMap);
@@ -176,7 +154,7 @@ public class ValidationUtil {
 		return true;
 	}
 
-	public static boolean requstParamValidator(Map<String, String> requestMap) {
+	public  boolean requstParamValidator(Map<String, String> requestMap) {
 		log.info("sessionId", "idType", "id",
 				"In requstParamValidator method of pre-registration core with requestMap " + requestMap);
 		for (String key : requestMap.keySet()) {
@@ -301,7 +279,7 @@ public class ValidationUtil {
 
 	public Map<String, String> getDocumentTypeNameByTypeCode(String langCode, String catCode) {
 		Map<String, String> documentTypeMap = new HashMap<>();
-		String uri = UriComponentsBuilder.fromUriString(ValidationUtil.documentTypeUri)
+		String uri = UriComponentsBuilder.fromUriString(documentTypeUri)
 				.buildAndExpand(catCode, langCode).toUriString();
 		@SuppressWarnings("unchecked")
 		ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>> responseBody = restTemplate
@@ -335,7 +313,7 @@ public class ValidationUtil {
 	public void getAllDocCategoriesAndTypes(String langcode, HttpHeaders headers) {
 		try {
 			log.debug("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes preRegistrationId ");
-			String uri = UriComponentsBuilder.fromUriString(ValidationUtil.masterdataUri).buildAndExpand(langcode)
+			String uri = UriComponentsBuilder.fromUriString(masterdataUri).buildAndExpand(langcode)
 					.toUriString();
 			HttpEntity entity = new HttpEntity<>(headers);
 			log.info("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes with url " + uri);

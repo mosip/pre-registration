@@ -178,7 +178,7 @@ public class NotificationService {
 			response.setId(notificationReqDTO.getId());
 			response.setVersion(notificationReqDTO.getVersion());
 			NotificationDTO notificationDto = notificationReqDTO.getRequest();
-			if (ValidationUtil.requestValidator(validationUtil.prepareRequestMap(notificationReqDTO),
+			if (validationUtil.requestValidator(validationUtil.prepareRequestMap(notificationReqDTO),
 					requiredRequestMap) && validationUtil.langvalidation(langCode)) {
 				MainResponseDTO<DemographicResponseDTO> demoDetail = notificationDtoValidation(notificationDto);
 				if (notificationDto.isAdditionalRecipient()) {
@@ -186,7 +186,7 @@ public class NotificationService {
 							"In notification service of sendNotification if additionalRecipient is"
 									+ notificationDto.isAdditionalRecipient());
 					if (notificationDto.getMobNum() != null && !notificationDto.getMobNum().isEmpty()) {
-						if (ValidationUtil.phoneValidator(notificationDto.getMobNum())) {
+						if (validationUtil.phoneValidator(notificationDto.getMobNum())) {
 							notificationUtil.notify(RequestCodes.SMS.getCode(), notificationDto, langCode, file);
 						} else {
 							throw new MandatoryFieldException(ErrorCodes.PRG_PAM_ACK_007.getCode(),
@@ -194,7 +194,7 @@ public class NotificationService {
 						}
 					}
 					if (notificationDto.getEmailID() != null && !notificationDto.getEmailID().isEmpty()) {
-						if (ValidationUtil.emailValidator(notificationDto.getEmailID())) {
+						if (validationUtil.emailValidator(notificationDto.getEmailID())) {
 							notificationUtil.notify(RequestCodes.EMAIL.getCode(), notificationDto, langCode, file);
 						} else {
 							throw new MandatoryFieldException(ErrorCodes.PRG_PAM_ACK_006.getCode(),
@@ -203,9 +203,9 @@ public class NotificationService {
 						}
 					}
 					if ((notificationDto.getEmailID() == null || notificationDto.getEmailID().isEmpty()
-							|| !ValidationUtil.emailValidator(notificationDto.getEmailID()))
+							|| !validationUtil.emailValidator(notificationDto.getEmailID()))
 							&& (notificationDto.getMobNum() == null || notificationDto.getMobNum().isEmpty()
-									|| !ValidationUtil.phoneValidator(notificationDto.getMobNum()))) {
+									|| !validationUtil.phoneValidator(notificationDto.getMobNum()))) {
 						throw new MandatoryFieldException(ErrorCodes.PRG_PAM_ACK_001.getCode(),
 								ErrorMessages.MOBILE_NUMBER_OR_EMAIL_ADDRESS_NOT_FILLED.getMessage(), response);
 					}
@@ -221,7 +221,10 @@ public class NotificationService {
 
 			response.setResponse(notificationResponse);
 			isSuccess = true;
-		} catch (RuntimeException | IOException | ParseException | io.mosip.kernel.core.util.exception.JsonParseException | io.mosip.kernel.core.util.exception.JsonMappingException | io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException ex) {
+		} catch (RuntimeException | IOException | ParseException
+				| io.mosip.kernel.core.util.exception.JsonParseException
+				| io.mosip.kernel.core.util.exception.JsonMappingException | io.mosip.kernel.core.exception.IOException
+				| JSONException | java.text.ParseException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In notification service of sendNotification " + ex.getMessage());
 			new NotificationExceptionCatcher().handle(ex, response);

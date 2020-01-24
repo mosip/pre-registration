@@ -368,7 +368,7 @@ public class DemographicService implements DemographicServiceIntf {
 			validationUtil.langvalidation(request.getRequest().getLangCode());
 			Map<String, String> requestParamMap = new HashMap<>();
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preRegistrationId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)) {
+			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicRequestDTO demographicRequest = request.getRequest();
 				log.info("sessionId", "idType", "id",
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -437,7 +437,7 @@ public class DemographicService implements DemographicServiceIntf {
 		boolean isRetrieveSuccess = false;
 		try {
 			requestParamMap.put(RequestCodes.USER_ID.getCode(), userId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)) {
+			if (validationUtil.requstParamValidator(requestParamMap)) {
 				log.info("sessionId", "idType", "id",
 						"get demographic details start time : " + DateUtils.getUTCCurrentDateTimeString());
 				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedBy(userId,
@@ -587,7 +587,7 @@ public class DemographicService implements DemographicServiceIntf {
 		response.setResponsetime(serviceUtil.getCurrentResponseTime());
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)) {
+			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
 				List<String> list = listAuth(authUserDetails().getAuthorities());
 				if (demographicEntity != null) {
@@ -640,7 +640,7 @@ public class DemographicService implements DemographicServiceIntf {
 		response.setVersion(version);
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preregId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)) {
+			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preregId);
 				if (!serviceUtil.isNull(demographicEntity)) {
 					userValidation(userId, demographicEntity.getCreatedBy());
@@ -704,7 +704,7 @@ public class DemographicService implements DemographicServiceIntf {
 		response.setVersion(version);
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)) {
+			if (validationUtil.requstParamValidator(requestParamMap)) {
 
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
 				if (demographicEntity != null) {
@@ -760,7 +760,7 @@ public class DemographicService implements DemographicServiceIntf {
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
 			requestParamMap.put(RequestCodes.STATUS_CODE.getCode(), status);
-			if (ValidationUtil.requstParamValidator(requestParamMap)) {
+			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
 				statusCheck(demographicEntity, status, userId);
 			}

@@ -1,6 +1,5 @@
 package io.mosip.preregistration.application.test.service;
 
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
@@ -21,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.http.cookie.MalformedCookieException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,6 +48,7 @@ import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.code.RequestCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
@@ -95,7 +96,7 @@ public class DocumentUploadServiceTest {
 
 	@Autowired
 	private DocumentServiceUtil serviceUtil;
-	
+
 	@MockBean
 	private AuthTokenUtil authTokenUtil;
 
@@ -106,20 +107,20 @@ public class DocumentUploadServiceTest {
 
 	@MockBean
 	private FileSystemAdapter fs;
-	
+
 	@MockBean
 	private RequestValidator requestValidator;
-	
+
 	@MockBean
 	private DemographicServiceIntf demographicServiceIntf;
-	
+
 	@MockBean
 	private BookingServiceIntf bookingServiceIntf;
-	
+
 	/**
 	 * Mocking the JsonValidatorImpl bean
 	 */
-	@MockBean(name="idObjectValidator")
+	@MockBean(name = "idObjectValidator")
 	private IdObjectValidator jsonValidator;
 
 	List<DocumentEntity> docEntity = new ArrayList<>();
@@ -207,8 +208,8 @@ public class DocumentUploadServiceTest {
 		mockMultipartFile = new MockMultipartFile("file", "Doc.pdf", "mixed/multipart", new FileInputStream(file));
 		InputStream sourceFile = new FileInputStream(file);
 		byte[] cephBytes = IOUtils.toByteArray(sourceFile);
-			 
-		preRegistrationEntity=new DemographicEntity(); 
+
+		preRegistrationEntity = new DemographicEntity();
 
 		preRegistrationEntity.setCreateDateTime(LocalDateTime.now());
 		preRegistrationEntity.setCreatedBy("Jagadishwari");
@@ -274,55 +275,71 @@ public class DocumentUploadServiceTest {
 		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any()))
 				.thenReturn(mockMultipartFileSizeCheck.toString().getBytes());
 		Mockito.when(documentRepository.save(Mockito.any())).thenReturn(entity);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.when(validationutil.langvalidation(Mockito.anyString())).thenReturn(true);
-		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),Mockito.anyString()))
-				.thenReturn(true);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.langvalidation(Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
 		MainResponseDTO<DocumentResponseDTO> responseDto = documentUploadService.uploadDocument(mockMultipartFile,
 				docJson, preRegistrationId);
 		assertEquals(responseUpload.getResponse().getDocCatCode(), responseDto.getResponse().getDocCatCode());
 	}
 
-//	@Test(expected = DemographicGetDetailsException.class)
-//	public void DemographicGetDetailsExceptionTest() throws IOException {
-//		DemographicGetDetailsException ex = new DemographicGetDetailsException(null, null);
-//		List<DocumentResponseDTO> responseUploadList = new ArrayList<>();
-//		MainResponseDTO<DemographicResponseDTO> restRes = new MainResponseDTO<DemographicResponseDTO>();
-//		DemographicResponseDTO dto = new DemographicResponseDTO();
-//		ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
-//		List<ExceptionJSONInfoDTO> excetionList = new ArrayList<>();
-//		exception.setMessage(ErrorMessages.DEMOGRAPHIC_GET_RECORD_FAILED.toString());
-//		excetionList.add(exception);
-//		restRes.setErrors(excetionList);
-//		responseUpload.setResponse(docResp);
-//		ResponseEntity<MainResponseDTO<DemographicResponseDTO>> rescenter = new ResponseEntity<>(restRes,
-//				HttpStatus.OK);
-//		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-//				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
-//				}), Mockito.anyMap())).thenReturn(rescenter);
-//		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-//		DemographicResponseDTO demodto= new DemographicResponseDTO();
-//		demodto.setPreRegistrationId("48690172097498");
-//		demoresponse.setResponse(demodto);
-//		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
-//		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenReturn(true);
-//		Mockito.doReturn(true).when(fs).storeFile(Mockito.any(), Mockito.any(), Mockito.any());
-//		Mockito.when(documentRepository.findSingleDocument(Mockito.anyString(), Mockito.anyString()))
-//				.thenReturn(entity);
-//		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any()))
-//				.thenReturn(mockMultipartFileSizeCheck.toString().getBytes());
-//		Mockito.when(documentRepository.save(Mockito.any())).thenReturn(entity);
-//		MainResponseDTO<DocumentResponseDTO> responseDto = documentUploadService.uploadDocument(mockMultipartFile,
-//				docJson, preRegistrationId);
-//		Mockito.when(validationutil.langvalidation(Mockito.anyString())).thenReturn(true);
-//		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(), Mockito.anyString()))
-//				.thenReturn(true);
-//		assertEquals(responseDto.getResponse().getDocCatCode(), responseUpload.getResponse().getDocCatCode());
-//	}
+	// @Test(expected = DemographicGetDetailsException.class)
+	// public void DemographicGetDetailsExceptionTest() throws IOException {
+	// DemographicGetDetailsException ex = new DemographicGetDetailsException(null,
+	// null);
+	// List<DocumentResponseDTO> responseUploadList = new ArrayList<>();
+	// MainResponseDTO<DemographicResponseDTO> restRes = new
+	// MainResponseDTO<DemographicResponseDTO>();
+	// DemographicResponseDTO dto = new DemographicResponseDTO();
+	// ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
+	// List<ExceptionJSONInfoDTO> excetionList = new ArrayList<>();
+	// exception.setMessage(ErrorMessages.DEMOGRAPHIC_GET_RECORD_FAILED.toString());
+	// excetionList.add(exception);
+	// restRes.setErrors(excetionList);
+	// responseUpload.setResponse(docResp);
+	// ResponseEntity<MainResponseDTO<DemographicResponseDTO>> rescenter = new
+	// ResponseEntity<>(restRes,
+	// HttpStatus.OK);
+	// Mockito.when(restTemplate.exchange(Mockito.anyString(),
+	// Mockito.eq(HttpMethod.GET), Mockito.any(),
+	// Mockito.eq(new
+	// ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
+	// }), Mockito.anyMap())).thenReturn(rescenter);
+	// MainResponseDTO<DemographicResponseDTO> demoresponse= new
+	// MainResponseDTO<>();
+	// DemographicResponseDTO demodto= new DemographicResponseDTO();
+	// demodto.setPreRegistrationId("48690172097498");
+	// demoresponse.setResponse(demodto);
+	// Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
+	// Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenReturn(true);
+	// Mockito.doReturn(true).when(fs).storeFile(Mockito.any(), Mockito.any(),
+	// Mockito.any());
+	// Mockito.when(documentRepository.findSingleDocument(Mockito.anyString(),
+	// Mockito.anyString()))
+	// .thenReturn(entity);
+	// Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any()))
+	// .thenReturn(mockMultipartFileSizeCheck.toString().getBytes());
+	// Mockito.when(documentRepository.save(Mockito.any())).thenReturn(entity);
+	// MainResponseDTO<DocumentResponseDTO> responseDto =
+	// documentUploadService.uploadDocument(mockMultipartFile,
+	// docJson, preRegistrationId);
+	// Mockito.when(validationutil.langvalidation(Mockito.anyString())).thenReturn(true);
+	// Mockito.when(validationutil.validateDocuments(Mockito.anyString(),
+	// Mockito.anyString(),Mockito.anyString(), Mockito.anyString()))
+	// .thenReturn(true);
+	// assertEquals(responseDto.getResponse().getDocCatCode(),
+	// responseUpload.getResponse().getDocCatCode());
+	// }
 
 	@Test(expected = DTOMappigException.class)
 	public void mandatoryFeildNotPresentTest() throws IOException {
@@ -332,35 +349,38 @@ public class DocumentUploadServiceTest {
 
 	@Test(expected = DocumentVirusScanException.class)
 	public void uploadDocumentVirusScanFailureTest1() throws Exception {
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
 		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenThrow(VirusScannerException.class);
 		documentUploadService.uploadDocument(mockMultipartFile, docJson, preRegistrationId);
 	}
 
 	@Test(expected = DocumentSizeExceedException.class)
 	public void uploadDocumentSizeFailurTest1() throws IOException {
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
 		Mockito.when(virusScan.scanDocument(mockMultipartFileSizeCheck.getBytes())).thenReturn(true);
 		documentUploadService.uploadDocument(mockMultipartFileSizeCheck, docJson, preRegistrationId);
 	}
 
 	@Test(expected = DocumentNotValidException.class)
 	public void uploadDocumentSizeFailurTest2() throws IOException {
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
 		Mockito.when(virusScan.scanDocument(mockMultipartFileExtnCheck.getBytes())).thenReturn(true);
 		documentUploadService.uploadDocument(mockMultipartFileExtnCheck, docJson, preRegistrationId);
 	}
 
 	@Test(expected = DocumentSizeExceedException.class)
 	public void uploadDocumentExtnFailurTest1() throws IOException {
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
 		Mockito.when(virusScan.scanDocument(mockMultipartFileSizeCheck.getBytes())).thenReturn(true);
 		documentUploadService.uploadDocument(mockMultipartFileSizeCheck, docJson, preRegistrationId);
 	}
 
 	@Test(expected = DocumentNotValidException.class)
 	public void uploadDocumentExtnFailurTest2() throws IOException {
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
 		Mockito.when(virusScan.scanDocument(mockMultipartFileExtnCheck.getBytes())).thenReturn(true);
 		documentUploadService.uploadDocument(mockMultipartFileExtnCheck, docJson, preRegistrationId);
 	}
-
-
 
 	@Test(expected = TableNotAccessibleException.class)
 	public void uploadDocumentRepoFailurTest1() throws IOException {
@@ -370,10 +390,17 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.langvalidation(Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.when(virusScan.scanDocument(mockMultipartSaveCheck.getBytes())).thenReturn(true);
 		Mockito.when(documentRepository.findSingleDocument(Mockito.anyString(), Mockito.anyString()))
@@ -392,10 +419,17 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.langvalidation(Mockito.any())).thenReturn(true);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenReturn(true);
 		Mockito.doReturn(false).when(fs).storeFile(Mockito.any(), Mockito.any(), Mockito.any());
@@ -406,8 +440,8 @@ public class DocumentUploadServiceTest {
 		Mockito.when(documentRepository.save(Mockito.any())).thenReturn(entity);
 
 		Mockito.when(validationutil.langvalidation(Mockito.anyString())).thenReturn(true);
-		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(true);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
 		documentUploadService.uploadDocument(mockMultipartFile, docJson, preRegistrationId);
 	}
 
@@ -418,8 +452,8 @@ public class DocumentUploadServiceTest {
 		copyDcoResDto.setDocCatCode("POA");
 		responseCopy.setResponse(copyDcoResDto);
 		responseCopy.setResponsetime(serviceUtil.getCurrentResponseTime());
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
@@ -437,8 +471,8 @@ public class DocumentUploadServiceTest {
 		Mockito.doReturn(sourceFile).when(fs).getFile(Mockito.anyString(), Mockito.anyString());
 
 		Mockito.when(validationutil.langvalidation(Mockito.anyString())).thenReturn(true);
-		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(),Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(true);
+		Mockito.when(validationutil.validateDocuments(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(true);
 		MainResponseDTO<DocumentResponseDTO> responseDto = documentUploadService.copyDocument("POA", "48690172097498",
 				"48690172097499");
 		assertEquals(responseDto.getResponse().getDocCatCode().toString(),
@@ -450,8 +484,8 @@ public class DocumentUploadServiceTest {
 		MainResponseDTO restRes = new MainResponseDTO<>();
 		ResponseEntity<MainResponseDTO<DemographicResponseDTO>> rescenter = new ResponseEntity<>(restRes,
 				HttpStatus.OK);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
@@ -473,8 +507,8 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
@@ -494,8 +528,8 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
@@ -531,8 +565,8 @@ public class DocumentUploadServiceTest {
 				}), Mockito.anyMap())).thenReturn(rescenter);
 		Mockito.doReturn(false).when(fs).copyFile(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(),
 				Mockito.anyString());
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
@@ -568,10 +602,11 @@ public class DocumentUploadServiceTest {
 				}), Mockito.anyMap())).thenReturn(rescenter);
 		Mockito.when(documentRepository.findByDemographicEntityPreRegistrationId(Mockito.anyString()))
 				.thenReturn(documentEntities);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		InputStream sourceFile = new FileInputStream(file);
 		Mockito.doReturn(sourceFile).when(fs).getFile(Mockito.anyString(), Mockito.anyString());
@@ -593,13 +628,14 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.doReturn(sourceFile).when(fs).getFile(Mockito.anyString(), Mockito.anyString());
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(file.toString().getBytes());
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		MainResponseDTO<DocumentDTO> serviceResponseDto = documentUploadService.getDocumentForDocId(docId,
 				"48690172097498");
 		assertNotNull(serviceResponseDto.getResponse().getDocument());
@@ -615,10 +651,11 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 
 		Mockito.when(fs.getFile(Mockito.anyString(), Mockito.anyString())).thenReturn(null);
@@ -634,8 +671,8 @@ public class DocumentUploadServiceTest {
 		Mockito.doReturn(true).when(fs).deleteFile(Mockito.anyString(), Mockito.anyString());
 		MainResponseDTO restRes = new MainResponseDTO<>();
 		responseUpload.setResponse(null);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
@@ -646,6 +683,7 @@ public class DocumentUploadServiceTest {
 				}), Mockito.anyMap())).thenReturn(rescenter);
 		Mockito.when(documentRepository.findBydocumentId(Mockito.anyString())).thenReturn(entity);
 		Mockito.when(documentRepository.deleteAllBydocumentId(Mockito.anyString())).thenReturn(1);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		MainResponseDTO<DocumentDeleteResponseDTO> responseDto = documentUploadService.deleteDocument(documentId,
 				preRegistrationId);
 		assertEquals(responseDto.getResponse().getMessage(), responsedelete.getResponse().getMessage());
@@ -660,10 +698,11 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.doReturn(true).when(fs).deleteFile(Mockito.anyString(), Mockito.anyString());
 		Mockito.when(documentRepository.findBydocumentId(Mockito.anyString())).thenReturn(copyEntity);
@@ -682,12 +721,12 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
-		
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(documentRepository.findBydocumentId(Mockito.anyString())).thenReturn(null);
 		documentUploadService.deleteDocument(documentId, preRegistrationId);
 
@@ -707,13 +746,14 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.when(documentRepository.findByDemographicEntityPreRegistrationId(preRegistrationId))
 				.thenReturn(docEntity);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(documentRepository.deleteAllByDemographicEntityPreRegistrationId(preRegistrationId)).thenReturn(1);
 		MainResponseDTO<DocumentDeleteResponseDTO> responseDto = documentUploadService
 				.deleteAllByPreId(preRegistrationId);
@@ -729,13 +769,14 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.when(documentRepository.findBydocumentId(Mockito.anyString()))
 				.thenThrow(DataAccessLayerException.class);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		documentUploadService.deleteDocument("1", preRegistrationId);
 	}
 
@@ -748,10 +789,11 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.when(documentRepository.findByDemographicEntityPreRegistrationId(Mockito.anyString()))
 				.thenThrow(DataAccessLayerException.class);
@@ -769,10 +811,11 @@ public class DocumentUploadServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 				}), Mockito.anyMap())).thenReturn(rescenter);
-		MainResponseDTO<DemographicResponseDTO> demoresponse= new MainResponseDTO<>();
-		DemographicResponseDTO demodto= new DemographicResponseDTO();
+		MainResponseDTO<DemographicResponseDTO> demoresponse = new MainResponseDTO<>();
+		DemographicResponseDTO demodto = new DemographicResponseDTO();
 		demodto.setPreRegistrationId("48690172097498");
 		demoresponse.setResponse(demodto);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
 		Mockito.doReturn(false).when(fs).deleteFile(Mockito.anyString(), Mockito.anyString());
 		Mockito.when(documentRepository.findBydocumentId(documentId)).thenReturn(entity);

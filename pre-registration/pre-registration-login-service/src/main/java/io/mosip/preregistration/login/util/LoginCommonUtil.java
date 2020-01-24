@@ -74,6 +74,10 @@ public class LoginCommonUtil {
 	@Autowired
 	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate1;
+	
+	@Autowired
+	private ValidationUtil validationUtil;
+	
 	/**
 	 * Logger instance
 	 */
@@ -161,10 +165,10 @@ public class LoginCommonUtil {
 			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_008.getCode(),
 					ErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
 		}
-		if (ValidationUtil.phoneValidator(userId)) {
+		if (validationUtil.phoneValidator(userId)) {
 			list.add(mobileChannel);
 			return list;
-		} else if (ValidationUtil.emailValidator(userId)) {
+		} else if (validationUtil.emailValidator(userId)) {
 			list.add(emailChannel);
 			return list;
 		}
