@@ -43,6 +43,7 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
@@ -470,6 +471,10 @@ public class DemographicExceptionHandler {
 	 */
 	@ExceptionHandler(DuplicatePridKeyException.class)
 	public ResponseEntity<MainResponseDTO<?>> duplicateKeyException(final DuplicatePridKeyException e) {
+		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
+	}
+	@ExceptionHandler(PreRegistrationException.class)
+	public ResponseEntity<MainResponseDTO<?>> commonException(final PreRegistrationException e) {
 		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
 	}
 }

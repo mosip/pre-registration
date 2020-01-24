@@ -7,6 +7,8 @@ package io.mosip.preregistration.document.exception.util;
 import org.json.JSONException;
 import org.postgresql.util.PSQLException;
 
+import io.mosip.kernel.core.exception.BaseCheckedException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.IOException;
 import io.mosip.kernel.core.exception.ParseException;
 import io.mosip.kernel.core.fsadapter.exception.FSAdapterException;
@@ -19,6 +21,7 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 import io.mosip.preregistration.document.errorcodes.ErrorCodes;
 import io.mosip.preregistration.document.errorcodes.ErrorMessages;
@@ -122,9 +125,15 @@ public class DocumentExceptionCatcher {
 					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(),
 					response);
 
-		}else if (ex instanceof PreIdInvalidForUserIdException) {
-			throw new PreIdInvalidForUserIdException(((PreIdInvalidForUserIdException) ex).getErrorCode(),
-					((PreIdInvalidForUserIdException) ex).getErrorText());
+		}else {
+			if(ex instanceof BaseUncheckedException) {
+				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+						((BaseUncheckedException) ex).getErrorText(), response);
+			}
+			else if(ex instanceof BaseCheckedException) {
+				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+						((BaseCheckedException) ex).getErrorText(), response);
+			}
 		}
 
 	}
