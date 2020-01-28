@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.apache.http.cookie.MalformedCookieException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -48,7 +47,6 @@ import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
-import io.mosip.preregistration.core.code.RequestCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
@@ -58,7 +56,7 @@ import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.AuthTokenUtil;
@@ -72,7 +70,6 @@ import io.mosip.preregistration.document.dto.DocumentRequestDTO;
 import io.mosip.preregistration.document.dto.DocumentResponseDTO;
 import io.mosip.preregistration.document.exception.DTOMappigException;
 import io.mosip.preregistration.document.exception.DocumentFailedToCopyException;
-import io.mosip.preregistration.document.exception.DocumentFailedToUploadException;
 import io.mosip.preregistration.document.exception.DocumentNotFoundException;
 import io.mosip.preregistration.document.exception.DocumentNotValidException;
 import io.mosip.preregistration.document.exception.DocumentSizeExceedException;
@@ -293,54 +290,7 @@ public class DocumentUploadServiceTest {
 		assertEquals(responseUpload.getResponse().getDocCatCode(), responseDto.getResponse().getDocCatCode());
 	}
 
-	// @Test(expected = DemographicGetDetailsException.class)
-	// public void DemographicGetDetailsExceptionTest() throws IOException {
-	// DemographicGetDetailsException ex = new DemographicGetDetailsException(null,
-	// null);
-	// List<DocumentResponseDTO> responseUploadList = new ArrayList<>();
-	// MainResponseDTO<DemographicResponseDTO> restRes = new
-	// MainResponseDTO<DemographicResponseDTO>();
-	// DemographicResponseDTO dto = new DemographicResponseDTO();
-	// ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
-	// List<ExceptionJSONInfoDTO> excetionList = new ArrayList<>();
-	// exception.setMessage(ErrorMessages.DEMOGRAPHIC_GET_RECORD_FAILED.toString());
-	// excetionList.add(exception);
-	// restRes.setErrors(excetionList);
-	// responseUpload.setResponse(docResp);
-	// ResponseEntity<MainResponseDTO<DemographicResponseDTO>> rescenter = new
-	// ResponseEntity<>(restRes,
-	// HttpStatus.OK);
-	// Mockito.when(restTemplate.exchange(Mockito.anyString(),
-	// Mockito.eq(HttpMethod.GET), Mockito.any(),
-	// Mockito.eq(new
-	// ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
-	// }), Mockito.anyMap())).thenReturn(rescenter);
-	// MainResponseDTO<DemographicResponseDTO> demoresponse= new
-	// MainResponseDTO<>();
-	// DemographicResponseDTO demodto= new DemographicResponseDTO();
-	// demodto.setPreRegistrationId("48690172097498");
-	// demoresponse.setResponse(demodto);
-	// Mockito.when(demographicServiceIntf.getDemographicData(Mockito.anyString())).thenReturn(demoresponse);
-	// Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenReturn(true);
-	// Mockito.doReturn(true).when(fs).storeFile(Mockito.any(), Mockito.any(),
-	// Mockito.any());
-	// Mockito.when(documentRepository.findSingleDocument(Mockito.anyString(),
-	// Mockito.anyString()))
-	// .thenReturn(entity);
-	// Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any()))
-	// .thenReturn(mockMultipartFileSizeCheck.toString().getBytes());
-	// Mockito.when(documentRepository.save(Mockito.any())).thenReturn(entity);
-	// MainResponseDTO<DocumentResponseDTO> responseDto =
-	// documentUploadService.uploadDocument(mockMultipartFile,
-	// docJson, preRegistrationId);
-	// Mockito.when(validationutil.langvalidation(Mockito.anyString())).thenReturn(true);
-	// Mockito.when(validationutil.validateDocuments(Mockito.anyString(),
-	// Mockito.anyString(),Mockito.anyString(), Mockito.anyString()))
-	// .thenReturn(true);
-	// assertEquals(responseDto.getResponse().getDocCatCode(),
-	// responseUpload.getResponse().getDocCatCode());
-	// }
-
+	
 	@Test(expected = DTOMappigException.class)
 	public void mandatoryFeildNotPresentTest() throws IOException {
 		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenReturn(true);
@@ -540,17 +490,17 @@ public class DocumentUploadServiceTest {
 		documentUploadService.copyDocument("POA", "48690172097498", "48690172097499");
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void InvalidRequestParameterExceptionTest1() throws Exception {
 		documentUploadService.copyDocument("POA", "", "48690172097499");
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void InvalidRequestParameterExceptionTest2() throws Exception {
 		documentUploadService.copyDocument("POA", "48690172097499", "");
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void InvalidRequestParameterExceptionTest3() throws Exception {
 		documentUploadService.copyDocument("abc", "48690172097499", "48690172097498");
 	}

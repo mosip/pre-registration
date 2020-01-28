@@ -33,6 +33,7 @@ import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 import io.mosip.preregistration.core.exception.IllegalParamException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.notification.exception.BookingDetailsNotFoundException;
@@ -217,5 +218,14 @@ public class NotificationExceptionHandler {
 		responseWrapper.setId(reqNode.path("id").asText());
 		responseWrapper.setVersion(reqNode.path("version").asText());
 		return responseWrapper;
+	}
+	/**
+	 * 
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(InvalidRequestException.class)
+	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
+		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
 }

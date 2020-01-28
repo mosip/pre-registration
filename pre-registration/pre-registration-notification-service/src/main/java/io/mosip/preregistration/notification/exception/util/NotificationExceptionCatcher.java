@@ -12,6 +12,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.IllegalParamException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.demographic.exception.RecordNotFoundException;
 import io.mosip.preregistration.notification.error.ErrorCodes;
@@ -55,6 +56,10 @@ public class NotificationExceptionCatcher {
 		else if (ex instanceof HttpServerErrorException) {
 			throw new NotificationSeriveException();
 		}
+		 else if (ex instanceof InvalidRequestException) {
+				throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+						((InvalidRequestException) ex).getErrorText(), mainResponseDto);
+			}
 		else if (ex instanceof JsonParseException) {
 			throw new JsonValidationException(ErrorCodes.PRG_PAM_ACK_004.getCode(), ErrorMessages.JSON_PARSING_FAILED.getMessage(),
 					ex.getCause(),mainResponseDto);

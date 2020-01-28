@@ -15,7 +15,7 @@ import io.mosip.preregistration.generateqrcode.exception.IllegalParamException;
 
 /**
  * @author Sanober Noor
- *@since 1.0.0
+ * @since 1.0.0
  */
 public class QRcodeExceptionCatcher {
 	/**
@@ -24,34 +24,31 @@ public class QRcodeExceptionCatcher {
 	 * @param ex
 	 *            pass the exception
 	 */
-	public void handle(Exception ex,MainResponseDTO<?> mainResponseDto) {
+	public void handle(Exception ex, MainResponseDTO<?> mainResponseDto) {
 		if (ex instanceof QrcodeGenerationException) {
 			throw new IllegalParamException(ErrorCodes.PRG_QRC_002.getCode(),
-					ErrorMessages.QRCODE_FAILED_TO_GENERATE.getCode(),ex.getCause(),mainResponseDto);
-		}
-		else if (ex instanceof IOException || ex instanceof JSONException) {
-			throw new io.mosip.preregistration.generateqrcode.exception.QrCodeIOException(ErrorCodes.PRG_QRC_001.getCode(),
-						ErrorMessages.INPUT_OUTPUT_EXCEPTION.getCode(),ex.getCause(),mainResponseDto);
-}
-		else if (ex instanceof NullPointerException) {
+					ErrorMessages.QRCODE_FAILED_TO_GENERATE.getCode(), ex.getCause(), mainResponseDto);
+		} else if (ex instanceof IOException || ex instanceof JSONException) {
+			throw new io.mosip.preregistration.generateqrcode.exception.QrCodeIOException(
+					ErrorCodes.PRG_QRC_001.getCode(), ErrorMessages.INPUT_OUTPUT_EXCEPTION.getCode(), ex.getCause(),
+					mainResponseDto);
+		} else if (ex instanceof NullPointerException) {
 			throw new IllegalParamException(ErrorCodes.PRG_QRC_002.getCode(),
-					ErrorMessages.QRCODE_FAILED_TO_GENERATE.getCode(),ex.getCause(),mainResponseDto);
+					ErrorMessages.QRCODE_FAILED_TO_GENERATE.getCode(), ex.getCause(), mainResponseDto);
 		}
-		
-		
-		 else if (ex instanceof InvalidRequestParameterException) {
+
+		else if (ex instanceof InvalidRequestParameterException) {
 			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
-					((InvalidRequestParameterException) ex).getErrorText(),mainResponseDto);
+					((InvalidRequestParameterException) ex).getErrorText(), mainResponseDto);
+		} else if (ex instanceof InvalidRequestException) {
+			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+					((InvalidRequestException) ex).getErrorText(), mainResponseDto);
+		} else if (ex instanceof ParseException) {
+			throw new InvalidRequestParameterException(
+					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_003.getCode(),
+					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(),
+					mainResponseDto);
 		}
-		 else if (ex instanceof InvalidRequestException) {
-				throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
-						((InvalidRequestException) ex).getErrorText(),mainResponseDto);
-			}
-		 else if (ex instanceof ParseException) {
-			 throw new InvalidRequestParameterException(io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_003.getCode(), io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), mainResponseDto);
-			}
-}
-		
 	}
 
-
+}

@@ -23,6 +23,7 @@ import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuthTokenUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
@@ -99,12 +100,12 @@ public class DocumentServiceUtilTest {
 		serviceUtil.parseDocumentId("1234!@#$&^$$~~~~~~#@!$^%");
 	}
 	
-	@Test(expected=InvalidRequestParameterException.class)
+	@Test(expected=InvalidRequestException.class)
 	public void isValidCatCodeTest() throws Exception{
 		serviceUtil.isValidCatCode("13fww");
 	}
 	
-	@Test(expected=InvalidRequestParameterException.class)
+	@Test(expected=InvalidRequestException.class)
 	public void inValidPreIDTest() throws Exception {
 		serviceUtil.isValidRequest(documentDto,null);
 	}

@@ -41,6 +41,7 @@ import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 import io.mosip.preregistration.core.exception.DecryptionFailedException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.exception.PreRegistrationException;
@@ -476,5 +477,15 @@ public class DemographicExceptionHandler {
 	@ExceptionHandler(PreRegistrationException.class)
 	public ResponseEntity<MainResponseDTO<?>> commonException(final PreRegistrationException e) {
 		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(InvalidRequestException.class)
+	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
+		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
 }
