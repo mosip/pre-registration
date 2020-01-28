@@ -34,6 +34,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.generateqrcode.exception.QrCodeIOException;
@@ -66,8 +67,17 @@ public class QRcodeExceptionHandler {
 	 */
 	@ExceptionHandler(QrCodeIOException.class)
 	public ResponseEntity<MainResponseDTO<?>> mandatoryFieldrequired(final QrCodeIOException e) {
-
 		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(InvalidRequestException.class)
+	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
+		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
 
 	/**

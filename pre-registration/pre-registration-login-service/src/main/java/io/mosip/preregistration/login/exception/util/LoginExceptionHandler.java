@@ -34,6 +34,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 import io.mosip.preregistration.core.util.GenericUtil;
@@ -45,73 +46,73 @@ import io.mosip.preregistration.login.exception.NoAuthTokenException;
 import io.mosip.preregistration.login.exception.SendOtpFailedException;
 import io.mosip.preregistration.login.exception.UserIdOtpFaliedException;
 
-
 /**
- *This class handles the exception caught while login
+ * This class handles the exception caught while login
  *
  * @author Akshay
- *@since 1.0.0
+ * @since 1.0.0
  */
 
 @RestControllerAdvice
 public class LoginExceptionHandler {
-	
+
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
-	
+
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	/**  The Environment. */
+	/** The Environment. */
 	@Autowired
-	protected  Environment env;
-	
+	protected Environment env;
+
 	/** The id. */
 	@Resource
 	protected Map<String, String> id;
 
 	@ExceptionHandler(SendOtpFailedException.class)
-	public ResponseEntity<MainResponseDTO<?>> sendOtpException(final SendOtpFailedException e){
+	public ResponseEntity<MainResponseDTO<?>> sendOtpException(final SendOtpFailedException e) {
 		return GenericUtil.errorResponse(e, e.getMainResposneDto());
 	}
-	
+
 	@ExceptionHandler(UserIdOtpFaliedException.class)
-	public ResponseEntity<MainResponseDTO<?>> userIdOtpException(final UserIdOtpFaliedException e){
+	public ResponseEntity<MainResponseDTO<?>> userIdOtpException(final UserIdOtpFaliedException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
 
 	@ExceptionHandler(InvalidateTokenException.class)
-	public ResponseEntity<MainResponseDTO<?>> invalidateTokenException(final InvalidateTokenException e){
+	public ResponseEntity<MainResponseDTO<?>> invalidateTokenException(final InvalidateTokenException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
-	
+
 	@ExceptionHandler(InvalidRequestParameterException.class)
-	public ResponseEntity<MainResponseDTO<?>> invalidRequestParameterException(final InvalidRequestParameterException e){
-	
+	public ResponseEntity<MainResponseDTO<?>> invalidRequestParameterException(
+			final InvalidRequestParameterException e) {
+
 		MainResponseDTO<?> errorRes = e.getMainResponseDto();
 		errorRes.setId(id.get(e.getOperation()));
 		errorRes.setVersion(env.getProperty("version"));
 		errorRes.setErrors(e.getExptionList());
 		errorRes.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
-	} 
-	
+	}
+
 	@ExceptionHandler(LoginServiceException.class)
-	public ResponseEntity<MainResponseDTO<?>> authServiceException(final LoginServiceException e){
+	public ResponseEntity<MainResponseDTO<?>> authServiceException(final LoginServiceException e) {
 		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
-		e.getValidationErrorList().stream().forEach(serviceError->errorList.add(new ExceptionJSONInfoDTO(serviceError.getErrorCode(),serviceError.getMessage())));
+		e.getValidationErrorList().stream().forEach(serviceError -> errorList
+				.add(new ExceptionJSONInfoDTO(serviceError.getErrorCode(), serviceError.getMessage())));
 		MainResponseDTO<?> errorRes = e.getMainResposneDTO();
 		errorRes.setErrors(errorList);
 		errorRes.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 	}
-	
+
 	@ExceptionHandler(ParseResponseException.class)
-	public ResponseEntity<MainResponseDTO<?>> parseResponseException(final ParseResponseException e){
+	public ResponseEntity<MainResponseDTO<?>> parseResponseException(final ParseResponseException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDto());
-	} 
-	
-	
+	}
+
 	/**
 	 * @param e
 	 *            pass the exception
@@ -121,12 +122,13 @@ public class LoginExceptionHandler {
 	 */
 	@ExceptionHandler(ConfigFileNotFoundException.class)
 	public ResponseEntity<MainResponseDTO<?>> configFileNotFoundException(final ConfigFileNotFoundException e) {
-		return GenericUtil.errorResponse(e,e.getMainResposneDto());
+		return GenericUtil.errorResponse(e, e.getMainResposneDto());
 	}
-	
+
 	@ExceptionHandler(InvalidFormatException.class)
-	public ResponseEntity<MainResponseDTO<?>> DateFormatException(final InvalidFormatException e){
-		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(ErrorCodes.PRG_CORE_REQ_003.getCode(),ErrorMessages.INVALID_REQUEST_DATETIME.getMessage());
+	public ResponseEntity<MainResponseDTO<?>> DateFormatException(final InvalidFormatException e) {
+		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(ErrorCodes.PRG_CORE_REQ_003.getCode(),
+				ErrorMessages.INVALID_REQUEST_DATETIME.getMessage());
 		MainResponseDTO<?> errorRes = new MainResponseDTO<>();
 		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
 		errorList.add(errorDetails);
@@ -134,18 +136,17 @@ public class LoginExceptionHandler {
 		errorRes.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 	}
-	
+
 	@ExceptionHandler(InvalidOtpOrUseridException.class)
-	public ResponseEntity<MainResponseDTO<?>> InavlidOtpOrUserIdException(final InvalidOtpOrUseridException e){
+	public ResponseEntity<MainResponseDTO<?>> InavlidOtpOrUserIdException(final InvalidOtpOrUseridException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
-	
+
 	@ExceptionHandler(NoAuthTokenException.class)
-	public ResponseEntity<MainResponseDTO<?>> NoAuthTokenException(final NoAuthTokenException e){
+	public ResponseEntity<MainResponseDTO<?>> NoAuthTokenException(final NoAuthTokenException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
-	
-	
+
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<ResponseWrapper<ServiceError>> methodArgumentNotValidException(
 			final HttpServletRequest httpServletRequest, final MethodArgumentNotValidException e) throws IOException {
@@ -167,9 +168,6 @@ public class LoginExceptionHandler {
 		errorResponse.getErrors().add(error);
 		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
 	}
-	
-	
-
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })
 	public ResponseEntity<ResponseWrapper<ServiceError>> defaultErrorHandler(
@@ -196,4 +194,15 @@ public class LoginExceptionHandler {
 		responseWrapper.setVersion(reqNode.path("version").asText());
 		return responseWrapper;
 	}
+
+	/**
+	 * 
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(InvalidRequestException.class)
+	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
+		return GenericUtil.errorResponse(e, e.getMainResponseDto());
+	}
+
 }
