@@ -40,6 +40,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.AppointmentBookException;
 import io.mosip.preregistration.core.exception.AppointmentCancelException;
 import io.mosip.preregistration.core.exception.AppointmentReBookException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.NotificationException;
 import io.mosip.preregistration.core.exception.PreRegistrationException;
@@ -165,13 +166,14 @@ public class BookingExceptionCatcher {
 		} else if (ex instanceof JsonProcessingException) {
 			throw new JsonException(ErrorCodes.PRG_BOOK_RCI_034.getCode(),
 					ErrorMessages.JSON_PROCESSING_EXCEPTION.getMessage(), mainResponseDTO);
-		}
-		else {
-			if(ex instanceof BaseUncheckedException) {
+		} else if (ex instanceof InvalidRequestException) {
+			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+					((InvalidRequestException) ex).getErrorText(), mainResponseDTO);
+		} else {
+			if (ex instanceof BaseUncheckedException) {
 				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
 						((BaseUncheckedException) ex).getErrorText(), mainResponseDTO);
-			}
-			else if(ex instanceof BaseCheckedException) {
+			} else if (ex instanceof BaseCheckedException) {
 				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
 						((BaseCheckedException) ex).getErrorText(), mainResponseDTO);
 			}

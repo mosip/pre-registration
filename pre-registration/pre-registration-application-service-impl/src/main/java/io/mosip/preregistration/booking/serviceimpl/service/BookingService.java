@@ -138,6 +138,9 @@ public class BookingService implements BookingServiceIntf {
 
 	@Value("${mosip.primary-language}")
 	String primaryLang;
+	
+	@Autowired
+	private ValidationUtil validationUtil;
 
 	@PostConstruct
 	public void setupBookingService() {
@@ -699,7 +702,7 @@ public class BookingService implements BookingServiceIntf {
 		boolean isSaveSuccess = false;
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preregId);
-			if (ValidationUtil.requstParamValidator(requestParamMap)) {
+			if (validationUtil.requstParamValidator(requestParamMap)) {
 				RegistrationBookingEntity registrationEntityList = bookingDAO.findByPreRegistrationId(preregId);
 
 				bookingDAO.deleteByPreRegistrationId(preregId);

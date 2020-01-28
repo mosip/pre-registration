@@ -154,6 +154,9 @@ public class BookingServiceTest {
 	 */
 	@MockBean(name = "idObjectValidator")
 	private IdObjectValidator jsonValidator;
+	
+	@Autowired
+	private ValidationUtil validationUtil;
 
 	@MockBean
 	ObjectMapper mapper;
@@ -486,7 +489,7 @@ public class BookingServiceTest {
 		Mockito.when(bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any())).thenReturn(availableEntity);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 		Mockito.when(bookingDAO.updateAvailibityEntity(availableEntity)).thenReturn(availableEntity);
 		Mockito.when(serviceUtil.mandatoryParameterCheck(Mockito.anyString(), Mockito.any())).thenReturn(true);
 		Mockito.when(serviceUtil.validateAppointmentDate(Mockito.any())).thenReturn(true);
@@ -682,7 +685,7 @@ public class BookingServiceTest {
 		Mockito.when(bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any())).thenReturn(availableEntity);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 
 		RegistrationCenterDto centerDto = new RegistrationCenterDto();
 		List<RegistrationCenterDto> centerList = new ArrayList<>();
@@ -782,7 +785,7 @@ public class BookingServiceTest {
 		Mockito.when(bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any())).thenReturn(availableEntity);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 
 		// Update status
 		RegistrationBookingEntity bookingEntity2 = new RegistrationBookingEntity();
@@ -895,7 +898,7 @@ public class BookingServiceTest {
 		Mockito.when(bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any())).thenReturn(availableEntity);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 		Mockito.when(demographicServiceIntf.getApplicationStatus("23587986034785", null))
 				.thenReturn(preRegResponseRebook);
 
@@ -985,7 +988,7 @@ public class BookingServiceTest {
 		Mockito.when(bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any())).thenReturn(availableEntity);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 		ResponseEntity<MainResponseDTO<PreRegistartionStatusDTO>> respEntity = new ResponseEntity<>(preRegResponse,
 				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
@@ -1031,7 +1034,7 @@ public class BookingServiceTest {
 		bookedStatusDTO.setPreRegistartionId("23587986034785");
 		preRegResponse.setResponse(bookedStatusDTO);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(cancelRequestdto);
+		requestValidatorFlag = validationUtil.requestValidator(cancelRequestdto);
 
 		MainResponseDTO<PreRegistartionStatusDTO> getApplicationStatus = new MainResponseDTO<>();
 		PreRegistartionStatusDTO preRegistartionStatus = new PreRegistartionStatusDTO();
@@ -1247,7 +1250,7 @@ public class BookingServiceTest {
 		bookedStatusDTO.setPreRegistartionId("23587986034785");
 		preRegResponse.setResponse(bookedStatusDTO);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(cancelRequestdto);
+		requestValidatorFlag = validationUtil.requestValidator(cancelRequestdto);
 		RegistrationCenterDto centerDto = new RegistrationCenterDto();
 		List<RegistrationCenterDto> centerList = new ArrayList<>();
 		centerDto.setId("10001");
@@ -1511,7 +1514,7 @@ public class BookingServiceTest {
 		preRegResponseRebook.setErrors(null);
 		preRegResponseRebook.setResponse(preRegistartionStatus);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 
 		Mockito.when(serviceUtil.mandatoryParameterCheck(Mockito.anyString(), Mockito.any())).thenReturn(true);
 		Mockito.when(serviceUtil.validateAppointmentDate(Mockito.any())).thenThrow(ex);
@@ -1558,7 +1561,7 @@ public class BookingServiceTest {
 		Mockito.when(bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any())).thenReturn(availableEntity);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 		RegistrationCenterDto centerDto = new RegistrationCenterDto();
 		List<RegistrationCenterDto> centerList = new ArrayList<>();
 		centerDto.setId("10001");
@@ -1655,7 +1658,7 @@ public class BookingServiceTest {
 		Mockito.when(bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any())).thenReturn(availableEntity);
 
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 
 		// Update status
 		RegistrationBookingEntity bookingEntity2 = new RegistrationBookingEntity();
@@ -1747,7 +1750,7 @@ public class BookingServiceTest {
 		availableEntity.setCrBy("John Doe");
 		availableEntity.setCrDate(DateUtils.parseDateToLocalDateTime(new Date()));
 		availableEntity.setDeleted(false);
-		requestValidatorFlag = ValidationUtil.requestValidator(bookingRequestDTOs);
+		requestValidatorFlag = validationUtil.requestValidator(bookingRequestDTOs);
 
 		Mockito.when(serviceUtil.validateAppointmentDate(Mockito.any())).thenThrow(ex);
 

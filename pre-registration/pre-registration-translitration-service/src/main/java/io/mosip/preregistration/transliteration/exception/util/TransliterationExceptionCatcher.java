@@ -10,6 +10,7 @@ import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.exception.ParseException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.IllegalParamException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 import io.mosip.preregistration.transliteration.errorcode.ErrorCodes;
@@ -51,6 +52,9 @@ public class TransliterationExceptionCatcher {
 		} else if (ex instanceof MissingRequestParameterException) {
 			throw new MissingRequestParameterException(((MissingRequestParameterException) ex).getErrorCode(),
 					((MissingRequestParameterException) ex).getErrorText(),response);
+		}else if (ex instanceof InvalidRequestException) {
+			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+					((InvalidRequestException) ex).getErrorText(), response);
 		}
 		else if (ex instanceof MandatoryFieldRequiredException) {
 			throw new MandatoryFieldRequiredException(((MandatoryFieldRequiredException) ex).getErrorCode(),

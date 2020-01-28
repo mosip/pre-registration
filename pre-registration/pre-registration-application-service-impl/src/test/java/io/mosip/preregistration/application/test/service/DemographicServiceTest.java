@@ -86,6 +86,7 @@ import io.mosip.preregistration.core.common.dto.identity.Identity;
 import io.mosip.preregistration.core.common.dto.identity.IdentityJsonValues;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.exception.HashingException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
@@ -1006,9 +1007,9 @@ public class DemographicServiceTest {
 
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void getApplicationDetailsInvalidRequestTest() {
-		InvalidRequestParameterException exception = new InvalidRequestParameterException(
+		InvalidRequestException exception = new InvalidRequestException(
 				ErrorCodes.PRG_PAM_APP_012.name(), ErrorMessages.MISSING_REQUEST_PARAMETER.name(), responseCreateDTO);
 		Mockito.when(demographicRepository.findByCreatedBy("", "")).thenThrow(exception);
 		preRegistrationService.getAllApplicationDetails("", "0");

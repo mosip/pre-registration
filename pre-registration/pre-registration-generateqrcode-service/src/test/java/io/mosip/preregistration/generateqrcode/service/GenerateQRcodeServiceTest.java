@@ -29,7 +29,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.generateqrcode.GenerateQRcodeApplicationTests;
 import io.mosip.preregistration.generateqrcode.dto.QRCodeResponseDTO;
@@ -103,7 +103,7 @@ public class GenerateQRcodeServiceTest {
 		assertEquals(qrCodeResponseDTO.getResponse().getQrcode(), response.getResponse().getQrcode());
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void generateQRCodeExceptionTest() throws java.io.IOException, QrcodeGenerationException {
 		String stringjson = mapper.writeValueAsString(qrcodedto);
 		notificationDTO = new NotificationDTO();

@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
@@ -59,6 +60,10 @@ public class DataSyncExceptionCatcher {
 		} else if (ex instanceof RecordNotFoundForDateRange) {
 			throw new RecordNotFoundForDateRange(((RecordNotFoundForDateRange) ex).getErrorCode(),
 					((RecordNotFoundForDateRange) ex).getErrorText(), mainResponsedto);
+		}
+		else if (ex instanceof InvalidRequestException) {
+			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+					((InvalidRequestException) ex).getErrorText(),mainResponsedto);
 		}
 		else if (ex instanceof ParseResponseException) {
 			throw new ParseResponseException(((ParseResponseException) ex).getErrorCode(), 

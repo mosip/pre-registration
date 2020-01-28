@@ -18,7 +18,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import io.mosip.preregistration.core.code.RequestCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.core.util.ValidationUtil;
 
@@ -58,25 +58,25 @@ public class ValidationUtilTest {
 	@Test
 	public void emailValidatorTest() {
 		String loginId = "user@gmail.com";
-		assertThat(ValidationUtil.emailValidator(loginId), is(true));
+		assertThat(validationUtil.emailValidator(loginId), is(true));
 	}
 
 	@Test
 	public void emailValidatorFailureTest() {
 		String loginId = "user@gmailcom";
-		assertThat(ValidationUtil.emailValidator(loginId), is(false));
+		assertThat(validationUtil.emailValidator(loginId), is(false));
 	}
 
 	@Test
 	public void phoneValidatorTest() {
 		String loginId = "9998867755";
-		assertThat(ValidationUtil.phoneValidator(loginId), is(true));
+		assertThat(validationUtil.phoneValidator(loginId), is(true));
 	}
 
 	@Test
 	public void phoneValidatorFailureTest() {
 		String loginId = "999886775";
-		assertThat(ValidationUtil.phoneValidator(loginId), is(false));
+		assertThat(validationUtil.phoneValidator(loginId), is(false));
 	}
 
 	@Test
@@ -85,31 +85,31 @@ public class ValidationUtilTest {
 		mainRequest.setRequest("Admin");
 		mainRequest.setRequesttime(new Date());
 		mainRequest.setVersion("1.0");
-		assertThat(ValidationUtil.requestValidator(mainRequest), is(true));
+		assertThat(validationUtil.requestValidator(mainRequest), is(true));
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requestValidatorFailureTest1() {
 		mainRequest.setVersion(null);
-		Mockito.when(ValidationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requestValidatorFailureTest2() {
 		mainRequest.setId(null);
-		Mockito.when(ValidationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requestValidatorFailureTest4() {
 		mainRequest.setRequest(null);
-		Mockito.when(ValidationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requestValidatorFailureTest5() {
 		mainRequest.setRequesttime(null);
-		Mockito.when(ValidationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requestValidator(mainRequest)).thenThrow(InvalidRequestException.class);
 	}
 
 	// --------------------------------------------------------
@@ -120,119 +120,119 @@ public class ValidationUtilTest {
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		assertThat(ValidationUtil.requstParamValidator(requestMap), is(true));
+		assertThat(validationUtil.requstParamValidator(requestMap), is(true));
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest1() {
 		requestMap.put(RequestCodes.USER_ID, "");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		Mockito.when(ValidationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest2() {
 		requestMap.put(RequestCodes.USER_ID, null);
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		Mockito.when(ValidationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest3() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "");
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		Mockito.when(ValidationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest4() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, null);
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		Mockito.when(ValidationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest5() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, "");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		Mockito.when(ValidationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest6() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, null);
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		Mockito.when(ValidationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestParameterException.class);
+		Mockito.when(validationUtil.requstParamValidator(requestMap)).thenThrow(InvalidRequestException.class);
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest7() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "");
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		assertThat(ValidationUtil.requstParamValidator(requestMap), is(true));
+		assertThat(validationUtil.requstParamValidator(requestMap), is(true));
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest8() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, null);
 		requestMap.put(RequestCodes.TO_DATE, "2018-12-19 19:52:16");
-		assertThat(ValidationUtil.requstParamValidator(requestMap), is(true));
+		assertThat(validationUtil.requstParamValidator(requestMap), is(true));
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest9() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, "");
-		assertThat(ValidationUtil.requstParamValidator(requestMap), is(true));
+		assertThat(validationUtil.requstParamValidator(requestMap), is(true));
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void requstParamValidatorFailureTest10() {
 		requestMap.put(RequestCodes.USER_ID, "9900806086");
 		requestMap.put(RequestCodes.PRE_REGISTRATION_ID, "70694681371453");
 		requestMap.put(RequestCodes.STATUS_CODE, "Pending_Appointment");
 		requestMap.put(RequestCodes.FROM_DATE, "2018-12-19 18:52:16");
 		requestMap.put(RequestCodes.TO_DATE, null);
-		assertThat(ValidationUtil.requstParamValidator(requestMap), is(true));
+		assertThat(validationUtil.requstParamValidator(requestMap), is(true));
 	}
 
 	// @Test
 	// public void isValidPreIdSuccessTest() {
 	// String preId="12345678901234";
-	// assertThat(ValidationUtil.isvalidPreRegId(preId), is(true));
+	// assertThat(validationUtil.isvalidPreRegId(preId), is(true));
 	// }
 	//
-	// @Test(expected = InvalidRequestParameterException.class)
+	// @Test(expected = InvalidRequestException.class)
 	// public void isValidPreIdFailureTest() {
 	// String preId="12345678901";
-	// assertThat(ValidationUtil.isvalidPreRegId(preId), is(false));
+	// assertThat(validationUtil.isvalidPreRegId(preId), is(false));
 	// }
 
 	@Test
@@ -241,7 +241,7 @@ public class ValidationUtilTest {
 		assertThat(validationUtil.langvalidation(langCode), is(true));
 	}
 
-	@Test(expected = InvalidRequestParameterException.class)
+	@Test(expected = InvalidRequestException.class)
 	public void isValidLangCodeFailureTest() {
 		String langCode = "fraaa";
 		validationUtil.langvalidation(langCode);

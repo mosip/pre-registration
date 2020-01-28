@@ -6,6 +6,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 import io.mosip.preregistration.login.errorcodes.ErrorCodes;
@@ -61,6 +62,9 @@ public class LoginExceptionCatcher {
 		} else if (ex instanceof NoAuthTokenException) {
 			throw new NoAuthTokenException(((NoAuthTokenException) ex).getErrorCode(),
 					((NoAuthTokenException) ex).getErrorText(), mainResponsedto);
+		}else if (ex instanceof InvalidRequestException) {
+			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+					((InvalidRequestException) ex).getErrorText(), mainResponsedto);
 		} else if ((ex instanceof HttpClientErrorException || ex instanceof HttpServerErrorException)
 				&& serviceType.equals("refreshConfig")) {
 			throw new ConfigFileNotFoundException(ErrorCodes.PRG_AUTH_012.getCode(),
@@ -68,7 +72,7 @@ public class LoginExceptionCatcher {
 		} else if ((ex instanceof HttpClientErrorException || ex instanceof HttpServerErrorException)
 				&& serviceType.equals("postconstruct")) {
 			throw new ConfigFileNotFoundException(ErrorCodes.PRG_AUTH_012.getCode(),
-					ErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), new MainResponseDTO<>());
+					ErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), mainResponsedto);
 		}
 
 	}

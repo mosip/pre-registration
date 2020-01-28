@@ -61,6 +61,7 @@ import io.mosip.preregistration.booking.serviceimpl.exception.TimeSpanException;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 import io.mosip.preregistration.core.exception.NotificationException;
@@ -453,6 +454,16 @@ public class BookingExceptionHandler {
 	@ExceptionHandler(PreRegistrationException.class)
 	public ResponseEntity<MainResponseDTO<?>> commonException(final PreRegistrationException e) {
 		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
+	}
+	
+	/**
+	 * 
+	 * @param e
+	 * @return
+	 */
+	@ExceptionHandler(InvalidRequestException.class)
+	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
+		return GenericUtil.errorResponse(e, e.getMainResponseDto());
 	}
 
 }

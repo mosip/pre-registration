@@ -28,6 +28,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.DecryptionFailedException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.exception.PreRegistrationException;
@@ -182,18 +183,20 @@ public class DemographicExceptionCatcher {
 		} else if (ex instanceof NoSuchAlgorithmException) {
 			throw new InvalidRequestParameterException(((NoSuchAlgorithmException) ex).getErrorCode(),
 					((NoSuchAlgorithmException) ex).getErrorText(), mainResponsedto);
-		}
-		else if (ex instanceof DataIntegrityViolationException ) {
-			throw new DuplicatePridKeyException(ErrorCodes.PRG_PAM_APP_021.getCode(),ErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
-		}else if (ex instanceof ConstraintViolationException ) {
-			throw new DuplicatePridKeyException(ErrorCodes.PRG_PAM_APP_021.getCode(),ErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
-		}
-		else {
-			if(ex instanceof BaseUncheckedException) {
+		} else if (ex instanceof InvalidRequestException) {
+			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+					((InvalidRequestException) ex).getErrorText(), mainResponsedto);
+		} else if (ex instanceof DataIntegrityViolationException) {
+			throw new DuplicatePridKeyException(ErrorCodes.PRG_PAM_APP_021.getCode(),
+					ErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
+		} else if (ex instanceof ConstraintViolationException) {
+			throw new DuplicatePridKeyException(ErrorCodes.PRG_PAM_APP_021.getCode(),
+					ErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
+		} else {
+			if (ex instanceof BaseUncheckedException) {
 				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
 						((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
-			}
-			else if(ex instanceof BaseCheckedException) {
+			} else if (ex instanceof BaseCheckedException) {
 				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
 						((BaseCheckedException) ex).getErrorText(), mainResponsedto);
 			}

@@ -54,6 +54,9 @@ public class DataSyncService {
 	 */
 	@Autowired
 	private DataSyncServiceUtil serviceUtil;
+	
+	@Autowired
+	private ValidationUtil validationUtil;
 
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
@@ -117,8 +120,8 @@ public class DataSyncService {
 		responseDto.setVersion(version);
 		requiredRequestMap.put("id", fetchAllId);
 		try {
-			ValidationUtil.requestValidator(dataSyncRequest);
-			if (ValidationUtil.requestValidator(serviceUtil.prepareRequestMap(dataSyncRequest), requiredRequestMap)) {
+			validationUtil.requestValidator(dataSyncRequest);
+			if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(dataSyncRequest), requiredRequestMap)) {
 				serviceUtil.validateDataSyncRequest(dataSyncRequest.getRequest(), responseDto);
 				DataSyncRequestDTO dataSyncRequestDTO = dataSyncRequest.getRequest();
 				if (serviceUtil.isNull(dataSyncRequestDTO.getToDate())) {
@@ -213,9 +216,9 @@ public class DataSyncService {
 		responseDto.setVersion(version);
 		requiredRequestMap.put("id", storeId);
 		try {
-			if (ValidationUtil.requestValidator(reverseDataSyncRequest)
+			if (validationUtil.requestValidator(reverseDataSyncRequest)
 					&& serviceUtil.validateReverseDataSyncRequest(reverseDataSyncRequest.getRequest(), responseDto)) {
-				if (ValidationUtil.requestValidator(serviceUtil.prepareRequestMap(reverseDataSyncRequest),
+				if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(reverseDataSyncRequest),
 						requiredRequestMap)) {
 					reverseDatasyncReponse = serviceUtil.reverseDateSyncSave(reverseDataSyncRequest.getRequesttime(),
 							reverseDataSyncRequest.getRequest(), "user");

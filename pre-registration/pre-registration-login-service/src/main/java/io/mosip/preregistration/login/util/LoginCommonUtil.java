@@ -45,7 +45,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.login.dto.MosipUserDTO;
@@ -74,6 +74,10 @@ public class LoginCommonUtil {
 	@Autowired
 	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate1;
+	
+	@Autowired
+	private ValidationUtil validationUtil;
+	
 	/**
 	 * Logger instance
 	 */
@@ -158,18 +162,18 @@ public class LoginCommonUtil {
 		log.info("sessionId", "idType", "id", "In validateUserIdandLangCode method of Login Common Util");
 		List<String> list = new ArrayList<>();
 		if (userId == null || userId.isEmpty()) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_008.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_AUTH_008.getCode(),
 					ErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
 		}
-		if (ValidationUtil.phoneValidator(userId)) {
+		if (validationUtil.phoneValidator(userId)) {
 			list.add(mobileChannel);
 			return list;
-		} else if (ValidationUtil.emailValidator(userId)) {
+		} else if (validationUtil.emailValidator(userId)) {
 			list.add(emailChannel);
 			return list;
 		}
 
-		throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_008.getCode(),
+		throw new InvalidRequestException(ErrorCodes.PRG_AUTH_008.getCode(),
 				ErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
 	}
 
@@ -180,23 +184,23 @@ public class LoginCommonUtil {
 	 * @return
 	 */
 
-	public boolean validateRequest(MainRequestDTO<?> mainRequest) {
-		log.info("sessionId", "idType", "id", "In validateRequest method of Login Common Util");
-		if (mainRequest.getId() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_004.getCode(),
-					ErrorMessages.INVALID_REQUEST_ID.getMessage(), null);
-		} else if (mainRequest.getRequest() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_007.getCode(),
-					ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null);
-		} else if (mainRequest.getRequesttime() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_006.getCode(),
-					ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), null);
-		} else if (mainRequest.getVersion() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_005.getCode(),
-					ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), null);
-		}
-		return true;
-	}
+//	public boolean validateRequest(MainRequestDTO<?> mainRequest) {
+//		log.info("sessionId", "idType", "id", "In validateRequest method of Login Common Util");
+//		if (mainRequest.getId() == null) {
+//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_004.getCode(),
+//					ErrorMessages.INVALID_REQUEST_ID.getMessage(), null);
+//		} else if (mainRequest.getRequest() == null) {
+//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_007.getCode(),
+//					ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null);
+//		} else if (mainRequest.getRequesttime() == null) {
+//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_006.getCode(),
+//					ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), null);
+//		} else if (mainRequest.getVersion() == null) {
+//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_005.getCode(),
+//					ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), null);
+//		}
+//		return true;
+//	}
 
 	/**
 	 * This method will validate the otp and userid for null values
@@ -206,10 +210,10 @@ public class LoginCommonUtil {
 	public void validateOtpAndUserid(User user) {
 		log.info("sessionId", "idType", "id", "In validateOtpAndUserid method of Login Common Util");
 		if (user.getUserId() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_008.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_AUTH_008.getCode(),
 					ErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
 		} else if (user.getOtp() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_010.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_AUTH_010.getCode(),
 					ErrorMessages.INVALID_REQUEST_OTP.getMessage(), null);
 		}
 	}

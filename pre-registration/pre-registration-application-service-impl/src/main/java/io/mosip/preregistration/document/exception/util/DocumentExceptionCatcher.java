@@ -18,6 +18,7 @@ import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.DecryptionFailedException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
@@ -116,21 +117,23 @@ public class DocumentExceptionCatcher {
 					((DecryptionFailedException) ex).getErrorText(), response);
 		} else if (ex instanceof EncryptionFailedException) {
 			throw new EncryptionFailedException(((EncryptionFailedException) ex).getValidationErrorList(), response);
-		}  else if (ex instanceof MasterDataNotAvailableException) {
-			throw new EncryptionFailedException(((MasterDataNotAvailableException) ex).getErrorCode().toString(),((MasterDataNotAvailableException) ex).getErrorText(), response);
-		}
-		else if (ex instanceof java.text.ParseException) {
+		} else if (ex instanceof MasterDataNotAvailableException) {
+			throw new EncryptionFailedException(((MasterDataNotAvailableException) ex).getErrorCode().toString(),
+					((MasterDataNotAvailableException) ex).getErrorText(), response);
+		} else if (ex instanceof InvalidRequestException) {
+			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
+					((InvalidRequestException) ex).getErrorText(), response);
+		} else if (ex instanceof java.text.ParseException) {
 			throw new InvalidRequestParameterException(
 					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_003.getCode(),
 					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(),
 					response);
 
-		}else {
-			if(ex instanceof BaseUncheckedException) {
+		} else {
+			if (ex instanceof BaseUncheckedException) {
 				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
 						((BaseUncheckedException) ex).getErrorText(), response);
-			}
-			else if(ex instanceof BaseCheckedException) {
+			} else if (ex instanceof BaseCheckedException) {
 				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
 						((BaseCheckedException) ex).getErrorText(), response);
 			}

@@ -38,65 +38,43 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 
 @Component
 public class ValidationUtil {
 
-	private static String emailRegex;
+	@Value("${mosip.id.validation.identity.email}")
+	private  String emailRegex;
 
-	private static String phoneRegex;
+	@Value("${mosip.id.validation.identity.phone}")
+	private  String phoneRegex;
 
-	private static String langCodes;
+	@Value("${mosip.supported-languages}")
+	private  String langCodes;
 
-	private static String documentTypeUri;
+	@Value("${mosip.kernel.idobjectvalidator.masterdata.documenttypes.rest.uri}")
+	private  String documentTypeUri;
 
-	private static String masterdataUri;
+	@Value("${mosip.kernel.masterdata.validdoc.rest.uri}")
+	private  String masterdataUri;
 
 	private static Logger log = LoggerConfiguration.logConfig(ValidationUtil.class);
 
-	private ValidationUtil() {
-	}
 
-	@Value("${mosip.id.validation.identity.email}")
-	public void setEmailRegex(String value) {
-		ValidationUtil.emailRegex = value;
-	}
-
-	@Value("${mosip.id.validation.identity.phone}")
-	public void setPhoneRegex(String value) {
-		ValidationUtil.phoneRegex = value;
-	}
-
-	@Value("${mosip.supported-languages}")
-	public void setLanCode(String value) {
-		ValidationUtil.langCodes = value;
-	}
-
-	public static boolean emailValidator(String email) {
+	public  boolean emailValidator(String email) {
 		return email.matches(emailRegex);
 	}
 
-	public static boolean phoneValidator(String phone) {
+	public  boolean phoneValidator(String phone) {
 		return phone.matches(phoneRegex);
 	}
 
-	public static boolean idValidation(String value, String regex) {
+	public  boolean idValidation(String value, String regex) {
 		if (!isNull(value)) {
 			return value.matches(regex);
 		}
 		return false;
-	}
-
-	@Value("${mosip.kernel.idobjectvalidator.masterdata.documenttypes.rest.uri}")
-	public void setDocType(String value) {
-		ValidationUtil.documentTypeUri = value;
-	}
-
-	@Value("${mosip.kernel.masterdata.validdoc.rest.uri}")
-	public void setDocCatTypeCode(String value) {
-		ValidationUtil.masterdataUri = value;
 	}
 
 	/** The validDocsMap. */
@@ -117,40 +95,40 @@ public class ValidationUtil {
 
 	private static final String NAME = "name";
 
-	public static boolean requestValidator(MainRequestDTO<?> mainRequest) {
+	public  boolean requestValidator(MainRequestDTO<?> mainRequest) {
 		log.info("sessionId", "idType", "id",
 				"In requestValidator method of pre-registration core with mainRequest " + mainRequest);
 		if (mainRequest.getId() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
 					ErrorMessages.INVALID_REQUEST_ID.getMessage(), null);
 		} else if (mainRequest.getRequest() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_004.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_004.getCode(),
 					ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null);
 		} else if (mainRequest.getRequesttime() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
 					ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), null);
 		} else if (mainRequest.getVersion() == null) {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_002.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_002.getCode(),
 					ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), null);
 		}
 		return true;
 	}
 
-	public static boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
+	public  boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
 		log.debug("sessionId", "idType", "id", "In requestValidator");
 		log.info("sessionId", "idType", "id", "In requestValidator method of pre-registration core with requestMap "
 				+ requestMap + " againt requiredRequestMap " + requiredRequestMap);
 		for (String key : requestMap.keySet()) {
 			if (key.equals(RequestCodes.ID) && (requestMap.get(RequestCodes.ID) == null
 					|| !requestMap.get(RequestCodes.ID).equals(requiredRequestMap.get(RequestCodes.ID)))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
 						ErrorMessages.INVALID_REQUEST_ID.getMessage(), null);
 			} else if (key.equals(RequestCodes.VER) && (requestMap.get(RequestCodes.VER) == null
 					|| !requestMap.get(RequestCodes.VER).equals(requiredRequestMap.get(RequestCodes.VER)))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_002.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_002.getCode(),
 						ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), null);
 			} else if (key.equals(RequestCodes.REQ_TIME) && requestMap.get(RequestCodes.REQ_TIME) == null) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
 						ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), null);
 
 			} else if (key.equals(RequestCodes.REQ_TIME) && requestMap.get(RequestCodes.REQ_TIME) != null) {
@@ -158,62 +136,62 @@ public class ValidationUtil {
 					LocalDate localDate = LocalDate.parse(requestMap.get(RequestCodes.REQ_TIME));
 					LocalDate serverDate = new Date().toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
 					if (localDate.isBefore(serverDate) || localDate.isAfter(serverDate)) {
-						throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
+						throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
 								ErrorMessages.INVALID_REQUEST_DATETIME_NOT_CURRENT_DATE.getMessage(), null);
 					}
 
 				} catch (Exception ex) {
-					throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
+					throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
 							ErrorMessages.INVALID_REQUEST_DATETIME_NOT_CURRENT_DATE.getMessage(), null);
 				}
 
 			} else if (key.equals(RequestCodes.REQUEST) && (requestMap.get(RequestCodes.REQUEST) == null
 					|| requestMap.get(RequestCodes.REQUEST).equals(""))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_004.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_004.getCode(),
 						ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null);
 			}
 		}
 		return true;
 	}
 
-	public static boolean requstParamValidator(Map<String, String> requestMap) {
+	public  boolean requstParamValidator(Map<String, String> requestMap) {
 		log.info("sessionId", "idType", "id",
 				"In requstParamValidator method of pre-registration core with requestMap " + requestMap);
 		for (String key : requestMap.keySet()) {
 			if (key.equals(RequestCodes.USER_ID) && (requestMap.get(RequestCodes.USER_ID) == null
 					|| requestMap.get(RequestCodes.USER_ID).equals(""))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
 						ErrorMessages.MISSING_REQUEST_PARAMETER.getMessage(), null);
 			} else if (key.equals(RequestCodes.PRE_REGISTRATION_ID)
 					&& (requestMap.get(RequestCodes.PRE_REGISTRATION_ID) == null
 							|| requestMap.get(RequestCodes.PRE_REGISTRATION_ID).equals(""))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
 						ErrorMessages.MISSING_REQUEST_PARAMETER.getMessage(), null);
 			} else if (key.equals(RequestCodes.STATUS_CODE) && (requestMap.get(RequestCodes.STATUS_CODE) == null
 					|| requestMap.get(RequestCodes.STATUS_CODE).equals(""))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
 						ErrorMessages.INVALID_STATUS_CODE.getMessage(), null);
 			} else if (key.equals(RequestCodes.FROM_DATE) && (requestMap.get(RequestCodes.FROM_DATE) == null
 					|| requestMap.get(RequestCodes.FROM_DATE).equals(""))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
 						ErrorMessages.INVALID_DATE.getMessage(), null);
 			} else if (key.equals(RequestCodes.FROM_DATE) && requestMap.get(RequestCodes.FROM_DATE) != null) {
 				try {
 					new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(requestMap.get(RequestCodes.FROM_DATE));
 				} catch (Exception ex) {
-					throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
+					throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
 							ErrorMessages.INVALID_REQUEST_DATETIME.getMessage() + "_FORMAT --> yyyy-MM-dd HH:mm:ss",
 							null);
 				}
 			} else if (key.equals(RequestCodes.TO_DATE) && (requestMap.get(RequestCodes.TO_DATE) == null
 					|| requestMap.get(RequestCodes.TO_DATE).equals(""))) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
 						ErrorMessages.INVALID_DATE.getMessage(), null);
 			} else if (key.equals(RequestCodes.TO_DATE) && requestMap.get(RequestCodes.TO_DATE) != null) {
 				try {
 					new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(requestMap.get(RequestCodes.TO_DATE));
 				} catch (Exception ex) {
-					throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
+					throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
 							ErrorMessages.INVALID_REQUEST_DATETIME.getMessage() + "_FORMAT --> yyyy-MM-dd HH:mm:ss",
 							null);
 				}
@@ -255,7 +233,7 @@ public class ValidationUtil {
 		if (reqParams.contains(langCode)) {
 			return true;
 		} else {
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_014.getCode(),
+			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_014.getCode(),
 					ErrorMessages.INVALID_LANG_CODE.getMessage(), null);
 		}
 	}
@@ -284,7 +262,7 @@ public class ValidationUtil {
 			} else {
 				log.debug("sessionId", "idType", "id",
 						"inside validateDocuments inside else preRegistrationId " + preRegistrationId);
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_017.toString(),
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_017.toString(),
 						ErrorMessages.INVALID_DOC_TYPE_CODE.getMessage() + "   " + validDocsMap + "  catcode " + catCode
 								+ " typeCode  ",
 						null);
@@ -292,7 +270,7 @@ public class ValidationUtil {
 		} else {
 			log.debug("sessionId", "idType", "id",
 					"inside validateDocuments inside second else  preRegistrationId " + preRegistrationId);
-			throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_018.toString(),
+			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_018.toString(),
 					ErrorMessages.INVALID_DOC_CAT_CODE.getMessage() + "   " + validDocsMap + "  langCode " + langCode,
 					null);
 		}
@@ -301,7 +279,7 @@ public class ValidationUtil {
 
 	public Map<String, String> getDocumentTypeNameByTypeCode(String langCode, String catCode) {
 		Map<String, String> documentTypeMap = new HashMap<>();
-		String uri = UriComponentsBuilder.fromUriString(ValidationUtil.documentTypeUri)
+		String uri = UriComponentsBuilder.fromUriString(documentTypeUri)
 				.buildAndExpand(catCode, langCode).toUriString();
 		@SuppressWarnings("unchecked")
 		ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>> responseBody = restTemplate
@@ -335,7 +313,7 @@ public class ValidationUtil {
 	public void getAllDocCategoriesAndTypes(String langcode, HttpHeaders headers) {
 		try {
 			log.debug("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes preRegistrationId ");
-			String uri = UriComponentsBuilder.fromUriString(ValidationUtil.masterdataUri).buildAndExpand(langcode)
+			String uri = UriComponentsBuilder.fromUriString(masterdataUri).buildAndExpand(langcode)
 					.toUriString();
 			HttpEntity entity = new HttpEntity<>(headers);
 			log.info("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes with url " + uri);
