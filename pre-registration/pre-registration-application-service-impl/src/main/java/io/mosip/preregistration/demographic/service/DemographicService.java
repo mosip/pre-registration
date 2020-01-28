@@ -27,6 +27,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
@@ -59,6 +60,7 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
@@ -806,11 +808,14 @@ public class DemographicService implements DemographicServiceIntf {
 	private void getDocumentServiceToDeleteAllByPreId(String preregId) {
 		log.info("sessionId", "idType", "id",
 				"In callDocumentServiceToDeleteAllByPreId method of pre-registration service ");
-		MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId = documentServiceImpl.deleteAllByPreId(preregId);
-		if (deleteAllByPreId.getErrors() != null) {
-			throw new DocumentFailedToDeleteException(deleteAllByPreId.getErrors().get(0).getErrorCode(),
-					deleteAllByPreId.getErrors().get(0).getMessage());
+		try {
+			documentServiceImpl.deleteAllByPreId(preregId);
+		} catch (RuntimeException ex) {
+			if(!((BaseUncheckedException) ex).getErrorCode().equalsIgnoreCase(ErrorCodes.PRG_PAM_DOC_005.toString())) {
+				throw ex;
+			}
 		}
+		
 	}
 
 	/**
