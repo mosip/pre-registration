@@ -33,7 +33,6 @@ import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.preregistration.batchjob.audit.AuditUtil;
 import io.mosip.preregistration.batchjob.code.ErrorCodes;
 import io.mosip.preregistration.batchjob.code.ErrorMessages;
 import io.mosip.preregistration.batchjob.entity.AvailibityEntity;
@@ -66,6 +65,7 @@ import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.NotificationException;
+import io.mosip.preregistration.core.util.AuditLogUtil;
 
 /**
  * @author Rajath Kr
@@ -136,7 +136,7 @@ public class AvailabilityUtil {
 	private BatchJpaRepositoryImpl batchServiceDAO;
 
 	@Autowired
-	private AuditUtil auditLogUtil;
+	private AuditLogUtil auditLogUtil;
 
 	/**
 	 * Autowired reference for {@link #restTemplateBuilder}
@@ -169,6 +169,24 @@ public class AvailabilityUtil {
 					if (insertedDate.isEmpty()) {
 						timeSlotCalculator(regDto, holidaylist, sDate);
 					} else if (regSlots.size() == 1) {
+						batchServiceDAO.deleteSlots(regDto.getId(), sDate);
+						timeSlotCalculator(regDto, holidaylist, sDate);
+					} else if (!insertedDate.contains(sDate)) {
+						timeSlotCalculator(regDto, holidaylist, sDate);
+					} else if (holidaylist.contains(sDate.toString())) {
+						List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO
+								.findAllPreIds(regDto.getId(), sDate);
+						if (!regBookingEntityList.isEmpty()) {
+							for (int i = 0; i < regBookingEntityList.size(); i++) {
+								if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
+										.equals(StatusCodes.BOOKED.getCode())) {
+									cancelBooking(
+											regBookingEntityList.get(i).getDemographicEntity().getPreRegistrationId(),
+											headers);
+									sendNotification(regBookingEntityList.get(i), headers);
+								}
+							}
+						}
 						batchServiceDAO.deleteSlots(regDto.getId(), sDate);
 						timeSlotCalculator(regDto, holidaylist, sDate);
 					} else {
@@ -295,23 +313,6 @@ public class AvailabilityUtil {
 								workingHoursCalculator(regSlots.get(regSlots.size() - 1).getToTime(), newEndTime,
 										regDto, sDate);
 							}
-						} else if (holidaylist.contains(sDate.toString())) {
-							List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO
-									.findAllPreIds(regDto.getId(), sDate);
-							if (!regBookingEntityList.isEmpty()) {
-								for (int i = 0; i < regBookingEntityList.size(); i++) {
-									if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
-											.equals(StatusCodes.BOOKED.getCode())) {
-										cancelBooking(regBookingEntityList.get(i).getDemographicEntity()
-												.getPreRegistrationId(), headers);
-										sendNotification(regBookingEntityList.get(i), headers);
-									}
-								}
-							}
-							batchServiceDAO.deleteSlots(regDto.getId(), sDate);
-							timeSlotCalculator(regDto, holidaylist, sDate);
-						} else if (!insertedDate.contains(sDate)) {
-							timeSlotCalculator(regDto, holidaylist, sDate);
 						}
 					}
 				}

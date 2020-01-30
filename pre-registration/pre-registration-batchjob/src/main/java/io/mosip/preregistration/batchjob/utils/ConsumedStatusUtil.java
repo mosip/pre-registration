@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.preregistration.batchjob.audit.AuditUtil;
 import io.mosip.preregistration.batchjob.entity.DemographicEntityConsumed;
 import io.mosip.preregistration.batchjob.entity.DocumentEntityConsumed;
 import io.mosip.preregistration.batchjob.entity.ProcessedPreRegEntity;
@@ -28,6 +27,7 @@ import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.AuthTokenUtil;
 
 /**
@@ -66,7 +66,7 @@ public class ConsumedStatusUtil {
 	private AuthTokenUtil tokenUtil;
 
 	@Autowired
-	AuditUtil auditLogUtil;
+	AuditLogUtil auditLogUtil;
 
 	@Value("${mosip.batch.token.authmanager.userName}")
 	private String auditUsername;
