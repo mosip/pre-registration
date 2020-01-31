@@ -46,7 +46,6 @@ import io.mosip.preregistration.login.errorcodes.ErrorMessages;
 import io.mosip.preregistration.login.exception.ConfigFileNotFoundException;
 import io.mosip.preregistration.login.exception.InvalidOtpOrUseridException;
 import io.mosip.preregistration.login.exception.InvalidateTokenException;
-import io.mosip.preregistration.login.exception.LoginServiceException;
 import io.mosip.preregistration.login.exception.SendOtpFailedException;
 import io.mosip.preregistration.login.service.LoginService;
 import io.mosip.preregistration.login.util.LoginCommonUtil;
@@ -303,7 +302,7 @@ public class LoginServiceTest {
 	  @Test
 	  public void setAuditValuesTest() {
 		  list.add("Mosip");
-		  Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any(),Mockito.any());
+		  Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any(),Mockito.anyString());
 		  Mockito.doReturn(responseEntityAudit).when(authCommonUtil).callAuthService(Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		  Mockito.when(responseEntityAudit.getHeaders()).thenReturn(headers);
 		  Mockito.when(responseEntityAudit.getBody()).thenReturn(responseWrapped);
@@ -315,7 +314,7 @@ public class LoginServiceTest {
 	  @Test
 	  public void setAuditValuesTestLoginException() {
 		  list.add("Mosip");
-		  Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any(),Mockito.any());
+		  Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any(),Mockito.anyString());
 		  Mockito.doReturn(responseEntityAudit).when(authCommonUtil).callAuthService(Mockito.any(),Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		  Mockito.when(responseEntityAudit.getHeaders()).thenReturn(headers);
 		  Mockito.when(responseEntityAudit.getBody()).thenReturn(responseWrapped);

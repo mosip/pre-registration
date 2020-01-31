@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.preregistration.batchjob.audit.AuditUtil;
 import io.mosip.preregistration.batchjob.exception.util.BatchServiceExceptionCatcher;
 import io.mosip.preregistration.batchjob.repository.utils.BatchJpaRepositoryImpl;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -22,6 +21,7 @@ import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.AuthTokenUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
 
@@ -46,7 +46,7 @@ public class ExpiredStatusUtil {
 	private BatchJpaRepositoryImpl batchServiceDAO;
 
 	@Autowired
-	AuditUtil auditLogUtil;
+	AuditLogUtil auditLogUtil;
 
 	@Autowired
 	private AuthTokenUtil tokenUtil;
