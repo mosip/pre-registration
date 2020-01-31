@@ -66,7 +66,7 @@ import io.mosip.kernel.core.idobjectvalidator.exception.IdObjectValidationFailed
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.DemographicTestApplication;
-import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
+import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;

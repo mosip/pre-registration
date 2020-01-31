@@ -33,7 +33,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.auth.adapter.handler.AuthHandler;
 import io.mosip.kernel.core.fsadapter.spi.FileSystemAdapter;
-import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
+import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.util.AuthTokenUtil;
