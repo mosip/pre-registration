@@ -21,7 +21,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
-import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
+import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
