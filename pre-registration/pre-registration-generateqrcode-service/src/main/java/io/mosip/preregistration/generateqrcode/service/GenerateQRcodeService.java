@@ -19,7 +19,6 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.generateqrcode.dto.QRCodeResponseDTO;
 import io.mosip.preregistration.generateqrcode.exception.util.QRcodeExceptionCatcher;

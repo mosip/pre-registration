@@ -23,7 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.preregistration.booking.serviceimpl.service.BookingServiceIntf;
+import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.util.RequestValidator;

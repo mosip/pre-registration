@@ -12,14 +12,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.json.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -39,8 +36,6 @@ import io.mosip.preregistration.transliteration.exception.MandatoryFieldRequired
 import io.mosip.preregistration.transliteration.exception.UnSupportedLanguageException;
 import io.mosip.preregistration.transliteration.repository.LanguageIdRepository;
 import io.mosip.preregistration.transliteration.service.TransliterationService;
-import io.mosip.preregistration.transliteration.service.util.TransliterationServiceUtil;
-import io.mosip.preregistration.transliteration.util.PreRegistrationTransliterator;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -48,12 +43,7 @@ public class TransliterationServiceTest {
 	
 	@MockBean
 	private LanguageIdRepository idRepository;
-	
-	@Autowired
-	private TransliterationServiceUtil  serviceUtil;
-	
-	@Autowired
-	private PreRegistrationTransliterator transliterator;
+
 	
 	@Autowired
 	private TransliterationService transliterationServiceImpl;
@@ -62,9 +52,6 @@ public class TransliterationServiceTest {
 	
 	JSONParser parser = new JSONParser();
 	
-	private JSONObject jsonObject;
-	private JSONObject jsonTestObject;
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 	private MainRequestDTO< TransliterationRequestDTO> requestDto=null;
 	private TransliterationRequestDTO transliterationRequest=null;
 	boolean requestValidatorFlag = false;
@@ -79,7 +66,6 @@ public class TransliterationServiceTest {
 	@Value("${mosip.pre-registration.transliteration.transliterate.id}")
 	String idUrl;
 
-	private Map<String, String> reqDateRange = new HashMap<>();
 	
 	@Before
 	public void setUp()  {
@@ -120,30 +106,11 @@ public class TransliterationServiceTest {
 		assertEquals(result.getResponse().getToFieldValue(), responseDTO.getResponse().getToFieldValue());
 		
 	}
-	
-	//@Test(expected = IllegalParamException.class)
-	public void failureTest() throws Exception{
-		
-		IllegalParamException exception = new IllegalParamException(ErrorCodes.PRG_TRL_APP_002.getCode(),
-				ErrorMessage.INCORRECT_MANDATORY_FIELDS.toString(), null);
-		Mockito.when(idRepository.findByFromLangAndToLang(Mockito.any(), Mockito.any())).thenThrow(exception);
-		TransliterationResponseDTO transliterationRequest2=new TransliterationResponseDTO();
-		transliterationRequest2.setFromFieldLang("eng");
-		transliterationRequest2.setFromFieldValue("Kishan");
-		transliterationRequest2.setToFieldLang("ara");
-		transliterationRequest2.setToFieldValue("كِسهَن");
-		requestDto=new MainRequestDTO<TransliterationRequestDTO>();
-		requestDto.setRequest(transliterationRequest);
-		transliterationServiceImpl.translitratorService(requestDto);
-	}
+
 	
 	@Test(expected=MandatoryFieldRequiredException.class)
 	public void mandatoryFieldFailTest() {
-		MandatoryFieldRequiredException exception=new MandatoryFieldRequiredException(ErrorCodes.PRG_TRL_APP_002.getCode()
-				, ErrorMessage.INCORRECT_MANDATORY_FIELDS.getMessage(),null);
-		
-		Mockito.when(idRepository.findByFromLangAndToLang(Mockito.any(), Mockito.any())).thenReturn(idEntity);
-		
+		Mockito.when(idRepository.findByFromLangAndToLang(Mockito.any(), Mockito.any())).thenReturn(idEntity);		
 		TransliterationResponseDTO transliterationRequest2=new TransliterationResponseDTO();
 		TransliterationRequestDTO request=new TransliterationRequestDTO();
 		request.setFromFieldLang("");
@@ -155,13 +122,11 @@ public class TransliterationServiceTest {
 		requestDto.setVersion("1.0");
 		requestDto.setRequest(request);
 		responseDTO.setResponse(transliterationRequest2);
-		MainResponseDTO<TransliterationResponseDTO> result=transliterationServiceImpl.translitratorService(requestDto);
+		transliterationServiceImpl.translitratorService(requestDto);
 		
 	}
 	@Test(expected=UnSupportedLanguageException.class)
 	public void unSupportedLangTest() {
-		UnSupportedLanguageException exception=new UnSupportedLanguageException(ErrorCodes.PRG_TRL_APP_008.getCode(), 
-				ErrorMessage.UNSUPPORTED_LANGUAGE.getMessage(),null);
 		Mockito.when(idRepository.findByFromLangAndToLang(Mockito.any(), Mockito.any())).thenReturn(idEntity);
 		TransliterationRequestDTO transliterationRequest=new TransliterationRequestDTO();
 		transliterationRequest=new TransliterationRequestDTO();
@@ -173,8 +138,7 @@ public class TransliterationServiceTest {
 		requestDto.setRequesttime(new Timestamp(System.currentTimeMillis()));
 		requestDto.setVersion("1.0");
 		requestDto.setRequest(transliterationRequest);
-		
-		MainResponseDTO<TransliterationResponseDTO> result=transliterationServiceImpl.translitratorService(requestDto);
+		transliterationServiceImpl.translitratorService(requestDto);
 	}
 
 	

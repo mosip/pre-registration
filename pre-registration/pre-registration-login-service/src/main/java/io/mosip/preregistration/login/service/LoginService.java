@@ -71,9 +71,6 @@ public class LoginService {
 	@Autowired
 	private LoginCommonUtil loginCommonUtil;
 
-	@Autowired
-	private Environment env;
-
 	@Value("${global.config.file}")
 	private String globalFileName;
 

@@ -17,8 +17,6 @@ import org.springframework.test.context.junit4.SpringRunner;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.transliteration.dto.TransliterationRequestDTO;
-import io.mosip.preregistration.transliteration.dto.TransliterationResponseDTO;
-import io.mosip.preregistration.transliteration.entity.LanguageIdEntity;
 import io.mosip.preregistration.transliteration.exception.MandatoryFieldRequiredException;
 import io.mosip.preregistration.transliteration.exception.MissingRequestParameterException;
 import io.mosip.preregistration.transliteration.service.TransliterationService;
@@ -53,7 +51,6 @@ public class TranslitrationExceptionTest {
 	@Autowired
 	private TransliterationService serviceImpl;
 
-	private LanguageIdEntity idEntity;
 
 	/**
 	 * Throws the InvalidRequestParameterException.

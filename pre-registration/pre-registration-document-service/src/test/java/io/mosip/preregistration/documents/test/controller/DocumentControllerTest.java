@@ -15,8 +15,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -61,7 +59,6 @@ import io.mosip.preregistration.documents.test.DocumentTestApplication;
 @AutoConfigureMockMvc
 public class DocumentControllerTest {
 
-	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	/**
 	 * Autowired reference for {@link #MockMvc}
@@ -100,10 +97,7 @@ public class DocumentControllerTest {
 
 	@MockBean
 	private DocumentServiceUtil serviceutil;
-
-	@Autowired
-	private ObjectMapper mapper;
-
+	
 	/**
 	 * Creating Mock Bean for FilesystemCephAdapterImpl
 	 */
@@ -137,7 +131,6 @@ public class DocumentControllerTest {
 				+ "\"requesttime\" : \"2018-12-28T05:23:08.019Z\",\"request\" :" + "{\"docCatCode\" "
 				+ ": \"POA\",\"docTypCode\" : \"address\",\"langCode\":\"ENG\"}}";
 
-		ObjectMapper mapper = new ObjectMapper();
 
 		response = new HashMap<String, String>();
 		response.put("DocumentId", "1");
@@ -226,14 +219,6 @@ public class DocumentControllerTest {
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 	}
 
-//	@WithUserDetails("INDIVIDUAL")
-//	@Test
-//	public void getAllDocumentforPreidTest() throws Exception {
-//		Mockito.when(service.getAllDocumentForPreId("48690172097498")).thenReturn(responseCopy);
-//		mockMvc.perform(get("/documents").contentType(MediaType.APPLICATION_JSON_VALUE)
-//				.param("preRegistrationId", "48690172097498")).andExpect(status().isOk());
-//	}
-
 
 	/**
 	 * @throws Exception
@@ -265,20 +250,6 @@ public class DocumentControllerTest {
 				.accept(MediaType.APPLICATION_JSON_VALUE).param("catCode", "POA").param("sourcePreId", "48690172097498");
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 	}
-
-//	@WithUserDetails("INDIVIDUAL")
-//	@Test
-//	public void copyDocumentTest() throws Exception {
-//		Mockito.when(service.copyDocument("POA", "48690172097498", "1234567891")).thenReturn(responseCopy);
-//		// mockMvc.perform(post("/documents/").contentType(MediaType.APPLICATION_JSON_VALUE).param("destinationPreId",
-//		// "1234567891").param("catCode", "POA").param("sourcePrId",
-//		// "48690172097498")).andExpect(status().isOk());
-//		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/documents/")
-//				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
-//				.accept(MediaType.APPLICATION_JSON_VALUE).param("preRegistrationId", "1234567891")
-//				.param("catCode", "POA").param("sourcePrId", "48690172097498");
-//		mockMvc.perform(requestBuilder).andExpect(status().isOk());
-//	}
 
 
 	/**

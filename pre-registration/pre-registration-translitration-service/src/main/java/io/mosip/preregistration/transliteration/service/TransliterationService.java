@@ -4,18 +4,11 @@
  */
 package io.mosip.preregistration.transliteration.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.transliteration.dto.TransliterationRequestDTO;
 import io.mosip.preregistration.transliteration.dto.TransliterationResponseDTO;
 import io.mosip.preregistration.transliteration.errorcode.ErrorCodes;

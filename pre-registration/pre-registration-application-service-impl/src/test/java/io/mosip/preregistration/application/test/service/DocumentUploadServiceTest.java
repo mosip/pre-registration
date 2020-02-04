@@ -290,7 +290,6 @@ public class DocumentUploadServiceTest {
 		assertEquals(responseUpload.getResponse().getDocCatCode(), responseDto.getResponse().getDocCatCode());
 	}
 
-	
 	@Test(expected = DTOMappigException.class)
 	public void mandatoryFeildNotPresentTest() throws IOException {
 		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenReturn(true);

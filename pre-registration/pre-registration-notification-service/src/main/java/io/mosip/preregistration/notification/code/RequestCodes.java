@@ -16,16 +16,15 @@ public enum RequestCodes {
 
 	/* preRegistration Id */
 	PREID(""),
-   /**
- * 
- */
-SMS("sms"),  
-/**
- * 
- */
-EMAIL("email"),
-MESSAGE("Email and sms request successfully submitted");
-	
+	/**
+	* 
+	*/
+	SMS("sms"),
+	/**
+	 * 
+	 */
+	EMAIL("email"), MESSAGE("Email and sms request successfully submitted");
+
 	/**
 	 * @param code
 	 */
