@@ -40,7 +40,6 @@ import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.preregistration.application.DemographicTestApplication;
 import io.mosip.preregistration.application.controller.DemographicController;
-import io.mosip.preregistration.booking.dto.BookingStatusDTO;
 import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -70,8 +69,7 @@ import net.minidev.json.parser.ParseException;
  * @since 1.0.0
  * 
  */
-@SpringBootTest(classes = { DemographicTestApplication.class })
-// @ContextConfiguration(classes = { DemographicTestApplication.class })
+@SpringBootTest(classes = { DemographicTestApplication.class })	
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 

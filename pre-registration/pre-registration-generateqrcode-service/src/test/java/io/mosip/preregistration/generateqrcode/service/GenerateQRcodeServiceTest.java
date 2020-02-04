@@ -124,7 +124,5 @@ public class GenerateQRcodeServiceTest {
 		Mockito.when(qrCodeGenerator.generateQrCode(null, QrVersion.V25)).thenThrow(QrcodeGenerationException.class);
 		service.generateQRCode(null);
 
-		// assertEquals(null, qrCodeResponseDTO.getResponse());
-
 	}
 }

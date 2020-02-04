@@ -306,23 +306,7 @@ public class DataSyncServiceUtilTest {
 		assertEquals(preRegIdsByRegCenterIdResponseDTO.getPreRegistrationIds().get(0), preRegIds.get(0));
 	}
 
-	// @Test(expected=DemographicGetDetailsException.class)
-	// public void demographicGetDetailsExceptionTest() {
-	// String fromDate="2018-01-17 00:00:00";
-	// String toDate="2019-01-17 00:00:00";
-	// preRegIds.add("23587986034785");
-	// MainResponseDTO mainResponseDTO=new MainResponseDTO();
-	// mainResponseDTO.setStatus(false);
-	// mainResponseDTO.setResTime(resTime);
-	// mainResponseDTO.setErr(exceptionJSONInfo);
-	// mainResponseDTO.setResponse(preRegIds);
-	// Mockito.when(restTemplateBuilder.build()).thenReturn(restTemplate);
-	// Mockito.when(restTemplate.exchange(Mockito.anyString(),
-	// Mockito.eq(HttpMethod.GET), Mockito.any(),
-	// Mockito.eq(MainResponseDTO.class))).thenReturn(null);
-	// List<String> list =serviceUtil.callGetPreIdsRestService(fromDate, toDate);
-	//
-	// }
+	
 
 	@Test
 	public void callGetDocRestServiceTest() {

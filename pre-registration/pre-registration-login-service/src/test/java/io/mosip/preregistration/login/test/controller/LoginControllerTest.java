@@ -1,6 +1,6 @@
 package io.mosip.preregistration.login.test.controller;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.FileNotFoundException;
@@ -13,11 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -33,15 +31,12 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 
-import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.login.PreRegistartionLoginApplication;
-import io.mosip.preregistration.login.config.LoginValidator;
 import io.mosip.preregistration.login.controller.LoginController;
 import io.mosip.preregistration.login.dto.OtpRequestDTO;
 import io.mosip.preregistration.login.dto.User;
@@ -69,26 +64,16 @@ public class LoginControllerTest {
 	@Autowired
 	private LoginController controller;
 
-	private HttpHeaders httpHeaders;
-
 	private AuthNResponse authNResposne;
 	
 	@Mock
 	private HttpServletResponse res;
-	
-	/** The Constant SENDOTP. */
-	private static final String SENDOTP = "sendotp";
-	
-	
-	/** The Constant VALIDATEOTP. */
-	private static final String VALIDATEOTP = "validateotp";
 
 	private MainResponseDTO<ResponseEntity<String>> serviceResponse;
 	
 	private MainRequestDTO<Object> loginRequest =new MainRequestDTO<>();
 
 	private ResponseEntity<String> responseEntity;
-
 
 
 

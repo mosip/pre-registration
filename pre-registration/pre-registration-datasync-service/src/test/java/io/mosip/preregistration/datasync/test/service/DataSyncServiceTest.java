@@ -153,49 +153,6 @@ public class DataSyncServiceTest {
 	public void setUp() throws URISyntaxException, IOException, org.json.simple.parser.ParseException, ParseException,
 			java.text.ParseException {
 
-		//spyDataSyncService = Mockito.spy(dataSyncService);
-
-		// ClassLoader classLoader = getClass().getClassLoader();
-		// JSONParser parser = new JSONParser();
-		// URI uri = new URI(
-		// classLoader.getResource("pre-registration-test.json").getFile().trim().replaceAll("\\u0020",
-		// "%20"));
-		// File jsonFileTest = new File(uri.getPath());
-		// jsonTestObject = (JSONObject) parser.parse(new FileReader(jsonFileTest));
-		// pFile = Files.readAllBytes(jsonFileTest.toPath());
-
-		// DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-		// Date date = dateFormat.parse("08/10/2018");
-		// long time = date.getTime();
-		// Timestamp times = new Timestamp(time);
-
-		// File file = new File(classLoader.getResource("Doc.pdf").getFile());
-		// uri = new
-		// URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020",
-		// "%20"));
-		// file = new File(uri.getPath());
-		// dFile = Files.readAllBytes(file.toPath());
-
-		// DocumentEntity documentEntity = new DocumentEntity(1, "75391783729406",
-		// "Doc.pdf", "address", "POA", "PDF",
-		// dFile, "Draft", "ENG", "Jagadishwari", new
-		// Timestamp(System.currentTimeMillis()), "Jagadishwari",
-		// new Timestamp(System.currentTimeMillis()));
-		//
-		// docEntityList.add(documentEntity);
-
-		// PreRegistrationEntity preRegistrationEntity = new PreRegistrationEntity();
-		// preRegistrationEntity.setCreateDateTime(times);
-		// preRegistrationEntity.setPreRegistrationId("23587986034785");
-		// userDetails.add(preRegistrationEntity);
-
-		// Date date1 = dateFormat.parse("08/10/2018");
-		// Date date2 = dateFormat.parse("01/11/2018");
-		// long time1 = date1.getTime();
-		// long time2 = date2.getTime();
-		// Timestamp from = new Timestamp(time1);
-		// Timestamp to = new Timestamp(time2);
-
 		List<String> preRegIds = new ArrayList<String>();
 		preRegIds.add("23587986034785");
 

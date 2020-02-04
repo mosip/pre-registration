@@ -6,7 +6,6 @@ package io.mosip.preregistration.transliteration.exception;
 
 import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.transliteration.errorcode.ErrorCodes;
 import lombok.Getter;
 
 /**
