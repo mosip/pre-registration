@@ -1,10 +1,7 @@
 package io.mosip.preregistration.booking.service;
 
-import java.util.Map;
 
 import org.springframework.stereotype.Service;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.BookingRequestDTO;
@@ -17,7 +14,6 @@ import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdResponseDTO;
-import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 
 @Service
 public interface BookingServiceIntf {
@@ -25,7 +21,7 @@ public interface BookingServiceIntf {
 	/**
 	 * Gives the availability details
 	 * 
-	 * @param regID
+	 * @param regID 
 	 * @return ResponseDto<AvailabilityDto>
 	 */
 	MainResponseDTO<AvailabilityDto> getAvailability(String regID);
@@ -101,10 +97,31 @@ public interface BookingServiceIntf {
 	 */
 	MainResponseDTO<DeleteBookingDTO> deleteBooking(String preregId);
 
+	/**
+	 * This Method is used to check the slot availability
+	 * 
+	 * @param bookingRequestDTO
+	 *            pass the booking details
+	 * 
+	 */
 	void checkSlotAvailability(BookingRequestDTO bookingRequestDTO);
 
+	/**
+	 * This Method is used to delete the old booking
+	 * 
+	 * @param preId
+	 *            pass the PreRegistrationId
+	 * 
+	 */
 	boolean deleteOldBooking(String preId);
 
+	/**
+	 * This Method is used to update the availability after cancel of booking
+	 * 
+	 * @param oldBooking
+	 *            pass the old Booking details
+	 * 
+	 */
 	boolean increaseAvailability(BookingRequestDTO oldBooking);
 
 	/**
@@ -125,7 +142,9 @@ public interface BookingServiceIntf {
 	 * @param fromDate
 	 *            pass fromDate*
 	 * @param toDate
-	 *            pass toDate*@return response List of Booked preRegIds
+	 *            pass toDate*
+	 * @param regCenterId        
+	 * @return MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>    
 	 ***/
 
 	MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO> getBookedPreRegistrationByDate(String fromDateStr,

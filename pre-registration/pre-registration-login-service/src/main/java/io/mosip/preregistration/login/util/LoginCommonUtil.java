@@ -70,14 +70,10 @@ public class LoginCommonUtil {
 	@Autowired
 	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate;
-
-	@Autowired
-	@Qualifier("restTemplateConfig")
-	private RestTemplate restTemplate1;
 	
 	@Autowired
 	private ValidationUtil validationUtil;
-	
+
 	/**
 	 * Logger instance
 	 */
@@ -177,30 +173,6 @@ public class LoginCommonUtil {
 				ErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
 	}
 
-	/**
-	 * This method will validate the null check for incoming request
-	 * 
-	 * @param mainRequest
-	 * @return
-	 */
-
-//	public boolean validateRequest(MainRequestDTO<?> mainRequest) {
-//		log.info("sessionId", "idType", "id", "In validateRequest method of Login Common Util");
-//		if (mainRequest.getId() == null) {
-//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_004.getCode(),
-//					ErrorMessages.INVALID_REQUEST_ID.getMessage(), null);
-//		} else if (mainRequest.getRequest() == null) {
-//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_007.getCode(),
-//					ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null);
-//		} else if (mainRequest.getRequesttime() == null) {
-//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_006.getCode(),
-//					ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), null);
-//		} else if (mainRequest.getVersion() == null) {
-//			throw new InvalidRequestParameterException(ErrorCodes.PRG_AUTH_005.getCode(),
-//					ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), null);
-//		}
-//		return true;
-//	}
 
 	/**
 	 * This method will validate the otp and userid for null values
@@ -355,7 +327,7 @@ public class LoginCommonUtil {
 		return userDetailsDto.getUserId();
 	}
 
-	private RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
 		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
 
