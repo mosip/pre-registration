@@ -324,6 +324,7 @@ public class LoginService {
 	 * @param eventType
 	 * @param description
 	 * @param idType
+	 * @param userName
 	 */
 	public void setAuditValues(String eventId, String eventName, String eventType, String description, String idType,
 			String userId, String userName) {
@@ -362,9 +363,10 @@ public class LoginService {
 	}
 
 	/**
-	 * This will return UI related configurations return
+	 * This will return UI related configurations 
+	 * 
+	 * @return response
 	 */
-
 	public MainResponseDTO<Map<String, String>> getConfig() {
 		log.info("sessionId", "idType", "id", "In login service of getConfig ");
 		MainResponseDTO<Map<String, String>> res = new MainResponseDTO<>();
@@ -398,7 +400,13 @@ public class LoginService {
 		res.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return res;
 	}
-
+	
+	
+	/**
+	 * This will refresh UI related configurations 
+	 * 
+	 * @return response
+	 */
 	public MainResponseDTO<String> refreshConfig() {
 		log.info("sessionId", "idType", "id", "In login service of refreshConfig ");
 		MainResponseDTO<String> res = new MainResponseDTO<>();

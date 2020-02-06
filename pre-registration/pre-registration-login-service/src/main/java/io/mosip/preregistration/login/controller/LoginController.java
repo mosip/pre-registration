@@ -82,9 +82,10 @@ public class LoginController {
 	private Logger log = LoggerConfiguration.logConfig(LoginController.class);
 	
 	/**
-	 * Post api to send otp
+	 * This Post api use to send otp to the user by email or sms
 	 * @param userOtpRequest
-	 * @return MainResponseDTO
+	 * @param errors
+	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/sendOtp",produces=MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Send Otp to UserId")
@@ -98,9 +99,10 @@ public class LoginController {
 		}
 	
 	/**
-	 * Post api to validate userid and otp
+	 * This Post api use to validate userid and otp
 	 * @param userIdOtpRequest
-	 * @return MainResponseDTO
+	 * @param errors
+	 * @return AuthNResponse
 	 */
 	@PostMapping(value="/validateOtp",produces=MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Validate UserId and Otp")
@@ -126,7 +128,7 @@ public class LoginController {
 	}
 	
 	/**
-	 * Post api to invalidate the token for logout.
+	 * This Post api use to invalidate the token for logout.
 	 * @param req
 	 * @return AuthNResponse
 	 */
@@ -155,7 +157,8 @@ public class LoginController {
   }
 	
 	/**
-	 *
+	 * This get api is use to load the configuration data
+	 *  
 	 * @return the response entity
 	 */
 	@GetMapping(path="/config" ,produces = MediaType.APPLICATION_JSON_VALUE)
@@ -168,6 +171,12 @@ public class LoginController {
 		
 	}
 	
+	
+	/**
+	 * This get api is use to refresh the configuration  data
+	 * 
+	 * @return the response entity
+	 */
 	@GetMapping(path="/refreshconfig" ,produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Refresh global and Pre-Registration config data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "global and Pre-Registration config data successfully updated") })

@@ -53,9 +53,10 @@ import io.mosip.preregistration.notification.exception.util.NotificationExceptio
 import io.mosip.preregistration.notification.service.util.NotificationServiceUtil;
 
 /**
- * The service class for notification.
+ * The service class contans all the method for notification.
  * 
  * @author Sanober Noor
+ * @author Tapaswini Behera
  * @since 1.0.0
  *
  */
@@ -360,7 +361,7 @@ public class NotificationService {
 	 * demographic details
 	 * 
 	 * @param notificationDto
-	 * @throws IOException
+	 * @return DemographicResponseDTO 
 	 * @throws ParseException
 	 */
 

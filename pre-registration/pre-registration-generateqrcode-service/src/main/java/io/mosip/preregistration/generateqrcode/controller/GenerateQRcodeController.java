@@ -29,7 +29,7 @@ import springfox.documentation.annotations.ApiIgnore;
  * This class provides  API's to generate the QR code operations on
  * pre-registration.
  * @author Sanober Noor
- *@since 1.0.0
+ * @since 1.0.0
  */
 @RestController
 @RequestMapping("/")
@@ -58,8 +58,9 @@ public class GenerateQRcodeController {
 	private GenerateQRcodeService service;
 	
 	/**
-	 * @param Json Stirng data
-	 * @return the response entity
+	 * @param data pass the data for generating qr code
+	 * @param errors 
+	 * @return QRCodeResponseDTO the response entity
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PostMapping(path="/generate" ,consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)

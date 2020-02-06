@@ -22,13 +22,10 @@ public interface DemographicServiceIntf {
 	 * This method is used to create the demographic data by generating the unique
 	 * PreId
 	 * 
-	 * @see
-	 * io.mosip.registration.service.RegistrationService#addPreRegistration(java.
-	 * lang.Object, java.lang.String)
 	 * 
-	 * @param demographicRequest pass demographic request
+	 * @param request pass demographic request
 	 * 
-	 * @return responseDTO
+	 * @return MainResponseDTO<DemographicCreateResponseDTO>
 	 */
 	MainResponseDTO<DemographicCreateResponseDTO> addPreRegistration(MainRequestDTO<DemographicRequestDTO> request);
 

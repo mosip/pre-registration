@@ -66,10 +66,10 @@ public class GenerateQRcodeService {
 	}
 
 	/**
-	 * This method will generate qrcode
+	 * This method will generate QR code
 	 * 
 	 * @param data
-	 * @return
+	 * @return QRCodeResponseDTO
 	 */
 	public MainResponseDTO<QRCodeResponseDTO> generateQRCode(MainRequestDTO<String> data) {
 		byte[] qrCode = null;

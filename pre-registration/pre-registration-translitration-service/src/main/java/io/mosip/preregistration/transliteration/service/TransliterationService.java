@@ -49,10 +49,6 @@ public class TransliterationService {
 	@Autowired
 	private TransliterationServiceUtil serviceUtil;
 
-	/**
-	 * This method acts as a post constructor to initialize the required request
-	 * parameters.
-	 */
 
 	/**
 	 * 
