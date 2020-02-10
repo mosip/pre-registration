@@ -281,7 +281,7 @@ public class LoginService {
 				headersMap.put("Cookie", authHeader);
 			}
 
-			String url = sendOtpResourceUrl + "/authorize/logout/user";
+			String url = sendOtpResourceUrl + "/logout/user";
 			userId = loginCommonUtil.getUserDetailsFromToken(headersMap);
 			responseEntity = (ResponseEntity<String>) loginCommonUtil.callAuthService(url, HttpMethod.DELETE,
 					MediaType.APPLICATION_JSON, null, headersMap, String.class);
