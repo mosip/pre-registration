@@ -452,7 +452,7 @@ public class AvailabilityUtil {
 	 * @return List of string
 	 */
 	public List<String> getHolidayListMasterData(RegistrationCenterDto regDto, HttpHeaders headers) {
-		log.info("sessionId", "idType", "id", "In callGetHolidayListRestService method of AvailabilityUtil");
+		log.info("sessionId", "idType", "id", "In callGetHolidayListRestService method of AvailabilityUtil for regcenter: "+regDto.getId());
 		List<String> holidaylist = null;
 		try {
 
@@ -536,8 +536,7 @@ public class AvailabilityUtil {
 			log.error("sessionId", "idType", "id",
 					"In callGetHolidayListRestService method of Booking Service Util for HttpClientErrorException- "
 							+ ex.getMessage());
-			throw new RestCallException(ErrorCodes.PRG_PAM_BAT_011.getCode(),
-					ErrorMessages.MASTER_DATA_NOT_FOUND.getMessage());
+			throw ex;
 
 		}
 		return holidaylist;
