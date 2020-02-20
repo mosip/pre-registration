@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>pre-registration-core</artifactId>
@@ -16,6 +16,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kernel.core.version>1.0.7-SNAPSHOT</kernel.core.version>
+		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
+		<kernel.logger.logback.version>1.0.6</kernel.logger.logback.version>
+		<kernel.dataaccess.hibernate.version>1.0.6</kernel.dataaccess.hibernate.version>
 	</properties>
 
 	<dependencies>
@@ -43,7 +47,7 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-templatemanager-velocity</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.templatemanager.velocity.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>dom4j</groupId>
@@ -64,12 +68,12 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-logger-logback</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.logger.logback.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-dataaccess-hibernate</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.dataaccess.hibernate.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>

@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>pre-registration-batchjob</artifactId>
@@ -16,6 +16,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
+		<pre.registration.core.version>1.0.7-SNAPSHOT</pre.registration.core.version>
 	</properties>
 	
 	<dependencyManagement>
@@ -54,12 +56,12 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>${project.version}</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 			<dependency>
 		    <groupId>io.mosip.kernel</groupId>
 		    <artifactId>kernel-auth-adapter</artifactId>
-		    <version>${kernel.core.version}</version>
+		    <version>${kernel.auth.adapter.version}</version>
 		</dependency>
 	</dependencies>
 
