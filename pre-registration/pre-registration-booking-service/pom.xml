@@ -8,12 +8,16 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
 	<name>pre-registration-booking-service</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kernel.core.version>1.0.7-SNAPSHOT</kernel.core.version>
+		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
+		<pre.registration.core.version>1.0.7-SNAPSHOT</pre.registration.core.version>
+		<pre.registration.application.service.impl.version>1.0.7-SNAPSHOT</pre.registration.application.service.impl.version>
 	</properties>
 
 	<dependencyManagement>
@@ -54,12 +58,12 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>${project.version}</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.auth.adapter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -73,7 +77,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-application-service-impl</artifactId>
-			<version>${project.version}</version>
+			<version>${pre.registration.application.service.impl.version}</version>
 		</dependency>
 	</dependencies>
 

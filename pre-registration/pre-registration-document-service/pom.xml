@@ -7,7 +7,7 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
 
@@ -16,6 +16,14 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
+		<kernel.core.version>1.0.7-SNAPSHOT</kernel.core.version>
+		<pre.registration.core.version>1.0.7-SNAPSHOT</pre.registration.core.version>
+		<pre.registration.application.service.impl.version>1.0.7-SNAPSHOT</pre.registration.application.service.impl.version>
+		<kernel.fsadapter.hdfs.version>1.0.6</kernel.fsadapter.hdfs.version>
+		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
+		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
+		<kernel.idobjectvalidator.version>1.0.7-SNAPSHOT</kernel.idobjectvalidator.version>
 	</properties>
 
 	<dependencyManagement>
@@ -42,7 +50,7 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-fsadapter-hdfs</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.fsadapter.hdfs.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -61,7 +69,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>${project.version}</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -70,17 +78,17 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-virusscanner-clamav</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.virusscanner.clamav.version}</version>
 		</dependency>
 			<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-idobjectvalidator</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.idobjectvalidator.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.auth.adapter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -94,7 +102,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-application-service-impl</artifactId>
-			<version>${project.version}</version>
+			<version>${pre.registration.application.service.impl.version}</version>
 		</dependency>
 	</dependencies>
 

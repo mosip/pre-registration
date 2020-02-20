@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>pre-registration-notification-service</artifactId>
@@ -14,6 +14,12 @@
 	<name>pre-registration-notification-service</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
+		<kernel.core.version>1.0.7-SNAPSHOT</kernel.core.version>
+		<pre.registration.core.version>1.0.7-SNAPSHOT</pre.registration.core.version>
+		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
+		<kernel.qrcodegenerator.zxing.version>1.0.6</kernel.qrcodegenerator.zxing.version>
+		<pre.registration.application.service.impl.version>1.0.7-SNAPSHOT</pre.registration.application.service.impl.version>
 	</properties>
 
 	<dependencyManagement>
@@ -34,11 +40,6 @@
 			<artifactId>spring-cloud-starter-config</artifactId>
 			<version>${spring-cloud-config.version}</version>
 		</dependency>
-		<!-- <dependency> <groupId>io.mosip.preregistration</groupId> <artifactId>pre-registration-core</artifactId> 
-			<version>${project.version}</version> <exclusions> <exclusion> <groupId>org.hibernate</groupId> 
-			<artifactId>hibernate-core</artifactId> </exclusion> <exclusion> <groupId>io.mosip.kernel</groupId> 
-			<artifactId>kernel-dataaccess-hibernate</artifactId> </exclusion> </exclusions> 
-			</dependency> -->
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
@@ -56,12 +57,12 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-templatemanager-velocity</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.templatemanager.velocity.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-qrcodegenerator-zxing</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.qrcodegenerator.zxing.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -80,18 +81,16 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>${project.version}</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
 		</dependency>
-		<!-- <dependency> <groupId>io.mosip.kernel</groupId> <artifactId>kernel-idobjectvalidator</artifactId> 
-			<version>${kernel.core.version}</version> </dependency> -->
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel.auth.adapter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -105,11 +104,8 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-application-service-impl</artifactId>
-			<version>${project.version}</version>
+			<version>${pre.registration.application.service.impl.version}</version>
 		</dependency>
-
-		<!-- <dependency> <groupId>io.mosip.kernel</groupId> <artifactId>kernel-idgenerator-prid</artifactId> 
-			<version>${kernel.core.version}</version> </dependency> -->
 		<dependency>
 			<groupId>dom4j</groupId>
 			<artifactId>dom4j</artifactId>
