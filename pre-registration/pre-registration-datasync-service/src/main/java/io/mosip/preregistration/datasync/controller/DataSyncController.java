@@ -32,9 +32,10 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 /**
- * Data Sync Controller
+ * This class provides different api to perform operation for datasync 
  * 
  * @author M1046129 - Jagadishwari
+ * @since 1.0.0
  *
  */
 @RestController
@@ -49,6 +50,9 @@ public class DataSyncController {
 	private Logger log = LoggerConfiguration.logConfig(DataSyncController.class);
 
 	/**
+	 * This POST api use to retrieve all PreRegistrationIds 
+	 * based on registration center id, from date and to date
+	 * 
 	 * @param DataSyncDTO
 	 * @return responseDto
 	 */
@@ -65,7 +69,9 @@ public class DataSyncController {
 	}
 
 	/**
-	 * @param preId
+	 * This Get api use to retrieve the details for an PreRegistrationId
+	 * 
+	 * @param preRegistrationId
 	 * @return zip file to download
 	 */
 	@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
@@ -81,6 +87,9 @@ public class DataSyncController {
 	}
 
 	/**
+	 * This POST api is used to retrieve all processed pre-registration ids 
+	 * and store in pre-registration database 
+	 * 
 	 * @param consumedData
 	 * @return response object
 	 */

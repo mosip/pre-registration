@@ -62,7 +62,8 @@ public class DocumentController {
 
 	/**
 	 * Post API to upload the document.
-	 * 
+	 * @param preRegistrationId
+	 * 			  preRegistrationId
 	 * @param reqDto
 	 *            pass documentString
 	 * @param file
@@ -94,12 +95,13 @@ public class DocumentController {
 	 * Post API to copy the document from source to destination by Preregistration
 	 * Id
 	 * 
+	 * @param preRegistrationId
+	 *            pass destination_preId
 	 * @param catCode
 	 *            pass cat_type
 	 * @param sourcePrId
 	 *            pass source_prId
-	 * @param destinationPreId
-	 *            pass destination_preId
+	 * 
 	 * @return response in a format specified in API document
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
@@ -143,7 +145,6 @@ public class DocumentController {
 	 * 
 	 * @param documentId
 	 *            pass documentId as path variable
-	 * 
 	 * @param preRegistrationId
 	 *            pass preRegistrationId as request param
 	 * @return response in a format specified in API document
@@ -168,6 +169,8 @@ public class DocumentController {
 	 * 
 	 * @param documentId
 	 *            pass documentId
+	 * @param preRegistrationId
+	 * 			  pass the preRegistratoinId           
 	 * @return response in a format specified in API document
 	 */
 
@@ -188,7 +191,7 @@ public class DocumentController {
 	/**
 	 * Delete API to delete all the documents for a preregistrationId
 	 * 
-	 * @param pre_registration_id
+	 * @param preRegistrationId
 	 *            pass preregistrationId
 	 * @return response in a format specified in API document
 	 */

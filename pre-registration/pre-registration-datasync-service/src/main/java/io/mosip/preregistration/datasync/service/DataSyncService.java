@@ -39,11 +39,12 @@ import io.mosip.preregistration.datasync.exception.util.DataSyncExceptionCatcher
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 
 /**
- * DataSync Service
+ * This class provides different service to perform operation for datasync 
  * 
  * @version 1.0.0
  * 
  * @author Jagadishwari
+ * @author Tapaswini Behera
  * @author Sanober Noor
  *
  */
@@ -110,6 +111,12 @@ public class DataSyncService {
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
+	/**
+	 * This method is use to retrieve all the preRegistratioId
+	 * 
+	 * @param dataSyncRequest
+	 * @return list of preRgistrationDto
+	 */
 	public MainResponseDTO<PreRegistrationIdsDTO> retrieveAllPreRegIds(
 			MainRequestDTO<DataSyncRequestDTO> dataSyncRequest) {
 		PreRegistrationIdsDTO preRegistrationIdsDTO = null;
@@ -161,9 +168,10 @@ public class DataSyncService {
 	}
 
 	/**
+	 * This method use to get all the details for an individual preRegistrationId
+	 * 
 	 * @param preId
-	 * @return Zipped File
-	 * @throws Exception
+	 * @return PreRegArchiveDTO contain all Zipped File
 	 */
 	public MainResponseDTO<PreRegArchiveDTO> getPreRegistrationData(String preId) {
 		MainResponseDTO<PreRegArchiveDTO> responseDto = new MainResponseDTO<>();
@@ -202,6 +210,8 @@ public class DataSyncService {
 	}
 
 	/**
+	 * This method is use to store all the consumed preRegistrationId and store it in the database
+	 * 
 	 * @param reverseDto
 	 * @return responseDTO
 	 */

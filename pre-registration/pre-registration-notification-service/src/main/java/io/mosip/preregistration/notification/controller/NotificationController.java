@@ -22,6 +22,7 @@ import io.swagger.annotations.ApiOperation;
  * Controller class for notification triggering.
  * 
  * @author Sanober Noor
+ * @author Tapaswini Behera
  * @since 1.0.0
  */
 @RestController

@@ -17,8 +17,10 @@ public enum RequestCodes {
 	/* preRegistration Id */
 	PRE_REGISTRAION_ID("preRegistrationId"),
 
+	/* Appointment Date */
 	REG_DATE("appointment_date"), 
 	
+	/* From Time Slot */
 	FROM_SLOT_TIME("time_slot_from");
 	/**
 	 * @param code

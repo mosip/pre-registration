@@ -70,24 +70,24 @@ public class DemographicController {
 	/** Autowired reference for {@link #DemographicService}. */
 	@Autowired
 	private DemographicServiceIntf preRegistrationService;
-	
+
 	@Autowired
 	private RequestValidator requestValidator;
-	
+
 	/** The Constant CREATE application. */
 	private static final String CREATE = "create";
-	
-	
+
 	/** The Constant UPADTE application. */
 	private static final String UPDATE = "update";
-	
+
 	/** The Constant for GET UPDATED DATE TIME application. */
 	private static final String UPDATEDTIME = "retrieve.date";
-	
+
 	/**
 	 * Inits the binder.
 	 *
-	 * @param binder the binder
+	 * @param binder
+	 *            the binder
 	 */
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
@@ -97,10 +97,13 @@ public class DemographicController {
 	private Logger log = LoggerConfiguration.logConfig(DemographicController.class);
 
 	/**
-	 * Post API to create a pre-registation application.
+	 * This Post API is use to create a pre-registation application for
+	 * registration.
 	 *
 	 * @param jsonObject
 	 *            the json object
+	 * @param errors
+	 *            Errors
 	 * @return List of response dto containing pre-id and group-id
 	 */
 
@@ -109,19 +112,24 @@ public class DemographicController {
 	@ApiOperation(value = "Create form data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Pre-Registration successfully Created") })
 	public ResponseEntity<MainResponseDTO<DemographicCreateResponseDTO>> register(
-			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject, @ApiIgnore Errors errors ) {
+			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject,
+			@ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration controller for add preregistration with json object" + jsonObject);
 		requestValidator.validateId(CREATE, jsonObject.getId(), errors);
-		DataValidationUtil.validate(errors,CREATE);
+		DataValidationUtil.validate(errors, CREATE);
 		return ResponseEntity.status(HttpStatus.OK).body(preRegistrationService.addPreRegistration(jsonObject));
 	}
 
 	/**
-	 * Put API to update a pre-registation application.
-	 *
+	 * This Put API use to update a pre-registation application.
+	 * 
+	 * @param preRegistrationId
+	 *            preRegistrationId
 	 * @param jsonObject
-	 *            the json object
+	 *            The json object
+	 * @param errors
+	 *            Errors
 	 * @return List of response dto containing pre-id and group-id
 	 */
 
@@ -131,12 +139,13 @@ public class DemographicController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Demographic data successfully Updated") })
 	public ResponseEntity<MainResponseDTO<DemographicUpdateResponseDTO>> update(
 			@PathVariable("preRegistrationId") String preRegistrationId,
-			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject, @ApiIgnore Errors errors) {
+			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject,
+			@ApiIgnore Errors errors) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
 		log.info("sessionId", "idType", "id",
 				"In pre-registration controller for Update preregistration with json object" + jsonObject);
 		requestValidator.validateId(UPDATE, jsonObject.getId(), errors);
-		DataValidationUtil.validate(errors,UPDATE);
+		DataValidationUtil.validate(errors, UPDATE);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.updatePreRegistration(jsonObject, preRegistrationId, userId));
 	}
@@ -144,7 +153,7 @@ public class DemographicController {
 	/**
 	 * Get API to fetch all the Pre-registration data for a pre-id.
 	 *
-	 * @param preRegId
+	 * @param preRegistraionId
 	 *            the pre reg id
 	 * @return the application data for a pre-id
 	 */
@@ -159,8 +168,7 @@ public class DemographicController {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration controller for fetching all demographic data with preregistartionId"
 						+ preRegistraionId);
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(preRegistrationService.getDemographicData(preRegistraionId));
+		return ResponseEntity.status(HttpStatus.OK).body(preRegistrationService.getDemographicData(preRegistraionId));
 	}
 
 	/**
@@ -191,8 +199,9 @@ public class DemographicController {
 	/**
 	 * Post api to fetch all the applications created by user.
 	 *
-	 * @param userId
-	 *            the user id
+	 * @param res
+	 * @param pageIdx
+	 * 
 	 * @return List of applications created by User
 	 */
 
@@ -259,9 +268,10 @@ public class DemographicController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Updated Date Time successfully fetched for list of pre-registration ids") })
 	public ResponseEntity<MainResponseDTO<Map<String, String>>> getUpdatedDateTimeByPreIds(
-			@Validated @RequestBody MainRequestDTO<PreRegIdsByRegCenterIdDTO> mainRequestDTO, @ApiIgnore Errors errors) {
+			@Validated @RequestBody MainRequestDTO<PreRegIdsByRegCenterIdDTO> mainRequestDTO,
+			@ApiIgnore Errors errors) {
 		requestValidator.validateId(UPDATEDTIME, mainRequestDTO.getId(), errors);
-		DataValidationUtil.validate(errors,UPDATEDTIME);
+		DataValidationUtil.validate(errors, UPDATEDTIME);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.getUpdatedDateTimeForPreIds(mainRequestDTO.getRequest()));
 	}

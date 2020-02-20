@@ -223,6 +223,15 @@ public class BookingService implements BookingServiceIntf {
 		return response;
 	}
 
+
+	/**
+	 * Retrieve number of holidays based on date Time, number of holidays and available slots
+	 * 
+	 * @param dateTimeList
+	 * @param noOfHoliday
+	 * @param availableEntity
+	 * @return noOfHoliday
+	 */
 	public int getSlot(List<DateTimeDto> dateTimeList, int noOfHoliday, List<AvailibityEntity> availableEntity) {
 		Map<LocalDate, List<AvailibityEntity>> result = null;
 		result = availableEntity.stream().collect(

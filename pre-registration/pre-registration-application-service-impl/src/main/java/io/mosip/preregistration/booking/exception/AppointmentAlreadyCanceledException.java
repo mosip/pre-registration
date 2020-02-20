@@ -5,8 +5,8 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
 /**
- * @author M1046129
- *
+ * @author Jagadishwari 
+ * @since 1.0.0
  */
 
 @Getter

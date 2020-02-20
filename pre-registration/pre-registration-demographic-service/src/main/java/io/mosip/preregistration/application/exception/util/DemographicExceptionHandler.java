@@ -481,8 +481,8 @@ public class DemographicExceptionHandler {
 	
 	/**
 	 * 
-	 * @param e
-	 * @return
+	 * @param InvalidRequestException e
+	 * @return ResponseEntity<MainResponseDTO<?>>
 	 */
 	@ExceptionHandler(InvalidRequestException.class)
 	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
