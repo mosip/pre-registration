@@ -93,6 +93,8 @@ The project requires JDK 1.8.
 
 # Test
 
+# APIs
+
 # Documentation
 
 MOSIP documentation is available on [Wiki](https://github.com/mosip/documentation/wiki)
