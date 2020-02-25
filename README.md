@@ -1,57 +1,102 @@
-# mosip-platform
-This repository contains the source code of the Modular Open Source Identity Platform. To know more about MOSIP, its architecture, external integrations, releases, etc., please check the [Platform Documentation](https://github.com/mosip/mosip-docs/wiki)
+# Pre-Registration 
+This repository contains the source code and design documents for MOSIP Pre-Registration module. 
 
-### Introduction
-MOSIP consists of the following modules - 
-1. `Kernel` - The Kernel module provides a bedrock to build and run services by providing several significant necessary technical functions. It contains common functionalities which are used by more than one module.
-2. `Pre-Registration` - Pre-Registration module enables individuals to book appointments in a registration centre, by providing basic demographic details.
-3. `Registration` - Registration module provides a desktop application for Registration Officers/Supervisors to register an individual in MOSIP, by capturing their demographic and biometric details. 
-4. `Registration Processor` - Registration Processor validates and processes an individual's data received from the registration module, and eventually generates a UIN (Unique Identification Number) for the individual.
-5. `ID Repository` - The ID Repository module acts as a repository of individual's data along with UIN mapped.
-6. `ID Authentication` - ID Authentication module enables a Partner to authenticate an individual.
+# Dependencies
+Pre-Registration services' dependencies are mentioned below.  For all kernel services refer to [commons repo](https://github.com/mosip/commons)
 
-### Build
-The following commands should be run in the parent project to build all the modules - 
-`mvn clean install`
-The above command can be used to build individual modules when run in their respective folders
+* pre-registration-login-service
+    *  kernel-auditmanager-service 
+    *  kernel-auth-service 
+    *  kernel-config-server 
 
-### Deploy
-The following command should be executed to run any service locally in specific profile and local configurations - 
-`java -Dspring.profiles.active=<profile> -jar <jar-name>.jar`
+* pre-registration-demographic-service
+    *  kernel-auditmanager-service.
+    *  kernel-auth-service  
+    *  kernel-config-server  
+    *  kernel-cryptomanager-service  
+    *  kernel-masterdata-service  
+    *  kernel-pridgenerator-service  
+	 
+* pre-registration-document-service
+    *  kernel-auditmanager-service 
+    *  kernel-auth-service  
+    *  kernel-config-server  
+    *  kernel-cryptomanager-service  
+    *  kernel-masterdata-service  
 
-The following command should be executed to run any service locally in specific profile and `remote` configurations - 
-`java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
+* pre-registration-booking-service
+    *  kernel-auditmanager-service  
+    *  kernel-auth-service  
+    *  kernel-config-server   
+    *  kernel-masterdata-service  
 
-The following command should be executed to run a docker image - 
-`docker run -it -p <host-port>:<container-port> -e active_profile_env={profile} -e spring_config_label_env= {branch} -e spring_config_url_env={config_server_url} <docker-registry-IP:docker-registry-port/<dcker-image>`
+* pre-registration-notification-service
+    *  kernel-auditmanager-service  
+    *  kernel-auth-service  
+    *  kernel-config-server  
+    *  kernel-cryptomanager-service  
+    *  kernel-masterdata-service  
+    *  kernel-emailnotification-service  
+    *  kernel-smsnotification-service  
 
-### Configurations
-All the configurations used by the codebase in `mosip-platform` is present in [mosip-config](https://github.com/mosip/mosip-config) repository.
+* pre-registration-datasync-service
+    *  pre-registration-demographic-service  
+    *  pre-registration-document-service  
+    *  pre-registration-booking-service  
+    *  kernel-auditmanager-service  
+    *  kernel-auth-service  
+    *  kernel-config-server  
 
-### Functional Test-cases
-Functional tests run against the codebase in `mosip-platform` is present in [mosip-functional-tests](https://github.com/mosip/mosip-functional-tests) repository.
+* pre-registration-generateqrcode-service
+    *  kernel-auditmanager-service  
+    *  kernel-auth-service
+    *  kernel-config-server  
 
-### Documentation
-Relevant documents to get started with MOSIP can be found in [mosip-docs](https://github.com/mosip/mosip-docs) repository. 
-In order to get started, please refer to the [Getting-Started](https://github.com/mosip/mosip-docs/wiki/Getting-Started) guide.
+* pre-registration-tranlitration-service
+    *  kernel-config-server   
 
-### Infra
-Automated scripts to build and deploy MOSIP modules are present in [mosip-infra](https://github.com/mosip/mosip-infra) repository.
+* pre-registration-batchjob
+     *  pre-registration-notification-service 
+     *  pre-registration-booking-service 
+     *  kernel-auditmanager-service  
+     *  kernel-auth-service  
+     *  kernel-config-server  
+     *  kernel-masterdata-service
 
+# Build
+The project requires JDK 1.8. 
+1. To build jars:
+    ```
+    $ cd pre-registration
+    $ mvn clean install 
+    ```
+1. To skip JUnit tests and Java Docs:
+    ```
+    $ mvn install -DskipTests=true -Dmaven.javadoc.skip=true
+    ```
+1. To build Dockers
+    
 
----
+# Deploy
 
-### Contribute
-You can contribute to MOSIP! 
+1. Install environ using [sandbox installer](https://githbu.com/mosip-infra/deployment/sandbox/) scripts.
 
-We want to engage constructively with the community.  If you find a **vulnerability** or issue, please file a bug with the respective repository.  We welcome pull requests with fixes too.  Please see the [Contributor Guide](https://github.com/mosip/mosip-docs/wiki/Contributor-Guide) on how to file bugs, contribute code, and more.
+1. To run a jar 
+    ```
+    `java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
+    ```
+    
+1. To run a Docker image
+    ``` 
+    $ docker run -it -p <host-port>:<container-port> -e active_profile_env={profile} -e spring_config_label_env= {branch} -e spring_config_url_env={config_server_url} <docker-registry-IP:docker-registry-port/<dcker-image>`
+    ```
 
-### License
+# Test
+
+# Documentation
+
+MOSIP documentation is available on [Wiki](https://github.com/mosip/documentation/wiki)
+
+# License
 This project is licensed under the terms of [Mozilla Public License 2.0](https://github.com/mosip/mosip-platform/blob/master/LICENSE)
-
-### Communication
-Join the [developer mailing list](https://groups.io/g/mosip-dev)
-
-
-You may also be interested in joining our community room on Gitter via [![Gitter](https://badges.gitter.im/mosip-community/community.svg)](https://gitter.im/mosip-community/community?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge)  where you could get some great community support
 
