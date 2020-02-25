@@ -2,23 +2,15 @@
 
 **Background**
 - Exposing the REST API to store the supporting documents of the citizen for a pre-registration.
-
-The target users are -
-   - Pre-Registration portal
    
 The key requirements are -
 
-- Create the APIs to store, modify, delete and retrieve the supporting document of the citizen for a pre-registration.
-
-- For each document upload it should hit the rest api to store the document in database.
-
-- There should be a copy document option in the UI prospective, Once it get checked then an REST API call should happen with source pre-registration id, destination pre-registration id and document category type, with this parameter document get copied to the destination pre-registration id in database.
-
-- Get all the documents associated with pre-registration id. 
-
-- Get particular document associated with document id. 
-
-- Delete particular document by providing the document id and pre-registration id.
+1. Create the APIs to store, modify, delete and retrieve the supporting document of the citizen for a pre-registration.
+2. For each document upload it should hit the rest api to store the document in database.
+3. There should be a copy document option in the UI prospective, Once it get checked then an REST API call should happen with source pre-registration id, destination pre-registration id and document category type, with this parameter document get copied to the destination pre-registration id in database.
+4. Get all the documents associated with pre-registration id. 
+5. Get particular document associated with document id. 
+6. Delete particular document by providing the document id and pre-registration id.
 
 
 The key non-functional requirements are
@@ -30,8 +22,7 @@ The key non-functional requirements are
 	- Compare hash while retrieving the data.
 
 -   Log the each state of the pre-registration creation:
-    -   As a security measures the Pre-Id or applicant information should
-        not be logged.
+    -   As a security measures the Pre-Id or applicant information should not be logged.
 		
 -   Audit :
     -   Each state of the document service should be stored into the DB for audit purpose.
@@ -180,12 +171,3 @@ Component Name | Module Name | Description |
   Exception Manager  |  Kernel     |       To prepare the user defined exception and render to the user.
   Log        |          Kernel         |   To log the process.
   Database Access   |    Kernel      |      To get the database connectivity
-
-
-**User Story References**
-
-  **User Story No.** |  **Reference Link** |
-  -----|----------|
-  **MOS-623**      |     <https://mosipid.atlassian.net/browse/MOS-623>
-  **MOS-626**      |     <https://mosipid.atlassian.net/browse/MOS-626>
-  **MOS-805**       |    <https://mosipid.atlassian.net/browse/MOS-805>

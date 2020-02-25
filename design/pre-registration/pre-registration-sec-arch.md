@@ -4,8 +4,5 @@
 **Introduction**
 This is the technical security flow for pre registration API access.
 
-The target users are -
-   - citizens and enrollment center employees.
-   
 ![pre-registration-technical-flow](_images/preregd_sec_arch.png)
 

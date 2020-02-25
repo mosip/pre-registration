@@ -1,35 +1,28 @@
 # Approach for Notification Service
 
 **Background**
-- Exposing the REST API to notify via SMS or email to a citizen.
+- Exposing a REST API to send notifications to citizen via SMS or Email.
 
-The target users are -
-   - Pre-Registration UI
+The key requirements are
 
-The key requirements -
-
--   Create the REST API to notify via SMS or email to a citizen while sending any notification. which internally call the kernel notification service.
+-   Create a REST API to send notifications to citizen via SMS or Email, which internally calls the kernel notification service.
 
 The key non-functional requirements are
 
--   Log the each state while sending notification to a citizen:
+-   Log : 
+	- Log the each state while sending notification to a citizen:
 
 -   Exception :
-    -   Any exception occurred during sending notification, the same will
-        be reported to the user with the user understandable exception.
+    -   Any exception occurred during sending notification, the same will be reported to the user with the user understandable exception.
 
 **Solution**
 
 **Notify :**
 
 - Create a REST API as '/notify' POST method which accept the notification details, lang code, document for attachment as a request part parameters.
-
 - notification details contains : name, pre-registration id, appointment date, appointment time, mobile number, email address and additionalRecipient.
-
 - If the additionalRecipient is false then based on the pre-registration id do the REST call to retrieve the pre-registration data, parse the ID JSON object to get the mobile number and email address out of it.
-
 - Do the REST call to retrieve the corresponding language notification templet based on requestd and lang code.
-
 - DO the REST call to the KERNEL notification service based on SMS and Email. If it is successful send the success response otherwise throw an exception. 
 
 **Class Diagram**
@@ -54,10 +47,3 @@ Component Name | Module Name | Description |
   Email Notifier | Kernel | To notify via email.
   Exception Manager  |  Kernel     |       To prepare the user defined exception and render to the user.
   Log        |          Kernel         |   To log the process.
-
-**User Story References**
-
-**User Story No.** |  **Reference Link** |
------|----------|
-**MOS-13142**      |     <https://mosipid.atlassian.net/browse/MOS-13142>
-**MOS-14510**      |      <https://mosipid.atlassian.net/browse/MOS-14510>
