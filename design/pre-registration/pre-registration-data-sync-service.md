@@ -6,17 +6,15 @@
 - Expose the API to Registration Processor will provide with the list of Pre-Registration IDs for which it wants to update Pre-Registration status.
 
 
-The target users are -
-   - Registration Client and Registration Processor
+The key requirements are:
 
-The key requirements are -
 - Create the REST API to Registration client, list of Pre-Registration IDs for which it wants to get Pre-Registration Data.
 
 - Another REST API to Registration client, they will provide Pre-Registration Id to get the pre-registration data in zipped format. which consisting of ID.json and Documents.
 
 - Create the REST API to Registration Processor will provide with the list of Pre-Registration IDs for which they consumed.
 
-The key non-functional requirements are
+The key non-functional requirements are:
 
 - Security :
     - The Pre-Registration securely share the pre-registration data to registration client.
@@ -40,17 +38,17 @@ The key non-functional requirements are
 
 2. Registration client would call the service
 
-3. the result would be fetched from DB and zipped information delivered.
+3. The result would be fetched from DB and zipped information delivered.
 
-4. security architecture would depict the security scenarios other than HTTPS.
+4. Security architecture would depict the security scenarios other than HTTPS.
 
-5. multiple clients and pre registration is source of data.
+5. Multiple clients and pre registration is source of data.
 
-6. registration client should be on-line to get the data.
+6. Registration client should be on-line to get the data.
 
-7. NO intermediate server to support mobility of registration client.
+7. No intermediate server to support mobility of registration client.
 
-8. HTTPS provides end point security.
+8. HTTPS provides end point security.
 
  
 
@@ -140,11 +138,6 @@ The key non-functional requirements are
 
 
 
-  
-  
-  
-
-
 
 **Dependency Modules**
 
@@ -154,11 +147,3 @@ Component Name | Module Name | Description |
   Exception Manager  |  Kernel     |       To prepare the user defined exception and render to the user.
   Log        |          Kernel         |   To log the process.
   Database Access   |    Kernel      |      To get the database connectivity
-
-
-**User Story References**
-
-  **User Story No.**|**Reference Link**|
-  -----|----------|
-  **MOS-668**      |     <https://mosipid.atlassian.net/browse/MOS-668>
-  **MOS-1999**       |    <https://mosipid.atlassian.net/browse/MOS-1999>
