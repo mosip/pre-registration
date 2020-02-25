@@ -86,9 +86,9 @@ The project requires JDK 1.8.
     `java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
     ```
     Example:  
-        _profile_: env   
-        _config_label_: master  
-        _config-url_: http://localhost:51000  
+        _profile_: `env`   
+        _config_label_: `master`  
+        _config-url_: `http://localhost:51000`  
 
 Refer to kernel-config-server README for details.
 
