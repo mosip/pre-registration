@@ -80,14 +80,18 @@ The project requires JDK 1.8.
 # Deploy
 
 1. Install environ using [sandbox installer](https://githbu.com/mosip-infra/deployment/sandbox/) scripts.
-
-1. Set the properites.
-
-1. To run a jar 
+1. Run kernel-config-server
+1. Run a Services jar 
     ```
     `java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
     ```
-    
+Example:
+_profile_: env 
+_config_label_: master
+_config-url_: http://localhost:51000
+
+Refer to kernel-config-server README for details.
+
 1. To run a Docker image
     ``` 
     $ docker run -it -p <host-port>:<container-port> -e active_profile_env={profile} -e spring_config_label_env= {branch} -e spring_config_url_env={config_server_url} <docker-registry-IP:docker-registry-port/<dcker-image>`
