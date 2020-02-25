@@ -81,6 +81,8 @@ The project requires JDK 1.8.
 
 1. Install environ using [sandbox installer](https://githbu.com/mosip-infra/deployment/sandbox/) scripts.
 
+1. Set the properites.
+
 1. To run a jar 
     ```
     `java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
