@@ -1,6 +1,7 @@
 # pre-registration-booking-service
 
-## [Background & Design](https://github.com/mosip/pre-registration/pre-registration-booking-service.md)
+## Design
+[Design](https://github.com/mosip/pre-registration/pre-registration-booking-service.md)
 
 ## Default Port and Context Path
 ```
