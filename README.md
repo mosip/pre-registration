@@ -89,7 +89,7 @@ The project requires JDK 1.8.
         _config_label_: `master` (git branch of config repo*)  
         _config-url_: `http://localhost:51000` (Url of the config server*)  
 	
-	*Refer to kernel-config-server README for details
+	* Refer to [kernel-config-server](https://github.com/mosip/commons/tree/master/kernel/kernel-config-server) for details
 
 
 1. Note that you will have to run the dependent Services like kernel-config-server to run any Service successfully.
