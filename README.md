@@ -79,7 +79,7 @@ The project requires JDK 1.8.
 
 # Deploy
 
-1. Install environ using [sandbox installer](https://githbu.com/mosip-infra/deployment/sandbox/) scripts.
+1. Install environ using [sandbox installer](https://githbu.com/mosip/mosip-infra/deployment/sandbox/) scripts.
 1. Run kernel-config-server
 1. Run a Services jar 
     ```
