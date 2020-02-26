@@ -78,21 +78,23 @@ The project requires JDK 1.8.
     
 
 # Deploy
+1. To run all services as Dockers using MiniKube run [sandbox installer](https://githbu.com/mosip/mosip-infra/deployment/sandbox/) scripts.
 
-1. Install environ using [sandbox installer](https://githbu.com/mosip/mosip-infra/deployment/sandbox/) scripts.
-1. Run kernel-config-server
-1. Run a Services jar 
+1. To run a Service jar individually:
     ```
     `java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
     ```
     Example:  
-        _profile_: `env`   
-        _config_label_: `master`  
-        _config-url_: `http://localhost:51000`  
+        _profile_: `env` (extension used on configuration property files*)    
+        _config_label_: `master` (git branch of config repo*)  
+        _config-url_: `http://localhost:51000` (Url of the config server*)  
+	
+	*Refer to kernel-config-server README for details
 
-Refer to kernel-config-server README for details.
 
-1. To run a Docker image
+1. Note that you will have to run the dependent Services like kernel-config-server to run any Service successfully.
+
+1. To run a Docker image individually:
     ``` 
     $ docker run -it -p <host-port>:<container-port> -e active_profile_env={profile} -e spring_config_label_env= {branch} -e spring_config_url_env={config_server_url} <docker-registry-IP:docker-registry-port/<dcker-image>`
     ```
