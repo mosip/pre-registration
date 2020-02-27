@@ -3,9 +3,12 @@ package io.mosip.preregistration.datasync.exception.util;
 import java.io.IOException;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
+import io.mosip.kernel.core.exception.BaseCheckedException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
@@ -68,6 +71,15 @@ public class DataSyncExceptionCatcher {
 		else if (ex instanceof ParseResponseException) {
 			throw new ParseResponseException(((ParseResponseException) ex).getErrorCode(), 
 					((ParseResponseException) ex).getErrorText(), mainResponsedto);
+		}
+		else {
+			if (ex instanceof BaseUncheckedException) {
+				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+						((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
+			} else if (ex instanceof BaseCheckedException) {
+				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+						((BaseCheckedException) ex).getErrorText(), mainResponsedto);
+			}
 		}
 	}
 }

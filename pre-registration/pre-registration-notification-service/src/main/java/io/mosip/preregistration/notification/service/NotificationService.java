@@ -367,7 +367,6 @@ public class NotificationService {
 
 	public MainResponseDTO<DemographicResponseDTO> getDemographicDetails(NotificationDTO notificationDto)
 			throws IOException, ParseException {
-		try {
 			MainResponseDTO<DemographicResponseDTO> responseEntity = demographicServiceIntf
 					.getDemographicData(notificationDto.getPreRegistrationId());
 			ObjectMapper mapper = new ObjectMapper();
@@ -390,15 +389,6 @@ public class NotificationService {
 						ErrorMessages.FULL_NAME_VALIDATION_EXCEPTION.getMessage(), response);
 			}
 			return responseEntity;
-		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In getDemographicDetails method of notification service - " + ex.getMessage());
-			throw new RestCallException(ErrorCodes.PRG_PAM_ACK_011.getCode(),
-					ErrorMessages.DEMOGRAPHIC_CALL_FAILED.getMessage());
-
-		}
-
 	}
 
 	/**
@@ -412,19 +402,11 @@ public class NotificationService {
 		log.info("sessionId", "idType", "id", "In getAppointmentDetailsRestService method of notification service ");
 
 		BookingRegistrationDTO bookingRegistrationDTO = null;
-		try {
 			MainResponseDTO<BookingRegistrationDTO> respEntity = bookingServiceIntf.getAppointmentDetails(preId);
 			if (respEntity.getErrors() != null) {
 				throw new BookingDetailsNotFoundException(respEntity.getErrors(), response);
 			}
 			bookingRegistrationDTO = respEntity.getResponse();
-		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In getAppointmentDetailsRestService method of notification service - " + ex.getMessage());
-			throw new RestCallException(ErrorCodes.PRG_PAM_ACK_012.getCode(),
-					ErrorMessages.BOOKING_CALL_FAILED.getMessage());
-		}
 		return bookingRegistrationDTO;
 	}
 }
