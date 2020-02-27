@@ -2,7 +2,7 @@
 This repository contains the source code and design documents for MOSIP Pre-Registration module. 
 
 # Dependencies
-Pre-Registration services' dependencies are mentioned below.  For all kernel services refer to [commons repo](https://github.com/mosip/commons)
+Pre-Registration services' dependencies are mentioned below.  For all Kernel services refer to [commons repo](https://github.com/mosip/commons)
 
 * pre-registration-login-service
     *  kernel-auditmanager-service 
