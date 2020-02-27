@@ -5,9 +5,12 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 
+import io.mosip.kernel.core.exception.BaseCheckedException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 import io.mosip.preregistration.login.errorcodes.ErrorCodes;
 import io.mosip.preregistration.login.errorcodes.ErrorMessages;
@@ -73,6 +76,15 @@ public class LoginExceptionCatcher {
 				&& serviceType.equals("postconstruct")) {
 			throw new ConfigFileNotFoundException(ErrorCodes.PRG_AUTH_012.getCode(),
 					ErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), mainResponsedto);
+		}
+		else {
+			if (ex instanceof BaseUncheckedException) {
+				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+						((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
+			} else if (ex instanceof BaseCheckedException) {
+				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+						((BaseCheckedException) ex).getErrorText(), mainResponsedto);
+			}
 		}
 
 	}

@@ -36,6 +36,7 @@ import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.generateqrcode.exception.QrCodeIOException;
 import io.mosip.preregistration.generateqrcode.exception.IllegalParamException;
@@ -151,6 +152,10 @@ public class QRcodeExceptionHandler {
 				io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(), e.getMessage());
 		errorResponse.getErrors().add(error);
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+	@ExceptionHandler(PreRegistrationException.class)
+	public ResponseEntity<MainResponseDTO<?>> commonException(final PreRegistrationException e) {
+		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
 	}
 
 	@Autowired

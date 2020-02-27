@@ -36,6 +36,7 @@ import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.login.exception.ConfigFileNotFoundException;
@@ -203,6 +204,11 @@ public class LoginExceptionHandler {
 	@ExceptionHandler(InvalidRequestException.class)
 	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDto());
+	}
+	
+	@ExceptionHandler(PreRegistrationException.class)
+	public ResponseEntity<MainResponseDTO<?>> commonException(final PreRegistrationException e) {
+		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
 	}
 
 }

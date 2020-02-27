@@ -9,11 +9,14 @@ import java.text.ParseException;
 
 import org.springframework.web.client.HttpServerErrorException;
 
+import io.mosip.kernel.core.exception.BaseCheckedException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.IllegalParamException;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.demographic.exception.RecordNotFoundException;
 import io.mosip.preregistration.notification.error.ErrorCodes;
 import io.mosip.preregistration.notification.error.ErrorMessages;
@@ -95,6 +98,15 @@ public class NotificationExceptionCatcher {
 		else if (ex instanceof RecordNotFoundException) {
 			throw new RecordNotFoundException(((RecordNotFoundException) ex).getErrorCode(),((RecordNotFoundException) ex).getErrorText());
 
+		}
+		else {
+			if (ex instanceof BaseUncheckedException) {
+				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+						((BaseUncheckedException) ex).getErrorText(), mainResponseDto);
+			} else if (ex instanceof BaseCheckedException) {
+				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+						((BaseCheckedException) ex).getErrorText(), mainResponseDto);
+			}
 		}
 	}
 

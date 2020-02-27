@@ -5,10 +5,13 @@ import java.text.ParseException;
 
 import org.json.JSONException;
 
+import io.mosip.kernel.core.exception.BaseCheckedException;
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.qrcodegenerator.exception.QrcodeGenerationException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.generateqrcode.error.ErrorCodes;
 import io.mosip.preregistration.generateqrcode.error.ErrorMessages;
 import io.mosip.preregistration.generateqrcode.exception.IllegalParamException;
@@ -54,6 +57,15 @@ public class QRcodeExceptionCatcher {
 					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(),
 					mainResponseDto);
 
+		}
+		else {
+			if (ex instanceof BaseUncheckedException) {
+				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+						((BaseUncheckedException) ex).getErrorText(), mainResponseDto);
+			} else if (ex instanceof BaseCheckedException) {
+				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+						((BaseCheckedException) ex).getErrorText(), mainResponseDto);
+			}
 		}
 	}
 

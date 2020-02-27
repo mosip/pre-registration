@@ -35,6 +35,7 @@ import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 import io.mosip.preregistration.core.exception.IllegalParamException;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.notification.exception.BookingDetailsNotFoundException;
 import io.mosip.preregistration.notification.exception.DemographicDetailsNotFoundException;
@@ -227,5 +228,10 @@ public class NotificationExceptionHandler {
 	@ExceptionHandler(InvalidRequestException.class)
 	public ResponseEntity<MainResponseDTO<?>> invalidRequestException(final InvalidRequestException e) {
 		return GenericUtil.errorResponse(e, e.getMainResponseDto());
+	}
+	
+	@ExceptionHandler(PreRegistrationException.class)
+	public ResponseEntity<MainResponseDTO<?>> commonException(final PreRegistrationException e) {
+		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
 	}
 }
