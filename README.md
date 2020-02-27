@@ -103,8 +103,10 @@ The project requires JDK 1.8.
     ```
 
 # Test
+Automated functaionl tests available in [Functional Tests repo](https://github.com/mosip/mosip-functional-tests)
 
 # APIs
+API documentation available on Wiki: [Pre-Registration APIs](https://github.com/mosip/documentation/wiki/Pre-Registration)
 
 # Documentation
 
