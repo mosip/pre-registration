@@ -95,8 +95,7 @@ The project requires JDK 1.8.
 	\* Refer to [kernel-config-server](https://github.com/mosip/commons/tree/master/kernel/kernel-config-server) for details
 
 
-1. Note that you will have to run the dependent Services like kernel-config-server to run any Service successfully.
-
+1. Note that you will have to run the dependent services like kernel-config-server to run any service successfully.
 1. To run a Docker image individually:
     ``` 
     $ docker run -it -p <host-port>:<container-port> -e active_profile_env={profile} -e spring_config_label_env= {branch} -e spring_config_url_env={config_server_url} <docker-registry-IP:docker-registry-port/<dcker-image>`
