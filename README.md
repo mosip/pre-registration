@@ -74,8 +74,11 @@ The project requires JDK 1.8.
     ```
     $ mvn install -DskipTests=true -Dmaven.javadoc.skip=true
     ```
-1. To build Dockers
-    
+1. To build Docker for a service:
+    ```
+    $ cd <service folder>
+    $ docker build -f Dockerfile
+    ```
 
 # Deploy
 1. To run all services as Dockers using MiniKube run [sandbox installer](https://githbu.com/mosip/mosip-infra/deployment/sandbox/) scripts.
