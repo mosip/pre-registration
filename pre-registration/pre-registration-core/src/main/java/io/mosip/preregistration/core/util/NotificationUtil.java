@@ -2,9 +2,7 @@ package io.mosip.preregistration.core.util;
 
 import java.io.IOException;
 import java.util.Date;
-import java.util.Optional;
 
-import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -106,7 +104,7 @@ public class NotificationUtil {
 			doc = new HttpEntity<>(file.getBytes(), pdfHeaderMap);
 		}
 
-		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp= null;
+		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		String merseTemplate = null;
 		if (acknowledgementDTO.getIsBatch()) {
