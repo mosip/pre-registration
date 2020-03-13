@@ -131,10 +131,7 @@ public class NotificationUtil {
 					new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 					});
 		} catch (RestClientException e) {
-			if (resp.getBody().getErrors() != null) {
-				throw new RestCallException(resp.getBody().getErrors().get(0).getErrorCode(),
-						resp.getBody().getErrors().get(0).getErrorCode());
-			}
+			throw new RestCallException(e.getMessage(), e.getCause());
 		}
 
 		NotificationResponseDTO notifierResponse = new NotificationResponseDTO();
