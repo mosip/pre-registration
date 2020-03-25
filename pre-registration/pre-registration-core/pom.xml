@@ -9,6 +9,8 @@
 		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
+	<version>1.0.7-SNAPSHOT</version>
+
 	<artifactId>pre-registration-core</artifactId>
 
 	<name>pre-registration-core</name>

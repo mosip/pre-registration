@@ -11,6 +11,8 @@
 		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
+	<version>1.0.7-SNAPSHOT</version>
+
 	<name>pre-registration-booking-service</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
