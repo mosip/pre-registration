@@ -9,6 +9,8 @@
 		<version>1.0.7-SNAPSHOT</version>
 	</parent>
 
+	<version>1.0.7-SNAPSHOT</version>
+
 	<artifactId>pre-registration-notification-service</artifactId>
 
 	<name>pre-registration-notification-service</name>
