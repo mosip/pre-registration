@@ -6,10 +6,10 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.7-SNAPSHOT</version>
+		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.7-SNAPSHOT</version>
+	<version>1.0.7</version>
 
 	<artifactId>pre-registration-datasync-service</artifactId>
 	<name>pre-registration-datasync-service</name>
@@ -19,7 +19,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<pre.registration.core.version>1.0.7-SNAPSHOT</pre.registration.core.version>
+		<pre.registration.core.version>1.0.7</pre.registration.core.version>
 		<kernel.crypto.signature.version>1.0.6</kernel.crypto.signature.version>
 	</properties>
 
