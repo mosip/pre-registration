@@ -5,23 +5,23 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.7-SNAPSHOT</version>
+		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.7-SNAPSHOT</version>
+	<version>1.0.7</version>
 
 	<artifactId>pre-registration-application-service-impl</artifactId>
 	<name>pre-registration-application-service-impl</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.core.version>1.0.7-SNAPSHOT</kernel.core.version>
+		<kernel.core.version>1.0.7</kernel.core.version>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.fsadapter.hdfs.version>1.0.6</kernel.fsadapter.hdfs.version>
 		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
-		<kernel.idobjectvalidator.version>1.0.7-SNAPSHOT</kernel.idobjectvalidator.version>
-		<pre.registration.core.version>1.0.7-SNAPSHOT</pre.registration.core.version>
+		<kernel.idobjectvalidator.version>1.0.7</kernel.idobjectvalidator.version>
+		<pre.registration.core.version>1.0.7</pre.registration.core.version>
 	</properties>
 
 	<dependencyManagement>
