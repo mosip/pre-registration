@@ -1,6 +1,65 @@
 # Pre-Registration 
 This repository contains the source code and design documents for MOSIP Pre-Registration module. 
 
+# RestTemplete Dependencies
+
+* pre-registration-booking-service
+	* ${notification.service.env}/${notification.service.version}/${notification.service.contextpath}/notification
+	* ${masterdata.resource.url}/registrationcenters
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	* ${audit.service.env}/${masterdata.service.version}/${audit.service.contextpath}/audits
+	
+* pre-registration-datasync-service
+	* ${booking.service.env}/${booking.service.contextpath}
+	* ${document.service.env}/${document.service.contextpath}
+	* ${demographic.service.env}/${demographic.service.contextpath}
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	* ${audit.service.env}/${masterdata.service.version}/${audit.service.contextpath}/audits
+
+* pre-registration-demographic-service
+	* ${spring.cloud.config.uri}/${spring.application.name}/${spring.profiles.active}/${spring.cloud.config.label}/
+	* ${kernel.prid.env}/${masterdata.service.version}/${kernel.prid.contextpath}/prid
+	* ${audit.service.env}/${masterdata.service.version}/${audit.service.contextpath}/audits
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	
+* pre-registration-document-service
+	* ${crypto.service.env}/${masterdata.service.version}/${crypto.service.contextpath}
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	* ${kernel.auth.env}/${masterdata.service.version}/${kernel.auth.contextpath}/authenticate/clientidsecretkey
+
+* pre-registration-generateqrcode-service
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	
+* pre-registration-login-service
+	* ${kernel.auth.env}/${masterdata.service.version}/${kernel.auth.contextpath}
+	* ${spring.cloud.config.uri}/${spring.application.name}/${spring.profiles.active}/${spring.cloud.config.label}/
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	* ${audit.service.env}/${masterdata.service.version}/${audit.service.contextpath}/audits
+
+* pre-registration-notification-service
+	* ${email.service.env}/${masterdata.service.version}/${email.service.contextpath}/email/send
+	* ${sms.service.env}/${masterdata.service.version}/${sms.service.contextpath}/sms/send
+	* ${audit.service.env}/${masterdata.service.version}/${audit.service.contextpath}/audits
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	* ${masterdata.resource.url}/templates
+	
+* pre-registration-core
+	* ${audit.service.env}/${masterdata.service.version}/${audit.service.contextpath}/audits
+	* ${kernel.auth.env}/${masterdata.service.version}/${kernel.auth.contextpath}/authenticate/clientidsecretkey
+	* ${crypto.service.env}/${masterdata.service.version}/${crypto.service.contextpath}
+	* ${email.service.env}/${masterdata.service.version}/${email.service.contextpath}/email/send
+	* ${sms.service.env}/${masterdata.service.version}/${sms.service.contextpath}/sms/send
+	* ${masterdata.resource.url}/templates
+	* ${masterdata.resource.url}/documenttypes/{documentcategorycode}/{langcode}
+	* ${masterdata.resource.url}/validdocuments/{langcode}
+	
 # Dependencies
 Pre-Registration services' dependencies are mentioned below.  For all Kernel services refer to [commons repo](https://github.com/mosip/commons)
 
