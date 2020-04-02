@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -153,6 +154,12 @@ public class DataSyncServiceUtil {
 	@Value("${mosip.utc-datetime-pattern}")
 	private String dateTimeFormat;
 
+	@Value("${version:1.0}")
+	private String version;
+
+	@Value("${moispDemographicRequestId:mosip.pre-registration.demographic.retrieve.date}")
+	private String moispDemographicRequestId;
+
 	/**
 	 * Autowired reference for {@link #ValidationUtil}
 	 */
@@ -172,8 +179,7 @@ public class DataSyncServiceUtil {
 	/**
 	 * This method is used to validate data sync request parameters
 	 * 
-	 * @param dataSyncRequest
-	 *            object
+	 * @param dataSyncRequest object
 	 * @param mainResponseDTO
 	 * @return true or false
 	 */
@@ -488,11 +494,9 @@ public class DataSyncServiceUtil {
 	/**
 	 * This method is used to set the JSON values to RequestCodes constants.
 	 * 
-	 * @param demographicData
-	 *            pass demographicData
+	 * @param demographicData pass demographicData
 	 * @return values from JSON
-	 * @throws ParseException
-	 *             On json Parsing Failed
+	 * @throws ParseException On json Parsing Failed
 	 * 
 	 */
 
@@ -707,6 +711,9 @@ public class DataSyncServiceUtil {
 		Map<String, String> response = null;
 		try {
 			MainRequestDTO<PreRegIdsByRegCenterIdDTO> mainRequestDTO = new MainRequestDTO<>();
+			mainRequestDTO.setId(moispDemographicRequestId);
+			mainRequestDTO.setVersion(version);
+			mainRequestDTO.setRequesttime(new Date());
 			mainRequestDTO.setRequest(preRegIdsDTO);
 			UriComponentsBuilder builder = UriComponentsBuilder
 					.fromHttpUrl(demographicResourceUrl + "/applications/updatedTime");
