@@ -18,7 +18,6 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.core.version>1.0.7-SNAPSHOT</kernel.core.version>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.logger.logback.version>1.0.6</kernel.logger.logback.version>
 		<kernel.dataaccess.hibernate.version>1.0.6</kernel.dataaccess.hibernate.version>
@@ -44,7 +43,7 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-core</artifactId>
-			<version>${kernel.core.version}</version>
+			<version>${kernel-core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
