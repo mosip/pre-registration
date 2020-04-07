@@ -91,5 +91,10 @@
 			<artifactId>kernel-idobjectvalidator</artifactId>
 			<version>${kernel.idobjectvalidator.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>io.mosip.kernel</groupId>
+			<artifactId>kernel-auth-adapter</artifactId>
+			<version>${kernel-auth-adapter.version}</version>
+		</dependency>
 	</dependencies>
 </project>
