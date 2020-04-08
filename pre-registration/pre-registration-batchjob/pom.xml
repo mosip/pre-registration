@@ -19,7 +19,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<pre.registration.core.version>1.0.7</pre.registration.core.version>
 	</properties>
 	
 	<dependencyManagement>
