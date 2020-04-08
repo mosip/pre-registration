@@ -10,7 +10,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.7</version>
+	<version>1.0.8-SNAPSHOT</version>
 
 	<artifactId>pre-registration-demographic-service</artifactId>
 	<name>pre-registration-demographic-service</name>
@@ -18,7 +18,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<pre.registration.core.version>1.0.7</pre.registration.core.version>
 		<pre.registration.application.service.impl.version>1.0.7</pre.registration.application.service.impl.version>
 	</properties>
 
