@@ -9,7 +9,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.7</version>
+	<version>1.0.8-SNAPSHOT</version>
 
 	<artifactId>pre-registration-notification-service</artifactId>
 
@@ -17,8 +17,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<kernel.core.version>1.0.7</kernel.core.version>
-		<pre.registration.core.version>1.0.7</pre.registration.core.version>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.0.6</kernel.qrcodegenerator.zxing.version>
 		<pre.registration.application.service.impl.version>1.0.7</pre.registration.application.service.impl.version>

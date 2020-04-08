@@ -11,13 +11,12 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.7</version>
+	<version>1.0.8-SNAPSHOT</version>
 
 	<name>pre-registration-booking-service</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.core.version>1.0.7</kernel.core.version>
-		<pre.registration.core.version>1.0.7</pre.registration.core.version>
+		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<pre.registration.application.service.impl.version>1.0.7</pre.registration.application.service.impl.version>
 	</properties>
 
@@ -64,7 +63,7 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel-auth-adapter.version}</version>
+			<version>${kernel.auth.adapter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -104,4 +103,3 @@
 	</build>
 
 </project>
-

@@ -9,7 +9,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.7</version>
+	<version>1.0.8-SNAPSHOT</version>
 
 	<artifactId>pre-registration-core</artifactId>
 
@@ -43,7 +43,7 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-core</artifactId>
-			<version>${kernel-core.version}</version>
+			<version>${kernel.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
