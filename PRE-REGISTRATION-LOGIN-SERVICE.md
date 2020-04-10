@@ -34,5 +34,5 @@ This service details used by Pre-Registration portal to authenticate user by sen
 | ------------- | ------------- | ------------- |
 | commons/kernel | kernel-auth-service| /authorize/validateToken |
 | commons/kernel  | kernel-masterdata-service  | /documenttypes/{documentcategorycode}/{langcode}|
-| commons/kernel |  | /validdocuments/{languagecode} |
+|  |  | /validdocuments/{languagecode} |
 | commons/kernel | kernel-auditmanager-service | /audits |
