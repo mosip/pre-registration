@@ -16,6 +16,7 @@
 	<name>pre-registration-notification-service</name>
 	<properties>
 		<pre.registration.core.version>1.0.8-SNAPSHOT</pre.registration.core.version>
+		<kernel.core.version>1.0.8-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
