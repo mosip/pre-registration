@@ -1,68 +1,6 @@
 # Pre-Registration 
 This repository contains the source code and design documents for MOSIP Pre-Registration module. 
 
-# Dependencies
-Pre-Registration services' dependencies are mentioned below.  For all Kernel services refer to [commons repo](https://github.com/mosip/commons)
-
-* pre-registration-login-service
-    *  kernel-auditmanager-service 
-    *  kernel-auth-service 
-    *  kernel-config-server 
-
-* pre-registration-demographic-service
-    *  kernel-auditmanager-service.
-    *  kernel-auth-service  
-    *  kernel-config-server  
-    *  kernel-cryptomanager-service  
-    *  kernel-masterdata-service  
-    *  kernel-pridgenerator-service  
-	 
-* pre-registration-document-service
-    *  kernel-auditmanager-service 
-    *  kernel-auth-service  
-    *  kernel-config-server  
-    *  kernel-cryptomanager-service  
-    *  kernel-masterdata-service  
-
-* pre-registration-booking-service
-    *  kernel-auditmanager-service  
-    *  kernel-auth-service  
-    *  kernel-config-server   
-    *  kernel-masterdata-service  
-
-* pre-registration-notification-service
-    *  kernel-auditmanager-service  
-    *  kernel-auth-service  
-    *  kernel-config-server  
-    *  kernel-cryptomanager-service  
-    *  kernel-masterdata-service  
-    *  kernel-emailnotification-service  
-    *  kernel-smsnotification-service  
-
-* pre-registration-datasync-service
-    *  pre-registration-demographic-service  
-    *  pre-registration-document-service  
-    *  pre-registration-booking-service  
-    *  kernel-auditmanager-service  
-    *  kernel-auth-service  
-    *  kernel-config-server  
-
-* pre-registration-generateqrcode-service
-    *  kernel-auditmanager-service  
-    *  kernel-auth-service
-    *  kernel-config-server  
-
-* pre-registration-tranlitration-service
-    *  kernel-config-server   
-
-* pre-registration-batchjob
-     *  pre-registration-notification-service 
-     *  pre-registration-booking-service 
-     *  kernel-auditmanager-service  
-     *  kernel-auth-service  
-     *  kernel-config-server  
-     *  kernel-masterdata-service
-
 # Build
 The project requires JDK 1.8. 
 1. To build jars:
