@@ -9,7 +9,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.7</version>
+	<version>1.0.8</version>
 
 	<artifactId>pre-registration-datasync-service</artifactId>
 	<name>pre-registration-datasync-service</name>
@@ -18,7 +18,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
-		<pre.registration.core.version>1.0.7</pre.registration.core.version>
+		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.crypto.signature.version>1.0.6</kernel.crypto.signature.version>
 	</properties>
 
@@ -64,7 +64,7 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel-auth-adapter.version}</version>
+			<version>${kernel.auth.adapter.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -101,4 +101,3 @@
 	</build>
 
 </project>
-

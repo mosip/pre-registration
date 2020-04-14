@@ -1,6 +1,7 @@
 package io.mosip.preregistration.core.util;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -16,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.kernel.core.util.TokenHandlerUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.LoginUser;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
@@ -43,15 +45,40 @@ public class AuthTokenUtil {
 	String userName;
 	@Value("${mosip.batch.token.authmanager.password}")
 	String password;
+	
+	@Value("${auth-token-generator.rest.issuerUrl}")
+	String issuerUrl;
 
 	@Value("${version}")
 	String version;
+	
+	
+	private volatile String authToken;
 
 	private Logger log = LoggerConfiguration.logConfig(AuthTokenUtil.class);
 
 	public HttpHeaders getTokenHeader() {
-
 		HttpHeaders headers = new HttpHeaders();
+		Optional<String> newAuthToken = getAuthToken();
+		newAuthToken.ifPresent(token -> headers.set("Cookie",token));
+		return headers;
+	}
+
+	private synchronized Optional<String> getAuthToken() {
+		if(authToken == null || !isValidAuthToken(authToken)) {
+			Optional<String> newAuthToken = getNewAuthToken();
+			if(newAuthToken.isPresent()) {
+				authToken = newAuthToken.get();
+			}
+		}
+		return Optional.ofNullable(authToken);
+	}
+
+	private boolean isValidAuthToken(String authToken) { 
+		return TokenHandlerUtil.isValidBearerToken(authToken, issuerUrl, userName);
+	}
+
+	private Optional<String> getNewAuthToken() {
 		try {
 			/* Get the token from auth-manager service */
 			LoginUser loginUser = new LoginUser();
@@ -82,13 +109,13 @@ public class AuthTokenUtil {
 			}
 			/* Call to availability sync Util */
 
-			headers.set("Cookie", tokenResponse.getHeaders().get("Set-Cookie").get(0));
+			return Optional.ofNullable(tokenResponse.getHeaders().get("Set-Cookie").get(0));
 
 		} catch (Exception e) {
 			log.error("Sync master ", " Tasklet ", " encountered exception ", e.getMessage());
 			throw e;
 		}
-		return headers;
+		
 	}
 
 }

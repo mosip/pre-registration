@@ -9,15 +9,16 @@
 		<version>1.0.6</version>
 	</parent>
 
-  <version>1.0.7</version>
+  <version>1.0.8</version>
 
   <artifactId>pre-registration-translitration-service</artifactId>
 	<name>pre-registration-translitration-service</name>
 
 
   <properties>
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <pre.registration.core.version>1.0.7</pre.registration.core.version>
+    	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+ 	<pre.registration.core.version>1.0.8</pre.registration.core.version>
+	<kernel.core.version>1.0.8</kernel.core.version>
   </properties>
   
   <dependencyManagement>
@@ -59,7 +60,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>${pre.registration.core.version}</version>
+			<version>1.0.8</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.ibm.icu</groupId>
