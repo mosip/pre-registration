@@ -10,7 +10,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.8-SNAPSHOT</version>
+	<version>1.0.8</version>
 
 	<artifactId>pre-registration-document-service</artifactId>
 	<name>pre-registration-document-service</name>
