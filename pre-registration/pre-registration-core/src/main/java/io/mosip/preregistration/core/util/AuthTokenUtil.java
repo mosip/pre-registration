@@ -74,6 +74,7 @@ public class AuthTokenUtil {
 		return Optional.ofNullable(authToken);
 	}
 
+
 	private boolean isValidAuthToken(String authToken) {
 		try {
 			return TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""), issuerUrl, userName);
@@ -81,7 +82,7 @@ public class AuthTokenUtil {
             log.info("sessionId", "idType", "id", "Error in Validate Token offline: " + e.getMessage());
 			return false;
 		}
-	}
+
 
 	private Optional<String> getNewAuthToken() {
 		try {
