@@ -81,7 +81,7 @@
 			<artifactId>kernel-crypto-signature</artifactId>
 			<version>${kernel.crypto.signature.version}</version>
 		</dependency>
-<dependency>
+		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
