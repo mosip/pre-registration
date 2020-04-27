@@ -81,7 +81,11 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+<<<<<<< HEAD
          <dependency>
+=======
+		<dependency>
+>>>>>>> 1.0.9-Add promotheus dependency (#43)
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
