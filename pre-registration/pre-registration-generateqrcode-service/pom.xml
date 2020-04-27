@@ -8,7 +8,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 
 	<artifactId>pre-registration-generateqrcode-service</artifactId>
 
@@ -20,6 +20,7 @@
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.0.6</kernel.qrcodegenerator.zxing.version>
+		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
 	<dependencies>
@@ -95,6 +96,16 @@
 			<artifactId>spring-security-test</artifactId>
 			<version>${spring.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-core</artifactId>
+			<version>${io.micrometer.prometheus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<version>${io.micrometer.prometheus.version}</version>
 		</dependency>
 	</dependencies>
 
