@@ -9,7 +9,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.8</version>
+	<version>1.0.9-SNAPSHOT</version>
 
 	<artifactId>pre-registration-datasync-service</artifactId>
 	<name>pre-registration-datasync-service</name>
@@ -20,6 +20,7 @@
 		<java.version>1.8</java.version>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.crypto.signature.version>1.0.6</kernel.crypto.signature.version>
+        <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
 	<dependencyManagement>
@@ -80,7 +81,16 @@
 			<artifactId>kernel-crypto-signature</artifactId>
 			<version>${kernel.crypto.signature.version}</version>
 		</dependency>
-
+<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-core</artifactId>
+			<version>${io.micrometer.prometheus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<version>${io.micrometer.prometheus.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

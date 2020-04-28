@@ -9,7 +9,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-  <version>1.0.8</version>
+  <version>1.0.9-SNAPSHOT</version>
 
   <artifactId>pre-registration-translitration-service</artifactId>
 	<name>pre-registration-translitration-service</name>
@@ -19,6 +19,7 @@
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
  	<pre.registration.core.version>1.0.8</pre.registration.core.version>
 	<kernel.core.version>1.0.8</kernel.core.version>
+    <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
   </properties>
   
   <dependencyManagement>
@@ -66,6 +67,16 @@
 		    <groupId>com.ibm.icu</groupId>
 		    <artifactId>icu4j</artifactId>
 		    <version>${icu.version}</version>
+		</dependency>
+        	<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-core</artifactId>
+			<version>${io.micrometer.prometheus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus</artifactId>
+			<version>${io.micrometer.prometheus.version}</version>
 		</dependency>
   </dependencies>
   <build>
