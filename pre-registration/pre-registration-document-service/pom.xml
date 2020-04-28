@@ -23,7 +23,7 @@
 		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
 		<kernel.idobjectvalidator.version>1.0.7</kernel.idobjectvalidator.version>
-		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+        <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
 	<dependencyManagement>
@@ -104,7 +104,7 @@
 			<artifactId>pre-registration-application-service-impl</artifactId>
 			<version>${pre.registration.application.service.impl.version}</version>
 		</dependency>
-		<dependency>
+        <dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
@@ -114,6 +114,7 @@
 			<artifactId>micrometer-registry-prometheus</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
 		</dependency>
+	</dependencies>
 	</dependencies>
 
 	<build>
