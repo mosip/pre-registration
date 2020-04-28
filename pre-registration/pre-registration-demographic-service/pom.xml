@@ -10,7 +10,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.9-SNAPSHOT</version>
+	<version>1.0.8</version>
 
 	<artifactId>pre-registration-demographic-service</artifactId>
 	<name>pre-registration-demographic-service</name>
@@ -19,7 +19,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<pre.registration.application.service.impl.version>1.0.7</pre.registration.application.service.impl.version>
-		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
 	<dependencyManagement>
@@ -80,16 +79,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-core</artifactId>
-			<version>${io.micrometer.prometheus.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-			<version>${io.micrometer.prometheus.version}</version>
 		</dependency>
 
 	</dependencies>
