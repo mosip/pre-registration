@@ -28,4 +28,5 @@ test.txt
 .recommenders/
 /.recommenders/
 **/*.iml
+**/META-INF/
 .vscode

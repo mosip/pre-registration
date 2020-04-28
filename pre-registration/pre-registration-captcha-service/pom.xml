@@ -1,348 +1,79 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<?xml version="1.0"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-
-	<groupId>io.mosip.preregistration</groupId>
-	<artifactId>pre-registration-parent</artifactId>
-	<version>1.0.6</version>
-	<packaging>pom</packaging>
-
-	<name>pre-registration</name>
-	<description>Parent project of MOSIP Pre-Registration</description>
-	<url>https://github.com/mosip/pre-registration</url>
-	
-	<licenses>
-          <license>
-                <name>MPL 2.0</name>
-                <url>https://www.mozilla.org/en-US/MPL/2.0/</url>
-          </license>
-        </licenses>
-	
-	 <scm>
-                <connection>scm:git:git://github.com/mosip/pre-registration.git</connection>
-                <developerConnection>scm:git:ssh://github.com:mosip/pre-registration.git</developerConnection>
-                <url>https://github.com/mosip/pre-registration</url>
-                <tag>HEAD</tag>
-        </scm>
-	
-	<developers>
-                <developer>
-                  <name>Mosip</name>
-                  <email>mosip.emailnotifier@gmail.com</email>
-                  <organization>io.mosip</organization>
-                  <organizationUrl>https://github.com/mosip/pre-registration</organizationUrl>
-                </developer>
-        </developers>
-	
-	<distributionManagement>
-                <snapshotRepository>
-                        <id>ossrh</id>
-                        <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-                </snapshotRepository>
-                <repository>
-                        <id>ossrh</id>
-                        <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-                </repository>
-        </distributionManagement>
+	<parent>
+		<groupId>io.mosip.preregistration</groupId>
+		<artifactId>pre-registration-parent</artifactId>
+		<version>1.0.6</version>
+	</parent>
+	<groupId>io.mosip.preregistration.captcha</groupId>
+	<artifactId>pre-registration-captcha-service</artifactId>
+	<version>1.0.9</version>
+	<name>pre-registration-captcha-service</name>
+	<description>A pre-registration service to generate and validate captcha</description>
 
 	<properties>
-		<pre.registration.core.version>1.0.8</pre.registration.core.version>
-		<kernel.core.version>1.0.8</kernel.core.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.version>3.7.0</maven.compiler.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<maven.compiler.version>3.7.0</maven.compiler.version>
+		<java.version>1.8</java.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
-		<maven.surefire.plugin.version>2.9</maven.surefire.plugin.version>
-		<maven.jacoco.plugin.version>0.8.1</maven.jacoco.plugin.version>
-		<maven.sonar.plugin.version>3.2</maven.sonar.plugin.version>
-		<maven.javadoc.version>3.0.1</maven.javadoc.version>
-
-		<!-- Core -->
-		<spring.version>5.0.4.RELEASE</spring.version>
-		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
-		<spring.data.version>2.0.9.RELEASE</spring.data.version>
-		<spring-cloud-config.version>2.0.0.RELEASE</spring-cloud-config.version>
-
-		<!-- Miscellaneous -->
-		<javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
-		<jackson.version>2.9.5</jackson.version>
-
-		<!-- Swagger -->
-		<swagger.version>2.9.2</swagger.version>
-
-		<!-- Data Access -->
-		<eclipselink.version>2.5.0</eclipselink.version>
-		<mysql.connector.version>5.1.46</mysql.connector.version>
-		<h2.version>1.4.197</h2.version>
-		<postgresql.version>42.2.2</postgresql.version>
-
-		<!-- For Cache -->
-		<ignite.version>2.3.0</ignite.version>
-		<apache.httpclient.version>4.5.6</apache.httpclient.version>
-
-		<!-- Support tools & utilities -->
-		<commons-math3>3.6.1</commons-math3>
-		<commons-lang3>3.7</commons-lang3>
-		<commons.beanutils.version>1.9.2</commons.beanutils.version>
-		<commons.configuration2.version>2.2</commons.configuration2.version>
-		<commons-collections4.version>4.3</commons-collections4.version>
-
-
-		<!-- Test & Logging -->
-		<junit.version>4.12</junit.version>
-		<logback.version>1.1.6</logback.version>
-		<slf4j.version>1.7.19</slf4j.version>
-		<mockito.version>1.10.19</mockito.version>
-
-		<!-- Lombok -->
-		<lombok.version>1.16.18</lombok.version>
-
-		<!-- Json Simple -->
-		<jsonsimple.version>1.1</jsonsimple.version>
-
-		<uuid.fasterxml.version>3.1.4</uuid.fasterxml.version>
-		<org.json.version>20080701</org.json.version>
-		<modelmapper.version>0.7.4</modelmapper.version>
-		<java.interceptor.version>1.2</java.interceptor.version>
-		<icu.version>63.1</icu.version>
-		
-	    <kernel-auth-adapter.version>1.0.6</kernel-auth-adapter.version>
-	    <kernel-core.version>1.0.8</kernel-core.version>
-
-
-		<sonar.coverage.exclusions>**/code/**,**/config/**,**/dao/**,**/dto/**,**/entity/**,**/errorcodes/**,**/exception/**,**/exception/system/**,**/exception/util/**,**/repository/**,**/*Config.java,**/*Application.java,**/batchjob/**,**/util/**,**/stateUtil/**</sonar.coverage.exclusions>
-		<sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
-		
-		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-		<maven.war.plugin.version>3.1.0</maven.war.plugin.version> 
-		
 	</properties>
-	<modules>
-		<module>pre-registration-core</module>
-		<module>pre-registration-login-service</module>
-		<module>pre-registration-application-service-impl</module>
-		<module>pre-registration-demographic-service</module>
-		<module>pre-registration-document-service</module>
-		<module>pre-registration-booking-service</module>
-		<module>pre-registration-datasync-service</module>
-		<module>pre-registration-batchjob</module>
-		<module>pre-registration-transliteration-service</module>
-		<module>pre-registration-notification-service</module>
-		<module>pre-registration-generateqrcode-service</module>
-		<module>pre-registration-captcha-service</module>
-	</modules>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-dependencies</artifactId>
+				<version>${spring.boot.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+
+		</dependencies>
+	</dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+			<version>${spring-cloud-config.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-devtools</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.mosip.preregistration</groupId>
+			<artifactId>pre-registration-core</artifactId>
+			<version>${pre.registration.core.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>io.mosip.kernel</groupId>
+					<artifactId>kernel-dataaccess-hibernate</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
 	<build>
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven.compiler.version}</version>
-					<configuration>
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>${maven.jar.plugin.version}</version>
-					<configuration>
-						<archive>
-							<manifest>
-								<addClasspath>true</addClasspath>
-								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							</manifest>
-							<manifestEntries>
-								<Project-Name>${project.name}</Project-Name>
-								<Project-Version>${project.version}</Project-Version>
-							</manifestEntries>
-						</archive>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>${maven.war.plugin.version}</version>
-					<configuration>
-						<archive>
-							<manifest>
-								<addClasspath>true</addClasspath>
-								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							</manifest>
-							<manifestEntries>
-								<Project-Name>${project.name}</Project-Name>
-								<Project-Version>${project.version}</Project-Version>
-							</manifestEntries>
-						</archive>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-surefire-plugin</artifactId>
-					<version>${maven.surefire.plugin.version}</version>
-					<configuration>
-						<skip>false</skip>
-						<useFile>false</useFile>
-						<excludes>
-							<exclude>**/*IntegrationTest.java</exclude>
-						</excludes>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.jacoco</groupId>
-					<artifactId>jacoco-maven-plugin</artifactId>
-					<version>${maven.jacoco.plugin.version}</version>
-				</plugin>
-				<plugin>
-					<groupId>org.sonarsource.scanner.maven</groupId>
-					<artifactId>sonar-maven-plugin</artifactId>
-					<version>${maven.sonar.plugin.version}</version>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 		<plugins>
 			<plugin>
-				<groupId>org.jacoco</groupId>
-				<artifactId>jacoco-maven-plugin</artifactId>
-				<configuration>
-					<append>true</append>
-				</configuration>
-				<executions>
-					<execution>
-						<id>agent-for-ut</id>
-						<goals>
-							<goal>prepare-agent</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>agent-for-it</id>
-						<goals>
-							<goal>prepare-agent-integration</goal>
-						</goals>
-					</execution>
-					<execution>
-						<id>jacoco-site</id>
-						<phase>verify</phase>
-						<goals>
-							<goal>report</goal>
-						</goals>
-					</execution>
-				</executions>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
-<!--			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven.javadoc.version}</version>
-				<configuration>
-					<aggregate>true</aggregate>
-				</configuration>
-			</plugin>
--->			
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
-				<executions>
-					<execution>
-					 	<id>attach-javadocs</id>
-					  	<goals>
-							<goal>jar</goal>
-						</goals>
-					</execution>
-				</executions>
-				<configuration>
-                         		<additionalJOption>-Xdoclint:none</additionalJOption>
-                	  	</configuration>
-                	</plugin>
-			
-			<plugin>
-				  <groupId>org.sonatype.plugins</groupId>
-				  <artifactId>nexus-staging-maven-plugin</artifactId>
-				  <version>1.6.7</version>
-				  <extensions>true</extensions>
-				  <configuration>
-					<serverId>ossrh</serverId>
-					<nexusUrl>https://oss.sonatype.org/</nexusUrl>
-					<autoReleaseAfterClose>false</autoReleaseAfterClose>
-				  </configuration>
-			</plugin>
-			
-		 	<plugin>
-				  <groupId>org.apache.maven.plugins</groupId>
-				  <artifactId>maven-source-plugin</artifactId>
-				  <version>2.2.1</version>
-				  <executions>
-					<execution>
-						<id>attach-sources</id>
-					  	<goals>
-							<goal>jar-no-fork</goal>
-					  	</goals>
-					</execution>
-				  </executions>
-			</plugin>
-			
-			<plugin>
-				  <groupId>org.apache.maven.plugins</groupId>
-				  <artifactId>maven-gpg-plugin</artifactId>
-				  <version>1.5</version>
-				  <executions>
-					<execution>
-						  <id>sign-artifacts</id>
-						  <phase>verify</phase>
-						  <goals>
-							<goal>sign</goal>
-						  </goals>
-						  <configuration>
-                					<gpgArguments>
-                    						<arg>--pinentry-mode</arg>
-                    						<arg>loopback</arg>
-                					</gpgArguments>
-            					  </configuration>
-					</execution>
-				  </executions>
-        		</plugin>
-		
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.plugin.version}</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Project-Name>${project.name}</Project-Name>
-							<Project-Version>${project.version}</Project-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>${maven.war.plugin.version}</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Project-Name>${project.name}</Project-Name>
-							<Project-Version>${project.version}</Project-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
 </project>
