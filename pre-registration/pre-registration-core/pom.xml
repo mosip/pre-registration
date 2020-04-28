@@ -119,16 +119,5 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>${commons-collections4.version}</version>
 		</dependency>
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-core</artifactId>
-			<version>1.4.2</version>
-		</dependency>
-		<!-- Micrometer Prometheus registry -->
-		<dependency>
-			<groupId>io.micrometer</groupId>
-			<artifactId>micrometer-registry-prometheus</artifactId>
-			<version>1.4.2</version>
-		</dependency>
 	</dependencies>
 </project>
