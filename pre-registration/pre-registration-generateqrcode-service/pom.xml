@@ -108,7 +108,6 @@
 			<version>${io.micrometer.prometheus.version}</version>
 		</dependency>
 	</dependencies>
-	</dependencies>
 
 	<build>
 		<plugins>
