@@ -11,8 +11,8 @@
 
   <version>1.0.9-SNAPSHOT</version>
 
-  <artifactId>pre-registration-translitration-service</artifactId>
-	<name>pre-registration-translitration-service</name>
+  <artifactId>pre-registration-transliteration-service</artifactId>
+	<name>pre-registration-transliteration-service</name>
 
 
   <properties>
