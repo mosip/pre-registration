@@ -42,7 +42,7 @@ public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponse
 				String timestamp = DateUtils.getUTCCurrentDateTimeString();
 				body.setResponsetime(timestamp); 
 				SignatureResponse cryptoManagerResponseDto = signatureUtil
-						.sign(objectMapper.writeValueAsString(body),timestamp);
+						.sign(objectMapper.writeValueAsString(body));
 				response.getHeaders().add("Response-Signature", cryptoManagerResponseDto.getData());
 			} catch (JsonProcessingException e) {
 				throw new ParseResponseException(ErrorCodes.PRG_DATA_SYNC_017.toString(),
