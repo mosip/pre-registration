@@ -48,7 +48,7 @@
 
 	<properties>
 		<pre.registration.core.version>1.0.8</pre.registration.core.version>
-		<kernel.core.version>1.0.8</kernel.core.version>
+		<kernel.core.version>1.0.9-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -113,7 +113,7 @@
 		<icu.version>63.1</icu.version>
 		
 	    <kernel-auth-adapter.version>1.0.6</kernel-auth-adapter.version>
-	    <kernel-core.version>1.0.8</kernel-core.version>
+	    <kernel-core.version>1.0.9-SNAPSHOT</kernel-core.version>
 
 
 		<sonar.coverage.exclusions>**/code/**,**/config/**,**/dao/**,**/dto/**,**/entity/**,**/errorcodes/**,**/exception/**,**/exception/system/**,**/exception/util/**,**/repository/**,**/*Config.java,**/*Application.java,**/batchjob/**,**/util/**,**/stateUtil/**</sonar.coverage.exclusions>
@@ -132,9 +132,10 @@
 		<module>pre-registration-booking-service</module>
 		<module>pre-registration-datasync-service</module>
 		<module>pre-registration-batchjob</module>
-		<module>pre-registration-translitration-service</module>
+		<module>pre-registration-transliteration-service</module>
 		<module>pre-registration-notification-service</module>
 		<module>pre-registration-generateqrcode-service</module>
+        <module>pre-registration-captcha-service</module>
 	</modules>
 	<build>
 		<pluginManagement>

@@ -1,6 +1,7 @@
 <project
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -17,7 +18,7 @@
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 
 	<properties>
-		<kernel.core.version>1.0.8</kernel.core.version>
+		<kernel.core.version>1.0.9-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.logger.logback.version>1.0.6</kernel.logger.logback.version>
@@ -59,7 +60,7 @@
 					<groupId>antlr</groupId>
 					<artifactId>antlr</artifactId>
 				</exclusion>
-			</exclusions> 
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.projectlombok</groupId>

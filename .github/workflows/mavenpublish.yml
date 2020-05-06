@@ -54,4 +54,3 @@ jobs:
         mvn deploy -DskipTests -s $GITHUB_WORKSPACE/settings.xml
       env:
         GPG_TTY: $(tty)
-  
