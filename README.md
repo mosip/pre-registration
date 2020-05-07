@@ -1,3 +1,5 @@
+[![Build Status](https://travis-ci.org/mosip/pre-registration.svg?branch=master)](https://travis-ci.org/mosip/pre-registration)
+
 # Pre-Registration 
 This repository contains the source code and design documents for MOSIP Pre-Registration module. 
 
