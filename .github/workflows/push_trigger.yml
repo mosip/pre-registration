@@ -48,11 +48,6 @@ jobs:
       run: |
         cd pre-registration
         mvn -B package -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
-        
-    - name: Publish the maven package
-      run: |
-        cd pre-registration
-        mvn -B package -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
 
     - name: Ready the springboot artifacts
       run: find -name '*.jar' -executable -type f  -exec zip release.zip {} +
