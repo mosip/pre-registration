@@ -1,4 +1,3 @@
-
 name: Maven Package upon a push 
 
 on:
@@ -46,7 +45,6 @@ jobs:
       run: |
         cd pre-registration
         mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/settings.xml
-
     - name: Ready the springboot artifacts
       run: find -name '*.jar' -executable -type f  -exec zip release.zip {} +
 
@@ -95,7 +93,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install libxml2-utils
-
     - name: Build with Maven
       run: cd pre-registration && mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/settings.xml
 
@@ -512,4 +509,3 @@ jobs:
           echo VERSION=$VERSION
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-
