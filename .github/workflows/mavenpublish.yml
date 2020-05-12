@@ -470,14 +470,14 @@ jobs:
           echo VERSION=$VERSION
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-  docker-pre-registration-translitration-service:
+  docker-pre-registration-transliteration-service:
     needs: build
 
     runs-on: ubuntu-latest
     env:
       NAMESPACE: ${{ secrets.dev_namespace_docker_hub }}
-      SERVICE_NAME: pre-registration-translitration-service
-      SERVICE_LOCATION: pre-registration/pre-registration-translitration-service
+      SERVICE_NAME: pre-registration-transliteration-service
+      SERVICE_LOCATION: pre-registration/pre-registration-transliteration-service
 
     steps:
       - uses: actions/checkout@v2
