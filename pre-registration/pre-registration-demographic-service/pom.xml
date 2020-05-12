@@ -99,7 +99,8 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
-					<layout>ZIP</layout>
+					<layout>ZIP</layout>>
+					<executable>true</executable>
 				</configuration>
 				<executions>
 					<execution>
