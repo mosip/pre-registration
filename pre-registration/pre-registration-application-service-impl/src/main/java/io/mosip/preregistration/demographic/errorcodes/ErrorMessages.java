@@ -171,7 +171,9 @@ public enum ErrorMessages {
 	/**
 	 * PRG_PAM_APP_021
 	 */
-	DUPLICATE_KEY("Duplicate key for prid");
+	DUPLICATE_KEY("Duplicate key for prid"),
+	
+	SERVER_ERROR("Error while calling config server");
 
 	private ErrorMessages(String message) {
 		this.message = message;
