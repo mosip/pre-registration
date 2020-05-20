@@ -17,9 +17,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<pre.registration.application.service.impl.version>1.0.7</pre.registration.application.service.impl.version>
+		<kernel.auth.adapter.version>1.0.8</kernel.auth.adapter.version>
+		<pre.registration.application.service.impl.version>1.0.8</pre.registration.application.service.impl.version>
         <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+        <kernel-idobjectvalidator-version>1.0.9-SNAPSHOT</kernel-idobjectvalidator-version>
 	</properties>
 
 	<dependencyManagement>
@@ -90,6 +91,11 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.mosip.kernel</groupId>
+			<artifactId>kernel-idobjectvalidator</artifactId>
+			<version>${kernel-idobjectvalidator-version}</version>
 		</dependency>
 	</dependencies>
 

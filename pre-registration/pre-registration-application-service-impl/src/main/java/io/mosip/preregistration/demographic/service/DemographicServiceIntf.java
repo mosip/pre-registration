@@ -13,6 +13,8 @@ import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.demographic.dto.DemographicMetadataDTO;
 import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
+import io.mosip.preregistration.demographic.dto.SchemaResponseDto;
+
 
 public interface DemographicServiceIntf {
 
@@ -100,5 +102,12 @@ public interface DemographicServiceIntf {
 
 	MainResponseDTO<Map<String, String>> getUpdatedDateTimeForPreIds(
 			PreRegIdsByRegCenterIdDTO preRegIdsByRegCenterIdDTO);
+	
+	/**
+	 * Gets the schemaconfig.
+	 *
+	 * @return {@link SchemaResponseDto}
+	 */
+	MainResponseDTO<SchemaResponseDto> getSchemaconfig();
 
 }

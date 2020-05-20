@@ -42,6 +42,7 @@ import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.demographic.dto.DemographicMetadataDTO;
 import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
+import io.mosip.preregistration.demographic.dto.SchemaResponseDto;
 import io.mosip.preregistration.demographic.service.DemographicServiceIntf;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -274,6 +275,16 @@ public class DemographicController {
 		DataValidationUtil.validate(errors, UPDATEDTIME);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.getUpdatedDateTimeForPreIds(mainRequestDTO.getRequest()));
+	}
+
+	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN','REGISTRATION_PROCESSOR')")
+	@GetMapping(path = "/config", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Get IDschema config fields")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Config fetch successful") })
+	public ResponseEntity<MainResponseDTO<SchemaResponseDto>> getIdSchemaConfig() {
+                       
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(preRegistrationService.getSchemaconfig());
 	}
 
 }
