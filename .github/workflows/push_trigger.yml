@@ -2,6 +2,8 @@
 name: Maven Package upon a push 
 
 on:
+  pull_request:
+    types: [closed]
   push:
     branches:
       - master
@@ -81,12 +83,21 @@ jobs:
     - name: Setup the settings file for ossrh server
       run: echo "<settings> <servers>  <server>  <id>ossrh</id>    <username>${{secrets.ossrh_user}}</username> <password>${{secrets.ossrh_secret}}</password> </server> </servers> <profiles> <profile>     <id>ossrh</id> <activation> <activeByDefault>true</activeByDefault> </activation>  <properties> <gpg.executable>gpg2</gpg.executable> <gpg.passphrase>${{secrets.gpg_secret}}</gpg.passphrase> </properties> </profile> <profile> <id>allow-snapshots</id>       <activation><activeByDefault>true</activeByDefault></activation> <repositories> <repository>        <id>snapshots-repo</id> <url>https://oss.sonatype.org/content/repositories/snapshots</url> <releases><enabled>false</enabled></releases> <snapshots><enabled>true</enabled></snapshots> </repository>  <repository>         <id>releases-repo</id>  <url>https://oss.sonatype.org/service/local/staging/deploy/maven2</url>         <releases><enabled>true</enabled></releases>         <snapshots><enabled>false</enabled></snapshots> </repository> </repositories>  </profile> </profiles> </settings>" > $GITHUB_WORKSPACE/settings.xml
 
+    - name: Install xmllint
+      run: |
+        sudo apt-get update
+        sudo apt-get install libxml2-utils
 
-    - name: Publish the maven package
+    - name: Build with Maven
       run: |
         cd pre-registration
-        mvn deploy -DskipTests -s $GITHUB_WORKSPACE/settings.xml
+        mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/settings.xml
+    - name: Publish the maven package
+      run: |
+        chmod +x ./deploy.sh
+        ./deploy.sh pre-registration $GITHUB_WORKSPACE/settings.xml SNAPSHOT
       env:
+        GITHUB_TOKEN: ${{ secrets.access_token }}
         GPG_TTY: $(tty)  
 
   docker-pre-registration-booking-service:
