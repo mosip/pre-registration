@@ -253,11 +253,11 @@ public class DemographicService implements DemographicServiceIntf {
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
 	 */
-	// @PostConstruct
-	// public void setup() {
-	// getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
-	//
-	// }
+	 @PostConstruct
+	 public void setup() {
+	 getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
+	
+	 }
 
 	@Autowired
 	CryptoUtil cryptoUtil;
