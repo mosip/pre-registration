@@ -183,9 +183,9 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@PostConstruct
 	public void setup() {
-		HttpHeaders headers = tokenUtil.getTokenHeader();
-		requiredRequestMap.put("version", ver);
-		validationUtil.getAllDocCategoriesAndTypes(primaryLang, headers);
+//		HttpHeaders headers = tokenUtil.getTokenHeader();
+//		requiredRequestMap.put("version", ver);
+//		validationUtil.getAllDocCategoriesAndTypes(primaryLang, headers);
 	}
 
 	public AuthUserDetails authUserDetails() {

@@ -8,9 +8,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.assertj.core.util.Arrays;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -35,7 +38,6 @@ import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
-import io.mosip.kernel.core.idobjectvalidator.constant.IdObjectValidatorSupportedOperations;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
@@ -228,8 +230,8 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	protected String trueStatus = "true";
 
-	@Value("${preregistartion.config.identityjson}")
-	private String preregistrationIdJson;
+	@Value("${mosip.kernel.idobjectvalidator.mandatory-attributes.pre-registration.new-registration}")
+	private String preRegNewRegIdJson;
 
 	private String getIdentityJsonString = "";
 
@@ -300,13 +302,20 @@ public class DemographicService implements DemographicServiceIntf {
 		MainResponseDTO<DemographicCreateResponseDTO> mainResponseDTO = null;
 		boolean isSuccess = false;
 		try {
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
+			String idSchema=serviceUtil.getSchema();
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
+			ArrayList<String> list = 
+					  Pattern.compile("\\s*,\\s*")
+					  .splitAsStream(preRegNewRegIdJson)
+					  .collect(Collectors.toCollection(ArrayList<String>::new));
+			
 			mainResponseDTO = (MainResponseDTO<DemographicCreateResponseDTO>) serviceUtil.getMainResponseDto(request);
 			DemographicRequestDTO demographicRequest = request.getRequest();
 			validationUtil.langvalidation(demographicRequest.getLangCode());
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-			jsonValidator.validateIdObject(demographicRequest.getDemographicDetails(),
-					IdObjectValidatorSupportedOperations.NEW_REGISTRATION);
+			jsonValidator.validateIdObject(idSchema,demographicRequest.getDemographicDetails(),list);
 			log.info("sessionId", "idType", "id",
 					"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 			log.info("sessionId", "idType", "id",
@@ -383,6 +392,13 @@ public class DemographicService implements DemographicServiceIntf {
 		mainResponseDTO = (MainResponseDTO<DemographicUpdateResponseDTO>) serviceUtil.getMainResponseDto(request);
 		boolean isSuccess = false;
 		try {
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
+			String idSchema=serviceUtil.getSchema();
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
+			ArrayList<String> list = 
+					  Pattern.compile("\\s*,\\s*")
+					  .splitAsStream(preRegNewRegIdJson)
+					  .collect(Collectors.toCollection(ArrayList<String>::new));
 			validationUtil.langvalidation(request.getRequest().getLangCode());
 			Map<String, String> requestParamMap = new HashMap<>();
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preRegistrationId);
@@ -390,8 +406,8 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicRequestDTO demographicRequest = request.getRequest();
 				log.info("sessionId", "idType", "id",
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-				jsonValidator.validateIdObject(demographicRequest.getDemographicDetails(),
-						IdObjectValidatorSupportedOperations.NEW_REGISTRATION);
+				jsonValidator.validateIdObject(idSchema,demographicRequest.getDemographicDetails(),
+						list);
 				log.info("sessionId", "idType", "id",
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
