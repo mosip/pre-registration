@@ -60,9 +60,9 @@ import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
-import io.mosip.kernel.core.idobjectvalidator.constant.IdObjectValidatorSupportedOperations;
 import io.mosip.kernel.core.idobjectvalidator.exception.IdObjectIOException;
 import io.mosip.kernel.core.idobjectvalidator.exception.IdObjectValidationFailedException;
+import io.mosip.kernel.core.idobjectvalidator.exception.InvalidIdSchemaException;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.DemographicTestApplication;
@@ -432,8 +432,8 @@ public class DemographicServiceTest {
         dto.setPrid("67547447647457");
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		Mockito.when(serviceUtil.generateId()).thenReturn("67547447647457");
-		Mockito.when(jsonValidator.validateIdObject(jsonObject.toString(),
-				IdObjectValidatorSupportedOperations.NEW_REGISTRATION)).thenReturn(true);
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.save(Mockito.any())).thenReturn(preRegistrationEntity);
 		demographicResponseForCreateDTO = new DemographicCreateResponseDTO();
 		demographicResponseForCreateDTO.setDemographicDetails(jsonObject);
@@ -478,8 +478,9 @@ public class DemographicServiceTest {
 
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		Mockito.when(serviceUtil.generateId()).thenReturn("67547447647457");
-		Mockito.when(jsonValidator.validateIdObject(jsonObject.toString(),
-				IdObjectValidatorSupportedOperations.NEW_REGISTRATION)).thenReturn(true);
+		
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.save(Mockito.any())).thenThrow(errorException);
 		demographicResponseForCreateDTO = new DemographicCreateResponseDTO();
 		demographicResponseForCreateDTO.setDemographicDetails(jsonObject);
@@ -553,8 +554,8 @@ public class DemographicServiceTest {
 
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		preRegistrationEntity.setDemogDetailHash(HashUtill.hashUtill(preRegistrationEntity.getApplicantDetailJson()));
-		Mockito.when(jsonValidator.validateIdObject(jsonTestObject.toString(),
-				IdObjectValidatorSupportedOperations.NEW_REGISTRATION)).thenReturn(true);
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
 		Mockito.when(demographicRepository.update(Mockito.any())).thenReturn(preRegistrationEntity);
@@ -600,8 +601,8 @@ public class DemographicServiceTest {
 				ErrorCodes.PRG_PAM_APP_012.toString(), ErrorMessages.MISSING_REQUEST_PARAMETER.toString(),
 				responseCreateDTO);
 		jsonObject = (JSONObject) parser.parse(new FileReader(fileCr));
-		Mockito.when(jsonValidator.validateIdObject(jsonObject.toString(),
-				IdObjectValidatorSupportedOperations.NEW_REGISTRATION)).thenReturn(true);
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+				new ArrayList<String>())).thenReturn(true);
 
 		preRegistrationEntity.setCreateDateTime(null);
 		preRegistrationEntity.setCreatedBy("");
@@ -657,7 +658,7 @@ public class DemographicServiceTest {
 
 	@Test(expected = PreIdInvalidForUserIdException.class)
 	public void invalidUserTest() throws FileNotFoundException, IOException, org.json.simple.parser.ParseException,
-			IdObjectIOException, IdObjectValidationFailedException {
+			IdObjectIOException, IdObjectValidationFailedException, InvalidIdSchemaException {
 		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
 		requestMap.put("id", updateId);
 		request.setId(updateId);
@@ -666,8 +667,8 @@ public class DemographicServiceTest {
 
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		preRegistrationEntity.setDemogDetailHash(HashUtill.hashUtill(preRegistrationEntity.getApplicantDetailJson()));
-		Mockito.when(jsonValidator.validateIdObject(jsonTestObject.toString(),
-				IdObjectValidatorSupportedOperations.NEW_REGISTRATION)).thenReturn(true);
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
 		Mockito.when(demographicRepository.update(Mockito.any())).thenReturn(preRegistrationEntity);
@@ -683,7 +684,7 @@ public class DemographicServiceTest {
 
 	@Test(expected = DemographicServiceException.class)
 	public void httpServerErrorTestForUpdate() throws FileNotFoundException, IOException,
-			org.json.simple.parser.ParseException, IdObjectIOException, IdObjectValidationFailedException {
+			org.json.simple.parser.ParseException, IdObjectIOException, IdObjectValidationFailedException, InvalidIdSchemaException {
 		HttpServerErrorException errorException = new HttpServerErrorException(HttpStatus.BAD_GATEWAY, "httpError");
 		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
 		requestMap.put("id", updateId);
@@ -693,8 +694,8 @@ public class DemographicServiceTest {
 
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		preRegistrationEntity.setDemogDetailHash(HashUtill.hashUtill(preRegistrationEntity.getApplicantDetailJson()));
-		Mockito.when(jsonValidator.validateIdObject(jsonTestObject.toString(),
-				IdObjectValidatorSupportedOperations.NEW_REGISTRATION)).thenReturn(true);
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.findBypreRegistrationId(Mockito.anyString())).thenThrow(errorException);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
 		Mockito.when(demographicRepository.update(Mockito.any())).thenReturn(preRegistrationEntity);

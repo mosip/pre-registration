@@ -163,6 +163,8 @@ public enum ErrorMessages {
 	 */
 	PRID_RESTCALL_FAIL("Rest call to get prid failed"),
 	
+	ID_SCHEMA_FETCH_FAILED("Id schema fetch failed"),
+	
 	/**
 	 * PRG_PAM_APP_019
 	 */
