@@ -4,6 +4,7 @@
  */
 package io.mosip.preregistration.demographic.service.util;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -44,6 +45,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
@@ -65,6 +69,7 @@ import io.mosip.preregistration.demographic.dto.ClientSecretDTO;
 import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
+import io.mosip.preregistration.demographic.dto.IdSchemaDto;
 import io.mosip.preregistration.demographic.dto.PridFetchResponseDto;
 import io.mosip.preregistration.demographic.errorcodes.ErrorCodes;
 import io.mosip.preregistration.demographic.errorcodes.ErrorMessages;
@@ -93,7 +98,6 @@ public class DemographicServiceUtil {
 	@Autowired
 	private Environment env;
 
-
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -118,6 +122,8 @@ public class DemographicServiceUtil {
 	@Value("${appId}")
 	private String appId;
 
+	@Autowired
+	private ObjectMapper objectMapper;
 	/**
 	 * Logger instance
 	 */
@@ -544,14 +550,16 @@ public class DemographicServiceUtil {
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			ResponseEntity<ResponseWrapper<String>> responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET,
-					entity, new ParameterizedTypeReference<ResponseWrapper<String>>() {
+			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
-			response = responseEntity.getBody().getResponse();
+
+			response = responseEntity.getBody().getResponse().getSchemaJson();
+
 			if (response == null || response.isEmpty()) {
 				throw new RestCallException(ErrorCodes.PRG_PAM_APP_020.getCode(),
 						ErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());

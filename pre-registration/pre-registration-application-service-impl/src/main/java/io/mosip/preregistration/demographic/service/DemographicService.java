@@ -224,6 +224,9 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Value("${mosip.utc-datetime-pattern}")
 	private String dateFormat;
+	
+	@Value("${preregistartion.config.identityjson}")
+	private String preregistrationIdJson;
 
 	/**
 	 * Response status
