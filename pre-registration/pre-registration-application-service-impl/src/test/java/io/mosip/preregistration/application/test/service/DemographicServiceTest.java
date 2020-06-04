@@ -514,35 +514,35 @@ public class DemographicServiceTest {
 	/**
 	 * @throws Exception
 	 */
-// 	@Test(expected = TableNotAccessibleException.class)
-// 	public void saveFailureCheck() throws Exception {
-// 		DataAccessLayerException exception = new DataAccessLayerException(ErrorCodes.PRG_PAM_APP_002.toString(),
-// 				ErrorMessages.PRE_REGISTRATION_TABLE_NOT_ACCESSIBLE.toString(), null);
-// 		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
-// 		requestMap.put("id", createId);
-// 		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
-// 		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
+ 	@Test(expected = TableNotAccessibleException.class)
+ 	public void saveFailureCheck() throws Exception {
+ 		DataAccessLayerException exception = new DataAccessLayerException(ErrorCodes.PRG_PAM_APP_002.toString(),
+ 				ErrorMessages.PRE_REGISTRATION_TABLE_NOT_ACCESSIBLE.toString(), null);
+ 		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
+ 		requestMap.put("id", createId);
+ 		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
+ 		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
 
-// 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
-// 		Mockito.when(jsonValidator.validateIdObject(Mockito.any(), Mockito.any())).thenReturn(true);
-// 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
-// 		ResponseWrapper<PridFetchResponseDto> pridRes = new ResponseWrapper<>();
-// 		PridFetchResponseDto dto= new PridFetchResponseDto();
-// 		dto.setPrid("98746563542672");
-// 		pridRes.setResponse(dto);
-// 		ResponseEntity<ResponseWrapper<PridFetchResponseDto>> res = new ResponseEntity<>(pridRes,
-// 				HttpStatus.OK);
-// 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-// 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
-// 				}))).thenReturn(res);
-// 		Mockito.when(serviceUtil.generateId()).thenReturn("98746563542672");
-// 		Mockito.when(demographicRepository.save(Mockito.any())).thenThrow(exception);
-// 		createPreRegistrationDTO = new DemographicRequestDTO();
-// 		createPreRegistrationDTO.setDemographicDetails(jsonObject);
-// 		createPreRegistrationDTO.setLangCode("fra");
-// 		request.setRequest(createPreRegistrationDTO);
-// 		preRegistrationService.addPreRegistration(request);
-// 	}
+ 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
+ 		Mockito.when(jsonValidator.validateIdObject(Mockito.any(), Mockito.any())).thenReturn(true);
+ 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
+ 		ResponseWrapper<PridFetchResponseDto> pridRes = new ResponseWrapper<>();
+ 		PridFetchResponseDto dto= new PridFetchResponseDto();
+ 		dto.setPrid("98746563542672");
+ 		pridRes.setResponse(dto);
+ 		ResponseEntity<ResponseWrapper<PridFetchResponseDto>> res = new ResponseEntity<>(pridRes,
+ 				HttpStatus.OK);
+ 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
+				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
+				}))).thenReturn(res);
+ 		Mockito.when(serviceUtil.generateId()).thenReturn("98746563542672");
+		Mockito.when(demographicRepository.save(Mockito.any())).thenThrow(exception);
+ 		createPreRegistrationDTO = new DemographicRequestDTO();
+ 		createPreRegistrationDTO.setDemographicDetails(jsonObject);
+ 		createPreRegistrationDTO.setLangCode("fra");
+		request.setRequest(createPreRegistrationDTO);
+ 		preRegistrationService.addPreRegistration(request);
+ 	}
 
 	@Test
 	public void successUpdateTest() throws Exception {
@@ -1391,19 +1391,19 @@ public class DemographicServiceTest {
 	//
 	// }
 
-// 	@Test(expected = RecordNotFoundException.class)
-// 	public void RecordNotFoundExceptionTest() {
-// 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(null);
-// 		requestMap.put("id", createId);
-// 		request.setId(updateId);
-// 		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
-// 		createPreRegistrationDTO = new DemographicRequestDTO();
-// 		createPreRegistrationDTO.setDemographicDetails(jsonTestObject);
-// 		createPreRegistrationDTO.setLangCode("eng");
-// 		request.setRequest(createPreRegistrationDTO);
-// 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
-// 		preRegistrationService.updatePreRegistration(request, preId, userId);
-// 	}
+ 	@Test(expected = RecordNotFoundException.class)
+ 	public void RecordNotFoundExceptionTest() {
+ 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(null);
+ 		requestMap.put("id", createId);
+ 		request.setId(updateId);
+		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
+ 		createPreRegistrationDTO = new DemographicRequestDTO();
+ 		createPreRegistrationDTO.setDemographicDetails(jsonTestObject);
+ 		createPreRegistrationDTO.setLangCode("eng");
+		request.setRequest(createPreRegistrationDTO);
+ 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
+		preRegistrationService.updatePreRegistration(request, preId, userId);
+ 	}
 
 	@Test(expected = HashingException.class)
 	public void getPreRegistrationHashingExceptionTest() {
