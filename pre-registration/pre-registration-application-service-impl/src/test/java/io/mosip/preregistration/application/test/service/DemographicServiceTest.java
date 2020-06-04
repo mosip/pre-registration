@@ -432,7 +432,7 @@ public class DemographicServiceTest {
         dto.setPrid("67547447647457");
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		Mockito.when(serviceUtil.generateId()).thenReturn("67547447647457");
-		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),Mockito.eq(jsonObject.toString()),
 				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.save(Mockito.any())).thenReturn(preRegistrationEntity);
 		demographicResponseForCreateDTO = new DemographicCreateResponseDTO();
@@ -479,7 +479,7 @@ public class DemographicServiceTest {
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		Mockito.when(serviceUtil.generateId()).thenReturn("67547447647457");
 		
-		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),Mockito.eq(jsonObject.toString()),
 				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.save(Mockito.any())).thenThrow(errorException);
 		demographicResponseForCreateDTO = new DemographicCreateResponseDTO();
@@ -554,7 +554,7 @@ public class DemographicServiceTest {
 
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		preRegistrationEntity.setDemogDetailHash(HashUtill.hashUtill(preRegistrationEntity.getApplicantDetailJson()));
-		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),Mockito.eq(jsonObject.toString()),
 				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
@@ -601,7 +601,7 @@ public class DemographicServiceTest {
 				ErrorCodes.PRG_PAM_APP_012.toString(), ErrorMessages.MISSING_REQUEST_PARAMETER.toString(),
 				responseCreateDTO);
 		jsonObject = (JSONObject) parser.parse(new FileReader(fileCr));
-		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),Mockito.eq(jsonObject.toString()),
 				new ArrayList<String>())).thenReturn(true);
 
 		preRegistrationEntity.setCreateDateTime(null);
@@ -667,7 +667,7 @@ public class DemographicServiceTest {
 
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		preRegistrationEntity.setDemogDetailHash(HashUtill.hashUtill(preRegistrationEntity.getApplicantDetailJson()));
-		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),Mockito.eq(jsonObject.toString()),
 				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
@@ -694,7 +694,7 @@ public class DemographicServiceTest {
 
 		preRegistrationEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		preRegistrationEntity.setDemogDetailHash(HashUtill.hashUtill(preRegistrationEntity.getApplicantDetailJson()));
-		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(),jsonObject.toString(),
+		Mockito.when(jsonValidator.validateIdObject(Mockito.anyString(), Mockito.eq(jsonObject.toString()),
 				new ArrayList<String>())).thenReturn(true);
 		Mockito.when(demographicRepository.findBypreRegistrationId(Mockito.anyString())).thenThrow(errorException);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
