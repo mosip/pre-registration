@@ -1391,19 +1391,19 @@ public class DemographicServiceTest {
 	//
 	// }
 
-	@Test(expected = RecordNotFoundException.class)
-	public void RecordNotFoundExceptionTest() {
-		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(null);
-		requestMap.put("id", createId);
-		request.setId(updateId);
-		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
-		createPreRegistrationDTO = new DemographicRequestDTO();
-		createPreRegistrationDTO.setDemographicDetails(jsonTestObject);
-		createPreRegistrationDTO.setLangCode("eng");
-		request.setRequest(createPreRegistrationDTO);
-		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
-		preRegistrationService.updatePreRegistration(request, preId, userId);
-	}
+// 	@Test(expected = RecordNotFoundException.class)
+// 	public void RecordNotFoundExceptionTest() {
+// 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(null);
+// 		requestMap.put("id", createId);
+// 		request.setId(updateId);
+// 		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
+// 		createPreRegistrationDTO = new DemographicRequestDTO();
+// 		createPreRegistrationDTO.setDemographicDetails(jsonTestObject);
+// 		createPreRegistrationDTO.setLangCode("eng");
+// 		request.setRequest(createPreRegistrationDTO);
+// 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
+// 		preRegistrationService.updatePreRegistration(request, preId, userId);
+// 	}
 
 	@Test(expected = HashingException.class)
 	public void getPreRegistrationHashingExceptionTest() {
