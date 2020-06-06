@@ -50,7 +50,7 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     sed -i 's/<service_name>/pre-registration-demographic-service/g' glowroot/glowroot.properties ; \
     java -Dloader.path=/kernel-ref-idobjectvalidator-1.0.9-SNAPSHOT.jar -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-demographic-service.jar ; \
     else \
-    wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/1.0.9-SNAPSHOT/kernel-ref-idobjectvalidator1.0.9-SNAPSHOT.jar kernel-ref-idobjectvalidator-1.0.9-SNAPSHOT.jar ; \
+    wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/1.0.9-SNAPSHOT/kernel-ref-idobjectvalidator-1.0.9-SNAPSHOT.jar kernel-ref-idobjectvalidator-1.0.9-SNAPSHOT.jar ; \
     java -Dloader.path=/kernel-ref-idobjectvalidator-1.0.9-SNAPSHOT.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-demographic-service.jar ; \
     fi
 
