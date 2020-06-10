@@ -278,7 +278,7 @@ public class DemographicController {
 	}
 
     @PreAuthorize("hasRole('INDIVIDUAL')")
-	@GetMapping(path = "/config", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/application/config", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Get IDschema config fields")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Config fetch successful") })
 	public ResponseEntity<MainResponseDTO<SchemaResponseDto>> getIdSchemaConfig() {
