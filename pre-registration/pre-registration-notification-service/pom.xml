@@ -16,7 +16,7 @@
 	<name>pre-registration-notification-service</name>
 	<properties>
 		<pre.registration.core.version>1.0.8</pre.registration.core.version>
-		<kernel.core.version>1.0.8</kernel.core.version>
+		<kernel.core.version>1.0.9-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
@@ -55,7 +55,7 @@
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-core</artifactId>
-			<version>1.0.8</version>
+			<version>${kernel.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
