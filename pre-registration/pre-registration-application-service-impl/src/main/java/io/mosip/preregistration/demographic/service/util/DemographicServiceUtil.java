@@ -136,8 +136,7 @@ public class DemographicServiceUtil {
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
 	 * 
-	 * @param demographicEntity
-	 *            pass the demographicEntity
+	 * @param demographicEntity pass the demographicEntity
 	 * @return createDTO with the values
 	 */
 	public DemographicResponseDTO setterForCreateDTO(DemographicEntity demographicEntity) {
@@ -173,8 +172,7 @@ public class DemographicServiceUtil {
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
 	 * 
-	 * @param demographicEntity
-	 *            pass the demographicEntity
+	 * @param demographicEntity pass the demographicEntity
 	 * @return createDTO with the values
 	 */
 	public DemographicCreateResponseDTO setterForCreatePreRegistration(DemographicEntity demographicEntity,
@@ -200,8 +198,7 @@ public class DemographicServiceUtil {
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
 	 * 
-	 * @param demographicEntity
-	 *            pass the demographicEntity
+	 * @param demographicEntity pass the demographicEntity
 	 * @return createDTO with the values
 	 */
 	public DemographicUpdateResponseDTO setterForUpdatePreRegistration(DemographicEntity demographicEntity) {
@@ -234,12 +231,9 @@ public class DemographicServiceUtil {
 	 * This method is used to set the values from the request to the
 	 * demographicEntity entity fields.
 	 * 
-	 * @param demographicRequest
-	 *            pass demographicRequest
-	 * @param requestId
-	 *            pass requestId
-	 * @param entityType
-	 *            pass entityType
+	 * @param demographicRequest pass demographicRequest
+	 * @param requestId          pass requestId
+	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
 	public DemographicEntity prepareDemographicEntityForCreate(DemographicRequestDTO demographicRequest,
@@ -271,12 +265,9 @@ public class DemographicServiceUtil {
 	 * This method is used to set the values from the request to the
 	 * demographicEntity entity fields.
 	 * 
-	 * @param demographicRequest
-	 *            pass demographicRequest
-	 * @param requestId
-	 *            pass requestId
-	 * @param entityType
-	 *            pass entityType
+	 * @param demographicRequest pass demographicRequest
+	 * @param requestId          pass requestId
+	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
 	public DemographicEntity prepareDemographicEntityForUpdate(DemographicEntity demographicEntity,
@@ -304,8 +295,7 @@ public class DemographicServiceUtil {
 	 * This method is used to add the initial request values into a map for input
 	 * validations.
 	 *
-	 * @param demographicRequestDTO
-	 *            pass demographicRequestDTO
+	 * @param demographicRequestDTO pass demographicRequestDTO
 	 * @return a map for request input validation
 	 */
 
@@ -327,15 +317,12 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used to set the JSON values to RequestCodes constants.
 	 * 
-	 * @param demographicData
-	 *            pass demographicData
-	 * @param identityKey
-	 *            pass identityKey
+	 * @param demographicData pass demographicData
+	 * @param identityKey     pass identityKey
 	 * @return values from JSON based on key
 	 * 
-	 * @throws ParseException
-	 *             On json Parsing Failed
-	 * @throws org.json.simple.parser.ParseException
+	 * @throws ParseException On json Parsing Failed
+	 * @throws                org.json.simple.parser.ParseException
 	 * 
 	 */
 	public JSONArray getValueFromIdentity(byte[] demographicData, String identityKey)
@@ -350,15 +337,12 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used to set the JSON values to RequestCodes constants.
 	 * 
-	 * @param demographicData
-	 *            pass demographicData
-	 * @param identityKey
-	 *            pass postalcode
+	 * @param demographicData pass demographicData
+	 * @param identityKey     pass postalcode
 	 * @return values from JSON
 	 * 
-	 * @throws ParseException
-	 *             On json Parsing Failed
-	 * @throws org.json.simple.parser.ParseException
+	 * @throws ParseException On json Parsing Failed
+	 * @throws                org.json.simple.parser.ParseException
 	 * 
 	 */
 
@@ -378,8 +362,7 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used as Null checker for different input keys.
 	 *
-	 * @param key
-	 *            pass the key
+	 * @param key pass the key
 	 * @return true if key not null and return false if key is null.
 	 */
 	public boolean isNull(Object key) {
@@ -400,8 +383,7 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used to validate Pending_Appointment and Booked status codes.
 	 * 
-	 * @param statusCode
-	 *            pass statusCode
+	 * @param statusCode pass statusCode
 	 * @return true or false
 	 */
 	public boolean checkStatusForDeletion(String statusCode) {
@@ -550,7 +532,7 @@ public class DemographicServiceUtil {
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = getRestTemplate().exchange(uriBuilder,
 					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -565,7 +547,7 @@ public class DemographicServiceUtil {
 						ErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
 			}
 
-		} catch (RestClientException ex) {
+		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
 
 			throw new RestCallException(ErrorCodes.PRG_PAM_APP_020.getCode(),
 					ErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
