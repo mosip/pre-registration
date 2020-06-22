@@ -22,7 +22,7 @@
 		<kernel.fsadapter.hdfs.version>1.0.6</kernel.fsadapter.hdfs.version>
 		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
-		<kernel.idobjectvalidator.version>1.0.7</kernel.idobjectvalidator.version>
+		<kernel.idobjectvalidator.version>1.0.9-SNAPSHOT</kernel.idobjectvalidator.version>
         <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -122,6 +122,7 @@
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
+					<executable>true</executable>
 					<layout>ZIP</layout>
 				</configuration>
 				<executions>

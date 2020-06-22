@@ -163,6 +163,8 @@ public enum ErrorMessages {
 	 */
 	PRID_RESTCALL_FAIL("Rest call to get prid failed"),
 	
+	ID_SCHEMA_FETCH_FAILED("Id schema fetch failed"),
+	
 	/**
 	 * PRG_PAM_APP_019
 	 */
@@ -171,7 +173,9 @@ public enum ErrorMessages {
 	/**
 	 * PRG_PAM_APP_021
 	 */
-	DUPLICATE_KEY("Duplicate key for prid");
+	DUPLICATE_KEY("Duplicate key for prid"),
+	
+	SERVER_ERROR("Error while calling config server");
 
 	private ErrorMessages(String message) {
 		this.message = message;

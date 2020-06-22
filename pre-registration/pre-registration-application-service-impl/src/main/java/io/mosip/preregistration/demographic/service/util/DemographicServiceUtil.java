@@ -4,6 +4,11 @@
  */
 package io.mosip.preregistration.demographic.service.util;
 
+import java.io.IOException;
+import java.security.KeyManagementException;
+import java.security.KeyStoreException;
+import java.security.NoSuchAlgorithmException;
+import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -14,7 +19,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.net.ssl.SSLContext;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.TrustStrategy;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClients;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -28,16 +39,21 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -49,9 +65,11 @@ import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.demographic.code.RequestCodes;
+import io.mosip.preregistration.demographic.dto.ClientSecretDTO;
 import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
+import io.mosip.preregistration.demographic.dto.IdSchemaDto;
 import io.mosip.preregistration.demographic.dto.PridFetchResponseDto;
 import io.mosip.preregistration.demographic.errorcodes.ErrorCodes;
 import io.mosip.preregistration.demographic.errorcodes.ErrorMessages;
@@ -82,14 +100,30 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
-	
+
+	@Value("${clientId}")
+	private String clientId;
+
+	@Value("${secretKey}")
+	private String secretKey;
+
 	@Value("${mosip.io.prid.url}")
 	private String pridURl;
 
 	@Value("${preregistartion.config.identityjson}")
 	private String preregistrationIdJson;
 
+	@Value("${sendOtp.resource.url}")
+	private String sendOtpResourceUrl;
+
+	@Value("${mosip.preregistration.id-schema}")
+	private String idSchemaConfig;
+
+	@Value("${appId}")
+	private String appId;
+
+	@Autowired
+	private ObjectMapper objectMapper;
 	/**
 	 * Logger instance
 	 */
@@ -102,8 +136,7 @@ public class DemographicServiceUtil {
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
 	 * 
-	 * @param demographicEntity
-	 *            pass the demographicEntity
+	 * @param demographicEntity pass the demographicEntity
 	 * @return createDTO with the values
 	 */
 	public DemographicResponseDTO setterForCreateDTO(DemographicEntity demographicEntity) {
@@ -139,8 +172,7 @@ public class DemographicServiceUtil {
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
 	 * 
-	 * @param demographicEntity
-	 *            pass the demographicEntity
+	 * @param demographicEntity pass the demographicEntity
 	 * @return createDTO with the values
 	 */
 	public DemographicCreateResponseDTO setterForCreatePreRegistration(DemographicEntity demographicEntity,
@@ -166,8 +198,7 @@ public class DemographicServiceUtil {
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
 	 * 
-	 * @param demographicEntity
-	 *            pass the demographicEntity
+	 * @param demographicEntity pass the demographicEntity
 	 * @return createDTO with the values
 	 */
 	public DemographicUpdateResponseDTO setterForUpdatePreRegistration(DemographicEntity demographicEntity) {
@@ -200,12 +231,9 @@ public class DemographicServiceUtil {
 	 * This method is used to set the values from the request to the
 	 * demographicEntity entity fields.
 	 * 
-	 * @param demographicRequest
-	 *            pass demographicRequest
-	 * @param requestId
-	 *            pass requestId
-	 * @param entityType
-	 *            pass entityType
+	 * @param demographicRequest pass demographicRequest
+	 * @param requestId          pass requestId
+	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
 	public DemographicEntity prepareDemographicEntityForCreate(DemographicRequestDTO demographicRequest,
@@ -237,12 +265,9 @@ public class DemographicServiceUtil {
 	 * This method is used to set the values from the request to the
 	 * demographicEntity entity fields.
 	 * 
-	 * @param demographicRequest
-	 *            pass demographicRequest
-	 * @param requestId
-	 *            pass requestId
-	 * @param entityType
-	 *            pass entityType
+	 * @param demographicRequest pass demographicRequest
+	 * @param requestId          pass requestId
+	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
 	public DemographicEntity prepareDemographicEntityForUpdate(DemographicEntity demographicEntity,
@@ -270,8 +295,7 @@ public class DemographicServiceUtil {
 	 * This method is used to add the initial request values into a map for input
 	 * validations.
 	 *
-	 * @param demographicRequestDTO
-	 *            pass demographicRequestDTO
+	 * @param demographicRequestDTO pass demographicRequestDTO
 	 * @return a map for request input validation
 	 */
 
@@ -293,15 +317,12 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used to set the JSON values to RequestCodes constants.
 	 * 
-	 * @param demographicData
-	 *            pass demographicData
-	 * @param identityKey
-	 *            pass identityKey
+	 * @param demographicData pass demographicData
+	 * @param identityKey     pass identityKey
 	 * @return values from JSON based on key
 	 * 
-	 * @throws ParseException
-	 *             On json Parsing Failed
-	 * @throws org.json.simple.parser.ParseException
+	 * @throws ParseException On json Parsing Failed
+	 * @throws                org.json.simple.parser.ParseException
 	 * 
 	 */
 	public JSONArray getValueFromIdentity(byte[] demographicData, String identityKey)
@@ -316,15 +337,12 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used to set the JSON values to RequestCodes constants.
 	 * 
-	 * @param demographicData
-	 *            pass demographicData
-	 * @param identityKey
-	 *            pass postalcode
+	 * @param demographicData pass demographicData
+	 * @param identityKey     pass postalcode
 	 * @return values from JSON
 	 * 
-	 * @throws ParseException
-	 *             On json Parsing Failed
-	 * @throws org.json.simple.parser.ParseException
+	 * @throws ParseException On json Parsing Failed
+	 * @throws                org.json.simple.parser.ParseException
 	 * 
 	 */
 
@@ -344,8 +362,7 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used as Null checker for different input keys.
 	 *
-	 * @param key
-	 *            pass the key
+	 * @param key pass the key
 	 * @return true if key not null and return false if key is null.
 	 */
 	public boolean isNull(Object key) {
@@ -366,8 +383,7 @@ public class DemographicServiceUtil {
 	/**
 	 * This method is used to validate Pending_Appointment and Booked status codes.
 	 * 
-	 * @param statusCode
-	 *            pass statusCode
+	 * @param statusCode pass statusCode
 	 * @return true or false
 	 */
 	public boolean checkStatusForDeletion(String statusCode) {
@@ -470,9 +486,9 @@ public class DemographicServiceUtil {
 					ErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
 		}
 	}
-	
+
 	public String generateId() {
-		String prid=null;
+		String prid = null;
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(pridURl);
 			HttpHeaders headers = new HttpHeaders();
@@ -481,9 +497,8 @@ public class DemographicServiceUtil {
 			String uriBuilder = regbuilder.build().encode().toUriString();
 			log.info("sessionId", "idType", "id",
 					"In callRegCenterDateRestService method of Booking Service URL- " + uriBuilder);
-			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = restTemplate.exchange(
-					uriBuilder, HttpMethod.GET, entity,
-					new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
+			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
@@ -505,7 +520,96 @@ public class DemographicServiceUtil {
 		}
 		return prid;
 
-		
 	}
 
+	public String getSchema() {
+		String response = null;
+		try {
+			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(idSchemaConfig);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.set("Cookie", getAuthToken());
+			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
+			String uriBuilder = regbuilder.build().encode().toUriString();
+
+			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = getRestTemplate().exchange(uriBuilder,
+					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
+					});
+			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
+				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
+
+			response = responseEntity.getBody().getResponse().getSchemaJson();
+
+			if (response == null || response.isEmpty()) {
+				throw new RestCallException(ErrorCodes.PRG_PAM_APP_020.getCode(),
+						ErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
+			}
+
+		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+
+			throw new RestCallException(ErrorCodes.PRG_PAM_APP_020.getCode(),
+					ErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
+		}
+		return response;
+
+	}
+
+	private String getAuthToken() {
+		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
+		ClientSecretDTO clientSecretDto = new ClientSecretDTO(clientId, secretKey, appId);
+		RequestWrapper<ClientSecretDTO> requestKernel = new RequestWrapper<>();
+		requestKernel.setRequest(clientSecretDto);
+		requestKernel.setRequesttime(LocalDateTime.now());
+		ResponseEntity<ResponseWrapper<AuthNResponse>> response = (ResponseEntity<ResponseWrapper<AuthNResponse>>) callAuthService(
+				tokenUrl, HttpMethod.POST, MediaType.APPLICATION_JSON, requestKernel, null, ResponseWrapper.class);
+		if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
+			throw new RestCallException(ErrorCodes.PRG_PAM_APP_020.getCode(),
+					ErrorMessages.PRID_RESTCALL_FAIL.getMessage());
+		}
+		return response.getHeaders().get("Set-Cookie").get(0);
+	}
+
+	public ResponseEntity<?> callAuthService(String url, HttpMethod httpMethodType, MediaType mediaType, Object body,
+			Map<String, String> headersMap, Class<?> responseClass) {
+		ResponseEntity<?> response = null;
+		try {
+			log.info("sessionId", "idType", "id", "In getResponseEntity method of Login Common Util");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(mediaType);
+			HttpEntity<?> request = null;
+			if (headersMap != null) {
+				headersMap.forEach((k, v) -> headers.add(k, v));
+			}
+			if (body != null) {
+				request = new HttpEntity<>(body, headers);
+			} else {
+				request = new HttpEntity<>(headers);
+			}
+			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
+			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
+		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+			log.debug("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
+			throw new RestClientException("rest call failed");
+		}
+		return response;
+
+	}
+
+	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+
+		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+
+		SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy)
+				.build();
+
+		SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+
+		CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+
+		requestFactory.setHttpClient(httpClient);
+		return new RestTemplate(requestFactory);
+	}
 }

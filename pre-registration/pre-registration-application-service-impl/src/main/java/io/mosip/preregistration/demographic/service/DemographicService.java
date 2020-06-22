@@ -8,14 +8,18 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
 
+import org.assertj.core.util.Arrays;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
@@ -23,7 +27,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
@@ -31,7 +38,6 @@ import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
-import io.mosip.kernel.core.idobjectvalidator.constant.IdObjectValidatorSupportedOperations;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
@@ -47,7 +53,6 @@ import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
-import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -60,7 +65,6 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
-import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
@@ -73,14 +77,15 @@ import io.mosip.preregistration.demographic.dto.DemographicMetadataDTO;
 import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.demographic.dto.DemographicViewDTO;
+import io.mosip.preregistration.demographic.dto.SchemaResponseDto;
 import io.mosip.preregistration.demographic.errorcodes.ErrorCodes;
 import io.mosip.preregistration.demographic.errorcodes.ErrorMessages;
 import io.mosip.preregistration.demographic.exception.BookingDeletionFailedException;
 import io.mosip.preregistration.demographic.exception.DemographicServiceException;
-import io.mosip.preregistration.demographic.exception.DocumentFailedToDeleteException;
 import io.mosip.preregistration.demographic.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.demographic.exception.RecordNotFoundException;
 import io.mosip.preregistration.demographic.exception.RecordNotFoundForPreIdsException;
+import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
 import io.mosip.preregistration.demographic.exception.util.DemographicExceptionCatcher;
 import io.mosip.preregistration.demographic.repository.DemographicRepository;
 import io.mosip.preregistration.demographic.service.util.DemographicServiceUtil;
@@ -132,7 +137,6 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Autowired
 	private BookingServiceIntf bookingServiceImpl;
-
 
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
@@ -220,26 +224,45 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Value("${mosip.utc-datetime-pattern}")
 	private String dateFormat;
+	
+	@Value("${preregistartion.config.identityjson}")
+	private String preregistrationIdJson;
 
 	/**
 	 * Response status
 	 */
 	protected String trueStatus = "true";
 
-	@Value("${preregistartion.config.identityjson}")
-	private String preregistrationIdJson;
+	@Value("${mosip.kernel.idobjectvalidator.mandatory-attributes.pre-registration.new-registration}")
+	private String preRegNewRegIdJson;
 
 	private String getIdentityJsonString = "";
+
+	/**
+	 * Environment instance
+	 */
+	@Autowired
+	private Environment env;
+
+	/** The rest template. */
+	@Autowired
+	private RestTemplate restTemplate;
+
+	@Autowired
+	private ObjectMapper objectMapper;
+
+	@Value("${preregistration.demographic.idschema-json-filename}")
+	private String fileName;
 
 	/**
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
 	 */
-	@PostConstruct
-	public void setup() {
-		getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
-
-	}
+	 @PostConstruct
+	 public void setup() {
+	 getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
+	
+	 }
 
 	@Autowired
 	CryptoUtil cryptoUtil;
@@ -279,21 +302,28 @@ public class DemographicService implements DemographicServiceIntf {
 		log.info("sessionId", "idType", "id", "In addPreRegistration method of pre-registration service ");
 		log.info("sessionId", "idType", "id",
 				"Pre Registration start time : " + DateUtils.getUTCCurrentDateTimeString());
-		MainResponseDTO<DemographicCreateResponseDTO> mainResponseDTO= null;
+		MainResponseDTO<DemographicCreateResponseDTO> mainResponseDTO = null;
 		boolean isSuccess = false;
 		try {
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
+			String idSchema=serviceUtil.getSchema();
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
+			ArrayList<String> list = 
+					  Pattern.compile("\\s*,\\s*")
+					  .splitAsStream(preRegNewRegIdJson)
+					  .collect(Collectors.toCollection(ArrayList<String>::new));
+			
 			mainResponseDTO = (MainResponseDTO<DemographicCreateResponseDTO>) serviceUtil.getMainResponseDto(request);
 			DemographicRequestDTO demographicRequest = request.getRequest();
 			validationUtil.langvalidation(demographicRequest.getLangCode());
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-			jsonValidator.validateIdObject(demographicRequest.getDemographicDetails(),
-					IdObjectValidatorSupportedOperations.NEW_REGISTRATION);
+			jsonValidator.validateIdObject(idSchema,demographicRequest.getDemographicDetails(),list);
 			log.info("sessionId", "idType", "id",
 					"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 			log.info("sessionId", "idType", "id",
 					"Pre ID generation start time : " + DateUtils.getUTCCurrentDateTimeString());
-			//String preId = pridGenerator.generateId();
+			// String preId = pridGenerator.generateId();
 			String preId = serviceUtil.generateId();
 			log.info("sessionId", "idType", "id",
 					"Pre ID generation end time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -321,7 +351,7 @@ public class DemographicService implements DemographicServiceIntf {
 			new DemographicExceptionCatcher().handle(ex, mainResponseDTO);
 
 		} finally {
-			
+
 			if (isSuccess) {
 				setAuditValues(EventId.PRE_407.toString(), EventName.PERSIST.toString(), EventType.BUSINESS.toString(),
 						"Pre-Registration data is sucessfully saved in the demographic table",
@@ -365,6 +395,13 @@ public class DemographicService implements DemographicServiceIntf {
 		mainResponseDTO = (MainResponseDTO<DemographicUpdateResponseDTO>) serviceUtil.getMainResponseDto(request);
 		boolean isSuccess = false;
 		try {
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
+			String idSchema=serviceUtil.getSchema();
+			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
+			ArrayList<String> list = 
+					  Pattern.compile("\\s*,\\s*")
+					  .splitAsStream(preRegNewRegIdJson)
+					  .collect(Collectors.toCollection(ArrayList<String>::new));
 			validationUtil.langvalidation(request.getRequest().getLangCode());
 			Map<String, String> requestParamMap = new HashMap<>();
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preRegistrationId);
@@ -372,8 +409,8 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicRequestDTO demographicRequest = request.getRequest();
 				log.info("sessionId", "idType", "id",
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-				jsonValidator.validateIdObject(demographicRequest.getDemographicDetails(),
-						IdObjectValidatorSupportedOperations.NEW_REGISTRATION);
+				jsonValidator.validateIdObject(idSchema,demographicRequest.getDemographicDetails(),
+						list);
 				log.info("sessionId", "idType", "id",
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
@@ -709,7 +746,8 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
 				if (demographicEntity != null) {
 					List<String> list = listAuth(authUserDetails().getAuthorities());
-					log.info("sessionId", "idType", "id", "In getDemographicData method of pre-registration service with list  "+list);
+					log.info("sessionId", "idType", "id",
+							"In getDemographicData method of pre-registration service with list  " + list);
 					if (list.contains("ROLE_INDIVIDUAL")) {
 						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
 					}
@@ -811,11 +849,11 @@ public class DemographicService implements DemographicServiceIntf {
 		try {
 			documentServiceImpl.deleteAllByPreId(preregId);
 		} catch (RuntimeException ex) {
-			if(!((BaseUncheckedException) ex).getErrorCode().equalsIgnoreCase(ErrorCodes.PRG_PAM_DOC_005.toString())) {
+			if (!((BaseUncheckedException) ex).getErrorCode().equalsIgnoreCase(ErrorCodes.PRG_PAM_DOC_005.toString())) {
 				throw ex;
 			}
 		}
-		
+
 	}
 
 	/**
@@ -908,7 +946,8 @@ public class DemographicService implements DemographicServiceIntf {
 	}
 
 	public void userValidation(String authUserId, String preregUserId) {
-		log.info("sessionId", "idType", "id", "In getDemographicData method of userValidation with priid "+preregUserId +" and userID "+authUserId);
+		log.info("sessionId", "idType", "id", "In getDemographicData method of userValidation with priid "
+				+ preregUserId + " and userID " + authUserId);
 		if (!authUserId.trim().equals(preregUserId.trim())) {
 			throw new PreIdInvalidForUserIdException(ErrorCodes.PRG_PAM_APP_017.getCode(),
 					ErrorMessages.INVALID_PREID_FOR_USER.getMessage());
@@ -962,6 +1001,43 @@ public class DemographicService implements DemographicServiceIntf {
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
 		}
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see io.mosip.preregistration.demographic.service.DemographicServiceIntf#
+	 * getSchemaconfig()
+	 */
+	@Override
+	public MainResponseDTO<SchemaResponseDto> getSchemaconfig() {
+		return getConfigDetailsResponse(fileName);
+	}
+
+	private MainResponseDTO<SchemaResponseDto> getConfigDetailsResponse(String fileName) {
+
+		String response = serviceUtil.getJson(fileName);
+		JSONObject jsonObject = null;
+		SchemaResponseDto schemaResponseDto = null;
+		try {
+			jsonObject = objectMapper.readValue(response, JSONObject.class);
+		} catch (JsonParseException e) {
+			throw new io.mosip.preregistration.demographic.exception.system.JsonParseException(
+					ErrorMessages.JSON_PARSING_FAILED.getMessage());
+		} catch (JsonMappingException e) {
+			throw new SystemFileIOException(ErrorCodes.PRG_PAM_APP_018.getCode(),
+					ErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+		} catch (IOException e) {
+			throw new SystemFileIOException(ErrorCodes.PRG_PAM_APP_018.getCode(),
+					ErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+		}
+
+		MainResponseDTO<SchemaResponseDto> responseDto = new MainResponseDTO<>();
+		schemaResponseDto = new SchemaResponseDto();
+		schemaResponseDto.setIdSchema(jsonObject);
+		responseDto.setResponse(schemaResponseDto);
+		return responseDto;
+
 	}
 
 }

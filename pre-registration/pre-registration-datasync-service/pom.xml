@@ -19,7 +19,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>1.8</java.version>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<kernel.crypto.signature.version>1.0.6</kernel.crypto.signature.version>
+		<kernel.crypto.signature.version>1.0.9-SNAPSHOT</kernel.crypto.signature.version>
         <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -81,7 +81,7 @@
 			<artifactId>kernel-crypto-signature</artifactId>
 			<version>${kernel.crypto.signature.version}</version>
 		</dependency>
-<dependency>
+		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
@@ -98,6 +98,9 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<executable>true</executable>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
