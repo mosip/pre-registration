@@ -10,7 +10,7 @@
 	</parent>
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
-	<version>1.0.9-SNAPSHOT</version>
+	<version>1.0.9-rc1</version>
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
 
