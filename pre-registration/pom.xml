@@ -47,8 +47,8 @@
         </distributionManagement>
 
 	<properties>
-		<pre.registration.core.version>1.0.8</pre.registration.core.version>
-		<kernel.core.version>1.0.9-SNAPSHOT</kernel.core.version>
+		<pre.registration.core.version>1.0.9-rc1</pre.registration.core.version>
+		<kernel.core.version>1.0.9-rc1</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -113,7 +113,7 @@
 		<icu.version>63.1</icu.version>
 		
 	    <kernel-auth-adapter.version>1.0.6</kernel-auth-adapter.version>
-	    <kernel-core.version>1.0.9-SNAPSHOT</kernel-core.version>
+	    <kernel-core.version>1.0.9-rc1</kernel-core.version>
 
 
 		<sonar.coverage.exclusions>**/code/**,**/config/**,**/dao/**,**/dto/**,**/entity/**,**/errorcodes/**,**/exception/**,**/exception/system/**,**/exception/util/**,**/repository/**,**/*Config.java,**/*Application.java,**/batchjob/**,**/util/**,**/stateUtil/**</sonar.coverage.exclusions>

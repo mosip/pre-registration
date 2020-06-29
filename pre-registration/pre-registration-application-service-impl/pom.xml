@@ -8,7 +8,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.9-SNAPSHOT</version>
+	<version>1.0.9-rc1</version>
 
 	<artifactId>pre-registration-application-service-impl</artifactId>
 	<name>pre-registration-application-service-impl</name>
@@ -19,7 +19,7 @@
 		<kernel.fsadapter.hdfs.version>1.0.6</kernel.fsadapter.hdfs.version>
 		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
-		<kernel.idobjectvalidator.version>1.0.9-SNAPSHOT</kernel.idobjectvalidator.version>
+		<kernel.idobjectvalidator.version>1.0.9-rc1</kernel.idobjectvalidator.version>
 	</properties>
 
 	<dependencyManagement>
