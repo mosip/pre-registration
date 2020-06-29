@@ -17,7 +17,7 @@
 
   <properties>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
- 	<pre.registration.core.version>1.0.8</pre.registration.core.version>
+ 	<pre.registration.core.version>1.0.9-rc1</pre.registration.core.version>
 	<kernel.core.version>1.0.8</kernel.core.version>
     <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
   </properties>
