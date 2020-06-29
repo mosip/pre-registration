@@ -8,7 +8,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.8</version>
+	<version>1.0.9-SNAPSHOT</version>
 
 	<artifactId>pre-registration-application-service-impl</artifactId>
 	<name>pre-registration-application-service-impl</name>

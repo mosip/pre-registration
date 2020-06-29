@@ -8,7 +8,7 @@
 		<version>1.0.6</version>
 	</parent>
 
-	<version>1.0.9-SNAPSHOT</version>
+	<version>1.0.9-rc1</version>
 
 	<artifactId>pre-registration-generateqrcode-service</artifactId>
 
@@ -21,6 +21,7 @@
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.0.6</kernel.qrcodegenerator.zxing.version>
         <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+                <kernel.core.version>1.0.9-rc1</kernel.core.version>
 	</properties>
 
 	<dependencies>
