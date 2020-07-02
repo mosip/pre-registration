@@ -47,8 +47,8 @@
         </distributionManagement>
 
 	<properties>
-		<pre.registration.core.version>1.0.9-rc1</pre.registration.core.version>
-		<kernel.core.version>1.0.9-rc1</kernel.core.version>
+		<pre.registration.core.version>1.0.9</pre.registration.core.version>
+		<kernel.core.version>1.0.9</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
