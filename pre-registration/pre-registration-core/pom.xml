@@ -7,10 +7,10 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 
-	<version>1.0.9-rc1</version>
+	<version>1.0.9</version>
 
 	<artifactId>pre-registration-core</artifactId>
 
@@ -18,7 +18,7 @@
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 
 	<properties>
-		<kernel.core.version>1.0.9-rc1</kernel.core.version>
+		<kernel.core.version>1.0.9</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.logger.logback.version>1.0.6</kernel.logger.logback.version>

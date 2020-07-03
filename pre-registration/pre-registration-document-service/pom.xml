@@ -7,10 +7,10 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 
-	<version>1.0.9-rc1</version>
+	<version>1.0.9</version>
 
 	<artifactId>pre-registration-document-service</artifactId>
 	<name>pre-registration-document-service</name>
@@ -22,9 +22,9 @@
 		<kernel.fsadapter.hdfs.version>1.0.6</kernel.fsadapter.hdfs.version>
 		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
-		<kernel.idobjectvalidator.version>1.0.9-rc1</kernel.idobjectvalidator.version>
+		<kernel.idobjectvalidator.version>1.0.9</kernel.idobjectvalidator.version>
         <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
-                <kernel.core.version>1.0.9-rc1</kernel.core.version>
+                <kernel.core.version>1.0.9</kernel.core.version>
 	</properties>
 
 	<dependencyManagement>

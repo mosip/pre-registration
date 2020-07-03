@@ -7,20 +7,20 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 
-	<version>1.0.9-rc1</version>
+	<version>1.0.9</version>
 
 	<artifactId>pre-registration-demographic-service</artifactId>
 	<name>pre-registration-demographic-service</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.auth.adapter.version>1.0.9-rc1</kernel.auth.adapter.version>
-		<pre.registration.application.service.impl.version>1.0.9-rc1</pre.registration.application.service.impl.version>
+		<kernel.auth.adapter.version>1.0.9</kernel.auth.adapter.version>
+		<pre.registration.application.service.impl.version>1.0.9</pre.registration.application.service.impl.version>
         <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
-        <kernel-idobjectvalidator-version>1.0.9-rc1</kernel-idobjectvalidator-version>
+        <kernel-idobjectvalidator-version>1.0.9</kernel-idobjectvalidator-version>
 	</properties>
 
 	<dependencyManagement>
