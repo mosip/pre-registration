@@ -109,7 +109,7 @@ jobs:
     - name: Publish the maven package
       run: |
         chmod +x ./deploy.sh
-        ./deploy.sh pre-registration $GITHUB_WORKSPACE/settings.xml rc1
+        ./deploy.sh pre-registration $GITHUB_WORKSPACE/settings.xml .*
       env:
         GITHUB_TOKEN: ${{ secrets.access_token }}
         GPG_TTY: $(tty)
