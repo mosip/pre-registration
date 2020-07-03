@@ -21,7 +21,7 @@
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.0.6</kernel.qrcodegenerator.zxing.version>
-		<pre.registration.application.service.impl.version>1.0.8</pre.registration.application.service.impl.version>
+		<pre.registration.application.service.impl.version>1.0.9</pre.registration.application.service.impl.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -84,7 +84,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>1.0.8</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
