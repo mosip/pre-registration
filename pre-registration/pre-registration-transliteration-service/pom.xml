@@ -6,10 +6,10 @@
   <parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 
-  <version>1.0.9-SNAPSHOT</version>
+  <version>1.0.9</version>
 
   <artifactId>pre-registration-transliteration-service</artifactId>
 	<name>pre-registration-transliteration-service</name>
@@ -17,7 +17,7 @@
 
   <properties>
     	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
- 	<pre.registration.core.version>1.0.8</pre.registration.core.version>
+ 	<pre.registration.core.version>1.0.9</pre.registration.core.version>
 	<kernel.core.version>1.0.8</kernel.core.version>
     <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
   </properties>
@@ -61,7 +61,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>1.0.8</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
 		    <groupId>com.ibm.icu</groupId>

@@ -5,10 +5,10 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 
-	<version>1.0.8</version>
+	<version>1.0.9</version>
 
 	<artifactId>pre-registration-application-service-impl</artifactId>
 	<name>pre-registration-application-service-impl</name>
@@ -19,7 +19,7 @@
 		<kernel.fsadapter.hdfs.version>1.0.6</kernel.fsadapter.hdfs.version>
 		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
-		<kernel.idobjectvalidator.version>1.0.9-SNAPSHOT</kernel.idobjectvalidator.version>
+		<kernel.idobjectvalidator.version>1.0.9</kernel.idobjectvalidator.version>
 	</properties>
 
 	<dependencyManagement>

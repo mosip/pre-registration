@@ -6,22 +6,23 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.6</version>
+		<version>1.0.7</version>
 	</parent>
 
-	<version>1.0.9-SNAPSHOT</version>
+	<version>1.0.9</version>
 
 	<artifactId>pre-registration-notification-service</artifactId>
 
 	<name>pre-registration-notification-service</name>
 	<properties>
-		<pre.registration.core.version>1.0.8</pre.registration.core.version>
-		<kernel.core.version>1.0.9-SNAPSHOT</kernel.core.version>
+
+		<pre.registration.core.version>1.0.9</pre.registration.core.version>
+		<kernel.core.version>1.0.9</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
 		<kernel.templatemanager.velocity.version>1.0.6</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.0.6</kernel.qrcodegenerator.zxing.version>
-		<pre.registration.application.service.impl.version>1.0.8</pre.registration.application.service.impl.version>
+		<pre.registration.application.service.impl.version>1.0.9</pre.registration.application.service.impl.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -84,7 +85,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>1.0.8</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
