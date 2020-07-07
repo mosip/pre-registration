@@ -109,6 +109,7 @@ jobs:
     - name: Publish the maven package
       run: |
         chmod +x ./deploy.sh
+
         cd pre-registration && mvn deploy -DskipTests -s $GITHUB_WORKSPACE/settings.xml  -f pom.xml
       env:
         GITHUB_TOKEN: ${{ secrets.access_token }}
