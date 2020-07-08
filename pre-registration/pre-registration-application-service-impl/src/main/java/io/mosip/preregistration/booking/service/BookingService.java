@@ -713,7 +713,10 @@ public class BookingService implements BookingServiceIntf {
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preregId);
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				RegistrationBookingEntity registrationEntityList = bookingDAO.findByPreRegistrationId(preregId);
-
+				String str = registrationEntityList.getRegDate() + " " + registrationEntityList.getSlotFromTime();
+				DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+				LocalDateTime bookedDateTime = LocalDateTime.parse(str, formatter);
+				serviceUtil.timeSpanCheckForCancle(bookedDateTime);
 				bookingDAO.deleteByPreRegistrationId(preregId);
 				availableEntity = bookingDAO.findByFromTimeAndToTimeAndRegDateAndRegcntrId(
 						LocalTime.parse(registrationEntityList.getSlotFromTime().toString()),
