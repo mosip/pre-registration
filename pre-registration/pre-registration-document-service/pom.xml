@@ -17,8 +17,8 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>=
-		  <pre.registration.application.service.impl.version>1.0.9</pre.registration.application.service.impl.version>
+		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
+		<pre.registration.application.service.impl.version>1.0.9</pre.registration.application.service.impl.version>
 		<kernel.fsadapter.hdfs.version>1.0.6</kernel.fsadapter.hdfs.version>
 		<kernel.virusscanner.clamav.version>1.0.6</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.0.6</kernel.idgenerator.prid.version>
