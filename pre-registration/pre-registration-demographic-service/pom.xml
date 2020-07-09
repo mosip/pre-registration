@@ -98,7 +98,6 @@
 			<version>${kernel-idobjectvalidator-version}</version>
 		</dependency>
 	</dependencies>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -119,6 +118,5 @@
 			</plugin>
 		</plugins>
 	</build>
-
-
 </project>
+
