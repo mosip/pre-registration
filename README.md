@@ -45,11 +45,11 @@ The project requires JDK 1.8.
 Automated functaionl tests available in [Functional Tests repo](https://github.com/mosip/mosip-functional-tests)
 
 # APIs
-API documentation available on Wiki: [Pre-Registration APIs](https://github.com/mosip/documentation/wiki/Pre-Registration-APIs)
+API documentation available on Wiki: [Pre-Registration APIs](https://docs.mosip.io/platform/apis/pre-registration-apis)
 
 # Documentation
 
-MOSIP documentation is available on [Wiki](https://github.com/mosip/documentation/wiki)
+MOSIP documentation is available on [docs.mosip.io](https://docs.mosip.io/platform/modules/pre-registration-module/pre-registration)
 
 # License
 This project is licensed under the terms of [Mozilla Public License 2.0](https://github.com/mosip/mosip-platform/blob/master/LICENSE)
