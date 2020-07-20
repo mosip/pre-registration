@@ -76,7 +76,8 @@ public class NotificationUtil {
 			response = smsNotification(acknowledgementDTO, langCode);
 		}
 		if (notificationType.equals(RequestCodes.EMAIL)) {
-			response = emailNotification(acknowledgementDTO, langCode, file);
+		        response = emailNotification(acknowledgementDTO, langCode, null);
+			//response = emailNotification(acknowledgementDTO, langCode, file);
 		}
 
 		return response;
