@@ -9,7 +9,7 @@
 		<version>1.0.7</version>
 	</parent>
 
-	<version>1.0.9</version>
+	<version>1.0.9-rc1</version>
 
 	<artifactId>pre-registration-notification-service</artifactId>
 
