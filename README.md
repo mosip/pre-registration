@@ -1,5 +1,4 @@
-[![Build Status](https://travis-ci.org/mosip/pre-registration.svg?branch=master)](https://travis-ci.org/mosip/pre-registration)
-[![Join the chat at https://gitter.im/mosip-community/Pre-registration](https://badges.gitter.im/mosip-community/Pre-registration.svg)](https://gitter.im/mosip-community/Pre-registration?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![Build Status](https://travis-ci.org/mosip/pre-registration.svg?branch=master)](https://travis-ci.org/mosip/pre-registration) [![Join the chat at https://gitter.im/mosip-community/Pre-registration](https://badges.gitter.im/mosip-community/Pre-registration.svg)](https://gitter.im/mosip-community/Pre-registration?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # Pre-Registration 
 This repository contains the source code and design documents for MOSIP Pre-Registration module. 
