@@ -53,8 +53,8 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdResponseDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
-import io.mosip.preregistration.demographic.service.DemographicServiceIntf;
-import io.mosip.preregistration.document.service.DocumentServiceIntf;
+//import io.mosip.preregistration.demographic.service.DemographicServiceIntf;
+//import io.mosip.preregistration.document.service.DocumentServiceIntf;
 import net.minidev.json.parser.JSONParser;
 import net.minidev.json.parser.ParseException;
 
@@ -88,11 +88,11 @@ public class BookingControllerTest {
 	/**
 	 * Creating Mock Bean for DemographicService
 	 */
-	@MockBean
-	private DemographicServiceIntf preRegistrationService;
-	
-	@MockBean
-	private DocumentServiceIntf documentServiceIntf;
+//	@MockBean
+//	private DemographicServiceIntf preRegistrationService;
+//	
+//	@MockBean
+//	private DocumentServiceIntf documentServiceIntf;
 
 	private AvailabilityDto availabilityDto;
 
