@@ -89,10 +89,10 @@ public class DemographicControllerTest {
 	/**
 	 * Creating Mock Bean for DemographicService
 	 */
-	@MockBean
+	@Mock
 	private DemographicServiceIntf preRegistrationService;
 
-	@MockBean
+	@Mock
 	private DocumentServiceIntf documentServiceIntf;
 
 //	@MockBean

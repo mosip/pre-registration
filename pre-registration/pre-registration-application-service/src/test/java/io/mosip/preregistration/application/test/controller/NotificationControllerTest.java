@@ -59,13 +59,13 @@ public class NotificationControllerTest {
 	@MockBean
 	private ValidationUtil validationUtil;
 
-	@MockBean
+	@Mock
 	private DemographicServiceIntf preRegistrationService;
 
 	/**
 	 * Creating Mock Bean for DocumentUploadService
 	 */
-	@MockBean
+	@Mock
 	private DocumentServiceIntf demoservice;
 
 //	@MockBean

@@ -81,19 +81,19 @@ public class DocumentControllerTest {
 	/**
 	 * Creating Mock Bean for DemographicService
 	 */
-	@MockBean
+	@Mock
 	private DemographicServiceIntf preRegistrationService;
 	
 	/**
 	 * Creating Mock Bean for DocumentUploadService
 	 */
-	@MockBean
+	@Mock
 	private DocumentServiceIntf service;
 	
 //	@MockBean
 //	private BookingServiceIntf bookingServiceIntf;
 
-	@MockBean
+	@Mock
 	private DocumentServiceUtil serviceutil;
 	
 	/**

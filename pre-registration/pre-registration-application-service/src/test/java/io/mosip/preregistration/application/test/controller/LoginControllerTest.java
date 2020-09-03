@@ -52,7 +52,7 @@ public class LoginControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	@MockBean
+	@Mock
 	private LoginService loginService;
 
 	@MockBean

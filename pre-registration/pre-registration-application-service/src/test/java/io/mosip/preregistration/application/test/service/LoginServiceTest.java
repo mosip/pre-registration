@@ -63,7 +63,7 @@ public class LoginServiceTest {
 	private OtpRequestDTO otp;
 	@Mock
 	private User user;
-	@MockBean
+	@Mock
 	private LoginCommonUtil authCommonUtil;
 	@Mock
 	private OtpUser otpUser;
