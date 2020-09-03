@@ -126,7 +126,7 @@ import io.mosip.preregistration.application.service.DocumentServiceIntf;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { PreRegistrationApplicationTest.class })
+@SpringBootTest
 public class DemographicServiceTest {
 
 	/**

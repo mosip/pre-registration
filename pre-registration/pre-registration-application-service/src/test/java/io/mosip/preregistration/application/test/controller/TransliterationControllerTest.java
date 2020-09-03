@@ -90,8 +90,8 @@ public class TransliterationControllerTest {
 
 		logger.info("----------Successful transliteration controller operation-------");
 		MainResponseDTO<TransliterationResponseDTO> response = new MainResponseDTO<>();
-//		TransliterationResponseDTO dto = new TransliterationResponseDTO();
-//		//response.setResponse(dto);
+		TransliterationResponseDTO dto = new TransliterationResponseDTO();
+		response.setResponse(dto);
 		Mockito.when(serviceImpl.translitratorService(Mockito.any())).thenReturn(response);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/transliterate")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
@@ -105,7 +105,7 @@ public class TransliterationControllerTest {
 	 * @throws Exception
 	 *             on error
 	 */
-	//@Test
+	@Test
 	public void failureTest() throws Exception {
 		logger.info("----------Unsuccessful transliteration controller operation-------");
 		Mockito.doThrow(new IllegalParamException("ex",null)).when(serviceImpl).translitratorService(Mockito.any());

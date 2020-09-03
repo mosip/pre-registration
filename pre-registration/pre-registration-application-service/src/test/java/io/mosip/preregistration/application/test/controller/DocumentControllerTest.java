@@ -52,7 +52,7 @@ import io.mosip.preregistration.document.dto.DocumentResponseDTO;
  * @since 1.0.0
  * 
  */
-@SpringBootTest(classes = { PreRegistrationApplicationTest.class })
+@SpringBootTest
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
 public class DocumentControllerTest {

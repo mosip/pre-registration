@@ -3,12 +3,11 @@
 This service manages to provide the following service to the Pre-registration application.
 
   * Demographic - This service details used by Pre-Registration portal to maintain the demographic data by providing his/her basic details.
-  * Document- This service enables Pre-Registration portal to request for uploading the document for a particular 
-pre-registration.
+  * Document- This service enables Pre-Registration portal to request for uploading the document for a particular pre-registration.
   * QrCodeGenerator- This service details used by Pre-Registration portal to generate QR Code.
-  * Transliteration- This service details used by Pre-Registration portal to provide transliteration from primary to secondary                                     language.
+  * Transliteration- This service details used by Pre-Registration portal to provide transliteration from primary to secondary language.
   * Notification- This service details used by Pre-Registration portal to trigger notification via SMS or email.
-  * Login - This service details used by Pre-Registration portal to authenticate user by sending OTP to the user, validating                                     with userid and OTP.
+  * Login - This service details used by Pre-Registration portal to authenticate user by sending OTP to the user, validating  with userid and OTP.
  
 
 ## Design
@@ -49,12 +48,12 @@ pre-registration.
 | commons/kernel | kernel-auth-service| /authorize/validateToken |
 | commons/kernel | kernel-pridgenerator-service | /pridgenerator/prid |
 | commons/kernel | kernel-masterdata-service  | /documenttypes/{documentcategorycode}/{langcode}|
-|  |   | /validdocuments/{languagecode} | 
-|  |   |  /{langcode}/{templatetypecode} |
-|commons/kernel | kernel-emailnotification-service | /email/send |
+| | /validdocuments/{languagecode} | 
+| |  /{langcode}/{templatetypecode} |
+| commons/kernel | kernel-emailnotification-service | /email/send |
 | commons/kernel | kernel-smsnotification-service | /sms/send |
 | commons/kernel | kernel-cryptomanager-service | /encrypt |
-|  |  | /decrypt |
+| | /decrypt |
 
 
 

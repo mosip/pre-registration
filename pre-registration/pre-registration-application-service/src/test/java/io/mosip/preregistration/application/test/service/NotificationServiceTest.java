@@ -73,7 +73,7 @@ import io.mosip.preregistration.application.exception.RestCallException;
  * @since 1.0.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = { PreRegistrationApplicationTest.class })
+@SpringBootTest
 public class NotificationServiceTest {
 
 	@Autowired
