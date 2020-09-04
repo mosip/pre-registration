@@ -15,7 +15,7 @@ import org.springframework.context.annotation.FilterType;
  * @author Rajath KR
  * @since 1.0.0
  */
-@SpringBootApplication(scanBasePackages= {"io.mosip.preregistration.core.*,io.mosip.preregistration.application.*,io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*,io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*"})
+@SpringBootApplication
 @ComponentScan(basePackages = "io.mosip.*", excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "io.mosip.kernel.idobjectvalidator.*"))
 public class PreRegistrationApplicationTest {
 	/**
