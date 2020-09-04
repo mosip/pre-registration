@@ -421,50 +421,50 @@ public class BookingServiceUtilTest {
 
 	}
 
-	@Test(expected = DemographicStatusUpdationException.class)
-	public void callUpdateStatusRestServiceTest() {
+// 	@Test(expected = DemographicStatusUpdationException.class)
+// 	public void callUpdateStatusRestServiceTest() {
 
-		Map<String, Object> map = new HashMap<>();
-		map.put("pre_rgistration_id", "23587986034785");
+// 		Map<String, Object> map = new HashMap<>();
+// 		map.put("pre_rgistration_id", "23587986034785");
 
-		RestClientException ex = new RestClientException(null);
-		MainResponseDTO<String> preRegResponse = new MainResponseDTO<>();
-		preRegResponse.setResponse(null);
-		ExceptionJSONInfoDTO err = new ExceptionJSONInfoDTO();
-		List<ExceptionJSONInfoDTO> errList = new ArrayList<>();
-		err.setErrorCode(ErrorCodes.PRG_BOOK_RCI_011.name());
-		err.setMessage(ErrorMessages.DEMOGRAPHIC_STATUS_UPDATION_FAILED.getMessage());
-		errList.add(err);
-		preRegResponse.setErrors(errList);
-		preRegResponse.setResponsetime(serviceUtil.getCurrentResponseTime());
-		MainResponseDTO<String> updatePreRegistrationStatus = new MainResponseDTO<>();
-		updatePreRegistrationStatus.setErrors(errList);
-		Mockito.when(serviceUtil.updatePreRegistrationStatus("23587986034785", "Pending_Appointment")).thenReturn(updatePreRegistrationStatus);
-		serviceUtil.updateDemographicStatus("23587986034785", "Pending_Appointment");
+// 		RestClientException ex = new RestClientException(null);
+// 		MainResponseDTO<String> preRegResponse = new MainResponseDTO<>();
+// 		preRegResponse.setResponse(null);
+// 		ExceptionJSONInfoDTO err = new ExceptionJSONInfoDTO();
+// 		List<ExceptionJSONInfoDTO> errList = new ArrayList<>();
+// 		err.setErrorCode(ErrorCodes.PRG_BOOK_RCI_011.name());
+// 		err.setMessage(ErrorMessages.DEMOGRAPHIC_STATUS_UPDATION_FAILED.getMessage());
+// 		errList.add(err);
+// 		preRegResponse.setErrors(errList);
+// 		preRegResponse.setResponsetime(serviceUtil.getCurrentResponseTime());
+// 		MainResponseDTO<String> updatePreRegistrationStatus = new MainResponseDTO<>();
+// 		updatePreRegistrationStatus.setErrors(errList);
+// 		Mockito.when(serviceUtil.updatePreRegistrationStatus("23587986034785", "Pending_Appointment")).thenReturn(updatePreRegistrationStatus);
+// 		serviceUtil.updateDemographicStatus("23587986034785", "Pending_Appointment");
 
-	}
+// 	}
 
 	
 
-	@SuppressWarnings("unchecked")
-	@Test(expected = BookingDataNotFoundException.class)
-	public void callGetStatusRestServiceforCancelTest() {
+// 	@SuppressWarnings("unchecked")
+// 	@Test(expected = BookingDataNotFoundException.class)
+// 	public void callGetStatusRestServiceforCancelTest() {
 
-		List<PreRegistartionStatusDTO> statusList = new ArrayList<>();
-		PreRegistartionStatusDTO preRegistartionStatusDTO = new PreRegistartionStatusDTO();
-		@SuppressWarnings("rawtypes")
-		MainResponseDTO preRegResponse = new MainResponseDTO();
-		preRegistartionStatusDTO.setStatusCode(StatusCodes.PENDING_APPOINTMENT.getCode());
-		preRegistartionStatusDTO.setPreRegistartionId("23587986034785");
-		statusList.add(preRegistartionStatusDTO);
+// 		List<PreRegistartionStatusDTO> statusList = new ArrayList<>();
+// 		PreRegistartionStatusDTO preRegistartionStatusDTO = new PreRegistartionStatusDTO();
+// 		@SuppressWarnings("rawtypes")
+// 		MainResponseDTO preRegResponse = new MainResponseDTO();
+// 		preRegistartionStatusDTO.setStatusCode(StatusCodes.PENDING_APPOINTMENT.getCode());
+// 		preRegistartionStatusDTO.setPreRegistartionId("23587986034785");
+// 		statusList.add(preRegistartionStatusDTO);
 
-		preRegResponse.setResponse(preRegistartionStatusDTO);
-		preRegResponse.setErrors(null);
-		preRegResponse.setResponsetime(serviceUtil.getCurrentResponseTime());
-		Mockito.when(serviceUtil.getApplicationStatus("23587986034785")).thenReturn(preRegResponse);
-		serviceUtil.getDemographicStatusForCancel("23587986034785");
+// 		preRegResponse.setResponse(preRegistartionStatusDTO);
+// 		preRegResponse.setErrors(null);
+// 		preRegResponse.setResponsetime(serviceUtil.getCurrentResponseTime());
+// 		Mockito.when(serviceUtil.getApplicationStatus("23587986034785")).thenReturn(preRegResponse);
+// 		serviceUtil.getDemographicStatusForCancel("23587986034785");
 
-	}
+// 	}
 
 
 //	@Test(expected = DemographicGetStatusException.class)
@@ -489,19 +489,19 @@ public class BookingServiceUtilTest {
 
 	}
 
-	@Test(expected = DemographicGetStatusException.class)
-	public void callGetStatusRestService1Test() {
-		MainResponseDTO<PreRegistartionStatusDTO> getApplicationStatus = new MainResponseDTO<>();
-		List<ExceptionJSONInfoDTO> ex = new ArrayList<ExceptionJSONInfoDTO>();
-		ExceptionJSONInfoDTO err = new ExceptionJSONInfoDTO();
-		err.setErrorCode(ErrorCodes.PRG_BOOK_RCI_011.name());
-		err.setMessage(ErrorMessages.DEMOGRAPHIC_STATUS_UPDATION_FAILED.getMessage());
-		ex.add(err);
-		getApplicationStatus.setErrors(ex);
-		Mockito.when(serviceUtil.getApplicationStatus("23587986034785")).thenReturn(getApplicationStatus);
-		serviceUtil.getDemographicStatus("23587986034785");
+// 	@Test(expected = DemographicGetStatusException.class)
+// 	public void callGetStatusRestService1Test() {
+// 		MainResponseDTO<PreRegistartionStatusDTO> getApplicationStatus = new MainResponseDTO<>();
+// 		List<ExceptionJSONInfoDTO> ex = new ArrayList<ExceptionJSONInfoDTO>();
+// 		ExceptionJSONInfoDTO err = new ExceptionJSONInfoDTO();
+// 		err.setErrorCode(ErrorCodes.PRG_BOOK_RCI_011.name());
+// 		err.setMessage(ErrorMessages.DEMOGRAPHIC_STATUS_UPDATION_FAILED.getMessage());
+// 		ex.add(err);
+// 		getApplicationStatus.setErrors(ex);
+// 		Mockito.when(serviceUtil.getApplicationStatus("23587986034785")).thenReturn(getApplicationStatus);
+// 		serviceUtil.getDemographicStatus("23587986034785");
 
-	}
+// 	}
 	
 	@Test
 	public void isValidRegCenterTest() {
