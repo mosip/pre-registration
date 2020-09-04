@@ -115,8 +115,8 @@ jobs:
     - name: Publish the maven package
       run: |
         chmod +x ./deploy.sh
-
-        cd pre-registration && mvn deploy -DskipTests -Dgpg.skip -s $GITHUB_WORKSPACE/settings1.xml  -f pom.xml
+        ./deploy.sh pre-registration $GITHUB_WORKSPACE/settings1.xml .*
+#        cd pre-registration && mvn deploy -DskipTests -Dgpg.skip -s $GITHUB_WORKSPACE/settings1.xml  -f pom.xml
       env:
         GITHUB_TOKEN: ${{ secrets.access_token }}
         GPG_TTY: $(tty)
