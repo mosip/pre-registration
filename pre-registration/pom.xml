@@ -10,6 +10,12 @@
 
 	<name>pre-registration</name>
 	<description>Parent project of MOSIP Pre-Registration</description>
+	<distributionManagement>
+               <repository>
+                       <id>github</id>
+                       <url>https://maven.pkg.github.com/mosip/pre-registration</url>
+               </repository> 
+        </distributionManagement> 
 	<url>https://github.com/mosip/pre-registration</url>
 	
 	<licenses>
