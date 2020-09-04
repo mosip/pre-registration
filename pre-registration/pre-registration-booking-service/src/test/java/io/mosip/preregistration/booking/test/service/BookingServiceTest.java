@@ -1731,7 +1731,7 @@ public class BookingServiceTest {
 		successBookDto1.setRegistrationCenterId("1");
 		successBookDto1.setSlotFromTime(LocalTime.of(9, 0).toString());
 		successBookDto1.setSlotToTime(LocalTime.of(9, 15).toString());
-		successBookDto1.setRegDate(org.joda.time.LocalDate.now().plusDays(30).toString());
+		successBookDto1.setRegDate(LocalDate.now().plusDays(30).toString());
 		successBookDtoList.add(successBookDto1);
 		bookingRequest.setBookingRequest(successBookDtoList);
 		bookingRequestDTOs.setRequest(bookingRequest);
