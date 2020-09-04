@@ -41,7 +41,7 @@
                 </developer>
         </developers>
 	
-	<distributionManagement>
+<!--	<distributionManagement>
                 <snapshotRepository>
                         <id>ossrh</id>
                         <url>https://oss.sonatype.org/content/repositories/snapshots</url>
@@ -51,7 +51,7 @@
                         <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
                 </repository>
         </distributionManagement>
-
+-->
 	<properties>
 		<pre.registration.core.version>1.0.9</pre.registration.core.version>
 		<kernel.core.version>1.0.9</kernel.core.version>
