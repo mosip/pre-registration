@@ -3,6 +3,7 @@ package io.mosip.preregistration.core.util;
 import java.io.IOException;
 import java.util.Date;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -21,6 +22,7 @@ import org.springframework.web.multipart.MultipartFile;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.core.code.RequestCodes;
+import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
@@ -56,6 +58,9 @@ public class NotificationUtil {
 
 	@Value("${cancel.appoinment.template}")
 	private String cancelAppoinment;
+	
+	@Value("${booking.resource.url}")
+	private String getAppointmentResourseUrl;
 
 	@Autowired
 	private TemplateUtil templateUtil;
@@ -204,6 +209,34 @@ public class NotificationUtil {
 
 	}
 
+	public MainResponseDTO<BookingRegistrationDTO> getAppointmentDetails(String preRegId) {
+		MainResponseDTO<BookingRegistrationDTO> response = new MainResponseDTO<>();
+		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> responseEntity = null;
+		String url = getAppointmentResourseUrl + "/appointment/" + preRegId;
+		try {
+			log.info("sessionId", "idType", "id", "In callBookingService method of DemographicServiceUtil" + url);
+			HttpHeaders headers =  new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<?> entity = new HttpEntity<>(headers);
+			System.out.println(entity);
+			responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity,
+					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
+					});
+			System.out.println(responseEntity);
+			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
+				System.out.println(responseEntity.getBody().getErrors());
+				response.setErrors(responseEntity.getBody().getErrors());
+			}else {
+				response.setResponse(responseEntity.getBody().getResponse());
+			}
+			log.info("sessionId", "idType", "id", "In call to booking rest service :" + url);
+		} catch (Exception ex) {
+			log.debug("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
+			throw new RestClientException("Rest call failed");
+		}
+		return response;
+	}
+	
 	public String getCurrentResponseTime() {
 		log.info("sessionId", "idType", "id", "In getCurrentResponseTime method of NotificationUtil service");
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
