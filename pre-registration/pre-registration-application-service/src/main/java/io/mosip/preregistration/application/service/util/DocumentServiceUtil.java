@@ -52,7 +52,7 @@ import io.mosip.preregistration.application.exception.DemographicGetDetailsExcep
 import io.mosip.preregistration.application.exception.DocumentNotValidException;
 import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
-
+import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
 /**
  * This class provides the utility methods for DocumentService
  * 
