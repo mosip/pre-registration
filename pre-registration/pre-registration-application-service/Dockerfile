@@ -32,7 +32,7 @@ ENV artifactory_url_env=${artifactory_url}
 
 copy ./target/pre-registration-application-*.jar pre-registration-application-service.jar
 
-EXPOSE 9092
+EXPOSE 9090
 CMD if [ "$is_glowroot_env" = "present" ]; then \
     wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/1.0.9-SNAPSHOT/kernel-ref-idobjectvalidator-1.0.9-SNAPSHOT.jar kernel-ref-idobjectvalidator-1.0.9-SNAPSHOT.jar ; \
     wget "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/testing/glowroot.zip ; \
