@@ -23,7 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import io.mosip.kernel.core.exception.IOException;
 import io.mosip.kernel.core.fsadapter.spi.FileSystemAdapter;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -102,8 +102,15 @@ public class DocumentServiceUtil {
 	@Value("${demographic.resource.url}")
 	private String demographicResourceUrl;
 
+// 	@Autowired
+// 	private FileSystemAdapter fs;
+	
+	@Value("${mosip.kernel.objectstore.account-name}")
+	private String objectStoreAccountName;
+
+	@Qualifier("S3Adapter")
 	@Autowired
-	private FileSystemAdapter fs;
+	private ObjectStoreAdapter objectStore;
 
 	/**
 	 * Logger configuration for DocumentServiceUtil
@@ -264,7 +271,8 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDemographicEntity(demographicEntity);
 		copyDocumentEntity.setDocId(sourceEntity.getDocId());
 		String key = sourceEntity.getDocCatCode() + "_" + sourceEntity.getDocumentId();
-		InputStream file = fs.getFile(sourceEntity.getDemographicEntity().getPreRegistrationId(), key);
+		InputStream file = objectStore.getObject(objectStoreAccountName,sourceEntity.getDemographicEntity().getPreRegistrationId(), key);
+		//InputStream file = fs.getFile(sourceEntity.getDemographicEntity().getPreRegistrationId(), key);
 
 		copyDocumentEntity.setDocHash(HashUtill.hashUtill(IOUtils.toByteArray(file)));
 		copyDocumentEntity.setDocName(sourceEntity.getDocName());
