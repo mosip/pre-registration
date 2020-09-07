@@ -595,7 +595,7 @@ public class DocumentService implements DocumentServiceIntf {
 					//boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(),
 							//key);
 					//boolean isDeleted = fs.deleteFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key);
-					boolean isDeleted;
+					boolean isDeleted = false;
 					if (!isDeleted) {
 						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
 								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
