@@ -24,7 +24,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
+import org.springframework.beans.factory.annotation.Qualifier;
 import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
 import io.mosip.kernel.core.fsadapter.spi.FileSystemAdapter;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -147,6 +147,7 @@ public class DocumentService implements DocumentServiceIntf {
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
 
+	@Qualifier("S3Adapter")
 	@Autowired
 	private ObjectStoreAdapter objectStore;
 
