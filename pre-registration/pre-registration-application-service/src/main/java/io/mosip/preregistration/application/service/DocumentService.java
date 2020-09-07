@@ -141,8 +141,8 @@ public class DocumentService implements DocumentServiceIntf {
 	/**
 	 * Autowired reference for {@link #FileSystemAdapter}
 	 */
-	@Autowired
-	private FileSystemAdapter fs;
+// 	@Autowired
+// 	private FileSystemAdapter fs;
 	
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
@@ -594,7 +594,8 @@ public class DocumentService implements DocumentServiceIntf {
 					String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 					//boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(),
 							//key);
-					boolean isDeleted = fs.deleteFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key);
+					//boolean isDeleted = fs.deleteFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key);
+					boolean isDeleted;
 					if (!isDeleted) {
 						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
 								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
@@ -698,7 +699,7 @@ public class DocumentService implements DocumentServiceIntf {
 			for (DocumentEntity documentEntity : documentEntityList) {
 				String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 				//objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(), key);
-				fs.deleteFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key);
+				//fs.deleteFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key);
 			}
 			deleteDTO.setMessage(DocumentStatusMessages.ALL_DOCUMENT_DELETE_SUCCESSFUL.getMessage());
 		}
