@@ -440,7 +440,7 @@ public class DocumentService implements DocumentServiceIntf {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
-			if (ex instanceof DocumentNotFoundException)
+			if (ex instanceof DocumentNotFoundException){
 				isDocNotFound = true;
 			ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(((DocumentNotFoundException)ex).getErrorCode(), 
 						((DocumentNotFoundException)ex).getErrorText());
@@ -449,6 +449,7 @@ public class DocumentService implements DocumentServiceIntf {
 				responseDto.setErrors(errorList);
 				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			//new DocumentExceptionCatcher().handle(ex, responseDto);
+			}
 		} finally {
 			if (isRetrieveSuccess) {
 				setAuditValues(EventId.PRE_401.toString(), EventName.RETRIEVE.toString(), EventType.BUSINESS.toString(),
