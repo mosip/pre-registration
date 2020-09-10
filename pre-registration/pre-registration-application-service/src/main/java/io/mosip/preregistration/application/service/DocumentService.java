@@ -399,8 +399,8 @@ public class DocumentService implements DocumentServiceIntf {
 		if (copyDocumentEntity != null) {
 			destinationBucketName = copyDocumentEntity.getDemographicEntity().getPreRegistrationId();
 			destinationKey = copyDocumentEntity.getDocCatCode() + "_" + copyDocumentEntity.getDocumentId();
-			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, sourceKey, sourceBucketName,
-					objectStore.getObject(objectStoreAccountName, destinationBucketName, destinationKey));
+			InputStream sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, sourceKey);
+			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, destinationBucketName, destinationKey,sourcefile);
 			if (!isStoreSuccess) {
 				throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_009.toString(),
 						DocumentErrorMessages.DOCUMENT_FAILED_TO_UPLOAD.getMessage());
