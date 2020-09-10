@@ -63,7 +63,7 @@ import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.document.dto.DocumentRequestDTO;
 import io.mosip.preregistration.document.dto.DocumentResponseDTO;
 import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
-
+import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 /**
  * This class provides the service implementation for Document
  * 
