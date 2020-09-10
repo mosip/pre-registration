@@ -521,7 +521,7 @@ public class PreRegistrationExceptionHandler {
 		errorRes.setErrors(errorList);
 		errorRes.setId(e.getMainResponseDTO().getId());
 		errorRes.setVersion(e.getMainResponseDTO().getVersion());
-		errorRes.setResponsetime(DateUtils.formatDate(new Date(), utcDateTimepattern));
+		errorRes.setResponsetime(DateUtils.formatDate(new Date(), utcDateTimePattern));
 
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 	}
@@ -771,7 +771,7 @@ public class PreRegistrationExceptionHandler {
 	}
 
 	public String getCurrentResponseTime() {
-		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
+		return DateUtils.formatDate(new Date(System.currentTimeMillis()), utcDateTimePattern);
 	}
 
 	private ResponseWrapper<ServiceError> setErrors(HttpServletRequest httpServletRequest) throws IOException {
