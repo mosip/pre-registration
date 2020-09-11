@@ -17,7 +17,6 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<pre.registration.application.service.impl.version>1.0.9</pre.registration.application.service.impl.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -80,11 +79,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.mosip.preregistration</groupId>
-			<artifactId>pre-registration-application-service-impl</artifactId>
-			<version>${pre.registration.application.service.impl.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
