@@ -9,6 +9,7 @@ on:
       - master
       - 1.1.*
       - MOSIP-8545
+      - develop
   
 jobs:
   build:
