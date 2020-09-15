@@ -267,10 +267,13 @@ public class PreRegistrationExceptionHandler {
 	 */
 	@ExceptionHandler(InvalidRequestParameterException.class)
 	public ResponseEntity<MainResponseDTO<?>> invalidRequest(final InvalidRequestParameterException e) {
+		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(), e.getErrorText());
+		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
+		errorList.add(errorDetails);
 		MainResponseDTO<?> errorRes = e.getMainResponseDto();
 		errorRes.setId(id.get(e.getOperation()));
 		errorRes.setVersion(env.getProperty("version"));
-		errorRes.setErrors(e.getExptionList());
+		errorRes.setErrors(errorList);
 		errorRes.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 	}
