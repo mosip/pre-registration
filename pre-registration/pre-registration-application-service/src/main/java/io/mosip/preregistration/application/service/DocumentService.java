@@ -141,8 +141,6 @@ public class DocumentService implements DocumentServiceIntf {
 	/**
 	 * Autowired reference for {@link #FileSystemAdapter}
 	 */
-// 	@Autowired
-// 	private FileSystemAdapter fs;
 	
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
@@ -294,7 +292,7 @@ public class DocumentService implements DocumentServiceIntf {
 			String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 
 			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName,
-					documentEntity.getDemographicEntity().getPreRegistrationId(), key,
+					documentEntity.getDemographicEntity().getPreRegistrationId(),null,null, key,
 					new ByteArrayInputStream(encryptedDocument));
 
 			if (!isStoreSuccess) {
@@ -399,8 +397,8 @@ public class DocumentService implements DocumentServiceIntf {
 		if (copyDocumentEntity != null) {
 			destinationBucketName = copyDocumentEntity.getDemographicEntity().getPreRegistrationId();
 			destinationKey = copyDocumentEntity.getDocCatCode() + "_" + copyDocumentEntity.getDocumentId();
-			InputStream sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, sourceKey);
-			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, destinationBucketName, destinationKey,sourcefile);
+			InputStream sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName,null,null, sourceKey);
+			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, destinationBucketName,null,null, destinationKey,sourcefile);
 			if (!isStoreSuccess) {
 				throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_009.toString(),
 						DocumentErrorMessages.DOCUMENT_FAILED_TO_UPLOAD.getMessage());
@@ -498,7 +496,7 @@ public class DocumentService implements DocumentServiceIntf {
 				}
 				String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 				InputStream sourcefile = objectStore.getObject(objectStoreAccountName,
-						documentEntity.getDemographicEntity().getPreRegistrationId(), key);
+						documentEntity.getDemographicEntity().getPreRegistrationId(),null,null, key);
 				if (sourcefile == null) {
 					throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_005.toString(),
 							DocumentErrorMessages.DOCUMENT_FAILED_TO_FETCH.getMessage());
@@ -600,10 +598,8 @@ public class DocumentService implements DocumentServiceIntf {
 				}
 				if (documnetDAO.deleteAllBydocumentId(documentId) > 0) {
 					String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
-					//boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(),
-							//key);
-					//boolean isDeleted = fs.deleteFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key);
-					boolean isDeleted = false;
+					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(),
+							null,null,key);
 					if (!isDeleted) {
 						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
 								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
@@ -706,8 +702,8 @@ public class DocumentService implements DocumentServiceIntf {
 		if (documnetDAO.deleteAllBypreregId(preregId) >= 0) {
 			for (DocumentEntity documentEntity : documentEntityList) {
 				String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
-				//objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(), key);
-				//fs.deleteFile(documentEntity.getDemographicEntity().getPreRegistrationId(), key);
+				objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(), null,null,key);
+			
 			}
 			deleteDTO.setMessage(DocumentStatusMessages.ALL_DOCUMENT_DELETE_SUCCESSFUL.getMessage());
 		}
