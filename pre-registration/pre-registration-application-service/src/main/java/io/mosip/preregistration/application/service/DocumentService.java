@@ -440,13 +440,7 @@ public class DocumentService implements DocumentServiceIntf {
 					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
 			if (ex instanceof DocumentNotFoundException){
 				isDocNotFound = true;
-			ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(((DocumentNotFoundException)ex).getErrorCode(), 
-						((DocumentNotFoundException)ex).getErrorText());
-				List<ExceptionJSONInfoDTO> errorList=new ArrayList<>();
-				errorList.add(errorDetails);
-				responseDto.setErrors(errorList);
-				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
-			//new DocumentExceptionCatcher().handle(ex, responseDto);
+			 new DocumentExceptionCatcher().handle(ex, responseDto);
 			}
 		} finally {
 			if (isRetrieveSuccess) {
