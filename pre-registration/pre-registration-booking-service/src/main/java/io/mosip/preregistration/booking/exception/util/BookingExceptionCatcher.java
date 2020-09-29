@@ -75,8 +75,8 @@ public class BookingExceptionCatcher {
 		} else if (ex instanceof DateTimeException || ex instanceof java.time.format.DateTimeParseException
 				|| ex instanceof InvalidDateTimeFormatException || ex instanceof java.text.ParseException) {
 			throw new InvalidDateTimeFormatException(
-					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_019.toString(),
-					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_DATE_TIME_FORMAT.getMessage(),
+					((InvalidDateTimeFormatException)ex).getErrorCode(),
+					((InvalidDateTimeFormatException)ex).getErrorText(),
 					mainResponseDTO);
 		} else if (ex instanceof ParseException) {
 			throw new ParseException(io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_019.toString(),
