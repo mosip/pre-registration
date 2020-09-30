@@ -59,6 +59,7 @@ import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
 import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
 import io.mosip.preregistration.application.exception.InvalidateTokenException;
 import io.mosip.preregistration.application.exception.LoginServiceException;
+import io.mosip.preregistration.application.exception.MandatoryFieldException;
 import io.mosip.preregistration.application.exception.MandatoryFieldNotFoundException;
 import io.mosip.preregistration.application.exception.MandatoryFieldRequiredException;
 import io.mosip.preregistration.application.exception.MissingRequestParameterException;
@@ -274,6 +275,14 @@ public class PreRegistrationExceptionHandler {
 		errorRes.setVersion(env.getProperty("version"));
 		errorRes.setErrors(e.getExptionList());
 		errorRes.setResponsetime(GenericUtil.getCurrentResponseTime());
+		if (errorRes.getErrors() == null) {
+			List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
+			ExceptionJSONInfoDTO error = new ExceptionJSONInfoDTO();
+			error.setErrorCode(e.getErrorCode());
+			error.setMessage(e.getErrorText());
+			errorList.add(error);
+			errorRes.setErrors(errorList);
+		}
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 	}
 
@@ -750,6 +759,16 @@ public class PreRegistrationExceptionHandler {
 	@ExceptionHandler(InvalidDocumentIdExcepion.class)
 	public ResponseEntity<MainResponseDTO<?>> invalidDocumnetIdExcepion(final InvalidDocumentIdExcepion e) {
 		return GenericUtil.errorResponse(e, e.getResponse());
+	}
+
+	/**
+	 * @param e
+	 * @param request
+	 * @return response of MandatoryFieldRequiredException
+	 */
+	@ExceptionHandler(MandatoryFieldException.class)
+	public ResponseEntity<MainResponseDTO<?>> mandatoryFieldrequired(final MandatoryFieldException e) {
+		return GenericUtil.errorResponse(e, e.getMainResponseDTO());
 	}
 
 	/**

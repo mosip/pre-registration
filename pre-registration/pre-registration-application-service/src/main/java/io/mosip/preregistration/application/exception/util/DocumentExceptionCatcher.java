@@ -38,6 +38,7 @@ import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
 import io.mosip.preregistration.application.exception.MandatoryFieldNotFoundException;
 import io.mosip.preregistration.application.exception.ParsingException;
 import io.mosip.preregistration.application.exception.PrimaryKeyValidationException;
+import io.mosip.preregistration.application.exception.RecordNotFoundException;
 
 /**
  * This class is used to catch the exceptions that occur while uploading the
@@ -66,8 +67,8 @@ public class DocumentExceptionCatcher {
 			throw new DTOMappigException(((JsonParseException) ex).getErrorCode(),
 					((JsonParseException) ex).getErrorText(), response);
 		} else if (ex instanceof JSONException || ex instanceof ParseException) {
-			throw new ParsingException(DocumentErrorCodes.PRG_PAM_DOC_015.toString(), DocumentErrorMessages.JSON_EXCEPTION.getMessage(),
-					response);
+			throw new ParsingException(DocumentErrorCodes.PRG_PAM_DOC_015.toString(),
+					DocumentErrorMessages.JSON_EXCEPTION.getMessage(), response);
 
 		} else if (ex instanceof InvalidRequestParameterException) {
 			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
@@ -122,6 +123,10 @@ public class DocumentExceptionCatcher {
 		} else if (ex instanceof InvalidRequestException) {
 			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
 					((InvalidRequestException) ex).getErrorText(), response);
+		} else if (ex instanceof RecordNotFoundException) {
+			throw new RecordNotFoundException(((RecordNotFoundException) ex).getErrorCode(),
+					((RecordNotFoundException) ex).getErrorText(), response);
+
 		} else if (ex instanceof java.text.ParseException) {
 			throw new InvalidRequestParameterException(
 					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_003.getCode(),
