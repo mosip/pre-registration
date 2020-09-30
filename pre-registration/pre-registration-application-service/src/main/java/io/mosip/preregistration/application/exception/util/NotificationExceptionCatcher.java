@@ -96,7 +96,7 @@ public class NotificationExceptionCatcher {
 
 		}
 		else if (ex instanceof RecordNotFoundException) {
-			throw new RecordNotFoundException(((RecordNotFoundException) ex).getErrorCode(),((RecordNotFoundException) ex).getErrorText());
+			throw new RecordNotFoundException(((RecordNotFoundException) ex).getErrorCode(),((RecordNotFoundException) ex).getErrorText(),mainResponseDto);
 
 		}
 		else {
