@@ -271,7 +271,9 @@ public class PreRegistrationExceptionHandler {
 			final InvalidRequestParameterException e) {
 
 		MainResponseDTO<?> errorRes = e.getMainResponseDto();
-		errorRes.setId(id.get(e.getOperation()));
+		if(errorRes.getId() == null) {
+			errorRes.setId(id.get(e.getOperation()));
+		}
 		errorRes.setVersion(env.getProperty("version"));
 		errorRes.setErrors(e.getExptionList());
 		errorRes.setResponsetime(GenericUtil.getCurrentResponseTime());
