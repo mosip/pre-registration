@@ -36,6 +36,7 @@ import io.mosip.preregistration.application.exception.DocumentFailedToCopyExcept
 import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.FSServerException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.util.DocumentExceptionCatcher;
 import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -438,7 +439,7 @@ public class DocumentService implements DocumentServiceIntf {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
-			if (ex instanceof DocumentNotFoundException){
+			if (ex instanceof DocumentNotFoundException || ex instanceof RecordNotFoundException){
 				isDocNotFound = true;
 			 new DocumentExceptionCatcher().handle(ex, responseDto);
 			}
