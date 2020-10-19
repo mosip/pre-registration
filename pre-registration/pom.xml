@@ -123,7 +123,6 @@
 	<modules>
 		<module>pre-registration-core</module>
 		<module>pre-registration-application-service</module>
-		<module>pre-registration-booking-service</module>
 		<module>pre-registration-datasync-service</module>
 		<module>pre-registration-batchjob</module>
         <module>pre-registration-captcha-service</module>
