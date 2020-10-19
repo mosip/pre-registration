@@ -3,6 +3,7 @@ package io.mosip.preregistration.application.service;
 import java.io.IOException;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -126,6 +127,9 @@ public class NotificationService {
 
 	@Value("${preregistartion.identity.phone}")
 	private String phone;
+
+	@Value("${preregistration.notification.nameFormat}")
+	private String nameFormat;
 
 	@Value("#{'${mosip.notificationtype}'.split('\\|')}")
 	private List<String> notificationTypeList;
@@ -382,10 +386,20 @@ public class NotificationService {
 							"Not considering the requested mobilenumber/email since additional recipient is false ");
 				}
 			}
-			if (!notificationDto.getIsBatch()
-					&& !notificationDto.getName().equals(responseNode.get(fullName).get(0).get("value").asText())) {
-				throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_008.getCode(),
-						NotificationErrorMessages.FULL_NAME_VALIDATION_EXCEPTION.getMessage(), response);
+			if (!notificationDto.getIsBatch()) {
+				String name = "";
+				if(nameFormat != null) {
+					String[] nameKeys = nameFormat.split(",");
+					ArrayList<String> nameVals = new ArrayList<String>();
+					for(int i=0; i<nameKeys.length;i++){
+						nameVals.add(responseNode.get(nameKeys[i]).get(0).get("value").asText().trim());
+					}
+					name = String.join(" ", nameVals);
+				}
+				if(!notificationDto.getName().equals(name)){
+					throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_008.getCode(),
+							NotificationErrorMessages.FULL_NAME_VALIDATION_EXCEPTION.getMessage(), response);
+				}
 			}
 			return responseEntity;
 	}
