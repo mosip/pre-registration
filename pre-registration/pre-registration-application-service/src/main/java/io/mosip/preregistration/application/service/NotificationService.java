@@ -36,7 +36,6 @@ import io.mosip.preregistration.application.exception.MandatoryFieldException;
 import io.mosip.preregistration.application.exception.RestCallException;
 import io.mosip.preregistration.application.exception.util.NotificationExceptionCatcher;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
-//import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
@@ -77,9 +76,6 @@ public class NotificationService {
 
 	@Autowired
 	private DemographicServiceIntf demographicServiceIntf;
-
-//	@Autowired
-//	private BookingServiceIntf bookingServiceIntf;
 
 	/**
 	 * Reference for ${appointmentResourse.url} from property file
