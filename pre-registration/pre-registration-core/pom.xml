@@ -18,11 +18,11 @@
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 
 	<properties>
-		<kernel.core.version>1.2.0-SNAPSHOT</kernel.core.version>
+		<kernel.core.version>1.1.2-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.templatemanager.velocity.version>1.2.0-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.logger.logback.version>1.2.0-SNAPSHOT</kernel.logger.logback.version>
-		<kernel.dataaccess.hibernate.version>1.2.0-SNAPSHOT</kernel.dataaccess.hibernate.version>
+		<kernel.templatemanager.velocity.version>1.1.2-SNAPSHOT</kernel.templatemanager.velocity.version>
+		<kernel.logger.logback.version>1.1.2-SNAPSHOT</kernel.logger.logback.version>
+		<kernel.dataaccess.hibernate.version>1.1.2-SNAPSHOT</kernel.dataaccess.hibernate.version>
 	</properties>
 
 	<dependencies>
