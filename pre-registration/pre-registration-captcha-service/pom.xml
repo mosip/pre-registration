@@ -6,11 +6,19 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
+<<<<<<< HEAD
 		<version>1.1.2-rc2</version>
 	</parent>
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
 	<version>1.1.2-rc2</version>
+=======
+		<version>1.2.0-SNAPSHOT</version>
+	</parent>
+	<groupId>io.mosip.preregistration.captcha</groupId>
+	<artifactId>pre-registration-captcha-service</artifactId>
+	<version>1.2.0-SNAPSHOT</version>
+>>>>>>> Keycloak config changes
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
 

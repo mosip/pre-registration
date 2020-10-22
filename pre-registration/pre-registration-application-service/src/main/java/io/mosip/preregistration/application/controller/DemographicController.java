@@ -64,7 +64,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/")
-@Api(tags = "Pre-Registration")
+@Api(tags = "application")
 @CrossOrigin("*")
 public class DemographicController {
 

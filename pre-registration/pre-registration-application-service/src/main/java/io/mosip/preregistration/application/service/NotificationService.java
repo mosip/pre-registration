@@ -23,7 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.code.NotificationRequestCodes;
@@ -122,7 +122,7 @@ public class NotificationService {
 	@Value("${preregistartion.identity.email}")
 	private String email;
 
-	@Value("${preregistartion.identity.fullName}")
+	@Value("${preregistartion.identity.name}")
 	private String fullName;
 
 	@Value("${preregistartion.identity.phone}")
