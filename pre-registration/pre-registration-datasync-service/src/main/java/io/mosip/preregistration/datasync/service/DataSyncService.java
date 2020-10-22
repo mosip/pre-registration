@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;

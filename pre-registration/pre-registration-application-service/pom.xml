@@ -6,25 +6,22 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.7</version>
+		<version>1.2.0-SNAPSHOT</version>
 	</parent>
-
-	<version>1.1.2-SNAPSHOT</version>
-
+	<version>1.2.0-SNAPSHOT</version>
 	<artifactId>pre-registration-application-service</artifactId>
 	<name>pre-registration-application-service</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.core.version>1.1.2-SNAPSHOT</kernel.core.version>
-		<kernel.auth.adapter.version>1.0.9</kernel.auth.adapter.version>
 		<kernel.khazana.version>1.1.2-SNAPSHOT</kernel.khazana.version>
 		<kernel.virusscanner.clamav.version>1.1.2-SNAPSHOT</kernel.virusscanner.clamav.version>
 		<kernel.idgenerator.prid.version>1.1.2-SNAPSHOT</kernel.idgenerator.prid.version>
 		<kernel.idobjectvalidator.version>1.1.2-SNAPSHOT</kernel.idobjectvalidator.version>
 		<kernel.templatemanager.velocity.version>1.1.2-SNAPSHOT</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.1.2-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
-		<pre.registration.core.version>1.1.2-SNAPSHOT</pre.registration.core.version>
+		<pre.registration.core.version>1.2.0-SNAPSHOT</pre.registration.core.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -71,11 +68,6 @@
 			<version>${kernel.core.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel.auth.adapter.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
@@ -89,11 +81,6 @@
 			<artifactId>khazana</artifactId>
 			<version>${kernel.khazana.version}</version>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-fsadapter-hdfs</artifactId>
-			<version>${kernel.fsadapter.hdfs.version}</version>
-		</dependency> -->
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-virusscanner-clamav</artifactId>

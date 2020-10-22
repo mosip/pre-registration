@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.7</version>
+		<version>1.2.0-SNAPSHOT</version>
 	</parent>
 
-	<version>1.1.2-SNAPSHOT</version>
 
+	<version>1.2.0-SNAPSHOT</version>
 	<artifactId>pre-registration-datasync-service</artifactId>
 	<name>pre-registration-datasync-service</name>
 
@@ -18,9 +18,8 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
-		<kernel.auth.adapter.version>1.0.9</kernel.auth.adapter.version>
 		<kernel.crypto.signature.version>1.1.2-SNAPSHOT</kernel.crypto.signature.version>
-        <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+    <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
 	<dependencyManagement>
@@ -69,11 +68,6 @@
 			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel.auth.adapter.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
@@ -106,6 +100,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
+					<layout>ZIP</layout>
 				</configuration>
 				<executions>
 					<execution>

@@ -25,8 +25,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.beans.factory.annotation.Qualifier;
-import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
-import io.mosip.kernel.core.fsadapter.spi.FileSystemAdapter;
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.code.DocumentStatusMessages;
@@ -64,7 +63,6 @@ import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.document.dto.DocumentRequestDTO;
 import io.mosip.preregistration.document.dto.DocumentResponseDTO;
 import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
-import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 /**
  * This class provides the service implementation for Document
  * 

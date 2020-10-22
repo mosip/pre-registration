@@ -41,7 +41,7 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     rm -rf glowroot.zip ; \
     
     sed -i 's/<service_name>/pre-registration-application-service/g' glowroot/glowroot.properties ; \
-    java -Dloader.path=/kernel-ref-idobjectvalidator.jar -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
+    java -Dloader.path=/kernel-ref-idobjectvalidator.jar, kernel-auth-adapter-1.1.2-SNAPSHOT.jar -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
     else \
     wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
     java -Dloader.path=/kernel-ref-idobjectvalidator.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
