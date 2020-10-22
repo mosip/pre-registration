@@ -35,6 +35,7 @@ copy ./target/pre-registration-application-*.jar pre-registration-application-se
 EXPOSE 9090
 CMD if [ "$is_glowroot_env" = "present" ]; then \
     wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
+     wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/core/authmanager/authadapter/ kernel-auth-adapter-1.1.2-SNAPSHOT.jar  kernel-auth-adapter-1.1.2-SNAPSHOT.jar ; \
     wget "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/testing/glowroot.zip ; \
     apt-get update && apt-get install -y unzip ; \
     unzip glowroot.zip ; \
