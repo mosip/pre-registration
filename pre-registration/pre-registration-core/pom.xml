@@ -10,7 +10,7 @@
 		<version>1.0.7</version>
 	</parent>
 
-	<version>1.1.2-SNAPSHOT</version>
+	<version>1.1.2-rc2</version>
 
 	<artifactId>pre-registration-core</artifactId>
 
@@ -18,11 +18,11 @@
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 
 	<properties>
-		<kernel.core.version>1.1.2-SNAPSHOT</kernel.core.version>
+		<kernel.core.version>1.1.2-rc2</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.templatemanager.velocity.version>1.1.2-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.logger.logback.version>1.1.2-SNAPSHOT</kernel.logger.logback.version>
-		<kernel.dataaccess.hibernate.version>1.1.2-SNAPSHOT</kernel.dataaccess.hibernate.version>
+		<kernel.templatemanager.velocity.version>1.1.2-rc2</kernel.templatemanager.velocity.version>
+		<kernel.logger.logback.version>1.1.2-rc2</kernel.logger.logback.version>
+		<kernel.dataaccess.hibernate.version>1.1.2-rc2</kernel.dataaccess.hibernate.version>
 	</properties>
 
 	<dependencies>
