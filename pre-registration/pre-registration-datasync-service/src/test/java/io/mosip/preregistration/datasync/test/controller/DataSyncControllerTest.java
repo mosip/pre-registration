@@ -163,7 +163,7 @@ public class DataSyncControllerTest {
 		mainDataSyncResponseDTO.setResponse(preRegistrationIdsDTO);
 
 		Mockito.when(dataSyncService.retrieveAllPreRegIds(mainDataSyncRequestDTO)).thenReturn(mainDataSyncResponseDTO);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/sync/")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/sync")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE).content(jsonObject.toString());
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
