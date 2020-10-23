@@ -39,7 +39,7 @@ import io.swagger.annotations.ApiResponses;
  *
  */
 @RestController
-@RequestMapping("/sync")
+@RequestMapping("/")
 @Api(tags = "Data-Sync")
 @CrossOrigin("*")
 public class DataSyncController {
@@ -58,7 +58,7 @@ public class DataSyncController {
 	 */
 	@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@ResponseFilter
-	@PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/sync", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "All PreRegistrationIds fetched successfully") })
 	@ApiOperation(value = "Fetch all PreRegistrationIds")
 	public ResponseEntity<MainResponseDTO<PreRegistrationIdsDTO>> retrieveAllPreRegids(
@@ -76,7 +76,7 @@ public class DataSyncController {
 	 */
 	@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@ResponseFilter
-	@GetMapping(path = "/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/sync/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Retrieve Pre-Registrations")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Data Sync records fetched") })
 	public ResponseEntity<MainResponseDTO<PreRegArchiveDTO>> retrievePreRegistrations(
@@ -95,7 +95,7 @@ public class DataSyncController {
 	 */
 	@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN','REGISTRATION_PROCESSOR')")
 	@ResponseFilter
-	@PostMapping(path = "/consumedPreRegIds", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/sync/consumedPreRegIds", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Store consumed Pre-Registrations")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Consumed Pre-Registrations saved") })
 	public ResponseEntity<MainResponseDTO<ReverseDatasyncReponseDTO>> storeConsumedPreRegistrationsIds(
