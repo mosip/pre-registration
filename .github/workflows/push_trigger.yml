@@ -227,6 +227,7 @@ jobs:
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION       
 
+
   docker-pre-registration-login-service:
     needs: build
 
