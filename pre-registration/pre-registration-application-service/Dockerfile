@@ -45,7 +45,8 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     java -Dloader.path=/kernel-ref-idobjectvalidator.jar, kernel-auth-adapter-1.1.2-SNAPSHOT.jar -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
     else \
     wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
-    java -Dloader.path=/kernel-ref-idobjectvalidator.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
+    wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/core/authmanager/authadapter/ kernel-auth-adapter-1.1.2-SNAPSHOT.jar  kernel-auth-adapter-1.1.2-SNAPSHOT.jar ; \
+    java -Dloader.path=/kernel-ref-idobjectvalidator.jar, kernel-auth-adapter-1.1.2-SNAPSHOT.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
     fi
 
 #CMD ["java","-Dloader.path=/kernel-ref-idobjectvalidator-0.9.1.jar","-jar","-Dspring.cloud.config.label=${spring_config_label_env}","-Dspring.profiles.active=${active_profile_env}","-Dspring.cloud.config.uri=${spring_config_url_env}","pre-registration-application-service.jar"]
