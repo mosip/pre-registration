@@ -45,7 +45,7 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     java -Dloader.path=/kernel-auth-adapter-1.1.2-SNAPSHOT.jar \
     java -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
     else \
-     wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-auth-adapter/1.2.0-SNAPSHOT/kernel-auth-adapter-1.2.0-20200918.164425-65.jar kernel-auth-adapter-1.2.0-20200918.164425-65.jar; \
+     wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-auth-adapter/1.2.0-SNAPSHOT/kernel-auth-adapter-1.2.0-20200918.164425-65.jar; \
     java -jar -Dloader.path=/kernel-auth-adapter-1.2.0-20200918.164425-65.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
     fi
 
