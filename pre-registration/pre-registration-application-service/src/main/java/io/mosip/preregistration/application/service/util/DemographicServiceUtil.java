@@ -632,6 +632,37 @@ public class DemographicServiceUtil {
 
 	}
 
+	public MainResponseDTO<DeleteBookingDTO> deleteBooking (String preRegId) {
+		MainResponseDTO<DeleteBookingDTO> response = new MainResponseDTO<>();
+		String url = deleteAppointmentResourseUrl + '/' + "appointment";
+		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
+		param.add("preRegistrationId", preRegId);
+		System.out.println(url);
+		String regbuilder = UriComponentsBuilder.fromHttpUrl(url).toString();
+		try {
+			log.info("sessionId", "idType", "id", "In callBookingService method of DemographicServiceUtil"+regbuilder);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<?> entity = new HttpEntity<>(param,headers);
+
+			ResponseEntity<MainResponseDTO<DeleteBookingDTO>> responseEntity =restTemplate.exchange(regbuilder,
+					HttpMethod.DELETE, entity, new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
+					});
+			System.out.println(responseEntity);
+			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
+				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
+			response.setResponse(responseEntity.getBody().getResponse());
+			log.info("sessionId", "idType", "id", "In call to booking rest service :" + regbuilder);
+		} catch (RestClientException ex) {
+			log.debug("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
+			throw new RestClientException("rest call failed");
+		}
+		return response;
+
+	}
+
 	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
 		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;

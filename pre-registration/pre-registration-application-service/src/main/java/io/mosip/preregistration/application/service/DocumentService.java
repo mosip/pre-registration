@@ -65,7 +65,6 @@ import io.mosip.preregistration.core.util.AuthTokenUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
-
 /**
  * This class provides the service implementation for Document
  * 
@@ -146,7 +145,6 @@ public class DocumentService implements DocumentServiceIntf {
 	/**
 	 * Autowired reference for {@link #FileSystemAdapter}
 	 */
-
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
 

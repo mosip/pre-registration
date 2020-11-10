@@ -6,7 +6,11 @@
 
 	<groupId>io.mosip.preregistration</groupId>
 	<artifactId>pre-registration-parent</artifactId>
+<<<<<<< HEAD
 	<version>1.1.4</version>
+=======
+	<version>1.1.2</version>
+>>>>>>> 1.1.2 (#99)
 	<packaging>pom</packaging>
 
 	<name>pre-registration</name>
@@ -48,12 +52,21 @@
 	</distributionManagement>
 
 	<properties>
+<<<<<<< HEAD
 		<pre.registration.core.version>1.1.4</pre.registration.core.version>
 		<kernel.core.version>1.1.4</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
+=======
+		<pre.registration.core.version>1.1.2</pre.registration.core.version>
+		<kernel.core.version>1.1.2</kernel.core.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>11</maven.compiler.source>
+		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.version>3.8.0</maven.compiler.version>		
+>>>>>>> 1.1.2 (#99)
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
 		<maven.surefire.plugin.version>2.9</maven.surefire.plugin.version>
@@ -121,10 +134,17 @@
 	<modules>
 		<module>pre-registration-core</module>
 		<module>pre-registration-application-service</module>
+<<<<<<< HEAD
 		<module>pre-registration-datasync-service</module>
 		<module>pre-registration-batchjob</module>
 		<module>pre-registration-captcha-service</module>
 
+=======
+		<module>pre-registration-booking-service</module>
+		<module>pre-registration-datasync-service</module>
+		<module>pre-registration-batchjob</module>
+        <module>pre-registration-captcha-service</module>
+>>>>>>> 1.1.2 (#99)
 	</modules>
 	<dependencies>
 		<dependency>
@@ -133,9 +153,15 @@
 			<version>2.3.0</version>
 		</dependency>
 		<dependency>
+<<<<<<< HEAD
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
 			<version>1.1</version>
+=======
+		    <groupId>javax.activation</groupId>
+		    <artifactId>activation</artifactId>
+		    <version>1.1</version>
+>>>>>>> 1.1.2 (#99)
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
@@ -143,6 +169,7 @@
 			<version>2.3.0-b170127.1453</version>
 		</dependency>
 		<dependency>
+<<<<<<< HEAD
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
 			<version>2.22.0</version>
@@ -153,6 +180,18 @@
 			<artifactId>javassist</artifactId>
 			<version>3.27.0-GA</version>
 		</dependency>
+=======
+		    <groupId>org.mockito</groupId>
+		    <artifactId>mockito-core</artifactId>
+		    <version>2.22.0</version>
+		    <scope>test</scope>
+		</dependency>
+		<dependency>
+		    <groupId>org.javassist</groupId>
+		    <artifactId>javassist</artifactId>
+		    <version>3.27.0-GA</version>
+		</dependency> 
+>>>>>>> 1.1.2 (#99)
 	</dependencies>
 	<build>
 		<pluginManagement>
@@ -277,9 +316,15 @@
 					</execution>
 				</executions>
 				<configuration>
+<<<<<<< HEAD
 					<doclint>none</doclint>
 				</configuration>
 			</plugin>
+=======
+                         	<doclint>none</doclint>
+                </configuration>
+            </plugin>			
+>>>>>>> 1.1.2 (#99)
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>

@@ -272,7 +272,7 @@ public class PreRegistrationExceptionHandler {
 			final InvalidRequestParameterException e) {
 
 		MainResponseDTO<?> errorRes = e.getMainResponseDto();
-		if (errorRes.getId() == null) {
+		if(errorRes.getId() == null) {
 			errorRes.setId(id.get(e.getOperation()));
 		}
 		errorRes.setVersion(env.getProperty("version"));

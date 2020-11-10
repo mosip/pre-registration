@@ -6,10 +6,19 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
+<<<<<<< HEAD
 		<version>1.1.4</version>
 	</parent>
 
 	<version>1.1.4</version>
+=======
+		<version>1.1.2</version>
+	</parent>
+
+	<version>1.1.2</version>
+
+	
+>>>>>>> 1.1.2 (#99)
 	<artifactId>pre-registration-batchjob</artifactId>
 
 	<name>pre-registration-batchjob</name>
@@ -17,6 +26,10 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+<<<<<<< HEAD
+=======
+		<kernel.auth.adapter.version>1.0.9</kernel.auth.adapter.version>
+>>>>>>> 1.1.2 (#99)
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 	
@@ -63,6 +76,14 @@
 			<artifactId>pre-registration-core</artifactId>
 			<version>${pre.registration.core.version}</version>
 		</dependency>
+<<<<<<< HEAD
+=======
+			<dependency>
+		    <groupId>io.mosip.kernel</groupId>
+		    <artifactId>kernel-auth-adapter</artifactId>
+		    <version>${kernel.auth.adapter.version}</version>
+		</dependency>
+>>>>>>> 1.1.2 (#99)
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>

@@ -24,8 +24,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
+<<<<<<< HEAD:pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 
 import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
+=======
+import org.springframework.beans.factory.annotation.Qualifier;
+>>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 import io.mosip.kernel.core.exception.IOException;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
@@ -53,7 +57,19 @@ import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
+<<<<<<< HEAD:pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 
+=======
+import io.mosip.preregistration.application.service.DemographicServiceIntf;
+import io.mosip.preregistration.document.dto.DocumentRequestDTO;
+import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
+import io.mosip.preregistration.application.errorcodes.DocumentErrorMessages;
+import io.mosip.preregistration.application.exception.DemographicGetDetailsException;
+import io.mosip.preregistration.application.exception.DocumentNotValidException;
+import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
+import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
+>>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 /**
  * This class provides the utility methods for DocumentService
  * 
@@ -105,7 +121,11 @@ public class DocumentServiceUtil {
 
 // 	@Autowired
 // 	private FileSystemAdapter fs;
+<<<<<<< HEAD:pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 
+=======
+	
+>>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
 
@@ -265,8 +285,12 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDemographicEntity(demographicEntity);
 		copyDocumentEntity.setDocId(sourceEntity.getDocId());
 		String key = sourceEntity.getDocCatCode() + "_" + sourceEntity.getDocumentId();
+<<<<<<< HEAD:pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 		InputStream file = objectStore.getObject(objectStoreAccountName,
 				sourceEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+=======
+		InputStream file = objectStore.getObject(objectStoreAccountName,sourceEntity.getDemographicEntity().getPreRegistrationId(),null,null,key);
+>>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 		copyDocumentEntity.setDocHash(HashUtill.hashUtill(IOUtils.toByteArray(file)));
 		copyDocumentEntity.setDocName(sourceEntity.getDocName());
 		copyDocumentEntity.setDocTypeCode(sourceEntity.getDocTypeCode());
@@ -320,7 +344,12 @@ public class DocumentServiceUtil {
 
 	/**
 	 * 
+<<<<<<< HEAD:pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 	 * @param documentDto DocumentRequestDTO
+=======
+	 * @param documentDto
+	 *            DocumentRequestDTO
+>>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/src/main/java/io/mosip/preregistration/application/service/util/DocumentServiceUtil.java
 	 * @return boolean
 	 */
 
