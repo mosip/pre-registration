@@ -618,19 +618,9 @@ public class DemographicServiceUtil {
 			ResponseEntity<MainResponseDTO<DeleteBookingDTO>> responseEntity = getRestTemplate().exchange(url,
 					HttpMethod.DELETE, entity, new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
 					});
-			System.out.println(responseEntity);
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
-			}
-			response.setResponse(responseEntity.getBody().getResponse());
 			log.info("sessionId", "idType", "id", "In call to booking rest service :" + regbuilder);
 		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-			log.debug("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
-		}
-		return response;
-
 	}
 
 	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {

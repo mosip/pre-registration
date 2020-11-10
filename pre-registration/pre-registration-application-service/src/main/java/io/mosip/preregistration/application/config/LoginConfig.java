@@ -23,13 +23,13 @@ public class LoginConfig {
 	@Value("${swagger.base-url:#{null}}")
 	private String swaggerBaseUrl;
 
-	@Value("${server.port:9090}")
+	@Value("${server.port:9092}")
 	private int serverPort;
 
 	String proto = "http";
 	String host = "localhost";
 	int port = -1;
-	String hostWithPort = "localhost:9090";
+	String hostWithPort = "localhost:9092";
 
 	@Bean
 	public Docket packetUploaderApis() {
