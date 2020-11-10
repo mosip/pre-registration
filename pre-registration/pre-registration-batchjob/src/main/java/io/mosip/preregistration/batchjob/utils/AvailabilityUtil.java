@@ -524,7 +524,7 @@ public class AvailabilityUtil {
 					if (!workingDay.isWorking()) {
 						for (LocalDate date = LocalDate.now(); date
 								.isBefore(LocalDate.now().plusDays(syncDays)); date = date.plusDays(1)) {
-							if (workingDay.getDayCode().equalsIgnoreCase(date.getDayOfWeek().toString())) {
+							if (workingDay.getName().equalsIgnoreCase(date.getDayOfWeek().toString().substring(0,3))) {
 								holidaylist.add(date.toString());
 							}
 						}

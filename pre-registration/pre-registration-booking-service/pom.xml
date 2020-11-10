@@ -8,17 +8,18 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.7</version>
+		<version>1.1.2</version>
 	</parent>
 
-	<version>1.0.9</version>
+	<version>1.1.2</version>
 
 	<name>pre-registration-booking-service</name>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
-		<pre.registration.application.service.impl.version>1.0.9</pre.registration.application.service.impl.version>
+		<kernel.auth.adapter.version>1.0.9</kernel.auth.adapter.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+		<pre.registration.core.version>1.1.2</pre.registration.core.version>
+		<kernel.core.version>1.1.2</kernel.core.version>
 	</properties>
 
 	<dependencyManagement>
@@ -29,6 +30,12 @@
 				<version>${spring.boot.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>compile</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -76,11 +83,6 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-			<groupId>io.mosip.preregistration</groupId>
-			<artifactId>pre-registration-application-service-impl</artifactId>
-			<version>${pre.registration.application.service.impl.version}</version>
-		</dependency>
-		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
@@ -115,3 +117,4 @@
 	</build>
 
 </project>
+

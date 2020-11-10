@@ -6,10 +6,11 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.0.7</version>
+		<version>1.1.2</version>
 	</parent>
 
-	<version>1.0.9</version>
+	<version>1.1.2</version>
+
 	
 	<artifactId>pre-registration-batchjob</artifactId>
 
@@ -18,7 +19,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.auth.adapter.version>1.0.6</kernel.auth.adapter.version>
+		<kernel.auth.adapter.version>1.0.9</kernel.auth.adapter.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 	
@@ -31,7 +32,12 @@
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>compile</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 

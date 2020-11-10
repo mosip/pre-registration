@@ -5,8 +5,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
@@ -53,6 +55,9 @@ public class TemplateUtil {
 
 	@Value("${resource.template.url}")
 	private String resourceUrl;
+	
+	@Value("${timeZone}")
+	private String timeZone;
 	/**
 	 * Autowired reference for {@link #restTemplateBuilder}
 	 */
@@ -113,16 +118,17 @@ public class TemplateUtil {
 		Map<String, Object> responseMap = new HashMap<>();
 		log.info("sessionId", "idType", "id", "In mapSetting method of TemplateUtil service ");
 		DateTimeFormatter dateFormate = DateTimeFormatter.ofPattern("dd MMM yyyy");
-		DateTimeFormatter timeFormate = DateTimeFormatter.ofPattern("HH:mm");
+		DateTimeFormatter timeFormate = DateTimeFormatter.ofPattern("h:mma");
 
 		LocalDateTime now = LocalDateTime.now();
-		LocalTime localTime = LocalTime.now();
+		Instant nowUtc = Instant.now();
+		ZoneId countryZoneId = ZoneId.of(timeZone);
+		ZonedDateTime nowCountryTime = ZonedDateTime.ofInstant(nowUtc, countryZoneId);
 		
-
 		responseMap.put("name", acknowledgementDTO.getName());
 		responseMap.put("PRID", acknowledgementDTO.getPreRegistrationId());
 		responseMap.put("Date", dateFormate.format(now));
-		responseMap.put("Time", timeFormate.format(localTime));
+		responseMap.put("Time", timeFormate.format(nowCountryTime));
 		responseMap.put("Appointmentdate", acknowledgementDTO.getAppointmentDate());
 		responseMap.put("Appointmenttime", acknowledgementDTO.getAppointmentTime());
 		return responseMap;
