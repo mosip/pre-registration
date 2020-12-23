@@ -2,7 +2,7 @@
  * Copyright
  * 
  */
-package io.mosip.preregistration.document.dto;
+package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
 
