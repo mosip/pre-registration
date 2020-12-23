@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="0,0" last-zoom="0.65"
+<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="403,0" last-zoom="0.65"
 	 default-schema="public" default-owner="postgres">
 <role name="sysadmin"
       superuser="true"
@@ -198,6 +198,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="character varying" length="64"/>
 		<comment><![CDATA[Document Hash: Hash value of the document being uploaded in document store. This will be used to make sure that nobody has tampered the document stored in a separate store. ]]></comment>
 	</column>
+	<column name="doc_ref_id">
+		<type name="character varying" length="0"/>
+		<comment><![CDATA[Document Reference ID: This is the ID to reference the document, This is entered by the end-user or it is populating using OCR of the document.]]></comment>
+	</column>
 	<column name="encrypted_dtimes" not-null="true">
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Encrypted Data Time: Date and time when the document was encrypted before uploading it on document store. This will also be used  get the key for decrypting the data.]]></comment>
@@ -281,6 +285,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="doc_hash" not-null="true">
 		<type name="character varying" length="64"/>
 		<comment><![CDATA[Document Hash: Hash value of the document being uploaded in document store. This will be used to make sure that nobody has tampered the document stored in a separate store. ]]></comment>
+	</column>
+	<column name="doc_ref_id">
+		<type name="character varying" length="0"/>
+		<comment><![CDATA[Document Reference ID: This is the ID to reference the document, This is entered by the end-user or it is populating using OCR of the document.]]></comment>
 	</column>
 	<column name="encrypted_dtimes" not-null="true">
 		<type name="timestamp" length="0"/>

@@ -22,6 +22,7 @@ CREATE TABLE prereg.applicant_document_consumed(
 	doc_file_format character varying(36) NOT NULL,
 	doc_id character varying(128) NOT NULL,
 	doc_hash character varying(64) NOT NULL,
+	doc_ref_id character varying,
 	encrypted_dtimes timestamp NOT NULL,
 	status_code character varying(36) NOT NULL,
 	lang_code character varying(3) NOT NULL,
@@ -36,7 +37,7 @@ CREATE TABLE prereg.applicant_document_consumed(
 create unique index idx_appldocc_prereg_id on prereg.applicant_document_consumed (prereg_id, doc_cat_code, doc_typ_code) ;
 
 -- ddl-end --
-COMMENT ON TABLE prereg.applicant_document_consumed IS 'Applicant Document Consumed: Documents that are uploaded as part of pre-registration process which was consumed is maintained here. ';
+COMMENT ON TABLE prereg.applicant_document_consumed IS 'Applicant Document: Documents that are uploaded as part of pre-registration process which was consumed is maintained here. ';
 -- ddl-end --
 COMMENT ON COLUMN prereg.applicant_document_consumed.id IS 'Id: Unique id generated for the documents being uploaded as part of pre-registration process.';
 -- ddl-end --
@@ -53,6 +54,8 @@ COMMENT ON COLUMN prereg.applicant_document_consumed.doc_file_format IS 'Documen
 COMMENT ON COLUMN prereg.applicant_document_consumed.doc_id IS 'Document Id: ID of the document being uploaded';
 -- ddl-end --
 COMMENT ON COLUMN prereg.applicant_document_consumed.doc_hash IS 'Document Hash: Hash value of the document being uploaded in document store. This will be used to make sure that nobody has tampered the document stored in a separate store. ';
+-- ddl-end --
+COMMENT ON COLUMN prereg.applicant_document_consumed.doc_ref_id IS 'Document Reference ID: This is the ID to reference the document, This is entered by the end-user or it is populating using OCR of the document.';
 -- ddl-end --
 COMMENT ON COLUMN prereg.applicant_document_consumed.encrypted_dtimes IS 'Encrypted Data Time: Date and time when the document was encrypted before uploading it on document store. This will also be used  get the key for decrypting the data.';
 -- ddl-end --
