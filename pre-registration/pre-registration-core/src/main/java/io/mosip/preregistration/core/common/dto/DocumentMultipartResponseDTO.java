@@ -52,5 +52,9 @@ public class DocumentMultipartResponseDTO implements Serializable {
 	 */
 	private String langCode;
 	
-
+	/**
+	 * Document Reference
+	 */
+	private String docReferenceNo;
+	
 }

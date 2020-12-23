@@ -9,7 +9,7 @@
 		<artifactId>pre-registration-parent</artifactId>
 		<version>1.1.3</version>
 	</parent>
-	<version>1.1.3</version>
+	<version>1.1.4-SNAPSHOT</version>
 
 
 	<artifactId>pre-registration-core</artifactId>

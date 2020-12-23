@@ -179,6 +179,7 @@ public class DocumentServiceUtil {
 		documentEntity.setCrBy(userId);
 		documentEntity.setUpdBy(userId);
 		documentEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+	//	documentEntity.setDocReferenceNo(dto.getDocReferenceNo());
 		// documentEntity.setEncryptedDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		return documentEntity;
 	}

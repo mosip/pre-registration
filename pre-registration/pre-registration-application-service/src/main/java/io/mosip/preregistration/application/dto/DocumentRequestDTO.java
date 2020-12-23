@@ -5,7 +5,6 @@
 package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -49,5 +48,11 @@ public class DocumentRequestDTO implements Serializable {
 	 */
 	@JsonProperty("langCode")
 	private String langCode;
+
+	/**
+	 * Uploaded docReferenceNo
+	 */
+	@JsonProperty("docReferenceNo")
+	private String docReferenceNo;
 
 }

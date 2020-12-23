@@ -6,6 +6,8 @@ package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -36,6 +38,14 @@ public class DocumentResponseDTO implements Serializable {
 	 * Document Name
 	 */
 	private String docName;
+	
+	
+	/**
+	 * Document Reference Number
+	 * 
+	 */
+	private String docReferenceNo;
+	
 	/**
 	 * Document Category
 	 */
