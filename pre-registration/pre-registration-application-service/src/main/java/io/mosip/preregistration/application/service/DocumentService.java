@@ -557,6 +557,7 @@ public class DocumentService implements DocumentServiceIntf {
 			allDocDto.setDocumentId(doc.getDocumentId());
 			allDocDto.setDocTypCode(doc.getDocTypeCode());
 			allDocDto.setLangCode(doc.getLangCode());
+			//allDocDto.setDocReferenceNo(doc.getDocReferenceNo());
 			allDocRes.add(allDocDto);
 		}
 		documentsMetaData.setDocumentsMetaData(allDocRes);

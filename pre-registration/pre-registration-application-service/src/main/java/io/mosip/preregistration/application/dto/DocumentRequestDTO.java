@@ -2,7 +2,7 @@
  * Copyright
  * 
  */
-package io.mosip.preregistration.application.dto;
+package io.mosip.preregistration.document.dto;
 
 import java.io.Serializable;
 import java.util.Date;
@@ -49,5 +49,11 @@ public class DocumentRequestDTO implements Serializable {
 	 */
 	@JsonProperty("langCode")
 	private String langCode;
+
+	/**
+	 * Uploaded docReferenceNo
+	 */
+	@JsonProperty("docReferenceNo")
+	private String docReferenceNo;
 
 }
