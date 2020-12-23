@@ -2,10 +2,9 @@
  * Copyright
  * 
  */
-package io.mosip.preregistration.document.dto;
+package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
