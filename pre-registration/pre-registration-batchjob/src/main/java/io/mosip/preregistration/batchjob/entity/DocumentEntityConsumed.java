@@ -122,5 +122,8 @@ public class DocumentEntityConsumed implements Serializable {
 	 */
 	@Column(name = "doc_hash")
 	private String DocHash;
+	
+	@Column(name = "doc_ref_id")
+	private String docRefId;
 
 }
