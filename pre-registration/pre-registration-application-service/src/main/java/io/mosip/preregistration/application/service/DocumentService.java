@@ -326,8 +326,8 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public MainResponseDTO<DocumentResponseDTO> copyDocument(String catCode, String sourcePreId,
-			String destinationPreId) {
+	public MainResponseDTO<DocumentResponseDTO> copyDocument(String catCode,
+			String sourcePreId, String destinationPreId) {
 		log.info("sessionId", "idType", "id", "In copyDocument method of document service");
 		String sourceBucketName;
 		String sourceKey;
