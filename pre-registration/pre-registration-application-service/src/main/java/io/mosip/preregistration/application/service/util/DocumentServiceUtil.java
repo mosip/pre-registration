@@ -45,7 +45,7 @@ import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.application.service.DemographicServiceIntf;
-import io.mosip.preregistration.document.dto.DocumentRequestDTO;
+import io.mosip.preregistration.application.dto.DocumentRequestDTO;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorMessages;
 import io.mosip.preregistration.application.exception.DemographicGetDetailsException;
