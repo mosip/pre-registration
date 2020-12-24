@@ -30,7 +30,6 @@ public class DocumentRequestDTO implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7070542323407937205L;
 
-
 	/**
 	 * Document Category
 	 */
@@ -52,7 +51,7 @@ public class DocumentRequestDTO implements Serializable {
 	/**
 	 * Uploaded docReferenceNo
 	 */
-	@JsonProperty("docReferenceNo")
-	private String docReferenceNo;
+	@JsonProperty("docRefId")
+	private String docRefId;;
 
 }

@@ -38,14 +38,13 @@ public class DocumentResponseDTO implements Serializable {
 	 * Document Name
 	 */
 	private String docName;
-	
-	
+
 	/**
 	 * Document Reference Number
 	 * 
 	 */
-	private String docReferenceNo;
-	
+	private String docRefId;;
+
 	/**
 	 * Document Category
 	 */
