@@ -22,6 +22,7 @@ CREATE TABLE prereg.applicant_document(
 	doc_file_format character varying(36) NOT NULL,
 	doc_id character varying(128) NOT NULL,
 	doc_hash character varying(64) NOT NULL,
+	doc_ref_id character varying,
 	encrypted_dtimes timestamp NOT NULL,
 	status_code character varying(36) NOT NULL,
 	lang_code character varying(3) NOT NULL,
@@ -54,6 +55,8 @@ COMMENT ON COLUMN prereg.applicant_document.doc_file_format IS 'Documenet File F
 COMMENT ON COLUMN prereg.applicant_document.doc_id IS 'Document Id: ID of the document being uploaded';
 -- ddl-end --
 COMMENT ON COLUMN prereg.applicant_document.doc_hash IS 'Document Hash: Hash value of the document being uploaded in document store. This will be used to make sure that nobody has tampered the document stored in a separate store. ';
+-- ddl-end --
+COMMENT ON COLUMN prereg.applicant_document.doc_ref_id IS 'Document Reference ID: This is the ID to reference the document, This is entered by the end-user or it is populating using OCR of the document.';
 -- ddl-end --
 COMMENT ON COLUMN prereg.applicant_document.encrypted_dtimes IS 'Encrypted Data Time: Date and time when the document was encrypted before uploading it on document store. This will also be used  get the key for decrypting the data.';
 -- ddl-end --
