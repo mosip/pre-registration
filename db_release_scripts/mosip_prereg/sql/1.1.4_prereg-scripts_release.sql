@@ -18,4 +18,3 @@ ALTER TABLE prereg.applicant_document_consumed ADD COLUMN IF NOT EXISTS doc_ref_
 
 \ir ../ddl/prereg-otp_transaction.sql
 
-
