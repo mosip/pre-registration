@@ -20,6 +20,7 @@
 \ir ddl/prereg-language_transliteration.sql
 \ir ddl/prereg-prid_seed.sql
 \ir ddl/prereg-prid_seq.sql
+\ir ddl/prereg-otp_transaction.sql
 
 
 \ir ddl/prereg-fk.sql
