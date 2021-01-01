@@ -74,9 +74,6 @@ public class OTPManager {
 	/** The logger. */
 	private Logger logger = LoggerConfiguration.logConfig(OTPManager.class);
 
-	@Value("${secret_url}")
-	private String SECRET_URL;
-
 	@Autowired
 	NotificationServiceUtil notification;
 
@@ -246,7 +243,7 @@ public class OTPManager {
 		jsonObject.put("request", jsonObject1);
 
 		HttpEntity<String> entity = new HttpEntity<String>(jsonObject.toString(), headers);
-		HttpEntity<String> response = restTemplate.exchange(SECRET_URL, HttpMethod.POST, entity, String.class);
+		HttpEntity<String> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, String.class);
 
 		Object obj = JSONValue.parse(response.getBody());
 
