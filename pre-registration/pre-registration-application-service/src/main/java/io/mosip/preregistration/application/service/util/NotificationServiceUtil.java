@@ -131,12 +131,11 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public void invokeSmsNotification(String otp, String userId, String token, MainRequestDTO<OtpRequestDTO> requestDTO,String langCode)
+	public void invokeSmsNotification(Map values, String userId, String token, MainRequestDTO<OtpRequestDTO> requestDTO,String langCode)
 			throws PreRegLoginException, IOException {
 
 		String otpSmsTemplate = environment.getProperty(PreRegLoginConstant.OTP_SMS_TEMPLATE);
-		otpSmsTemplate = "ida-auth-otp-sms-template";
-		String smsTemplate = applyTemplate(otp, otpSmsTemplate, token,langCode);
+		String smsTemplate = applyTemplate(values, otpSmsTemplate, token,langCode);
 		sendSmsNotification(userId, smsTemplate, token, requestDTO);
 	}
 
@@ -153,16 +152,12 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public void invokeEmailNotification(String otp, String userId, String token,
+	public void invokeEmailNotification(Map values, String userId, String token,
 			MainRequestDTO<OtpRequestDTO> requestDTO,String langCode) throws PreRegLoginException, IOException {
 		String otpContentTemaplate = environment.getProperty(PreRegLoginConstant.OTP_CONTENT_TEMPLATE);
 		String otpSubjectTemplate = environment.getProperty(PreRegLoginConstant.OTP_SUBJECT_TEMPLATE);
-
-		otpContentTemaplate="ida-auth-otp-email-content-template";
-		otpSubjectTemplate="ida-auth-otp-email-subject-template";
-		String mailSubject = applyTemplate(otp, otpSubjectTemplate, token,langCode);
-		String mailContent = applyTemplate(otp, otpContentTemaplate, token,langCode);
-		
+		String mailSubject = applyTemplate(values, otpSubjectTemplate, token,langCode);
+		String mailContent = applyTemplate(values, otpContentTemaplate, token,langCode);
 		sendEmailNotification(userId, mailSubject, mailContent, token, requestDTO);
 	}
 
@@ -263,12 +258,10 @@ public class NotificationServiceUtil {
 	 * @throws IOException                       Signals that an I/O exception has
 	 *                                           occurred.
 	 */
-	public String applyTemplate(String value, String templateName, String token,String langCode)
+	public String applyTemplate(Map mp, String templateName, String token,String langCode)
 			throws PreRegLoginException, IOException {
 		Objects.requireNonNull(templateName);
-		Objects.requireNonNull(value);
-		Map<String, Object> mp = new HashMap();
-		mp.put("otp", value);//add few more values
+		Objects.requireNonNull(mp);
 		StringWriter writer = new StringWriter();
 		InputStream templateValue;
 		String fetchedTemplate = fetchTemplate(templateName, token,langCode);

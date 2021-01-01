@@ -1,7 +1,12 @@
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
+import java.time.ZoneId;
+import java.time.temporal.TemporalAmount;
+import java.time.temporal.TemporalUnit;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
@@ -128,12 +133,18 @@ public class OTPManager {
 			txn.setStatusCode(PreRegLoginConstant.ACTIVE_STATUS);
 			otpRepo.save(txn);
 		}
-
+		Map<String, Object> mp = new HashMap();
+		mp.put("otp", otp);
+		mp.put("requestdate", requestDTO.getRequesttime());
+		mp.put("validateTime","15 minutes");
+		mp.put("userid", userId);
+		mp.put("validTill", new Date(requestDTO.getRequesttime().getTime()+15));
+		
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
-			notification.invokeSmsNotification(otp, userId, token, requestDTO, language);
+			notification.invokeSmsNotification(mp, userId, token, requestDTO, language);
 		}
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.EMAIL)) {
-			notification.invokeEmailNotification(otp, userId, token, requestDTO, language);
+			notification.invokeEmailNotification(mp, userId, token, requestDTO, language);
 		}
 		return true;
 	}
