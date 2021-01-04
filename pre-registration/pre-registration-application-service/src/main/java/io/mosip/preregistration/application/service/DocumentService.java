@@ -129,7 +129,6 @@ public class DocumentService implements DocumentServiceIntf {
 	@Value("${mosip.preregistration.document.delete.specific.id}")
 	private String deleteSpecificId;
 
-
 	@Value("${mosip.preregistration.document.update.docrefId.id}")
 	private String updateDocRefId;
 	/**
