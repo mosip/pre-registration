@@ -9,7 +9,6 @@ import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 
-
 @Service
 public interface DocumentServiceIntf {
 
