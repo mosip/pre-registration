@@ -116,5 +116,15 @@ public class DocumentDAO {
 					DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage(), ex.getCause());
 		}
 	}
+	
+	public DocumentEntity updateDocument(DocumentEntity entity) {
+		try {
+			return documentRepository.update(entity);
+		} catch (DataAccessLayerException ex) {
+			log.error("sessionId", "idType", "id", "In updateDocument method of DocumnetDAO - " + ex);
+			throw new TableNotAccessibleException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
+					DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage(), ex.getCause());
+		}
+	}
 
 }

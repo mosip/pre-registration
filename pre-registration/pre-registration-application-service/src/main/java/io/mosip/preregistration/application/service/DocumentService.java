@@ -39,6 +39,7 @@ import io.mosip.preregistration.application.exception.DocumentFailedToCopyExcept
 import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.FSServerException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.util.DocumentExceptionCatcher;
 import io.mosip.preregistration.application.repository.DocumentDAO;
@@ -127,6 +128,9 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Value("${mosip.preregistration.document.delete.specific.id}")
 	private String deleteSpecificId;
+
+	@Value("${mosip.preregistration.docRefId.update}")
+	private String updateDocRefId;
 	/**
 	 * Reference for ${version} from property file
 	 */
@@ -320,8 +324,8 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public MainResponseDTO<DocumentResponseDTO> copyDocument(String catCode,
-			String sourcePreId, String destinationPreId) {
+	public MainResponseDTO<DocumentResponseDTO> copyDocument(String catCode, String sourcePreId,
+			String destinationPreId) {
 		log.info("sessionId", "idType", "id", "In copyDocument method of document service");
 		String sourceBucketName;
 		String sourceKey;
@@ -753,5 +757,40 @@ public class DocumentService implements DocumentServiceIntf {
 		}
 		inputValidation.put(RequestCodes.REQUEST, requestDTO.getRequest().toString());
 		return inputValidation;
+	}
+
+	@Override
+	public MainResponseDTO<String> updateDocRefId(String documentId, String preId, String docRefId) {
+		log.info("sessionId", "idType", "id", "In updateDocRefId method of document service");
+		MainResponseDTO<String> response = new MainResponseDTO<>();
+		Map<String, String> requestParamMap = new HashMap<>();
+		response.setResponsetime(serviceUtil.getCurrentResponseTime());
+		response.setId(updateDocRefId);
+		response.setVersion(ver);
+		try {
+			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preId);
+			if (validationUtil.requstParamValidator(requestParamMap) && documentId != null && !documentId.equals("")) {
+				DocumentEntity documentEntity = documnetDAO.findBydocumentId(documentId);
+				if (documentEntity != null) {
+					documentEntity.setDocRefId(docRefId);
+					documnetDAO.updateDocument(documentEntity);
+				} else {
+					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
+							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage());
+				}
+			} else {
+				throw new RecordNotFoundException(DocumentErrorCodes.PRG_PAM_DOC_019.toString(),
+						DocumentErrorMessages.INVALID_DOCUMENT_ID.getMessage());
+			}
+		} catch (Exception ex) {
+			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
+			new DocumentExceptionCatcher().handle(ex, response);
+		}
+
+		response.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		return response;
+
 	}
 }
