@@ -41,6 +41,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.dto.MosipUserDTO;
+import io.mosip.preregistration.application.dto.User;
+import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
+import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
@@ -48,10 +52,6 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.application.dto.MosipUserDTO;
-import io.mosip.preregistration.application.dto.User;
-import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
-import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 
 /**
  * 
