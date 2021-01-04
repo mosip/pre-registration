@@ -198,7 +198,7 @@ public class DocumentController {
 	}
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
-	@PutMapping(path = "/documents/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping(path = "/documents/document/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "update document reference Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document Reference Id successfully updated ") })
 	public ResponseEntity<MainResponseDTO<String>> updateDocRefId(
