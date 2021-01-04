@@ -129,6 +129,7 @@ public class DocumentService implements DocumentServiceIntf {
 	@Value("${mosip.preregistration.document.delete.specific.id}")
 	private String deleteSpecificId;
 
+
 	@Value("${mosip.preregistration.document.update.docrefId.id}")
 	private String updateDocRefId;
 	/**
@@ -326,8 +327,8 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Override
 	@Transactional(rollbackFor = Exception.class)
-	public MainResponseDTO<DocumentResponseDTO> copyDocument(String catCode,
-			String sourcePreId, String destinationPreId) {
+	public MainResponseDTO<DocumentResponseDTO> copyDocument(String catCode, String sourcePreId,
+			String destinationPreId) {
 		log.info("sessionId", "idType", "id", "In copyDocument method of document service");
 		String sourceBucketName;
 		String sourceKey;
