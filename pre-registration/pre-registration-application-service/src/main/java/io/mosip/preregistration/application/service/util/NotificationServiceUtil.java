@@ -30,6 +30,7 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManager;
@@ -73,12 +74,12 @@ public class NotificationServiceUtil {
 	TemplateManager templateManager;
 
 	/** The Constant LANG_CODE. */
-	private static final String LANG_CODE = "langCode";
+	private static final String LANG_CODE = "langcode";
 
 	private static final String IS_ACTIVE = "isActive";
 
 	/** The Constant TEMPLATE_TYPE_CODE. */
-	private static final String TEMPLATE_TYPE_CODE = "templateTypeCode";
+	private static final String TEMPLATE_TYPE_CODE = "templatetypecode";
 
 	/**
 	 * Autowired reference for {@link #RestTemplateBuilder}
@@ -131,11 +132,11 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public void invokeSmsNotification(Map values, String userId, String token, MainRequestDTO<OtpRequestDTO> requestDTO,String langCode)
-			throws PreRegLoginException, IOException {
+	public void invokeSmsNotification(Map values, String userId, String token, MainRequestDTO<OtpRequestDTO> requestDTO,
+			String langCode) throws PreRegLoginException, IOException {
 
 		String otpSmsTemplate = environment.getProperty(PreRegLoginConstant.OTP_SMS_TEMPLATE);
-		String smsTemplate = applyTemplate(values, otpSmsTemplate, token,langCode);
+		String smsTemplate = applyTemplate(values, otpSmsTemplate, token, langCode);
 		sendSmsNotification(userId, smsTemplate, token, requestDTO);
 	}
 
@@ -153,11 +154,11 @@ public class NotificationServiceUtil {
 	 *                                           exception
 	 */
 	public void invokeEmailNotification(Map values, String userId, String token,
-			MainRequestDTO<OtpRequestDTO> requestDTO,String langCode) throws PreRegLoginException, IOException {
+			MainRequestDTO<OtpRequestDTO> requestDTO, String langCode) throws PreRegLoginException, IOException {
 		String otpContentTemaplate = environment.getProperty(PreRegLoginConstant.OTP_CONTENT_TEMPLATE);
 		String otpSubjectTemplate = environment.getProperty(PreRegLoginConstant.OTP_SUBJECT_TEMPLATE);
-		String mailSubject = applyTemplate(values, otpSubjectTemplate, token,langCode);
-		String mailContent = applyTemplate(values, otpContentTemaplate, token,langCode);
+		String mailSubject = applyTemplate(values, otpSubjectTemplate, token, langCode);
+		String mailContent = applyTemplate(values, otpContentTemaplate, token, langCode);
 		sendEmailNotification(userId, mailSubject, mailContent, token, requestDTO);
 	}
 
@@ -217,23 +218,22 @@ public class NotificationServiceUtil {
 			mailRequestDto.setMailContent(mailContent);
 
 			mailRequestDto.setMailTo(new String[] { emailId });
-		
-			 LinkedMultiValueMap<String, Object> map =new LinkedMultiValueMap<>();
-			 map.add("mailContent", mailContent);
-			 map.add("mailSubject", mailSubject);
-			 map.add("mailTo", emailId);
-			 
+
+			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("mailContent", mailContent);
+			map.add("mailSubject", mailSubject);
+			map.add("mailTo", emailId);
+
 			HttpHeaders headers1 = new HttpHeaders();
 
 			headers1.setContentType(MediaType.MULTIPART_FORM_DATA);
-			
 
 			headers1.set("Cookie", token.substring(0, token.indexOf(";")));
-			HttpEntity<LinkedMultiValueMap<String, Object>> entity1 = new HttpEntity<LinkedMultiValueMap<String, Object>>(map, headers1);
+			HttpEntity<LinkedMultiValueMap<String, Object>> entity1 = new HttpEntity<LinkedMultiValueMap<String, Object>>(
+					map, headers1);
 
-			PreRegSmsResponseDto response = restTemplate
-					.exchange(environment.getProperty("mail-notification.rest.uri"), HttpMethod.POST, entity1,
-							PreRegSmsResponseDto.class).getBody();
+			PreRegSmsResponseDto response = restTemplate.exchange(environment.getProperty("mail-notification.rest.uri"),
+					HttpMethod.POST, entity1, PreRegSmsResponseDto.class).getBody();
 			if (!response.getResponse().getStatus().equalsIgnoreCase(PreRegLoginConstant.SUCCESS))
 				throw new PreRegLoginException(PreRegLoginErrorConstants.DATA_VALIDATION_FAILED.getErrorCode(),
 						PreRegLoginErrorConstants.DATA_VALIDATION_FAILED.getErrorMessage());
@@ -258,13 +258,13 @@ public class NotificationServiceUtil {
 	 * @throws IOException                       Signals that an I/O exception has
 	 *                                           occurred.
 	 */
-	public String applyTemplate(Map mp, String templateName, String token,String langCode)
+	public String applyTemplate(Map mp, String templateName, String token, String langCode)
 			throws PreRegLoginException, IOException {
 		Objects.requireNonNull(templateName);
 		Objects.requireNonNull(mp);
 		StringWriter writer = new StringWriter();
 		InputStream templateValue;
-		String fetchedTemplate = fetchTemplate(templateName, token,langCode);
+		String fetchedTemplate = fetchTemplate(templateName, token, langCode);
 		templateValue = templateManager
 				.merge(new ByteArrayInputStream(fetchedTemplate.getBytes(StandardCharsets.UTF_8)), mp);
 		if (templateValue == null) {
@@ -283,7 +283,7 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public String fetchTemplate(String templateName, String token,String langCode) throws PreRegLoginException {
+	public String fetchTemplate(String templateName, String token, String langCode) throws PreRegLoginException {
 
 		Map<String, String> params = new HashMap<>();
 		params.put(LANG_CODE, langCode);
@@ -295,7 +295,9 @@ public class NotificationServiceUtil {
 
 		headers1.set("Cookie", token.substring(0, token.indexOf(";")));
 		HttpEntity entity1 = new HttpEntity<>(headers1);
-		String url = environment.getProperty("id-masterdata-template-service-multilang.rest.uri");
+		String url = UriComponentsBuilder
+				.fromUriString(environment.getProperty("id-masterdata-template-service-multilang.rest.uri"))
+				.buildAndExpand(params).toString();
 
 		Map<String, Object> response = restTemplate.exchange(url, HttpMethod.GET, entity1, Map.class, templateName)
 				.getBody();
@@ -306,13 +308,13 @@ public class NotificationServiceUtil {
 		} else {
 			fetchResponse = Collections.emptyMap();
 		}
-		
+
 		List<Map<String, Object>> masterDataList = fetchResponse.get("templates");
 		Map<String, Map<String, String>> masterDataMap = new HashMap<>();
 		for (Map<String, Object> map : masterDataList) {
-			String lang = String.valueOf(map.get(LANG_CODE));
-			if (!params.containsKey(LANG_CODE)
-					|| (params.containsKey(LANG_CODE) && lang.contentEquals(params.get(LANG_CODE)))) {
+			String lang = String.valueOf(map.get("langCode"));
+			if (!params.containsKey("langCode")
+					|| (params.containsKey("langCode") && lang.contentEquals(params.get("langCode")))) {
 				String key = String.valueOf(map.get("templateTypeCode"));
 				String value = String.valueOf(map.get("fileText"));
 				Object isActiveObj = map.get(IS_ACTIVE);
