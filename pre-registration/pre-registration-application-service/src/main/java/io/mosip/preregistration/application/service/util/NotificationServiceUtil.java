@@ -271,6 +271,7 @@ public class NotificationServiceUtil {
 		StringWriter writer = new StringWriter();
 		InputStream templateValue;
 		String fetchedTemplate = fetchTemplate(templateName, token, langCode);
+
 		templateValue = templateManager
 				.merge(new ByteArrayInputStream(fetchedTemplate.getBytes(StandardCharsets.UTF_8)), mp);
 		if (templateValue == null) {
