@@ -271,7 +271,6 @@ public class NotificationServiceUtil {
 		StringWriter writer = new StringWriter();
 		InputStream templateValue;
 		String fetchedTemplate = fetchTemplate(templateName, token, langCode);
-
 		templateValue = templateManager
 				.merge(new ByteArrayInputStream(fetchedTemplate.getBytes(StandardCharsets.UTF_8)), mp);
 		if (templateValue == null) {
@@ -290,7 +289,6 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-
 	public String fetchTemplate(String templateName, String token, String langCode) throws PreRegLoginException {
 
 		Map<String, String> params = new HashMap<>();
@@ -324,7 +322,6 @@ public class NotificationServiceUtil {
 			String lang = String.valueOf(map.get("langCode"));
 			if (!params.containsKey("langCode")
 					|| (params.containsKey("langCode") && lang.contentEquals(params.get("langCode")))) {
-
 				String key = String.valueOf(map.get("templateTypeCode"));
 				String value = String.valueOf(map.get("fileText"));
 				Object isActiveObj = map.get(IS_ACTIVE);
