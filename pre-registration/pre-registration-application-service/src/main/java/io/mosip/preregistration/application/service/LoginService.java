@@ -131,11 +131,11 @@ public class LoginService {
 	private String globalConfig;
 	private String preregConfig;
 
-	/*
-	 * @PostConstruct public void setupLoginService() { globalConfig =
-	 * loginCommonUtil.getConfig(globalFileName); preregConfig =
-	 * loginCommonUtil.getConfig(preRegFileName); }
-	 */
+	@PostConstruct
+	public void setupLoginService() {
+		globalConfig = loginCommonUtil.getConfig(globalFileName);
+		preregConfig = loginCommonUtil.getConfig(preRegFileName);
+	}
 
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
@@ -143,7 +143,7 @@ public class LoginService {
 	 * @param userOtpRequest
 	 * @return MainResponseDTO<AuthNResponse>
 	 */
-	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest,String language) {
+	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest, String language) {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
@@ -152,10 +152,10 @@ public class LoginService {
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
 			log.debug("sessionId", "idType", "id", "response after loginCommonUtil" + response);
-			
+
 			userid = userOtpRequest.getRequest().getUserId();
 			otpChannel = loginCommonUtil.validateUserId(userid);
-			boolean otpSent = otpmanager.sendOtp(userOtpRequest, otpChannel.get(0),language);
+			boolean otpSent = otpmanager.sendOtp(userOtpRequest, otpChannel.get(0), language);
 			AuthNResponse authNResponse = null;
 			if (otpSent) {
 				if (otpChannel.get(0).equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER))
