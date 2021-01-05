@@ -131,11 +131,12 @@ public class LoginService {
 	private String globalConfig;
 	private String preregConfig;
 
-	/*
-	 * @PostConstruct public void setupLoginService() { globalConfig =
-	 * loginCommonUtil.getConfig(globalFileName); preregConfig =
-	 * loginCommonUtil.getConfig(preRegFileName); }
-	 */
+	
+	  @PostConstruct public void setupLoginService() { 
+	  globalConfig = loginCommonUtil.getConfig(globalFileName); 
+          preregConfig = loginCommonUtil.getConfig(preRegFileName); 
+	  }
+	 
 
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
