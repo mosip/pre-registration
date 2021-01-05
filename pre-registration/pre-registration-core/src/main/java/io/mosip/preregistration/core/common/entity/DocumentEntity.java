@@ -150,4 +150,5 @@ public class DocumentEntity implements Serializable {
 	@Column(name = "doc_ref_id")
 	private String docRefId;
 
+
 }
