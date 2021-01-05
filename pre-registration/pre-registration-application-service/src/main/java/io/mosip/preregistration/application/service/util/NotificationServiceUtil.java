@@ -32,7 +32,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManager;
 import io.mosip.kernel.core.util.JsonUtils;
@@ -78,13 +77,11 @@ public class NotificationServiceUtil {
 
 	private static final String LANG_CODE = "langcode";
 
-
 	private static final String IS_ACTIVE = "isActive";
 
 	/** The Constant TEMPLATE_TYPE_CODE. */
 
 	private static final String TEMPLATE_TYPE_CODE = "templatetypecode";
-
 
 	/**
 	 * Autowired reference for {@link #RestTemplateBuilder}
@@ -225,7 +222,6 @@ public class NotificationServiceUtil {
 
 			mailRequestDto.setMailTo(new String[] { emailId });
 
-
 			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
 			map.add("mailContent", mailContent);
 			map.add("mailSubject", mailSubject);
@@ -275,6 +271,7 @@ public class NotificationServiceUtil {
 		StringWriter writer = new StringWriter();
 		InputStream templateValue;
 		String fetchedTemplate = fetchTemplate(templateName, token, langCode);
+
 		templateValue = templateManager
 				.merge(new ByteArrayInputStream(fetchedTemplate.getBytes(StandardCharsets.UTF_8)), mp);
 		if (templateValue == null) {
@@ -306,6 +303,7 @@ public class NotificationServiceUtil {
 
 		headers1.set("Cookie", token.substring(0, token.indexOf(";")));
 		HttpEntity entity1 = new HttpEntity<>(headers1);
+
 		String url = UriComponentsBuilder
 				.fromUriString(environment.getProperty("id-masterdata-template-service-multilang.rest.uri"))
 				.buildAndExpand(params).toString();

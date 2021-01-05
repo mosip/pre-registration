@@ -139,10 +139,6 @@ public class LoginService {
 	OTPManager otpmanager;
 
 	@Autowired
-	OTPManager otpmanager;
-
-	@Autowired
-	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate;
 
 	private String globalConfig;
@@ -163,7 +159,6 @@ public class LoginService {
 	 * @param userOtpRequest
 	 * @return MainResponseDTO<AuthNResponse>
 	 */
-
 	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest, String language) {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
