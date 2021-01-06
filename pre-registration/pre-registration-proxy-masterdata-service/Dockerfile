@@ -30,21 +30,49 @@ ENV is_glowroot_env=${is_glowroot}
 # environment variable to pass artifactory url, at docker runtime
 ENV artifactory_url_env=${artifactory_url}
 
-copy ./target/pre-registration-application-*.jar pre-registration-application-service.jar
+# environment variable to pass iam_adapter url, at docker runtime
+ENV iam_adapter_url_env=${iam_adapter_url}
 
-EXPOSE 9090
+# can be passed during Docker build as build time environment for github branch to pickup configuration from.
+ARG container_user=mosip
+
+# can be passed during Docker build as build time environment for github branch to pickup configuration from.
+ARG container_user_group=mosip
+
+# can be passed during Docker build as build time environment for github branch to pickup configuration from.
+ARG container_user_uid=1001
+
+# can be passed during Docker build as build time environment for github branch to pickup configuration from.
+ARG container_user_gid=1001
+
+# install packages and create user
+RUN apt-get -y update \
+&& apt-get install -y unzip \
+&& groupadd -g ${container_user_gid} ${container_user_group} \
+&& useradd -u ${container_user_uid} -g ${container_user_group} -s /bin/sh -m ${container_user}
+
+# set working directory for the user
+WORKDIR /home/${container_user}
+
+COPY ./target/pre-registration-proxy-masterdata-service-*.jar pre-registration-proxy-masterdata-service.jar
+
+# change permissions of file inside working dir
+RUN chown -R ${container_user}:${container_user} /home/${container_user}
+
+# select container user for all tasks
+USER ${container_user_uid}:${container_user_gid}
+
+EXPOSE 8088
 CMD if [ "$is_glowroot_env" = "present" ]; then \
-    wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
-    wget "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/testing/glowroot.zip ; \
-    apt-get update && apt-get install -y unzip ; \
+    wget -q --show-progress "${iam_adapter_url_env}" -O kernel-auth-adapter.jar; \
+    wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/testing/glowroot.zip ; \
     unzip glowroot.zip ; \
     rm -rf glowroot.zip ; \
-    
     sed -i 's/<service_name>/pre-registration-application-service/g' glowroot/glowroot.properties ; \
-    java -Dloader.path=/kernel-ref-idobjectvalidator.jar, kernel-auth-adapter-1.1.2-SNAPSHOT.jar -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
+    java -Dloader.path=./kernel-auth-adapter.jar -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-proxy-masterdata-service.jar ; \
     else \
-    wget "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
-    java -Dloader.path=/kernel-ref-idobjectvalidator.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
+    wget -q --show-progress  "${iam_adapter_url_env}" -O kernel-auth-adapter.jar; \
+    java -Dloader.path=./kernel-auth-adapter.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-proxy-masterdata-service.jar ; \
     fi
 
 #CMD ["java","-Dloader.path=/kernel-ref-idobjectvalidator-0.9.1.jar","-jar","-Dspring.cloud.config.label=${spring_config_label_env}","-Dspring.profiles.active=${active_profile_env}","-Dspring.cloud.config.uri=${spring_config_url_env}","pre-registration-application-service.jar"]
