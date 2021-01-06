@@ -104,7 +104,6 @@ public class ProxyMasterdataServiceUtil {
 		requestFactory.setHttpClient(httpClient);
 		
 		 RestTemplate restTemplate = new RestTemplate(requestFactory);
-		 restTemplate.setInterceptors(Collections.singletonList(new RestInterceptor()));
 		 
 		return restTemplate;
 	}
