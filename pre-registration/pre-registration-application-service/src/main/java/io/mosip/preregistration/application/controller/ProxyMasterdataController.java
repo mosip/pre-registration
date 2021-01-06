@@ -1,4 +1,4 @@
-package io.mosip.preregistration.proxymasterdataservice.controller;
+package io.mosip.preregistration.application.controller;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -14,8 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.proxymasterdataservice.config.LoggerConfiguration;
-import io.mosip.preregistration.proxymasterdataservice.service.ProxyMasterDataService;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 @RestController
 @RequestMapping("/proxy")
@@ -25,13 +24,16 @@ public class ProxyMasterdataController {
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterdataController.class);
 
 	@Autowired
-	private ProxyMasterDataService service;
+	private io.mosip.preregistration.application.service.ProxyMasterDataService service;
+
 	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@RequestMapping(path = "/**", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public ResponseEntity<?> masterDataProxyController(@RequestBody(required = false) String body,
 			HttpServletRequest request) {
-		log.info("sessionId", "idType", "id", "In masterDataProxyController method with request url"+ request.getRequestURI() + body);
+		log.info("sessionId", "idType", "id",
+				"In masterDataProxyController method with request url" + request.getRequestURI() + body);
+		System.out.println("testing>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		return ResponseEntity.status(HttpStatus.OK).body(service.getMasterDataResponse(body, request));
 	}
 

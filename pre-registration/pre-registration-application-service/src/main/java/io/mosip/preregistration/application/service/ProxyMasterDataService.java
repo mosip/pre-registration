@@ -1,4 +1,4 @@
-package io.mosip.preregistration.proxymasterdataservice.service;
+package io.mosip.preregistration.application.service;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -17,14 +17,18 @@ import org.springframework.web.client.RestTemplate;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.proxymasterdataservice.config.LoggerConfiguration;
-import io.mosip.preregistration.proxymasterdataservice.service.util.ProxyMasterdataServiceUtil;
+import io.mosip.preregistration.application.util.ProxyMasterdataServiceUtil;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.util.AuthTokenUtil;
 
 @Service
 public class ProxyMasterDataService {
 
 	@Autowired
 	private ProxyMasterdataServiceUtil util;
+	
+	@Autowired
+	private AuthTokenUtil tokenUtil;
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterDataService.class);
 
@@ -35,9 +39,8 @@ public class ProxyMasterDataService {
 
 		ResponseEntity<?> response = null;
 
-		HttpHeaders headers = new HttpHeaders();
+		HttpHeaders headers = tokenUtil.getTokenHeader();
 		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.set("Cookie", util.getAuthToken());
 
 		HttpEntity<?> entity = new HttpEntity<>(body, headers);
 

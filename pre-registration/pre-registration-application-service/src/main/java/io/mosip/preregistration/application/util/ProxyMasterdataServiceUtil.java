@@ -1,12 +1,11 @@
-package io.mosip.preregistration.proxymasterdataservice.service.util;
+package io.mosip.preregistration.application.util;
 
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.time.LocalDateTime;
-import java.util.Map;
+import java.util.Collections;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
@@ -16,44 +15,24 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import io.mosip.kernel.core.authmanager.model.AuthNResponseDto;
-import io.mosip.kernel.core.exception.ExceptionUtils;
-import io.mosip.kernel.core.http.RequestWrapper;
-import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.proxymasterdataservice.config.LoggerConfiguration;
-import io.mosip.preregistration.proxymasterdataservice.dto.ClientSecretDTO;
+import io.mosip.preregistration.application.config.RestInterceptor;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 @Component
 public class ProxyMasterdataServiceUtil {
 
-	@Value("${appId}")
-	private String appId;
-
-	@Value("${clientId}")
-	private String clientId;
-
-	@Value("${secretKey}")
-	private String secretKey;
-
-	@Value("${sendOtp.resource.url}")
-	private String sendOtpResourceUrl;
 
 	@Value("${mosip.base.url}")
 	private String baseUrl;
-
-	@Value("${version}")
+	
+	@Value("${masterdata.service.version}")
 	private String version;
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterdataServiceUtil.class);
@@ -109,46 +88,7 @@ public class ProxyMasterdataServiceUtil {
 		return httpMethod;
 	}
 
-	public String getAuthToken() {
-		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
-		ClientSecretDTO clientSecretDto = new ClientSecretDTO(clientId, secretKey, appId);
-		io.mosip.kernel.core.http.RequestWrapper<ClientSecretDTO> requestKernel = new RequestWrapper<>();
-		requestKernel.setRequest(clientSecretDto);
-		requestKernel.setRequesttime(LocalDateTime.now());
-		ResponseEntity<ResponseWrapper<AuthNResponseDto>> response = (ResponseEntity<ResponseWrapper<AuthNResponseDto>>) callAuthService(
-				tokenUrl, HttpMethod.POST, MediaType.APPLICATION_JSON, requestKernel, null, ResponseWrapper.class);
-		if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
-			throw new RestClientException("rest call failed");
-		}
-		return response.getHeaders().get("Set-Cookie").get(0);
-	}
-
-	public ResponseEntity<?> callAuthService(String url, HttpMethod httpMethodType, MediaType mediaType, Object body,
-			Map<String, String> headersMap, Class<?> responseClass) {
-		ResponseEntity<?> response = null;
-		try {
-			log.info("sessionId", "idType", "id", "In callAuthService method of proxyMasterDataServiceUtil");
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(mediaType);
-			HttpEntity<?> request = null;
-			if (headersMap != null) {
-				headersMap.forEach((k, v) -> headers.add(k, v));
-			}
-			if (body != null) {
-				request = new HttpEntity<>(body, headers);
-			} else {
-				request = new HttpEntity<>(headers);
-			}
-			log.info("sessionId", "idType", "id", "calling kernel rest service :" + url);
-			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
-		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-			log.debug("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
-			throw new RestClientException("rest call failed");
-		}
-		return response;
-
-	}
-
+	
 	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
 		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
@@ -162,6 +102,10 @@ public class ProxyMasterdataServiceUtil {
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
 		requestFactory.setHttpClient(httpClient);
-		return new RestTemplate(requestFactory);
+		
+		 RestTemplate restTemplate = new RestTemplate(requestFactory);
+		 restTemplate.setInterceptors(Collections.singletonList(new RestInterceptor()));
+		 
+		return restTemplate;
 	}
 }
