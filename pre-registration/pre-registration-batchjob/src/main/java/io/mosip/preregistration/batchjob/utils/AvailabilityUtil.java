@@ -524,7 +524,11 @@ public class AvailabilityUtil {
 			if(responseEntity3.getBody().getResponse().getWorkingdays() != null) {
 				List<String> workingDays = responseEntity3.getBody().getResponse().getWorkingdays().stream()
 						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
+<<<<<<< HEAD
 				List<String> nonWorkingDays = ListUtils.subtract( Arrays.asList(DAYS),workingDays);
+=======
+				List<String> nonWorkingDays = ListUtils.subtract(workingDays, Arrays.asList(DAYS));
+>>>>>>> Fixed to get valid non-working days
 				log.info("sessionId", "idType", "id",	"nonWorkingDays >>> " + nonWorkingDays);
 				for(String nonWorkingDay : nonWorkingDays) {
 					for (LocalDate date = LocalDate.now(); date
