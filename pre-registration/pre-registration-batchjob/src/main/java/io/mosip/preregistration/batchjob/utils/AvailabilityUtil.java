@@ -3,14 +3,11 @@ package io.mosip.preregistration.batchjob.utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TimeZone;
+import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import org.apache.commons.collections4.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -143,6 +140,8 @@ public class AvailabilityUtil {
 	 */
 	@Autowired
 	RestTemplate restTemplate;
+
+	private static final String[] DAYS = {"MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN"};
 
 	private Logger log = LoggerConfiguration.logConfig(AvailabilityUtil.class);
 
@@ -517,9 +516,24 @@ public class AvailabilityUtil {
 						responseEntity3.getBody().getErrors().get(0).getMessage());
 			}
 			// Code to retrive date of days and add it to holidays.
-			if (!responseEntity3.getBody().getResponse().getWorkingdays().isEmpty()) {
-				for (WorkingDaysDto workingDay : responseEntity3.getBody().getResponse().getWorkingdays()) {
+			if(responseEntity3.getBody().getResponse().getWorkingdays() != null) {
+				List<String> workingDays = responseEntity3.getBody().getResponse().getWorkingdays().stream()
+						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
+				List<String> nonWorkingDays = ListUtils.subtract(workingDays, Arrays.asList(DAYS));
+				log.info("sessionId", "idType", "id",	"nonWorkingDays >>> " + nonWorkingDays);
+				for(String nonWorkingDay : nonWorkingDays) {
+					for (LocalDate date = LocalDate.now(); date
+							.isBefore(LocalDate.now().plusDays(syncDays)); date = date.plusDays(1)) {
+						if (nonWorkingDay.equalsIgnoreCase(date.getDayOfWeek().toString().substring(0,3))) {
+							holidaylist.add(date.toString());
+						}
+					}
+				}
+			}
 
+			/*if (!responseEntity3.getBody().getResponse().getWorkingdays().isEmpty()) {
+				for (WorkingDaysDto workingDay : responseEntity3.getBody().getResponse().getWorkingdays()) {
+					Days.values()
 					// Get the non working days to add it to holiday list .
 					if (!workingDay.isWorking()) {
 						for (LocalDate date = LocalDate.now(); date
@@ -530,7 +544,7 @@ public class AvailabilityUtil {
 						}
 					}
 				}
-			}
+			}*/
 
 		} catch (HttpClientErrorException ex) {
 			log.error("sessionId", "idType", "id",
