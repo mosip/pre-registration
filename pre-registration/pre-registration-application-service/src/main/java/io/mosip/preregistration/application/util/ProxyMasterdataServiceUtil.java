@@ -22,7 +22,6 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.application.config.RestInterceptor;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 @Component
