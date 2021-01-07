@@ -5,7 +5,6 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
-import java.util.Collections;
 
 import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
@@ -27,10 +26,9 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class ProxyMasterdataServiceUtil {
 
-
 	@Value("${mosip.base.url}")
 	private String baseUrl;
-	
+
 	@Value("${masterdata.service.version}")
 	private String version;
 
@@ -87,7 +85,6 @@ public class ProxyMasterdataServiceUtil {
 		return httpMethod;
 	}
 
-	
 	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
 		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
@@ -101,9 +98,8 @@ public class ProxyMasterdataServiceUtil {
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 
 		requestFactory.setHttpClient(httpClient);
-		
-		 RestTemplate restTemplate = new RestTemplate(requestFactory);
-		 
+
+		RestTemplate restTemplate = new RestTemplate(requestFactory);
 		return restTemplate;
 	}
 }

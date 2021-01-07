@@ -33,7 +33,6 @@ public class ProxyMasterdataController {
 			HttpServletRequest request) {
 		log.info("sessionId", "idType", "id",
 				"In masterDataProxyController method with request url" + request.getRequestURI() + body);
-		System.out.println("testing>>>>>>>>>>>>>>>>>>>>>>>>>>>");
 		return ResponseEntity.status(HttpStatus.OK).body(service.getMasterDataResponse(body, request));
 	}
 
