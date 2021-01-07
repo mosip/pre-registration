@@ -316,7 +316,7 @@ public class AvailabilityUtil {
 						}
 					}
 				}
-							}
+							
 				} catch (Throwable ex) {
 					log.error("sessionId", "idType", "id", "In  addAvailability method reg center loop AvailabilityUtil- " + ex.getMessage());
 				}
