@@ -159,6 +159,7 @@ public class AvailabilityUtil {
 					.collect(Collectors.toList());
 			List<String> regCenterDumped = batchServiceDAO.findRegCenter(LocalDate.now());
 			for (RegistrationCenterDto regDto : regCenterDtos) {
+				try{
 				List<LocalDate> insertedDate = batchServiceDAO.findDistinctDate(LocalDate.now(), regDto.getId());
 				List<String> holidaylist = getHolidayListMasterData(regDto, headers);
 				regCenterDumped.remove(regDto.getId());
@@ -314,6 +315,10 @@ public class AvailabilityUtil {
 							}
 						}
 					}
+				}
+							}
+				} catch (Throwable ex) {
+					log.error("sessionId", "idType", "id", "In  addAvailability method reg center loop AvailabilityUtil- " + ex.getMessage());
 				}
 
 			}
