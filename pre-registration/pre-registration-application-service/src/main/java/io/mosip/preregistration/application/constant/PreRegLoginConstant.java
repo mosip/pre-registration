@@ -30,5 +30,4 @@ public class PreRegLoginConstant {
 	public static final String OTP_ERROR_CODE="PRG_AUTH_001";
 	public static final String JWT_AUDIENCE="account";
 	public static final String JWT_SCOPE="PRE-REGISTRATION";
-
 }
