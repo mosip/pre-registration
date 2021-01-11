@@ -69,5 +69,5 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	@Bean
 	AuthenticationEntryPoint forbiddenEntryPoint() {
 		return new HttpStatusEntryPoint(HttpStatus.FORBIDDEN);
-	}<<<<<<<HEAD
-}=======}>>>>>>>1.1.4(#127)
+	}
+}
