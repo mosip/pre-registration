@@ -28,4 +28,7 @@ public class PreRegLoginConstant {
 	public static final String VALIDATE_ERROR_CODE="KER-OTV-005";
 	public static final String OTP_ERROR_MESSAGE="OTP failed to send through a specified channel";
 	public static final String OTP_ERROR_CODE="PRG_AUTH_001";
+	public static final String JWT_AUDIENCE="account";
+	public static final String JWT_SCOPE="PRE-REGISTRATION";
+	
 }
