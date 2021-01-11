@@ -64,7 +64,7 @@ public class LoginController {
 	private LoginService loginService;
 	@Autowired
 	private LoginCommonUtil loginCommonUtil;
-	
+
 	@Autowired
 	private Environment environment;
 
@@ -104,7 +104,8 @@ public class LoginController {
 		log.info("sessionId", "idType", "id", "In sendOtp method of Login controller for sending Otp ");
 		loginValidator.validateId(SENDOTP, userOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, SENDOTP);
-		return ResponseEntity.status(HttpStatus.OK).body(loginService.sendOTP(userOtpRequest,environment.getProperty(PreRegLoginConstant.MOSIP_PRIMARY_LANGUAGE)));
+		return ResponseEntity.status(HttpStatus.OK).body(loginService.sendOTP(userOtpRequest,
+				environment.getProperty(PreRegLoginConstant.MOSIP_PRIMARY_LANGUAGE)));
 	}
 
 	/**
@@ -122,16 +123,16 @@ public class LoginController {
 		log.info("sessionId", "idType", "id", "In sendOtp method of Login controller for sending Otp ");
 		loginValidator.validateId(SENDOTP, userOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, SENDOTP);
-		MainRequestDTO<OtpRequestDTO>  MainRequestDTO=new MainRequestDTO<>();
-		OtpRequestDTO dto=new OtpRequestDTO();
+		MainRequestDTO<OtpRequestDTO> MainRequestDTO = new MainRequestDTO<>();
+		OtpRequestDTO dto = new OtpRequestDTO();
 		dto.setUserId(userOtpRequest.getRequest().getUserId());
 		MainRequestDTO.setRequest(dto);
 		MainRequestDTO.setId(userOtpRequest.getId());
 		MainRequestDTO.setRequesttime(userOtpRequest.getRequesttime());
 		MainRequestDTO.setVersion(userOtpRequest.getVersion());
-		return ResponseEntity.status(HttpStatus.OK).body(loginService.sendOTP(MainRequestDTO,userOtpRequest.getRequest().getLangCode()));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(loginService.sendOTP(MainRequestDTO, userOtpRequest.getRequest().getLangCode()));
 	}
-
 
 	/**
 	 * This Post api use to validate userid and otp
@@ -142,7 +143,6 @@ public class LoginController {
 	 */
 	@PostMapping(value = "/validateOtp", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Validate UserId and Otp")
-	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> validateWithUserIdOtp(
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiIgnore Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
@@ -150,8 +150,8 @@ public class LoginController {
 				"In validateWithUserIdotp method of Login controller for validating user and Otp and providing the access token ");
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
-
-		Cookie responseCookie = new Cookie("SESSIONID", req.getSession().getId());
+		Cookie responseCookie = new Cookie("Authorization",
+				loginService.generateJWTToken(userIdOtpRequest.getRequest().getUserId(), req.getRequestURI()));
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
