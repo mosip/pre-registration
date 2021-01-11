@@ -43,7 +43,7 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 		MosipUserDto mosipUserDto = new MosipUserDto();
 
 		try {
-			if (Jwts.parser().requireExpiration(Jwts.claims().getExpiration()) != null) {
+			
 				Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(token.toString());
 				mosipUserDto.setUserId(clamis.getBody().get("userId").toString());
 				mosipUserDto.setName(clamis.getBody().get("user_name").toString());
@@ -51,11 +51,7 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 				mosipUserDto.setRole(clamis.getBody().get("roles").toString());
 				System.out.println(mosipUserDto.getUserId());
 				LOGGER.info("extracted token details" + mosipUserDto);
-			} else {
-				LOGGER.info("In retriveUser method of AuthenticationProvider class else block" + token
-						+ mosipUserDto.getUserId());
-				throw new JwtException("Jwt token not valid");
-			}
+		
 
 		} catch (JwtException e) {
 			LOGGER.error("exception while parsing the token" + e);
