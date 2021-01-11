@@ -106,7 +106,6 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 	}
 
 	private ResponseEntity<String> getKeycloakValidatedUserResponse(String token) {
-		System.out.println(token);
 		HttpHeaders headers = new HttpHeaders();
 		headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
 		HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
