@@ -161,7 +161,6 @@ public class DemographicController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN','PRE_REGISTRATION_ADMIN')")
 	@GetMapping(path = "/applications/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-
 	@ApiOperation(value = "Get Pre-Registartion data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Demographic data successfully retrieved") })
 	public ResponseEntity<MainResponseDTO<DemographicResponseDTO>> getApplication(

@@ -17,6 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -271,7 +272,7 @@ public class PreRegistrationExceptionHandler {
 			final InvalidRequestParameterException e) {
 
 		MainResponseDTO<?> errorRes = e.getMainResponseDto();
-		if(errorRes.getId() == null) {
+		if (errorRes.getId() == null) {
 			errorRes.setId(id.get(e.getOperation()));
 		}
 		errorRes.setVersion(env.getProperty("version"));
@@ -494,6 +495,15 @@ public class PreRegistrationExceptionHandler {
 			final HttpServletRequest httpServletRequest, Exception e) throws IOException {
 		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
 		ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_016.getCode(), e.getMessage());
+		errorResponse.getErrors().add(error);
+		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(value = AccessDeniedException.class)
+	public ResponseEntity<ResponseWrapper<ServiceError>> AccessDeniedExceptionHandler(
+			final HttpServletRequest httpServletRequest, Exception e) throws IOException {
+		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
+		ServiceError error = new ServiceError("KER-AUTH-401", "Authentication failed");
 		errorResponse.getErrors().add(error);
 		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
 	}

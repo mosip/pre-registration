@@ -20,7 +20,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.authmanager.authadapter.model.MosipUserDto;
-import io.mosip.kernel.core.util.DateUtils;
 
 @Component
 public class AuthenticationProvider extends AbstractUserDetailsAuthenticationProvider {
@@ -43,15 +42,13 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 		MosipUserDto mosipUserDto = new MosipUserDto();
 
 		try {
-			
-				Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(token.toString());
-				mosipUserDto.setUserId(clamis.getBody().get("userId").toString());
-				mosipUserDto.setName(clamis.getBody().get("user_name").toString());
-				mosipUserDto.setToken(token.toString());
-				mosipUserDto.setRole(clamis.getBody().get("roles").toString());
-				System.out.println(mosipUserDto.getUserId());
-				LOGGER.info("extracted token details" + mosipUserDto);
-		
+
+			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(token.toString());
+			mosipUserDto.setUserId(clamis.getBody().get("userId").toString());
+			mosipUserDto.setName(clamis.getBody().get("user_name").toString());
+			mosipUserDto.setToken(token.toString());
+			mosipUserDto.setRole(clamis.getBody().get("roles").toString());
+			LOGGER.info("extracted token details" + mosipUserDto);
 
 		} catch (JwtException e) {
 			LOGGER.error("exception while parsing the token" + e);
