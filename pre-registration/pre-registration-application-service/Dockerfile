@@ -75,9 +75,9 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     else \
    // wget -q --show-progress https://repo1.maven.org/maven2/io/mosip/kernel/kernel-virusscanner-clamav/1.1.3/kernel-virusscanner-clamav-1.1.3.jar; \
     wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
-#     wget -q --show-progress  "${iam_adapter_url_env}" -O kernel-auth-adapter.jar; \
+#   wget -q --show-progress  "${iam_adapter_url_env}" -O kernel-auth-adapter.jar; \
    // java -Dloader.path=./kernel-ref-idobjectvalidator.jar,./kernel-auth-adapter.jar,./kernel-virusscanner-clamav-1.1.3.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
-      java -Dloader.path=./kernel-ref-idobjectvalidator.jar, -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
+      java -Dloader.path=./kernel-ref-idobjectvalidator.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
     fi
 
 #CMD ["java","-Dloader.path=/kernel-ref-idobjectvalidator-0.9.1.jar","-jar","-Dspring.cloud.config.label=${spring_config_label_env}","-Dspring.profiles.active=${active_profile_env}","-Dspring.cloud.config.uri=${spring_config_url_env}","pre-registration-application-service.jar"]
