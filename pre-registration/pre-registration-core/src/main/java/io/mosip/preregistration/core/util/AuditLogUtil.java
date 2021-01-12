@@ -71,6 +71,9 @@ public class AuditLogUtil {
 	@Value("${audit.url}")
 	private String auditUrl;
 
+	@Autowired
+	private AuthTokenUtil tokenUtil;
+
 	/**
 	 * To Set the Host Ip & Host Name
 	 */
@@ -170,7 +173,7 @@ public class AuditLogUtil {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(auditUrl);
 			RequestWrapper<AuditRequestDto> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(auditRequestDto);
-			HttpHeaders headers = new HttpHeaders();
+			HttpHeaders headers = tokenUtil.getTokenHeader();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<RequestWrapper<AuditRequestDto>> requestEntity = new HttpEntity<>(requestKernel, headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
