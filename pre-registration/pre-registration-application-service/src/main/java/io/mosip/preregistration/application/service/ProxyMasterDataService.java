@@ -1,8 +1,6 @@
 package io.mosip.preregistration.application.service;
 
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
+
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -53,7 +51,7 @@ public class ProxyMasterDataService {
 			log.info("sessionId", "idType", "id",
 					"Proxy MasterData Call response for " + util.getUrl(request) + response.getBody());
 
-		} catch (KeyManagementException | NoSuchAlgorithmException | KeyStoreException | RestClientException e) {
+		} catch (RestClientException e) {
 
 			log.info("sessionId", "idType", "id", "Proxy MasterData Call Exception response for " + util.getUrl(request)
 					+ e.getMessage() + ExceptionUtils.getStackTrace(e));
