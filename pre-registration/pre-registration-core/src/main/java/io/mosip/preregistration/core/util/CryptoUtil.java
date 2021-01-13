@@ -96,7 +96,7 @@ public class CryptoUtil {
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);
 
-			HttpHeaders headers = tokenUtil.getTokenHeader();
+			HttpHeaders headers = new HttpHeaders();
 			;
 			headers.setContentType(MediaType.APPLICATION_JSON);
 
