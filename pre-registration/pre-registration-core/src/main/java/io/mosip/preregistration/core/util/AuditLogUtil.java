@@ -71,9 +71,6 @@ public class AuditLogUtil {
 	@Value("${audit.url}")
 	private String auditUrl;
 
-	@Autowired
-	private AuthTokenUtil tokenUtil;
-
 	/**
 	 * To Set the Host Ip & Host Name
 	 */

@@ -39,9 +39,6 @@ public class CryptoUtil {
 	 */
 	@Autowired
 	RestTemplate restTemplate;
-	
-	@Autowired
-    private AuthTokenUtil tokenUtil;
 
 	@Value("${cryptoResource.url}")
 	public String cryptoResourceUrl;
@@ -62,14 +59,14 @@ public class CryptoUtil {
 			requestKernel.setRequest(dto);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-            System.out.println(headers);
+			System.out.println(headers);
 			HttpEntity<RequestWrapper<CryptoManagerRequestDTO>> request = new HttpEntity<>(requestKernel, headers);
 			log.info("sessionId", "idType", "id",
 					"In encrypt method of CryptoUtil service cryptoResourceUrl: " + cryptoResourceUrl + "/encrypt");
 			response = restTemplate.exchange(cryptoResourceUrl + "/encrypt", HttpMethod.POST, request,
 					new ParameterizedTypeReference<ResponseWrapper<CryptoManagerResponseDTO>>() {
 					});
-			System.out.println("decrypt response of "+response);
+			System.out.println("decrypt response of " + response);
 			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
 				throw new EncryptionFailedException(response.getBody().getErrors(), null);
 			}
@@ -99,7 +96,8 @@ public class CryptoUtil {
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);
 
-			HttpHeaders headers = tokenUtil.getTokenHeader();;
+			HttpHeaders headers = tokenUtil.getTokenHeader();
+			;
 			headers.setContentType(MediaType.APPLICATION_JSON);
 
 			HttpEntity<RequestWrapper<CryptoManagerRequestDTO>> request = new HttpEntity<>(requestKernel, headers);
