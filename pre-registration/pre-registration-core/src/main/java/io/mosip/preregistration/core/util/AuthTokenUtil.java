@@ -3,8 +3,6 @@ package io.mosip.preregistration.core.util;
 import java.time.LocalDateTime;
 import java.util.Optional;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -55,12 +53,6 @@ public class AuthTokenUtil {
 	String version;
 
 	private String authToken;
-
-// 	@PostConstruct
-// 	public void init() {
-// 		this.getToken();
-
-// 	}
 
 	private Logger log = LoggerConfiguration.logConfig(AuthTokenUtil.class);
 

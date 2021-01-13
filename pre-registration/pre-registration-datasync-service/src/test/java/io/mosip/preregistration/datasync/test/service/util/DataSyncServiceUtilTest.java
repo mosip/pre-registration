@@ -23,8 +23,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -212,7 +212,7 @@ public class DataSyncServiceUtilTest {
 		serviceUtil.validateDataSyncRequest(dataSyncRequestDTO, null);
 
 	}
-	
+
 	@Test(expected = InvalidRequestParameterException.class)
 	public void invalidToDateTest() {
 		dataSyncRequestDTO.setRegistrationCenterId("1005");
@@ -307,8 +307,6 @@ public class DataSyncServiceUtilTest {
 				.getBookedPreIdsByDateAndRegCenterIdRestService(fromDate, toDate, "10001");
 		assertEquals(preRegIdsByRegCenterIdResponseDTO.getPreRegistrationIds().get(0), preRegIds.get(0));
 	}
-
-	
 
 	@Test
 	public void callGetDocRestServiceTest() {
