@@ -145,10 +145,11 @@ public class LoginService {
 	private String globalConfig;
 	private String preregConfig;
 
-	@PostConstruct
 	public void setupLoginService() {
+		log.info("sessionId", "idType", "id", "In setupLoginService method of login service");
 		globalConfig = loginCommonUtil.getConfig(globalFileName);
 		preregConfig = loginCommonUtil.getConfig(preRegFileName);
+		log.info("sessionId", "idType", "id", "Fetched the globalConfig and preRegconfig from config server");
 	}
 
 	/**

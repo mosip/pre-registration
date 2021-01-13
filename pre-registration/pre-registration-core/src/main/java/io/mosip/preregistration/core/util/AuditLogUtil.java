@@ -173,7 +173,7 @@ public class AuditLogUtil {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(auditUrl);
 			RequestWrapper<AuditRequestDto> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(auditRequestDto);
-			HttpHeaders headers = tokenUtil.getTokenHeader();
+			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<RequestWrapper<AuditRequestDto>> requestEntity = new HttpEntity<>(requestKernel, headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();

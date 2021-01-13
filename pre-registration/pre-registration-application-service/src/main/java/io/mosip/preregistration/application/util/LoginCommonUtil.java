@@ -22,7 +22,6 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
@@ -68,7 +67,6 @@ public class LoginCommonUtil {
 	private Environment env;
 
 	@Autowired
-	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate;
 	
 	@Autowired
