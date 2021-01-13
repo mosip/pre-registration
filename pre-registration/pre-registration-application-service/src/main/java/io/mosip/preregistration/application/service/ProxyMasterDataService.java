@@ -19,13 +19,15 @@ import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.util.ProxyMasterdataServiceUtil;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.core.util.AuthTokenUtil;
 
 @Service
 public class ProxyMasterDataService {
 
 	@Autowired
 	private ProxyMasterdataServiceUtil util;
+	
+	@Autowired
+	private RestTemplate restTemplate;
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterDataService.class);
 
@@ -44,8 +46,6 @@ public class ProxyMasterDataService {
 		log.info("sessionId", "idType", "id", "httpEntity " + entity);
 
 		try {
-
-			RestTemplate restTemplate = util.getRestTemplate();
 
 			response = restTemplate.exchange(util.getUrl(request), util.getHttpMethodType(request), entity,
 					String.class);
