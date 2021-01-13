@@ -26,9 +26,6 @@ public class ProxyMasterDataService {
 
 	@Autowired
 	private ProxyMasterdataServiceUtil util;
-	
-	@Autowired
-	private AuthTokenUtil tokenUtil;
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterDataService.class);
 
@@ -39,7 +36,7 @@ public class ProxyMasterDataService {
 
 		ResponseEntity<?> response = null;
 
-		HttpHeaders headers = tokenUtil.getTokenHeader();
+		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(body, headers);

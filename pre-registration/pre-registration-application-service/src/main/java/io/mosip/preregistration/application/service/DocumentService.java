@@ -128,7 +128,7 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Value("${mosip.preregistration.document.delete.specific.id}")
 	private String deleteSpecificId;
-	
+
 	@Value("${mosip.preregistration.document.update.docrefId.id}")
 	private String updateDocRefId;
 	/**
@@ -190,10 +190,12 @@ public class DocumentService implements DocumentServiceIntf {
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
 	 */
-	@PostConstruct
 	public void setup() {
-		HttpHeaders headers = tokenUtil.getTokenHeader();
+		log.info("sessionId", "idType", "id", "In setup method of document service");
+		HttpHeaders headers = new HttpHeaders();
 		requiredRequestMap.put("version", ver);
+		log.info("sessionId", "idType", "id",
+				"In setup method of document service calling getAllDocCategoriesAndTypes of validationUtil");
 		validationUtil.getAllDocCategoriesAndTypes(primaryLang, headers);
 	}
 
