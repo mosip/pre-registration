@@ -56,11 +56,11 @@ public class AuthTokenUtil {
 
 	private String authToken;
 
-	@PostConstruct
-	public void init() {
-		this.getToken();
+// 	@PostConstruct
+// 	public void init() {
+// 		this.getToken();
 
-	}
+// 	}
 
 	private Logger log = LoggerConfiguration.logConfig(AuthTokenUtil.class);
 
