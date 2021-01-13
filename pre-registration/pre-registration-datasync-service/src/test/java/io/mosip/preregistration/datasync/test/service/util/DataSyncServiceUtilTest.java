@@ -91,6 +91,7 @@ public class DataSyncServiceUtilTest {
 	ValidationUtil validationUtil;
 
 	@MockBean
+	@Qualifier("restTemplate")
 	RestTemplate restTemplate;
 
 	/**
