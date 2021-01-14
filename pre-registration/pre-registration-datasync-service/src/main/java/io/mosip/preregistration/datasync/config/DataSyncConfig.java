@@ -7,6 +7,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -28,6 +30,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 @ConfigurationProperties("mosip")
 public class DataSyncConfig {
+
+	private static final Logger logger = LoggerFactory.getLogger(DataSyncConfig.class);
 
 	/** The id. */
 	private Map<String, String> id;
@@ -85,7 +89,7 @@ public class DataSyncConfig {
 				}
 				swaggerBaseUrlSet = true;
 			} catch (MalformedURLException e) {
-				System.err.println("SwaggerUrlException: " + e);
+				logger.error("SwaggerUrlException: ", e);
 			}
 		}
 
@@ -94,7 +98,7 @@ public class DataSyncConfig {
 
 		if (swaggerBaseUrlSet) {
 			docket.protocols(protocols()).host(hostWithPort);
-			System.out.println("\nSwagger Base URL: " + proto + "://" + hostWithPort + "\n");
+			logger.info("Swagger Base URL: {}://{}", proto, hostWithPort);
 		}
 		return docket;
 	}

@@ -75,7 +75,7 @@ public class NotificationController {
 			@RequestPart(value = "attachment", required = false) MultipartFile file , HttpServletRequest res) {
 		log.info("sessionId", "idType", "id",
 				"In notification controller for send notification with request notification dto  " + jsonbObject);
-		System.out.println(res.getHeader("Cookie"));
+		log.debug("sessionId", "idType", "id", res.getHeader("Cookie"));
 		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file), HttpStatus.OK);
 
 	}

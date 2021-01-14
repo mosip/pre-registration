@@ -218,13 +218,13 @@ public class NotificationUtil {
 			HttpHeaders headers =  new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<?> entity = new HttpEntity<>(headers);
-			System.out.println(entity);
+			log.debug("sessionId", "idType", "id", entity.toString());
 			responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					});
-			System.out.println(responseEntity);
+			log.debug("sessionId", "idType", "id", responseEntity.toString());
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				System.out.println(responseEntity.getBody().getErrors());
+				log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
 				response.setErrors(responseEntity.getBody().getErrors());
 			}else {
 				response.setResponse(responseEntity.getBody().getResponse());
