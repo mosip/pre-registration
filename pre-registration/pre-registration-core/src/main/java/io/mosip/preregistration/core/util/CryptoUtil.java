@@ -66,6 +66,7 @@ public class CryptoUtil {
 					new ParameterizedTypeReference<ResponseWrapper<CryptoManagerResponseDTO>>() {
 					});
 			log.info("sessionId", "idType", "id", "decrypt response of " + response);
+
 			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
 				throw new EncryptionFailedException(response.getBody().getErrors(), null);
 			}
