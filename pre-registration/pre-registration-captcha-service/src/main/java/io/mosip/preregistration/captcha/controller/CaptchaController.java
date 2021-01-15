@@ -46,7 +46,7 @@ public class CaptchaController {
 		@Validated	@RequestBody MainRequestDTO<CaptchaRequestDTO> captchaRequest, @ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration captcha controller to validate the recaptcha token" + captchaRequest);
-		System.out.println("In pre-registration captcha controller to validate the recaptcha token" + "  "+captchaRequest);
+		//System.out.println("In pre-registration captcha controller to validate the recaptcha token" + "  "+captchaRequest);
 		requestValidator.validateId(VALIDATE, captchaRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATE);
 		return new ResponseEntity<>(this.captchaService.validateCaptcha(captchaRequest.getRequest()), HttpStatus.OK);

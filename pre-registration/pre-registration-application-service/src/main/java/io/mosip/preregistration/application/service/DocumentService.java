@@ -560,7 +560,7 @@ public class DocumentService implements DocumentServiceIntf {
 		List<DocumentMultipartResponseDTO> allDocRes = new ArrayList<>();
 		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
 		for (DocumentEntity doc : entityList) {
-			System.out.println("Demographic preid: " + doc.getDemographicEntity().getStatusCode());
+			log.info("","","","Demographic preid:" + doc.getDemographicEntity().getStatusCode());
 			DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
 			allDocDto.setDocCatCode(doc.getDocCatCode());
 			allDocDto.setDocName(doc.getDocName());

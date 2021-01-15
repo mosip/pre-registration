@@ -50,16 +50,14 @@ public class AuthenticationFilter extends AbstractAuthenticationProcessingFilter
 			if (cookies != null) {
 				for (Cookie cookie : cookies) {
 					if (cookie.getName().contains("Authorization")) {
-						System.out.println(cookie.getValue());
+						LOGGER.debug(cookie.getValue());
 						token = cookie.getValue();
-						LOGGER.info("Token from the cookie:" + token);
+						LOGGER.debug("Token from the cookie:" + token);
 					}
 				}
 			}
 		} catch (Exception e) {
-
-			LOGGER.error("extract token from cookie failed for request " + httpServletRequest.getRequestURI());
-			e.printStackTrace();
+			LOGGER.error("extract token from cookie failed for request",e);
 		}
 
 		if (token == null) {

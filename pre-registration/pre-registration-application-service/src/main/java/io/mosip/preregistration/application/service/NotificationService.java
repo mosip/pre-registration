@@ -412,7 +412,6 @@ public class NotificationService {
 
 		BookingRegistrationDTO bookingRegistrationDTO = null;
 			MainResponseDTO<BookingRegistrationDTO> respEntity = notificationUtil.getAppointmentDetails(preId);
-			System.out.println(respEntity);
 			if (respEntity.getErrors() != null) {
 				throw new BookingDetailsNotFoundException(respEntity.getErrors(), response);
 			}
