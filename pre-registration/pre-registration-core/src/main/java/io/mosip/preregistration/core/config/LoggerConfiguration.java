@@ -14,25 +14,8 @@ public final class LoggerConfiguration {
 
 	}
 
-	
-	/** The mosip rolling file appender. */
-	private static RollingFileAppender mosipRollingFileAppender;
-	
-	static {
-		mosipRollingFileAppender = new RollingFileAppender();
-		mosipRollingFileAppender.setAppend(true);
-		mosipRollingFileAppender.setAppenderName("fileappender");
-		mosipRollingFileAppender.setFileName("/home/logs/preregistration.log");
-		mosipRollingFileAppender.setFileNamePattern("/home/logs/preregistration-%d{yyyy-MM-dd}-%i.log");
-		mosipRollingFileAppender.setImmediateFlush(true);
-		mosipRollingFileAppender.setMaxFileSize("50mb");
-//		mosipRollingFileAppender.setMaxHistory(3);
-		mosipRollingFileAppender.setPrudent(false);
-//		mosipRollingFileAppender.setTotalCap("50mb");
-	}
-	
 	public static Logger logConfig(Class<?> clazz) {
-		return Logfactory.getDefaultRollingFileLogger(mosipRollingFileAppender, clazz);
+		return Logfactory.getSlf4jLogger(clazz);
 	}
 
 }
