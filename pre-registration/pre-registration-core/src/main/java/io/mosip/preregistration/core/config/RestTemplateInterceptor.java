@@ -15,7 +15,9 @@ import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestFactory;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
+import org.springframework.security.core.context.SecurityContextHolder;
 
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.core.util.AuthTokenUtil;
 
 public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
@@ -36,15 +38,32 @@ public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
 			ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
 		LOGGER.info("Request url: " + httpRequest.getURI());
 		if (!httpRequest.getURI().toString().contains("authmanager")) {
-			HttpHeaders headers = httpRequest.getHeaders();
-			LOGGER.info("Reterving token from AuthTokenutil : ");
-			String token = tokenUtil.getToken();
-			headers.set(HttpHeaders.COOKIE, token);
+			if (httpRequest.getURI().toString().contains("preregistration")) {
+				HttpHeaders headers = httpRequest.getHeaders();
+				LOGGER.info("Reterving token from AuthTokenutil : ");
+				String token = getAuthUserDetails().getToken();
+				headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
+			} else {
+				HttpHeaders headers = httpRequest.getHeaders();
+				LOGGER.info("Reterving token from AuthTokenutil : ");
+				String token = tokenUtil.getToken();
+				headers.set(HttpHeaders.COOKIE, token);
+			}
+
 			LOGGER.info("Header set with cookie for request url: " + httpRequest.getURI());
 		}
 		httpRequest = resolveServiceId(httpRequest);
 		ClientHttpResponse response = clientHttpRequestExecution.execute(httpRequest, bytes);
 		return response;
+	}
+
+	private AuthUserDetails getAuthUserDetails() {
+		AuthUserDetails authUserDetails = null;
+		if (SecurityContextHolder.getContext() != null && SecurityContextHolder.getContext().getAuthentication() != null
+				&& SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof AuthUserDetails)
+
+			authUserDetails = (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return authUserDetails;
 	}
 
 	private HttpRequest resolveServiceId(HttpRequest request) {
