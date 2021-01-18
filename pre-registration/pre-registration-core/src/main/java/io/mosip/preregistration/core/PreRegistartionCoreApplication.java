@@ -28,6 +28,7 @@ import org.springframework.context.annotation.FilterType;
 				}) })
 public class PreRegistartionCoreApplication {
 	public static void main(String[] args) {
+		System.out.println("PreRegistartionCoreApplication started....");
 		SpringApplication.run(PreRegistartionCoreApplication.class, args);
 	}
 }
