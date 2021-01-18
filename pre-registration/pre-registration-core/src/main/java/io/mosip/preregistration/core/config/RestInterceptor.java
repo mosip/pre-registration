@@ -20,9 +20,9 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.core.util.AuthTokenUtil;
 
-public class RestTemplateInterceptor implements ClientHttpRequestInterceptor {
+public class RestInterceptor implements ClientHttpRequestInterceptor {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(RestTemplateInterceptor.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(RestInterceptor.class);
 
 	@Autowired
 	private ClientHttpRequestFactory requestFactory;
