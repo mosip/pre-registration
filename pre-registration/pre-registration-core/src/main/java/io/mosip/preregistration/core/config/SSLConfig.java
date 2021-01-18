@@ -63,8 +63,8 @@ public class SSLConfig {
 	}
 
 	@Bean
-	public RestTemplateInterceptor restTemplateInterceptor() {
-		return new RestTemplateInterceptor();
+	public RestInterceptor restTemplateInterceptor() {
+		return new RestInterceptor();
 	}
 
 	@Bean
