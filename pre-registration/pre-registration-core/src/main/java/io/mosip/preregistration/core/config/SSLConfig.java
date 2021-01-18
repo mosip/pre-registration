@@ -55,7 +55,7 @@ public class SSLConfig {
 		if (CollectionUtils.isEmpty(interceptors)) {
 			interceptors = new ArrayList<>();
 		}
-		interceptors.add(restTemplateInterceptor());
+		interceptors.add(restInterceptor());
 		restTemplate.setInterceptors(interceptors);
 
 		return restTemplate;
@@ -63,7 +63,7 @@ public class SSLConfig {
 	}
 
 	@Bean
-	public RestInterceptor restTemplateInterceptor() {
+	public RestInterceptor restInterceptor() {
 		return new RestInterceptor();
 	}
 
