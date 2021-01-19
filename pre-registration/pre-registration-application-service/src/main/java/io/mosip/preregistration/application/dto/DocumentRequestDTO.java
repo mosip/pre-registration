@@ -52,7 +52,8 @@ public class DocumentRequestDTO implements Serializable {
 	 * Uploaded docReferenceNo
 	 */
 	@JsonProperty("docRefId")
-	private String docRefId;;
+	private String docRefId;
+
 
 
 }
