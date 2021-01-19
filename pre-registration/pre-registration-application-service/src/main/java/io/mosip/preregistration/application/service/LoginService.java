@@ -139,11 +139,15 @@ public class LoginService {
 	OTPManager otpmanager;
 
 	@Autowired
+	OTPManager otpmanager;
+
+	@Autowired
 	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate;
 
 	private String globalConfig;
 	private String preregConfig;
+
 
 	public void setupLoginService() {
 		log.info("sessionId", "idType", "id", "In setupLoginService method of login service");
@@ -152,12 +156,14 @@ public class LoginService {
 		log.info("sessionId", "idType", "id", "Fetched the globalConfig and preRegconfig from config server");
 	}
 
+
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
 	 * 
 	 * @param userOtpRequest
 	 * @return MainResponseDTO<AuthNResponse>
 	 */
+
 	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest, String language) {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
