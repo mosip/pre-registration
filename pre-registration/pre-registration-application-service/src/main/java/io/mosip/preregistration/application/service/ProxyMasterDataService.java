@@ -27,6 +27,7 @@ public class ProxyMasterDataService {
 	@Autowired
 	private RestTemplate restTemplate;
 
+
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterDataService.class);
 
 	public Object getMasterDataResponse(String body, HttpServletRequest request) {
