@@ -1,7 +1,9 @@
 package io.mosip.preregistration.application.service;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 
 /**
@@ -30,6 +32,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -121,6 +126,18 @@ public class LoginService {
 	@Value("${secretKey}")
 	private String secretKey;
 
+	@Value("${prereg.auth.jwt.secret}")
+	private String jwtSecret;
+
+	@Value("${prereg.auth.jwt.token.expiration}")
+	private String jwtTokenExpiryTime;
+
+	@Value("${prereg.auth.jwt.token.roles}")
+	private String jwtTokenRoles;
+
+	@Autowired
+	OTPManager otpmanager;
+
 	@Autowired
 	OTPManager otpmanager;
 
@@ -131,12 +148,14 @@ public class LoginService {
 	private String globalConfig;
 	private String preregConfig;
 
-	
-	  @PostConstruct public void setupLoginService() { 
-	  globalConfig = loginCommonUtil.getConfig(globalFileName); 
-          preregConfig = loginCommonUtil.getConfig(preRegFileName); 
-	  }
-	 
+
+	public void setupLoginService() {
+		log.info("sessionId", "idType", "id", "In setupLoginService method of login service");
+		globalConfig = loginCommonUtil.getConfig(globalFileName);
+		preregConfig = loginCommonUtil.getConfig(preRegFileName);
+		log.info("sessionId", "idType", "id", "Fetched the globalConfig and preRegconfig from config server");
+	}
+
 
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
@@ -144,7 +163,8 @@ public class LoginService {
 	 * @param userOtpRequest
 	 * @return MainResponseDTO<AuthNResponse>
 	 */
-	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest,String language) {
+
+	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest, String language) {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
@@ -153,10 +173,10 @@ public class LoginService {
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
 			log.debug("sessionId", "idType", "id", "response after loginCommonUtil" + response);
-			
+
 			userid = userOtpRequest.getRequest().getUserId();
 			otpChannel = loginCommonUtil.validateUserId(userid);
-			boolean otpSent = otpmanager.sendOtp(userOtpRequest, otpChannel.get(0),language);
+			boolean otpSent = otpmanager.sendOtp(userOtpRequest, otpChannel.get(0), language);
 			AuthNResponse authNResponse = null;
 			if (otpSent) {
 				if (otpChannel.get(0).equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER))
@@ -423,5 +443,22 @@ public class LoginService {
 		res.setResponse("success");
 		res.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return res;
+	}
+
+	public String generateJWTToken(String userId, String issuerUrl) {
+		log.info("sessionId", "idType", "id", "In generateJWTToken method of loginservice:" + userId + issuerUrl);
+		Map<String, Object> claims = new HashMap<String, Object>();
+		claims.put("userId", userId);
+		claims.put("scope", PreRegLoginConstant.JWT_SCOPE);
+		claims.put("user_name", userId);
+		claims.put("roles", jwtTokenRoles);
+
+		String jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
+				.setSubject(userId)
+				.setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt(jwtTokenExpiryTime))))
+				.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
+				.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
+		log.info("sessionId", "idType", "id", "Auth token generarted:" + jws);
+		return jws;
 	}
 }

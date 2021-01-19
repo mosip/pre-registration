@@ -24,13 +24,13 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.dto.DocumentResponseDTO;
+import io.mosip.preregistration.application.service.DocumentServiceIntf;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.document.dto.DocumentResponseDTO;
-import io.mosip.preregistration.application.service.DocumentServiceIntf;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -62,12 +62,10 @@ public class DocumentController {
 
 	/**
 	 * Post API to upload the document.
-	 * @param preRegistrationId
-	 * 			  preRegistrationId
-	 * @param reqDto
-	 *            pass documentString
-	 * @param file
-	 *            pass files
+	 * 
+	 * @param preRegistrationId preRegistrationId
+	 * @param reqDto            pass documentString
+	 * @param file              pass files
 	 * @return response in a format specified in API document
 	 * 
 	 */
@@ -83,8 +81,7 @@ public class DocumentController {
 		log.debug("sessionId", "idType", "id", "Pre-id " + preRegistrationId);
 		log.info("sessionId", "idType", "id",
 				"In fileUpload method of document controller to upload the document for request " + reqDto.toString());
-		log.info("sessionId", "idType", "id",
-				"iN Controller v2");
+		log.info("sessionId", "idType", "id", "iN Controller v2");
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(documentUploadService.uploadDocument(file, reqDto, preRegistrationId));
@@ -95,12 +92,9 @@ public class DocumentController {
 	 * Post API to copy the document from source to destination by Preregistration
 	 * Id
 	 * 
-	 * @param preRegistrationId
-	 *            pass destination_preId
-	 * @param catCode
-	 *            pass cat_type
-	 * @param sourcePrId
-	 *            pass source_prId
+	 * @param preRegistrationId pass destination_preId
+	 * @param catCode           pass cat_type
+	 * @param sourcePrId        pass source_prId
 	 * 
 	 * @return response in a format specified in API document
 	 */
@@ -123,8 +117,7 @@ public class DocumentController {
 	/**
 	 * Get API to fetch all the documents for a Preregistration Id
 	 * 
-	 * @param pre_registration_id
-	 *            pass preRegistrationId
+	 * @param pre_registration_id pass preRegistrationId
 	 * @return response in a format specified in API document
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
@@ -143,10 +136,8 @@ public class DocumentController {
 	/**
 	 * Get API to fetch document for a document Id
 	 * 
-	 * @param documentId
-	 *            pass documentId as path variable
-	 * @param preRegistrationId
-	 *            pass preRegistrationId as request param
+	 * @param documentId        pass documentId as path variable
+	 * @param preRegistrationId pass preRegistrationId as request param
 	 * @return response in a format specified in API document
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
@@ -167,10 +158,8 @@ public class DocumentController {
 	 * Delete API to delete the document for a Document Id
 	 * 
 	 * 
-	 * @param documentId
-	 *            pass documentId
-	 * @param preRegistrationId
-	 * 			  pass the preRegistratoinId           
+	 * @param documentId        pass documentId
+	 * @param preRegistrationId pass the preRegistratoinId
 	 * @return response in a format specified in API document
 	 */
 
@@ -191,8 +180,7 @@ public class DocumentController {
 	/**
 	 * Delete API to delete all the documents for a preregistrationId
 	 * 
-	 * @param preRegistrationId
-	 *            pass preregistrationId
+	 * @param preRegistrationId pass preregistrationId
 	 * @return response in a format specified in API document
 	 */
 
@@ -207,5 +195,21 @@ public class DocumentController {
 				"In deleteDocument method of document controller to delete all the document for preId "
 						+ preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(documentUploadService.deleteAllByPreId(preRegistrationId));
+	}
+
+	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	@PutMapping(path = "/documents/document/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "update document reference Id")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document Reference Id successfully updated ") })
+	public ResponseEntity<MainResponseDTO<String>> updateDocRefId(
+			@Valid @PathVariable(required = true) String documentId,
+			@Valid @RequestParam(required = true, value = "preRegistrationId") String preRegistrationId,
+			@Valid @RequestParam(required = true, value = "docRefId") String docRefId) {
+		log.info("sessionId", "idType", "id",
+				"In updateDocRefId method of document controller to update the docRefId for documentId " + documentId
+						+ "preregistrationId " + preRegistrationId + "DocRefId " + docRefId);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(documentUploadService.updateDocRefId(documentId, preRegistrationId, docRefId));
+
 	}
 }

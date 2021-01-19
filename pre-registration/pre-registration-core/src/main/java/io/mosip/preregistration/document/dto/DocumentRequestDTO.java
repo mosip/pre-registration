@@ -50,4 +50,7 @@ public class DocumentRequestDTO implements Serializable {
 	@JsonProperty("langCode")
 	private String langCode;
 
+	@JsonProperty("docReferenceNo")
+	private String docReferenceNo;
+
 }

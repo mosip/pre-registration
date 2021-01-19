@@ -17,6 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -24,17 +25,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.code.DocumentStatusMessages;
+import io.mosip.preregistration.application.dto.DocumentRequestDTO;
+import io.mosip.preregistration.application.dto.DocumentResponseDTO;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorMessages;
 import io.mosip.preregistration.application.exception.DocumentFailedToCopyException;
 import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.FSServerException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.util.DocumentExceptionCatcher;
 import io.mosip.preregistration.application.repository.DocumentDAO;
@@ -60,9 +65,7 @@ import io.mosip.preregistration.core.util.AuthTokenUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.document.dto.DocumentRequestDTO;
-import io.mosip.preregistration.document.dto.DocumentResponseDTO;
-import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
+
 /**
  * This class provides the service implementation for Document
  * 
@@ -125,6 +128,9 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Value("${mosip.preregistration.document.delete.specific.id}")
 	private String deleteSpecificId;
+
+	@Value("${mosip.preregistration.document.update.docrefId.id}")
+	private String updateDocRefId;
 	/**
 	 * Reference for ${version} from property file
 	 */
@@ -140,7 +146,7 @@ public class DocumentService implements DocumentServiceIntf {
 	/**
 	 * Autowired reference for {@link #FileSystemAdapter}
 	 */
-	
+
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
 
@@ -184,10 +190,12 @@ public class DocumentService implements DocumentServiceIntf {
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
 	 */
-	@PostConstruct
 	public void setup() {
-		HttpHeaders headers = tokenUtil.getTokenHeader();
+		log.info("sessionId", "idType", "id", "In setup method of document service");
+		HttpHeaders headers = new HttpHeaders();
 		requiredRequestMap.put("version", ver);
+		log.info("sessionId", "idType", "id",
+				"In setup method of document service calling getAllDocCategoriesAndTypes of validationUtil");
 		validationUtil.getAllDocCategoriesAndTypes(primaryLang, headers);
 	}
 
@@ -291,7 +299,7 @@ public class DocumentService implements DocumentServiceIntf {
 			String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 
 			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName,
-					documentEntity.getDemographicEntity().getPreRegistrationId(),null,null, key,
+					documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key,
 					new ByteArrayInputStream(encryptedDocument));
 
 			if (!isStoreSuccess) {
@@ -396,8 +404,10 @@ public class DocumentService implements DocumentServiceIntf {
 		if (copyDocumentEntity != null) {
 			destinationBucketName = copyDocumentEntity.getDemographicEntity().getPreRegistrationId();
 			destinationKey = copyDocumentEntity.getDocCatCode() + "_" + copyDocumentEntity.getDocumentId();
-			InputStream sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName,null,null, sourceKey);
-			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, destinationBucketName,null,null, destinationKey,sourcefile);
+			InputStream sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, null, null,
+					sourceKey);
+			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, destinationBucketName, null, null,
+					destinationKey, sourcefile);
 			if (!isStoreSuccess) {
 				throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_009.toString(),
 						DocumentErrorMessages.DOCUMENT_FAILED_TO_UPLOAD.getMessage());
@@ -437,9 +447,9 @@ public class DocumentService implements DocumentServiceIntf {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
-			if (ex instanceof DocumentNotFoundException || ex instanceof RecordNotFoundException){
+			if (ex instanceof DocumentNotFoundException || ex instanceof RecordNotFoundException) {
 				isDocNotFound = true;
-			 new DocumentExceptionCatcher().handle(ex, responseDto);
+				new DocumentExceptionCatcher().handle(ex, responseDto);
 			}
 		} finally {
 			if (isRetrieveSuccess) {
@@ -489,7 +499,7 @@ public class DocumentService implements DocumentServiceIntf {
 				}
 				String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 				InputStream sourcefile = objectStore.getObject(objectStoreAccountName,
-						documentEntity.getDemographicEntity().getPreRegistrationId(),null,null, key);
+						documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
 				if (sourcefile == null) {
 					throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_005.toString(),
 							DocumentErrorMessages.DOCUMENT_FAILED_TO_FETCH.getMessage());
@@ -550,13 +560,14 @@ public class DocumentService implements DocumentServiceIntf {
 		List<DocumentMultipartResponseDTO> allDocRes = new ArrayList<>();
 		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
 		for (DocumentEntity doc : entityList) {
-			System.out.println("Demographic preid: " + doc.getDemographicEntity().getStatusCode());
+			log.info("","","","Demographic preid:" + doc.getDemographicEntity().getStatusCode());
 			DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
 			allDocDto.setDocCatCode(doc.getDocCatCode());
 			allDocDto.setDocName(doc.getDocName());
 			allDocDto.setDocumentId(doc.getDocumentId());
 			allDocDto.setDocTypCode(doc.getDocTypeCode());
 			allDocDto.setLangCode(doc.getLangCode());
+			allDocDto.setDocRefId(doc.getDocRefId());
 			allDocRes.add(allDocDto);
 		}
 		documentsMetaData.setDocumentsMetaData(allDocRes);
@@ -591,8 +602,8 @@ public class DocumentService implements DocumentServiceIntf {
 				}
 				if (documnetDAO.deleteAllBydocumentId(documentId) > 0) {
 					String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
-					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(),
-							null,null,key);
+					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,
+							documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
 					if (!isDeleted) {
 						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
 								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
@@ -695,8 +706,9 @@ public class DocumentService implements DocumentServiceIntf {
 		if (documnetDAO.deleteAllBypreregId(preregId) >= 0) {
 			for (DocumentEntity documentEntity : documentEntityList) {
 				String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
-				objectStore.deleteObject(objectStoreAccountName,documentEntity.getDemographicEntity().getPreRegistrationId(), null,null,key);
-			
+				objectStore.deleteObject(objectStoreAccountName,
+						documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+
 			}
 			deleteDTO.setMessage(DocumentStatusMessages.ALL_DOCUMENT_DELETE_SUCCESSFUL.getMessage());
 		}
@@ -747,5 +759,40 @@ public class DocumentService implements DocumentServiceIntf {
 		}
 		inputValidation.put(RequestCodes.REQUEST, requestDTO.getRequest().toString());
 		return inputValidation;
+	}
+
+	@Override
+	public MainResponseDTO<String> updateDocRefId(String documentId, String preId, String docRefId) {
+		log.info("sessionId", "idType", "id", "In updateDocRefId method of document service");
+		MainResponseDTO<String> response = new MainResponseDTO<>();
+		Map<String, String> requestParamMap = new HashMap<>();
+		response.setResponsetime(serviceUtil.getCurrentResponseTime());
+		response.setId(updateDocRefId);
+		response.setVersion(ver);
+		try {
+			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preId);
+			if (validationUtil.requstParamValidator(requestParamMap) && documentId != null && !documentId.equals("")) {
+				DocumentEntity documentEntity = documnetDAO.findBydocumentId(documentId);
+				if (documentEntity != null) {
+					documentEntity.setDocRefId(docRefId);
+					documnetDAO.updateDocument(documentEntity);
+				} else {
+					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
+							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage());
+				}
+			} else {
+				throw new RecordNotFoundException(DocumentErrorCodes.PRG_PAM_DOC_019.toString(),
+						DocumentErrorMessages.INVALID_DOCUMENT_ID.getMessage());
+			}
+		} catch (Exception ex) {
+			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
+			new DocumentExceptionCatcher().handle(ex, response);
+		}
+
+		response.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		return response;
+
 	}
 }

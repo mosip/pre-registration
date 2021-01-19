@@ -5,7 +5,6 @@
 package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -31,7 +30,6 @@ public class DocumentRequestDTO implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7070542323407937205L;
 
-
 	/**
 	 * Document Category
 	 */
@@ -49,5 +47,12 @@ public class DocumentRequestDTO implements Serializable {
 	 */
 	@JsonProperty("langCode")
 	private String langCode;
+
+	/**
+	 * Uploaded docReferenceNo
+	 */
+	@JsonProperty("docRefId")
+	private String docRefId;;
+
 
 }

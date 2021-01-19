@@ -67,11 +67,11 @@ public class CaptchaServiceImpl implements CaptchaService {
 			log.info("sessionId", "idType", "id",
 					"In pre-registration captcha service try block to validate the token request via a google verify site rest call"
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl);
-			System.out.println(((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl);
+			//System.out.println(((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl);
 			captchaResponse = this.restTemplate.postForObject(recaptchaVerifyUrl, param, GoogleCaptchaDTO.class);
-			System.out.println(captchaResponse);
+			log.debug("sessionId", "idType", "id", captchaResponse.toString());
 		} catch (RestClientException ex) {
-			log.info("sessionId", "idType", "id",
+			log.error("sessionId", "idType", "id",
 					"In pre-registration captcha service to validate the token request via a google verify site rest call has failed --->"
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl + "  "
 							+ ex);
@@ -111,7 +111,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 	private void validateCaptchaRequest(CaptchaRequestDTO captchaRequest) {
 
 	 if (captchaRequest.getCaptchaToken() == null || captchaRequest.getCaptchaToken().trim().length() == 0) {
-			System.out.println(captchaRequest);
+		 	log.debug("sessionId", "idType", "id", captchaRequest.toString());
 			throw new InvalidRequestCaptchaException(CaptchaErrorCode.INVALID_CAPTCHA_REQUEST.getErrorCode(),
 					CaptchaErrorCode.INVALID_CAPTCHA_REQUEST.getErrorMessage());
 		}

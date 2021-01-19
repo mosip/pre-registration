@@ -19,13 +19,14 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.beans.factory.annotation.Qualifier;
+
+import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
 import io.mosip.kernel.core.exception.IOException;
-import io.mosip.kernel.core.fsadapter.spi.FileSystemAdapter;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.JsonUtils;
@@ -33,6 +34,14 @@ import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
+import io.mosip.preregistration.application.dto.DocumentRequestDTO;
+import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
+import io.mosip.preregistration.application.errorcodes.DocumentErrorMessages;
+import io.mosip.preregistration.application.exception.DemographicGetDetailsException;
+import io.mosip.preregistration.application.exception.DocumentNotValidException;
+import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
+import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.service.DemographicServiceIntf;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -44,15 +53,7 @@ import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.application.service.DemographicServiceIntf;
-import io.mosip.preregistration.document.dto.DocumentRequestDTO;
-import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
-import io.mosip.preregistration.application.errorcodes.DocumentErrorMessages;
-import io.mosip.preregistration.application.exception.DemographicGetDetailsException;
-import io.mosip.preregistration.application.exception.DocumentNotValidException;
-import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
-import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
-import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
+
 /**
  * This class provides the utility methods for DocumentService
  * 
@@ -92,7 +93,7 @@ public class DocumentServiceUtil {
 
 	@Autowired
 	ValidationUtil validationUtil;
-	
+
 	@Autowired
 	private DemographicServiceIntf demographgicServiceItf;
 
@@ -104,7 +105,7 @@ public class DocumentServiceUtil {
 
 // 	@Autowired
 // 	private FileSystemAdapter fs;
-	
+
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
 
@@ -120,19 +121,13 @@ public class DocumentServiceUtil {
 	/**
 	 * This method is used to assign the input JSON values to DTO
 	 * 
-	 * @param documentJsonString
-	 *            pass the document json
+	 * @param documentJsonString pass the document json
 	 * @return UploadRequestDTO
-	 * @throws JSONException
-	 *             on json error
-	 * @throws JsonParseException
-	 *             on json parsing error
-	 * @throws JsonMappingException
-	 *             on json mapping error
-	 * @throws IOException
-	 *             on input error
-	 * @throws ParseException
-	 *             on parsing error
+	 * @throws JSONException        on json error
+	 * @throws JsonParseException   on json parsing error
+	 * @throws JsonMappingException on json mapping error
+	 * @throws IOException          on input error
+	 * @throws ParseException       on parsing error
 	 */
 	public MainRequestDTO<DocumentRequestDTO> createUploadDto(String documentJsonString, String preRegistrationId)
 			throws JSONException, JsonParseException, JsonMappingException, IOException, ParseException {
@@ -157,8 +152,7 @@ public class DocumentServiceUtil {
 	/**
 	 * This method assigns the values from DTO to entity
 	 * 
-	 * @param dto
-	 *            pass the document dto
+	 * @param dto pass the document dto
 	 * @return DocumentEntity
 	 */
 	public DocumentEntity dtoToEntity(MultipartFile file, DocumentRequestDTO dto, String userId,
@@ -179,6 +173,7 @@ public class DocumentServiceUtil {
 		documentEntity.setCrBy(userId);
 		documentEntity.setUpdBy(userId);
 		documentEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		documentEntity.setDocRefId(dto.getDocRefId());
 		// documentEntity.setEncryptedDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		return documentEntity;
 	}
@@ -186,8 +181,7 @@ public class DocumentServiceUtil {
 	/**
 	 * This method is used to check whether the key is null
 	 * 
-	 * @param key
-	 *            pass the key
+	 * @param key pass the key
 	 * @return true if key is null, else false
 	 */
 	public boolean isNull(Object key) {
@@ -271,7 +265,8 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDemographicEntity(demographicEntity);
 		copyDocumentEntity.setDocId(sourceEntity.getDocId());
 		String key = sourceEntity.getDocCatCode() + "_" + sourceEntity.getDocumentId();
-		InputStream file = objectStore.getObject(objectStoreAccountName,sourceEntity.getDemographicEntity().getPreRegistrationId(),null,null,key);
+		InputStream file = objectStore.getObject(objectStoreAccountName,
+				sourceEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
 		copyDocumentEntity.setDocHash(HashUtill.hashUtill(IOUtils.toByteArray(file)));
 		copyDocumentEntity.setDocName(sourceEntity.getDocName());
 		copyDocumentEntity.setDocTypeCode(sourceEntity.getDocTypeCode());
@@ -290,8 +285,7 @@ public class DocumentServiceUtil {
 	/**
 	 * This method checks the size of uploaded file
 	 * 
-	 * @param uploadedFileSize
-	 *            pass uploaded file
+	 * @param uploadedFileSize pass uploaded file
 	 * @return true if file size is within the limit, else false
 	 */
 	public boolean fileSizeCheck(long uploadedFileSize) {
@@ -308,10 +302,8 @@ public class DocumentServiceUtil {
 	/**
 	 * This method checks the file extension
 	 * 
-	 * @param file
-	 *            pass uploaded file
-	 * @throws DocumentNotValidException
-	 *             if uploaded document is not valid
+	 * @param file pass uploaded file
+	 * @throws DocumentNotValidException if uploaded document is not valid
 	 */
 	public boolean fileExtensionCheck(MultipartFile file) {
 		log.info("sessionId", "idType", "id", "In fileExtensionCheck method of document service util");
@@ -327,8 +319,7 @@ public class DocumentServiceUtil {
 
 	/**
 	 * 
-	 * @param documentDto
-	 *            DocumentRequestDTO
+	 * @param documentDto DocumentRequestDTO
 	 * @return boolean
 	 */
 
@@ -344,10 +335,8 @@ public class DocumentServiceUtil {
 	/**
 	 * This method checks the file extension
 	 * 
-	 * @param file
-	 *            pass uploaded file
-	 * @throws DocumentNotValidException
-	 *             if uploaded document is not valid
+	 * @param file pass uploaded file
+	 * @throws DocumentNotValidException if uploaded document is not valid
 	 */
 	public boolean isVirusScanSuccess(MultipartFile file) {
 		try {

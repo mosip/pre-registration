@@ -137,6 +137,7 @@ public class ConsumedStatusUtil {
 							documentEntityConsumed.setStatusCode(documentEntity.getStatusCode());
 							documentEntityConsumed.setUpdBy(auditUserId);
 							documentEntityConsumed.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
+							documentEntityConsumed.setDocRefId(documentEntity.getDocRefId());
 							batchJpaRepositoryImpl.updateConsumedDocument(documentEntityConsumed);
 
 						});
@@ -184,12 +185,11 @@ public class ConsumedStatusUtil {
 				setAuditValues(EventId.PRE_412.toString(), EventName.CONSUMEDSTATUS.toString(),
 						EventType.BUSINESS.toString(),
 						"Upadted the consumed status & the consumed PreRegistration ids successfully saved in the database",
-						AuditLogVariables.PRE_REGISTRATION_ID.toString(), auditUserId,
-						auditUsername, null, headers);
+						AuditLogVariables.PRE_REGISTRATION_ID.toString(), auditUserId, auditUsername, null, headers);
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
-						"Consumed status failed to update", AuditLogVariables.NO_ID.toString(),
-						auditUserId, auditUsername, null, headers);
+						"Consumed status failed to update", AuditLogVariables.NO_ID.toString(), auditUserId,
+						auditUsername, null, headers);
 			}
 		}
 		return true;
