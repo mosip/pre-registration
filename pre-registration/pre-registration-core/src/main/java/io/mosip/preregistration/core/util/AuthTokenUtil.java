@@ -74,7 +74,7 @@ public class AuthTokenUtil {
 		if (authToken == null || !isValidAuthToken(authToken)) {
 			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil to intialize a new Token");
 			Optional<String> newAuthToken = getNewAuthToken();
-			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil with a latest Token-->"+newAuthToken.get());
+			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil with a latest Token-->");
 			if (newAuthToken.isPresent()) {
 				authToken = newAuthToken.get();
 			}
@@ -111,7 +111,6 @@ public class AuthTokenUtil {
 			HttpEntity<RequestWrapper<LoginUser>> tokenEntity = new HttpEntity<>(requestWrapper, tokenHeader);
 
 			String tokenUriBuilder = authBuilder.build().encode().toUriString();
-			//System.out.println("In AuthTokenUtil to get token with URL- " + tokenUriBuilder);
 			log.info("sessionId", "idType", "id", "In Authtokenutil to get token with URL- " + tokenUriBuilder);
 			ResponseEntity<ResponseWrapper<AuthNResponse>> tokenResponse = restTemplate.exchange(tokenUriBuilder,
 					HttpMethod.POST, tokenEntity, new ParameterizedTypeReference<ResponseWrapper<AuthNResponse>>() {

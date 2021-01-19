@@ -42,13 +42,13 @@ public class RestInterceptor implements ClientHttpRequestInterceptor {
 				HttpHeaders headers = httpRequest.getHeaders();
 				LOGGER.info("Reterving prereg specfic token: ");
 				String token = getAuthUserDetails().getToken();
-				LOGGER.info("Reterved prereg token: "+token);
+				LOGGER.info("Reterved prereg token: " + token);
 				headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
 			} else {
 				HttpHeaders headers = httpRequest.getHeaders();
 				LOGGER.info("Reterving token from AuthTokenutil from keycloak: ");
 				String token = tokenUtil.getToken();
-				LOGGER.info("Reterved token from AuthTokenutil from keycloak: "+ token);
+				LOGGER.info("Reterved token from AuthTokenutil from keycloak: " + token);
 				headers.set(HttpHeaders.COOKIE, token);
 			}
 
