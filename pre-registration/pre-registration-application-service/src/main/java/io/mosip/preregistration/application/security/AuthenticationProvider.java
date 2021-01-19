@@ -45,10 +45,11 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Value("${prereg.auth.jwt.secret}")
+	private String jwtSecret;
+
 	@Value("${auth.server.admin.validate.url:http://localhost:8091/v1/authmanager/authorize/admin/validateToken}")
 	private String adminValidateUrl;
-
-	private byte[] secret = TextCodec.BASE64.decode("Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=");
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -65,9 +66,9 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 		Object token = usernamePasswordAuthenticationToken.getCredentials();
 		LOGGER.info("In retriveUser method of AuthenticationProvider class" + token);
 		MosipUserDto mosipUserDto = new MosipUserDto();
-
+		byte[] secret = TextCodec.BASE64.decode(jwtSecret);
 		try {
-
+			
 			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(token.toString());
 			mosipUserDto.setUserId(clamis.getBody().get("userId").toString());
 			mosipUserDto.setName(clamis.getBody().get("user_name").toString());
@@ -107,13 +108,11 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 	private ResponseEntity<String> getKeycloakValidatedUserResponse(String token) {
 		System.out.println(token);
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("User-Agent", "Mozilla");
 		headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
 		HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
 		ResponseEntity<String> response = null;
 		try {
-			response = restTemplate.exchange("https://dev.mosip.net/v1/authmanager/authorize/admin/validateToken",
-					HttpMethod.GET, entity, String.class);
+			response = restTemplate.exchange(adminValidateUrl, HttpMethod.GET, entity, String.class);
 		} catch (RestClientException e) {
 			throw new AccessDeniedException(e.getMessage());
 		}
