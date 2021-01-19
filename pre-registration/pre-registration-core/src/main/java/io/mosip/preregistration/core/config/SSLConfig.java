@@ -48,8 +48,6 @@ public class SSLConfig {
 		requestFactory.setHttpClient(httpClient);
 
 		RestTemplate restTemplate = new RestTemplate(requestFactory);
-		
-		System.out.println("In SSlConfig");
 
 		List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
 		if (CollectionUtils.isEmpty(interceptors)) {
