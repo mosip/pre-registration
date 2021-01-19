@@ -68,7 +68,7 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 		MosipUserDto mosipUserDto = new MosipUserDto();
 		byte[] secret = TextCodec.BASE64.decode(jwtSecret);
 		try {
-
+			
 			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(token.toString());
 			mosipUserDto.setUserId(clamis.getBody().get("userId").toString());
 			mosipUserDto.setName(clamis.getBody().get("user_name").toString());
