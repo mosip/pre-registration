@@ -40,13 +40,15 @@ public class RestInterceptor implements ClientHttpRequestInterceptor {
 		if (!httpRequest.getURI().toString().contains("authmanager")) {
 			if (httpRequest.getURI().toString().contains("preregistration")) {
 				HttpHeaders headers = httpRequest.getHeaders();
-				LOGGER.info("Reterving token from AuthTokenutil : ");
+				LOGGER.info("Reterving prereg token: ");
 				String token = getAuthUserDetails().getToken();
+				LOGGER.info("Reterived prereg token: "+token);
 				headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
 			} else {
 				HttpHeaders headers = httpRequest.getHeaders();
-				LOGGER.info("Reterving token from AuthTokenutil : ");
+				LOGGER.info("Reterving token from keycloak : ");
 				String token = tokenUtil.getToken();
+				LOGGER.info("Reterived keycloak token: "+token);
 				headers.set(HttpHeaders.COOKIE, token);
 			}
 
