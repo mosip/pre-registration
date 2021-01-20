@@ -69,9 +69,6 @@ public class LoginController {
 	private Environment environment;
 
 	@Autowired
-	private Environment environment;
-
-	@Autowired
 	private RequestValidator loginValidator;
 
 	/** The Constant SENDOTP. */
