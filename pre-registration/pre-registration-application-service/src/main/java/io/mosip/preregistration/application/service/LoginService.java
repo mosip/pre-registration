@@ -139,10 +139,6 @@ public class LoginService {
 	OTPManager otpmanager;
 
 	@Autowired
-	OTPManager otpmanager;
-
-	@Autowired
-	@Qualifier("restTemplateConfig")
 	private RestTemplate restTemplate;
 
 	private String globalConfig;
