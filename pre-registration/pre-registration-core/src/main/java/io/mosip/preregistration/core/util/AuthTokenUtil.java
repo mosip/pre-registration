@@ -46,7 +46,7 @@ public class AuthTokenUtil {
 	@Value("${mosip.batch.token.authmanager.password}")
 	String password;
 
-	@Value("${auth-token-generator.rest.issuerUrl}")
+	@Value("${auth-token-generator.prereg.rest.issuerUrl}")
 	String issuerUrl;
 
 	@Value("${version}")
@@ -85,6 +85,7 @@ public class AuthTokenUtil {
 	private boolean isValidAuthToken(String authToken) {
 		try {
 			log.info("sessionId", "idType", "id", "In isValidAuthToken of AuthTokenUtil to check if its valid-->"+ authToken);
+			log.info("sessionId", "idType", "id", "In isValidAuthToken issuerUrl-->"+ issuerUrl);
 			return TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""), issuerUrl, userName);
 		} catch (Exception e) {
 			log.info("sessionId", "idType", "id", "Error in Validate Token offline: " + e.getMessage());
