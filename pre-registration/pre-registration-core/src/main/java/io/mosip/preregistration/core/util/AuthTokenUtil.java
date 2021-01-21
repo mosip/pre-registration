@@ -92,7 +92,6 @@ public class AuthTokenUtil {
 			log.info("sessionId", "idType", "id",
 					"In isValidAuthToken method to check token validity-->" + isTokenValid);
 			return isTokenValid;
-
 		} catch (Exception e) {
 			log.info("sessionId", "idType", "id", "Error in Validate Token offline: " + e.getMessage());
 			return false;
