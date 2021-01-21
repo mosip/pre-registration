@@ -84,6 +84,7 @@ public class AuthTokenUtil {
 	private boolean isValidAuthToken(String authToken) {
 		try {
 			 log.info("sessionId", "idType", "id", "In isValidAuthToken of AuthTokenUtil to check if its valid-->");
+			 log.info("sessionId", "idType", "id", "In isValidAuthToken issuerUrl-->" + issuerUrl);
 		         boolean isTokenValid = TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""), issuerUrl, userName);
 			 log.info("sessionId", "idType", "id", "In isValidAuthToken method to check token validity-->"+isTokenValid);
 			 return isTokenValid;
