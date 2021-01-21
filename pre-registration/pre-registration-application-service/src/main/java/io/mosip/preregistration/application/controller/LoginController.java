@@ -1,15 +1,13 @@
 package io.mosip.preregistration.application.controller;
 
-import java.net.HttpCookie;
-import java.util.List;
 import java.util.Map;
-import org.springframework.core.env.Environment;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -26,20 +24,18 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.core.common.dto.AuthNResponse;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.ResponseWrapper;
-import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.core.util.DataValidationUtil;
-import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
+import io.mosip.preregistration.core.common.dto.AuthNResponse;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.util.DataValidationUtil;
+import io.mosip.preregistration.core.util.RequestValidator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;

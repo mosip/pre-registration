@@ -74,7 +74,7 @@ public class AuthTokenUtil {
 		if (authToken == null || !isValidAuthToken(authToken)) {
 			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil to intialize a new Token");
 			Optional<String> newAuthToken = getNewAuthToken();
-			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil with a latest Token-->"+newAuthToken.get());
+			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil with a latest Token-->");
 			if (newAuthToken.isPresent()) {
 				authToken = newAuthToken.get();
 			}
@@ -84,9 +84,14 @@ public class AuthTokenUtil {
 
 	private boolean isValidAuthToken(String authToken) {
 		try {
-			log.info("sessionId", "idType", "id", "In isValidAuthToken of AuthTokenUtil to check if its valid-->"+ authToken);
-			log.info("sessionId", "idType", "id", "In isValidAuthToken issuerUrl-->"+ issuerUrl);
-			return TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""), issuerUrl, userName);
+
+			log.info("sessionId", "idType", "id", "In isValidAuthToken of AuthTokenUtil to check if its valid-->");
+			log.info("sessionId", "idType", "id", "In isValidAuthToken issuerUrl-->" + issuerUrl);
+			boolean isTokenValid = TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""),
+					issuerUrl, userName);
+			log.info("sessionId", "idType", "id",
+					"In isValidAuthToken method to check token validity-->" + isTokenValid);
+			return isTokenValid;
 		} catch (Exception e) {
 			log.info("sessionId", "idType", "id", "Error in Validate Token offline: " + e.getMessage());
 			return false;
@@ -111,7 +116,6 @@ public class AuthTokenUtil {
 			HttpEntity<RequestWrapper<LoginUser>> tokenEntity = new HttpEntity<>(requestWrapper, tokenHeader);
 
 			String tokenUriBuilder = authBuilder.build().encode().toUriString();
-			//System.out.println("In AuthTokenUtil to get token with URL- " + tokenUriBuilder);
 			log.info("sessionId", "idType", "id", "In Authtokenutil to get token with URL- " + tokenUriBuilder);
 			ResponseEntity<ResponseWrapper<AuthNResponse>> tokenResponse = restTemplate.exchange(tokenUriBuilder,
 					HttpMethod.POST, tokenEntity, new ParameterizedTypeReference<ResponseWrapper<AuthNResponse>>() {
