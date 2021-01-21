@@ -46,7 +46,7 @@ public class AuthTokenUtil {
 	@Value("${mosip.batch.token.authmanager.password}")
 	String password;
 
-	@Value("${auth-token-generator.prereg.rest.issuerUrl}")
+	@Value("${auth-token-generator.rest.issuerUrl}")
 	String issuerUrl;
 
 	@Value("${version}")
