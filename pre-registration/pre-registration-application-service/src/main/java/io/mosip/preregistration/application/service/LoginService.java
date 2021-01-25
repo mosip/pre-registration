@@ -32,6 +32,9 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
@@ -144,14 +147,12 @@ public class LoginService {
 	private String globalConfig;
 	private String preregConfig;
 
-
 	public void setupLoginService() {
 		log.info("sessionId", "idType", "id", "In setupLoginService method of login service");
 		globalConfig = loginCommonUtil.getConfig(globalFileName);
 		preregConfig = loginCommonUtil.getConfig(preRegFileName);
 		log.info("sessionId", "idType", "id", "Fetched the globalConfig and preRegconfig from config server");
 	}
-
 
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
@@ -279,45 +280,36 @@ public class LoginService {
 	 * @param authHeader
 	 * @return AuthNResponse
 	 */
-
-	public MainResponseDTO<AuthNResponse> invalidateToken(String authHeader) {
+	public MainResponseDTO<String> invalidateToken(String token) {
 		log.info("sessionId", "idType", "id", "In calluserIdOtp method of login service ");
-		ResponseEntity<String> responseEntity = null;
-		AuthNResponse authNResponse = null;
-		MainResponseDTO<AuthNResponse> response = new MainResponseDTO<>();
+		MainResponseDTO<String> response = new MainResponseDTO<>();
 		response.setId(invalidateTokenId);
 		response.setVersion(version);
-		boolean isSuccess = false;
 		String userId = null;
+		boolean isSuccess = false;
 		try {
-
-			Map<String, String> headersMap = new HashMap<>();
-			if (authHeader != null) {
-				headersMap.put("Cookie", authHeader);
-			}
-
-			String url = sendOtpResourceUrl + "/logout/user";
-			userId = loginCommonUtil.getUserDetailsFromToken(headersMap);
-			responseEntity = (ResponseEntity<String>) loginCommonUtil.callAuthService(url, HttpMethod.DELETE,
-					MediaType.APPLICATION_JSON, null, headersMap, String.class);
-			log.info("sessionId", "idType", "id", "Kernel response: \n" + responseEntity.getBody());
-			List<ServiceError> validationErrorList = null;
-			validationErrorList = ExceptionUtils.getServiceErrorList(responseEntity.getBody());
-			if (!validationErrorList.isEmpty()) {
-				throw new LoginServiceException(validationErrorList, response);
-			}
-			ResponseWrapper<?> responseKernel = loginCommonUtil.requestBodyExchange(responseEntity.getBody());
-			authNResponse = (AuthNResponse) loginCommonUtil.requestBodyExchangeObject(
-					loginCommonUtil.responseToString(responseKernel.getResponse()), AuthNResponse.class);
-			response.setResponse(authNResponse);
+			byte[] secret = TextCodec.BASE64.decode(jwtSecret);
+			String jwtToken = token.replace("Authorization=", "").split(";")[0];
+			log.debug("sessionId", "idType", "id", "token tobe reset" + jwtToken);
+			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
+			userId = clamis.getBody().get("userId").toString();
+			response.setResponse("Loggedout successfully");
 			isSuccess = true;
+		} catch (JwtException e) {
+			log.info("sessionId", "idType", "id", "failed logout:" + e);
+			MainResponseDTO<String> res = new MainResponseDTO<String>();
+			res.setResponse("Failed to invalidate the auth token");
+			new LoginExceptionCatcher().handle(e, null, res);
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In call invalidateToken method of login service- " + ex.getMessage());
 			new LoginExceptionCatcher().handle(ex, "invalidateToken", response);
 		} finally {
+			System.out.println(response);
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
+
 			if (isSuccess) {
 				setAuditValues(EventId.PRE_410.toString(), EventName.AUTHENTICATION.toString(),
 						EventType.BUSINESS.toString(), "User sucessfully logged-out",
@@ -440,7 +432,7 @@ public class LoginService {
 		return res;
 	}
 
-	public String generateJWTToken(String userId, String issuerUrl) {
+	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
 		log.info("sessionId", "idType", "id", "In generateJWTToken method of loginservice:" + userId + issuerUrl);
 		Map<String, Object> claims = new HashMap<String, Object>();
 		claims.put("userId", userId);
@@ -448,12 +440,44 @@ public class LoginService {
 		claims.put("user_name", userId);
 		claims.put("roles", jwtTokenRoles);
 
-		String jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
-				.setSubject(userId)
-				.setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt(jwtTokenExpiryTime))))
-				.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
-				.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
-		log.info("sessionId", "idType", "id", "Auth token generarted:" + jws);
+		String jws = null;
+		if (jwtTokenExpiryTime != null) {
+			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
+					.setSubject(userId)
+					.setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt(jwtTokenExpiryTime))))
+					.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
+					.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
+			log.info("sessionId", "idType", "id", "Auth token generarted:" + jws);
+		} else {
+			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
+					.setSubject(userId).setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt("0"))))
+					.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
+					.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
+			log.info("sessionId", "idType", "id", "Auth token generarted:" + jws);
+		}
+
 		return jws;
+	}
+
+	public String getLoginToken(String userId, String issuerUrl) {
+		return this.generateJWTToken(userId, issuerUrl, jwtTokenExpiryTime);
+	}
+
+	public String getLogoutToken(String token) {
+		byte[] secret = TextCodec.BASE64.decode(jwtSecret);
+		String jwtToken = token.replace("Authorization=", "").split(";")[0];
+		String userId = null;
+		String issuer = null;
+		try {
+			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
+			userId = clamis.getBody().get("userId").toString();
+			issuer = clamis.getBody().getIssuer();
+		} catch (JwtException e) {
+			log.info("sessionId", "idType", "id", "failed to generate logout token:" + e);
+			MainResponseDTO<String> res = new MainResponseDTO<String>();
+			res.setResponse("Failed to generate logout token");
+			new LoginExceptionCatcher().handle(e, null, res);
+		}
+		return this.generateJWTToken(userId, issuer, null);
 	}
 }
