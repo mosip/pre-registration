@@ -111,8 +111,10 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 		HttpEntity<String> entity = new HttpEntity<>("parameters", headers);
 		ResponseEntity<String> response = null;
 		try {
+			LOGGER.info("validate token url" + adminValidateUrl);
 			response = restTemplate.exchange(adminValidateUrl, HttpMethod.GET, entity, String.class);
 		} catch (RestClientException e) {
+			LOGGER.error("validate token exception" + e);
 			throw new AccessDeniedException(e.getMessage());
 		}
 		return response;
