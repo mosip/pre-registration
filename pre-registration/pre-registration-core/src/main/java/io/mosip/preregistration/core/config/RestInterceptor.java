@@ -38,7 +38,7 @@ public class RestInterceptor implements ClientHttpRequestInterceptor {
 			ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
 		LOGGER.info("Request url: " + httpRequest.getURI());
 		if (!httpRequest.getURI().toString().contains("authmanager")) {
-			if (httpRequest.getURI().toString().contains("preregistration")) {
+			if (httpRequest.getURI().toString().contains("preregistration") && !httpRequest.getURI().toString().contains("sync")) {
 				HttpHeaders headers = httpRequest.getHeaders();
 				LOGGER.info("Reterving prereg token: ");
 				String token = getAuthUserDetails().getToken();
