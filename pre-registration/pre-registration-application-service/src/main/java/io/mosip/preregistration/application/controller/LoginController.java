@@ -29,7 +29,6 @@ import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.service.LoginService;
-import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -58,8 +57,6 @@ public class LoginController {
 	/** Autowired reference for {@link #authService}. */
 	@Autowired
 	private LoginService loginService;
-	@Autowired
-	private LoginCommonUtil loginCommonUtil;
 
 	@Autowired
 	private Environment environment;
@@ -147,7 +144,7 @@ public class LoginController {
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		Cookie responseCookie = new Cookie("Authorization",
-				loginService.generateJWTToken(userIdOtpRequest.getRequest().getUserId(), req.getRequestURI()));
+				loginService.getLoginToken(userIdOtpRequest.getRequest().getUserId(), req.getRequestURI()));
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
@@ -166,11 +163,17 @@ public class LoginController {
 	@PostMapping(value = "/invalidateToken", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Invalidate the token")
 	@ResponseStatus(value = HttpStatus.OK)
-	public ResponseEntity<MainResponseDTO<AuthNResponse>> invalidateToken(HttpServletRequest req) {
+	public ResponseEntity<MainResponseDTO<String>> invalidateToken(HttpServletRequest req, HttpServletResponse res) {
 		log.info("sessionId", "idType", "id",
 				"In invalidateToken method of Login controller for invalidating access token ");
-		String authHeader = req.getHeader("Cookie");
-		return ResponseEntity.status(HttpStatus.OK).body(loginService.invalidateToken(authHeader));
+		Cookie responseCookie = new Cookie("Authorization",
+				loginService.getLogoutToken(req.getHeader("Cookie")));
+		responseCookie.setMaxAge((int) -1);
+		responseCookie.setHttpOnly(true);
+		responseCookie.setSecure(true);
+		responseCookie.setPath("/");
+		res.addCookie(responseCookie);
+		return ResponseEntity.status(HttpStatus.OK).body(loginService.invalidateToken(req.getHeader("Cookie")));
 
 	}
 
