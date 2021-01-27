@@ -132,10 +132,11 @@ public class OTPManager {
 		}
 		Map<String, Object> mp = new HashMap();
 		mp.put("otp", otp);
-		mp.put("requestdate", requestDTO.getRequesttime());
-		mp.put("validateTime","15 minutes");
-		mp.put("userid", userId);
-		mp.put("validTill", new Date(requestDTO.getRequesttime().getTime()+15));
+		mp.put("date", requestDTO.getRequesttime());
+		mp.put("validTime", "15 minutes");
+		mp.put("name", userId);
+		mp.put("username", userId);
+		mp.put("validTill", new Date(requestDTO.getRequesttime().getTime() + 15));
 		
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
 			notification.invokeSmsNotification(mp, userId, token, requestDTO, language);
