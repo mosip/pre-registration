@@ -136,7 +136,7 @@ public class OTPManager {
 		mp.put("validTime", "15 minutes");
 		mp.put("name", userId);
 		mp.put("username", userId);
-		mp.put("validTill", new Date(requestDTO.getRequesttime().getTime() + 15));
+		mp.put("time", new Date(requestDTO.getRequesttime().getTime()));
 		
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
 			notification.invokeSmsNotification(mp, userId, token, requestDTO, language);
