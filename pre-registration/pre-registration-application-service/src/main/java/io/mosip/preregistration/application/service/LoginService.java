@@ -32,7 +32,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -432,7 +431,6 @@ public class LoginService {
 		res.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return res;
 	}
-
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
 		log.info("sessionId", "idType", "id", "In generateJWTToken method of loginservice:" + userId + issuerUrl);
