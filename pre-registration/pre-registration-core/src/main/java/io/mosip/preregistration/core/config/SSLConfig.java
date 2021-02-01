@@ -52,16 +52,16 @@ public class SSLConfig {
 		requestFactory.setHttpClient(httpClient);
 
 		RestTemplate restTemplate = new RestTemplate(requestFactory);
-        System.out.println(bypassInterceptor);
-		if (!bypassInterceptor) {
+		
 			List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
 			if (CollectionUtils.isEmpty(interceptors)) {
 				interceptors = new ArrayList<>();
 			}
+		if (!bypassInterceptor) {
 			interceptors.add(restInterceptor());
-
+}
 			restTemplate.setInterceptors(interceptors);
-		}
+		
 		return restTemplate;
 
 	}
