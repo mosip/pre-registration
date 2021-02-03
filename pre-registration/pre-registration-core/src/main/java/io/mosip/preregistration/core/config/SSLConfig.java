@@ -30,6 +30,9 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 public class SSLConfig {
+	
+	@Value("${preregistration.core.restinterceptor.bypass:false}")
+	private boolean bypassInterceptor;
 
 	@Bean
 	public RestTemplate restTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
@@ -53,7 +56,9 @@ public class SSLConfig {
 		if (CollectionUtils.isEmpty(interceptors)) {
 			interceptors = new ArrayList<>();
 		}
+		if (!bypassInterceptor) {
 		interceptors.add(restInterceptor());
+		}
 		restTemplate.setInterceptors(interceptors);
 
 		return restTemplate;
