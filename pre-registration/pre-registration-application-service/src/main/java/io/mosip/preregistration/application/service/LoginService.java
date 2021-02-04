@@ -239,8 +239,10 @@ public class LoginService {
 				authresponse.setStatus(PreRegLoginConstant.SUCCESS);
 
 			} else {
-				authresponse.setMessage(PreRegLoginConstant.VALIDATION_UNSUCCESS);
-				authresponse.setStatus(PreRegLoginConstant.UNSUCCESS);
+// 				authresponse.setMessage(PreRegLoginConstant.VALIDATION_UNSUCCESS);
+// 				authresponse.setStatus(PreRegLoginConstant.UNSUCCESS);
+				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),PreRegLoginConstant.VALIDATION_UNSUCCESS,
+						response);
 
 			}
 			response.setResponse(authresponse);
