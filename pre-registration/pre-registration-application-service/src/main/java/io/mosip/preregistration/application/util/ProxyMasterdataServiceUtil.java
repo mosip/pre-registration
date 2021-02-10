@@ -1,23 +1,13 @@
 package io.mosip.preregistration.application.util;
 
 import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
+import java.net.URLDecoder;
 
-import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -38,7 +28,7 @@ public class ProxyMasterdataServiceUtil {
 
 		log.info("sessionId", "idType", "id", "In getUrl method of proxyMasterDataServiceUtil");
 
-		String query = request.getQueryString();
+		String query = URLDecoder.decode(request.getQueryString());
 		String url = null;
 		URI uri = null;
 		if (query != null) {
