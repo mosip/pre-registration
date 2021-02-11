@@ -343,7 +343,7 @@ public class DocumentServiceUtil {
 			log.info("sessionId", "idType", "id", "In isVirusScanSuccess method of document service util");
 			return virusScan.scanDocument(file.getBytes());
 		} catch (Exception e) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
 			log.error("sessionId", "idType", "id", e.getMessage());
 			throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
 					DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());

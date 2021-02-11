@@ -137,7 +137,8 @@ public class NotificationServiceUtil {
 
 	public void invokeSmsNotification(Map values, String userId, String token, MainRequestDTO<OtpRequestDTO> requestDTO,
 			String langCode) throws PreRegLoginException, IOException {
-
+		log.info("sessionId", "idType", "id",
+				"In invokeSmsNotification method of notification service util");
 		String otpSmsTemplate = environment.getProperty(PreRegLoginConstant.OTP_SMS_TEMPLATE);
 		String smsTemplate = applyTemplate(values, otpSmsTemplate, token, langCode);
 		sendSmsNotification(userId, smsTemplate, token, requestDTO);
@@ -158,6 +159,8 @@ public class NotificationServiceUtil {
 	 */
 	public void invokeEmailNotification(Map values, String userId, String token,
 			MainRequestDTO<OtpRequestDTO> requestDTO, String langCode) throws PreRegLoginException, IOException {
+		log.info("sessionId", "idType", "id",
+				"In invokeEmailNotification method of notification service util");
 		String otpContentTemaplate = environment.getProperty(PreRegLoginConstant.OTP_CONTENT_TEMPLATE);
 		String otpSubjectTemplate = environment.getProperty(PreRegLoginConstant.OTP_SUBJECT_TEMPLATE);
 		String mailSubject = applyTemplate(values, otpSubjectTemplate, token, langCode);
