@@ -36,19 +36,16 @@ public class RestInterceptor implements ClientHttpRequestInterceptor {
 	@Override
 	public ClientHttpResponse intercept(HttpRequest httpRequest, byte[] bytes,
 			ClientHttpRequestExecution clientHttpRequestExecution) throws IOException {
-		LOGGER.info("Request url: " + httpRequest.getURI());
 		if (!httpRequest.getURI().toString().contains("authmanager")) {
 			if (httpRequest.getURI().toString().contains("preregistration")) {
 				HttpHeaders headers = httpRequest.getHeaders();
-				LOGGER.info("Reterving prereg token: ");
 				String token = getAuthUserDetails().getToken();
-				LOGGER.info("Reterived prereg token: "+token);
+				LOGGER.info("Reterived prereg token: ");
 				headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
 			} else {
 				HttpHeaders headers = httpRequest.getHeaders();
-				LOGGER.info("Reterving token from keycloak : ");
 				String token = tokenUtil.getToken();
-				LOGGER.info("Reterived keycloak token: "+token);
+				LOGGER.info("Reterived keycloak token: ");
 				headers.set(HttpHeaders.COOKIE, token);
 			}
 

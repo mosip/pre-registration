@@ -54,7 +54,7 @@ public class ProxyMasterDataService {
 
 		} catch (RestClientException e) {
 
-			log.info("sessionId", "idType", "id", "Proxy MasterData Call Exception response for " + util.getUrl(request)
+			log.error("sessionId", "idType", "id", "Proxy MasterData Call Exception response for " + util.getUrl(request)
 					+ e.getMessage() + ExceptionUtils.getStackTrace(e));
 			throw new RestClientException(e.getMessage());
 		}
