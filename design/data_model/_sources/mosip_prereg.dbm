@@ -3,7 +3,7 @@
 CAUTION: Do not modify this file unless you know what you are doing.
          Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="0.9.2-alpha" last-position="403,572" last-zoom="0.65"
+<dbmodel pgmodeler-ver="0.9.3" use-changelog="false" last-position="750,299" last-zoom="0.65" max-obj-count="55"
 	 default-schema="public" default-owner="postgres">
 <role name="sysadmin"
       superuser="true"
@@ -46,18 +46,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<comment><![CDATA[Pre-registration database to store the data that is captured as part of pre-registration process]]></comment>
 </database>
 
-<schema name="public" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
+<schema name="public" layer="0" rect-visible="true" fill-color="#e1e1e1" sql-disabled="true">
 </schema>
 
-<schema name="prereg" rect-visible="true" fill-color="#83af1f">
+<schema name="prereg" layer="0" rect-visible="true" fill-color="#83af1f">
 	<role name="sysadmin"/>
 </schema>
 
-<table name="applicant_demographic">
+<table name="applicant_demographic" layer="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Applicant Demographic: Stores demographic details of an applicant. The demographic information is stored in json format.]]></comment>
-	<position x="560" y="60"/>
+	<position x="540" y="60"/>
 	<column name="prereg_id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Pre Registration ID: Unique Id generated for an individual during the pre-registration process which will be referenced during registration process at a registration center.]]></comment>
@@ -107,11 +107,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="applicant_demographic_consumed">
+<table name="applicant_demographic_consumed" layer="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Applicant Demographic: Stores demographic details of an applicant that was comsumed.]]></comment>
-	<position x="580" y="420"/>
+	<position x="520" y="360"/>
 	<column name="prereg_id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Pre Registration ID: Unique Id generated for an individual during the pre-registration process which will be referenced during registration process at a registration center.]]></comment>
@@ -161,11 +161,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="applicant_document">
+<table name="applicant_document" layer="0" collapse-mode="2" max-obj-count="19" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Applicant Document: Documents that are uploaded as part of pre-registration process is maintained here. The documents are stored in document repository  and only the hash value and its location details are stored.]]></comment>
-	<position x="1060" y="80"/>
+	<position x="1040" y="40"/>
 	<column name="id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Id: Unique id generated for the documents being uploaded as part of pre-registration process.]]></comment>
@@ -249,11 +249,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<table name="applicant_document_consumed">
+<table name="applicant_document_consumed" layer="0" collapse-mode="2" max-obj-count="19" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Applicant Document: Documents that are uploaded as part of pre-registration process which was consumed is maintained here. ]]></comment>
-	<position x="1540" y="120"/>
+	<position x="1500" y="40"/>
 	<column name="id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Id: Unique id generated for the documents being uploaded as part of pre-registration process.]]></comment>
@@ -337,10 +337,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		</idxelement>
 </index>
 
-<table name="batch_job_execution">
+<table name="batch_job_execution" layer="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
-	<position x="1860" y="760"/>
+	<position x="1540" y="960"/>
 	<column name="job_execution_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
@@ -379,10 +379,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="batch_job_execution_context">
+<table name="batch_job_execution_context" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
-	<position x="2260" y="580"/>
+	<position x="2380" y="760"/>
 	<column name="job_execution_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
@@ -397,10 +397,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="batch_job_execution_params">
+<table name="batch_job_execution_params" layer="0" collapse-mode="2" max-obj-count="9" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
-	<position x="1900" y="500"/>
+	<position x="1960" y="740"/>
 	<column name="job_execution_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
@@ -427,10 +427,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 </table>
 
-<table name="batch_job_instance">
+<table name="batch_job_instance" layer="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
-	<position x="2280" y="740"/>
+	<position x="2180" y="1120"/>
 	<column name="job_instance_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
@@ -451,10 +451,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="batch_step_execution">
+<table name="batch_step_execution" layer="0" collapse-mode="2" max-obj-count="21" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
-	<position x="2080" y="80"/>
+	<position x="2020" y="40"/>
 	<column name="step_execution_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
@@ -514,10 +514,10 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="batch_step_execution_context">
+<table name="batch_step_execution_context" layer="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
-	<position x="2260" y="440"/>
+	<position x="2280" y="560"/>
 	<column name="step_execution_id" not-null="true">
 		<type name="bigint" length="0"/>
 	</column>
@@ -532,11 +532,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="intf_processed_prereg_list">
+<table name="intf_processed_prereg_list" layer="0" collapse-mode="2" max-obj-count="10" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Interface Processd Pre Registration List: Interface table to temporarily store the list of pre-registrations that were processed by registration processor application. The data can be removed once the data is updated in actual tables.]]></comment>
-	<position x="200" y="120"/>
+	<position x="60" y="60"/>
 	<column name="prereg_id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Pre-registration id: Pre registration id that was consumed by registration processor to generate UIN.]]></comment>
@@ -565,7 +565,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Updated DateTimestamp : Date and Timestamp when any of the fields in the record is updated with new values.]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -578,11 +578,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="pre_registration_transaction">
+<table name="pre_registration_transaction" layer="0" collapse-mode="2" max-obj-count="14" z-value="0">
 	<schema name="prereg"/>
 	<role name="appadmin"/>
 	<comment><![CDATA[Pre-Registration Transaction: Stores various transactions that are processd within pre-registration module/application.]]></comment>
-	<position x="580" y="740"/>
+	<position x="540" y="660"/>
 	<column name="id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Transaction id of the transactions that were recorded in pre-registration module/application]]></comment>
@@ -623,7 +623,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Updated DateTimestamp : Date and Timestamp when any of the fields in the record is updated with new values.]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -636,11 +636,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="processed_prereg_list">
+<table name="processed_prereg_list" layer="0" collapse-mode="2" max-obj-count="14" z-value="0">
 	<schema name="prereg"/>
 	<role name="appadmin"/>
 	<comment><![CDATA[Processed Pre-Registration List: Stores the list of pre-registrations that were processed by registration processor application.]]></comment>
-	<position x="200" y="340"/>
+	<position x="60" y="320"/>
 	<column name="prereg_id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Pre-Registration ID: Pre-registration id that was consumed by registration processor to generate UIN]]></comment>
@@ -681,7 +681,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Updated DateTimestamp : Date and Timestamp when any of the fields in the record is updated with new values.]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -694,11 +694,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="reg_appointment">
+<table name="reg_appointment" layer="0" collapse-mode="2" max-obj-count="14" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Registration Appointment: Stores all the appointment requests booked by an individual at a registration center. ]]></comment>
-	<position x="960" y="500"/>
+	<position x="1040" y="460"/>
 	<column name="id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[ID: Unique id generated for the registration appointment booking.]]></comment>
@@ -755,11 +755,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="reg_appointment_consumed">
+<table name="reg_appointment_consumed" layer="0" collapse-mode="2" max-obj-count="14" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Registration Appointment: Stores all the appointment requests booked by an individual at a registration center that are consumed. ]]></comment>
-	<position x="1460" y="520"/>
+	<position x="1500" y="480"/>
 	<column name="id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[ID: Unique id generated for the registration appointment booking.]]></comment>
@@ -816,11 +816,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="reg_available_slot">
+<table name="reg_available_slot" layer="0" collapse-mode="2" max-obj-count="13" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Registration Available Slots: Slots available at a registration center for an individual to book for registrating themselves to get a UIN. ]]></comment>
-	<position x="200" y="660"/>
+	<position x="60" y="700"/>
 	<column name="regcntr_id" not-null="true">
 		<type name="character varying" length="10"/>
 		<comment><![CDATA[Registration Center ID: Id of the Registration Center where the appointment can be booded for registration process. Refers to master.registration_center.id]]></comment>
@@ -857,7 +857,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Updated DateTimestamp : Date and Timestamp when any of the fields in the record is updated with new values.]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -870,11 +870,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="transaction_type">
+<table name="transaction_type" layer="0" collapse-mode="2" max-obj-count="12" z-value="0">
 	<schema name="prereg"/>
 	<role name="appadmin"/>
 	<comment><![CDATA[Transaction Type: Defines various transaction types that are processd within pre-registration module/application.]]></comment>
-	<position x="220" y="900"/>
+	<position x="100" y="1040"/>
 	<column name="code" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[Code: Code of the transaction types available in pre-registration module/application]]></comment>
@@ -907,7 +907,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Updated DateTimestamp : Date and Timestamp when any of the fields in the record is updated with new values.]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -920,11 +920,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="language_transliteration">
+<table name="language_transliteration" layer="0" collapse-mode="2" max-obj-count="8" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Language Transliteration: Mapping table to store mapping between the language id, (defined by the utility) to support transliteration from one language to another. ]]></comment>
-	<position x="1000" y="800"/>
+	<position x="1060" y="800"/>
 	<column name="lang_from_code" not-null="true">
 		<type name="character varying" length="3"/>
 		<comment><![CDATA[Language From Code: Host language code from which the transliteration to be done ]]></comment>
@@ -973,11 +973,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<role name="sysadmin"/>
 </sequence>
 
-<table name="prid_seed">
+<table name="prid_seed" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Pre-Registration ID Seed: Stores a random number that will be used as seed in the algorithm to generate a PRID. This seed value is encrypted/hashed and used along with a counter in the algorithm to generate a unique random number. Only one seed value would be available for the generation of PRID and this will never change.]]></comment>
-	<position x="1400" y="960"/>
+	<position x="1060" y="1080"/>
 	<column name="seed_no" not-null="true">
 		<type name="character varying" length="32"/>
 		<comment><![CDATA[Seed Number: Seed number is the random number generated which will be used as seed in the algorithm to generate PRID.]]></comment>
@@ -990,7 +990,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Created DateTimestamp : Date and Timestamp when the record is created/inserted]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -1003,11 +1003,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="prid_seq">
+<table name="prid_seq" layer="0" collapse-mode="2" max-obj-count="6" z-value="0">
 	<schema name="prereg"/>
 	<role name="sysadmin"/>
 	<comment><![CDATA[Pre-Registration ID Sequence: Stores sequence numbers that are used in the algorithm to generate PRID. Stores a incremental sequence number that will be used as salt in the algorithm to generate a PRID. This salt value is encrypted/hashed and used along with a seed number in the algorithm to generate a unique random number.]]></comment>
-	<position x="1400" y="820"/>
+	<position x="1060" y="1260"/>
 	<column name="seq_no" not-null="true">
 		<type name="character varying" length="32"/>
 		<comment><![CDATA[Sequence Number: Sequence number is the number generated which is used in the algorithm to generate PRID.]]></comment>
@@ -1020,7 +1020,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Created DateTimestamp : Date and Timestamp when the record is created/inserted]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -1033,11 +1033,11 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="otp_transaction" alias="otpt">
+<table name="otp_transaction" layer="0" alias="otpt" collapse-mode="2" max-obj-count="16" z-value="0">
 	<schema name="prereg"/>
 	<role name="appadmin"/>
 	<comment><![CDATA[OTP Transaction: All OTP related data and validation details are maintained here for Pre Registration module.]]></comment>
-	<position x="860" y="980"/>
+	<position x="520" y="1060"/>
 	<column name="id" not-null="true">
 		<type name="character varying" length="36"/>
 		<comment><![CDATA[ID: OTP id is a unique identifier (UUID) used as an unique key to identify the OTP transaction]]></comment>
@@ -1086,7 +1086,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<type name="timestamp" length="0"/>
 		<comment><![CDATA[Updated DateTimestamp : Date and Timestamp when any of the fields in the record is updated with new values.]]></comment>
 	</column>
-	<column name="is_deleted">
+	<column name="is_deleted" not-null="true" default-value="FALSE">
 		<type name="boolean" length="0"/>
 		<comment><![CDATA[IS_Deleted : Flag to mark whether the record is Soft deleted.]]></comment>
 	</column>
@@ -1159,61 +1159,61 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<columns names="prereg_id" ref-type="dst-columns"/>
 </constraint>
 
-<relationship name="rel_applicant_document_applicant_demographic" type="relfk"
+<relationship name="rel_applicant_document_applicant_demographic" type="relfk" layer="0"
 	 custom-color="#5aa578"
 	 src-table="prereg.applicant_document"
 	 dst-table="prereg.applicant_demographic" reference-fk="fk_appldoc_appldem"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_applicant_document_consumed_applicant_demographic_consumed" type="relfk"
+<relationship name="rel_applicant_document_consumed_applicant_demographic_consumed" type="relfk" layer="0"
 	 custom-color="#4b3e56"
 	 src-table="prereg.applicant_document_consumed"
 	 dst-table="prereg.applicant_demographic_consumed" reference-fk="fk_appldocc_appldem"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_batch_job_execution_batch_job_instance" type="relfk"
+<relationship name="rel_batch_job_execution_batch_job_instance" type="relfk" layer="0"
 	 custom-color="#9ac721"
 	 src-table="prereg.batch_job_execution"
 	 dst-table="prereg.batch_job_instance" reference-fk="job_inst_exec_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_batch_job_execution_context_batch_job_execution" type="relfk"
+<relationship name="rel_batch_job_execution_context_batch_job_execution" type="relfk" layer="0"
 	 custom-color="#249b49"
 	 src-table="prereg.batch_job_execution_context"
 	 dst-table="prereg.batch_job_execution" reference-fk="job_exec_ctx_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_batch_job_execution_params_batch_job_execution" type="relfk"
+<relationship name="rel_batch_job_execution_params_batch_job_execution" type="relfk" layer="0"
 	 custom-color="#942665"
 	 src-table="prereg.batch_job_execution_params"
 	 dst-table="prereg.batch_job_execution" reference-fk="job_exec_params_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_batch_step_execution_batch_job_execution" type="relfk"
+<relationship name="rel_batch_step_execution_batch_job_execution" type="relfk" layer="0"
 	 custom-color="#abb258"
 	 src-table="prereg.batch_step_execution"
 	 dst-table="prereg.batch_job_execution" reference-fk="job_exec_step_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_batch_step_execution_context_batch_step_execution" type="relfk"
+<relationship name="rel_batch_step_execution_context_batch_step_execution" type="relfk" layer="0"
 	 custom-color="#94e1e5"
 	 src-table="prereg.batch_step_execution_context"
 	 dst-table="prereg.batch_step_execution" reference-fk="step_exec_ctx_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_processed_prereg_list_pre_registration_transaction" type="relfk"
+<relationship name="rel_processed_prereg_list_pre_registration_transaction" type="relfk" layer="0"
 	 custom-color="#a239f5"
 	 src-table="prereg.processed_prereg_list"
 	 dst-table="prereg.pre_registration_transaction" reference-fk="pprlst_pregtrn_fk"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_reg_appointment_applicant_demographic" type="relfk"
+<relationship name="rel_reg_appointment_applicant_demographic" type="relfk" layer="0"
 	 custom-color="#4e132e"
 	 src-table="prereg.reg_appointment"
 	 dst-table="prereg.applicant_demographic" reference-fk="fk_rappmnt_id"
 	 src-required="false" dst-required="false"/>
 
-<relationship name="rel_reg_appointment_consumed_applicant_demographic_consumed" type="relfk"
+<relationship name="rel_reg_appointment_consumed_applicant_demographic_consumed" type="relfk" layer="0"
 	 custom-color="#081cb1"
 	 src-table="prereg.reg_appointment_consumed"
 	 dst-table="prereg.applicant_demographic_consumed" reference-fk="fk_rappmntc_id"

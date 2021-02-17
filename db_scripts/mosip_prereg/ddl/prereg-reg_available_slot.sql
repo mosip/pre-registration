@@ -8,7 +8,7 @@
 --
 -- Modified Date        Modified By         Comments / Remarks
 -- ------------------------------------------------------------------------------------------
--- 
+-- Jan-2021		Ram Bhatt	    Set is_deleted flag to not null and default false
 -- ------------------------------------------------------------------------------------------
 -- object: prereg.reg_available_slot | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.reg_available_slot CASCADE;
@@ -22,7 +22,7 @@ CREATE TABLE prereg.reg_available_slot(
 	cr_dtimes timestamp NOT NULL,
 	upd_by character varying(256),
 	upd_dtimes timestamp,
-	is_deleted boolean,
+	is_deleted boolean NOT NULL DEFAULT FALSE,
 	del_dtimes timestamp,
 	CONSTRAINT pk_ravlslt_id PRIMARY KEY (regcntr_id,availability_date,slot_from_time)
 
