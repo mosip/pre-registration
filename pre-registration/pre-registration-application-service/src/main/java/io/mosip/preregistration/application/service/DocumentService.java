@@ -361,6 +361,7 @@ public class DocumentService implements DocumentServiceIntf {
 					documentResponseDTO.setDocCatCode(copyDocumentEntity.getDocCatCode());
 					documentResponseDTO.setDocTypCode(copyDocumentEntity.getDocTypeCode());
 					documentResponseDTO.setDocFileFormat(copyDocumentEntity.getDocFileFormat());
+					documentResponseDTO.setDocRefId(copyDocumentEntity.getDocRefId());
 					responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 					responseDto.setResponse(documentResponseDTO);
 				} else {
