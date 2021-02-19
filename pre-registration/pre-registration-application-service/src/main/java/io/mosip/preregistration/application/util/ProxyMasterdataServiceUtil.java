@@ -1,23 +1,13 @@
 package io.mosip.preregistration.application.util;
 
 import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
+import java.net.URLDecoder;
 
-import javax.net.ssl.SSLContext;
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -41,15 +31,17 @@ public class ProxyMasterdataServiceUtil {
 		String query = request.getQueryString();
 		String url = null;
 		URI uri = null;
+		String requestUrl = request.getRequestURI();
+		requestUrl = URLDecoder.decode(requestUrl);
 		if (query != null) {
-
+                        String decodedQuery = URLDecoder.decode(query);
 			url = baseUrl + "/" + version
-					+ request.getRequestURI().replace(request.getContextPath() + "/proxy", "").strip().toString();
-			uri = UriComponentsBuilder.fromHttpUrl(url).query(query).build().toUri();
+					+ requestUrl.replace(request.getContextPath() + "/proxy", "").strip().toString();
+			uri = UriComponentsBuilder.fromHttpUrl(url).query(decodedQuery).build().toUri();
 			log.info("sessionId", "idType", "id", " Requested Url is: " + uri);
 		} else {
 			url = baseUrl + "/" + version
-					+ request.getRequestURI().replace(request.getContextPath() + "/proxy", "").strip().toString();
+					+ requestUrl.replace(request.getContextPath() + "/proxy", "").strip().toString();
 			uri = UriComponentsBuilder.fromHttpUrl(url).build().toUri();
 
 			log.info("sessionId", "idType", "id", " Requested Url is: " + uri);
