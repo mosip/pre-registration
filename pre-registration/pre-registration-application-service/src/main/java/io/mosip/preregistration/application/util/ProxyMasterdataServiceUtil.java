@@ -29,17 +29,19 @@ public class ProxyMasterdataServiceUtil {
 		log.info("sessionId", "idType", "id", "In getUrl method of proxyMasterDataServiceUtil");
 
 		String query = request.getQueryString();
+		String requestUrl = request.getRequestURI();
+		requestUrl = URLDecoder.decode(requestUrl);
 		String url = null;
 		URI uri = null;
 		if (query != null) {
                         String decodedQuery = URLDecoder.decode(query);
 			url = baseUrl + "/" + version
-					+ request.getRequestURI().replace(request.getContextPath() + "/proxy", "").strip().toString();
+					+ requestUrl.replace(request.getContextPath() + "/proxy", "").strip().toString();
 			uri = UriComponentsBuilder.fromHttpUrl(url).query(decodedQuery).build().toUri();
 			log.info("sessionId", "idType", "id", " Requested Url is: " + uri);
 		} else {
 			url = baseUrl + "/" + version
-					+ request.getRequestURI().replace(request.getContextPath() + "/proxy", "").strip().toString();
+					+ requestUrl.replace(request.getContextPath() + "/proxy", "").strip().toString();
 			uri = UriComponentsBuilder.fromHttpUrl(url).build().toUri();
 
 			log.info("sessionId", "idType", "id", " Requested Url is: " + uri);
