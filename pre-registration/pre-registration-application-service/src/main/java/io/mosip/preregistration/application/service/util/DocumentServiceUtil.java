@@ -272,6 +272,7 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDocTypeCode(sourceEntity.getDocTypeCode());
 		copyDocumentEntity.setDocCatCode(sourceEntity.getDocCatCode());
 		copyDocumentEntity.setDocFileFormat(sourceEntity.getDocFileFormat());
+		copyDocumentEntity.setDocRefId(sourceEntity.getDocRefId());
 		copyDocumentEntity.setCrBy(sourceEntity.getCrBy());
 		copyDocumentEntity.setUpdBy(sourceEntity.getUpdBy());
 		copyDocumentEntity.setLangCode(sourceEntity.getLangCode());
