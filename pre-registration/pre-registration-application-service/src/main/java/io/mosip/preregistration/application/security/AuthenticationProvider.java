@@ -61,7 +61,6 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 	@Override
 	protected UserDetails retrieveUser(String userName,
 			UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken) throws AuthenticationException {
-		LOGGER.info("In retriveUser method of AuthenticationProvider class" + usernamePasswordAuthenticationToken);
 		Object token = usernamePasswordAuthenticationToken.getCredentials();
 		LOGGER.info("In retriveUser method of AuthenticationProvider class" + token);
 		MosipUserDto mosipUserDto = new MosipUserDto();
@@ -88,12 +87,11 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 				ResponseWrapper<?> responseObject = objectMapper.readValue(response.getBody(), ResponseWrapper.class);
 				mosipUserDto = objectMapper.readValue(objectMapper.writeValueAsString(responseObject.getResponse()),
 						MosipUserDto.class);
-				LOGGER.info("user " + mosipUserDto.getUserId());
 			} catch (Exception e) {
 				throw new AccessDeniedException(String.valueOf(HttpStatus.UNAUTHORIZED.value()));
 			}
 		} catch (JwtException e) {
-			LOGGER.error("exception while parsing the token" + e);
+			LOGGER.error("exception while parsing the token", ExceptionUtils.getStackTrace(e));
 			throw new UsernameNotFoundException("Cannot find user with authentication token=" + token);
 		}
 
@@ -113,7 +111,7 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 			LOGGER.info("validate token url" + adminValidateUrl);
 			response = restTemplate.exchange(adminValidateUrl, HttpMethod.GET, entity, String.class);
 		} catch (RestClientException e) {
-			LOGGER.error("validate token exception" + e);
+			LOGGER.error("validate token exception", ExceptionUtils.getStackTrace(e));
 			throw new AccessDeniedException(e.getMessage());
 		}
 		return response;

@@ -159,13 +159,13 @@ public class DemographicServiceUtil {
 			createDto.setUpdatedBy(demographicEntity.getUpdatedBy());
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
 					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage(), ex.getCause());
 		} catch (EncryptionFailedException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw ex;
@@ -218,13 +218,13 @@ public class DemographicServiceUtil {
 			createDto.setLangCode(demographicEntity.getLangCode());
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
 		} catch (ParseException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
 					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage(), ex.getCause());
 		} catch (EncryptionFailedException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw ex;
@@ -411,7 +411,7 @@ public class DemographicServiceUtil {
 		try {
 			return new SimpleDateFormat(utcDateTimePattern).parse(date);
 		} catch (java.text.ParseException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getDateFromString method of pre-registration service- " + ex.getCause());
 			throw new DateParseException(DemographicErrorCodes.PRG_PAM_APP_011.getCode(),
@@ -484,7 +484,7 @@ public class DemographicServiceUtil {
 			log.info("sessionId", "idType", "id", " URL in demographic service util of getJson " + uriBuilder);
 			return restTemplate.getForObject(uriBuilder.toString(), String.class);
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
 			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
@@ -516,7 +516,7 @@ public class DemographicServiceUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In callRegCenterDateRestService method of Booking Service Util for HttpClientErrorException- "
 							+ ex.getMessage());
@@ -595,7 +595,7 @@ public class DemographicServiceUtil {
 			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
 			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
 		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-			log.debug("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
 		return response;
@@ -625,7 +625,7 @@ public class DemographicServiceUtil {
 			response.setResponse(responseEntity.getBody().getResponse());
 			log.info("sessionId", "idType", "id", "In call to booking rest service :" + regbuilder);
 		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-			log.debug("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
 		return response;

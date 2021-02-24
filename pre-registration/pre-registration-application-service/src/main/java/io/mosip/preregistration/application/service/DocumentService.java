@@ -249,7 +249,7 @@ public class DocumentService implements DocumentServiceIntf {
 			isUploadSuccess = true;
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In uploadDoucment method of document service - " + ex.getMessage());
 			new DocumentExceptionCatcher().handle(ex, responseDto);
 		} finally {
@@ -361,6 +361,7 @@ public class DocumentService implements DocumentServiceIntf {
 					documentResponseDTO.setDocCatCode(copyDocumentEntity.getDocCatCode());
 					documentResponseDTO.setDocTypCode(copyDocumentEntity.getDocTypeCode());
 					documentResponseDTO.setDocFileFormat(copyDocumentEntity.getDocFileFormat());
+					documentResponseDTO.setDocRefId(copyDocumentEntity.getDocRefId());
 					responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 					responseDto.setResponse(documentResponseDTO);
 				} else {
@@ -371,7 +372,7 @@ public class DocumentService implements DocumentServiceIntf {
 			isCopySuccess = true;
 
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In copyDoucment method of document service - " + ex.getMessage());
 			new DocumentExceptionCatcher().handle(ex, responseDto);
 		} finally {
@@ -444,7 +445,7 @@ public class DocumentService implements DocumentServiceIntf {
 			isRetrieveSuccess = true;
 
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
 			if (ex instanceof DocumentNotFoundException || ex instanceof RecordNotFoundException) {
@@ -520,7 +521,7 @@ public class DocumentService implements DocumentServiceIntf {
 			isRetrieveSuccess = true;
 
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
 			if (ex instanceof DocumentNotFoundException)
@@ -617,7 +618,7 @@ public class DocumentService implements DocumentServiceIntf {
 			isRetrieveSuccess = true;
 
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In deleteDocument method of document service - " + ex.getMessage());
 			if (ex instanceof DocumentNotFoundException)
 				isDocNotFound = true;
@@ -672,7 +673,7 @@ public class DocumentService implements DocumentServiceIntf {
 
 			isDeleteSuccess = true;
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In deleteAllByPreId method of document service - " + ex.getMessage());
 			if (ex instanceof DocumentNotFoundException)
@@ -785,7 +786,7 @@ public class DocumentService implements DocumentServiceIntf {
 						DocumentErrorMessages.INVALID_DOCUMENT_ID.getMessage());
 			}
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
 			new DocumentExceptionCatcher().handle(ex, response);

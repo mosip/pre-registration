@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
-
+import org.springframework.beans.factory.annotation.Value;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -31,7 +31,7 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 public class SSLConfig {
-
+	
 	@Value("${preregistration.core.restinterceptor.bypass:false}")
 	private boolean bypassInterceptor;
 
@@ -53,15 +53,14 @@ public class SSLConfig {
 
 		RestTemplate restTemplate = new RestTemplate(requestFactory);
 		
-			List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
-			if (CollectionUtils.isEmpty(interceptors)) {
-				interceptors = new ArrayList<>();
-			}
+		List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
+		if (CollectionUtils.isEmpty(interceptors)) {
+			interceptors = new ArrayList<>();
+		}
 		if (!bypassInterceptor) {
-			interceptors.add(restInterceptor());
-}
-			restTemplate.setInterceptors(interceptors);
-		
+		interceptors.add(restInterceptor());
+		}
+		restTemplate.setInterceptors(interceptors);
 		return restTemplate;
 
 	}

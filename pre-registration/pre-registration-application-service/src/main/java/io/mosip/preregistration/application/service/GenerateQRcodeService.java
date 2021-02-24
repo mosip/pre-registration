@@ -98,7 +98,7 @@ public class GenerateQRcodeService {
 			response.setResponsetime(serviceUtil.getCurrentResponseTime());
 
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In generateQRCode service of generateQRCode " + ex.getMessage());
 			new QRcodeExceptionCatcher().handle(ex, response);
 		}

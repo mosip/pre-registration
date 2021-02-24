@@ -90,7 +90,7 @@ public class OTPManager {
 	 */
 	public boolean sendOtp(MainRequestDTO<OtpRequestDTO> requestDTO, String channelType, String language)
 			throws PreRegLoginException, IOException {
-
+		logger.info("sessionId", "idType", "id", "In sendOtp method of otpmanager service ");
 		String userId = requestDTO.getRequest().getUserId();
 
 		String token = "";
@@ -104,7 +104,8 @@ public class OTPManager {
 					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
 		}
 		String otp = generateOTP(requestDTO, token);
-
+		logger.info("sessionId", "idType", "id",
+				"In generateOTP method of otpmanager service OTP generated");
 		String otpHash = digestAsPlainText(
 				(userId + environment.getProperty(PreRegLoginConstant.KEY_SPLITTER) + otp).getBytes());
 
@@ -131,23 +132,29 @@ public class OTPManager {
 			otpRepo.save(txn);
 		}
 		Map<String, Object> mp = new HashMap();
-	        mp.put("otp", otp);
+
+		mp.put("otp", otp);
 		mp.put("date", requestDTO.getRequesttime());
 		mp.put("validTime", "15 minutes");
 		mp.put("name", userId);
 		mp.put("username", userId);
 		mp.put("time", new Date(requestDTO.getRequesttime().getTime()));
-		
+
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
+			logger.info("sessionId", "idType", "id",
+					"In generateOTP method of otpmanager service invoking sms notification");
 			notification.invokeSmsNotification(mp, userId, token, requestDTO, language);
 		}
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.EMAIL)) {
+			logger.info("sessionId", "idType", "id",
+					"In generateOTP method of otpmanager service invoking email notification");
 			notification.invokeEmailNotification(mp, userId, token, requestDTO, language);
 		}
 		return true;
 	}
 
 	private String generateOTP(MainRequestDTO<OtpRequestDTO> requestDTO, String token) throws PreRegLoginException {
+		logger.info("sessionId", "idType", "id", "In generateOTP method of otpmanager service ");
 		try {
 			OTPGenerateRequestDTO otpRequestDTO = new OTPGenerateRequestDTO();
 			otpRequestDTO.setId(requestDTO.getId());
@@ -198,6 +205,7 @@ public class OTPManager {
 	 * @throws PreRegLoginException the id authentication business exception
 	 */
 	public boolean validateOtp(String otp, String userId) throws PreRegLoginException {
+		logger.info("sessionId", "idType", "id", "In validateOtp method of otpmanager service ");
 		String otpHash;
 		otpHash = digestAsPlainText(
 				(userId + environment.getProperty(PreRegLoginConstant.KEY_SPLITTER) + otp).getBytes());
@@ -227,7 +235,7 @@ public class OTPManager {
 	}
 
 	public String generateToken() throws Exception {
-
+		logger.info("sessionId", "idType", "id", "In generateToken method of otpmanager service ");
 		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);

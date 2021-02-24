@@ -29,10 +29,10 @@ public class ProxyMasterdataServiceUtil {
 		log.info("sessionId", "idType", "id", "In getUrl method of proxyMasterDataServiceUtil");
 
 		String query = request.getQueryString();
-		String url = null;
-		URI uri = null;
 		String requestUrl = request.getRequestURI();
 		requestUrl = URLDecoder.decode(requestUrl);
+		String url = null;
+		URI uri = null;
 		if (query != null) {
                         String decodedQuery = URLDecoder.decode(query);
 			url = baseUrl + "/" + version

@@ -57,7 +57,6 @@ public class AuthTokenUtil {
 	private Logger log = LoggerConfiguration.logConfig(AuthTokenUtil.class);
 
 	public HttpHeaders getTokenHeader() {
-		log.info("sessionId", "idType", "id", "In getTokenHeader of AuthTokenUtil");
 		HttpHeaders headers = new HttpHeaders();
 		String newAuthToken = getAuthToken();
 		headers.set("Cookie", newAuthToken);
@@ -65,14 +64,12 @@ public class AuthTokenUtil {
 	}
 
 	public String getToken() {
-		log.info("sessionId", "idType", "id", "In getToken of AuthTokenUtil to get token");
 		return getAuthToken();
 	}
 
 	private synchronized String getAuthToken() {
 		log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil");
 		if (authToken == null || !isValidAuthToken(authToken)) {
-			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil to intialize a new Token");
 			Optional<String> newAuthToken = getNewAuthToken();
 			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil with a latest Token-->");
 			if (newAuthToken.isPresent()) {
@@ -84,9 +81,6 @@ public class AuthTokenUtil {
 
 	private boolean isValidAuthToken(String authToken) {
 		try {
-
-			log.info("sessionId", "idType", "id", "In isValidAuthToken of AuthTokenUtil to check if its valid-->");
-			log.info("sessionId", "idType", "id", "In isValidAuthToken issuerUrl-->" + issuerUrl);
 			boolean isTokenValid = TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""),
 					issuerUrl, userName);
 			log.info("sessionId", "idType", "id",
