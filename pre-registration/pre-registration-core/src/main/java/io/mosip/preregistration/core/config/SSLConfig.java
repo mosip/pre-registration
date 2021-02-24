@@ -35,9 +35,6 @@ public class SSLConfig {
 	@Value("${preregistration.core.restinterceptor.bypass:false}")
 	private boolean bypassInterceptor;
 
-	@Value("${preregistration.core.restinterceptor.bypass:false}")
-	private boolean bypassInterceptor;
-
 	@Bean
 	public RestTemplate restTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
