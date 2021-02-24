@@ -293,7 +293,8 @@ public class LoginService {
 		try {
 			byte[] secret = TextCodec.BASE64.decode(jwtSecret);
 			String jwtToken = token.replace("Authorization=", "").split(";")[0];
-			log.info("sessionId", "idType", "id", "token tobe reset" + jwtToken);
+
+			log.info("sessionId", "idType", "id", "token to be reset" + jwtToken);
 			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
 			userId = clamis.getBody().get("userId").toString();
 			response.setResponse("Loggedout successfully");
@@ -305,11 +306,12 @@ public class LoginService {
 			new LoginExceptionCatcher().handle(e, null, res);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In call invalidateToken method of login service- " + ex.getMessage());
 			new LoginExceptionCatcher().handle(ex, "invalidateToken", response);
 		} finally {
+			System.out.println(response);
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
 
 			if (isSuccess) {
@@ -433,7 +435,6 @@ public class LoginService {
 		res.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return res;
 	}
-
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
 		log.info("sessionId", "idType", "id", "In generateJWTToken method of loginservice:" + userId + issuerUrl);

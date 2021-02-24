@@ -132,6 +132,7 @@ public class OTPManager {
 			otpRepo.save(txn);
 		}
 		Map<String, Object> mp = new HashMap();
+
 		mp.put("otp", otp);
 		mp.put("date", requestDTO.getRequesttime());
 		mp.put("validTime", "15 minutes");

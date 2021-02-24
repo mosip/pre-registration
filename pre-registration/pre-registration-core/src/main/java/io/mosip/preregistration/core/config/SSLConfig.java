@@ -13,6 +13,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.ssl.TrustStrategy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -31,6 +32,9 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 public class SSLConfig {
 	
+	@Value("${preregistration.core.restinterceptor.bypass:false}")
+	private boolean bypassInterceptor;
+
 	@Value("${preregistration.core.restinterceptor.bypass:false}")
 	private boolean bypassInterceptor;
 
@@ -60,7 +64,6 @@ public class SSLConfig {
 		interceptors.add(restInterceptor());
 		}
 		restTemplate.setInterceptors(interceptors);
-
 		return restTemplate;
 
 	}

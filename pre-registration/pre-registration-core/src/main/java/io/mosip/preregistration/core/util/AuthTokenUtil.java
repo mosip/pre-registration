@@ -71,6 +71,7 @@ public class AuthTokenUtil {
 		log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil");
 		if (authToken == null || !isValidAuthToken(authToken)) {
 			Optional<String> newAuthToken = getNewAuthToken();
+			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil with a latest Token-->");
 			if (newAuthToken.isPresent()) {
 				authToken = newAuthToken.get();
 			}
