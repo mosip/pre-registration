@@ -1,6 +1,6 @@
 -- -------------------------------------------------------------------------------------------------
 -- Database Name: mosip_prereg
--- Release Version 	: 1.1.4
+-- Release Version 	: 1.1.4-rc1
 -- Purpose    		: Revoking Database Alter deployement done for release in Pre registration DB.       
 -- Create By   		: Sadanandegowda DM
 -- Created Date		: Dec-2020
