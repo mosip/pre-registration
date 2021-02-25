@@ -19,8 +19,8 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
 		<pre.registration.core.version>1.1.5-SNAPSHOT</pre.registration.core.version>
-		<kernel.crypto.signature.version>1.1.4</kernel.crypto.signature.version>
-    <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+		<kernel.crypto.signature.version>1.1.5-SNAPSHOT</kernel.crypto.signature.version>
+        <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
 	<dependencyManagement>
