@@ -23,6 +23,7 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +34,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -40,6 +42,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.dto.LanguageResponseDTO;
 import io.mosip.preregistration.application.dto.MosipUserDTO;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
@@ -49,6 +52,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
+import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 import io.mosip.preregistration.core.util.ValidationUtil;
 
@@ -71,6 +75,9 @@ public class LoginCommonUtil {
 	
 	@Autowired
 	private ValidationUtil validationUtil;
+	
+	@Value("${masterdata.resource.url}")
+	private String masterdataUrl;
 
 	/**
 	 * Logger instance
@@ -323,6 +330,24 @@ public class LoginCommonUtil {
 				responseToString(responseKernel.getResponse()), MosipUserDTO.class);
 
 		return userDetailsDto.getUserId();
+	}
+	
+	public LanguageResponseDTO getLanguages() {
+		ResponseEntity<MainResponseDTO<LanguageResponseDTO>> res = null;
+		UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(masterdataUrl+"/languages");
+		try {
+			String uriBuilder = regbuilder.build().encode().toUriString();
+			log.info("sessionId", "idType", "id", "In getLanguages method restcall");
+			res = restTemplate.exchange(uriBuilder, HttpMethod.GET, null,
+					new ParameterizedTypeReference<MainResponseDTO<LanguageResponseDTO>>() {
+					});
+		} catch (RestClientException ex) {
+			log.debug(ExceptionUtils.getStackTrace(ex));
+			log.error(ex.getMessage());
+			throw new RestCallException(LoginErrorCodes.PRG_AUTH_015.getCode(),
+					LoginErrorMessages.UNABLE_TO_FETCH_LANGUAGES.getMessage());
+		}
+		return res.getBody().getResponse();
 	}
 
 	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {

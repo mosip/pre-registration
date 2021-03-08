@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
+import io.mosip.preregistration.application.dto.ConfigResponseDTO;
 import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.User;
@@ -186,9 +187,9 @@ public class LoginController {
 	@ApiOperation(value = "Get global and Pre-Registration config data")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully retrieved") })
-	public ResponseEntity<MainResponseDTO<Map<String, String>>> configParams() {
+	public ResponseEntity<MainResponseDTO<ConfigResponseDTO>> configParams() {
 		log.info("sessionId", "idType", "id", "In Login controller for getting config values ");
-		return new ResponseEntity<>(loginService.getConfig(), HttpStatus.OK);
+		return ResponseEntity.status(HttpStatus.OK).body(loginService.getConfig());
 
 	}
 

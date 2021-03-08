@@ -20,7 +20,8 @@ public enum LoginErrorMessages {
 	INVALID_REQUEST_OTP("Invalid otp received"),//PRE_AUTH_010
 	ERROR_WHILE_PARSING("Error while Parsing the kernel response"),//PRE_AUTH_011
 	CONFIG_FILE_NOT_FOUND_EXCEPTION("Config file not found in the config server"),//PRE_AUTH_011
-	TOKEN_NOT_PRESENT("Token is not present in the header");//PRE_AUTH_014
+	TOKEN_NOT_PRESENT("Token is not present in the header"),//PRE_AUTH_014
+	UNABLE_TO_FETCH_LANGUAGES("Rest call to get all languages details failed"); //	PRG_AUTH_015
 	private LoginErrorMessages(String message) {
 		this.message = message;
 	}

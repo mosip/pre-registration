@@ -17,13 +17,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -32,7 +28,6 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
-
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.JwtException;
@@ -40,8 +35,21 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.exception.ExceptionUtils;
-import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.constant.PreRegLoginConstant;
+import io.mosip.preregistration.application.dto.ClientSecretDTO;
+import io.mosip.preregistration.application.dto.ConfigResponseDTO;
+import io.mosip.preregistration.application.dto.LanguageResponseDTO;
+import io.mosip.preregistration.application.dto.OtpRequestDTO;
+import io.mosip.preregistration.application.dto.User;
+import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
+import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
+import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
+import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
+import io.mosip.preregistration.application.exception.LoginServiceException;
+import io.mosip.preregistration.application.exception.PreRegLoginException;
+import io.mosip.preregistration.application.exception.util.LoginExceptionCatcher;
+import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
@@ -50,28 +58,12 @@ import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
-import io.mosip.preregistration.application.constant.PreRegLoginConstant;
-import io.mosip.preregistration.application.dto.ClientSecretDTO;
-import io.mosip.preregistration.application.dto.OtpRequestDTO;
-import io.mosip.preregistration.application.dto.OtpUser;
-import io.mosip.preregistration.application.dto.User;
-import io.mosip.preregistration.application.dto.UserOtp;
-import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
-import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
-import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
-import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
-import io.mosip.preregistration.application.exception.LoginServiceException;
-import io.mosip.preregistration.application.exception.NoAuthTokenException;
-import io.mosip.preregistration.application.exception.PreRegLoginException;
-import io.mosip.preregistration.application.exception.util.LoginExceptionCatcher;
-import io.mosip.preregistration.application.util.LoginCommonUtil;
 
 @Service
 public class LoginService {
@@ -147,12 +139,14 @@ public class LoginService {
 
 	private String globalConfig;
 	private String preregConfig;
+	private LanguageResponseDTO languages ;
 
 	public void setupLoginService() {
 		log.info("sessionId", "idType", "id", "In setupLoginService method of login service");
 		globalConfig = loginCommonUtil.getConfig(globalFileName);
 		preregConfig = loginCommonUtil.getConfig(preRegFileName);
 		log.info("sessionId", "idType", "id", "Fetched the globalConfig and preRegconfig from config server");
+		languages = loginCommonUtil.getLanguages();
 	}
 
 	/**
@@ -239,10 +233,8 @@ public class LoginService {
 				authresponse.setStatus(PreRegLoginConstant.SUCCESS);
 
 			} else {
-// 				authresponse.setMessage(PreRegLoginConstant.VALIDATION_UNSUCCESS);
-// 				authresponse.setStatus(PreRegLoginConstant.UNSUCCESS);
-				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),PreRegLoginConstant.VALIDATION_UNSUCCESS,
-						response);
+				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),
+						PreRegLoginConstant.VALIDATION_UNSUCCESS, response);
 
 			}
 			response.setResponse(authresponse);
@@ -378,9 +370,9 @@ public class LoginService {
 	 * 
 	 * @return response
 	 */
-	public MainResponseDTO<Map<String, String>> getConfig() {
+	public MainResponseDTO<ConfigResponseDTO> getConfig() {
 		log.info("sessionId", "idType", "id", "In login service of getConfig ");
-		MainResponseDTO<Map<String, String>> res = new MainResponseDTO<>();
+		MainResponseDTO<ConfigResponseDTO> res = new MainResponseDTO<>();
 		res.setId(configId);
 		res.setVersion(version);
 		List<String> reqParams = new ArrayList<>();
@@ -396,7 +388,6 @@ public class LoginService {
 				Properties prop2 = loginCommonUtil.parsePropertiesString(preregConfig);
 				loginCommonUtil.getConfigParams(prop1, configParams, reqParams);
 				loginCommonUtil.getConfigParams(prop2, configParams, reqParams);
-
 			} else {
 				throw new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.getCode(),
 						LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), res);
@@ -407,7 +398,10 @@ public class LoginService {
 			log.error("sessionId", "idType", "id", "In login service of getConfig " + ex.getMessage());
 			new LoginExceptionCatcher().handle(ex, "config", res);
 		}
-		res.setResponse(configParams);
+		ConfigResponseDTO resp = new  ConfigResponseDTO();
+		resp.setConfigParams(configParams);
+		resp.setLanguages(languages.getLanguages());
+		res.setResponse(resp);
 		res.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return res;
 	}
