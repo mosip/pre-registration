@@ -1,6 +1,7 @@
 package io.mosip.preregistration.application.exception.util;
 
 import org.springframework.lang.NonNull;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
@@ -28,6 +29,7 @@ import io.mosip.preregistration.application.exception.UserIdOtpFaliedException;
  * @author Akshay
  * @since 1.0.0
  */
+@Component
 public class LoginExceptionCatcher {
 	
 
