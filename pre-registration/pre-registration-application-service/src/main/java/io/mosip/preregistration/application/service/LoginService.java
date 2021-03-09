@@ -387,18 +387,17 @@ public class LoginService {
 		MainResponseDTO<String> res = new MainResponseDTO<>();
 		res.setId(configId);
 		res.setVersion(version);
-
 		try {
 			globalConfig = loginCommonUtil.getConfig(globalFileName);
 			preregConfig = loginCommonUtil.getConfig(preRegFileName);
 			res.setResponse("success");
 			res.setResponsetime(GenericUtil.getCurrentResponseTime());
-			return res;
+			
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
 			log.error("In login service of refreshConfig {}" + ex);
 			loginExceptionCatcher.handle(ex, "refreshConfig", res);
 		}
-
+		return res;
 	}
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
