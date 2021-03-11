@@ -132,8 +132,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}    
 
-
-
   docker-pre-registration-application-service:
     needs: build
 
@@ -289,7 +287,6 @@ jobs:
           echo VERSION=$VERSION
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
           docker push $IMAGE_ID:$VERSION
-
 
   docker-pre-registration-captcha-service:
     needs: build

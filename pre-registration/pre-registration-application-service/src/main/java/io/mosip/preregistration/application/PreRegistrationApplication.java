@@ -8,7 +8,7 @@ import io.mosip.preregistration.application.PreRegistrationApplication;
 import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication
-@ComponentScan(basePackages = "io.mosip.*", excludeFilters = {
+@ComponentScan(basePackages = "io.mosip.*, ${mosip.auth.adapter.impl.basepackage}", excludeFilters = {
 		@ComponentScan.Filter(type = FilterType.REGEX,
 				pattern = {"io\\.mosip\\.kernel\\.zkcryptoservice\\..*",
 						"io\\.mosip\\.kernel\\.tokenidgenerator\\..*",

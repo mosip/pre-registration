@@ -65,12 +65,6 @@ import io.mosip.preregistration.core.util.AuthTokenUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
-
-/**
- * This class provides the service implementation for Document
- * 
- * @author Kishan Rathore
- * @author Rajath KR
  * @author Tapaswini Behera
  * @author Jagadishwari S
  * @since 1.0.0
