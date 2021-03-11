@@ -65,7 +65,7 @@ import io.mosip.preregistration.core.util.AuthTokenUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
- * @author Tapaswini Behera
+/* * @author Tapaswini Behera
  * @author Jagadishwari S
  * @since 1.0.0
  */
