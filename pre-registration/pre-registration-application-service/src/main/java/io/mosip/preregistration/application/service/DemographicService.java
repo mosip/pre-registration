@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -31,7 +29,6 @@ import org.springframework.web.client.RestTemplate;
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.BaseUncheckedException;
@@ -134,9 +131,6 @@ public class DemographicService implements DemographicServiceIntf {
 	@Autowired
 	private DocumentServiceIntf documentServiceImpl;
 
-//	@Autowired
-//	private BookingServiceIntf bookingServiceImpl;
-
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
 	 */
@@ -223,7 +217,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Value("${mosip.utc-datetime-pattern}")
 	private String dateFormat;
-	
+
 	@Value("${preregistartion.config.identityjson}")
 	private String preregistrationIdJson;
 
@@ -257,11 +251,13 @@ public class DemographicService implements DemographicServiceIntf {
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
 	 */
-	 @PostConstruct
-	 public void setup() {
-	 getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
-	
-	 }
+
+	public void setup() {
+		log.info("sessionId", "idType", "id", "In setup method of demographic service");
+		getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
+		log.info("sessionId", "idType", "id", "Fetched the identity json from config server" + getIdentityJsonString);
+
+	}
 
 	@Autowired
 	CryptoUtil cryptoUtil;
@@ -305,19 +301,17 @@ public class DemographicService implements DemographicServiceIntf {
 		boolean isSuccess = false;
 		try {
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
-			String idSchema=serviceUtil.getSchema();
+			String idSchema = serviceUtil.getSchema();
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
-			ArrayList<String> list = 
-					  Pattern.compile("\\s*,\\s*")
-					  .splitAsStream(preRegNewRegIdJson)
-					  .collect(Collectors.toCollection(ArrayList<String>::new));
-			
+			ArrayList<String> list = Pattern.compile("\\s*,\\s*").splitAsStream(preRegNewRegIdJson)
+					.collect(Collectors.toCollection(ArrayList<String>::new));
+
 			mainResponseDTO = (MainResponseDTO<DemographicCreateResponseDTO>) serviceUtil.getMainResponseDto(request);
 			DemographicRequestDTO demographicRequest = request.getRequest();
 			validationUtil.langvalidation(demographicRequest.getLangCode());
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-			jsonValidator.validateIdObject(idSchema,demographicRequest.getDemographicDetails(),list);
+			jsonValidator.validateIdObject(idSchema, demographicRequest.getDemographicDetails(), list);
 			log.info("sessionId", "idType", "id",
 					"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 			log.info("sessionId", "idType", "id",
@@ -338,13 +332,13 @@ public class DemographicService implements DemographicServiceIntf {
 			log.info("sessionId", "idType", "id",
 					"Pre Registration end time : " + DateUtils.getUTCCurrentDateTimeString());
 		} catch (HttpServerErrorException | HttpClientErrorException e) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
 			log.error("sessionId", "idType", "id",
 					"In pre-registration service of addPreRegistration- " + e.getResponseBodyAsString());
 			List<ServiceError> errorList = ExceptionUtils.getServiceErrorList(e.getResponseBodyAsString());
 			new DemographicExceptionCatcher().handle(new DemographicServiceException(errorList, null), mainResponseDTO);
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In pre-registration service of addPreRegistration- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, mainResponseDTO);
@@ -395,12 +389,10 @@ public class DemographicService implements DemographicServiceIntf {
 		boolean isSuccess = false;
 		try {
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
-			String idSchema=serviceUtil.getSchema();
+			String idSchema = serviceUtil.getSchema();
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
-			ArrayList<String> list = 
-					  Pattern.compile("\\s*,\\s*")
-					  .splitAsStream(preRegNewRegIdJson)
-					  .collect(Collectors.toCollection(ArrayList<String>::new));
+			ArrayList<String> list = Pattern.compile("\\s*,\\s*").splitAsStream(preRegNewRegIdJson)
+					.collect(Collectors.toCollection(ArrayList<String>::new));
 			validationUtil.langvalidation(request.getRequest().getLangCode());
 			Map<String, String> requestParamMap = new HashMap<>();
 			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegistrationId);
@@ -408,8 +400,7 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicRequestDTO demographicRequest = request.getRequest();
 				log.info("sessionId", "idType", "id",
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-				jsonValidator.validateIdObject(idSchema,demographicRequest.getDemographicDetails(),
-						list);
+				jsonValidator.validateIdObject(idSchema, demographicRequest.getDemographicDetails(), list);
 				log.info("sessionId", "idType", "id",
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
@@ -429,13 +420,13 @@ public class DemographicService implements DemographicServiceIntf {
 			log.info("sessionId", "idType", "id",
 					"Pre Registration end time : " + DateUtils.getUTCCurrentDateTimeString());
 		} catch (HttpServerErrorException | HttpClientErrorException e) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
 			log.error("sessionId", "idType", "id",
 					"In pre-registration service of addPreRegistration- " + e.getResponseBodyAsString());
 			List<ServiceError> errorList = ExceptionUtils.getServiceErrorList(e.getResponseBodyAsString());
 			new DemographicExceptionCatcher().handle(new DemographicServiceException(errorList, null), mainResponseDTO);
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In pre-registration service of updatePreRegistration- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, mainResponseDTO);
@@ -524,7 +515,7 @@ public class DemographicService implements DemographicServiceIntf {
 			}
 			isRetrieveSuccess = true;
 		} catch (RuntimeException | JsonProcessingException | ParseException | IOException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getAllApplicationDetails method of pre-registration service - " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -558,7 +549,8 @@ public class DemographicService implements DemographicServiceIntf {
 			log.info("sessionId", "idType", "id", "decryption end time : " + DateUtils.getUTCCurrentDateTimeString());
 			log.info("sessionId", "idType", "id",
 					"get document metadata start time : " + DateUtils.getUTCCurrentDateTimeString());
-			JSONObject documentJsonObject = getDocumentMetadata(demographicEntity, DemographicRequestCodes.POA.getCode());
+			JSONObject documentJsonObject = getDocumentMetadata(demographicEntity,
+					DemographicRequestCodes.POA.getCode());
 			log.info("sessionId", "idType", "id",
 					"get document metadata end time : " + DateUtils.getUTCCurrentDateTimeString());
 
@@ -568,7 +560,7 @@ public class DemographicService implements DemographicServiceIntf {
 			String poaValue = getPreregistrationIdentityJson().getIdentity().getProofOfAddress().getValue();
 			String postalCodeValue = getPreregistrationIdentityJson().getIdentity().getPostalCode().getValue();
 			String[] nameKeys = nameValue.split(",");
-			for(int i=0; i<nameKeys.length;i++){
+			for (int i = 0; i < nameKeys.length; i++) {
 				demographicMetadata.put(nameKeys[i], serviceUtil.getValueFromIdentity(decryptedString, nameKeys[i]));
 			}
 			demographicMetadata.put(postalCodeValue,
@@ -654,7 +646,7 @@ public class DemographicService implements DemographicServiceIntf {
 				}
 			}
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getApplicationStatus method of pre-registration service - " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -706,7 +698,7 @@ public class DemographicService implements DemographicServiceIntf {
 			}
 			isDeleteSuccess = true;
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In pre-registration deleteIndividual service- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
 		} finally {
@@ -772,7 +764,7 @@ public class DemographicService implements DemographicServiceIntf {
 				}
 			}
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getDemographicData of pre-registration service- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -805,7 +797,7 @@ public class DemographicService implements DemographicServiceIntf {
 				statusCheck(demographicEntity, status, userId);
 			}
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -818,10 +810,8 @@ public class DemographicService implements DemographicServiceIntf {
 	/**
 	 * This method will check the status before updating.
 	 * 
-	 * @param demographicEntity
-	 *            pass demographicEntity
-	 * @param status
-	 *            pass status
+	 * @param demographicEntity pass demographicEntity
+	 * @param status            pass status
 	 */
 	public void statusCheck(DemographicEntity demographicEntity, String status, String userId) {
 		if (demographicEntity != null) {
@@ -851,7 +841,8 @@ public class DemographicService implements DemographicServiceIntf {
 		try {
 			documentServiceImpl.deleteAllByPreId(preregId);
 		} catch (RuntimeException ex) {
-			if (!((BaseUncheckedException) ex).getErrorCode().equalsIgnoreCase(DemographicErrorCodes.PRG_PAM_DOC_005.toString())) {
+			if (!((BaseUncheckedException) ex).getErrorCode()
+					.equalsIgnoreCase(DemographicErrorCodes.PRG_PAM_DOC_005.toString())) {
 				throw ex;
 			}
 		}
@@ -938,7 +929,7 @@ public class DemographicService implements DemographicServiceIntf {
 
 			mainResponseDTO.setResponse(preIdMap);
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getUpdatedDateTimeForPreIds method of pre-registration service- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, mainResponseDTO);
@@ -998,7 +989,7 @@ public class DemographicService implements DemographicServiceIntf {
 		try {
 			return mapIdentityJsonStringToObject.readValue(getIdentityJsonString, DemographicIdentityRequestDTO.class);
 		} catch (IOException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
 		}

@@ -59,17 +59,19 @@ public class CryptoUtil {
 			requestKernel.setRequest(dto);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
-
 			HttpEntity<RequestWrapper<CryptoManagerRequestDTO>> request = new HttpEntity<>(requestKernel, headers);
 			log.info("sessionId", "idType", "id",
 					"In encrypt method of CryptoUtil service cryptoResourceUrl: " + cryptoResourceUrl + "/encrypt");
 			response = restTemplate.exchange(cryptoResourceUrl + "/encrypt", HttpMethod.POST, request,
 					new ParameterizedTypeReference<ResponseWrapper<CryptoManagerResponseDTO>>() {
 					});
+			log.info("sessionId", "idType", "id", "decrypt response of " + response);
+
 			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
 				throw new EncryptionFailedException(response.getBody().getErrors(), null);
 			}
 			encryptedBytes = response.getBody().getResponse().getData().getBytes();
+
 		} catch (Exception ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",

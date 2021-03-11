@@ -45,40 +45,49 @@ public class AuthTokenUtil {
 	String userName;
 	@Value("${mosip.batch.token.authmanager.password}")
 	String password;
-	
+
 	@Value("${auth-token-generator.rest.issuerUrl}")
 	String issuerUrl;
 
 	@Value("${version}")
 	String version;
-	
-	
-	private volatile String authToken;
+
+	private String authToken;
 
 	private Logger log = LoggerConfiguration.logConfig(AuthTokenUtil.class);
 
 	public HttpHeaders getTokenHeader() {
 		HttpHeaders headers = new HttpHeaders();
-		Optional<String> newAuthToken = getAuthToken();
-		newAuthToken.ifPresent(token -> headers.set("Cookie",token));
+		String newAuthToken = getAuthToken();
+		headers.set("Cookie", newAuthToken);
 		return headers;
 	}
 
-	private synchronized Optional<String> getAuthToken() {
-		if(authToken == null || !isValidAuthToken(authToken)) {
+	public String getToken() {
+		return getAuthToken();
+	}
+
+	private synchronized String getAuthToken() {
+		log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil");
+		if (authToken == null || !isValidAuthToken(authToken)) {
 			Optional<String> newAuthToken = getNewAuthToken();
-			if(newAuthToken.isPresent()) {
+			log.info("sessionId", "idType", "id", "In getAuthToken of AuthTokenUtil with a latest Token-->");
+			if (newAuthToken.isPresent()) {
 				authToken = newAuthToken.get();
 			}
 		}
-		return Optional.ofNullable(authToken);
+		return authToken;
 	}
 
 	private boolean isValidAuthToken(String authToken) {
 		try {
-			return TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""), issuerUrl, userName);
+			boolean isTokenValid = TokenHandlerUtil.isValidBearerToken(authToken.replace("Authorization=", ""),
+					issuerUrl, userName);
+			log.info("sessionId", "idType", "id",
+					"In isValidAuthToken method to check token validity-->" + isTokenValid);
+			return isTokenValid;
 		} catch (Exception e) {
-            log.info("sessionId", "idType", "id", "Error in Validate Token offline: " + e.getMessage());
+			log.info("sessionId", "idType", "id", "Error in Validate Token offline: " + e.getMessage());
 			return false;
 		}
 	}
@@ -101,8 +110,7 @@ public class AuthTokenUtil {
 			HttpEntity<RequestWrapper<LoginUser>> tokenEntity = new HttpEntity<>(requestWrapper, tokenHeader);
 
 			String tokenUriBuilder = authBuilder.build().encode().toUriString();
-			System.out.println("In BookingTasklet to get token with URL- " + tokenUriBuilder);
-			log.info("sessionId", "idType", "id", "In BookingTasklet to get token with URL- " + tokenUriBuilder);
+			log.info("sessionId", "idType", "id", "In Authtokenutil to get token with URL- " + tokenUriBuilder);
 			ResponseEntity<ResponseWrapper<AuthNResponse>> tokenResponse = restTemplate.exchange(tokenUriBuilder,
 					HttpMethod.POST, tokenEntity, new ParameterizedTypeReference<ResponseWrapper<AuthNResponse>>() {
 					});
@@ -120,7 +128,7 @@ public class AuthTokenUtil {
 			log.error("Sync master ", " Tasklet ", " encountered exception ", e.getMessage());
 			throw e;
 		}
-		
+
 	}
 
 }

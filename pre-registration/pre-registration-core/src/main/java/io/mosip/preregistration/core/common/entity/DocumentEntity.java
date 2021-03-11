@@ -143,5 +143,12 @@ public class DocumentEntity implements Serializable {
 	 */
 	@Column(name = "doc_hash")
 	private String DocHash;
+	
+	/**
+	 * Hash value of row
+	 */
+	@Column(name = "doc_ref_id")
+	private String docRefId;
+
 
 }

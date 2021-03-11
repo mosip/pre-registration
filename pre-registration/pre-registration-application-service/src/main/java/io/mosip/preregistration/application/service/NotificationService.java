@@ -23,7 +23,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -37,7 +36,6 @@ import io.mosip.preregistration.application.exception.MandatoryFieldException;
 import io.mosip.preregistration.application.exception.RestCallException;
 import io.mosip.preregistration.application.exception.util.NotificationExceptionCatcher;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
-
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
@@ -121,7 +119,6 @@ public class NotificationService {
 	private String email;
 
 	@Value("${preregistartion.identity.name}")
-
 	private String fullName;
 
 	@Value("${preregistartion.identity.phone}")
@@ -228,7 +225,7 @@ public class NotificationService {
 				| io.mosip.kernel.core.util.exception.JsonParseException
 				| io.mosip.kernel.core.util.exception.JsonMappingException | io.mosip.kernel.core.exception.IOException
 				| JSONException | java.text.ParseException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In notification service of sendNotification " + ex.getMessage());
 			new NotificationExceptionCatcher().handle(ex, response);
 		} finally {
@@ -286,7 +283,7 @@ public class NotificationService {
 			}
 			return NotificationRequestCodes.MESSAGE.getCode();
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getDemographicDetailsWithPreId method of notification service - " + ex.getMessage());
 			throw new RestCallException(NotificationErrorCodes.PRG_PAM_ACK_011.getCode(),
@@ -415,7 +412,6 @@ public class NotificationService {
 
 		BookingRegistrationDTO bookingRegistrationDTO = null;
 			MainResponseDTO<BookingRegistrationDTO> respEntity = notificationUtil.getAppointmentDetails(preId);
-			System.out.println(respEntity);
 			if (respEntity.getErrors() != null) {
 				throw new BookingDetailsNotFoundException(respEntity.getErrors(), response);
 			}
