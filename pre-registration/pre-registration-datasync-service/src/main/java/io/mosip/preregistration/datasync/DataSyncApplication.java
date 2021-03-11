@@ -12,11 +12,7 @@ import org.springframework.context.annotation.FilterType;
  *
  */
 @SpringBootApplication
-<<<<<<< HEAD
 @ComponentScan(basePackages = "io.mosip.*, ${mosip.auth.adapter.impl.basepackage}", excludeFilters = {
-=======
-@ComponentScan(basePackages = "io.mosip.*", excludeFilters = {
->>>>>>> 1.1.2 (#99)
 		@ComponentScan.Filter(type = FilterType.REGEX,
 				pattern = {"io\\.mosip\\.kernel\\.zkcryptoservice\\..*",
 						"io\\.mosip\\.kernel\\.tokenidgenerator\\..*",

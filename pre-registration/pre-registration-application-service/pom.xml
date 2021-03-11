@@ -6,17 +6,12 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-<<<<<<< HEAD:pre-registration/pre-registration-application-service/pom.xml
 		<version>1.1.4</version>
-=======
-		<version>1.1.2</version>
->>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/pom.xml
 	</parent>
 	<version>1.1.4</version>
 	<artifactId>pre-registration-application-service</artifactId>
 	<name>pre-registration-application-service</name>
 
-<<<<<<< HEAD:pre-registration/pre-registration-application-service/pom.xml
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.core.version>1.1.4</kernel.core.version>
@@ -27,24 +22,6 @@
 		<kernel.templatemanager.velocity.version>1.1.4</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.1.4</kernel.qrcodegenerator.zxing.version>
 		<pre.registration.core.version>1.1.4</pre.registration.core.version>
-=======
-	<version>1.1.2</version>
-
-	<artifactId>pre-registration-application-service</artifactId>
-	<name>pre-registration-application-service</name>
-
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.core.version>1.1.2</kernel.core.version>
-		<kernel.auth.adapter.version>1.0.9</kernel.auth.adapter.version>
-		<kernel.khazana.version>1.1.2</kernel.khazana.version>
-		<kernel.virusscanner.clamav.version>1.1.2</kernel.virusscanner.clamav.version>
-		<kernel.idgenerator.prid.version>1.1.2</kernel.idgenerator.prid.version>
-		<kernel.idobjectvalidator.version>1.1.2</kernel.idobjectvalidator.version>
-		<kernel.templatemanager.velocity.version>1.1.2</kernel.templatemanager.velocity.version>
-		<kernel.qrcodegenerator.zxing.version>1.1.2</kernel.qrcodegenerator.zxing.version>
-		<pre.registration.core.version>1.1.2</pre.registration.core.version>
->>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/pom.xml
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -67,7 +44,6 @@
 	</dependencyManagement>
 	<dependencies>
 		<dependency>
-<<<<<<< HEAD:pre-registration/pre-registration-application-service/pom.xml
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
 			<version>0.6.0</version>
@@ -75,39 +51,6 @@
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-=======
-			<groupId>com.h2database</groupId>
-			<artifactId>h2</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.cloud</groupId>
-			<artifactId>spring-cloud-starter-config</artifactId>
-			<version>${spring-cloud-config.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.mosip.preregistration</groupId>
-			<artifactId>pre-registration-core</artifactId>
-			<version>${pre.registration.core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-core</artifactId>
-			<version>${kernel.core.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-auth-adapter</artifactId>
-			<version>${kernel.auth.adapter.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-security</artifactId>
->>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/pom.xml
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
@@ -119,11 +62,11 @@
 			<artifactId>khazana</artifactId>
 			<version>${kernel.khazana.version}</version>
 		</dependency>
-<!-- 		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-fsadapter-hdfs</artifactId>
-			<version>${kernel.fsadapter.hdfs.version}</version>
-		</dependency> -->
+		<dependency>
+			<groupId>io.mosip.preregistration</groupId>
+			<artifactId>pre-registration-core</artifactId>
+			<version>${pre.registration.core.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-virusscanner-clamav</artifactId>
@@ -131,7 +74,6 @@
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
-<<<<<<< HEAD:pre-registration/pre-registration-application-service/pom.xml
 			<artifactId>kernel-virusscanner-clamav</artifactId>
 			<version>${kernel.virusscanner.clamav.version}</version>
 		</dependency>
@@ -139,15 +81,6 @@
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-core</artifactId>
 			<version>${kernel.core.version}</version>
-=======
-			<artifactId>kernel-idgenerator-prid</artifactId>
-			<version>${kernel.idgenerator.prid.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-idobjectvalidator</artifactId>
-			<version>${kernel.idobjectvalidator.version}</version>
->>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/pom.xml
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
@@ -160,7 +93,6 @@
 			<version>${kernel.qrcodegenerator.zxing.version}</version>
 		</dependency>
 		<dependency>
-<<<<<<< HEAD:pre-registration/pre-registration-application-service/pom.xml
 			<groupId>io.mosip.commons</groupId>
 			<artifactId>khazana</artifactId>
 			<version>${kernel.khazana.version}</version>
@@ -196,18 +128,6 @@
 			<version>${apache.httpclient.version}</version>
 		</dependency>
 		<dependency>
-=======
-			<groupId>com.ibm.icu</groupId>
-			<artifactId>icu4j</artifactId>
-			<version>${icu.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.httpcomponents</groupId>
-			<artifactId>httpclient</artifactId>
-			<version>${apache.httpclient.version}</version>
-		</dependency>
-		<dependency>
->>>>>>> 1.1.2 (#99):pre-registration/pre-registration-application-service/pom.xml
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
 			<version>${org.json.version}</version>

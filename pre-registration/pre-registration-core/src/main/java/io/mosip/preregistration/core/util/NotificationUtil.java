@@ -218,7 +218,6 @@ public class NotificationUtil {
 			HttpHeaders headers =  new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<?> entity = new HttpEntity<>(headers);
-<<<<<<< HEAD
 			log.debug("sessionId", "idType", "id", entity.toString());
 			responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
@@ -226,15 +225,6 @@ public class NotificationUtil {
 			log.debug("sessionId", "idType", "id", responseEntity.toString());
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
-=======
-			System.out.println(entity);
-			responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity,
-					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
-					});
-			System.out.println(responseEntity);
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				System.out.println(responseEntity.getBody().getErrors());
->>>>>>> 1.1.2 (#99)
 				response.setErrors(responseEntity.getBody().getErrors());
 			}else {
 				response.setResponse(responseEntity.getBody().getResponse());
