@@ -602,11 +602,11 @@ public class DemographicServiceUtil {
 
 	}
 
+
 		public MainResponseDTO<DeleteBookingDTO> deleteBooking (String preRegId)  {
 		MainResponseDTO<DeleteBookingDTO> response = new MainResponseDTO<>();
 		String url = deleteAppointmentResourseUrl + '/' + "appointment"+"?preRegistrationId=" + preRegId;
 		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
-		System.out.println(url);
 		String regbuilder = UriComponentsBuilder.fromHttpUrl(url).toString();
 		try {
 			log.info("sessionId", "idType", "id", "In callBookingService method of DemographicServiceUtil"+regbuilder);
@@ -618,7 +618,6 @@ public class DemographicServiceUtil {
 			ResponseEntity<MainResponseDTO<DeleteBookingDTO>> responseEntity = getRestTemplate().exchange(url,
 					HttpMethod.DELETE, entity, new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
 					});
-			System.out.println(responseEntity);
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());

@@ -23,6 +23,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -36,6 +37,7 @@ import io.mosip.preregistration.application.exception.MandatoryFieldException;
 import io.mosip.preregistration.application.exception.RestCallException;
 import io.mosip.preregistration.application.exception.util.NotificationExceptionCatcher;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
+
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
@@ -119,6 +121,7 @@ public class NotificationService {
 	private String email;
 
 	@Value("${preregistartion.identity.name}")
+
 	private String fullName;
 
 	@Value("${preregistartion.identity.phone}")
