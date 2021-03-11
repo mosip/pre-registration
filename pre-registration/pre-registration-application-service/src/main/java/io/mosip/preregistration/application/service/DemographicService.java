@@ -32,7 +32,8 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
+
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
@@ -566,7 +567,10 @@ public class DemographicService implements DemographicServiceIntf {
 			String nameValue = getPreregistrationIdentityJson().getIdentity().getName().getValue();
 			String poaValue = getPreregistrationIdentityJson().getIdentity().getProofOfAddress().getValue();
 			String postalCodeValue = getPreregistrationIdentityJson().getIdentity().getPostalCode().getValue();
-			demographicMetadata.put(nameValue, serviceUtil.getValueFromIdentity(decryptedString, nameValue));
+			String[] nameKeys = nameValue.split(",");
+			for(int i=0; i<nameKeys.length;i++){
+				demographicMetadata.put(nameKeys[i], serviceUtil.getValueFromIdentity(decryptedString, nameKeys[i]));
+			}
 			demographicMetadata.put(postalCodeValue,
 					serviceUtil.getIdJSONValue(jsonObj.toJSONString(), postalCodeValue));
 			demographicMetadata.put(poaValue, documentJsonObject);

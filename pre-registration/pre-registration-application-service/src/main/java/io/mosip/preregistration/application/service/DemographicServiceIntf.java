@@ -2,7 +2,8 @@ package io.mosip.preregistration.application.service;
 
 import java.util.Map;
 
-import io.mosip.kernel.auth.adapter.model.AuthUserDetails;
+
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;

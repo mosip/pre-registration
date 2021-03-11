@@ -31,7 +31,7 @@ public class DataSyncConfig {
 
 	/** The id. */
 	private Map<String, String> id;
-	
+
 	/**
 	 * Sets the id.
 	 *
@@ -40,7 +40,6 @@ public class DataSyncConfig {
 	public void setId(Map<String, String> id) {
 		this.id = id;
 	}
-	
 
 	/**
 	 * Id.
@@ -51,10 +50,11 @@ public class DataSyncConfig {
 	public Map<String, String> ic() {
 		return Collections.unmodifiableMap(id);
 	}
+
 	/**
 	 * @return docket
 	 */
-	
+
 	@Value("${application.env.local:false}")
 	private Boolean localEnv;
 
@@ -68,9 +68,10 @@ public class DataSyncConfig {
 	String host = "localhost";
 	int port = -1;
 	String hostWithPort = "localhost:9094";
+
 	@Bean
 	public Docket api() {
-		
+
 		boolean swaggerBaseUrlSet = false;
 		if (!localEnv && swaggerBaseUrl != null && !swaggerBaseUrl.isEmpty()) {
 			try {
@@ -81,7 +82,7 @@ public class DataSyncConfig {
 					hostWithPort = host;
 				} else {
 					hostWithPort = host + ":" + port;
-				} 
+				}
 				swaggerBaseUrlSet = true;
 			} catch (MalformedURLException e) {
 				System.err.println("SwaggerUrlException: " + e);
@@ -91,14 +92,13 @@ public class DataSyncConfig {
 		Docket docket = new Docket(DocumentationType.SWAGGER_2).groupName("Pre-Registration-Datasync").select()
 				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.regex("(?!/(error).*).*")).build();
 
-
 		if (swaggerBaseUrlSet) {
 			docket.protocols(protocols()).host(hostWithPort);
 			System.out.println("\nSwagger Base URL: " + proto + "://" + hostWithPort + "\n");
 		}
 		return docket;
 	}
-	
+
 	private Set<String> protocols() {
 		Set<String> protocols = new HashSet<>();
 		protocols.add(proto);

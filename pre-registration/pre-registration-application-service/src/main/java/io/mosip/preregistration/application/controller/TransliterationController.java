@@ -41,7 +41,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @RestController
 @RequestMapping("/transliteration")
-@Api(tags = "Pre-Registration")
+@Api(tags = "transliteration")
 @CrossOrigin("*")
 public class TransliterationController {
 
