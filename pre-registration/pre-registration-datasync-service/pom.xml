@@ -21,12 +21,8 @@
 		<pre.registration.core.version>1.1.4</pre.registration.core.version>
 		<kernel.crypto.signature.version>1.1.4</kernel.crypto.signature.version>
     <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
-	</properties>
 
 	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-dependencies</artifactId>
 				<version>${spring.boot.version}</version>
 				<type>pom</type>
