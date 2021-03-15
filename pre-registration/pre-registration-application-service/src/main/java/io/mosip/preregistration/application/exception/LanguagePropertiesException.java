@@ -17,4 +17,5 @@ public class LanguagePropertiesException extends BaseUncheckedException {
 		this.errorCode = errorCode;
 		this.errorMessage = errorMessage;
 	}
+}
 
