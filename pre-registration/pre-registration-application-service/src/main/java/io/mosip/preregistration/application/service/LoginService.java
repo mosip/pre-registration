@@ -396,6 +396,7 @@ public class LoginService {
 				Properties prop2 = loginCommonUtil.parsePropertiesString(preregConfig);
 				loginCommonUtil.getConfigParams(prop1, configParams, reqParams);
 				loginCommonUtil.getConfigParams(prop2, configParams, reqParams);
+				loginCommonUtil.validateLanguageProperties(configParams);
 
 			} else {
 				throw new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.getCode(),

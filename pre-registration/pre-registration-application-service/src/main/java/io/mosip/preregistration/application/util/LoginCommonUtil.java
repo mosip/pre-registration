@@ -9,11 +9,14 @@ import java.security.cert.X509Certificate;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Properties;
+import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
 
@@ -44,6 +47,7 @@ import io.mosip.preregistration.application.dto.MosipUserDTO;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
+import io.mosip.preregistration.application.exception.LanguagePropertiesException;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
@@ -68,7 +72,7 @@ public class LoginCommonUtil {
 
 	@Autowired
 	private RestTemplate restTemplate;
-	
+
 	@Autowired
 	private ValidationUtil validationUtil;
 
@@ -88,6 +92,11 @@ public class LoginCommonUtil {
 
 	@Value("${sendOtp.resource.url}")
 	private String sendOtpResourceUrl;
+
+	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
+	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
+	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
+	private static final String MOSIP_MAX_LANGUAGE_COUNT = "mosip.max-languages.count";
 
 	/**
 	 * This method will return the MainResponseDTO with id and version
@@ -138,7 +147,7 @@ public class LoginCommonUtil {
 			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
 			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
 		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-			log.debug("sessionId", "idType", "id", "Kernel rest call exception "+ExceptionUtils.getStackTrace(ex));
+			log.debug("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
 		return response;
@@ -170,7 +179,6 @@ public class LoginCommonUtil {
 		throw new InvalidRequestException(LoginErrorCodes.PRG_AUTH_008.getCode(),
 				LoginErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
 	}
-
 
 	/**
 	 * This method will validate the otp and userid for null values
@@ -323,6 +331,111 @@ public class LoginCommonUtil {
 				responseToString(responseKernel.getResponse()), MosipUserDTO.class);
 
 		return userDetailsDto.getUserId();
+	}
+
+	public void validateLanguageProperties(Map<String, String> configParams) {
+		try {
+			log.info("In validateLanguageProperties method of  logincommon util");
+
+			List<Object> mandatoryLanguages = Arrays.asList(env.getProperty(MOSIP_MANDATORY_LANGUAGE).split(","))
+					.stream().distinct().collect(Collectors.toList());
+			List<Object> optionalLanguages = Arrays.asList(env.getProperty(MOSIP_OPTIONAL_LANGUAGE).split(",")).stream()
+					.distinct().collect(Collectors.toList());
+
+			int minLanguageCount = tryParsePropertiesToInteger(MOSIP_MIN_LANGUAGE_COUNT);
+			int maxLanguageCount = tryParsePropertiesToInteger(MOSIP_MAX_LANGUAGE_COUNT);
+
+			for (Object mandatoryLanguage : mandatoryLanguages) {
+				optionalLanguages.removeIf(optionalLang -> optionalLang.equals(mandatoryLanguage));
+			}
+
+			log.info("mandatory Language: {} and optional Languages: {} ", mandatoryLanguages, optionalLanguages);
+			log.info("min-Language-count: {} and max-Languages-count: {} ", minLanguageCount, maxLanguageCount);
+
+			if (Objects.nonNull(minLanguageCount)) {
+				if (minLanguageCount > (mandatoryLanguages.size() + optionalLanguages.size())) {
+					log.info(
+							"min-language-count is count {} is greater than sum of number of mandatory and optional language {} overriding to sum of mandatpry and optional language",
+							minLanguageCount, (mandatoryLanguages.size() + optionalLanguages.size()));
+					minLanguageCount = mandatoryLanguages.size() + optionalLanguages.size();
+				} else if (mandatoryLanguages.size() > 0 && minLanguageCount < mandatoryLanguages.size()) {
+					log.info(
+							"min-language-count is count {} is lesser than mandatory-languages {} overidding to mandatory-language size",
+							minLanguageCount, mandatoryLanguages.size());
+					minLanguageCount = mandatoryLanguages.size();
+				} else if (minLanguageCount > 0 && minLanguageCount > maxLanguageCount) {
+					log.info(
+							"min-language-count is count {} is greater than max-language-count {} overidding to max-language-count",
+							minLanguageCount, maxLanguageCount);
+					minLanguageCount = maxLanguageCount;
+				}
+			} else {
+				log.info("min-language-count is count null overidding to mandatory-language size", maxLanguageCount,
+						mandatoryLanguages.size());
+				minLanguageCount = mandatoryLanguages.size() > 0 ? mandatoryLanguages.size() : 1;
+			}
+
+			if (Objects.nonNull(maxLanguageCount)) {
+				if (maxLanguageCount > (mandatoryLanguages.size() + optionalLanguages.size())) {
+					log.info(
+							"max-language-count is count {} is greater than sum of number of mandatory and optional language {} overriding to sum of mandatpry and optional language",
+							maxLanguageCount, (mandatoryLanguages.size() + optionalLanguages.size()));
+					maxLanguageCount = mandatoryLanguages.size() + optionalLanguages.size();
+				} else if (maxLanguageCount > 0 && maxLanguageCount < minLanguageCount) {
+					log.info(
+							"max-language-count is count {} is lesser than min-language-count {} overidding to max-language-count to min-language-count",
+							maxLanguageCount, minLanguageCount);
+					maxLanguageCount = minLanguageCount;
+				} else if (mandatoryLanguages.size() > 0 && maxLanguageCount < mandatoryLanguages.size()) {
+					log.info(
+							"max-language-count is count {} is lesser than mandatory-languages {} overidding to mandatory-language size",
+							maxLanguageCount, mandatoryLanguages.size());
+					maxLanguageCount = mandatoryLanguages.size();
+				} else {
+					log.info("max-language-count is count null overidding to mandatory-language size", maxLanguageCount,
+							mandatoryLanguages.size());
+					maxLanguageCount = mandatoryLanguages.size() > 0 ? mandatoryLanguages.size()
+							: optionalLanguages.size();
+				}
+
+				configParams.put(MOSIP_MAX_LANGUAGE_COUNT, String.valueOf(maxLanguageCount));
+				configParams.put(MOSIP_MIN_LANGUAGE_COUNT, String.valueOf(minLanguageCount));
+				configParams.put(MOSIP_MANDATORY_LANGUAGE,
+						mandatoryLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
+				configParams.put(MOSIP_OPTIONAL_LANGUAGE,
+						optionalLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
+
+			}
+		} catch (Exception e) {
+			log.error("Exception in validateLanguageProperties of logincommonutil ", e);
+			throw new LanguagePropertiesException(LoginErrorCodes.PRG_AUTH_015.getCode(),
+					LoginErrorMessages.LANGUAGE_PROPERTIES_NOT_FOUND.getMessage());
+		}
+	}
+
+	Integer tryParsePropertiesToInteger(String prop) {
+		try {
+			Integer propCount;
+			if (prop.equals(MOSIP_MAX_LANGUAGE_COUNT)) {
+				propCount = Integer.parseInt(env.getProperty(prop, env.getProperty(MOSIP_MIN_LANGUAGE_COUNT)));
+			} else
+				propCount = Integer.parseInt(env.getProperty(prop, "1"));
+			if (propCount < 1) {
+				log.info("{} value is less than 1 {} overriding to 1", prop, propCount);
+				return 1;
+			} else
+				return propCount;
+		} catch (NumberFormatException e) {
+			if (prop.equals(MOSIP_MAX_LANGUAGE_COUNT)) {
+				log.info("{} specified is invaild overriding to default value : {}", prop,
+						env.getProperty(MOSIP_MIN_LANGUAGE_COUNT));
+				return Integer.parseInt(env.getProperty(MOSIP_MIN_LANGUAGE_COUNT));
+			} else {
+				log.info("{} specified is invaild overriding to default value : 1", prop);
+				return 1;
+			}
+
+		}
 	}
 
 	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
