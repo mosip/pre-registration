@@ -149,10 +149,10 @@ public class LoginService {
 	private String preregConfig;
 
 	public void setupLoginService() {
-		log.info("sessionId", "idType", "id", "In setupLoginService method of login service");
+		log.info("In setupLoginService method of login service");
 		globalConfig = loginCommonUtil.getConfig(globalFileName);
 		preregConfig = loginCommonUtil.getConfig(preRegFileName);
-		log.info("sessionId", "idType", "id", "Fetched the globalConfig and preRegconfig from config server");
+		log.info("Fetched the globalConfig and preRegconfig from config server");
 	}
 
 	/**
@@ -165,11 +165,11 @@ public class LoginService {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
-		log.info("sessionId", "idType", "id", "In callsendOtp method of login service  with request " + userOtpRequest);
+		log.info("In callsendOtp method of login service  with request {}" , userOtpRequest);
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
-			log.info("sessionId", "idType", "id", "response after loginCommonUtil" + response);
+			log.info("Response after loginCommonUtil {}", response);
 
 			userid = userOtpRequest.getRequest().getUserId();
 			otpChannel = loginCommonUtil.validateUserId(userid);
@@ -187,13 +187,10 @@ public class LoginService {
 
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In callsendOtp method of login service- " + ex.getResponseBodyAsString());
+			log.error("In callsendOtp method of login service- " , ex.getResponseBodyAsString());
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In callsendOtp method of login service- " + ex.getMessage());
+			log.error("In callsendOtp method of login service- ",  ex);
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} finally {
 			if (isSuccess) {
@@ -221,7 +218,7 @@ public class LoginService {
 	 * @return MainResponseDTO<AuthNResponse>
 	 */
 	public MainResponseDTO<AuthNResponse> validateWithUserIdOtp(MainRequestDTO<User> userIdOtpRequest) {
-		log.info("sessionId", "idType", "id", "In calluserIdOtp method of login service ");
+		log.info("In calluserIdOtp method of login service ");
 		MainResponseDTO<AuthNResponse> response = null;
 		response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userIdOtpRequest);
 		String userid = null;
@@ -239,8 +236,6 @@ public class LoginService {
 				authresponse.setStatus(PreRegLoginConstant.SUCCESS);
 
 			} else {
-// 				authresponse.setMessage(PreRegLoginConstant.VALIDATION_UNSUCCESS);
-// 				authresponse.setStatus(PreRegLoginConstant.UNSUCCESS);
 				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),PreRegLoginConstant.VALIDATION_UNSUCCESS,
 						response);
 
@@ -248,12 +243,10 @@ public class LoginService {
 			response.setResponse(authresponse);
 			isSuccess = true;
 		} catch (PreRegLoginException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In calluserIdOtp method of login service- " + ex.getMessage());
+			log.error("In calluserIdOtp method of login service- " , ex);
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} catch (RuntimeException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In calluserIdOtp method of login service- " + ex.getMessage());
+			log.error("In calluserIdOtp method of login service- " ,ex);
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} finally {
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
@@ -284,7 +277,7 @@ public class LoginService {
 	 * @return AuthNResponse
 	 */
 	public MainResponseDTO<String> invalidateToken(String token) {
-		log.info("sessionId", "idType", "id", "In calluserIdOtp method of login service ");
+		log.info("In calluserIdOtp method of login service ");
 		MainResponseDTO<String> response = new MainResponseDTO<>();
 		response.setId(invalidateTokenId);
 		response.setVersion(version);
@@ -294,21 +287,19 @@ public class LoginService {
 			byte[] secret = TextCodec.BASE64.decode(jwtSecret);
 			String jwtToken = token.replace("Authorization=", "").split(";")[0];
 
-			log.info("sessionId", "idType", "id", "token to be reset" + jwtToken);
+			log.info("Token to be reset {}", jwtToken);
 			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
 			userId = clamis.getBody().get("userId").toString();
 			response.setResponse("Loggedout successfully");
 			isSuccess = true;
 		} catch (JwtException e) {
-			log.error("sessionId", "idType", "id", "failed logout:" + e);
+			log.error("Failed logout:", e);
 			MainResponseDTO<String> res = new MainResponseDTO<String>();
 			res.setResponse("Failed to invalidate the auth token");
 			new LoginExceptionCatcher().handle(e, null, res);
 		} catch (Exception ex) {
 			ex.printStackTrace();
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In call invalidateToken method of login service- " + ex.getMessage());
+			log.error("In call invalidateToken method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "invalidateToken", response);
 		} finally {
 			System.out.println(response);
@@ -364,12 +355,9 @@ public class LoginService {
 			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
 			auditLogUtil.saveAuditDetails(auditRequestDto, token);
 		} catch (LoginServiceException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In setAuditvalue of login service:" + StringUtils.join(ex.getValidationErrorList(), ","));
+			log.error("In setAuditvalue of login service:" , StringUtils.join(ex.getValidationErrorList(), ","));
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In setAuditvalue of login service:" + ex.getMessage());
+			log.error("In setAuditvalue of login service:" ,ex);
 		}
 	}
 
@@ -379,7 +367,7 @@ public class LoginService {
 	 * @return response
 	 */
 	public MainResponseDTO<Map<String, String>> getConfig() {
-		log.info("sessionId", "idType", "id", "In login service of getConfig ");
+		log.info("In login service of getConfig ");
 		MainResponseDTO<Map<String, String>> res = new MainResponseDTO<>();
 		res.setId(configId);
 		res.setVersion(version);
@@ -404,8 +392,7 @@ public class LoginService {
 			}
 
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In login service of getConfig " + ex.getMessage());
+			log.error("In login service of getConfig ", ex);
 			new LoginExceptionCatcher().handle(ex, "config", res);
 		}
 		res.setResponse(configParams);
@@ -419,7 +406,7 @@ public class LoginService {
 	 * @return response
 	 */
 	public MainResponseDTO<String> refreshConfig() {
-		log.info("sessionId", "idType", "id", "In login service of refreshConfig ");
+		log.info("In login service of refreshConfig ");
 		MainResponseDTO<String> res = new MainResponseDTO<>();
 		res.setId(configId);
 		res.setVersion(version);
@@ -428,8 +415,7 @@ public class LoginService {
 			globalConfig = loginCommonUtil.getConfig(globalFileName);
 			preregConfig = loginCommonUtil.getConfig(preRegFileName);
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In login service of refreshConfig " + ex.getMessage());
+			log.error("In login service of refreshConfig " , ex);
 			new LoginExceptionCatcher().handle(ex, "refreshConfig", res);
 		}
 		res.setResponse("success");
@@ -438,7 +424,7 @@ public class LoginService {
 	}
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
-		log.info("sessionId", "idType", "id", "In generateJWTToken method of loginservice:" + userId + issuerUrl);
+		log.info("In generateJWTToken method of loginservice:{} {}" ,userId , issuerUrl);
 		Map<String, Object> claims = new HashMap<String, Object>();
 		claims.put("userId", userId);
 		claims.put("scope", PreRegLoginConstant.JWT_SCOPE);
@@ -452,13 +438,13 @@ public class LoginService {
 					.setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt(jwtTokenExpiryTime))))
 					.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
 					.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
-			log.info("sessionId", "idType", "id", "Auth token generarted:" + jws);
+			log.info("Auth token generarted");
 		} else {
 			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
 					.setSubject(userId).setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt("0"))))
 					.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
 					.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
-			log.info("sessionId", "idType", "id", "Auth token generarted:" + jws);
+			log.info("Auth token generarted:");
 		}
 
 		return jws;
@@ -478,7 +464,7 @@ public class LoginService {
 			userId = clamis.getBody().get("userId").toString();
 			issuer = clamis.getBody().getIssuer();
 		} catch (JwtException e) {
-			log.error("sessionId", "idType", "id", "failed to generate logout token:" + e);
+			log.error("Failed to generate logout token:", e);
 			MainResponseDTO<String> res = new MainResponseDTO<String>();
 			res.setResponse("Failed to generate logout token");
 			new LoginExceptionCatcher().handle(e, null, res);

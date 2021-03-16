@@ -105,7 +105,7 @@ public class LoginCommonUtil {
 	 * @return MainResponseDTO<?>
 	 */
 	public MainResponseDTO<?> getMainResponseDto(MainRequestDTO<?> mainRequestDto) {
-		log.info("sessionId", "idType", "id", "In getMainResponseDTO method of Login Common Util");
+		log.info("In getMainResponseDTO method of Login Common Util");
 		MainResponseDTO<?> response = new MainResponseDTO<>();
 		response.setId(mainRequestDto.getId());
 		response.setVersion(mainRequestDto.getVersion());
@@ -132,7 +132,7 @@ public class LoginCommonUtil {
 			Map<String, String> headersMap, Class<?> responseClass) {
 		ResponseEntity<?> response = null;
 		try {
-			log.info("sessionId", "idType", "id", "In getResponseEntity method of Login Common Util");
+			log.info("In getResponseEntity method of Login Common Util");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(mediaType);
 			HttpEntity<?> request = null;
@@ -144,10 +144,10 @@ public class LoginCommonUtil {
 			} else {
 				request = new HttpEntity<>(headers);
 			}
-			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
+			log.info("In call to kernel rest service :{}", url);
 			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
 		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-			log.debug("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
+			log.debug("Kernel rest call exception ", ex);
 			throw new RestClientException("rest call failed");
 		}
 		return response;
@@ -162,7 +162,7 @@ public class LoginCommonUtil {
 	 * @return List<String>
 	 */
 	public List<String> validateUserId(String userId) {
-		log.info("sessionId", "idType", "id", "In validateUserIdandLangCode method of Login Common Util");
+		log.info("In validateUserIdandLangCode method of Login Common Util");
 		List<String> list = new ArrayList<>();
 		if (userId == null || userId.isEmpty()) {
 			throw new InvalidRequestException(LoginErrorCodes.PRG_AUTH_008.getCode(),
@@ -186,7 +186,7 @@ public class LoginCommonUtil {
 	 * @param user
 	 */
 	public void validateOtpAndUserid(User user) {
-		log.info("sessionId", "idType", "id", "In validateOtpAndUserid method of Login Common Util");
+		log.info("In validateOtpAndUserid method of Login Common Util");
 		if (user.getUserId() == null) {
 			throw new InvalidRequestException(LoginErrorCodes.PRG_AUTH_008.getCode(),
 					LoginErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
@@ -276,7 +276,7 @@ public class LoginCommonUtil {
 
 		uriBuilder.append(configServerUri + "/").append(configAppName + "/").append(configProfile + "/")
 				.append(configLabel + "/").append(filname);
-		log.info("sessionId", "idType", "id", " URL in login service util of configRestCall" + uriBuilder);
+		log.info(" URL in login service util of configRestCall {} ", uriBuilder);
 		return restTemplate.getForObject(uriBuilder.toString(), String.class);
 
 	}
@@ -304,7 +304,7 @@ public class LoginCommonUtil {
 	 * @return
 	 */
 	public Map<String, String> createRequestMap(MainRequestDTO<?> requestDto) {
-		log.info("sessionId", "idType", "id", "In prepareRequestMap method of Login Service Util");
+		log.info("In prepareRequestMap method of Login Service Util");
 		Map<String, String> requestMap = new HashMap<>();
 		requestMap.put("id", requestDto.getId());
 		requestMap.put("version", requestDto.getVersion());
@@ -324,7 +324,7 @@ public class LoginCommonUtil {
 				MediaType.APPLICATION_JSON, null, authHeader, String.class);
 		ResponseWrapper<?> responseKernel = requestBodyExchange(response.getBody());
 		if (!(responseKernel.getErrors() == null)) {
-			log.error("sessionId", "idType", "id", "Invalid Token");
+			log.error("Invalid Token");
 			return null;
 		}
 		MosipUserDTO userDetailsDto = (MosipUserDTO) requestBodyExchangeObject(
