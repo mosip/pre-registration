@@ -160,7 +160,7 @@ public class NotificationService {
 	 * @return the response dto.
 	 */
 	public MainResponseDTO<NotificationResponseDTO> sendNotification(String jsonString, String langCode,
-			MultipartFile file) {
+			MultipartFile file, boolean isLatest) {
 
 		response = new MainResponseDTO<>();
 
@@ -173,12 +173,13 @@ public class NotificationService {
 		String resp = null;
 		boolean isSuccess = false;
 		try {
-			MainRequestDTO<NotificationDTO> notificationReqDTO = serviceUtil.createNotificationDetails(jsonString);
+			MainRequestDTO<NotificationDTO> notificationReqDTO = serviceUtil.createNotificationDetails(jsonString,
+					langCode, isLatest);
 			response.setId(notificationReqDTO.getId());
 			response.setVersion(notificationReqDTO.getVersion());
 			NotificationDTO notificationDto = notificationReqDTO.getRequest();
 			if (validationUtil.requestValidator(validationUtil.prepareRequestMap(notificationReqDTO),
-					requiredRequestMap) && validationUtil.langvalidation(langCode)) {
+					requiredRequestMap)) {
 				MainResponseDTO<DemographicResponseDTO> demoDetail = notificationDtoValidation(notificationDto);
 				if (notificationDto.isAdditionalRecipient()) {
 					log.info("sessionId", "idType", "id",
@@ -245,6 +246,16 @@ public class NotificationService {
 		return response;
 	}
 
+	/**
+	 * This method is calling demographic getApplication service to get the user
+	 * emailId and mobile number
+	 * 
+	 * @param notificationDto
+	 * @param langCode
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
 	private String getDemographicDetailsWithPreId(MainResponseDTO<DemographicResponseDTO> responseEntity,
 			NotificationDTO notificationDto, String langCode, MultipartFile file) throws IOException {
 		try {

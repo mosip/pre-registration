@@ -21,7 +21,6 @@ import java.util.Optional;
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -43,7 +42,6 @@ import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
-import io.mosip.preregistration.application.dto.NameLanguagePair;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.PreRegMailRequestDto;
 import io.mosip.preregistration.application.dto.PreRegSmsRequestDto;
@@ -110,7 +108,8 @@ public class NotificationServiceUtil {
 	 */
 
 	@SuppressWarnings("unchecked")
-	public MainRequestDTO<NotificationDTO> createNotificationDetails(String jsonString)
+	public MainRequestDTO<NotificationDTO> createNotificationDetails(String jsonString, String langauageCode,
+			boolean isLatest)
 			throws JsonParseException, JsonMappingException, io.mosip.kernel.core.exception.IOException, JSONException,
 			ParseException, com.fasterxml.jackson.core.JsonParseException,
 			com.fasterxml.jackson.databind.JsonMappingException, IOException {
@@ -119,18 +118,30 @@ public class NotificationServiceUtil {
 		MainRequestDTO<NotificationDTO> notificationReqDto = new MainRequestDTO<>();
 		JSONObject notificationData = new JSONObject(jsonString);
 		JSONObject notificationDtoData = (JSONObject) notificationData.get("request");
-		HashMap<String, String> result = objectMapper.readValue(notificationDtoData.toString(), HashMap.class);
-		List<KeyValuePairDto> langaueNamePairs = new ArrayList<KeyValuePairDto>();
-		KeyValuePairDto langaueNamePair = null;
 		NotificationDTO notificationDto = null;
-		for (Map.Entry<String, String> set : result.entrySet()) {
-			langaueNamePair = new KeyValuePairDto();
-			notificationDto = objectMapper.convertValue(set.getValue(), NotificationDTO.class);
-			langaueNamePair.setKey(set.getKey());
+		List<KeyValuePairDto> langaueNamePairs = new ArrayList<KeyValuePairDto>();
+		if (isLatest) {
+			HashMap<String, String> result = objectMapper.readValue(notificationDtoData.toString(), HashMap.class);
+			KeyValuePairDto langaueNamePair = null;
+			for (Map.Entry<String, String> set : result.entrySet()) {
+				langaueNamePair = new KeyValuePairDto();
+				notificationDto = objectMapper.convertValue(set.getValue(), NotificationDTO.class);
+				langaueNamePair.setKey(set.getKey());
+				langaueNamePair.setValue(notificationDto.getName());
+				langaueNamePairs.add(langaueNamePair);
+			}
+			notificationDto.setFullName(langaueNamePairs);
+		}
+		if (!isLatest) {
+			notificationDto = (NotificationDTO) JsonUtils.jsonStringToJavaObject(NotificationDTO.class,
+					notificationDtoData.toString());
+			KeyValuePairDto langaueNamePair = new KeyValuePairDto();
+			langaueNamePair.setKey(langauageCode);
 			langaueNamePair.setValue(notificationDto.getName());
 			langaueNamePairs.add(langaueNamePair);
+			notificationDto.setFullName(langaueNamePairs);
 		}
-		notificationDto.setFullName(langaueNamePairs);
+
 		notificationReqDto.setId(notificationData.get("id").toString());
 		notificationReqDto.setVersion(notificationData.get("version").toString());
 		if (!(notificationData.get("requesttime") == null
@@ -142,37 +153,6 @@ public class NotificationServiceUtil {
 		}
 		notificationReqDto.setRequest(notificationDto);
 		return notificationReqDto;
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public MainRequestDTO<List<NotificationDTO>> createNotificationsDetails(String jsonString)
-			throws JsonParseException, JsonMappingException, io.mosip.kernel.core.exception.IOException, JSONException,
-			ParseException, com.fasterxml.jackson.core.JsonParseException,
-			com.fasterxml.jackson.databind.JsonMappingException, IOException {
-		MainRequestDTO<List<NotificationDTO>> notificationReqDto = new MainRequestDTO<>();
-		List<NotificationDTO> notifications = new ArrayList<NotificationDTO>();		
-		JSONObject notificationData = new JSONObject(jsonString);
-		JSONObject notificationDtoData = (JSONObject) notificationData.get("request");
-		HashMap<String, String> result = objectMapper.readValue(notificationDtoData.toString(), HashMap.class);
-		for (Map.Entry<String, String> set : result.entrySet()) {
-			NotificationDTO notificationDto = objectMapper.convertValue(set.getValue(), NotificationDTO.class);
-			notificationDto.setLanguageCode(set.getKey());
-			notifications.add(notificationDto);
-		}
-		notificationReqDto.setId(notificationData.get("id").toString());
-		notificationReqDto.setVersion(notificationData.get("version").toString());
-		if (!(notificationData.get("requesttime") == null
-				|| notificationData.get("requesttime").toString().isEmpty())) {
-			notificationReqDto.setRequesttime(
-					new SimpleDateFormat(utcDateTimePattern).parse(notificationData.get("requesttime").toString()));
-		} else {
-			notificationReqDto.setRequesttime(null);
-		}
-		notificationReqDto.setRequest(notifications);
-
-		return notificationReqDto;
-
 	}
 
 	/**
