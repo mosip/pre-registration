@@ -74,6 +74,11 @@ EXPOSE 9090
 CMD if [ "$is_glowroot_env" = "present" ]; then \
     #wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar "${loader_path_env}"/kernel-ref-idobjectvalidator.jar ; \
      wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
+	 wget -q --show-progress 
+	 "${artifactory_url_env}"/artifactory/libs-release-local/icu4j/icu4j.jar
+	 "${loader_path_env}"/icu4j.jar ; \
+	 wget -q --show-progress 
+	 "${artifactory_url_env}"/artifactory/libs-release-local/icu4j/kernel-transliteration-icu4j.jar "${loader_path_env}"/kernel-transliteration-icu4j.jar ; \
     wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/testing/glowroot.zip ; \
         unzip glowroot.zip ; \
     rm -rf glowroot.zip ; \
