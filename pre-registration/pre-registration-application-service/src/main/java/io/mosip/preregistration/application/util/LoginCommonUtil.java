@@ -392,10 +392,9 @@ public class LoginCommonUtil {
 							maxLanguageCount, mandatoryLanguages.size());
 					maxLanguageCount = mandatoryLanguages.size();
 				} else {
-					log.info("max-language-count is count null overidding to mandatory-language size", maxLanguageCount,
+					log.info("max-language-count is count null overidding to min-language count", maxLanguageCount,
 							mandatoryLanguages.size());
-					maxLanguageCount = mandatoryLanguages.size() > 0 ? mandatoryLanguages.size()
-							: optionalLanguages.size();
+					maxLanguageCount = minLanguageCount;
 				}
 
 				configParams.put(MOSIP_MAX_LANGUAGE_COUNT, String.valueOf(maxLanguageCount));
