@@ -23,6 +23,7 @@ import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.core.code.RequestCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
+import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
@@ -58,7 +59,7 @@ public class NotificationUtil {
 
 	@Value("${cancel.appoinment.template}")
 	private String cancelAppoinment;
-	
+
 	@Value("${booking.resource.url}")
 	private String getAppointmentResourseUrl;
 
@@ -72,17 +73,16 @@ public class NotificationUtil {
 	private String dateTimeFormat;
 
 	public MainResponseDTO<NotificationResponseDTO> notify(String notificationType, NotificationDTO acknowledgementDTO,
-			String langCode, MultipartFile file) throws IOException {
+			MultipartFile file) throws IOException {
 
 		log.info("sessionId", "idType", "id", "In notify method of NotificationUtil service:" + notificationType);
 
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		if (notificationType.equals(RequestCodes.SMS)) {
-			response = smsNotification(acknowledgementDTO, langCode);
+			response = smsNotification(acknowledgementDTO);
 		}
 		if (notificationType.equals(RequestCodes.EMAIL)) {
-		        response = emailNotification(acknowledgementDTO, langCode, null);
-			//response = emailNotification(acknowledgementDTO, langCode, file);
+			response = emailNotification(acknowledgementDTO, null);
 		}
 
 		return response;
@@ -92,13 +92,12 @@ public class NotificationUtil {
 	 * This method will send the email notification to the user
 	 * 
 	 * @param acknowledgementDTO
-	 * @param langCode
 	 * @param file
 	 * @return
 	 * @throws IOException
 	 */
 	public MainResponseDTO<NotificationResponseDTO> emailNotification(NotificationDTO acknowledgementDTO,
-			String langCode, MultipartFile file) throws IOException {
+			MultipartFile file) throws IOException {
 		log.info("sessionId", "idType", "id", "In emailNotification method of NotificationUtil service");
 		HttpEntity<byte[]> doc = null;
 		String fileText = null;
@@ -112,22 +111,28 @@ public class NotificationUtil {
 
 		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
-		String merseTemplate = null;
-		if (acknowledgementDTO.getIsBatch()) {
-			fileText = templateUtil.getTemplate(langCode, cancelAppoinment);
-		} else {
+		String mergeTemplate = null;
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			if (acknowledgementDTO.getIsBatch()) {
+				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
+			} else {
+				fileText = templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgement);
+			}
 
-			fileText = templateUtil.getTemplate(langCode, emailAcknowledgement);
-
+			String languageWiseTemplate = templateUtil.templateMerge(fileText, acknowledgementDTO);
+			if (mergeTemplate == null) {
+				mergeTemplate = languageWiseTemplate;
+			} else {
+				mergeTemplate += System.lineSeparator() + languageWiseTemplate;
+			}
 		}
 
-		merseTemplate = templateUtil.templateMerge(fileText, acknowledgementDTO);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 		MultiValueMap<Object, Object> emailMap = new LinkedMultiValueMap<>();
 		emailMap.add("attachments", doc);
-		emailMap.add("mailContent", merseTemplate);
-		emailMap.add("mailSubject", getEmailSubject(acknowledgementDTO, langCode));
+		emailMap.add("mailContent", mergeTemplate);
+		emailMap.add("mailSubject", getEmailSubject(acknowledgementDTO));
 		emailMap.add("mailTo", acknowledgementDTO.getEmailID());
 		HttpEntity<MultiValueMap<Object, Object>> httpEntity = new HttpEntity<>(emailMap, headers);
 		log.info("sessionId", "idType", "id",
@@ -153,13 +158,13 @@ public class NotificationUtil {
 	 * This method will give the email subject
 	 * 
 	 * @param acknowledgementDTO
-	 * @param langCode
 	 * @return
 	 * @throws IOException
 	 */
-	public String getEmailSubject(NotificationDTO acknowledgementDTO, String langCode) throws IOException {
+	public String getEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
 		log.info("sessionId", "idType", "id", "In getEmailSubject method of NotificationUtil service");
-		return templateUtil.templateMerge(templateUtil.getTemplate(langCode, emailAcknowledgementSubject),
+		return templateUtil.templateMerge(
+				templateUtil.getTemplate(acknowledgementDTO.getFullName().get(0).getKey(), emailAcknowledgementSubject),
 				acknowledgementDTO);
 	}
 
@@ -167,23 +172,31 @@ public class NotificationUtil {
 	 * This method will send the sms notification to the user
 	 * 
 	 * @param acknowledgementDTO
-	 * @param langCode
 	 * @return
 	 * @throws IOException
 	 */
-	public MainResponseDTO<NotificationResponseDTO> smsNotification(NotificationDTO acknowledgementDTO, String langCode)
+	public MainResponseDTO<NotificationResponseDTO> smsNotification(NotificationDTO acknowledgementDTO)
 			throws IOException {
 		log.info("sessionId", "idType", "id", "In smsNotification method of NotificationUtil service");
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
 		String mergeTemplate = null;
-		if (acknowledgementDTO.getIsBatch()) {
-			mergeTemplate = templateUtil.templateMerge(templateUtil.getTemplate(langCode, cancelAppoinment),
-					acknowledgementDTO);
-		} else {
-			mergeTemplate = templateUtil.templateMerge(templateUtil.getTemplate(langCode, smsAcknowledgement),
-					acknowledgementDTO);
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			String languageWiseTemplate = null;
+			if (acknowledgementDTO.getIsBatch()) {
+				languageWiseTemplate = templateUtil.templateMerge(
+						templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment), acknowledgementDTO);
+			} else {
+				languageWiseTemplate = templateUtil.templateMerge(
+						templateUtil.getTemplate(keyValuePair.getKey(), smsAcknowledgement), acknowledgementDTO);
+			}
+			if (mergeTemplate == null) {
+				mergeTemplate = languageWiseTemplate;
+			} else {
+				mergeTemplate += System.lineSeparator() + languageWiseTemplate;
+			}
 		}
+
 		SMSRequestDTO smsRequestDTO = new SMSRequestDTO();
 		smsRequestDTO.setMessage(mergeTemplate);
 		smsRequestDTO.setNumber(acknowledgementDTO.getMobNum());
@@ -204,9 +217,7 @@ public class NotificationUtil {
 		notifierResponse.setStatus(resp.getBody().getResponse().getStatus());
 		response.setResponse(notifierResponse);
 		response.setResponsetime(getCurrentResponseTime());
-
 		return response;
-
 	}
 
 	public MainResponseDTO<BookingRegistrationDTO> getAppointmentDetails(String preRegId) {
@@ -215,7 +226,7 @@ public class NotificationUtil {
 		String url = getAppointmentResourseUrl + "/appointment/" + preRegId;
 		try {
 			log.info("sessionId", "idType", "id", "In callBookingService method of DemographicServiceUtil" + url);
-			HttpHeaders headers =  new HttpHeaders();
+			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<?> entity = new HttpEntity<>(headers);
 			log.debug("sessionId", "idType", "id", entity.toString());
@@ -226,7 +237,7 @@ public class NotificationUtil {
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
 				response.setErrors(responseEntity.getBody().getErrors());
-			}else {
+			} else {
 				response.setResponse(responseEntity.getBody().getResponse());
 			}
 			log.info("sessionId", "idType", "id", "In call to booking rest service :" + url);
@@ -236,7 +247,7 @@ public class NotificationUtil {
 		}
 		return response;
 	}
-	
+
 	public String getCurrentResponseTime() {
 		log.info("sessionId", "idType", "id", "In getCurrentResponseTime method of NotificationUtil service");
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);

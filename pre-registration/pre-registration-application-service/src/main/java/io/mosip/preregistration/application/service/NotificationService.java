@@ -43,6 +43,7 @@ import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
@@ -153,15 +154,13 @@ public class NotificationService {
 	/**
 	 * Method to send notification.
 	 * 
-	 * @param jsonString
-	 *            the json string.
-	 * @param langCode
-	 *            the language code.
-	 * @param file
-	 *            the file to send.
+	 * @param jsonString the json string.
+	 * @param langCode   the language code.
+	 * @param file       the file to send.
 	 * @return the response dto.
 	 */
-	public MainResponseDTO<NotificationResponseDTO> sendNotification(String jsonString, String langCode, MultipartFile file) {
+	public MainResponseDTO<NotificationResponseDTO> sendNotification(String jsonString, String langCode,
+			MultipartFile file, boolean isLatest) {
 
 		response = new MainResponseDTO<>();
 
@@ -174,12 +173,13 @@ public class NotificationService {
 		String resp = null;
 		boolean isSuccess = false;
 		try {
-			MainRequestDTO<NotificationDTO> notificationReqDTO = serviceUtil.createNotificationDetails(jsonString);
+			MainRequestDTO<NotificationDTO> notificationReqDTO = serviceUtil.createNotificationDetails(jsonString,
+					langCode, isLatest);
 			response.setId(notificationReqDTO.getId());
 			response.setVersion(notificationReqDTO.getVersion());
 			NotificationDTO notificationDto = notificationReqDTO.getRequest();
 			if (validationUtil.requestValidator(validationUtil.prepareRequestMap(notificationReqDTO),
-					requiredRequestMap) && validationUtil.langvalidation(langCode)) {
+					requiredRequestMap)) {
 				MainResponseDTO<DemographicResponseDTO> demoDetail = notificationDtoValidation(notificationDto);
 				if (notificationDto.isAdditionalRecipient()) {
 					log.info("sessionId", "idType", "id",
@@ -187,7 +187,7 @@ public class NotificationService {
 									+ notificationDto.isAdditionalRecipient());
 					if (notificationDto.getMobNum() != null && !notificationDto.getMobNum().isEmpty()) {
 						if (validationUtil.phoneValidator(notificationDto.getMobNum())) {
-							notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, langCode, file);
+							notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
 						} else {
 							throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_007.getCode(),
 									NotificationErrorMessages.PHONE_VALIDATION_EXCEPTION.getMessage(), response);
@@ -195,7 +195,7 @@ public class NotificationService {
 					}
 					if (notificationDto.getEmailID() != null && !notificationDto.getEmailID().isEmpty()) {
 						if (validationUtil.emailValidator(notificationDto.getEmailID())) {
-							notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, langCode, file);
+							notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
 						} else {
 							throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_006.getCode(),
 									NotificationErrorMessages.EMAIL_VALIDATION_EXCEPTION.getMessage(), response);
@@ -207,7 +207,8 @@ public class NotificationService {
 							&& (notificationDto.getMobNum() == null || notificationDto.getMobNum().isEmpty()
 									|| !validationUtil.phoneValidator(notificationDto.getMobNum()))) {
 						throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_001.getCode(),
-								NotificationErrorMessages.MOBILE_NUMBER_OR_EMAIL_ADDRESS_NOT_FILLED.getMessage(), response);
+								NotificationErrorMessages.MOBILE_NUMBER_OR_EMAIL_ADDRESS_NOT_FILLED.getMessage(),
+								response);
 					}
 					notificationResponse.setMessage(NotificationRequestCodes.MESSAGE.getCode());
 				} else {
@@ -264,17 +265,28 @@ public class NotificationService {
 
 			responseNode = responseNode.get(identity);
 
-			notificationDto.setName(responseNode.get(fullName).get(0).get("value").asText());
+			JsonNode arrayNode = responseNode.get("fullName");
+			List<KeyValuePairDto> langaueNamePairs = new ArrayList<KeyValuePairDto>();
+			KeyValuePairDto langaueNamePair = null;
+			if (arrayNode.isArray()) {
+				for (JsonNode jsonNode : arrayNode) {
+					langaueNamePair = new KeyValuePairDto();
+					langaueNamePair.setKey(jsonNode.get("language").asText().trim());
+					langaueNamePair.setValue(jsonNode.get("value").asText().trim());
+					langaueNamePairs.add(langaueNamePair);
+				}
+			}
 
+			notificationDto.setFullName(langaueNamePairs);
 			if (responseNode.get(email) != null) {
 				String emailId = responseNode.get(email).asText();
 				notificationDto.setEmailID(emailId);
-				notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, langCode, file);
+				notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
 			}
 			if (responseNode.get(phone) != null) {
 				String phoneNumber = responseNode.get(phone).asText();
 				notificationDto.setMobNum(phoneNumber);
-				notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, langCode, file);
+				notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
 
 			}
 			if (responseNode.get(email) == null && responseNode.get(phone) == null) {
@@ -288,9 +300,7 @@ public class NotificationService {
 					"In getDemographicDetailsWithPreId method of notification service - " + ex.getMessage());
 			throw new RestCallException(NotificationErrorCodes.PRG_PAM_ACK_011.getCode(),
 					NotificationErrorMessages.DEMOGRAPHIC_CALL_FAILED.getMessage());
-
 		}
-
 	}
 
 	/**
@@ -350,7 +360,6 @@ public class NotificationService {
 				throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_002.getCode(),
 						NotificationErrorMessages.INCORRECT_MANDATORY_FIELDS.getMessage(), response);
 			}
-
 		}
 		return demoDetail;
 	}
@@ -360,44 +369,48 @@ public class NotificationService {
 	 * demographic details
 	 * 
 	 * @param notificationDto
-	 * @return DemographicResponseDTO 
+	 * @return DemographicResponseDTO
 	 * @throws ParseException
 	 */
 
 	public MainResponseDTO<DemographicResponseDTO> getDemographicDetails(NotificationDTO notificationDto)
 			throws IOException, ParseException {
-			MainResponseDTO<DemographicResponseDTO> responseEntity = demographicServiceIntf
-					.getDemographicData(notificationDto.getPreRegistrationId());
-			ObjectMapper mapper = new ObjectMapper();
+		MainResponseDTO<DemographicResponseDTO> responseEntity = demographicServiceIntf
+				.getDemographicData(notificationDto.getPreRegistrationId());
+		ObjectMapper mapper = new ObjectMapper();
 
-			if (responseEntity.getErrors() != null) {
-				throw new DemographicDetailsNotFoundException(responseEntity.getErrors(), response);
+		if (responseEntity.getErrors() != null) {
+			throw new DemographicDetailsNotFoundException(responseEntity.getErrors(), response);
+		}
+		JsonNode responseNode = mapper.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
+		responseNode = responseNode.get(identity);
+		if (!notificationDto.isAdditionalRecipient()) {
+			if (notificationDto.getMobNum() != null || notificationDto.getEmailID() != null) {
+				log.error("sessionId", "idType", "id",
+						"Not considering the requested mobilenumber/email since additional recipient is false ");
 			}
-			JsonNode responseNode = mapper
-					.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
-			responseNode = responseNode.get(identity);
-			if (!notificationDto.isAdditionalRecipient()) {
-				if (notificationDto.getMobNum() != null || notificationDto.getEmailID() != null) {
-					log.error("sessionId", "idType", "id",
-							"Not considering the requested mobilenumber/email since additional recipient is false ");
-				}
-			}
-			if (!notificationDto.getIsBatch()) {
-				String name = "";
-				if(nameFormat != null) {
-					String[] nameKeys = nameFormat.split(",");
-					ArrayList<String> nameVals = new ArrayList<String>();
-					for(int i=0; i<nameKeys.length;i++){
-						nameVals.add(responseNode.get(nameKeys[i]).get(0).get("value").asText().trim());
+		}
+		boolean isNameMatchFound = false;
+		if (!notificationDto.getIsBatch()) {
+			if (nameFormat != null) {
+				String[] nameKeys = nameFormat.split(",");
+				for (int i = 0; i < nameKeys.length; i++) {
+					JsonNode arrayNode = responseNode.get(nameKeys[i]);
+					for (JsonNode jsonNode : arrayNode) {
+						if (notificationDto.getName().equals(jsonNode.get("value").asText().trim())) {
+							isNameMatchFound = true;
+							break;
+						}
 					}
-					name = String.join(" ", nameVals);
 				}
-				if(!notificationDto.getName().equals(name)){
-					throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_008.getCode(),
-							NotificationErrorMessages.FULL_NAME_VALIDATION_EXCEPTION.getMessage(), response);
-				}
+
 			}
-			return responseEntity;
+			if (!isNameMatchFound) {
+				throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_008.getCode(),
+						NotificationErrorMessages.FULL_NAME_VALIDATION_EXCEPTION.getMessage(), response);
+			}
+		}
+		return responseEntity;
 	}
 
 	/**
@@ -411,11 +424,11 @@ public class NotificationService {
 		log.info("sessionId", "idType", "id", "In getAppointmentDetailsRestService method of notification service ");
 
 		BookingRegistrationDTO bookingRegistrationDTO = null;
-			MainResponseDTO<BookingRegistrationDTO> respEntity = notificationUtil.getAppointmentDetails(preId);
-			if (respEntity.getErrors() != null) {
-				throw new BookingDetailsNotFoundException(respEntity.getErrors(), response);
-			}
-			bookingRegistrationDTO = respEntity.getResponse();
+		MainResponseDTO<BookingRegistrationDTO> respEntity = notificationUtil.getAppointmentDetails(preId);
+		if (respEntity.getErrors() != null) {
+			throw new BookingDetailsNotFoundException(respEntity.getErrors(), response);
+		}
+		bookingRegistrationDTO = respEntity.getResponse();
 		return bookingRegistrationDTO;
 	}
 }

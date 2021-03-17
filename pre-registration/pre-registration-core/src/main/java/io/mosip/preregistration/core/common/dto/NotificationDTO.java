@@ -1,11 +1,8 @@
 package io.mosip.preregistration.core.common.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
-import org.json.simple.JSONObject;
-
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -58,6 +55,7 @@ public class NotificationDTO implements Serializable {
 	 */
 	private Boolean isBatch;
 	
-  
-
+	private String languageCode;
+	
+	private List<KeyValuePairDto> fullName;
 }
