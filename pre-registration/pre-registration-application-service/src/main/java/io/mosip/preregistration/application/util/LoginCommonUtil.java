@@ -333,7 +333,7 @@ public class LoginCommonUtil {
 		return userDetailsDto.getUserId();
 	}
 
-	public void validateLanguageProperties(Map<String, String> configParams) {
+		public void validateLanguageProperties(Map<String, String> configParams) {
 		try {
 			log.info("In validateLanguageProperties method of  logincommon util");
 
@@ -370,11 +370,11 @@ public class LoginCommonUtil {
 					minLanguageCount = maxLanguageCount;
 				}
 			} else {
-				log.info("min-language-count is count null overidding to mandatory-language size {} {}", minLanguageCount,
-						mandatoryLanguages.size());
+				log.info("min-language-count is count null overidding to mandatory-language size {} {}",
+						minLanguageCount, mandatoryLanguages.size());
 				minLanguageCount = mandatoryLanguages.size() > 0 ? mandatoryLanguages.size() : 1;
 			}
-
+			System.out.println("Max language count" + maxLanguageCount);
 			if (Objects.nonNull(maxLanguageCount)) {
 				if (maxLanguageCount > (mandatoryLanguages.size() + optionalLanguages.size())) {
 					log.info(
@@ -391,21 +391,21 @@ public class LoginCommonUtil {
 							"max-language-count is count {} is lesser than mandatory-languages {} overidding to mandatory-language size",
 							maxLanguageCount, mandatoryLanguages.size());
 					maxLanguageCount = mandatoryLanguages.size();
-				} else {
-					log.info("max-language-count is count null overidding to min-language count {} {}", maxLanguageCount,
-							mandatoryLanguages.size());
-					maxLanguageCount = minLanguageCount;
 				}
-
-				configParams.put(MOSIP_MAX_LANGUAGE_COUNT, String.valueOf(maxLanguageCount));
-				configParams.put(MOSIP_MIN_LANGUAGE_COUNT, String.valueOf(minLanguageCount));
-				configParams.put(MOSIP_MANDATORY_LANGUAGE,
-						mandatoryLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
-				configParams.put(MOSIP_OPTIONAL_LANGUAGE,
-						optionalLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
-
+			} else {
+				log.info("max-language-count is count null overidding to min-language count {} {}", maxLanguageCount,
+						minLanguageCount);
+				maxLanguageCount = minLanguageCount;
 			}
-		} catch (Exception e) {
+			configParams.put(MOSIP_MAX_LANGUAGE_COUNT, String.valueOf(maxLanguageCount));
+			configParams.put(MOSIP_MIN_LANGUAGE_COUNT, String.valueOf(minLanguageCount));
+			configParams.put(MOSIP_MANDATORY_LANGUAGE,
+					mandatoryLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
+			configParams.put(MOSIP_OPTIONAL_LANGUAGE,
+					optionalLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
+		} catch (
+
+		Exception e) {
 			log.error("Exception in validateLanguageProperties of logincommonutil ", e);
 			throw new LanguagePropertiesException(LoginErrorCodes.PRG_AUTH_015.getCode(),
 					LoginErrorMessages.LANGUAGE_PROPERTIES_NOT_FOUND.getMessage());
