@@ -370,7 +370,7 @@ public class LoginCommonUtil {
 					minLanguageCount = maxLanguageCount;
 				}
 			} else {
-				log.info("min-language-count is count null overidding to mandatory-language size", maxLanguageCount,
+				log.info("min-language-count is count null overidding to mandatory-language size {} {}", minLanguageCount,
 						mandatoryLanguages.size());
 				minLanguageCount = mandatoryLanguages.size() > 0 ? mandatoryLanguages.size() : 1;
 			}
@@ -392,7 +392,7 @@ public class LoginCommonUtil {
 							maxLanguageCount, mandatoryLanguages.size());
 					maxLanguageCount = mandatoryLanguages.size();
 				} else {
-					log.info("max-language-count is count null overidding to min-language count", maxLanguageCount,
+					log.info("max-language-count is count null overidding to min-language count {} {}", maxLanguageCount,
 							mandatoryLanguages.size());
 					maxLanguageCount = minLanguageCount;
 				}
