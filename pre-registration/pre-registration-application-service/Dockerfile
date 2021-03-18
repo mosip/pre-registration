@@ -73,19 +73,16 @@ USER ${container_user_uid}:${container_user_gid}
 EXPOSE 9090
 CMD if [ "$is_glowroot_env" = "present" ]; then \
     #wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar "${loader_path_env}"/kernel-ref-idobjectvalidator.jar ; \
-     wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar  "${loader_path_env}"/kernel-ref-idobjectvalidator.jar ; \
-	 wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/icu4j/icu4j.jar "${loader_path_env}"/icu4j.jar ; \
-	 wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/icu4j/kernel-transliteration-icu4j.jar "${loader_path_env}"/kernel-transliteration-icu4j.jar ; \   
-     wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/testing/glowroot.zip ; \
-        unzip glowroot.zip ; \
+     wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar kernel-ref-idobjectvalidator.jar ; \
+    wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/testing/glowroot.zip ; \
+    #wget -q --show-progress https://repo1.maven.org/maven2/io/mosip/kernel/kernel-virusscanner-clamav/1.1.3/kernel-virusscanner-clamav-1.1.3.jar; \
+    unzip glowroot.zip ; \
     rm -rf glowroot.zip ; \
     sed -i 's/<service_name>/pre-registration-application-service/g' glowroot/glowroot.properties ; \
     java -Dloader.path="${loader_path_env}" -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
     else \
-          wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar "${loader_path_env}"/kernel-ref-idobjectvalidator.jar ; \
-		  wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/icu4j/icu4j.jar "${loader_path_env}"/icu4j.jar ; \
-          wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/icu4j/kernel-transliteration-icu4j.jar "${loader_path_env}"/kernel-transliteration-icu4j.jar ; \
-      java -Dloader.path="${loader_path_env}" -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
+    # wget -q --show-progress https://repo1.maven.org/maven2/io/mosip/kernel/kernel-virusscanner-clamav/1.1.3/kernel-virusscanner-clamav-1.1.3.jar; \
+      wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-snapshot-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar "${loader_path_env}"/kernel-ref-idobjectvalidator.jar ; \
+      java -Dloader.path=./kernel-ref-idobjectvalidator.jar -jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
       #java -jar -Dloader.path="${loader_path_env}" -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-application-service.jar ; \
-     
     fi
