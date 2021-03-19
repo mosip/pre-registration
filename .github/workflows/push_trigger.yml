@@ -10,6 +10,7 @@ on:
       - 1.1.*
       - MOSIP-8545
       - develop
+      - develop_transliteration_fix
   
 jobs:
   build:
