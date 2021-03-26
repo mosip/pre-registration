@@ -28,4 +28,8 @@ public class DocumentMetaDataDTO implements Serializable {
 	 * document name
 	 */
 	private String value;
+	/**
+	 * document reference Id
+	 */
+	private String docRefId;
 }
