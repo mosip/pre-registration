@@ -137,16 +137,12 @@ public class OTPManager {
 		LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(environment.getProperty("timeZone")));
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		System.out.println(dateFormatter.format(dateTime) + "" + timeFormatter.format(dateTime));
 
 		mp.put("otp", otp);
-		mp.put("date", requestDTO.getRequesttime());
-		mp.put("validTime", "15 minutes");
 		mp.put("date",dateFormatter.format(dateTime));
-		mp.put("validTime", validTime +" minutes");
+		mp.put("validTime", validTime);
 		mp.put("name", userId);
 		mp.put("username", userId);
-		mp.put("time", new Date(requestDTO.getRequesttime().getTime()));
 		mp.put("time", timeFormatter.format(dateTime));
 
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
