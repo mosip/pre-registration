@@ -143,7 +143,7 @@ public class OTPManager {
 		mp.put("date", requestDTO.getRequesttime());
 		mp.put("validTime", "15 minutes");
 		mp.put("date",dateFormatter.format(dateTime));
-		mp.put("validTime", validTime +" minutes");
+		mp.put("validTime", validTime);
 		mp.put("name", userId);
 		mp.put("username", userId);
 		mp.put("time", new Date(requestDTO.getRequesttime().getTime()));
