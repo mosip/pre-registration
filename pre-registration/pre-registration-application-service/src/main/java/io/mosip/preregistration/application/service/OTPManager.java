@@ -1,11 +1,11 @@
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,7 +40,7 @@ import io.mosip.preregistration.application.exception.PreRegLoginException;
 import io.mosip.preregistration.application.repository.OtpTxnRepository;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.config.LoggerConfiguration;;
 
 /**
  * OTPManager handling with OTP-Generation and OTP-Validation.
@@ -144,6 +144,7 @@ public class OTPManager {
 		mp.put("name", userId);
 		mp.put("username", userId);
 		mp.put("time", timeFormatter.format(dateTime));
+
 
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
 			logger.info("sessionId", "idType", "id",
