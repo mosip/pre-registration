@@ -596,6 +596,7 @@ public class DataSyncServiceUtil {
 		documentMetaDataDTO.setType(getTypeName(documentMultipartResponseDTO.getLangCode(),
 				documentMultipartResponseDTO.getDocCatCode(), documentMultipartResponseDTO.getDocTypCode()));
 		documentMetaDataDTO.setFormat(getFileFormat(documentMultipartResponseDTO.getDocName()));
+		documentMetaDataDTO.setDocRefId(documentMultipartResponseDTO.getDocRefId());
 		try {
 			return JsonUtils.jsonStringToJavaMap(JsonUtils.javaObjectToJsonString(documentMetaDataDTO));
 		} catch (JsonParseException | JsonMappingException | io.mosip.kernel.core.exception.IOException
