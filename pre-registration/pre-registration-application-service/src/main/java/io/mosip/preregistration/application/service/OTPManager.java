@@ -1,11 +1,10 @@
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.ZoneId;
-import java.time.temporal.TemporalAmount;
-import java.time.temporal.TemporalUnit;
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -29,7 +28,6 @@ import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.HMACUtils;
-
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
 import io.mosip.preregistration.application.dto.OTPGenerateRequestDTO;
@@ -40,7 +38,7 @@ import io.mosip.preregistration.application.exception.PreRegLoginException;
 import io.mosip.preregistration.application.repository.OtpTxnRepository;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.config.LoggerConfiguration;;
 
 /**
  * OTPManager handling with OTP-Generation and OTP-Validation.
@@ -133,12 +131,17 @@ public class OTPManager {
 		}
 		Map<String, Object> mp = new HashMap();
 
+		Integer validTime = environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Integer.class)/60;
+		LocalDate dateTime = LocalDate.now(ZoneId.of(environment.getProperty("timeZone")));
+		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+
 		mp.put("otp", otp);
-		mp.put("date", requestDTO.getRequesttime());
-		mp.put("validTime", "15 minutes");
+		mp.put("date",dateFormatter);
+		mp.put("validTime", validTime +" minutes");
 		mp.put("name", userId);
 		mp.put("username", userId);
-		mp.put("time", new Date(requestDTO.getRequesttime().getTime()));
+		mp.put("time", timeFormatter);;
 
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
 			logger.info("sessionId", "idType", "id",
