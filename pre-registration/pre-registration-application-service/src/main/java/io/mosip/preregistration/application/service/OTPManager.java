@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -40,7 +41,7 @@ import io.mosip.preregistration.application.exception.PreRegLoginException;
 import io.mosip.preregistration.application.repository.OtpTxnRepository;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.config.LoggerConfiguration;;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 /**
  * OTPManager handling with OTP-Generation and OTP-Validation.
@@ -137,6 +138,7 @@ public class OTPManager {
 		LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(environment.getProperty("timeZone")));
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		System.out.println(dateFormatter.format(dateTime) + "" + timeFormatter.format(dateTime));
 
 		mp.put("otp", otp);
 		mp.put("date",dateFormatter.format(dateTime));
