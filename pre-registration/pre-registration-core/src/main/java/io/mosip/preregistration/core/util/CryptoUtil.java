@@ -51,9 +51,9 @@ public class CryptoUtil {
 		try {
 			String encodedBytes = io.mosip.kernel.core.util.CryptoUtil.encodeBase64(originalInput);
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
-			dto.setApplicationId("REGISTRATION");
+			dto.setApplicationId("PREREGISTRATION");
 			dto.setData(encodedBytes);
-			dto.setReferenceId("");
+			dto.setReferenceId("INDIVIDUAL");
 			dto.setTimeStamp(localDateTime);
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);
@@ -89,9 +89,9 @@ public class CryptoUtil {
 		try {
 
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
-			dto.setApplicationId("REGISTRATION");
+			dto.setApplicationId("PREREGISTRATION");
 			dto.setData(new String(originalInput, StandardCharsets.UTF_8));
-			dto.setReferenceId("");
+			dto.setReferenceId("INDIVIDUAL");
 			dto.setTimeStamp(localDateTime);
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);
