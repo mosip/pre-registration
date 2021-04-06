@@ -33,5 +33,7 @@ public class CryptoManagerRequestDTO implements Serializable {
 	 */
 
 	private LocalDateTime timeStamp;
+	
+	private boolean prependThumbprint;
 
 }
