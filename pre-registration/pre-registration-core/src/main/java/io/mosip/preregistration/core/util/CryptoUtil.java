@@ -42,6 +42,9 @@ public class CryptoUtil {
 
 	@Value("${cryptoResource.url}")
 	public String cryptoResourceUrl;
+	
+	@Value("${preregistration.crypto.applicationId}")
+	public String cryptoApplicationId;
 
 	public byte[] encrypt(byte[] originalInput, LocalDateTime localDateTime) {
 		log.info("sessionId", "idType", "id", "In encrypt method of CryptoUtil service ");
@@ -51,7 +54,7 @@ public class CryptoUtil {
 		try {
 			String encodedBytes = io.mosip.kernel.core.util.CryptoUtil.encodeBase64(originalInput);
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
-			dto.setApplicationId("PREREGISTRATION");
+			dto.setApplicationId(cryptoApplicationId);
 			dto.setData(encodedBytes);
 			dto.setReferenceId("INDIVIDUAL");
 			dto.setTimeStamp(localDateTime);
