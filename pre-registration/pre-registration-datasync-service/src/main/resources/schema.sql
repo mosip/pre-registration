@@ -1,8 +1,0 @@
---create schema if not exists machinedb;
---
---DROP TABLE IF EXISTS machine_publickey;
---
---CREATE TABLE machine_publickey (
---  machine_id INT  PRIMARY KEY,
---  encryption_publickey VARCHAR(250) NOT NULL
---);
