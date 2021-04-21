@@ -30,6 +30,7 @@ import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdResponseDT
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
+import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
@@ -39,7 +40,7 @@ import io.mosip.preregistration.datasync.exception.util.DataSyncExceptionCatcher
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 
 /**
- * This class provides different service to perform operation for datasync 
+ * This class provides different service to perform operation for datasync
  * 
  * @version 1.0.0
  * 
@@ -55,7 +56,7 @@ public class DataSyncService {
 	 */
 	@Autowired
 	private DataSyncServiceUtil serviceUtil;
-	
+
 	@Autowired
 	private ValidationUtil validationUtil;
 
@@ -181,7 +182,6 @@ public class DataSyncService {
 		responseDto.setId(fetchId);
 		responseDto.setVersion(version);
 		try {
-//			serviceUtil.parsejson();
 			DemographicResponseDTO preRegistrationDTO = serviceUtil.getPreRegistrationData(preId.trim());
 			DocumentsMetaData documentsMetaData = serviceUtil.getDocDetails(preId.trim());
 			BookingRegistrationDTO bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
@@ -210,7 +210,52 @@ public class DataSyncService {
 	}
 
 	/**
-	 * This method is use to store all the consumed preRegistrationId and store it in the database
+	 * This method use to get all the details for an individual preRegistrationId
+	 * 
+	 * @param preId
+	 * @return PreRegArchiveDTO contain all Zipped File
+	 */
+	public MainResponseDTO<PreRegArchiveDTO> fetchPreRegistrationData(String preId, int machineId) {
+		MainResponseDTO<PreRegArchiveDTO> responseDto = new MainResponseDTO<>();
+		PreRegArchiveDTO preRegArchiveDTO = null;
+		log.info("sessionId", "idType", "id", "In fetchPreRegistrationData method of datasync service ");
+		boolean isRetrieveSuccess = false;
+		responseDto.setId(fetchId);
+		responseDto.setVersion(version);
+		try {
+			ApplicationInfoMetadataDTO preRegInfo = serviceUtil.getPreRegistrationInfo(preId.trim());
+			DemographicResponseDTO preRegistrationDTO = preRegInfo.getDemographicResponse();
+			DocumentsMetaData documentsMetaData = preRegInfo.getDocumentsMetaData();
+			BookingRegistrationDTO bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
+			String encryptionPublickey = serviceUtil.getEncryptionKey(machineId);
+			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO,
+					documentsMetaData);
+			String encryptedData = serviceUtil.encryptZippedFile(preRegArchiveDTO.getZipBytes(),encryptionPublickey);
+			preRegArchiveDTO.setZipBytes(encryptedData.getBytes());
+			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
+			responseDto.setResponse(preRegArchiveDTO);
+			isRetrieveSuccess = true;
+		} catch (Exception ex) {
+			log.debug("sessionId", "idType", "id"+ ExceptionUtils.getStackTrace(ex));
+			log.error("In getPreRegistrationData method of datasync service -" + ex.getMessage());
+			new DataSyncExceptionCatcher().handle(ex, responseDto);
+		} finally {
+			if (isRetrieveSuccess) {
+				setAuditValues(EventId.PRE_406.toString(), EventName.SYNC.toString(), EventType.BUSINESS.toString(),
+						"Retrieval of the Preregistration data is successful", AuditLogVariables.MULTIPLE_ID.toString(),
+						authUserDetails().getUserId(), authUserDetails().getUsername(), null);
+			} else {
+				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
+						"Retrieval of the Preregistration data is unsuccessful", AuditLogVariables.NO_ID.toString(),
+						authUserDetails().getUserId(), authUserDetails().getUsername(), null);
+			}
+		}
+		return responseDto;
+	}
+
+	/**
+	 * This method is use to store all the consumed preRegistrationId and store it
+	 * in the database
 	 * 
 	 * @param reverseDto
 	 * @return responseDTO

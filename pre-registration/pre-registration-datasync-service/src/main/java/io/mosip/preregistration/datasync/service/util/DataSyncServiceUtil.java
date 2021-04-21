@@ -5,7 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
-import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -35,8 +34,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
+import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.kernel.core.util.CryptoUtil;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.kernel.core.util.exception.JsonMappingException;
@@ -59,6 +62,8 @@ import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.datasync.code.RequestCodes;
+import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
+import io.mosip.preregistration.datasync.dto.ClientPublickeyDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.DocumentMetaDataDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
@@ -70,6 +75,7 @@ import io.mosip.preregistration.datasync.entity.InterfaceDataSyncTablePK;
 import io.mosip.preregistration.datasync.entity.ProcessedPreRegEntity;
 import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
+import io.mosip.preregistration.datasync.exception.DataSyncRecordNotFoundException;
 import io.mosip.preregistration.datasync.exception.DemographicGetDetailsException;
 import io.mosip.preregistration.datasync.exception.DocumentGetDetailsException;
 import io.mosip.preregistration.datasync.exception.RecordNotFoundForDateRange;
@@ -106,6 +112,12 @@ public class DataSyncServiceUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
+	@Autowired
+	private ClientCryptoManagerService clientCryptoManagerService;
+
+//	@Autowired
+	// private MachineRepository machineRepository;
+
 	/**
 	 * Reference for ${demographic.resource.url} from property file
 	 */
@@ -117,6 +129,9 @@ public class DataSyncServiceUtil {
 	 */
 	@Value("${document.resource.url}")
 	private String documentResourceUrl;
+
+	@Value("${syncdata.resource.url}")
+	private String syncdataResourceUrl;
 
 	/**
 	 * Reference for ${poa.url} from property file
@@ -857,30 +872,100 @@ public class DataSyncServiceUtil {
 		}
 		return extension;
 	}
-//	/*
-//	 * This method can be used to create zip file in mentioned path during zip
-//	 * creation.
-//	 * 
-//	 * Call this method in archiving method
-//	 */
-//
-//	public static void parsejson()
-//			throws IOException, JSONException, io.mosip.kernel.core.exception.IOException, java.io.IOException {
-//		try (BufferedReader bufferedReader = new BufferedReader(
-//				new FileReader(new File("C:/Users/M1046129/Desktop/idjson.json")))) {
-//			StringBuilder jsonBuilder = new StringBuilder();
-//			String value;
-//			while ((value = bufferedReader.readLine()) != null) {
-//				jsonBuilder.append(value);
+
+	public String getEncryptionKey(int machineId) {
+		log.info("sessionId", "idType", "id", "In callGetMachinePublickey  method of datasync service util");
+		String encryptionPublickey = null;
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder
+					.fromHttpUrl(syncdataResourceUrl + "/tpm/publickey/" + machineId);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
+			String uriBuilder = builder.build().encode().toUriString();
+			log.info("sessionId", "idType", "id", "In callGetMachinePublickey method URL-{} " + uriBuilder);
+			ResponseEntity<MainResponseDTO<ClientPublickeyDTO>> respEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.GET, httpEntity, new ParameterizedTypeReference<MainResponseDTO<ClientPublickeyDTO>>() {
+					});
+			if (respEntity.getBody().getErrors() != null) {
+				log.info("sessionId", "idType", "id",
+						"In callGetMachinePublickey method of datasync service util - unable to get envryption publickey for the machineID");
+			} else {
+				encryptionPublickey = respEntity.getBody().getResponse().getEncryptionPublicKey();
+			}
+		} catch (RestClientException ex) {
+			log.debug("{}", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In callGetMachinePublickey method of datasync service util - {}" + ex.getMessage());
+
+			throw new ZipFileCreationException(ErrorCodes.PRG_DATA_SYNC_018.getCode(),
+					ErrorMessages.FAILED_TO_FETCH_MACHINE_ENCRYPTION_PUBLICKEY.getMessage(), null);
+		}
+		return encryptionPublickey;
+
+	}
+
+	public String encryptZippedFile(byte[] zipBytes, String encryptionPublickey) {
+
+		TpmCryptoRequestDto tpmCryptoRequestDto = new TpmCryptoRequestDto();
+		tpmCryptoRequestDto.setValue(CryptoUtil.encodeBase64(zipBytes));
+		tpmCryptoRequestDto.setPublicKey(encryptionPublickey);
+		tpmCryptoRequestDto.setTpm(false);
+		TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
+		return tpmCryptoResponseDto.getValue();
+	}
+
+	public ApplicationInfoMetadataDTO getPreRegistrationInfo(String prid) {
+		log.info("sessionId", "idType", "id", "In getPreRegistrationInfo  method of datasync service util");
+		ApplicationInfoMetadataDTO applicationInfo = null;
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder
+					.fromHttpUrl(demographicResourceUrl + "/applications/info/" + prid);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
+			String uriBuilder = builder.build().encode().toUriString();
+			log.info("sessionId", "idType", "id", "In getPreRegistrationInfo method URL- {}" + uriBuilder);
+			ResponseEntity<MainResponseDTO<ApplicationInfoMetadataDTO>> respEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.GET, httpEntity,
+					new ParameterizedTypeReference<MainResponseDTO<ApplicationInfoMetadataDTO>>() {
+					});
+			if (respEntity.getBody().getErrors() != null) {
+				log.info("sessionId", "idType", "id",
+						"In getPreRegistrationInfo method of datasync service util - unable to get preregistration data for the prid {}"
+								+ prid);
+			} else {
+				applicationInfo = respEntity.getBody().getResponse();
+			}
+		} catch (RestClientException ex) {
+			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In getPreRegistrationInfo method of datasync service util - {} " + ex.getMessage());
+
+			throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
+					ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
+		}
+		return applicationInfo;
+
+	}
+
+//	public String getEncryptionPublicKey(int machineId) {
+//		MachineEntity entity = null;
+//		try {
+//			if (machineRepository.existsById(machineId)) {
+//				entity = machineRepository.findById(machineId).get();
+//			} else {
+//				String encryptionKey = getEncryptionKey(machineId);
+//				entity.setMachineId(machineId);
+//				entity.setEncryptedPublicKey(encryptionKey);
+//				machineRepository.save(entity);
 //			}
-//			ObjectMapper mapper = new ObjectMapper();
-//			PreRegArchiveDTO archiveDTO = mapper.readValue(
-//					new org.json.JSONObject(jsonBuilder.toString()).getString("response"), PreRegArchiveDTO.class); // change
-//			FileUtils.copyToFile(new ByteArrayInputStream(archiveDTO.getZipBytes()),
-//					new File("C:/Users/M1046129/Desktop/preZipNew.zip"));
-//			System.out.println("zip file saved");
+//
+//		} catch (Exception ex) {
+//			System.out.println(ex.getStackTrace());
 //		}
 //
+//		return entity.getEncryptedPublicKey();
 //	}
 
 }

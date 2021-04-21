@@ -21,7 +21,7 @@
 		<kernel.core.version>1.1.5-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.templatemanager.velocity.version>1.1.5-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.logger.logback.version>1.1.5-SNAPSHOT</kernel.logger.logback.version>
+		<kernel.logger.logback.version>1.2.0-SNAPSHOT</kernel.logger.logback.version>
 		<kernel.dataaccess.hibernate.version>1.1.5-SNAPSHOT</kernel.dataaccess.hibernate.version>
 	</properties>
 
