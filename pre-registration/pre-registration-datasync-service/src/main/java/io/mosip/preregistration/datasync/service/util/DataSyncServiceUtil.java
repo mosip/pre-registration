@@ -36,6 +36,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
+
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
@@ -553,7 +554,7 @@ public class DataSyncServiceUtil {
 							+ new JSONObject(finalMap).toJSONString());
 			String encryptionPublickey = getEncryptionKey(machineId);
 			inputFile.put("ID.json", new ObjectMapper().writeValueAsBytes(finalMap));
-			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile),encryptionPublickey));
+			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile), encryptionPublickey));
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
 		} catch (Exception ex) {
