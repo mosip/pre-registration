@@ -138,7 +138,7 @@ public class OTPManager {
 		LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(environment.getProperty("timeZone")));
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		System.out.println(dateFormatter.format(dateTime) + "" + timeFormatter.format(dateTime));
+		
 
 		mp.put("otp", otp);
 		mp.put("date",dateFormatter.format(dateTime));
