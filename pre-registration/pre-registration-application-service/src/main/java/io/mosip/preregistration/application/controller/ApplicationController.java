@@ -23,6 +23,7 @@ public class ApplicationController {
 
 	private Logger log = LoggerConfiguration.logConfig(ApplicationController.class);
 
+
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@GetMapping(path = "/applications/info/{preregistrationId}")
 	public ResponseEntity<MainResponseDTO<?>> getPreregistrationofPrid(

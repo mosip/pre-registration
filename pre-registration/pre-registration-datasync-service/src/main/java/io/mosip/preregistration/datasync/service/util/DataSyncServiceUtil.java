@@ -37,6 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
 import io.mosip.kernel.clientcrypto.service.impl.ClientCryptoManagerServiceImpl;
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
@@ -112,8 +113,11 @@ public class DataSyncServiceUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
+	@Autowired
+	private ClientCryptoManagerService clientCryptoManagerService;
+
 //	@Autowired
-	// private MachineRepository machineRepository;
+//	 private MachineRepository machineRepository;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -908,7 +912,11 @@ public class DataSyncServiceUtil {
 		tpmCryptoRequestDto.setValue(CryptoUtil.encodeBase64(zipBytes));
 		tpmCryptoRequestDto.setPublicKey(encryptionPublickey);
 		tpmCryptoRequestDto.setTpm(false);
+<<<<<<< HEAD
 		TpmCryptoResponseDto tpmCryptoResponseDto = new ClientCryptoManagerServiceImpl().csEncrypt(tpmCryptoRequestDto);
+=======
+		TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
+>>>>>>> MOSIP-10951
 		return tpmCryptoResponseDto.getValue();
 	}
 
