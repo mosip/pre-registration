@@ -34,13 +34,17 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
+import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;<<<<<<<HEAD
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;<<<<<<<HEAD
 
 =======>>>>>>>MOSIP-10951
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;<<<<<<<HEAD
 
-=======>>>>>>>MOSIP-10951
+=======>>>>>>>MOSIP-10951=======
+import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
+
+>>>>>>>resolving confilct
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
@@ -119,7 +123,7 @@ public class DataSyncServiceUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
-	<<<<<<<HEAD<<<<<<<HEAD
+	<<<<<<<HEAD<<<<<<<HEAD<<<<<<<HEAD
 	@Autowired
 	private ClientCryptoManagerService clientCryptoManagerService;
 
@@ -130,12 +134,14 @@ public class DataSyncServiceUtil {
 	=======
 //	@Autowired
 //	 private MachineRepository machineRepository;
-	=======
+	==============>>>>>>>resolving confilct
 	@Autowired
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@Autowired
-	private MachineRepository machineRepository;>>>>>>>MOSIP-10951>>>>>>>MOSIP-10951
+<<<<<<< HEAD
+	private MachineRepository machineRepository;>>>>>>>MOSIP-10951>>>>>>>MOSIP-10951=======
+	private MachineRepository machineRepository;>>>>>>>resolving confilct
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -945,7 +951,6 @@ public class DataSyncServiceUtil {
 			return CryptoUtil.decodeBase64(tpmCryptoResponseDto.getValue());
 		} else
 			return data;
-
 	}
 
 	public ApplicationInfoMetadataDTO getPreRegistrationInfo(String prid) {
