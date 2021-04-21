@@ -35,8 +35,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
-import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
+import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;<<<<<<<HEAD
 
+=======>>>>>>>MOSIP-10951
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
@@ -116,11 +117,16 @@ public class DataSyncServiceUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
+<<<<<<< HEAD
 	@Autowired
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@Autowired
 	private MachineRepository machineRepository;
+=======
+//	@Autowired
+//	 private MachineRepository machineRepository;
+>>>>>>> MOSIP-10951
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -913,6 +919,7 @@ public class DataSyncServiceUtil {
 
 	}
 
+
 	public byte[] encryptFile(byte[] data, String encryptionPublickey) {
 
 		if (encryptionPublickey != null) {
@@ -925,7 +932,7 @@ public class DataSyncServiceUtil {
 			return CryptoUtil.decodeBase64(tpmCryptoResponseDto.getValue());
 		} else
 			return data;
-	}
+      }
 
 	public ApplicationInfoMetadataDTO getPreRegistrationInfo(String prid) {
 		log.info("sessionId", "idType", "id", "In getPreRegistrationInfo  method of datasync service util");
