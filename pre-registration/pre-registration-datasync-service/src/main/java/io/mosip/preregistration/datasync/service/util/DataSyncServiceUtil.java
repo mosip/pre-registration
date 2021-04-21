@@ -37,10 +37,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
-<<<<<<< HEAD
 
-=======
->>>>>>> MOSIP-10951
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
@@ -118,16 +115,11 @@ public class DataSyncServiceUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
-<<<<<<< HEAD
-//	@Autowired
-//	 private MachineRepository machineRepository;
-=======
 	@Autowired
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@Autowired
 	private MachineRepository machineRepository;
->>>>>>> MOSIP-10951
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -920,24 +912,6 @@ public class DataSyncServiceUtil {
 
 	}
 
-<<<<<<< HEAD
-	public String encryptZippedFile(byte[] zipBytes, String encryptionPublickey) {
-
-		TpmCryptoRequestDto tpmCryptoRequestDto = new TpmCryptoRequestDto();
-		tpmCryptoRequestDto.setValue(CryptoUtil.encodeBase64(zipBytes));
-		tpmCryptoRequestDto.setPublicKey(encryptionPublickey);
-		tpmCryptoRequestDto.setTpm(false);
-<<<<<<< HEAD
-<<<<<<< HEAD
-		TpmCryptoResponseDto tpmCryptoResponseDto = new ClientCryptoManagerServiceImpl().csEncrypt(tpmCryptoRequestDto);
-=======
-		TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
->>>>>>> MOSIP-10951
-=======
-		TpmCryptoResponseDto tpmCryptoResponseDto = new ClientCryptoManagerServiceImpl().csEncrypt(tpmCryptoRequestDto);
->>>>>>> MOSIP-10951
-		return tpmCryptoResponseDto.getValue();
-=======
 	public byte[] encryptFile(byte[] data, String encryptionPublickey) {
 
 		if (encryptionPublickey != null) {
@@ -947,12 +921,9 @@ public class DataSyncServiceUtil {
 			tpmCryptoRequestDto.setTpm(false);
 			System.out.println(tpmCryptoRequestDto);
 			TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
-			System.out.println(tpmCryptoResponseDto.getValue());
-			System.out.println(new String(tpmCryptoResponseDto.getValue()));
 			return tpmCryptoResponseDto.getValue().getBytes();
 		} else
 			return data;
->>>>>>> MOSIP-10951
 	}
 
 	public ApplicationInfoMetadataDTO getPreRegistrationInfo(String prid) {
