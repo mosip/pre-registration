@@ -38,8 +38,9 @@ import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;<<<<<<<HEAD
 
 =======>>>>>>>MOSIP-10951
-import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;<<<<<<<HEAD
 
+=======>>>>>>>MOSIP-10951
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
@@ -117,16 +118,23 @@ public class DataSyncServiceUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
-<<<<<<< HEAD
+	<<<<<<<HEAD<<<<<<<HEAD
 	@Autowired
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@Autowired
-	private MachineRepository machineRepository;
-=======
+	private MachineRepository machineRepository;=======
 //	@Autowired
 //	 private MachineRepository machineRepository;
->>>>>>> MOSIP-10951
+	=======
+//	@Autowired
+//	 private MachineRepository machineRepository;
+	=======
+	@Autowired
+	private ClientCryptoManagerService clientCryptoManagerService;
+
+	@Autowired
+	private MachineRepository machineRepository;>>>>>>>MOSIP-10951>>>>>>>MOSIP-10951
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -558,9 +566,15 @@ public class DataSyncServiceUtil {
 			log.info("sessionId", "idType", "id",
 					"In archivingFiles method of datasync service util, Json file content - "
 							+ new JSONObject(finalMap).toJSONString());
+<<<<<<< HEAD
 			String encryptionPublickey = getEncryptionKey(machineId);
 			inputFile.put("ID.json", new ObjectMapper().writeValueAsBytes(finalMap));
 			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile), encryptionPublickey));
+=======
+			String encryptionPublickey = getEncryptionPublicKey(machineId);
+			inputFile.put("ID.json", encryptFile(new ObjectMapper().writeValueAsBytes(finalMap), encryptionPublickey));
+			preRegArchiveDTO.setZipBytes(getCompressed(inputFile));
+>>>>>>> MOSIP-10951
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
 		} catch (Exception ex) {
@@ -919,7 +933,6 @@ public class DataSyncServiceUtil {
 
 	}
 
-
 	public byte[] encryptFile(byte[] data, String encryptionPublickey) {
 
 		if (encryptionPublickey != null) {
@@ -932,7 +945,8 @@ public class DataSyncServiceUtil {
 			return CryptoUtil.decodeBase64(tpmCryptoResponseDto.getValue());
 		} else
 			return data;
-      }
+
+	}
 
 	public ApplicationInfoMetadataDTO getPreRegistrationInfo(String prid) {
 		log.info("sessionId", "idType", "id", "In getPreRegistrationInfo  method of datasync service util");
