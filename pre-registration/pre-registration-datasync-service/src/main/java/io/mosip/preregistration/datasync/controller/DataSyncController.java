@@ -32,7 +32,7 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 
 /**
- * This class provides different api to perform operation for datasync 
+ * This class provides different api to perform operation for datasync
  * 
  * @author M1046129 - Jagadishwari
  * @since 1.0.0
@@ -50,8 +50,8 @@ public class DataSyncController {
 	private Logger log = LoggerConfiguration.logConfig(DataSyncController.class);
 
 	/**
-	 * This POST api use to retrieve all PreRegistrationIds 
-	 * based on registration center id, from date and to date
+	 * This POST api use to retrieve all PreRegistrationIds based on registration
+	 * center id, from date and to date
 	 * 
 	 * @param DataSyncDTO
 	 * @return responseDto
@@ -86,9 +86,24 @@ public class DataSyncController {
 		return ResponseEntity.status(HttpStatus.OK).body(dataSyncService.getPreRegistrationData(preRegistrationId));
 	}
 
+	@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	@ResponseFilter
+	@GetMapping(path = "/sync/{preRegistrationId}/{machineId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Retrieve Pre-Registrations")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Data Sync records fetched") })
+	public ResponseEntity<MainResponseDTO<PreRegArchiveDTO>> retrievePreRegistrations(
+			@PathVariable(required = true, value = "preRegistrationId") String preRegistrationId,
+			@PathVariable(required = true, value = "machineId") int machineId) {
+		log.info("sessionId", "idType", "id",
+				"In Datasync controller for retreiving pre-registration data with preRegId and machineId "
+						+ preRegistrationId + " " + machineId);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(dataSyncService.fetchPreRegistrationData(preRegistrationId, machineId));
+	}
+
 	/**
-	 * This POST api is used to retrieve all processed pre-registration ids 
-	 * and store in pre-registration database 
+	 * This POST api is used to retrieve all processed pre-registration ids and
+	 * store in pre-registration database
 	 * 
 	 * @param consumedData
 	 * @return response object

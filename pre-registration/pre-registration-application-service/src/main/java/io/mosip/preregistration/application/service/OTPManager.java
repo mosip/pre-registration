@@ -1,6 +1,7 @@
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -137,6 +138,7 @@ public class OTPManager {
 		LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(environment.getProperty("timeZone")));
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
+		
 
 		mp.put("otp", otp);
 		mp.put("date",dateFormatter.format(dateTime));
@@ -144,6 +146,7 @@ public class OTPManager {
 		mp.put("name", userId);
 		mp.put("username", userId);
 		mp.put("time", timeFormatter.format(dateTime));
+
 
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
 			logger.info("sessionId", "idType", "id",

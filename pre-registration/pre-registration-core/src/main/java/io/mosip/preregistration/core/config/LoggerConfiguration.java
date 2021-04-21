@@ -1,8 +1,6 @@
 package io.mosip.preregistration.core.config;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.logger.logback.appender.ConsoleAppender;
-import io.mosip.kernel.logger.logback.appender.RollingFileAppender;
 import io.mosip.kernel.logger.logback.factory.Logfactory;
 
 public final class LoggerConfiguration {
