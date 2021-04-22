@@ -36,6 +36,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
@@ -91,6 +92,9 @@ public class DataSyncServiceUtilTest {
 
 	@MockBean
 	ValidationUtil validationUtil;
+	
+	@MockBean
+	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@MockBean
 	@Qualifier("restTemplate")
@@ -530,7 +534,7 @@ public class DataSyncServiceUtilTest {
 		Map<String, String> documentTypeMap = new HashMap<>();
 		Mockito.when(validationUtil.getDocumentTypeNameByTypeCode(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(documentTypeMap);
-		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData);
+		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData,null);
 	}
 
 	@Test
@@ -573,7 +577,7 @@ public class DataSyncServiceUtilTest {
 		Map<String, String> documentTypeMap = new HashMap<>();
 		Mockito.when(validationUtil.getDocumentTypeNameByTypeCode(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(documentTypeMap);
-		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData);
+		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData,null);
 	}
 
 	@Test

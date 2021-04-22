@@ -37,6 +37,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.signatureutil.model.SignatureResponse;
 import io.mosip.kernel.core.signatureutil.spi.SignatureUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -69,6 +70,9 @@ public class DataSyncControllerTest {
 
 	@MockBean
 	private DataSyncService dataSyncService;
+	
+	@MockBean
+	ClientCryptoManagerService clientCryptoManagerService;
 
 	@MockBean
 	RestTemplateBuilder restTemplateBuilder;

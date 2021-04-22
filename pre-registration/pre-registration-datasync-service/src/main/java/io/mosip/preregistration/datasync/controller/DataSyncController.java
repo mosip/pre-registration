@@ -93,7 +93,7 @@ public class DataSyncController {
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Data Sync records fetched") })
 	public ResponseEntity<MainResponseDTO<PreRegArchiveDTO>> retrievePreRegistrations(
 			@PathVariable(required = true, value = "preRegistrationId") String preRegistrationId,
-			@PathVariable(required = true, value = "machineId") int machineId) {
+			@PathVariable(required = true, value = "machineId") String machineId) {
 		log.info("sessionId", "idType", "id",
 				"In Datasync controller for retreiving pre-registration data with preRegId and machineId "
 						+ preRegistrationId + " " + machineId);

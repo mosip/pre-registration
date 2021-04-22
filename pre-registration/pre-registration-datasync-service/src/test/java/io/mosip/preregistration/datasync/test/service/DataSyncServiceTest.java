@@ -30,6 +30,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ParseException;
 import io.mosip.kernel.core.util.DateUtils;
@@ -83,6 +84,9 @@ public class DataSyncServiceTest {
 	 */
 	@MockBean
 	DataSyncServiceUtil serviceUtil;
+	
+	@MockBean
+	ClientCryptoManagerService clientCryptoManagerService;
 
 	@MockBean
 	AuditLogUtil auditLogUtil;
@@ -255,7 +259,7 @@ public class DataSyncServiceTest {
 				.thenReturn(documentDTO);
 		Mockito.when(serviceUtil.getAppointmentDetails(Mockito.anyString()))
 				.thenReturn(bookingRegistrationDTO);
-		Mockito.when(serviceUtil.archivingFiles(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(archiveDTO);
+		Mockito.when(serviceUtil.archivingFiles(Mockito.any(), Mockito.any(), Mockito.any(),Mockito.any())).thenReturn(archiveDTO);
 		Mockito.doNothing().when(spyDataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		MainResponseDTO<PreRegArchiveDTO> response = dataSyncService.getPreRegistrationData(preId);

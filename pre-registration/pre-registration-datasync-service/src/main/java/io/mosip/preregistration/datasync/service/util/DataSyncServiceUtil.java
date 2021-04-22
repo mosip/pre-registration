@@ -36,7 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
-import io.mosip.kernel.clientcrypto.service.impl.ClientCryptoManagerServiceImpl;
+import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
+
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
@@ -72,6 +73,7 @@ import io.mosip.preregistration.datasync.dto.ReverseDataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
 import io.mosip.preregistration.datasync.entity.InterfaceDataSyncEntity;
 import io.mosip.preregistration.datasync.entity.InterfaceDataSyncTablePK;
+import io.mosip.preregistration.datasync.entity.MachineEntity;
 import io.mosip.preregistration.datasync.entity.ProcessedPreRegEntity;
 import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
@@ -82,6 +84,7 @@ import io.mosip.preregistration.datasync.exception.RecordNotFoundForDateRange;
 import io.mosip.preregistration.datasync.exception.ZipFileCreationException;
 import io.mosip.preregistration.datasync.exception.system.SystemFileIOException;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
+import io.mosip.preregistration.datasync.repository.MachineRepository;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 
 /**
@@ -112,8 +115,11 @@ public class DataSyncServiceUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
-//	@Autowired
-	// private MachineRepository machineRepository;
+	@Autowired
+	private ClientCryptoManagerService clientCryptoManagerService;
+
+	@Autowired
+	private MachineRepository machineRepository;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -530,7 +536,7 @@ public class DataSyncServiceUtil {
 	 * @return preRegArchiveDTO
 	 */
 	public PreRegArchiveDTO archivingFiles(DemographicResponseDTO preRegistrationDTO,
-			BookingRegistrationDTO bookingRegistrationDTO, DocumentsMetaData documentEntityList) {
+			BookingRegistrationDTO bookingRegistrationDTO, DocumentsMetaData documentEntityList, String machineId) {
 		log.info("sessionId", "idType", "id", "In archivingFiles method of datasync service util");
 		PreRegArchiveDTO preRegArchiveDTO = null;
 		try {
@@ -545,12 +551,13 @@ public class DataSyncServiceUtil {
 			log.info("sessionId", "idType", "id",
 					"In archivingFiles method of datasync service util, Json file content - "
 							+ new JSONObject(finalMap).toJSONString());
-			inputFile.put("ID.json", new ObjectMapper().writeValueAsBytes(finalMap));
+			String encryptionPublickey = getEncryptionPublicKey(machineId);
+			inputFile.put("ID.json", encryptFile(new ObjectMapper().writeValueAsBytes(finalMap), encryptionPublickey));
 			preRegArchiveDTO.setZipBytes(getCompressed(inputFile));
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In archivingFiles method of datasync service util - " + ex.getMessage());
 			throw new ZipFileCreationException(ErrorCodes.PRG_DATA_SYNC_005.getCode(),
@@ -682,7 +689,6 @@ public class DataSyncServiceUtil {
 	 */
 	private static void zipping(String fileName, byte[] fileToZip, ZipOutputStream zipOutputStream) {
 		log.info("sessionId", "idType", "id", "In zipping method of datasync service util");
-
 		try {
 			ZipEntry entry = new ZipEntry(fileName);
 			zipOutputStream.putNextEntry(entry);
@@ -870,26 +876,30 @@ public class DataSyncServiceUtil {
 		return extension;
 	}
 
-	public String getEncryptionKey(int machineId) {
+	public String getEncryptionKey(String machineId) {
 		log.info("sessionId", "idType", "id", "In callGetMachinePublickey  method of datasync service util");
 		String encryptionPublickey = null;
 		try {
-			UriComponentsBuilder builder = UriComponentsBuilder
-					.fromHttpUrl(syncdataResourceUrl + "/tpm/publickey/" + machineId);
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
-			String uriBuilder = builder.build().encode().toUriString();
-			log.info("sessionId", "idType", "id", "In callGetMachinePublickey method URL-{} " + uriBuilder);
-			ResponseEntity<MainResponseDTO<ClientPublickeyDTO>> respEntity = restTemplate.exchange(uriBuilder,
-					HttpMethod.GET, httpEntity, new ParameterizedTypeReference<MainResponseDTO<ClientPublickeyDTO>>() {
-					});
-			if (respEntity.getBody().getErrors() != null) {
-				log.info("sessionId", "idType", "id",
-						"In callGetMachinePublickey method of datasync service util - unable to get envryption publickey for the machineID");
-			} else {
-				encryptionPublickey = respEntity.getBody().getResponse().getEncryptionPublicKey();
+			if (machineId != null) {
+				UriComponentsBuilder builder = UriComponentsBuilder
+						.fromHttpUrl(syncdataResourceUrl + "/tpm/publickey/" + machineId);
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+				HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
+				String uriBuilder = builder.build().encode().toUriString();
+				log.info("sessionId", "idType", "id", "In callGetMachinePublickey method URL-{} " + uriBuilder);
+				ResponseEntity<MainResponseDTO<ClientPublickeyDTO>> respEntity = restTemplate.exchange(uriBuilder,
+						HttpMethod.GET, httpEntity,
+						new ParameterizedTypeReference<MainResponseDTO<ClientPublickeyDTO>>() {
+						});
+				if (respEntity.getBody().getErrors() != null) {
+					log.info("sessionId", "idType", "id",
+							"In callGetMachinePublickey method of datasync service util - unable to get envryption publickey for the machineID");
+				} else {
+					encryptionPublickey = respEntity.getBody().getResponse().getEncryptionPublicKey();
+				}
 			}
+
 		} catch (RestClientException ex) {
 			log.debug("{}", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
@@ -902,14 +912,18 @@ public class DataSyncServiceUtil {
 
 	}
 
-	public String encryptZippedFile(byte[] zipBytes, String encryptionPublickey) {
+	public byte[] encryptFile(byte[] data, String encryptionPublickey) {
 
-		TpmCryptoRequestDto tpmCryptoRequestDto = new TpmCryptoRequestDto();
-		tpmCryptoRequestDto.setValue(CryptoUtil.encodeBase64(zipBytes));
-		tpmCryptoRequestDto.setPublicKey(encryptionPublickey);
-		tpmCryptoRequestDto.setTpm(false);
-		TpmCryptoResponseDto tpmCryptoResponseDto = new ClientCryptoManagerServiceImpl().csEncrypt(tpmCryptoRequestDto);
-		return tpmCryptoResponseDto.getValue();
+		if (encryptionPublickey != null) {
+			TpmCryptoRequestDto tpmCryptoRequestDto = new TpmCryptoRequestDto();
+			tpmCryptoRequestDto.setValue(CryptoUtil.encodeBase64(data));
+			tpmCryptoRequestDto.setPublicKey(encryptionPublickey);
+			tpmCryptoRequestDto.setTpm(false);
+			System.out.println(tpmCryptoRequestDto);
+			TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
+			return tpmCryptoResponseDto.getValue().getBytes();
+		} else
+			return data;
 	}
 
 	public ApplicationInfoMetadataDTO getPreRegistrationInfo(String prid) {
@@ -946,23 +960,34 @@ public class DataSyncServiceUtil {
 
 	}
 
-//	public String getEncryptionPublicKey(int machineId) {
-//		MachineEntity entity = null;
-//		try {
-//			if (machineRepository.existsById(machineId)) {
-//				entity = machineRepository.findById(machineId).get();
-//			} else {
-//				String encryptionKey = getEncryptionKey(machineId);
-//				entity.setMachineId(machineId);
-//				entity.setEncryptedPublicKey(encryptionKey);
-//				machineRepository.save(entity);
-//			}
-//
-//		} catch (Exception ex) {
-//			System.out.println(ex.getStackTrace());
-//		}
-//
-//		return entity.getEncryptedPublicKey();
-//	}
+	public String getEncryptionPublicKey(String machineId) {
+		log.info("sessionId", "idType", "id",
+				"In getEncryptionPublicKey method of datasync service util for machineId" + machineId);
+		MachineEntity entity = new MachineEntity();
+		String encryptionKey = null;
+		try {
+			if (machineRepository.existsById(machineId)) {
+				log.info("sessionId", "idType", "id", "Is EncryptionPublicKey for machineId is present" + machineId);
+				entity = machineRepository.findById(machineId).get();
+				log.info("sessionId", "idType", "id", "EncryptionPublicKey is present" + entity);
+			} else {
+				log.info("sessionId", "idType", "id", "EncryptionPublicKey is not present for machineId" + machineId);
+				encryptionKey = getEncryptionKey(machineId);
+				System.out.println(encryptionKey);
+				entity.setMachineId(machineId);
+				entity.setEncryptedPublicKey(encryptionKey);
+				machineRepository.save(entity);
+				log.info("sessionId", "idType", "id", "EncryptionPublicKey  for machineId is saved" + entity);
+			}
+
+		} catch (Exception ex) {
+			log.error("sessionId", "idType", "id",
+					"Error while saving EncryptionPublicKey  for machineId" + ex.getCause());
+			entity.setMachineId(machineId);
+			entity.setEncryptedPublicKey(encryptionKey);
+		}
+
+		return entity.getEncryptedPublicKey();
+	}
 
 }

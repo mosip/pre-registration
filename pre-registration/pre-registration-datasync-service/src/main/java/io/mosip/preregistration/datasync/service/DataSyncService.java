@@ -186,7 +186,7 @@ public class DataSyncService {
 			DocumentsMetaData documentsMetaData = serviceUtil.getDocDetails(preId.trim());
 			BookingRegistrationDTO bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
 			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO,
-					documentsMetaData);
+					documentsMetaData,null);
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
@@ -215,7 +215,7 @@ public class DataSyncService {
 	 * @param preId
 	 * @return PreRegArchiveDTO contain all Zipped File
 	 */
-	public MainResponseDTO<PreRegArchiveDTO> fetchPreRegistrationData(String preId, int machineId) {
+	public MainResponseDTO<PreRegArchiveDTO> fetchPreRegistrationData(String preId, String machineId) {
 		MainResponseDTO<PreRegArchiveDTO> responseDto = new MainResponseDTO<>();
 		PreRegArchiveDTO preRegArchiveDTO = null;
 		log.info("sessionId", "idType", "id", "In fetchPreRegistrationData method of datasync service ");
@@ -227,11 +227,8 @@ public class DataSyncService {
 			DemographicResponseDTO preRegistrationDTO = preRegInfo.getDemographicResponse();
 			DocumentsMetaData documentsMetaData = preRegInfo.getDocumentsMetaData();
 			BookingRegistrationDTO bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
-			String encryptionPublickey = serviceUtil.getEncryptionKey(machineId);
 			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO,
-					documentsMetaData);
-			String encryptedData = serviceUtil.encryptZippedFile(preRegArchiveDTO.getZipBytes(),encryptionPublickey);
-			preRegArchiveDTO.setZipBytes(encryptedData.getBytes());
+					documentsMetaData,machineId);
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
