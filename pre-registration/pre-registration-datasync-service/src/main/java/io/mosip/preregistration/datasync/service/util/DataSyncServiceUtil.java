@@ -552,8 +552,8 @@ public class DataSyncServiceUtil {
 					"In archivingFiles method of datasync service util, Json file content - "
 							+ new JSONObject(finalMap).toJSONString());
 			String encryptionPublickey = getEncryptionKey(machineId);
-			inputFile.put("ID.json", encryptFile(new ObjectMapper().writeValueAsBytes(finalMap), encryptionPublickey));
-			preRegArchiveDTO.setZipBytes(getCompressed(inputFile));
+			inputFile.put("ID.json", new ObjectMapper().writeValueAsBytes(finalMap));
+			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile),encryptionPublickey));
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
 		} catch (Exception ex) {
@@ -921,7 +921,7 @@ public class DataSyncServiceUtil {
 			tpmCryptoRequestDto.setTpm(false);
 			System.out.println(tpmCryptoRequestDto);
 			TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
-			return tpmCryptoResponseDto.getValue().getBytes();
+			return CryptoUtil.decodeBase64(tpmCryptoResponseDto.getValue());
 		} else
 			return data;
 	}
