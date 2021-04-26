@@ -19,17 +19,21 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -47,9 +51,12 @@ import io.mosip.preregistration.application.dto.PreRegMailRequestDto;
 import io.mosip.preregistration.application.dto.PreRegSmsRequestDto;
 import io.mosip.preregistration.application.dto.PreRegSmsResponseDto;
 import io.mosip.preregistration.application.exception.PreRegLoginException;
+import io.mosip.preregistration.booking.dto.RegistrationCenterDto;
+import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
 import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
+import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.dto.SMSRequestDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
@@ -82,6 +89,8 @@ public class NotificationServiceUtil {
 	private static final String LANG_CODE = "langcode";
 
 	private static final String IS_ACTIVE = "isActive";
+	
+	private static final String REG_CENTER_ID = "id";
 
 	/** The Constant TEMPLATE_TYPE_CODE. */
 
@@ -89,6 +98,9 @@ public class NotificationServiceUtil {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+	
+	@Value("${registrationcenter.centerdetail.rest.uri}")
+	private String centerDetailUri;
 
 	/**
 	 * Autowired reference for {@link #RestTemplateBuilder}
@@ -131,6 +143,7 @@ public class NotificationServiceUtil {
 				langaueNamePairs.add(langaueNamePair);
 			}
 			notificationDto.setFullName(langaueNamePairs);
+			notificationDto.setLanguageCode(langauageCode);
 		}
 		if (!isLatest) {
 			notificationDto = (NotificationDTO) JsonUtils.jsonStringToJavaObject(NotificationDTO.class,
@@ -140,6 +153,7 @@ public class NotificationServiceUtil {
 			langaueNamePair.setValue(notificationDto.getName());
 			langaueNamePairs.add(langaueNamePair);
 			notificationDto.setFullName(langaueNamePairs);
+			notificationDto.setLanguageCode(langauageCode);
 		}
 
 		notificationReqDto.setId(notificationData.get("id").toString());
@@ -371,5 +385,70 @@ public class NotificationServiceUtil {
 				.orElse("");
 
 	}
-
+	
+	public NotificationDTO modifyCenterNameAndAddress(NotificationDTO notificationDto, String registrationCenterId, String langCode) {
+		
+		if(notificationDto != null) {
+			String centerName = notificationDto.getRegistrationCenterName();
+			String address = notificationDto.getAddress();
+			if (centerName == null && address == null) {
+				RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId, langCode);
+				System.out.println("NotificationCenterDTO: " + centerDto);
+				centerName = centerDto.getName();
+				StringBuilder sb = new StringBuilder(centerDto.getAddressLine1());
+				sb.append(" ").append(centerDto.getAddressLine2()).append(" ").append(centerDto.getAddressLine3());
+				address = sb.toString();  
+			}
+			notificationDto.setRegistrationCenterName(centerName);
+			notificationDto.setAddress(address);
+		}
+		System.out.println("NotificationDto: " + notificationDto);
+		return notificationDto;
+	}
+	
+	public ResponseWrapper<RegistrationCenterResponseDto> getRegistrationCenter(String registrationCenterId, String langCode) {
+		ResponseWrapper<RegistrationCenterResponseDto> response = new ResponseWrapper<>();
+		ResponseEntity<ResponseWrapper<RegistrationCenterResponseDto>> responseEntity = null;
+//		String url = getAppointmentResourseUrl + "/appointment/" + preRegId;
+//		String url = "https://dev.mosip.net/v1/masterdata/registrationcenters/10001/eng"
+		String url = centerDetailUri + "/" + registrationCenterId + "/" + langCode;
+		try {
+			log.info("sessionId", "idType", "id", "In Registration method of RegistrationCenterController" + url);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<?> entity = new HttpEntity<>(headers);
+			log.debug("sessionId", "idType", "id", entity.toString());
+			responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity,
+					new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
+					});
+			System.out.println("ResponseEntity: " + responseEntity);
+			log.debug("sessionId", "idType", "id", responseEntity.toString());
+			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
+				log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
+				response.setErrors(responseEntity.getBody().getErrors());
+			} else {
+				response.setResponse(responseEntity.getBody().getResponse());
+			}
+			log.info("sessionId", "idType", "id", "In call to registrationcenter rest service :" + url);
+		} catch (Exception ex) {
+			log.debug("sessionId", "idType", "id", "Registration Center Details" + ExceptionUtils.getStackTrace(ex));
+			throw new RestClientException("Rest call failed");
+		}
+		return response;
+	}
+	
+	public RegistrationCenterDto getNotificationCenterAddressDTO(String registrationCenterId, String langCode) {
+		RegistrationCenterDto centerDto = null;
+		ResponseWrapper<RegistrationCenterResponseDto> getRegistrationCenter = getRegistrationCenter(registrationCenterId, langCode);
+		System.out.println("Res: " + getRegistrationCenter);
+		RegistrationCenterResponseDto registrationCenterResponseDto = getRegistrationCenter.getResponse();
+		System.out.println("Res1: " + registrationCenterResponseDto);
+		if (registrationCenterResponseDto != null) {
+			if (registrationCenterResponseDto.getRegistrationCenters() != null && !registrationCenterResponseDto.getRegistrationCenters().isEmpty()) {
+				centerDto = registrationCenterResponseDto.getRegistrationCenters().get(0);
+			}
+		}
+		return centerDto;
+	}
+	
 }
