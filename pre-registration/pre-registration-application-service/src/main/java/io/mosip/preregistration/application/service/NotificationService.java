@@ -332,6 +332,7 @@ public class NotificationService {
 		MainResponseDTO<DemographicResponseDTO> demoDetail = getDemographicDetails(dto);
 		if (!dto.getIsBatch()) {
 			BookingRegistrationDTO bookingDTO = getAppointmentDetailsRestService(dto.getPreRegistrationId());
+			String registrationCenterId = bookingDTO.getRegistrationCenterId();
 			String time = LocalTime.parse(bookingDTO.getSlotFromTime(), DateTimeFormatter.ofPattern("HH:mm"))
 					.format(DateTimeFormatter.ofPattern("hh:mm a"));
 			log.info("sessionId", "idType", "id", "In notificationDtoValidation with bookingDTO " + bookingDTO);
@@ -360,6 +361,7 @@ public class NotificationService {
 				throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_002.getCode(),
 						NotificationErrorMessages.INCORRECT_MANDATORY_FIELDS.getMessage(), response);
 			}
+			dto = serviceUtil.modifyCenterNameAndAddress(dto, registrationCenterId, dto.getLanguageCode());
 		}
 		return demoDetail;
 	}
