@@ -58,4 +58,9 @@ public class NotificationDTO implements Serializable {
 	private String languageCode;
 	
 	private List<KeyValuePairDto> fullName;
+	
+	private String registrationCenterName;
+	
+	private String address;
+	
 }
