@@ -131,6 +131,8 @@ public class TemplateUtil {
 		responseMap.put("Time", timeFormate.format(nowCountryTime));
 		responseMap.put("Appointmentdate", acknowledgementDTO.getAppointmentDate());
 		responseMap.put("Appointmenttime", acknowledgementDTO.getAppointmentTime());
+		responseMap.put("RegistrationCenterName", acknowledgementDTO.getRegistrationCenterName());
+		responseMap.put("RegistrationCenterAddress", acknowledgementDTO.getAddress());
 		return responseMap;
 	}
 
