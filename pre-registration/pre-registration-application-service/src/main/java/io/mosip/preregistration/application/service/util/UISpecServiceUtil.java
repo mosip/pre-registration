@@ -55,6 +55,7 @@ public class UISpecServiceUtil {
 	public UISpecResponseDTO saveUISchema(UISpecficationRequestDTO uiSpecRequest) {
 		log.info("In  UISpec serviceutil saveUIschema method");
 		UISpecResponseDTO response = null;
+		ResponseEntity<ResponseWrapper<UISpecResponseDTO>> responseEntity = null;
 		try {
 			log.info("Calling masterdata service to save ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(materdataResourceUrl + "/uispec");
@@ -71,8 +72,8 @@ public class UISpecServiceUtil {
 
 			log.info("masterdata service to save ui spec uri {} and request {}", uriBuilder, uiSpecPostRequest);
 
-			ResponseEntity<ResponseWrapper<UISpecResponseDTO>> responseEntity = restTemplate.exchange(uriBuilder,
-					HttpMethod.POST, entity, new ParameterizedTypeReference<ResponseWrapper<UISpecResponseDTO>>() {
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.POST, entity,
+					new ParameterizedTypeReference<ResponseWrapper<UISpecResponseDTO>>() {
 					});
 
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -92,6 +93,10 @@ public class UISpecServiceUtil {
 			log.error("error while saving uispec {}", ex);
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_001.getCode(),
 					ApplicationErrorMessages.UNABLE_TO_CREATE_THE_UI_SPEC.getMessage());
+		} catch (Exception ex) {
+			log.error("error while saving uispec {}", ex);
+			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+					responseEntity.getBody().getErrors().get(0).getMessage());
 		}
 		return response;
 
@@ -100,6 +105,7 @@ public class UISpecServiceUtil {
 	public UISpecResponseDTO updateUISchema(UISpecficationRequestDTO uiSpecRequest, String id) {
 		log.info("In  UISpec serviceutil updateUIschema method");
 		UISpecResponseDTO response = null;
+		ResponseEntity<ResponseWrapper<UISpecResponseDTO>> responseEntity = null;
 		try {
 			log.info("Calling masterdata service to update ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(materdataResourceUrl + "/uispec");
@@ -119,8 +125,8 @@ public class UISpecServiceUtil {
 
 			log.info("masterdata service to update ui spec uri {} and request {}", uriBuilder, uiSpecPostRequest);
 
-			ResponseEntity<ResponseWrapper<UISpecResponseDTO>> responseEntity = restTemplate.exchange(uriBuilder,
-					HttpMethod.PUT, entity, new ParameterizedTypeReference<ResponseWrapper<UISpecResponseDTO>>() {
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.PUT, entity,
+					new ParameterizedTypeReference<ResponseWrapper<UISpecResponseDTO>>() {
 					});
 
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -140,6 +146,10 @@ public class UISpecServiceUtil {
 			log.error("error while updating uispec {}", ex.getCause());
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_002.getCode(),
 					ApplicationErrorMessages.UNABLE_TO_UPDATE_THE_UI_SPEC.getMessage());
+		} catch (Exception ex) {
+			log.error("error while updating uispec {}", ex);
+			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+					responseEntity.getBody().getErrors().get(0).getMessage());
 		}
 		return response;
 
@@ -148,6 +158,7 @@ public class UISpecServiceUtil {
 	public String publishUISchema(String id) {
 		log.info("In  UISpec serviceutil publishUIschema method");
 		String response = null;
+		ResponseEntity<ResponseWrapper<String>> responseEntity = null;
 		try {
 			log.info("Calling masterdata service to publish ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder
@@ -170,8 +181,8 @@ public class UISpecServiceUtil {
 
 			log.info("masterdata service to publish ui spec uri {} and request {}", uriBuilder, uiSpecPublishRequest);
 
-			ResponseEntity<ResponseWrapper<String>> responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.PUT,
-					entity, new ParameterizedTypeReference<ResponseWrapper<String>>() {
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.PUT, entity,
+					new ParameterizedTypeReference<ResponseWrapper<String>>() {
 					});
 
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -188,9 +199,13 @@ public class UISpecServiceUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.error("error while updating uispec {}", ex.getCause());
+			log.error("error while updating uispec {}", ex);
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_005.getCode(),
 					ApplicationErrorMessages.FAILED_TO_PUBLISH_THE_UI_SPEC.getMessage());
+		} catch (Exception ex) {
+			log.error("error while updating uispec {}", ex);
+			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+					responseEntity.getBody().getErrors().get(0).getMessage());
 		}
 		return response;
 
@@ -199,6 +214,7 @@ public class UISpecServiceUtil {
 	public List<UISpecResponseDTO> getUISchema(Double version, Double idSchemaVersion) {
 		log.info("In  UISpec serviceutil getUIschema method");
 		List<UISpecResponseDTO> response = null;
+		ResponseEntity<ResponseWrapper<List<UISpecResponseDTO>>> responseEntity = null;
 		try {
 			log.info("Calling masterdata service to get ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder
@@ -216,8 +232,8 @@ public class UISpecServiceUtil {
 
 			log.info("masterdata service to get ui spec uri {} ", uriBuilder);
 
-			ResponseEntity<ResponseWrapper<List<UISpecResponseDTO>>> responseEntity = restTemplate.exchange(uriBuilder,
-					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<List<UISpecResponseDTO>>>() {
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
+					new ParameterizedTypeReference<ResponseWrapper<List<UISpecResponseDTO>>>() {
 					});
 
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -234,9 +250,13 @@ public class UISpecServiceUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.error("error while fetching uispec {}", ex.getCause());
+			log.error("error while fetching uispec {}", ex);
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 					ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
+		} catch (Exception ex) {
+			log.error("error while fetching uispec {}", ex);
+			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+					responseEntity.getBody().getErrors().get(0).getMessage());
 		}
 		return response;
 
@@ -245,6 +265,7 @@ public class UISpecServiceUtil {
 	public String deleteUISchema(String id) {
 		log.info("In  UISpec serviceutil deleteUIschema method");
 		String response = null;
+		ResponseEntity<ResponseWrapper<String>> responseEntity = null;
 		try {
 			log.info("Calling masterdata service to delete ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(materdataResourceUrl + "/uispec");
@@ -260,8 +281,8 @@ public class UISpecServiceUtil {
 
 			log.info("masterdata service to delete ui spec uri {} ", uriBuilder);
 
-			ResponseEntity<ResponseWrapper<String>> responseEntity = restTemplate.exchange(uriBuilder,
-					HttpMethod.DELETE, entity, new ParameterizedTypeReference<ResponseWrapper<String>>() {
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.DELETE, entity,
+					new ParameterizedTypeReference<ResponseWrapper<String>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				log.info("error while deleting uispec {}", responseEntity.getBody().getErrors());
@@ -280,6 +301,10 @@ public class UISpecServiceUtil {
 			log.error("error while deleting uispec {}", ex);
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_004.getCode(),
 					ApplicationErrorMessages.FAILED_TO_DELETE_THE_UI_SPEC.getMessage());
+		} catch (Exception ex) {
+			log.error("error while fetching uispec {}", ex);
+			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+					responseEntity.getBody().getErrors().get(0).getMessage());
 		}
 		return response;
 
@@ -288,6 +313,7 @@ public class UISpecServiceUtil {
 	public PageDTO<UISpecResponseDTO> getAllUISchema(int pageNumber, int pageSize) {
 		log.info("In  UISpec serviceutil getAllUISchema method");
 		PageDTO<UISpecResponseDTO> response = null;
+		ResponseEntity<ResponseWrapper<PageDTO<UISpecResponseDTO>>> responseEntity = null;
 		try {
 			log.info("Calling masterdata service to get ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(materdataResourceUrl + "/uispec/all");
@@ -304,8 +330,7 @@ public class UISpecServiceUtil {
 
 			log.info("masterdata service to get ui spec uri {} ", uriBuilder);
 
-			ResponseEntity<ResponseWrapper<PageDTO<UISpecResponseDTO>>> responseEntity = restTemplate.exchange(
-					uriBuilder, HttpMethod.GET, entity,
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<ResponseWrapper<PageDTO<UISpecResponseDTO>>>() {
 					});
 
@@ -323,9 +348,13 @@ public class UISpecServiceUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.error("error while fetching uispec {}", ex.getCause());
+			log.error("error while fetching uispec {}", ex);
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 					ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
+		} catch (Exception ex) {
+			log.error("error while fetching uispec {}", ex);
+			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+					responseEntity.getBody().getErrors().get(0).getMessage());
 		}
 		return response;
 
