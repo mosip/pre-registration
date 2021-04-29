@@ -361,7 +361,7 @@ public class NotificationService {
 				throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_002.getCode(),
 						NotificationErrorMessages.INCORRECT_MANDATORY_FIELDS.getMessage(), response);
 			}
-			dto = serviceUtil.modifyCenterNameAndAddress(dto, registrationCenterId, dto.getLanguageCode());
+			dto = serviceUtil.modifyCenterNameAndAddress(dto, registrationCenterId, dto.getLanguageCode().split(",")[0]);
 		}
 		return demoDetail;
 	}
