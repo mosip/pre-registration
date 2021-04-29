@@ -553,7 +553,7 @@ public class DataSyncServiceUtil {
 							+ new JSONObject(finalMap).toJSONString());
 			String encryptionPublickey = getEncryptionKey(machineId);
 			inputFile.put("ID.json", new ObjectMapper().writeValueAsBytes(finalMap));
-			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile),encryptionPublickey));
+			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile), encryptionPublickey));
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
 		} catch (Exception ex) {
