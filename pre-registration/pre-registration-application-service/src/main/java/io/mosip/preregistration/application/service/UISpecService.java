@@ -114,7 +114,7 @@ public class UISpecService {
 			log.info("deleting the UiSpec id {}", id);
 			response.setResponse(serviceUtil.deleteUISchema(id));
 		} catch (UISpecException ex) {
-			log.error("Exception occured while fetching the UiSpec");
+			log.error("Exception occured while deleting the UiSpec");
 			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
 			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
 			exception.setErrorCode(ex.getErrorCode());
