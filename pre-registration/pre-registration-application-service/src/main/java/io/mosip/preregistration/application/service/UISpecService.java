@@ -2,7 +2,9 @@ package io.mosip.preregistration.application.service;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.PageDTO;
 import io.mosip.preregistration.application.dto.UISpecDTO;
+import io.mosip.preregistration.application.dto.UISpecMetaDataDTO;
 import io.mosip.preregistration.application.dto.UISpecResponseDTO;
 import io.mosip.preregistration.application.dto.UISpecficationRequestDTO;
 import io.mosip.preregistration.application.exception.UISpecException;
@@ -81,14 +84,23 @@ public class UISpecService {
 		return response;
 	}
 
-	public MainResponseDTO<List<UISpecResponseDTO>> getUISpec(double version, double identitySchemaVersion) {
+	public MainResponseDTO<List<UISpecMetaDataDTO>> getUISpec(double version, double identitySchemaVersion) {
 		log.info("In UISpec service getUIspec method");
-		MainResponseDTO<List<UISpecResponseDTO>> response = new MainResponseDTO<List<UISpecResponseDTO>>();
+		MainResponseDTO<List<UISpecMetaDataDTO>> response = new MainResponseDTO<List<UISpecMetaDataDTO>>();
 		response.setVersion(this.version);
 		response.setResponsetime(LocalDateTime.now().toString());
 		try {
 			log.info("fetching the UiSpec version {} and identitySchemaVersion {}", version, identitySchemaVersion);
-			response.setResponse(serviceUtil.getUISchema(version, identitySchemaVersion));
+			List<UISpecResponseDTO> uiSchema = serviceUtil.getUISchema(version, identitySchemaVersion);
+			List<UISpecMetaDataDTO> fetchedSchema = prepareResponse(uiSchema);
+			if (identitySchemaVersion == 0) {
+				ArrayList<UISpecMetaDataDTO> latestPublishedList = new ArrayList<>();
+				latestPublishedList.add(getLatestPublishedSchema(fetchedSchema));
+				response.setResponse(latestPublishedList);
+			} else {
+				response.setResponse(fetchedSchema);
+			}
+
 		} catch (UISpecException ex) {
 			log.error("Exception occured while fetching the UiSpec");
 			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
@@ -156,17 +168,22 @@ public class UISpecService {
 		return response;
 	}
 
-	public MainResponseDTO<PageDTO<UISpecResponseDTO>> getAllUISpec(int pageNumber,int pageSize) {
+	public MainResponseDTO<PageDTO<UISpecMetaDataDTO>> getAllUISpec(int pageNumber, int pageSize) {
 		log.info("In UISpec service getAllUISpec method");
-		MainResponseDTO<PageDTO<UISpecResponseDTO>> response = new MainResponseDTO<PageDTO<UISpecResponseDTO>>();
+		MainResponseDTO<PageDTO<UISpecMetaDataDTO>> response = new MainResponseDTO<PageDTO<UISpecMetaDataDTO>>();
 		response.setVersion(this.version);
 		response.setResponsetime(LocalDateTime.now().toString());
 		try {
 			log.info("fetching the All published UiSpec");
-			PageDTO<UISpecResponseDTO> res = serviceUtil.getAllUISchema(pageNumber,pageSize);
-			res.setData(filterPreRegSpec(res.getData()));
-			res.setTotalItems(res.getData().size());
-			response.setResponse(res);
+			PageDTO<UISpecResponseDTO> res = serviceUtil.getAllUISchema(pageNumber, pageSize);
+			PageDTO<UISpecMetaDataDTO> fetchedSchema = new PageDTO<UISpecMetaDataDTO>();
+			fetchedSchema.setData(filterPreRegSpec(res.getData()));
+			fetchedSchema.setPageNo(res.getPageNo());
+			fetchedSchema.setPageSize(res.getPageSize());
+			fetchedSchema.setTotalItems(fetchedSchema.getData().size());
+			fetchedSchema.setTotalPages(res.getTotalPages());
+			fetchedSchema.setSort(res.getSort());
+			response.setResponse(fetchedSchema);
 		} catch (UISpecException ex) {
 			log.error("Exception occured while fetching all the UiSpec");
 			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
@@ -180,14 +197,43 @@ public class UISpecService {
 		return response;
 	}
 
-	private List<UISpecResponseDTO> filterPreRegSpec(List<UISpecResponseDTO> data) {
+	private List<UISpecMetaDataDTO> prepareResponse(List<UISpecResponseDTO> uiSchema) {
+		List<UISpecMetaDataDTO> res = new ArrayList<>();
+		uiSchema.forEach(spec -> {
+			System.out.println(spec.getId());
+			UISpecMetaDataDTO specData = new UISpecMetaDataDTO();
+			specData.setId(spec.getId());
+			specData.setDescription(spec.getDescription());
+			specData.setVersion(spec.getVersion());
+			specData.setIdentitySchemaId(spec.getIdentitySchemaId());
+			specData.setIdSchemaVersion(spec.getIdSchemaVersion());
+			specData.setTitle(spec.getTitle());
+			specData.setEffectiveFrom(spec.getEffectiveFrom());
+			specData.setStatus(spec.getStatus());
+			specData.setCreatedOn(spec.getCreatedOn());
+			specData.setUpdatedOn(spec.getUpdatedOn());
+			specData.setJsonSpec(spec.getJsonSpec().get(0).getSpec());
+			res.add(specData);
+		});
+		return res;
+	}
+
+	private UISpecMetaDataDTO getLatestPublishedSchema(List<UISpecMetaDataDTO> fetchedSchema) {
+		List<UISpecMetaDataDTO> sorted = fetchedSchema.stream().filter(spec -> spec.getStatus().equals("PUBLISHED"))
+				.sorted(Comparator.comparing(UISpecMetaDataDTO::getEffectiveFrom).reversed())
+				.collect(Collectors.toList());
+		sorted.forEach(spec -> System.out.println(spec.getEffectiveFrom()));
+		return sorted.get(0);
+	}
+
+	private List<UISpecMetaDataDTO> filterPreRegSpec(List<UISpecResponseDTO> data) {
 		List<UISpecResponseDTO> filteredData = new ArrayList<UISpecResponseDTO>();
 		data.forEach(spec -> {
 			if (spec.getDomain().equals(domain)) {
 				filteredData.add(spec);
 			}
 		});
-		return filteredData;
+		return prepareResponse(filteredData);
 	}
 
 }

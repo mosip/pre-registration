@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.PageDTO;
 import io.mosip.preregistration.application.dto.UISpecDTO;
+import io.mosip.preregistration.application.dto.UISpecMetaDataDTO;
 import io.mosip.preregistration.application.dto.UISpecResponseDTO;
 import io.mosip.preregistration.application.service.UISpecService;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -52,7 +53,7 @@ public class UISpecificationController {
 
 	@PutMapping(path = "/uispec")
 	@PreAuthorize("hasAnyRole('GLOBAL_ADMIN','ZONAL_ADMIN','PRE_REGISTRATION_ADMIN')")
-	@ApiOperation(value = "Service to publish draftted ui specification")
+	@ApiOperation(value = "Service to update draftted ui specification")
 	public ResponseEntity<MainResponseDTO<UISpecResponseDTO>> updateUISpec(
 			@RequestParam(name = "id", required = true) @ApiParam(value = "uispec id") String id,
 			@Valid @RequestBody MainRequestDTO<UISpecDTO> request) {
@@ -71,8 +72,8 @@ public class UISpecificationController {
 
 	@GetMapping("/uispec/latest")
 	@PreAuthorize("hasAnyRole('GLOBAL_ADMIN','ZONAL_ADMIN','REGISTRATION_CLIENT','REGISTRATION_SUPERVISOR','REGISTRATION_OFFICER','REGISTRATION_PROCESSOR','RESIDENT','INDIVIDUAL')")
-	@ApiOperation(value = "Service to fetch latest published ui specification of a domain")
-	public ResponseEntity<MainResponseDTO<List<UISpecResponseDTO>>> getLatestPublishedSchema(
+	@ApiOperation(value = "Service to fetch latest published ui specification")
+	public ResponseEntity<MainResponseDTO<List<UISpecMetaDataDTO>>> getLatestPublishedSchema(
 			@RequestParam(name = "version", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double version,
 			@RequestParam(name = "identitySchemaVersion", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double identitySchemaVersion) {
 		log.info("In UISpecification Controller to getLatestPublishedSchema");
@@ -82,8 +83,8 @@ public class UISpecificationController {
 
 	@GetMapping("/uispec/all")
 	@PreAuthorize("hasAnyRole('GLOBAL_ADMIN','ZONAL_ADMIN','REGISTRATION_CLIENT','REGISTRATION_SUPERVISOR','REGISTRATION_OFFICER','REGISTRATION_PROCESSOR','RESIDENT','INDIVIDUAL')")
-	@ApiOperation(value = "Service to fetch latest published ui specification of a domain")
-	public ResponseEntity<MainResponseDTO<PageDTO<UISpecResponseDTO>>> getAllPublishedSchema(
+	@ApiOperation(value = "Service to fetch all published ui specification")
+	public ResponseEntity<MainResponseDTO<PageDTO<UISpecMetaDataDTO>>> getAllPublishedSchema(
 			@RequestParam(name = "pageNumber", defaultValue = "0") @ApiParam(value = "page number", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10") @ApiParam(value = "page size", defaultValue = "10") int pageSize) {
 		log.info("In UISpecification Controller to getAllPublishedSchema");
