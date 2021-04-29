@@ -73,12 +73,12 @@ public class UISpecificationController {
 	@GetMapping("/uispec/latest")
 	@PreAuthorize("hasAnyRole('GLOBAL_ADMIN','ZONAL_ADMIN','REGISTRATION_CLIENT','REGISTRATION_SUPERVISOR','REGISTRATION_OFFICER','REGISTRATION_PROCESSOR','RESIDENT','INDIVIDUAL')")
 	@ApiOperation(value = "Service to fetch latest published ui specification")
-	public ResponseEntity<MainResponseDTO<List<UISpecMetaDataDTO>>> getLatestPublishedSchema(
+	public ResponseEntity<MainResponseDTO<UISpecMetaDataDTO>> getLatestPublishedSchema(
 			@RequestParam(name = "version", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double version,
 			@RequestParam(name = "identitySchemaVersion", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double identitySchemaVersion) {
 		log.info("In UISpecification Controller to getLatestPublishedSchema");
 		log.info("version {} identitySchemaVersion {}", version, identitySchemaVersion);
-		return ResponseEntity.status(HttpStatus.OK).body(uiSpecService.getUISpec(version, identitySchemaVersion));
+		return ResponseEntity.status(HttpStatus.OK).body(uiSpecService.getLatestUISpec(version, identitySchemaVersion));
 	}
 
 	@GetMapping("/uispec/all")

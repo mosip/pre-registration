@@ -84,25 +84,16 @@ public class UISpecService {
 		return response;
 	}
 
-	public MainResponseDTO<List<UISpecMetaDataDTO>> getUISpec(double version, double identitySchemaVersion) {
-		log.info("In UISpec service getUIspec method");
-		MainResponseDTO<List<UISpecMetaDataDTO>> response = new MainResponseDTO<List<UISpecMetaDataDTO>>();
-		response.setVersion(this.version);
+	public MainResponseDTO<String> publishUISpec(String id) {
+		log.info("In UISpec service publishUIspec method");
+		MainResponseDTO<String> response = new MainResponseDTO<String>();
+		response.setVersion(version);
 		response.setResponsetime(LocalDateTime.now().toString());
 		try {
-			log.info("fetching the UiSpec version {} and identitySchemaVersion {}", version, identitySchemaVersion);
-			List<UISpecResponseDTO> uiSchema = serviceUtil.getUISchema(version, identitySchemaVersion);
-			List<UISpecMetaDataDTO> fetchedSchema = prepareResponse(uiSchema);
-			if (identitySchemaVersion == 0) {
-				ArrayList<UISpecMetaDataDTO> latestPublishedList = new ArrayList<>();
-				latestPublishedList.add(getLatestPublishedSchema(fetchedSchema));
-				response.setResponse(latestPublishedList);
-			} else {
-				response.setResponse(fetchedSchema);
-			}
-
+			log.info("publish the UiSpec request id {}", id);
+			response.setResponse(serviceUtil.publishUISchema(id));
 		} catch (UISpecException ex) {
-			log.error("Exception occured while fetching the UiSpec");
+			log.error("Exception occured while publishing the UiSpec id {}", id);
 			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
 			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
 			exception.setErrorCode(ex.getErrorCode());
@@ -112,18 +103,6 @@ public class UISpecService {
 			response.setErrors(explist);
 		}
 		return response;
-	}
-
-	private UISpecficationRequestDTO getMasterDataUISpecRequest(UISpecDTO request) {
-		UISpecficationRequestDTO masterDataRequest = new UISpecficationRequestDTO();
-		masterDataRequest.setDomain(domain);
-		masterDataRequest.setDescription(request.getDescription());
-		masterDataRequest.setIdentitySchemaId(request.getIdentitySchemaId());
-		masterDataRequest.setTitle(request.getTitle());
-		masterDataRequest.setType(request.getType());
-		masterDataRequest.setJsonspec(request.getJsonspec());
-
-		return masterDataRequest;
 	}
 
 	public MainResponseDTO<String> deleteUISpec(String id) {
@@ -135,7 +114,7 @@ public class UISpecService {
 			log.info("deleting the UiSpec id {}", id);
 			response.setResponse(serviceUtil.deleteUISchema(id));
 		} catch (UISpecException ex) {
-			log.error("Exception occured while fetching the UiSpec");
+			log.error("Exception occured while deleting the UiSpec");
 			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
 			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
 			exception.setErrorCode(ex.getErrorCode());
@@ -147,16 +126,18 @@ public class UISpecService {
 		return response;
 	}
 
-	public MainResponseDTO<String> publishUISpec(String id) {
-		log.info("In UISpec service publishUIspec method");
-		MainResponseDTO<String> response = new MainResponseDTO<String>();
-		response.setVersion(version);
+	public MainResponseDTO<UISpecMetaDataDTO> getLatestUISpec(double version, double identitySchemaVersion) {
+		log.info("In UISpec service getUIspec method");
+		MainResponseDTO<UISpecMetaDataDTO> response = new MainResponseDTO<UISpecMetaDataDTO>();
+		response.setVersion(this.version);
 		response.setResponsetime(LocalDateTime.now().toString());
 		try {
-			log.info("publish the UiSpec request id {}", id);
-			response.setResponse(serviceUtil.publishUISchema(id));
+			log.info("fetching the UiSpec version {} and identitySchemaVersion {}", version, identitySchemaVersion);
+			List<UISpecResponseDTO> uiSchema = serviceUtil.getUISchema(version, identitySchemaVersion);
+			List<UISpecMetaDataDTO> fetchedSchema = prepareResponse(uiSchema);
+			response.setResponse(getLatestPublishedSchema(fetchedSchema));
 		} catch (UISpecException ex) {
-			log.error("Exception occured while publishing the UiSpec id {}", id);
+			log.error("Exception occured while fetching the UiSpec");
 			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
 			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
 			exception.setErrorCode(ex.getErrorCode());
@@ -195,6 +176,18 @@ public class UISpecService {
 			response.setErrors(explist);
 		}
 		return response;
+	}
+
+	private UISpecficationRequestDTO getMasterDataUISpecRequest(UISpecDTO request) {
+		UISpecficationRequestDTO masterDataRequest = new UISpecficationRequestDTO();
+		masterDataRequest.setDomain(domain);
+		masterDataRequest.setDescription(request.getDescription());
+		masterDataRequest.setIdentitySchemaId(request.getIdentitySchemaId());
+		masterDataRequest.setTitle(request.getTitle());
+		masterDataRequest.setType(request.getType());
+		masterDataRequest.setJsonspec(request.getJsonspec());
+
+		return masterDataRequest;
 	}
 
 	private List<UISpecMetaDataDTO> prepareResponse(List<UISpecResponseDTO> uiSchema) {
