@@ -127,7 +127,12 @@ public enum DocumentErrorMessages {
 	/**
 	 * ErrorMessage for PRG_PAM_DOC_021
 	 */
-	DOCUMENT_ALREADY_PRESENT("Document is alredy present");
+	DOCUMENT_ALREADY_PRESENT("Document is alredy present"),
+	
+	/**
+	 * ErrorMessage for PRG_PAM_DOC_012
+	 */
+	DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS("Document table not able to update by this status");
 
 	private DocumentErrorMessages(String message) {
 		this.message = message;

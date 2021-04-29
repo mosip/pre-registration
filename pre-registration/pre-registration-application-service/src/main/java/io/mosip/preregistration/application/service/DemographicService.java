@@ -406,9 +406,14 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
 				if (!serviceUtil.isNull(demographicEntity)) {
 					userValidation(userId, demographicEntity.getCreatedBy());
-					demographicEntity = demographicRepository.update(serviceUtil.prepareDemographicEntityForUpdate(
-							demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
-							authUserDetails().getUserId(), preRegistrationId));
+					if (!serviceUtil.isDemographicBookedOrExpired(demographicEntity, validationUtil)) {
+						demographicEntity = demographicRepository.update(serviceUtil.prepareDemographicEntityForUpdate(
+								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
+								authUserDetails().getUserId(), preRegistrationId));
+					} else {
+						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(), 
+								DemographicErrorMessages.NOT_POSSIBLE_TO_UPDATE.getMessage());
+					}
 				} else {
 					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());

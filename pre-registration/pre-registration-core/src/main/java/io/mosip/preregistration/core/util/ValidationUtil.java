@@ -34,6 +34,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.core.code.RequestCodes;
+import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
@@ -375,5 +376,15 @@ public class ValidationUtil {
 
 	public String getCurrentResponseTime() {
 		return LocalDateTime.now(ZoneId.of("UTC")).toString();
+	}
+	
+	public boolean isStatusBookedOrExpired(String status) {
+		boolean isStatusBookedOrExpired = false;
+		if (StatusCodes.BOOKED.getCode().equals(status)) {
+			isStatusBookedOrExpired = !isStatusBookedOrExpired;
+		} else if (StatusCodes.EXPIRED.getCode().equals(status)) {
+			isStatusBookedOrExpired = !isStatusBookedOrExpired;
+		}
+		return isStatusBookedOrExpired;
 	}
 }
