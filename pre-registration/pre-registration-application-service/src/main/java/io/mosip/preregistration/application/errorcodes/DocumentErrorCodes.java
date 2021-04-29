@@ -106,7 +106,10 @@ public enum DocumentErrorCodes {
 	 * ErrorCode for INVALID_DOCUMENT_ID
 	 */
 	PRG_PAM_DOC_022,
-	PRG_PAM_REQ_023
-	;
+	PRG_PAM_REQ_023,
+	/**
+	 * ErrorCode for DOCUMENT_TABLE_NOTACCESSIBLE BY BOOKED OR EXPIRED STATUS
+	 */
+	PRG_PAM_DOC_024;
 
 }

@@ -775,8 +775,13 @@ public class DocumentService implements DocumentServiceIntf {
 			if (validationUtil.requstParamValidator(requestParamMap) && documentId != null && !documentId.equals("")) {
 				DocumentEntity documentEntity = documnetDAO.findBydocumentId(documentId);
 				if (documentEntity != null) {
-					documentEntity.setDocRefId(docRefId);
-					documnetDAO.updateDocument(documentEntity);
+					if (!isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
+						documentEntity.setDocRefId(docRefId);
+						documnetDAO.updateDocument(documentEntity);
+					} else {
+						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
+								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+					}
 				} else {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
 							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage());
@@ -795,5 +800,9 @@ public class DocumentService implements DocumentServiceIntf {
 		response.setResponse("STATUS_UPDATED_SUCESSFULLY");
 		return response;
 
+	}
+	
+	public boolean isDocumentEntityBookedOrExpiredStatus(DocumentEntity documentEntity) {
+		return validationUtil.isStatusBookedOrExpired(documentEntity.getStatusCode());
 	}
 }
