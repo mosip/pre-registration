@@ -175,7 +175,9 @@ public enum DemographicErrorMessages {
 	 */
 	DUPLICATE_KEY("Duplicate key for prid"),
 	
-	SERVER_ERROR("Error while calling config server");
+	SERVER_ERROR("Error while calling config server"),
+	
+	NOT_POSSIBLE_TO_UPDATE("Application can not be updated!!");
 
 	private DemographicErrorMessages(String message) {
 		this.message = message;

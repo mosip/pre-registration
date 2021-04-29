@@ -99,7 +99,10 @@ public enum DemographicErrorCodes {
 	PRG_PAM_APP_020("PRG_PAM_APP_020"),
 	
 	/* ErrorCode for PRID_RESTCALL_FAIL */
-	PRG_PAM_APP_021("PRG_PAM_APP_021");
+	PRG_PAM_APP_021("PRG_PAM_APP_021"),
+	
+	/* ErrorCode for BookedorExpired status can not be update */
+	PRG_PAM_APP_022("PRG_PAM_APP_022");
 
 	private DemographicErrorCodes(String code) {
 		this.code = code;

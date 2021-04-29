@@ -72,6 +72,7 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
+import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
@@ -646,5 +647,9 @@ public class DemographicServiceUtil {
 
 		requestFactory.setHttpClient(httpClient);
 		return new RestTemplate(requestFactory);
+	}
+	
+	public boolean isDemographicBookedOrExpired(DemographicEntity demographicEntity, ValidationUtil validationUtil) {
+		return validationUtil.isStatusBookedOrExpired(demographicEntity.getStatusCode());
 	}
 }
