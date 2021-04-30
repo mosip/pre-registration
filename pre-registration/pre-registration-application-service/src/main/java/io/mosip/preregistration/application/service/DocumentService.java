@@ -11,8 +11,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -288,6 +286,10 @@ public class DocumentService implements DocumentServiceIntf {
 			DocumentEntity documentEntity = serviceUtil.dtoToEntity(file, document, authUserDetails().getUserId(),
 					preRegistrationId, getentity);
 			if (getentity != null) {
+				if (isDocumentEntityBookedOrExpiredStatus(getentity)) {
+					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
+							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+				}
 				documentEntity.setDocumentId(String.valueOf(getentity.getDocumentId()));
 			}
 			documentEntity.setDocName(file.getOriginalFilename());
@@ -349,6 +351,10 @@ public class DocumentService implements DocumentServiceIntf {
 				DocumentEntity documentEntity = documnetDAO.findSingleDocument(sourcePreId, catCode);
 				DocumentEntity destEntity = documnetDAO.findSingleDocument(destinationPreId, catCode);
 				if (documentEntity != null && sourceStatus && destinationStatus) {
+					if (isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
+						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
+								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+					}
 					DocumentEntity copyDocumentEntity = documnetDAO.saveDocument(
 							serviceUtil.documentEntitySetter(destinationPreId, documentEntity, destEntity));
 					sourceKey = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
@@ -775,13 +781,12 @@ public class DocumentService implements DocumentServiceIntf {
 			if (validationUtil.requstParamValidator(requestParamMap) && documentId != null && !documentId.equals("")) {
 				DocumentEntity documentEntity = documnetDAO.findBydocumentId(documentId);
 				if (documentEntity != null) {
-					if (!isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
-						documentEntity.setDocRefId(docRefId);
-						documnetDAO.updateDocument(documentEntity);
-					} else {
+					if (isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
 						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
 								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
 					}
+					documentEntity.setDocRefId(docRefId);
+					documnetDAO.updateDocument(documentEntity);
 				} else {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
 							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage());
