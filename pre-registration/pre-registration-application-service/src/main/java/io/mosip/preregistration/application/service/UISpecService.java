@@ -1,14 +1,20 @@
 package io.mosip.preregistration.application.service;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.PageDTO;
@@ -16,6 +22,9 @@ import io.mosip.preregistration.application.dto.UISpecDTO;
 import io.mosip.preregistration.application.dto.UISpecMetaDataDTO;
 import io.mosip.preregistration.application.dto.UISpecResponseDTO;
 import io.mosip.preregistration.application.dto.UISpecficationRequestDTO;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
+
 import io.mosip.preregistration.application.exception.UISpecException;
 import io.mosip.preregistration.application.service.util.UISpecServiceUtil;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
@@ -46,6 +55,7 @@ public class UISpecService {
 		UISpecResponseDTO uispecReq = new UISpecResponseDTO();
 		try {
 			log.info("Saving the UiSpec request {}", request);
+			isJSONValid(request.getJsonspec());
 			uispecReq = serviceUtil.saveUISchema(getMasterDataUISpecRequest(request));
 			response.setResponse(uispecReq);
 		} catch (UISpecException ex) {
@@ -69,6 +79,7 @@ public class UISpecService {
 		UISpecResponseDTO uispecResponse = new UISpecResponseDTO();
 		try {
 			log.info("updating the UiSpec request {}", updateRequest);
+			isJSONValid(updateRequest.getJsonspec());
 			uispecResponse = serviceUtil.updateUISchema(getMasterDataUISpecRequest(updateRequest), id);
 			response.setResponse(uispecResponse);
 		} catch (UISpecException ex) {
@@ -205,7 +216,12 @@ public class UISpecService {
 			specData.setStatus(spec.getStatus());
 			specData.setCreatedOn(spec.getCreatedOn());
 			specData.setUpdatedOn(spec.getUpdatedOn());
-			specData.setJsonSpec(spec.getJsonSpec().get(0).getSpec());
+			try {
+				specData.setJsonSpec(convertJsonStringToObject(spec.getJsonSpec().get(0).getSpec()));
+			} catch (ParseException e) {
+				throw new UISpecException(ApplicationErrorCodes.PRG_APP_006.getCode(),
+						ApplicationErrorMessages.UI_SPEC_VALUE_PARSE_ERROR.getMessage());
+			}
 			res.add(specData);
 		});
 		return res;
@@ -227,6 +243,30 @@ public class UISpecService {
 			}
 		});
 		return prepareResponse(filteredData);
+	}
+
+	private JSONObject convertJsonStringToObject(String jsonString) throws ParseException {
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject = null;
+		jsonObject = (JSONObject) jsonParser.parse(jsonString);
+
+		return jsonObject;
+	}
+
+	/**
+	 * Validates string is valid json or not
+	 * 
+	 * @param jsonInString
+	 */
+	private void isJSONValid(String jsonInString) {
+		ObjectMapper objectMapper = new ObjectMapper();
+		try {
+			objectMapper.readTree(jsonInString);
+		} catch (IOException e) {
+			log.error("Given jsonSpec is not a valid json objec", e);
+			throw new UISpecException(ApplicationErrorCodes.PRG_APP_006.getCode(),
+					ApplicationErrorMessages.UI_SPEC_VALUE_PARSE_ERROR.getMessage());
+		}
 	}
 
 }
