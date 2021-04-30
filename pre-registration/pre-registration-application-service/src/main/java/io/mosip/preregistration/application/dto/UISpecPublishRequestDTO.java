@@ -8,9 +8,9 @@ import lombok.Data;
 
 @Data
 public class UISpecPublishRequestDTO {
-	
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private LocalDateTime  effectiveFrom;
-	
+	private LocalDateTime effectiveFrom;
+
 	private String id;
 }
