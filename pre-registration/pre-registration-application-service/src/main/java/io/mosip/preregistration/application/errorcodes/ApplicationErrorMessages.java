@@ -10,7 +10,9 @@ public enum ApplicationErrorMessages {
 	
 	FAILED_TO_DELETE_THE_UI_SPEC("Failed to delete the ui spec"),
 	
-	FAILED_TO_PUBLISH_THE_UI_SPEC("Failed to publish the ui spec");
+	FAILED_TO_PUBLISH_THE_UI_SPEC("Failed to publish the ui spec"),
+	
+	UI_SPEC_VALUE_PARSE_ERROR("Error while parsing json");
 
 	private ApplicationErrorMessages(String message) {
 		this.message = message;

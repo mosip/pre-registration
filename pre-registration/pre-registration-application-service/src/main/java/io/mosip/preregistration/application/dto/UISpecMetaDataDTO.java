@@ -2,6 +2,8 @@ package io.mosip.preregistration.application.dto;
 
 import java.time.LocalDateTime;
 
+import org.json.simple.JSONObject;
+
 import lombok.Data;
 
 @Data
@@ -13,7 +15,7 @@ public class UISpecMetaDataDTO {
 	private String description;
 	private String identitySchemaId;
 	private double idSchemaVersion;
-	private String jsonSpec;
+	private JSONObject jsonSpec;
 	private String status;
 	private LocalDateTime effectiveFrom;
 	private LocalDateTime createdOn;
