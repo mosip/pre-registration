@@ -808,6 +808,6 @@ public class DocumentService implements DocumentServiceIntf {
 	}
 	
 	public boolean isDocumentEntityBookedOrExpiredStatus(DocumentEntity documentEntity) {
-		return validationUtil.isStatusBookedOrExpired(documentEntity.getStatusCode());
+		return validationUtil.isStatusBookedOrExpired(documentEntity.getDemographicEntity().getStatusCode());
 	}
 }
