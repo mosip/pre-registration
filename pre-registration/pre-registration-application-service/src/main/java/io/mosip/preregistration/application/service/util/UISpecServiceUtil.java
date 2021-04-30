@@ -1,5 +1,8 @@
 package io.mosip.preregistration.application.service.util;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -168,7 +171,7 @@ public class UISpecServiceUtil {
 
 			UISpecPublishRequestDTO publishRequest = new UISpecPublishRequestDTO();
 			publishRequest.setId(id);
-			publishRequest.setEffectiveFrom(getCurrentUTCTime());
+			publishRequest.setEffectiveFrom(LocalDateTime.now(ZoneId.of(ZoneOffset.UTC.getId())));
 
 			MainRequestDTO<UISpecPublishRequestDTO> uiSpecPublishRequest = new MainRequestDTO<>();
 			uiSpecPublishRequest.setRequest(publishRequest);
