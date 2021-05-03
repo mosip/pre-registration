@@ -1,7 +1,10 @@
 package io.mosip.preregistration.datasync.service;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.annotation.PostConstruct;
 
@@ -20,13 +23,13 @@ import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
+import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
-import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdResponseDTO;
+import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
@@ -51,6 +54,9 @@ import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
  */
 @Service
 public class DataSyncService {
+	
+	private static final String UTC_DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
+	
 	/**
 	 * Autowired reference for {@link #DataSyncServiceUtil}
 	 */
@@ -135,12 +141,12 @@ public class DataSyncService {
 				if (serviceUtil.isNull(dataSyncRequestDTO.getToDate())) {
 					dataSyncRequestDTO.setToDate(dataSyncRequestDTO.getFromDate());
 				}
-				PreRegIdsByRegCenterIdResponseDTO preRegIdsDTO = serviceUtil
+				BookingDataByRegIdDto preRegIdsDTO = serviceUtil
 						.getBookedPreIdsByDateAndRegCenterIdRestService(dataSyncRequestDTO.getFromDate(),
-								dataSyncRequestDTO.getToDate(), dataSyncRequestDTO.getRegistrationCenterId());
-				PreRegIdsByRegCenterIdDTO byRegCenterIdDTO = new PreRegIdsByRegCenterIdDTO();
-				byRegCenterIdDTO.setPreRegistrationIds(preRegIdsDTO.getPreRegistrationIds());
-				preRegistrationIdsDTO = serviceUtil.getLastUpdateTimeStamp(byRegCenterIdDTO);
+								dataSyncRequestDTO.getToDate(), dataSyncRequestDTO.getRegistrationCenterId());				
+				preRegistrationIdsDTO = new PreRegistrationIdsDTO();
+				preRegistrationIdsDTO.setPreRegistrationIds(getIdsWithTime(preRegIdsDTO));				
+				preRegistrationIdsDTO.setCountOfPreRegIds(String.valueOf(preRegIdsDTO.getIdsWithAppointmentDate().size()));
 				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 				responseDto.setResponse(preRegistrationIdsDTO);
 			}
@@ -166,6 +172,33 @@ public class DataSyncService {
 			}
 		}
 		return responseDto;
+	}
+
+	/**
+	 * 
+	 * @param preRegIdsDTO
+	 * @return
+	 */
+	private Map<String, String> getIdsWithTime(BookingDataByRegIdDto preRegIdsDTO) {
+		Map<String, String> idWithTime = new HashMap<String, String>();
+		for (Entry<String, Map<LocalDate, SlotTimeDto>> preRegWithTime : preRegIdsDTO.getIdsWithAppointmentDate()
+				.entrySet()) {
+			idWithTime.put(preRegWithTime.getKey(), getUTCTimeStamp(preRegWithTime.getValue()));
+		}
+		return idWithTime;
+	}	
+	
+	/**
+	 * Assuming one pre-reg id will have one appointTime and single time slot
+	 * @param value
+	 * @return
+	 */
+	private String getUTCTimeStamp(Map<LocalDate, SlotTimeDto> value) {
+		for (Entry<LocalDate, SlotTimeDto> v : value.entrySet()) {
+			return v.getKey().atTime(v.getValue().getFromTime())
+					.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+		}
+		return null;
 	}
 
 	/**

@@ -47,6 +47,7 @@ import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
@@ -258,16 +259,18 @@ public class DataSyncServiceUtil {
 	 * @param regCenterId
 	 * @return preRegIdsByRegCenterIdResponseDTO
 	 */
-	public PreRegIdsByRegCenterIdResponseDTO getBookedPreIdsByDateAndRegCenterIdRestService(String fromDate,
+	public BookingDataByRegIdDto getBookedPreIdsByDateAndRegCenterIdRestService(String fromDate,
 			String toDate, String regCenterId) {
 		log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method of datasync service util");
-		PreRegIdsByRegCenterIdResponseDTO preRegIdsByRegCenterIdResponseDTO = null;
+		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = null;
 		try {
 			Map<String, String> params = new HashMap<>();
 			params.put("registrationCenterId", regCenterId);
-			UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
-					.fromHttpUrl(bookingResourceUrl + "/appointment/preRegistrationId/{registrationCenterId}");
+//			UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+//					.fromHttpUrl(bookingResourceUrl + "/appointment/registrationCenterId/{registrationCenterId}");
 
+			UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
+					.fromHttpUrl("http://localhost:9095/preregistration/v1" + "/appointment/registrationCenterId/{registrationCenterId}");
 			URI uri = uriComponentsBuilder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri).queryParam("from_date", fromDate)
 					.queryParam("to_date", toDate);
@@ -277,9 +280,9 @@ public class DataSyncServiceUtil {
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
 			log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method URL- " + uriBuilder);
-			ResponseEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> respEntity = restTemplate.exchange(
+			ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = restTemplate.exchange(
 					uriBuilder, HttpMethod.GET, httpEntity,
-					new ParameterizedTypeReference<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>>() {
+					new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 					}, params);
 			if (respEntity.getBody().getErrors() != null) {
 				for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : respEntity.getBody().getErrors()) {
@@ -290,7 +293,7 @@ public class DataSyncServiceUtil {
 				}
 			} else {
 				preRegIdsByRegCenterIdResponseDTO = mapper.convertValue(respEntity.getBody().getResponse(),
-						PreRegIdsByRegCenterIdResponseDTO.class);
+						BookingDataByRegIdDto.class);
 			}
 		} catch (RestClientException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));

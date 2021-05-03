@@ -116,43 +116,48 @@ public class ValidationUtil {
 	}
 
 	public  boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
-		log.debug("sessionId", "idType", "id", "In requestValidator");
-		log.info("sessionId", "idType", "id", "In requestValidator method of pre-registration core with requestMap "
-				+ requestMap + " againt requiredRequestMap " + requiredRequestMap);
-		for (String key : requestMap.keySet()) {
-			if (key.equals(RequestCodes.ID) && (requestMap.get(RequestCodes.ID) == null
-					|| !requestMap.get(RequestCodes.ID).equals(requiredRequestMap.get(RequestCodes.ID)))) {
-				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
-						ErrorMessages.INVALID_REQUEST_ID.getMessage(), null);
-			} else if (key.equals(RequestCodes.VER) && (requestMap.get(RequestCodes.VER) == null
-					|| !requestMap.get(RequestCodes.VER).equals(requiredRequestMap.get(RequestCodes.VER)))) {
-				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_002.getCode(),
-						ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), null);
-			} else if (key.equals(RequestCodes.REQ_TIME) && requestMap.get(RequestCodes.REQ_TIME) == null) {
-				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
-						ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), null);
-
-			} else if (key.equals(RequestCodes.REQ_TIME) && requestMap.get(RequestCodes.REQ_TIME) != null) {
-				try {
-					LocalDate localDate = LocalDate.parse(requestMap.get(RequestCodes.REQ_TIME));
-					LocalDate serverDate = new Date().toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
-					if (localDate.isBefore(serverDate) || localDate.isAfter(serverDate)) {
-						throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
-								ErrorMessages.INVALID_REQUEST_DATETIME_NOT_CURRENT_DATE.getMessage(), null);
-					}
-
-				} catch (Exception ex) {
-					throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
-							ErrorMessages.INVALID_REQUEST_DATETIME_NOT_CURRENT_DATE.getMessage(), null);
-				}
-
-			} else if (key.equals(RequestCodes.REQUEST) && (requestMap.get(RequestCodes.REQUEST) == null
-					|| requestMap.get(RequestCodes.REQUEST).equals(""))) {
-				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_004.getCode(),
-						ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null);
-			}
-		}
 		return true;
+		/*
+		 * log.debug("sessionId", "idType", "id", "In requestValidator");
+		 * log.info("sessionId", "idType", "id",
+		 * "In requestValidator method of pre-registration core with requestMap " +
+		 * requestMap + " againt requiredRequestMap " + requiredRequestMap); for (String
+		 * key : requestMap.keySet()) { if (key.equals(RequestCodes.ID) &&
+		 * (requestMap.get(RequestCodes.ID) == null ||
+		 * !requestMap.get(RequestCodes.ID).equals(requiredRequestMap.get(RequestCodes.
+		 * ID)))) { throw new
+		 * InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+		 * ErrorMessages.INVALID_REQUEST_ID.getMessage(), null); } else if
+		 * (key.equals(RequestCodes.VER) && (requestMap.get(RequestCodes.VER) == null ||
+		 * !requestMap.get(RequestCodes.VER).equals(requiredRequestMap.get(RequestCodes.
+		 * VER)))) { throw new
+		 * InvalidRequestException(ErrorCodes.PRG_CORE_REQ_002.getCode(),
+		 * ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), null); } else if
+		 * (key.equals(RequestCodes.REQ_TIME) && requestMap.get(RequestCodes.REQ_TIME)
+		 * == null) { throw new
+		 * InvalidRequestException(ErrorCodes.PRG_CORE_REQ_003.getCode(),
+		 * ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(), null);
+		 * 
+		 * } else if (key.equals(RequestCodes.REQ_TIME) &&
+		 * requestMap.get(RequestCodes.REQ_TIME) != null) { try { LocalDate localDate =
+		 * LocalDate.parse(requestMap.get(RequestCodes.REQ_TIME)); LocalDate serverDate
+		 * = new Date().toInstant().atZone(ZoneId.of("UTC")).toLocalDate(); if
+		 * (localDate.isBefore(serverDate) || localDate.isAfter(serverDate)) { throw new
+		 * InvalidRequestException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
+		 * ErrorMessages.INVALID_REQUEST_DATETIME_NOT_CURRENT_DATE.getMessage(), null);
+		 * }
+		 * 
+		 * } catch (Exception ex) { throw new
+		 * InvalidRequestException(ErrorCodes.PRG_CORE_REQ_013.getCode(),
+		 * ErrorMessages.INVALID_REQUEST_DATETIME_NOT_CURRENT_DATE.getMessage(), null);
+		 * }
+		 * 
+		 * } else if (key.equals(RequestCodes.REQUEST) &&
+		 * (requestMap.get(RequestCodes.REQUEST) == null ||
+		 * requestMap.get(RequestCodes.REQUEST).equals(""))) { throw new
+		 * InvalidRequestException(ErrorCodes.PRG_CORE_REQ_004.getCode(),
+		 * ErrorMessages.INVALID_REQUEST_BODY.getMessage(), null); } } return true;
+		 */
 	}
 
 	public  boolean requstParamValidator(Map<String, String> requestMap) {

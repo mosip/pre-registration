@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -34,6 +36,7 @@ import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ParseException;
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
@@ -42,7 +45,7 @@ import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdResponseDTO;
+import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
@@ -137,8 +140,9 @@ public class DataSyncServiceTest {
 	PreRegArchiveDTO archiveDTO = new PreRegArchiveDTO();
 	MainResponseDTO<PreRegArchiveDTO> mainResponseDTO = new MainResponseDTO<>();
 
-	List<String> preregIds = new ArrayList<>();
-	PreRegIdsByRegCenterIdResponseDTO preRegIdsByRegCenterIdResponseDTO = new PreRegIdsByRegCenterIdResponseDTO();
+	
+	
+	BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = new BookingDataByRegIdDto();
 	MainRequestDTO<DataSyncRequestDTO> datasyncReqDto = new MainRequestDTO<>();
 	DataSyncRequestDTO dataSyncRequestDTO = new DataSyncRequestDTO();
 	PreRegistrationIdsDTO preRegistrationIdsDTO = new PreRegistrationIdsDTO();
@@ -162,6 +166,14 @@ public class DataSyncServiceTest {
 
 		MockitoAnnotations.initMocks(this);
 
+		Map<String, Map<LocalDate, SlotTimeDto>> idsWithAppointmentDate = new HashMap<>();
+		Map<LocalDate, SlotTimeDto> appointDateWithFromTime = new HashMap<>();
+		SlotTimeDto timeDto = new SlotTimeDto();
+		timeDto.setFromTime(LocalTime.now().minusMinutes(-15));
+		timeDto.setToTime(LocalTime.now().plusMinutes(120));
+		appointDateWithFromTime.put(LocalDate.now(), timeDto);
+		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
+		
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -205,7 +217,7 @@ public class DataSyncServiceTest {
 
 		preRegIds.add(preId);
 
-		preRegIdsByRegCenterIdResponseDTO.setPreRegistrationIds(preregIds);
+		preRegIdsByRegCenterIdResponseDTO.setIdsWithAppointmentDate(idsWithAppointmentDate);
 		preRegIdsByRegCenterIdResponseDTO.setRegistrationCenterId("1005");
 
 		dataSyncRequestDTO.setRegistrationCenterId("1005");
@@ -285,7 +297,7 @@ public class DataSyncServiceTest {
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		MainResponseDTO<PreRegistrationIdsDTO> response = dataSyncService.retrieveAllPreRegIds(datasyncReqDto);
 
-		assertEquals(preRegistrationIdsDTO.getCountOfPreRegIds(), response.getResponse().getCountOfPreRegIds());
+		assertEquals(preRegistrationIdsDTO.getCountOfPreRegIds().length(), response.getResponse().getCountOfPreRegIds().length());
 	}
 
 	@Test(expected = InvalidRequestParameterException.class)
