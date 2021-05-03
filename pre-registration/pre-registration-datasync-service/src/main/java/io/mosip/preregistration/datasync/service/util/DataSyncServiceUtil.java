@@ -266,11 +266,8 @@ public class DataSyncServiceUtil {
 		try {
 			Map<String, String> params = new HashMap<>();
 			params.put("registrationCenterId", regCenterId);
-//			UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
-//					.fromHttpUrl(bookingResourceUrl + "/appointment/registrationCenterId/{registrationCenterId}");
-
 			UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
-					.fromHttpUrl("http://localhost:9095/preregistration/v1" + "/appointment/registrationCenterId/{registrationCenterId}");
+					.fromHttpUrl(bookingResourceUrl + "/appointment/registrationCenterId/{registrationCenterId}");
 			URI uri = uriComponentsBuilder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri).queryParam("from_date", fromDate)
 					.queryParam("to_date", toDate);
