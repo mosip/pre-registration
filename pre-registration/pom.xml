@@ -196,7 +196,6 @@
 							<manifestEntries>
 								<Project-Name>${project.name}</Project-Name>
 								<Project-Version>${project.version}</Project-Version>
-								<Project-Description>${project.description}</Project-Description>
 							</manifestEntries>
 						</archive>
 					</configuration>
