@@ -115,7 +115,8 @@ public class ValidationUtil {
 		return true;
 	}
 
-	public  boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
+	public boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
+
 		log.debug("sessionId", "idType", "id", "In requestValidator");
 		log.info("sessionId", "idType", "id", "In requestValidator method of pre-registration core with requestMap "
 				+ requestMap + " againt requiredRequestMap " + requiredRequestMap);
@@ -153,6 +154,7 @@ public class ValidationUtil {
 			}
 		}
 		return true;
+
 	}
 
 	public  boolean requstParamValidator(Map<String, String> requestMap) {

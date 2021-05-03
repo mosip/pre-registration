@@ -9,12 +9,15 @@ import java.io.IOException;
 import java.net.URI;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -37,6 +40,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
+import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
@@ -47,6 +51,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdResponseDTO;
+import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
@@ -245,24 +250,36 @@ public class DataSyncServiceUtilTest {
 
 	@Test
 	public void callGetPreIdsRestServiceTest() {
+		Map<String, Map<LocalDate, SlotTimeDto>> idsWithAppointmentDate = new HashMap<>();
+		Map<LocalDate, SlotTimeDto> appointDateWithFromTime = new HashMap<>();
+		SlotTimeDto timeDto = new SlotTimeDto();
+		timeDto.setFromTime(LocalTime.now().minusMinutes(-15));
+		timeDto.setToTime(LocalTime.now().plusMinutes(120));
+		appointDateWithFromTime.put(LocalDate.now(), timeDto);
+		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
+		
 		String fromDate = "2018-01-17";
 		String toDate = "2019-01-17";
 		preRegIds.add("23587986034785");
-		MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO> mainResponseDTO = new MainResponseDTO<>();
-		PreRegIdsByRegCenterIdResponseDTO byRegCenterIdResponseDTO = new PreRegIdsByRegCenterIdResponseDTO();
-		byRegCenterIdResponseDTO.setPreRegistrationIds(preRegIds);
+		MainResponseDTO<BookingDataByRegIdDto> mainResponseDTO = new MainResponseDTO<>();
+		BookingDataByRegIdDto byRegCenterIdResponseDTO = new BookingDataByRegIdDto();
+		byRegCenterIdResponseDTO.setIdsWithAppointmentDate(idsWithAppointmentDate);
 		byRegCenterIdResponseDTO.setRegistrationCenterId("10001");
 		mainResponseDTO.setResponsetime(resTime);
 		mainResponseDTO.setErrors(null);
 		mainResponseDTO.setResponse(byRegCenterIdResponseDTO);
-		ResponseEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> respEntity = new ResponseEntity<>(
-				mainResponseDTO, HttpStatus.OK);
+		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(
+				mainResponseDTO, HttpStatus.OK);	
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>>() {
+				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 				}), Mockito.anyMap())).thenReturn(respEntity);
-		PreRegIdsByRegCenterIdResponseDTO preRegIdsByRegCenterIdResponseDTO = serviceUtil
+		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = serviceUtil
 				.getBookedPreIdsByDateAndRegCenterIdRestService(fromDate, toDate, "10001");
-		assertEquals(preRegIdsByRegCenterIdResponseDTO.getPreRegistrationIds().get(0), preRegIds.get(0));
+		String preReg = null;
+		for (Entry<String, Map<LocalDate, SlotTimeDto>> value : preRegIdsByRegCenterIdResponseDTO.getIdsWithAppointmentDate().entrySet()) {
+			preReg = value.getKey();
+		}		
+		assertEquals(preReg, preRegIds.get(0));
 	}
 
 	@Test(expected = RecordNotFoundForDateRange.class)
@@ -270,9 +287,17 @@ public class DataSyncServiceUtilTest {
 		String fromDate = "2018-01-17";
 		String toDate = "2019-01-17";
 		preRegIds.add("23587986034785");
-		MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO> mainResponseDTO = new MainResponseDTO<>();
-		PreRegIdsByRegCenterIdResponseDTO byRegCenterIdResponseDTO = new PreRegIdsByRegCenterIdResponseDTO();
-		byRegCenterIdResponseDTO.setPreRegistrationIds(preRegIds);
+		Map<String, Map<LocalDate, SlotTimeDto>> idsWithAppointmentDate = new HashMap<>();
+		Map<LocalDate, SlotTimeDto> appointDateWithFromTime = new HashMap<>();
+		SlotTimeDto timeDto = new SlotTimeDto();
+		timeDto.setFromTime(LocalTime.now().minusMinutes(-15));
+		timeDto.setToTime(LocalTime.now().plusMinutes(120));
+		appointDateWithFromTime.put(LocalDate.now(), timeDto);
+		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
+		
+		MainResponseDTO<BookingDataByRegIdDto> mainResponseDTO = new MainResponseDTO<>();
+		BookingDataByRegIdDto byRegCenterIdResponseDTO = new BookingDataByRegIdDto();
+		byRegCenterIdResponseDTO.setIdsWithAppointmentDate(idsWithAppointmentDate);
 		byRegCenterIdResponseDTO.setRegistrationCenterId("10001");
 		mainResponseDTO.setResponsetime(resTime);
 		List<ExceptionJSONInfoDTO> exceptionJSONInfoDTOs = new ArrayList<>();
@@ -283,10 +308,10 @@ public class DataSyncServiceUtilTest {
 		mainResponseDTO.setResponse(byRegCenterIdResponseDTO);
 		Map<String, String> params = new HashMap<>();
 		params.put("registrationCenterId", "10001");
-		ResponseEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> respEntity = new ResponseEntity<>(
+		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(
 				mainResponseDTO, HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>>() {
+				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 				}), Mockito.anyMap())).thenReturn(respEntity);
 		serviceUtil.getBookedPreIdsByDateAndRegCenterIdRestService(fromDate, toDate, "10001");
 	}
@@ -296,21 +321,32 @@ public class DataSyncServiceUtilTest {
 		String fromDate = "2018-01-17";
 		String toDate = null;
 		preRegIds.add("23587986034785");
-		MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO> mainResponseDTO = new MainResponseDTO<>();
-		PreRegIdsByRegCenterIdResponseDTO byRegCenterIdResponseDTO = new PreRegIdsByRegCenterIdResponseDTO();
-		byRegCenterIdResponseDTO.setPreRegistrationIds(preRegIds);
+		Map<String, Map<LocalDate, SlotTimeDto>> idsWithAppointmentDate = new HashMap<>();
+		Map<LocalDate, SlotTimeDto> appointDateWithFromTime = new HashMap<>();
+		SlotTimeDto timeDto = new SlotTimeDto();
+		timeDto.setFromTime(LocalTime.now().minusMinutes(-15));
+		timeDto.setToTime(LocalTime.now().plusMinutes(120));
+		appointDateWithFromTime.put(LocalDate.now(), timeDto);
+		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
+		MainResponseDTO<BookingDataByRegIdDto> mainResponseDTO = new MainResponseDTO<>();
+		BookingDataByRegIdDto byRegCenterIdResponseDTO = new BookingDataByRegIdDto();
+		byRegCenterIdResponseDTO.setIdsWithAppointmentDate(idsWithAppointmentDate);
 		byRegCenterIdResponseDTO.setRegistrationCenterId("10001");
 		mainResponseDTO.setResponsetime(resTime);
 		mainResponseDTO.setErrors(null);
 		mainResponseDTO.setResponse(byRegCenterIdResponseDTO);
-		ResponseEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> respEntity = new ResponseEntity<>(
+		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(
 				mainResponseDTO, HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>>() {
+				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 				}), Mockito.anyMap())).thenReturn(respEntity);
-		PreRegIdsByRegCenterIdResponseDTO preRegIdsByRegCenterIdResponseDTO = serviceUtil
+		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = serviceUtil
 				.getBookedPreIdsByDateAndRegCenterIdRestService(fromDate, toDate, "10001");
-		assertEquals(preRegIdsByRegCenterIdResponseDTO.getPreRegistrationIds().get(0), preRegIds.get(0));
+		String preReg = null;
+		for (Entry<String, Map<LocalDate, SlotTimeDto>> value : preRegIdsByRegCenterIdResponseDTO.getIdsWithAppointmentDate().entrySet()) {
+			preReg = value.getKey();
+		}		
+		assertEquals(preReg, preRegIds.get(0));		
 	}
 
 	@Test
