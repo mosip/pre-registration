@@ -2,7 +2,6 @@ package io.mosip.preregistration.application.service.util;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -24,7 +23,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.dto.PageDTO;
 import io.mosip.preregistration.application.dto.UISpecPublishRequestDTO;
 import io.mosip.preregistration.application.dto.UISpecResponseDTO;
@@ -41,9 +39,6 @@ public class UISpecServiceUtil {
 
 	@Autowired
 	private RestTemplate restTemplate;
-
-	@Value("${mosip.utc-datetime-pattern}")
-	private String dateTimeFormat;
 
 	@Value("${masterdata.resource.url}")
 	private String materdataResourceUrl;
@@ -171,7 +166,7 @@ public class UISpecServiceUtil {
 
 			UISpecPublishRequestDTO publishRequest = new UISpecPublishRequestDTO();
 			publishRequest.setId(id);
-			publishRequest.setEffectiveFrom(LocalDateTime.now(ZoneId.of(ZoneOffset.UTC.getId())));
+			publishRequest.setEffectiveFrom(LocalDateTime.now(ZoneId.of("UTC")));
 
 			MainRequestDTO<UISpecPublishRequestDTO> uiSpecPublishRequest = new MainRequestDTO<>();
 			uiSpecPublishRequest.setRequest(publishRequest);
@@ -361,11 +356,6 @@ public class UISpecServiceUtil {
 		}
 		return response;
 
-	}
-
-	public String getCurrentUTCTime() {
-		log.info("In getCurrentResponseTime method of service util");
-		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
 	}
 
 }

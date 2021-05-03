@@ -29,6 +29,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -41,7 +43,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @RestController
 @RequestMapping("/transliteration")
-@Api(tags = "transliteration")
+@Tag(name = "Transliteration Controller")
 @CrossOrigin("*")
 public class TransliterationController {
 
@@ -72,7 +74,7 @@ public class TransliterationController {
 	 * @return responseDto with transliterated toFieldValue. 
 	 */
 	@PostMapping(path = "/transliterate", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Get Pre-Registartion-Translitration data")
+	@Operation(summary  = "Get Pre-Registartion-Translitration data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Given key is translitrated successfully") })
 	public ResponseEntity<MainResponseDTO<TransliterationResponseDTO>> translitrator(
 			@Validated @RequestBody(required = true) MainRequestDTO<TransliterationRequestDTO> requestDTO, @ApiIgnore Errors errors) {
