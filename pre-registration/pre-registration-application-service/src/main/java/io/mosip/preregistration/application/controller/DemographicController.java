@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.service.DemographicServiceIntf;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -43,11 +44,11 @@ import io.mosip.preregistration.demographic.dto.DemographicMetadataDTO;
 import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.demographic.dto.SchemaResponseDto;
-import io.mosip.preregistration.application.service.DemographicServiceIntf;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -64,7 +65,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/")
-@Api(tags = "application")
+@Tag(name = "Demographic Controller")
 @CrossOrigin("*")
 public class DemographicController {
 
@@ -110,7 +111,7 @@ public class DemographicController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PostMapping(path = "/applications", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Create form data")
+	@Operation(summary  = "Create form data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Pre-Registration successfully Created") })
 	public ResponseEntity<MainResponseDTO<DemographicCreateResponseDTO>> register(
 			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject,
@@ -136,7 +137,7 @@ public class DemographicController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PutMapping(path = "/applications/{preRegistrationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Update form data")
+	@Operation(summary  = "Update form data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Demographic data successfully Updated") })
 	public ResponseEntity<MainResponseDTO<DemographicUpdateResponseDTO>> update(
 			@PathVariable("preRegistrationId") String preRegistrationId,
@@ -161,7 +162,7 @@ public class DemographicController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN','PRE_REGISTRATION_ADMIN')")
 	@GetMapping(path = "/applications/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Get Pre-Registartion data")
+	@Operation(summary  = "Get Pre-Registartion data")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Demographic data successfully retrieved") })
 	public ResponseEntity<MainResponseDTO<DemographicResponseDTO>> getApplication(
 			@PathVariable("preRegistrationId") String preRegistraionId) {
@@ -207,7 +208,7 @@ public class DemographicController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@GetMapping(path = "/applications", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Fetch all the applications created by user")
+	@Operation(summary  = "Fetch all the applications created by user")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "All applications fetched successfully") })
 	public ResponseEntity<MainResponseDTO<DemographicMetadataDTO>> getAllApplications(HttpServletRequest res,
 			@RequestParam(value = "pageIndex", required = false) String pageIdx) {
@@ -230,7 +231,7 @@ public class DemographicController {
 
 	@GetMapping(path = "/applications/status/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 
-	@ApiOperation(value = "Fetch the status of a application")
+	@Operation(summary  = "Fetch the status of a application")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "All applications status fetched successfully") })
 	public ResponseEntity<MainResponseDTO<PreRegistartionStatusDTO>> getApplicationStatus(
 			@PathVariable("preRegistrationId") String preId) {
@@ -251,7 +252,7 @@ public class DemographicController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@DeleteMapping(path = "/applications/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Discard individual")
+	@Operation(summary  = "Discard individual")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Deletion of individual is successfully") })
 	public ResponseEntity<MainResponseDTO<DeletePreRegistartionDTO>> discardIndividual(
 			@PathVariable("preRegistrationId") String preId) {
@@ -264,7 +265,7 @@ public class DemographicController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN','REGISTRATION_PROCESSOR')")
 	@PostMapping(path = "/applications/updatedTime", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Get Updated Date Time for List of Pre-Registration Id")
+	@Operation(summary  = "Get Updated Date Time for List of Pre-Registration Id")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "Updated Date Time successfully fetched for list of pre-registration ids") })
 	public ResponseEntity<MainResponseDTO<Map<String, String>>> getUpdatedDateTimeByPreIds(
@@ -278,7 +279,7 @@ public class DemographicController {
 
     @PreAuthorize("hasRole('INDIVIDUAL')")
 	@GetMapping(path = "/applications/config", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Get IDschema config fields")
+	@Operation(summary  = "Get IDschema config fields")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Config fetch successful") })
 	public ResponseEntity<MainResponseDTO<SchemaResponseDto>> getIdSchemaConfig() {
                        

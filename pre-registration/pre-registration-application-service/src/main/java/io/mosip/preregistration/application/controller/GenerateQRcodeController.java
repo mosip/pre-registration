@@ -21,6 +21,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import io.mosip.preregistration.application.dto.QRCodeResponseDTO;
 import io.mosip.preregistration.application.service.GenerateQRcodeService;
 import springfox.documentation.annotations.ApiIgnore;
@@ -34,6 +35,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/qrCode")
 @CrossOrigin("*")
+@Tag(name = "Generate QRCode Controller")
 public class GenerateQRcodeController {
 
 	private Logger log = LoggerConfiguration.logConfig(GenerateQRcodeController.class);

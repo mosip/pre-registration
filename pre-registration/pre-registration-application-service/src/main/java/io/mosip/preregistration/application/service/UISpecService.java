@@ -231,7 +231,6 @@ public class UISpecService {
 		List<UISpecMetaDataDTO> sorted = fetchedSchema.stream().filter(spec -> spec.getStatus().equals("PUBLISHED"))
 				.sorted(Comparator.comparing(UISpecMetaDataDTO::getEffectiveFrom).reversed())
 				.collect(Collectors.toList());
-		sorted.forEach(spec -> System.out.println(spec.getEffectiveFrom()));
 		return sorted.get(0);
 	}
 

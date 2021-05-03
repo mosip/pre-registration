@@ -8,10 +8,10 @@
 		<artifactId>pre-registration-parent</artifactId>
 		<version>1.1.5-SNAPSHOT</version>
 	</parent>
-	<version>1.1.5-SNAPSHOT</version>
-	<artifactId>pre-registration-application-service</artifactId>
-	<name>pre-registration-application-service</name>
 
+	<artifactId>pre-registration-application-service</artifactId>
+	<name>Pre-Registration Application Service Project</name>
+	<description>Maven project of MOSIP Pre-Registration Service</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.core.version>1.1.5-SNAPSHOT</kernel.core.version>

@@ -39,6 +39,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -50,7 +52,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @RestController
 @RequestMapping("/login")
-@Api(tags = "PreAuth")
+@Tag(name = "Login Controller")
 @CrossOrigin("*")
 public class LoginController {
 
@@ -90,7 +92,7 @@ public class LoginController {
 	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/sendOtp", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Send Otp to UserId")
+	@Operation(summary  = "Send Otp to UserId")
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTP(
 			@Validated @RequestBody MainRequestDTO<OtpRequestDTO> userOtpRequest, @ApiIgnore Errors errors) {
@@ -109,7 +111,7 @@ public class LoginController {
 	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/sendOtp/langcode", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Send Otp to UserId")
+	@Operation(summary  = "Send Otp to UserId")
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTPWithLangCode(
 			@Validated @RequestBody MainRequestDTO<OTPWithLangCodeDTO> userOtpRequest, @ApiIgnore Errors errors) {
@@ -135,7 +137,7 @@ public class LoginController {
 	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/validateOtp", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Validate UserId and Otp")
+	@Operation(summary  = "Validate UserId and Otp")
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> validateWithUserIdOtp(
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiIgnore Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
@@ -161,7 +163,7 @@ public class LoginController {
 	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/invalidateToken", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Invalidate the token")
+	@Operation(summary  = "Invalidate the token")
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<String>> invalidateToken(HttpServletRequest req, HttpServletResponse res) {
 		log.info("sessionId", "idType", "id",
@@ -183,7 +185,7 @@ public class LoginController {
 	 * @return the response entity
 	 */
 	@GetMapping(path = "/config", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Get global and Pre-Registration config data")
+	@Operation(summary  = "Get global and Pre-Registration config data")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully retrieved") })
 	public ResponseEntity<MainResponseDTO<Map<String, String>>> configParams() {
@@ -198,7 +200,7 @@ public class LoginController {
 	 * @return the response entity
 	 */
 	@GetMapping(path = "/refreshconfig", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Refresh global and Pre-Registration config data")
+	@Operation(summary  = "Refresh global and Pre-Registration config data")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully updated") })
 	public ResponseEntity<MainResponseDTO<String>> refreshConfigParams() {
