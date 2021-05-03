@@ -31,10 +31,11 @@ import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * This class provides different API's to perform operations on Document upload.
@@ -45,7 +46,7 @@ import io.swagger.annotations.ApiResponses;
  */
 @RestController
 @RequestMapping("/")
-@Api(tags = "Document Handler")
+@Tag(name = "Document Handler")
 @CrossOrigin("*")
 public class DocumentController {
 
@@ -71,7 +72,7 @@ public class DocumentController {
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PostMapping(path = "/documents/{preRegistrationId}", consumes = { "multipart/form-data" })
-	@ApiOperation(value = "Document Upload")
+	@Operation(summary  = "Document Upload")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document uploaded successfully") })
 	public ResponseEntity<MainResponseDTO<DocumentResponseDTO>> fileUpload(
 			@PathVariable(value = "preRegistrationId") String preRegistrationId,
@@ -100,7 +101,7 @@ public class DocumentController {
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PutMapping(path = "/documents/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Copy uploaded document")
+	@Operation(summary  = "Copy uploaded document")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document successfully copied") })
 	public ResponseEntity<MainResponseDTO<DocumentResponseDTO>> copyDocument(
 			@Valid @PathVariable(required = true, value = "preRegistrationId") String preRegistrationId,
@@ -122,7 +123,7 @@ public class DocumentController {
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@GetMapping(path = "/documents/preregistration/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Get All Document for Pre-Registration Id")
+	@Operation(summary  = "Get All Document for Pre-Registration Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Documents reterived successfully") })
 	public ResponseEntity<MainResponseDTO<DocumentsMetaData>> getAllDocumentforPreid(
 			@Valid @PathVariable(required = true) String preRegistrationId) {
@@ -142,7 +143,7 @@ public class DocumentController {
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@GetMapping(path = "/documents/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Get All Document for Document Id")
+	@Operation(summary  = "Get All Document for Document Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Documents reterived successfully") })
 	public ResponseEntity<MainResponseDTO<DocumentDTO>> getDocumentforDocId(
 			@Valid @PathVariable(required = true) String documentId,
@@ -165,7 +166,7 @@ public class DocumentController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@DeleteMapping(path = "/documents/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Delete document by document Id")
+	@Operation(summary  = "Delete document by document Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document successfully deleted") })
 	public ResponseEntity<MainResponseDTO<DocumentDeleteResponseDTO>> deleteDocument(
 			@Valid @PathVariable(required = true) String documentId,
@@ -187,7 +188,7 @@ public class DocumentController {
 	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@DeleteMapping(path = "/documents/preregistration/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 
-	@ApiOperation(value = "Delete all documents by pre-registration Id")
+	@Operation(summary  = "Delete all documents by pre-registration Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Documents successfully deleted") })
 	public ResponseEntity<MainResponseDTO<DocumentDeleteResponseDTO>> deleteAllByPreId(
 			@Valid @PathVariable(required = true) String preRegistrationId) {
@@ -199,7 +200,7 @@ public class DocumentController {
 
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@PutMapping(path = "/documents/document/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "update document reference Id")
+	@Operation(summary  = "update document reference Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document Reference Id successfully updated ") })
 	public ResponseEntity<MainResponseDTO<String>> updateDocRefId(
 			@Valid @PathVariable(required = true) String documentId,

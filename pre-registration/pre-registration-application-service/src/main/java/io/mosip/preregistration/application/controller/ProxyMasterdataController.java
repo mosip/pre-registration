@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @RequestMapping("/proxy")
 @CrossOrigin("*")
+@Tag(name = "Proxy Controller")
 public class ProxyMasterdataController {
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterdataController.class);

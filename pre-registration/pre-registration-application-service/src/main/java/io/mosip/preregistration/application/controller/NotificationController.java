@@ -19,6 +19,8 @@ import io.mosip.preregistration.application.service.NotificationService;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * Controller class for notification triggering.
@@ -30,6 +32,7 @@ import io.swagger.annotations.ApiOperation;
 @RestController
 @RequestMapping("/notification")
 @CrossOrigin("*")
+@Tag(name = "Notification Controller")
 public class NotificationController {
 
 	/**
@@ -50,7 +53,7 @@ public class NotificationController {
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(path = "/notify", consumes = { "multipart/form-data" })
-	@ApiOperation(value = "Trigger notification")
+	@Operation(summary  = "Trigger notification")
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotification(
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = true) String langCode,
@@ -72,7 +75,7 @@ public class NotificationController {
 	 */
 	@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(consumes = { "multipart/form-data" })
-	@ApiOperation(value = "Trigger notification")
+	@Operation(summary  = "Trigger notification")
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotifications(
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = false) String langCode,
