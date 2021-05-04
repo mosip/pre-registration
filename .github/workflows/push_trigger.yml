@@ -57,6 +57,15 @@ jobs:
         cd pre-registration
         mvn -B package -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
 
+    - name: Analyze with SonarCloud
+      run: |
+        cd pre-registration
+        mvn -B verify sonar:sonar -Dsonar.projectKey=${{ secrets.PROJECT_KEY }} -Dsonar.organization=${{ secrets.ORG_KEY }} -Dsonar.host.url=https://sonarcloud.io -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
+
     - name: Ready the springboot artifacts
       run: find -name '*.jar' -executable -type f  -exec zip release.zip {} +
 
@@ -66,6 +75,7 @@ jobs:
         name: release
         path: ./release.zip
 
+
     - name: Analyze with SonarCloud
       run: |
         cd pre-registration
@@ -73,6 +83,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+
 
   publish_to_nexus:
     needs: build
