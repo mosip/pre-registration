@@ -3,6 +3,7 @@ package io.mosip.preregistration.application.dto;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
@@ -26,6 +27,5 @@ public class UISpecDTO {
 	private String description;
 
 	@ApiModelProperty(notes = "UISpec", required = true)
-	@NotEmpty
-	private String jsonspec;
+	private JsonNode jsonspec;
 }
