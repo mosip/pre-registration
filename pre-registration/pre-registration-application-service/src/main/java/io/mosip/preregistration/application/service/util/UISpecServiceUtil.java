@@ -156,7 +156,7 @@ public class UISpecServiceUtil {
 	public String publishUISchema(String id) {
 		log.info("In  UISpec serviceutil publishUIschema method");
 		String response = null;
-		ResponseEntity<ResponseWrapper<String>> responseEntity = null;
+		ResponseEntity<String> responseEntity = null;
 		try {
 			log.info("Calling masterdata service to publish ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder
@@ -166,7 +166,7 @@ public class UISpecServiceUtil {
 
 			UISpecPublishRequestDTO publishRequest = new UISpecPublishRequestDTO();
 			publishRequest.setId(id);
-			publishRequest.setEffectiveFrom(LocalDateTime.now(ZoneId.of("UTC")));
+			publishRequest.setEffectiveFrom(LocalDateTime.now(ZoneId.of("UTC")).plusMinutes(5));
 
 			MainRequestDTO<UISpecPublishRequestDTO> uiSpecPublishRequest = new MainRequestDTO<>();
 			uiSpecPublishRequest.setRequest(publishRequest);
@@ -179,11 +179,11 @@ public class UISpecServiceUtil {
 
 			log.info("masterdata service to publish ui spec uri {} and request {}", uriBuilder, uiSpecPublishRequest);
 
-			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.PUT, entity,
-					new ParameterizedTypeReference<ResponseWrapper<String>>() {
-					});
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.PUT, entity, String.class);
 
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
+			response = responseEntity.getBody();
+
+			/*if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				log.info("error while updating uispec {}", responseEntity.getBody().getErrors());
 				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
@@ -194,7 +194,7 @@ public class UISpecServiceUtil {
 			if (Objects.isNull(response)) {
 				throw new UISpecException(ApplicationErrorCodes.PRG_APP_005.getCode(),
 						ApplicationErrorMessages.FAILED_TO_PUBLISH_THE_UI_SPEC.getMessage());
-			}
+			}*/
 
 		} catch (RestClientException ex) {
 			log.error("error while updating uispec {}", ex);
@@ -202,8 +202,8 @@ public class UISpecServiceUtil {
 					ApplicationErrorMessages.FAILED_TO_PUBLISH_THE_UI_SPEC.getMessage());
 		} catch (Exception ex) {
 			log.error("error while updating uispec {}", ex);
-			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-					responseEntity.getBody().getErrors().get(0).getMessage());
+			/*throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+					responseEntity.getBody().getErrors().get(0).getMessage());*/
 		}
 		return response;
 
