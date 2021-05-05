@@ -31,7 +31,8 @@ public enum StatusCodes {
 	/**
 	 * Canceled
 	 */
-	CANCELED("Cancelled"),
+
+	CANCELLED("Cancelled"),
 	
 	/**
 	 * Document_Uploaded
