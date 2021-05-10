@@ -55,7 +55,7 @@ public class UISpecService {
 		UISpecResponseDTO uispecReq = new UISpecResponseDTO();
 		try {
 			log.info("Saving the UiSpec request {}", request);
-			isJSONValid(request.getJsonspec());
+			isJSONValid(request.getJsonspec().toString());
 			uispecReq = serviceUtil.saveUISchema(getMasterDataUISpecRequest(request));
 			response.setResponse(uispecReq);
 		} catch (UISpecException ex) {
@@ -79,7 +79,7 @@ public class UISpecService {
 		UISpecResponseDTO uispecResponse = new UISpecResponseDTO();
 		try {
 			log.info("updating the UiSpec request {}", updateRequest);
-			isJSONValid(updateRequest.getJsonspec());
+			isJSONValid(updateRequest.getJsonspec().toString());
 			uispecResponse = serviceUtil.updateUISchema(getMasterDataUISpecRequest(updateRequest), id);
 			response.setResponse(uispecResponse);
 		} catch (UISpecException ex) {
@@ -204,7 +204,6 @@ public class UISpecService {
 	private List<UISpecMetaDataDTO> prepareResponse(List<UISpecResponseDTO> uiSchema) {
 		List<UISpecMetaDataDTO> res = new ArrayList<>();
 		uiSchema.forEach(spec -> {
-			System.out.println(spec.getId());
 			UISpecMetaDataDTO specData = new UISpecMetaDataDTO();
 			specData.setId(spec.getId());
 			specData.setDescription(spec.getDescription());
@@ -216,12 +215,7 @@ public class UISpecService {
 			specData.setStatus(spec.getStatus());
 			specData.setCreatedOn(spec.getCreatedOn());
 			specData.setUpdatedOn(spec.getUpdatedOn());
-			try {
-				specData.setJsonSpec(convertJsonStringToObject(spec.getJsonSpec().get(0).getSpec()));
-			} catch (ParseException e) {
-				throw new UISpecException(ApplicationErrorCodes.PRG_APP_006.getCode(),
-						ApplicationErrorMessages.UI_SPEC_VALUE_PARSE_ERROR.getMessage());
-			}
+			specData.setJsonSpec(spec.getJsonSpec().get(0).getSpec());
 			res.add(specData);
 		});
 		return res;
@@ -242,14 +236,6 @@ public class UISpecService {
 			}
 		});
 		return prepareResponse(filteredData);
-	}
-
-	private JSONObject convertJsonStringToObject(String jsonString) throws ParseException {
-		JSONParser jsonParser = new JSONParser();
-		JSONObject jsonObject = null;
-		jsonObject = (JSONObject) jsonParser.parse(jsonString);
-
-		return jsonObject;
 	}
 
 	/**
