@@ -17,7 +17,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-        <io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
 	<dependencyManagement>
@@ -67,7 +67,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-        	<dependency>
+		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
 			<version>${io.micrometer.prometheus.version}</version>
@@ -93,7 +93,7 @@
 							<goal>build-info</goal>
 							<goal>repackage</goal>
 						</goals>
-					</execution> 
+					</execution>
 				</executions>
 			</plugin>
 			<plugin>

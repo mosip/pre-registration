@@ -12,7 +12,9 @@ public enum ApplicationErrorCodes {
 
 	PRG_APP_005("PRG_APP_005"), // FAILED_TO_PUBLISH_THE_UI_SPEC
 
-	PRG_APP_006("PRG_APP_006"); // UI_SPEC_VALUE_PARSE_ERROR
+	PRG_APP_006("PRG_APP_006"), // UI_SPEC_VALUE_PARSE_ERROR
+	
+	PRG_APP_007("PRG_APP_007"); // Audit from UI Failed
 
 	private ApplicationErrorCodes(String code) {
 		this.code = code;

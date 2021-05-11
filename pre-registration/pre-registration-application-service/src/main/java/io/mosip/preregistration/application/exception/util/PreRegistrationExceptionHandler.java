@@ -36,6 +36,7 @@ import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.EmptyCheckUtils;
 import io.mosip.preregistration.application.code.DocumentStatusMessages;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
+import io.mosip.preregistration.application.exception.AuditFailedException;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
 import io.mosip.preregistration.application.exception.BookingDetailsNotFoundException;
 import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
@@ -63,6 +64,7 @@ import io.mosip.preregistration.application.exception.LoginServiceException;
 import io.mosip.preregistration.application.exception.MandatoryFieldException;
 import io.mosip.preregistration.application.exception.MandatoryFieldNotFoundException;
 import io.mosip.preregistration.application.exception.MandatoryFieldRequiredException;
+import io.mosip.preregistration.application.exception.MasterDataException;
 import io.mosip.preregistration.application.exception.MissingRequestParameterException;
 import io.mosip.preregistration.application.exception.NoAuthTokenException;
 import io.mosip.preregistration.application.exception.NotificationSeriveException;
@@ -260,6 +262,20 @@ public class PreRegistrationExceptionHandler {
 	@ExceptionHandler(OperationNotAllowedException.class)
 	public ResponseEntity<MainResponseDTO<?>> operationNotAllowedException(final OperationNotAllowedException e) {
 		return GenericUtil.errorResponse(e, e.getMainresponseDTO());
+	}
+
+	@ExceptionHandler(AuditFailedException.class)
+	public ResponseEntity<MainResponseDTO<?>> auditFailedException(final AuditFailedException e) {
+		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(), e.getErrorMessage());
+		MainResponseDTO<?> errorRes = new MainResponseDTO<>();
+		errorRes.setResponsetime(getCurrentResponseTime());
+		errorRes.setVersion(ver);
+
+		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
+		errorList.add(errorDetails);
+		errorRes.setErrors(errorList);
+
+		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 	}
 
 	/**
@@ -500,12 +516,14 @@ public class PreRegistrationExceptionHandler {
 	}
 
 	@ExceptionHandler(value = AccessDeniedException.class)
-	public ResponseEntity<ResponseWrapper<ServiceError>> AccessDeniedExceptionHandler(
-			final HttpServletRequest httpServletRequest, Exception e) throws IOException {
-		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
-		ServiceError error = new ServiceError("KER-AUTH-401", "Authentication failed");
-		errorResponse.getErrors().add(error);
-		return new ResponseEntity<>(errorResponse, HttpStatus.INTERNAL_SERVER_ERROR);
+	public ResponseEntity<MainResponseDTO<?>> AccessDeniedExceptionHandler(final AccessDeniedException e) {
+		MainResponseDTO<?> errorRes = new MainResponseDTO<>();
+		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
+		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO("KER-401", "Authentication Failed");
+		errorList.add(errorDetails);
+		errorRes.setErrors(errorList);
+		errorRes.setResponsetime(DateUtils.formatDate(new Date(), utcDateTimePattern));
+		return new ResponseEntity<>(errorRes, HttpStatus.UNAUTHORIZED);
 	}
 
 	/**
@@ -547,6 +565,21 @@ public class PreRegistrationExceptionHandler {
 		errorRes.setResponsetime(DateUtils.formatDate(new Date(), utcDateTimePattern));
 
 		return new ResponseEntity<>(errorRes, HttpStatus.OK);
+	}
+
+	@ExceptionHandler(MasterDataException.class)
+	public ResponseEntity<MainResponseDTO<?>> masterDataCallException(final MasterDataException e) {
+
+		MainResponseDTO<?> failureResponse = new MainResponseDTO<>();
+
+		List<ExceptionJSONInfoDTO> exceptionList = new ArrayList<ExceptionJSONInfoDTO>();
+		ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
+		exception.setErrorCode(e.getErrorCode());
+		exception.setMessage(e.getErrorMessage());
+
+		exceptionList.add(exception);
+		failureResponse.setErrors(exceptionList);
+		return ResponseEntity.status(HttpStatus.OK).body(failureResponse);
 	}
 
 	/**
