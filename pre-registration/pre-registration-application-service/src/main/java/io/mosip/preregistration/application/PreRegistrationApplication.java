@@ -3,8 +3,6 @@ package io.mosip.preregistration.application;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
-
-import io.mosip.preregistration.application.PreRegistrationApplication;
 import org.springframework.context.annotation.FilterType;
 
 @SpringBootApplication

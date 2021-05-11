@@ -1,6 +1,9 @@
 package io.mosip.preregistration.application.service;
 
-
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -10,12 +13,22 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.exception.MasterDataException;
 import io.mosip.preregistration.application.util.ProxyMasterdataServiceUtil;
+import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 @Service
@@ -23,10 +36,9 @@ public class ProxyMasterDataService {
 
 	@Autowired
 	private ProxyMasterdataServiceUtil util;
-	
+
 	@Autowired
 	private RestTemplate restTemplate;
-
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterDataService.class);
 
@@ -52,11 +64,13 @@ public class ProxyMasterDataService {
 			log.info("sessionId", "idType", "id",
 					"Proxy MasterData Call response for " + util.getUrl(request) + response.getBody());
 
-		} catch (RestClientException e) {
+		} catch (Exception e) {
 
-			log.error("sessionId", "idType", "id", "Proxy MasterData Call Exception response for " + util.getUrl(request)
-					+ e.getMessage() + ExceptionUtils.getStackTrace(e));
-			throw new RestClientException(e.getMessage());
+			log.error("sessionId", "idType", "id", "Proxy MasterData Call Exception response for "
+					+ util.getUrl(request) + e.getMessage() + ExceptionUtils.getStackTrace(e));
+
+			throw new MasterDataException("PRG_MSD_APP_001", "Failed to fetch masterdata information");
+
 		}
 
 		return response.getBody();
