@@ -116,7 +116,7 @@ public class TemplateUtil {
 	 */
 	public Map<String, Object> mapSetting(NotificationDTO acknowledgementDTO) {
 		Map<String, Object> responseMap = new HashMap<>();
-		log.info("sessionId", "idType", "id", "In mapSetting method of TemplateUtil service ");
+		log.info("sessionId", "idType", "id", "In mapSetting method of TemplateUtil service {}",acknowledgementDTO);
 		DateTimeFormatter dateFormate = DateTimeFormatter.ofPattern("dd MMM yyyy");
 		DateTimeFormatter timeFormate = DateTimeFormatter.ofPattern("h:mma");
 
