@@ -1,6 +1,7 @@
 package io.mosip.preregistration.application.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -118,7 +119,7 @@ public class ApplicationService {
 		auditRequestDto.setSessionUserName(auditRequest.getActionUserId());
 		auditRequestDto.setModuleId(auditRequest.getModuleId());
 		auditRequestDto.setModuleName(auditRequest.getModuleName());
-		auditRequestDto.setActionTimeStamp(auditRequest.getActionTimeStamp());
+		auditRequestDto.setActionTimeStamp(LocalDateTime.parse(auditRequest.getActionTimeStamp()));
 		return auditRequestDto;
 	}
 
