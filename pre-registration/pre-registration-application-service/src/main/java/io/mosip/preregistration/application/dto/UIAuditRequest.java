@@ -18,8 +18,7 @@ public class UIAuditRequest {
 	private String description;
 
 	@NotNull
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	private LocalDateTime actionTimeStamp;
+	private String actionTimeStamp;
 
 	@NotNull
 	private String actionUserId;
