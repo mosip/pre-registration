@@ -1,11 +1,14 @@
 package io.mosip.preregistration.application.config;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.CacheManager;
 import org.springframework.cache.annotation.CachingConfigurerSupport;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.cache.ehcache.EhCacheCacheManager;
+
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.env.Environment;
 
 import net.sf.ehcache.config.CacheConfiguration;
 
@@ -13,12 +16,19 @@ import net.sf.ehcache.config.CacheConfiguration;
 @Configuration
 public class CacheConfig extends CachingConfigurerSupport {
 
+	@Autowired
+	private Environment env;
+
 	@Bean
 	public net.sf.ehcache.CacheManager ehCacheManager() {
 		CacheConfiguration masterDataCache = new CacheConfiguration();
 		masterDataCache.setName("masterdata-cache");
-		masterDataCache.setMemoryStoreEvictionPolicy("LRU");
-		masterDataCache.setMaxEntriesLocalHeap(2000);
+		masterDataCache.setMemoryStoreEvictionPolicy(
+				env.getProperty("preregistration.masterdata.cache.memoryEvictionPolicy", "LRU"));
+		masterDataCache.setMaxEntriesLocalHeap(
+				Integer.parseInt(env.getProperty("preregistration.masterdata.cache.maxEntriesLocalHeap", "2000")));
+		masterDataCache.setTimeToLiveSeconds(
+				Integer.parseInt(env.getProperty("preregistration.masterdata.cache.TimeToLiveSeconds", "3600")));
 
 		net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
 		config.addCache(masterDataCache);
