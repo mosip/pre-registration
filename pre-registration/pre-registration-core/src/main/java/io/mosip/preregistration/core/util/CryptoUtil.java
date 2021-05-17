@@ -98,8 +98,7 @@ public class CryptoUtil {
 		ResponseEntity<ResponseWrapper<CryptoManagerResponseDTO>> response = null;
 		byte[] decodedBytes = null;
 		try {
-            System.out.println(new String(originalInput, StandardCharsets.UTF_8));
-            System.out.println(localDateTime);
+  
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
 			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(new String(originalInput, StandardCharsets.UTF_8));
