@@ -322,7 +322,7 @@ public class DemographicService implements DemographicServiceIntf {
 					"Pre ID generation end time : " + DateUtils.getUTCCurrentDateTimeString());
 			DemographicEntity demographicEntity = demographicRepository
 					.save(serviceUtil.prepareDemographicEntityForCreate(demographicRequest,
-							StatusCodes.PENDING_APPOINTMENT.getCode(), authUserDetails().getUserId(), preId));
+							StatusCodes.APPLICATION_INCOMPLETE.getCode(), authUserDetails().getUserId(), preId));
 			DemographicCreateResponseDTO res = serviceUtil.setterForCreatePreRegistration(demographicEntity,
 					demographicRequest.getDemographicDetails());
 
@@ -411,7 +411,7 @@ public class DemographicService implements DemographicServiceIntf {
 								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
 								authUserDetails().getUserId(), preRegistrationId));
 					} else {
-						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(), 
+						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(),
 								DemographicErrorMessages.NOT_POSSIBLE_TO_UPDATE.getMessage());
 					}
 				} else {
@@ -682,7 +682,9 @@ public class DemographicService implements DemographicServiceIntf {
 					userValidation(userId, demographicEntity.getCreatedBy());
 					if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
 						getDocumentServiceToDeleteAllByPreId(preregId);
-						if (!(demographicEntity.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode()))) {
+						if (!(demographicEntity.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())
+								|| demographicEntity.getStatusCode()
+										.equals(StatusCodes.APPLICATION_INCOMPLETE.getCode()))) {
 							getBookingServiceToDeleteAllByPreId(preregId);
 						}
 						int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
