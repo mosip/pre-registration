@@ -98,7 +98,7 @@ public class CryptoUtil {
 		ResponseEntity<ResponseWrapper<CryptoManagerResponseDTO>> response = null;
 		byte[] decodedBytes = null;
 		try {
-  
+
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
 			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(new String(originalInput, StandardCharsets.UTF_8));
