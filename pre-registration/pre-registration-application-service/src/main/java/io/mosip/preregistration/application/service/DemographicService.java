@@ -270,6 +270,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Override
 	public AuthUserDetails authUserDetails() {
+		System.out.println((AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
