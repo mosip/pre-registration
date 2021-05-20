@@ -19,6 +19,7 @@ import org.springframework.context.annotation.FilterType;
 						"io\\.mosip\\.kernel\\.cryptomanager\\..*",
 						"io\\.mosip\\.kernel\\.crypto\\..*",
 						"io\\.mosip\\.kernel\\.clientcrypto\\..*",
+					        "io\\.mosip\\.kernel\\.keymigrate\\..*"
 				}) })
 public class PreRegistrationApplication {
 	public static void main(String[] args) {
