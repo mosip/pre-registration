@@ -1,4 +1,4 @@
-\c mosip_prereg sysadmin
+\c mosip_prereg 
 
 \ir ddl/prereg-applicant_demographic.sql
 \ir ddl/prereg-applicant_demographic_consumed.sql
@@ -21,7 +21,5 @@
 \ir ddl/prereg-prid_seed.sql
 \ir ddl/prereg-prid_seq.sql
 \ir ddl/prereg-otp_transaction.sql
-
-
 \ir ddl/prereg-fk.sql
 \ir ddl/prereg-batch-fk.sql
