@@ -34,7 +34,6 @@ import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
-import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
@@ -107,8 +106,8 @@ public class DemographicService implements DemographicServiceIntf {
 	/**
 	 * Autowired reference for {@link #MosipPridGenerator<String>}
 	 */
-	@Autowired
-	private PridGenerator<String> pridGenerator;
+//	@Autowired
+//	private PridGenerator<String> pridGenerator;
 
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
