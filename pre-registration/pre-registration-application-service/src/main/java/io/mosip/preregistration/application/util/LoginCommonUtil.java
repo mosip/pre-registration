@@ -515,6 +515,7 @@ public class LoginCommonUtil {
 
 		} catch (RestClientException ex) {
 			log.error("Error while Calling captcha service to validate token {}", ex);
+
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
 		}
@@ -526,6 +527,7 @@ public class LoginCommonUtil {
 	public String sendOtpJwtToken(String userId) {
 		return Jwts.builder().setIssuedAt(Date.from(Instant.now())).setSubject(userId)
 				.setExpiration(Date.from(Instant.now().plusSeconds(otpExpiryTime))).setAudience(jwtAudience).toString();
+
 
 	}
 
