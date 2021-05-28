@@ -169,6 +169,7 @@ public class LoginService {
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
 				userOtpRequest.getRequest().getUserId(), language);
 
+
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
 			log.info("Response after loginCommonUtil {}", response);
@@ -203,6 +204,7 @@ public class LoginService {
 
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(LoginErrorCodes.PRG_AUTH_001.getCode(),
 						LoginErrorMessages.SEND_OTP_FAILED.getMessage());
+
 				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);
@@ -241,6 +243,7 @@ public class LoginService {
 			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
 
 			if (sendOtpResponse.getErrors() != null || !sendOtpResponse.getErrors().isEmpty()) {
+
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
