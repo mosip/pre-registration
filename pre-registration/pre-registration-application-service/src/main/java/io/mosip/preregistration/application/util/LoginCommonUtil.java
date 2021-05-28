@@ -477,6 +477,7 @@ public class LoginCommonUtil {
 		return new RestTemplate(requestFactory);
 	}
 
+
 	public MainResponseDTO<CaptchaResposneDTO> validateCaptchaToken(String captchaToken) {
 
 		if (captchaToken == null || captchaToken.isBlank()) {
@@ -490,6 +491,7 @@ public class LoginCommonUtil {
 		MainRequestDTO<CaptchaRequestDTO> captchaRequest = new MainRequestDTO<CaptchaRequestDTO>();
 		captchaRequest.setRequest(captcha);
 		captchaRequest.setRequesttime(new Date());
+
 		captchaRequest.setVersion(version);
 		captchaRequest.setId(captchaRequestId);
 		HttpHeaders header = new HttpHeaders();
@@ -509,6 +511,7 @@ public class LoginCommonUtil {
 			}
 		} catch (RestClientException ex) {
 			log.error("Error while Calling captcha service to validate token {}", ex);
+
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
 		}
@@ -520,6 +523,7 @@ public class LoginCommonUtil {
 	public String sendOtpJwtToken(String userId) {
 		return Jwts.builder().setIssuedAt(Date.from(Instant.now())).setSubject(userId)
 				.setExpiration(Date.from(Instant.now().plusSeconds(optExpiryTime))).setAudience(jwtAudience).toString();
+
 
 	}
 

@@ -15,12 +15,16 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+<<<<<<< HEAD
 import org.springframework.cache.annotation.Cacheable;
+=======
+>>>>>>> MOSIP-13822
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,6 +41,10 @@ import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
+<<<<<<< HEAD
+=======
+import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
+>>>>>>> MOSIP-13822
 import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
@@ -166,8 +174,10 @@ public class LoginService {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
+
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
 				userOtpRequest.getRequest().getUserId(), language);
+
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
@@ -200,8 +210,10 @@ public class LoginService {
 						EventType.BUSINESS.toString(), "Otp send sucessfully", AuditLogVariables.NO_ID.toString(),
 						userid, userid);
 			} else {
+
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(LoginErrorCodes.PRG_AUTH_001.getCode(),
 						LoginErrorMessages.SEND_OTP_FAILED.getMessage());
+
 				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);
@@ -216,6 +228,7 @@ public class LoginService {
 	@SuppressWarnings("unchecked")
 	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
+
 		log.info("In validateCaptchaAndSendOtp method with userId and langCode{}", request.getRequest().getUserId(),
 				request.getRequest().getUserId());
 		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
@@ -239,6 +252,7 @@ public class LoginService {
 			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
 
 			if (sendOtpResponse.getErrors() != null || !sendOtpResponse.getErrors().isEmpty()) {
+
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
@@ -248,9 +262,8 @@ public class LoginService {
 			authRes.setStatus(PreRegLoginConstant.SUCCESS);
 			response.setResponse(authRes);
 
-		} catch (
+		} catch (PreRegLoginException ex) {
 
-		PreRegLoginException ex) {
 			log.error("In validateCaptchaAndSendOtp method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} catch (Exception ex) {
