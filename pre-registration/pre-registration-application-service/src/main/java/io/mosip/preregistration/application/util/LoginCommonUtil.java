@@ -501,6 +501,7 @@ public class LoginCommonUtil {
 		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {
+
 			log.debug("Calling captcha service to validate token {}", captchaRequest);
 
 			responseEntity = restTemplate.exchange(captchaUrl, HttpMethod.POST, entity,
