@@ -482,8 +482,8 @@ public class LoginCommonUtil {
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {
 			log.info("Calling captcha service to validate token {}", captchaRequest);
-			responseEntity = restTemplate.exchange("http://localhost:9089/preregistration/captcha/validatecaptcha",
-					HttpMethod.POST, entity, new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
+			responseEntity = restTemplate.exchange(env.getProperty("captcha.resourse.url"), HttpMethod.POST, entity,
+					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
 					});
 		} catch (Exception ex) {
 			log.info("Error while Calling captcha service to validate token {}", ex);
