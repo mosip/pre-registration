@@ -171,6 +171,7 @@ public class LoginService {
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
 				userOtpRequest.getRequest().getUserId(), language);
 
+
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
 			log.info("Response after loginCommonUtil {}", response);
@@ -205,6 +206,7 @@ public class LoginService {
 
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(LoginErrorCodes.PRG_AUTH_001.getCode(),
 						LoginErrorMessages.SEND_OTP_FAILED.getMessage());
+
 				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);
@@ -237,7 +239,6 @@ public class LoginService {
 		AuthNResponse authRes = new AuthNResponse();
 		try {
 			if (isCaptchaEnabled) {
-
 				captchaResponse = this.loginCommonUtil.validateCaptchaToken(captchaToken);
 				authRes.setMessage(captchaResponse.getMessage().concat("\sand\s"));
 			}
