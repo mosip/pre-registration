@@ -288,7 +288,8 @@ public class DocumentService implements DocumentServiceIntf {
 			if (getentity != null) {
 				if (isDocumentEntityBookedOrExpiredStatus(getentity)) {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
-							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
+									.getMessage());
 				}
 				documentEntity.setDocumentId(String.valueOf(getentity.getDocumentId()));
 			}
@@ -351,9 +352,10 @@ public class DocumentService implements DocumentServiceIntf {
 				DocumentEntity documentEntity = documnetDAO.findSingleDocument(sourcePreId, catCode);
 				DocumentEntity destEntity = documnetDAO.findSingleDocument(destinationPreId, catCode);
 				if (documentEntity != null && sourceStatus && destinationStatus) {
-					if (isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
+					if (isDocumentEntityBookedOrExpiredStatus(destEntity)) {
 						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
-								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
+										.getMessage());
 					}
 					DocumentEntity copyDocumentEntity = documnetDAO.saveDocument(
 							serviceUtil.documentEntitySetter(destinationPreId, documentEntity, destEntity));
@@ -567,7 +569,7 @@ public class DocumentService implements DocumentServiceIntf {
 		List<DocumentMultipartResponseDTO> allDocRes = new ArrayList<>();
 		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
 		for (DocumentEntity doc : entityList) {
-			log.info("","","","Demographic preid:" + doc.getDemographicEntity().getStatusCode());
+			log.info("", "", "", "Demographic preid:" + doc.getDemographicEntity().getStatusCode());
 			DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
 			allDocDto.setDocCatCode(doc.getDocCatCode());
 			allDocDto.setDocName(doc.getDocName());
@@ -783,7 +785,8 @@ public class DocumentService implements DocumentServiceIntf {
 				if (documentEntity != null) {
 					if (isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
 						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
-								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
+										.getMessage());
 					}
 					documentEntity.setDocRefId(docRefId);
 					documnetDAO.updateDocument(documentEntity);
@@ -806,7 +809,7 @@ public class DocumentService implements DocumentServiceIntf {
 		return response;
 
 	}
-	
+
 	public boolean isDocumentEntityBookedOrExpiredStatus(DocumentEntity documentEntity) {
 		return validationUtil.isStatusBookedOrExpired(documentEntity.getDemographicEntity().getStatusCode());
 	}

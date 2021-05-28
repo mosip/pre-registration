@@ -28,6 +28,7 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -84,6 +85,7 @@ public class LoginCommonUtil {
 	private Environment env;
 
 	@Autowired
+	@Qualifier(value = "restTemplateConfig")
 	private RestTemplate restTemplate;
 
 	@Autowired
@@ -476,15 +478,15 @@ public class LoginCommonUtil {
 		captchaRequest.setVersion(env.getProperty("version"));
 		captchaRequest.setId(env.getProperty("mosip.preregistration.captcha.id.validate"));
 		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.APPLICATION_JSON);
-		HttpEntity<MainRequestDTO<CaptchaRequestDTO>> entity = new HttpEntity<MainRequestDTO<CaptchaRequestDTO>>(
-				captchaRequest, header);
+		header.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {
 			log.info("Calling captcha service to validate token {}", captchaRequest);
 			responseEntity = restTemplate.exchange(env.getProperty("captcha.resourse.url"), HttpMethod.POST, entity,
 					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
 					});
+			
 		} catch (Exception ex) {
 			log.info("Error while Calling captcha service to validate token {}", ex);
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
