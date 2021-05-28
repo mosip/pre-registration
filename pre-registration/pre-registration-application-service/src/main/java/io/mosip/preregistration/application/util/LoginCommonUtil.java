@@ -513,7 +513,6 @@ public class LoginCommonUtil {
 
 		} catch (RestClientException ex) {
 			log.error("Error while Calling captcha service to validate token {}", ex);
-
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
 		}
