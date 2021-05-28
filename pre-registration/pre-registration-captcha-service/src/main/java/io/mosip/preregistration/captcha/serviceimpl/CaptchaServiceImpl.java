@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.LinkedMultiValueMap;
@@ -41,6 +42,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 	private String version;
 
 	@Autowired
+	@Qualifier(value = "restTemplateBean")
 	private RestTemplate restTemplate;
 
 	private final String CAPTCHA_SUCCESS = " Captcha successfully verified";
@@ -67,7 +69,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 			log.info("sessionId", "idType", "id",
 					"In pre-registration captcha service try block to validate the token request via a google verify site rest call"
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl);
-			//System.out.println(((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl);
+			
 			captchaResponse = this.restTemplate.postForObject(recaptchaVerifyUrl, param, GoogleCaptchaDTO.class);
 			log.debug("sessionId", "idType", "id", captchaResponse.toString());
 		} catch (RestClientException ex) {
