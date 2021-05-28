@@ -89,7 +89,7 @@ public class NotificationServiceUtil {
 	private static final String LANG_CODE = "langcode";
 
 	private static final String IS_ACTIVE = "isActive";
-	
+
 	private static final String REG_CENTER_ID = "id";
 
 	/** The Constant TEMPLATE_TYPE_CODE. */
@@ -98,7 +98,7 @@ public class NotificationServiceUtil {
 
 	@Autowired
 	private ObjectMapper objectMapper;
-	
+
 	@Value("${registrationcenter.centerdetail.rest.uri}")
 	private String centerDetailUri;
 
@@ -314,6 +314,7 @@ public class NotificationServiceUtil {
 	public String applyTemplate(Map mp, String templateName, String token, String langCode)
 
 			throws PreRegLoginException, IOException {
+		log.info("In applyTemplate of NotificationServiceUtil for templateName {} and values {}", templateName, mp);
 		Objects.requireNonNull(templateName);
 		Objects.requireNonNull(mp);
 		StringWriter writer = new StringWriter();
@@ -338,7 +339,7 @@ public class NotificationServiceUtil {
 	 *                                           exception
 	 */
 	public String fetchTemplate(String templateName, String token, String langCode) throws PreRegLoginException {
-
+		log.info("In fetchTemplate of NotificationServiceUtil for templateName {}", templateName);
 		Map<String, String> params = new HashMap<>();
 		params.put(LANG_CODE, langCode);
 		params.put(TEMPLATE_TYPE_CODE, templateName);
@@ -385,10 +386,11 @@ public class NotificationServiceUtil {
 				.orElse("");
 
 	}
-	
-	public NotificationDTO modifyCenterNameAndAddress(NotificationDTO notificationDto, String registrationCenterId, String langCode) {
-		
-		if(notificationDto != null) {
+
+	public NotificationDTO modifyCenterNameAndAddress(NotificationDTO notificationDto, String registrationCenterId,
+			String langCode) {
+
+		if (notificationDto != null) {
 			String centerName = notificationDto.getRegistrationCenterName();
 			String address = notificationDto.getAddress();
 			if (centerName == null && address == null) {
@@ -397,7 +399,7 @@ public class NotificationServiceUtil {
 				centerName = centerDto.getName();
 				StringBuilder sb = new StringBuilder(centerDto.getAddressLine1());
 				sb.append(" ").append(centerDto.getAddressLine2()).append(" ").append(centerDto.getAddressLine3());
-				address = sb.toString();  
+				address = sb.toString();
 			}
 			notificationDto.setRegistrationCenterName(centerName);
 			notificationDto.setAddress(address);
@@ -405,8 +407,9 @@ public class NotificationServiceUtil {
 		System.out.println("NotificationDto: " + notificationDto);
 		return notificationDto;
 	}
-	
-	public ResponseWrapper<RegistrationCenterResponseDto> getRegistrationCenter(String registrationCenterId, String langCode) {
+
+	public ResponseWrapper<RegistrationCenterResponseDto> getRegistrationCenter(String registrationCenterId,
+			String langCode) {
 		ResponseWrapper<RegistrationCenterResponseDto> response = new ResponseWrapper<>();
 		ResponseEntity<ResponseWrapper<RegistrationCenterResponseDto>> responseEntity = null;
 //		String url = getAppointmentResourseUrl + "/appointment/" + preRegId;
@@ -436,19 +439,21 @@ public class NotificationServiceUtil {
 		}
 		return response;
 	}
-	
+
 	public RegistrationCenterDto getNotificationCenterAddressDTO(String registrationCenterId, String langCode) {
 		RegistrationCenterDto centerDto = null;
-		ResponseWrapper<RegistrationCenterResponseDto> getRegistrationCenter = getRegistrationCenter(registrationCenterId, langCode);
+		ResponseWrapper<RegistrationCenterResponseDto> getRegistrationCenter = getRegistrationCenter(
+				registrationCenterId, langCode);
 		System.out.println("Res: " + getRegistrationCenter);
 		RegistrationCenterResponseDto registrationCenterResponseDto = getRegistrationCenter.getResponse();
 		System.out.println("Res1: " + registrationCenterResponseDto);
 		if (registrationCenterResponseDto != null) {
-			if (registrationCenterResponseDto.getRegistrationCenters() != null && !registrationCenterResponseDto.getRegistrationCenters().isEmpty()) {
+			if (registrationCenterResponseDto.getRegistrationCenters() != null
+					&& !registrationCenterResponseDto.getRegistrationCenters().isEmpty()) {
 				centerDto = registrationCenterResponseDto.getRegistrationCenters().get(0);
 			}
 		}
 		return centerDto;
 	}
-	
+
 }

@@ -15,23 +15,18 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
-
-import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
-
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -39,9 +34,22 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
-import io.mosip.kernel.core.exception.ExceptionUtils;
-import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.constant.PreRegLoginConstant;
+import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
+import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
+import io.mosip.preregistration.application.dto.ClientSecretDTO;
+import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
+import io.mosip.preregistration.application.dto.OtpRequestDTO;
+import io.mosip.preregistration.application.dto.User;
+import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
+import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
+import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
+import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
+import io.mosip.preregistration.application.exception.LoginServiceException;
+import io.mosip.preregistration.application.exception.PreRegLoginException;
+import io.mosip.preregistration.application.exception.util.LoginExceptionCatcher;
+import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
@@ -50,28 +58,12 @@ import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
-import io.mosip.preregistration.application.constant.PreRegLoginConstant;
-import io.mosip.preregistration.application.dto.ClientSecretDTO;
-import io.mosip.preregistration.application.dto.OtpRequestDTO;
-import io.mosip.preregistration.application.dto.OtpUser;
-import io.mosip.preregistration.application.dto.User;
-import io.mosip.preregistration.application.dto.UserOtp;
-import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
-import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
-import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
-import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
-import io.mosip.preregistration.application.exception.LoginServiceException;
-import io.mosip.preregistration.application.exception.NoAuthTokenException;
-import io.mosip.preregistration.application.exception.PreRegLoginException;
-import io.mosip.preregistration.application.exception.util.LoginExceptionCatcher;
-import io.mosip.preregistration.application.util.LoginCommonUtil;
 
 @Service
 public class LoginService {
@@ -139,11 +131,14 @@ public class LoginService {
 	@Value("${prereg.auth.jwt.token.roles}")
 	private String jwtTokenRoles;
 
-	@Autowired
-	OTPManager otpmanager;
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int optexpiryTime;
+
+	@Value("${enable-captcha}")
+	private boolean isCaptchaEnabled;
 
 	@Autowired
-	private RestTemplate restTemplate;
+	OTPManager otpmanager;
 
 	private String globalConfig;
 	private String preregConfig;
@@ -161,11 +156,12 @@ public class LoginService {
 	 * @param userOtpRequest
 	 * @return MainResponseDTO<AuthNResponse>
 	 */
+	@SuppressWarnings("unchecked")
 	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest, String language) {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
-		log.info("In callsendOtp method of login service  with request {}" , userOtpRequest);
+		log.info("In callsendOtp method of login service  with request {}", userOtpRequest);
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
@@ -187,10 +183,10 @@ public class LoginService {
 
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-			log.error("In callsendOtp method of login service- " , ex.getResponseBodyAsString());
+			log.error("In callsendOtp method of login service- ", ex.getResponseBodyAsString());
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} catch (Exception ex) {
-			log.error("In callsendOtp method of login service- ",  ex);
+			log.error("In callsendOtp method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} finally {
 			if (isSuccess) {
@@ -200,7 +196,7 @@ public class LoginService {
 			} else {
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(PreRegLoginConstant.OTP_ERROR_CODE,
 						PreRegLoginConstant.OTP_ERROR_MESSAGE);
-				List<ExceptionJSONInfoDTO> lst = new ArrayList();
+				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);
 				response.setResponse(null);
@@ -211,12 +207,71 @@ public class LoginService {
 		return response;
 	}
 
+	@SuppressWarnings("unchecked")
+	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
+			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
+		log.info("In validateCaptchaAndSendOtp of loginservice {}", request);
+		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
+				.getMainResponseDto(request);
+
+		String captchaToken = request.getRequest().getCaptchaToken();
+		String langCode = request.getRequest().getLangCode();
+		String userId = request.getRequest().getUserId();
+
+		OtpRequestDTO otpRequest = new OtpRequestDTO();
+		otpRequest.setUserId(userId);
+		MainRequestDTO<OtpRequestDTO> userOtpRequest = new MainRequestDTO<OtpRequestDTO>();
+		userOtpRequest.setRequest(otpRequest);
+
+		try {
+			if (isCaptchaEnabled) {
+				log.info("Validating Captcha start {}", captchaToken);
+				if (Objects.isNull(captchaToken) || captchaToken.isBlank()) {
+					log.error("Validating Captcha token is null or blank");
+					throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorCode(),
+							PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorMessage());
+				} else {
+					log.info("Calling loginCommonsUtil validateCaptchaToken");
+					MainResponseDTO<CaptchaResposneDTO> captchaResposne = this.loginCommonUtil
+							.validateCaptchaToken(captchaToken);
+					if (!Objects.isNull(captchaResposne.getErrors())) {
+						log.error("validateCaptchaToken has an error {}", captchaResposne.getErrors());
+						throw new PreRegLoginException(captchaResposne.getErrors().get(0).getErrorCode(),
+								captchaResposne.getErrors().get(0).getMessage());
+					}
+				}
+			}
+
+			log.info("calling senOTP method of login service");
+			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
+			if (!Objects.isNull(sendOtpResponse.getErrors())) {
+				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
+						sendOtpResponse.getErrors().get(0).getMessage());
+			}
+
+			AuthNResponse authRes = new AuthNResponse();
+			authRes.setMessage(PreRegLoginConstant.SEND_OTP_AND_CAPTCHA_SUCCESS + otpChannel.get(0).toUpperCase());
+			authRes.setStatus(PreRegLoginConstant.SUCCESS);
+			response.setResponse(authRes);
+
+		} catch (PreRegLoginException ex) {
+			log.error("In validateCaptchaAndSendOtp method of login service- ", ex);
+			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
+		} catch (Exception ex) {
+			log.error("In validateCaptchaAndSendOtp method of login service- ", ex);
+			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
+		}
+		response.setResponsetime(LocalDateTime.now().toString());
+		return response;
+	}
+
 	/**
 	 * It will validate userId & otp and provide with a access token
 	 * 
 	 * @param userIdOtpRequest
 	 * @return MainResponseDTO<AuthNResponse>
 	 */
+	@SuppressWarnings("unchecked")
 	public MainResponseDTO<AuthNResponse> validateWithUserIdOtp(MainRequestDTO<User> userIdOtpRequest) {
 		log.info("In calluserIdOtp method of login service ");
 		MainResponseDTO<AuthNResponse> response = null;
@@ -236,17 +291,17 @@ public class LoginService {
 				authresponse.setStatus(PreRegLoginConstant.SUCCESS);
 
 			} else {
-				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),PreRegLoginConstant.VALIDATION_UNSUCCESS,
-						response);
+				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),
+						PreRegLoginConstant.VALIDATION_UNSUCCESS, response);
 
 			}
 			response.setResponse(authresponse);
 			isSuccess = true;
 		} catch (PreRegLoginException ex) {
-			log.error("In calluserIdOtp method of login service- " , ex);
+			log.error("In calluserIdOtp method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} catch (RuntimeException ex) {
-			log.error("In calluserIdOtp method of login service- " ,ex);
+			log.error("In calluserIdOtp method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} finally {
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
@@ -336,6 +391,7 @@ public class LoginService {
 			RequestWrapper<ClientSecretDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(clientSecretDto);
 			requestKernel.setRequesttime(LocalDateTime.now());
+			@SuppressWarnings("unchecked")
 			ResponseEntity<ResponseWrapper<AuthNResponse>> response = (ResponseEntity<ResponseWrapper<AuthNResponse>>) loginCommonUtil
 					.callAuthService(tokenUrl, HttpMethod.POST, MediaType.APPLICATION_JSON, requestKernel, null,
 							ResponseWrapper.class);
@@ -355,9 +411,9 @@ public class LoginService {
 			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
 			auditLogUtil.saveAuditDetails(auditRequestDto, token);
 		} catch (LoginServiceException ex) {
-			log.error("In setAuditvalue of login service:" , StringUtils.join(ex.getValidationErrorList(), ","));
+			log.error("In setAuditvalue of login service:", StringUtils.join(ex.getValidationErrorList(), ","));
 		} catch (Exception ex) {
-			log.error("In setAuditvalue of login service:" ,ex);
+			log.error("In setAuditvalue of login service:", ex);
 		}
 	}
 
@@ -415,7 +471,7 @@ public class LoginService {
 			globalConfig = loginCommonUtil.getConfig(globalFileName);
 			preregConfig = loginCommonUtil.getConfig(preRegFileName);
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-			log.error("In login service of refreshConfig " , ex);
+			log.error("In login service of refreshConfig ", ex);
 			new LoginExceptionCatcher().handle(ex, "refreshConfig", res);
 		}
 		res.setResponse("success");
@@ -424,7 +480,7 @@ public class LoginService {
 	}
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
-		log.info("In generateJWTToken method of loginservice:{} {}" ,userId , issuerUrl);
+		log.info("In generateJWTToken method of loginservice:{} {}", userId, issuerUrl);
 		Map<String, Object> claims = new HashMap<String, Object>();
 		claims.put("userId", userId);
 		claims.put("scope", PreRegLoginConstant.JWT_SCOPE);
@@ -470,5 +526,9 @@ public class LoginService {
 			new LoginExceptionCatcher().handle(e, null, res);
 		}
 		return this.generateJWTToken(userId, issuer, null);
+	}
+
+	public String sendOTPSuccessJwtToken(String userId) {
+		return this.loginCommonUtil.sendOtpJwtToken(userId);
 	}
 }
