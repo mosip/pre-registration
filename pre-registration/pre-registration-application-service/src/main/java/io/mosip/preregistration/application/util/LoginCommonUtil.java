@@ -107,16 +107,16 @@ public class LoginCommonUtil {
 
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int optExpiryTime;
-	
+
 	@Value("${mosip.preregistration.login.service.version}")
 	private String version;
-	
+
 	@Value("${captcha.resourse.url}")
 	private String captchaUrl;
-	
+
 	@Value("${mosip.preregistration.captcha.id.validate}")
 	private String captchaRequestId;
-	
+
 	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
 	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
 	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
@@ -398,7 +398,7 @@ public class LoginCommonUtil {
 						minLanguageCount, mandatoryLanguages.size());
 				minLanguageCount = mandatoryLanguages.size() > 0 ? mandatoryLanguages.size() : 1;
 			}
-	
+
 			if (Objects.nonNull(maxLanguageCount)) {
 				if (maxLanguageCount > (mandatoryLanguages.size() + optionalLanguages.size())) {
 					log.info(
@@ -501,7 +501,7 @@ public class LoginCommonUtil {
 				throw new PreRegLoginException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
-		} catch (Exception ex) {
+		} catch (RestClientException ex) {
 			log.info("Error while Calling captcha service to validate token {}", ex);
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
@@ -513,9 +513,7 @@ public class LoginCommonUtil {
 
 	public String sendOtpJwtToken(String userId) {
 		return Jwts.builder().setIssuedAt(Date.from(Instant.now())).setSubject(userId)
-				.setExpiration(Date.from(
-						Instant.now().plusSeconds(optExpiryTime)))
-				.setAudience(jwtAudience).toString();
+				.setExpiration(Date.from(Instant.now().plusSeconds(optExpiryTime))).setAudience(jwtAudience).toString();
 
 	}
 
