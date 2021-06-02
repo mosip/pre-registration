@@ -45,6 +45,7 @@ import io.mosip.preregistration.application.exception.DTOMappigException;
 import io.mosip.preregistration.application.exception.DemographicDetailsNotFoundException;
 import io.mosip.preregistration.application.exception.DemographicGetDetailsException;
 import io.mosip.preregistration.application.exception.DemographicServiceException;
+import io.mosip.preregistration.application.exception.DeprecatedException;
 import io.mosip.preregistration.application.exception.DocumentFailedToCopyException;
 import io.mosip.preregistration.application.exception.DocumentFailedToDeleteException;
 import io.mosip.preregistration.application.exception.DocumentFailedToUploadException;
@@ -834,6 +835,20 @@ public class PreRegistrationExceptionHandler {
 	@ExceptionHandler(PrimaryKeyValidationException.class)
 	public ResponseEntity<MainResponseDTO<?>> primaryKeyValidationException(final PrimaryKeyValidationException e) {
 		return GenericUtil.errorResponse(e, e.getResponse());
+	}
+	
+	
+	@ExceptionHandler(DeprecatedException.class)
+	public ResponseEntity<MainResponseDTO<?>> sizeExceedException(DeprecatedException e) {
+		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(),e.getErrorMessage());
+		MainResponseDTO<?> errorRes = new MainResponseDTO<>();
+		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
+		errorList.add(errorDetails);
+		errorRes.setErrors(errorList);
+		errorRes.setResponsetime(getCurrentResponseTime());
+		errorRes.setId("");
+		errorRes.setVersion(ver);
+		return new ResponseEntity<>(errorRes, HttpStatus.OK);
 	}
 
 	public String getCurrentResponseTime() {

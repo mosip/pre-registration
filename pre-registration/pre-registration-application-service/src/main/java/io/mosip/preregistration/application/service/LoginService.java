@@ -200,8 +200,8 @@ public class LoginService {
 						EventType.BUSINESS.toString(), "Otp send sucessfully", AuditLogVariables.NO_ID.toString(),
 						userid, userid);
 			} else {
-				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(PreRegLoginConstant.OTP_ERROR_CODE,
-						PreRegLoginConstant.OTP_ERROR_MESSAGE);
+				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(LoginErrorCodes.PRG_AUTH_001.getCode(),
+						LoginErrorMessages.SEND_OTP_FAILED.getMessage());
 				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);

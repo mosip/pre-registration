@@ -25,7 +25,5 @@ public class PreRegLoginConstant {
 	public static final String UNSUCCESS = "failure";
 	public static final String VALIDATE_ERROR_MESSAGE = "Validation can't be performed against this key. Generate OTP first.";
 	public static final String VALIDATE_ERROR_CODE = "KER-OTV-005";
-	public static final String OTP_ERROR_MESSAGE = "OTP failed to send through a specified channel";
-	public static final String OTP_ERROR_CODE = "PRG_AUTH_001";
 	public static final String SEND_OTP_AND_CAPTCHA_SUCCESS = "Captcha validation is Success and OTP sent successfully via - ";
 }
