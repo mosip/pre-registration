@@ -108,6 +108,7 @@ public class LoginCommonUtil {
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
 
+
 	@Value("${mosip.preregistration.login.service.version}")
 	private String version;
 
