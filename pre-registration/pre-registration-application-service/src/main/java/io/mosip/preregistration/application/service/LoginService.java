@@ -205,7 +205,6 @@ public class LoginService {
 
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(LoginErrorCodes.PRG_AUTH_001.getCode(),
 						LoginErrorMessages.SEND_OTP_FAILED.getMessage());
-
 				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);
