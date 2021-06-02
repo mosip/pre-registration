@@ -112,6 +112,7 @@ public class LoginCommonUtil {
 =======
 >>>>>>> implemented code review comments changes
 
+
 	@Value("${mosip.preregistration.login.service.version}")
 	private String version;
 
