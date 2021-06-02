@@ -69,6 +69,9 @@ public class LoginController {
 
 	@Autowired
 	private Environment environment;
+	
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int optExpiryTime;
 
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
@@ -104,6 +107,7 @@ public class LoginController {
 	 * @param errors
 	 * @return AuthNResponse
 	 */
+
 	@Deprecated(since = "1.2.0", forRemoval = true)
 	@PostMapping(value = "/sendOtp", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Send Otp to UserId")
@@ -159,6 +163,7 @@ public class LoginController {
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> validateWithUserIdOtp(
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiIgnore Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
+
 		log.debug("User ID: {}", userIdOtpRequest.getRequest().getUserId());
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
@@ -235,8 +240,6 @@ public class LoginController {
 		if (Objects.isNull(response.getErrors())) {
 			Cookie resCookie = new Cookie("canAuthorise",
 					loginService.sendOTPSuccessJwtToken(sendOtpRequestWithCaptcha.getRequest().getUserId()));
-
-			resCookie.setMaxAge((int) Integer.parseInt(environment.getProperty("mosip.kernel.otp.expiry-time")) / 60);
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
 			resCookie.setPath("/");

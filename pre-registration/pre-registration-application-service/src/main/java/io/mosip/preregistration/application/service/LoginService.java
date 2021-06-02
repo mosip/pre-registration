@@ -15,16 +15,12 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-<<<<<<< HEAD
 import org.springframework.cache.annotation.Cacheable;
-=======
->>>>>>> MOSIP-13822
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -40,11 +36,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
-import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
-<<<<<<< HEAD
-=======
-import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
->>>>>>> MOSIP-13822
 import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
@@ -178,7 +169,6 @@ public class LoginService {
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
 				userOtpRequest.getRequest().getUserId(), language);
 
-
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
 			log.info("Response after loginCommonUtil {}", response);
@@ -225,7 +215,7 @@ public class LoginService {
 		return response;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
 
@@ -252,7 +242,6 @@ public class LoginService {
 			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
 
 			if (sendOtpResponse.getErrors() != null || !sendOtpResponse.getErrors().isEmpty()) {
-
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
@@ -322,7 +311,7 @@ public class LoginService {
 			} else {
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(PreRegLoginConstant.VALIDATE_ERROR_CODE,
 						PreRegLoginConstant.VALIDATE_ERROR_MESSAGE);
-				List<ExceptionJSONInfoDTO> lst = new ArrayList();
+				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);
 				response.setResponse(null);
