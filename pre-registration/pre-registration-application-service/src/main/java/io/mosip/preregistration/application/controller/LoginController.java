@@ -68,6 +68,9 @@ public class LoginController {
 
 	@Autowired
 	private Environment environment;
+	
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int optExpiryTime;
 
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
@@ -237,7 +240,6 @@ public class LoginController {
 		if (Objects.isNull(response.getErrors())) {
 			Cookie resCookie = new Cookie("canAuthorise",
 					loginService.sendOTPSuccessJwtToken(sendOtpRequestWithCaptcha.getRequest().getUserId()));
-
 			resCookie.setMaxAge((int)  otpExpiryTime/ 60);
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
