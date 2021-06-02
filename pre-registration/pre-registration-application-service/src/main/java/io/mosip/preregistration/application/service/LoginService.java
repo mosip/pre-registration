@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -171,7 +172,6 @@ public class LoginService {
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
 				userOtpRequest.getRequest().getUserId(), language);
 
-
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
 			log.info("Response after loginCommonUtil {}", response);
@@ -249,6 +249,7 @@ public class LoginService {
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
+
 			if (Objects.isNull(authRes.getMessage()))
 				authRes.setMessage(sendOtpResponse.getResponse().getMessage());
 			else
