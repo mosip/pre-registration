@@ -107,7 +107,10 @@ public class LoginCommonUtil {
 
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
+<<<<<<< HEAD
 
+=======
+>>>>>>> implemented code review comments changes
 
 	@Value("${mosip.preregistration.login.service.version}")
 	private String version;
@@ -501,7 +504,6 @@ public class LoginCommonUtil {
 		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {
-
 			log.debug("Calling captcha service to validate token {}", captchaRequest);
 
 			responseEntity = restTemplate.exchange(captchaUrl, HttpMethod.POST, entity,
@@ -527,7 +529,6 @@ public class LoginCommonUtil {
 	public String sendOtpJwtToken(String userId) {
 		return Jwts.builder().setIssuedAt(Date.from(Instant.now())).setSubject(userId)
 				.setExpiration(Date.from(Instant.now().plusSeconds(otpExpiryTime))).setAudience(jwtAudience).toString();
-
 
 	}
 
