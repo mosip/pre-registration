@@ -9,10 +9,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -63,6 +65,9 @@ public class LoginController {
 
 	@Autowired
 	private Environment environment;
+	
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int optExpiryTime;
 
 	@Autowired
 	private RequestValidator loginValidator;
@@ -92,6 +97,7 @@ public class LoginController {
 	 * @param errors
 	 * @return AuthNResponse
 	 */
+	@Deprecated(since = "1.1.6", forRemoval = true)
 	@PostMapping(value = "/sendOtp", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Send Otp to UserId")
 	@ResponseStatus(value = HttpStatus.OK)
@@ -142,8 +148,8 @@ public class LoginController {
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> validateWithUserIdOtp(
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiIgnore Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
-		log.info(
-				"In validateWithUserIdotp method of Login controller for validating user and Otp and providing the access token ");
+		log.info("In validateWithUserIdotp method of Login controller");
+		log.debug("User ID: {}", userIdOtpRequest.getRequest().getUserId());
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		Cookie responseCookie = new Cookie("Authorization",
@@ -183,12 +189,13 @@ public class LoginController {
 	 * 
 	 * @return the response entity
 	 */
+
 	@GetMapping(path = "/config", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Get global and Pre-Registration config data")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully retrieved") })
 	public ResponseEntity<MainResponseDTO<Map<String, String>>> configParams() {
-		log.info("In Login controller for getting config values ");
+		log.debug("In Login controller for getting config values ");
 		return new ResponseEntity<>(loginService.getConfig(), HttpStatus.OK);
 
 	}
@@ -199,6 +206,7 @@ public class LoginController {
 	 * @return the response entity
 	 */
 	@GetMapping(path = "/refreshconfig", produces = MediaType.APPLICATION_JSON_VALUE)
+	@PreAuthorize("hasAnyRole('PRE_REGISTRATION_ADMIN')")
 	@Operation(summary = "Refresh global and Pre-Registration config data")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully updated") })
@@ -217,7 +225,7 @@ public class LoginController {
 		if (Objects.isNull(response.getErrors())) {
 			Cookie resCookie = new Cookie("canAuthorise",
 					loginService.sendOTPSuccessJwtToken(sendOtpRequestWithCaptcha.getRequest().getUserId()));
-			resCookie.setMaxAge((int) Integer.parseInt(environment.getProperty("mosip.kernel.otp.expiry-time")) / 60);
+			resCookie.setMaxAge((int) optExpiryTime/ 60);
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
 			resCookie.setPath("/");

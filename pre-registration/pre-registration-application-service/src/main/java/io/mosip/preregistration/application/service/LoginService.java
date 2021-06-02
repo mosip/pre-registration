@@ -15,12 +15,12 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,6 @@ import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
-import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
@@ -131,10 +130,16 @@ public class LoginService {
 	@Value("${prereg.auth.jwt.token.roles}")
 	private String jwtTokenRoles;
 
-	@Value("${mosip.kernel.otp.expiry-time}")
-	private int optexpiryTime;
+	@Value("${prereg.auth.jwt.scope}")
+	private String jwtScope;
 
-	@Value("${enable-captcha}")
+	@Value("${prereg.auth.jwt.audience}")
+	private String jwtAudience;
+
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int optExpiryTime;
+
+	@Value("${mosip.preregistration.captcha.enable}")
 	private boolean isCaptchaEnabled;
 
 	@Autowired
@@ -161,7 +166,8 @@ public class LoginService {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
-		log.info("In callsendOtp method of login service  with request {}", userOtpRequest);
+		log.info("In callsendOtp method of login service  with userID: {} and langCode",
+				userOtpRequest.getRequest().getUserId(), language);
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
@@ -210,7 +216,8 @@ public class LoginService {
 	@SuppressWarnings("unchecked")
 	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
-		log.info("In validateCaptchaAndSendOtp of loginservice {}", request);
+		log.info("In validateCaptchaAndSendOtp method with userId and langCode{}", request.getRequest().getUserId(),
+				request.getRequest().getUserId());
 		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
 				.getMainResponseDto(request);
 
@@ -225,26 +232,21 @@ public class LoginService {
 
 		try {
 			if (isCaptchaEnabled) {
-				log.info("Validating Captcha start {}", captchaToken);
-				if (Objects.isNull(captchaToken) || captchaToken.isBlank()) {
+
+				log.debug("Validating Captcha start {}", captchaToken);
+
+				if (captchaToken == null || captchaToken.isBlank()) {
 					log.error("Validating Captcha token is null or blank");
 					throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorCode(),
 							PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorMessage());
-				} else {
-					log.info("Calling loginCommonsUtil validateCaptchaToken");
-					MainResponseDTO<CaptchaResposneDTO> captchaResposne = this.loginCommonUtil
-							.validateCaptchaToken(captchaToken);
-					if (!Objects.isNull(captchaResposne.getErrors())) {
-						log.error("validateCaptchaToken has an error {}", captchaResposne.getErrors());
-						throw new PreRegLoginException(captchaResposne.getErrors().get(0).getErrorCode(),
-								captchaResposne.getErrors().get(0).getMessage());
-					}
 				}
+
+				this.loginCommonUtil.validateCaptchaToken(captchaToken);
 			}
 
 			log.info("calling senOTP method of login service");
 			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
-			if (!Objects.isNull(sendOtpResponse.getErrors())) {
+			if (sendOtpResponse.getErrors() != null || !sendOtpResponse.getErrors().isEmpty()) {
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
@@ -254,7 +256,9 @@ public class LoginService {
 			authRes.setStatus(PreRegLoginConstant.SUCCESS);
 			response.setResponse(authRes);
 
-		} catch (PreRegLoginException ex) {
+		} catch (
+
+		PreRegLoginException ex) {
 			log.error("In validateCaptchaAndSendOtp method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} catch (Exception ex) {
@@ -422,6 +426,7 @@ public class LoginService {
 	 * 
 	 * @return response
 	 */
+	@Cacheable(value = "login-cache", key = "'configCache'")
 	public MainResponseDTO<Map<String, String>> getConfig() {
 		log.info("In login service of getConfig ");
 		MainResponseDTO<Map<String, String>> res = new MainResponseDTO<>();
@@ -483,7 +488,7 @@ public class LoginService {
 		log.info("In generateJWTToken method of loginservice:{} {}", userId, issuerUrl);
 		Map<String, Object> claims = new HashMap<String, Object>();
 		claims.put("userId", userId);
-		claims.put("scope", PreRegLoginConstant.JWT_SCOPE);
+		claims.put("scope", jwtScope);
 		claims.put("user_name", userId);
 		claims.put("roles", jwtTokenRoles);
 
@@ -492,14 +497,14 @@ public class LoginService {
 			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
 					.setSubject(userId)
 					.setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt(jwtTokenExpiryTime))))
-					.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
-					.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
+					.setAudience(jwtAudience).signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret))
+					.compact();
 			log.info("Auth token generarted");
 		} else {
 			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
 					.setSubject(userId).setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt("0"))))
-					.setAudience(PreRegLoginConstant.JWT_AUDIENCE)
-					.signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret)).compact();
+					.setAudience(jwtAudience).signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret))
+					.compact();
 			log.info("Auth token generarted:");
 		}
 

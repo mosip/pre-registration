@@ -8,7 +8,6 @@ import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
 import java.time.Instant;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,16 +46,11 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.TextCodec;
-import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
 import io.mosip.preregistration.application.dto.CaptchaRequestDTO;
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.MosipUserDTO;
-import io.mosip.preregistration.application.dto.UISpecResponseDTO;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
@@ -108,6 +102,21 @@ public class LoginCommonUtil {
 	@Value("${sendOtp.resource.url}")
 	private String sendOtpResourceUrl;
 
+	@Value("${prereg.auth.jwt.audience}")
+	private String jwtAudience;
+
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int optExpiryTime;
+	
+	@Value("${mosip.preregistration.login.service.version}")
+	private String version;
+	
+	@Value("${captcha.resourse.url}")
+	private String captchaUrl;
+	
+	@Value("${mosip.preregistration.captcha.id.validate}")
+	private String captchaRequestId;
+	
 	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
 	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
 	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
@@ -389,7 +398,7 @@ public class LoginCommonUtil {
 						minLanguageCount, mandatoryLanguages.size());
 				minLanguageCount = mandatoryLanguages.size() > 0 ? mandatoryLanguages.size() : 1;
 			}
-			System.out.println("Max language count" + maxLanguageCount);
+	
 			if (Objects.nonNull(maxLanguageCount)) {
 				if (maxLanguageCount > (mandatoryLanguages.size() + optionalLanguages.size())) {
 					log.info(
@@ -468,25 +477,30 @@ public class LoginCommonUtil {
 		return new RestTemplate(requestFactory);
 	}
 
-	public MainResponseDTO<CaptchaResposneDTO> validateCaptchaToken(String captchaToken) throws PreRegLoginException {
+	public MainResponseDTO<CaptchaResposneDTO> validateCaptchaToken(String captchaToken) {
 		log.info("In validateCaptchaToken method of Login Common Util");
 		CaptchaRequestDTO captcha = new CaptchaRequestDTO();
 		captcha.setCaptchaToken(captchaToken);
 		MainRequestDTO<CaptchaRequestDTO> captchaRequest = new MainRequestDTO<CaptchaRequestDTO>();
 		captchaRequest.setRequest(captcha);
 		captchaRequest.setRequesttime(new Date());
-		captchaRequest.setVersion(env.getProperty("version"));
-		captchaRequest.setId(env.getProperty("mosip.preregistration.captcha.id.validate"));
+		captchaRequest.setVersion(version);
+		captchaRequest.setId(captchaRequestId);
 		HttpHeaders header = new HttpHeaders();
 		header.setContentType(MediaType.APPLICATION_JSON_UTF8);
 		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {
 			log.info("Calling captcha service to validate token {}", captchaRequest);
-			responseEntity = restTemplate.exchange(env.getProperty("captcha.resourse.url"), HttpMethod.POST, entity,
+			responseEntity = restTemplate.exchange(captchaUrl, HttpMethod.POST, entity,
 					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
 					});
-			
+
+			if (responseEntity.getBody().getErrors() != null || !responseEntity.getBody().getErrors().isEmpty()) {
+				log.error("validateCaptchaToken has an error {}", responseEntity.getBody().getErrors());
+				throw new PreRegLoginException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
 		} catch (Exception ex) {
 			log.info("Error while Calling captcha service to validate token {}", ex);
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
@@ -500,8 +514,8 @@ public class LoginCommonUtil {
 	public String sendOtpJwtToken(String userId) {
 		return Jwts.builder().setIssuedAt(Date.from(Instant.now())).setSubject(userId)
 				.setExpiration(Date.from(
-						Instant.now().plusSeconds(Integer.parseInt(env.getProperty("mosip.kernel.otp.expiry-time")))))
-				.setAudience(PreRegLoginConstant.JWT_AUDIENCE).toString();
+						Instant.now().plusSeconds(optExpiryTime)))
+				.setAudience(jwtAudience).toString();
 
 	}
 
