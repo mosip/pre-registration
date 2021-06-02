@@ -69,7 +69,7 @@ public class LoginController {
 
 	@Autowired
 	private Environment environment;
-	
+
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int optExpiryTime;
 
