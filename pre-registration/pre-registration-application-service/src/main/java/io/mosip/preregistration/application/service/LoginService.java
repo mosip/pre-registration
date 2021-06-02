@@ -171,7 +171,6 @@ public class LoginService {
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
 				userOtpRequest.getRequest().getUserId(), language);
 
-
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
 			log.info("Response after loginCommonUtil {}", response);
