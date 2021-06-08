@@ -71,9 +71,6 @@ public class LoginController {
 	private Environment environment;
 
 	@Value("${mosip.kernel.otp.expiry-time}")
-	private int optExpiryTime;
-
-	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
 
 	@Value("${mosip.preregistration.sendotp.allowapi:false}")
