@@ -137,7 +137,7 @@ public class LoginService {
 	private String jwtAudience;
 
 	@Value("${mosip.kernel.otp.expiry-time}")
-	private int optExpiryTime;
+	private int otpExpiryTime;
 
 	@Value("${mosip.preregistration.captcha.enable}")
 	private boolean isCaptchaEnabled;

@@ -71,7 +71,7 @@ public class LoginController {
 	private Environment environment;
 
 	@Value("${mosip.kernel.otp.expiry-time}")
-	private int optExpiryTime;
+	private int otpExpiryTime;
 
 	@Value("${mosip.preregistration.sendotp.allowapi:false}")
 	private boolean allowSendOtpApi;
@@ -110,7 +110,6 @@ public class LoginController {
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTP(
 			@Validated @RequestBody MainRequestDTO<OtpRequestDTO> userOtpRequest, @ApiIgnore Errors errors) {
-		log.info("In sendOtp method of Login controller for sending Otp ");
 		loginValidator.validateId(SENDOTP, userOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, SENDOTP);
 		if (!allowSendOtpApi)
@@ -133,7 +132,6 @@ public class LoginController {
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTPWithLangCode(
 			@Validated @RequestBody MainRequestDTO<OTPWithLangCodeDTO> userOtpRequest, @ApiIgnore Errors errors) {
-		log.info("In sendOtp method of Login controller for sending Otp ");
 		loginValidator.validateId(SENDOTP, userOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, SENDOTP);
 		MainRequestDTO<OtpRequestDTO> MainRequestDTO = new MainRequestDTO<>();
@@ -159,7 +157,6 @@ public class LoginController {
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> validateWithUserIdOtp(
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiIgnore Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
-		log.info("In validateWithUserIdotp method of Login controller");
 		log.debug("User ID: {}", userIdOtpRequest.getRequest().getUserId());
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
@@ -184,7 +181,6 @@ public class LoginController {
 	@Operation(summary = "Invalidate the token")
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<String>> invalidateToken(HttpServletRequest req, HttpServletResponse res) {
-		log.info("In invalidateToken method of Login controller for invalidating access token ");
 		Cookie responseCookie = new Cookie("Authorization", loginService.getLogoutToken(req.getHeader("Cookie")));
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
@@ -206,7 +202,6 @@ public class LoginController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully retrieved") })
 	public ResponseEntity<MainResponseDTO<Map<String, String>>> configParams() {
-		log.debug("In Login controller for getting config values ");
 		return new ResponseEntity<>(loginService.getConfig(), HttpStatus.OK);
 
 	}
@@ -222,7 +217,6 @@ public class LoginController {
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully updated") })
 	public ResponseEntity<MainResponseDTO<String>> refreshConfigParams() {
-		log.info("In Login controller for updating config values ");
 		return new ResponseEntity<>(loginService.refreshConfig(), HttpStatus.OK);
 
 	}
@@ -231,12 +225,11 @@ public class LoginController {
 	public ResponseEntity<MainResponseDTO<?>> sendOtpWithCaptcha(
 			@Validated @Valid @RequestBody MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> sendOtpRequestWithCaptcha,
 			HttpServletResponse res, @ApiIgnore Errors errors) {
-		log.info("In Login controller for sending otp and validating captcha");
 		MainResponseDTO<AuthNResponse> response = loginService.validateCaptchaAndSendOtp(sendOtpRequestWithCaptcha);
 		if (Objects.isNull(response.getErrors())) {
 			Cookie resCookie = new Cookie("canAuthorise",
 					loginService.sendOTPSuccessJwtToken(sendOtpRequestWithCaptcha.getRequest().getUserId()));
-			resCookie.setMaxAge((int) optExpiryTime / 60);
+			resCookie.setMaxAge((int) otpExpiryTime / 60);
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
 			resCookie.setPath("/");
