@@ -17,19 +17,19 @@ public class CacheConfig extends CachingConfigurerSupport {
 	@Value("${preregistration.cache.memoryEvictionPolicy}")
 	private String memoryEvictionPolicy;
 
-	@Value("${preregistration.cache.maxEntriesLocalHeap}")
+	@Value("${preregistration.masterdata.cache.maxEntriesLocalHeap}")
 	private long maxEntriesLocalHeap;
 
-	@Value("${preregistration.cache.setMaxBytesLocalDisk}")
+	@Value("${preregistration.masterdata.cache.setMaxBytesLocalDisk}")
 	private String setMaxBytesLocalDisk;
 
-	@Value("${preregistration.cache.TimeToLiveSeconds}")
+	@Value("${preregistration.masterdata.cache.TimeToLiveSeconds}")
 	private long TimeToLiveSeconds;
 
-	@Value("${preregistration.cache.setlogging}")
+	@Value("${preregistration.masterdata.cache.setlogging}")
 	private boolean setLogging;
 
-	@Value("${preregistration.cache.isEternal}")
+	@Value("${preregistration.masterdata.cache.isEternal}")
 	private boolean isEternal;
 
 	@Bean
@@ -55,7 +55,6 @@ public class CacheConfig extends CachingConfigurerSupport {
 
 		net.sf.ehcache.config.Configuration config = new net.sf.ehcache.config.Configuration();
 		config.addCache(masterDataCache);
-		config.addCache(loginCache);
 		return net.sf.ehcache.CacheManager.newInstance(config);
 	}
 
