@@ -71,9 +71,6 @@ public class LoginController {
 	private Environment environment;
 
 	@Value("${mosip.kernel.otp.expiry-time}")
-	private int optExpiryTime;
-
-	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
 
 	@Value("${mosip.preregistration.sendotp.allowapi:false}")
@@ -188,7 +185,7 @@ public class LoginController {
 	@Operation(summary = "Invalidate the token")
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<String>> invalidateToken(HttpServletRequest req, HttpServletResponse res) {
-		
+
 		Cookie responseCookie = new Cookie("Authorization", loginService.getLogoutToken(req.getHeader("Cookie")));
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
