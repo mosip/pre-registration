@@ -401,7 +401,6 @@ public class DemographicServiceUtil {
 	 */
 	public boolean checkStatusForDeletion(String statusCode) {
 		log.info("sessionId", "idType", "id", "In checkStatusForDeletion method of pre-registration service util ");
-
 		if (!statusCode.equals(StatusCodes.EXPIRED.getCode())) {
 			return true;
 		} else {
