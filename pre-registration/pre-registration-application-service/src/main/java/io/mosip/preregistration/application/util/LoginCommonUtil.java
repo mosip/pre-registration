@@ -111,7 +111,7 @@ public class LoginCommonUtil {
 	@Value("${mosip.preregistration.login.service.version}")
 	private String version;
 
-	@Value("${captcha.resourse.url}")
+	@Value("${mosip.preregistration.captcha.resourse.url}")
 	private String captchaUrl;
 
 	@Value("${mosip.preregistration.captcha.id.validate}")
@@ -478,7 +478,13 @@ public class LoginCommonUtil {
 	}
 
 	public MainResponseDTO<CaptchaResposneDTO> validateCaptchaToken(String captchaToken) {
-		log.info("In validateCaptchaToken method of Login Common Util");
+
+		if (captchaToken == null || captchaToken.isBlank()) {
+			log.error("Validating Captcha token is null or blank");
+			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorCode(),
+					PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorMessage());
+		}
+
 		CaptchaRequestDTO captcha = new CaptchaRequestDTO();
 		captcha.setCaptchaToken(captchaToken);
 		MainRequestDTO<CaptchaRequestDTO> captchaRequest = new MainRequestDTO<CaptchaRequestDTO>();
@@ -491,7 +497,7 @@ public class LoginCommonUtil {
 		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {
-			log.info("Calling captcha service to validate token {}", captchaRequest);
+			log.debug("Calling captcha service to validate token {}", captchaRequest);
 			responseEntity = restTemplate.exchange(captchaUrl, HttpMethod.POST, entity,
 					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
 					});
@@ -502,7 +508,7 @@ public class LoginCommonUtil {
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
 		} catch (RestClientException ex) {
-			log.info("Error while Calling captcha service to validate token {}", ex);
+			log.error("Error while Calling captcha service to validate token {}", ex);
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
 		}

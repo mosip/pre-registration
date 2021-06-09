@@ -233,19 +233,11 @@ public class LoginService {
 		try {
 			if (isCaptchaEnabled) {
 
-				log.debug("Validating Captcha start {}", captchaToken);
-
-				if (captchaToken == null || captchaToken.isBlank()) {
-					log.error("Validating Captcha token is null or blank");
-					throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorCode(),
-							PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorMessage());
-				}
-
 				this.loginCommonUtil.validateCaptchaToken(captchaToken);
 			}
 
-			log.info("calling senOTP method of login service");
 			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
+
 			if (sendOtpResponse.getErrors() != null || !sendOtpResponse.getErrors().isEmpty()) {
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
