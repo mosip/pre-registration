@@ -680,25 +680,27 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preregId);
 				if (!serviceUtil.isNull(demographicEntity)) {
 					userValidation(userId, demographicEntity.getCreatedBy());
-					getDocumentServiceToDeleteAllByPreId(preregId);
-					if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode())
-							|| demographicEntity.getStatusCode().equals(StatusCodes.EXPIRED.getCode()))) {
-						getBookingServiceToDeleteAllByPreId(preregId);
-					}
-					int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
-					if (isDeletedDemo > 0) {
-						deleteDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
-						deleteDto.setDeletedBy(demographicEntity.getCreatedBy());
-						deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
+					if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
+						getDocumentServiceToDeleteAllByPreId(preregId);
+						if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
+							getBookingServiceToDeleteAllByPreId(preregId);
+						}
+						int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
+						if (isDeletedDemo > 0) {
+							deleteDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
+							deleteDto.setDeletedBy(demographicEntity.getCreatedBy());
+							deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
 
-					} else {
-						throw new RecordFailedToDeleteException(DemographicErrorCodes.PRG_PAM_APP_004.getCode(),
-								DemographicErrorMessages.FAILED_TO_DELETE_THE_PRE_REGISTRATION_RECORD.getMessage());
+						} else {
+							throw new RecordFailedToDeleteException(DemographicErrorCodes.PRG_PAM_APP_004.getCode(),
+									DemographicErrorMessages.FAILED_TO_DELETE_THE_PRE_REGISTRATION_RECORD.getMessage());
+						}
 					}
 				} else {
 					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
 				}
+
 			}
 			isDeleteSuccess = true;
 		} catch (Exception ex) {

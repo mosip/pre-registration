@@ -394,7 +394,7 @@ public class DemographicServiceUtil {
 	 */
 	public boolean checkStatusForDeletion(String statusCode) {
 		log.info("sessionId", "idType", "id", "In checkStatusForDeletion method of pre-registration service util ");
-		if (statusCode.equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
+		if (!statusCode.equals(StatusCodes.EXPIRED.getCode())) {
 			return true;
 		} else {
 			throw new OperationNotAllowedException(DemographicErrorCodes.PRG_PAM_APP_003.getCode(),

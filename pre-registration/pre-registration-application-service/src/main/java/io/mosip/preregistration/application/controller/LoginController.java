@@ -104,7 +104,7 @@ public class LoginController {
 	 * @param errors
 	 * @return AuthNResponse
 	 */
-	@Deprecated(since = "1.1.6", forRemoval = true)
+	@Deprecated(since = "1.2.0", forRemoval = true)
 	@PostMapping(value = "/sendOtp", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Send Otp to UserId")
 	@ResponseStatus(value = HttpStatus.OK)
