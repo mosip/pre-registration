@@ -327,8 +327,8 @@ public class DemographicServiceUtil {
 	 * @param identityKey     pass identityKey
 	 * @return values from JSON based on key
 	 * 
-	 * @throws ParseException On json Parsing Failed
-	 * @throws                org.json.simple.parser.ParseException
+	 * @throws ParseException                        On json Parsing Failed
+	 * @throws org.json.simple.parser.ParseException
 	 * 
 	 */
 	public JSONArray getValueFromIdentity(byte[] demographicData, String identityKey)
@@ -347,8 +347,8 @@ public class DemographicServiceUtil {
 	 * @param identityKey     pass postalcode
 	 * @return values from JSON
 	 * 
-	 * @throws ParseException On json Parsing Failed
-	 * @throws                org.json.simple.parser.ParseException
+	 * @throws ParseException                        On json Parsing Failed
+	 * @throws org.json.simple.parser.ParseException
 	 * 
 	 */
 
@@ -394,11 +394,8 @@ public class DemographicServiceUtil {
 	 */
 	public boolean checkStatusForDeletion(String statusCode) {
 		log.info("sessionId", "idType", "id", "In checkStatusForDeletion method of pre-registration service util ");
-<<<<<<< HEAD
+
 		if (!statusCode.equals(StatusCodes.EXPIRED.getCode())) {
-=======
-		if (statusCode.equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
->>>>>>> review comments changes
 			return true;
 		} else {
 			throw new OperationNotAllowedException(DemographicErrorCodes.PRG_PAM_APP_003.getCode(),
@@ -606,13 +603,14 @@ public class DemographicServiceUtil {
 
 	}
 
-		public MainResponseDTO<DeleteBookingDTO> deleteBooking (String preRegId)  {
+	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegId) {
 		MainResponseDTO<DeleteBookingDTO> response = new MainResponseDTO<>();
-		String url = deleteAppointmentResourseUrl + '/' + "appointment"+"?preRegistrationId=" + preRegId;
+		String url = deleteAppointmentResourseUrl + '/' + "appointment" + "?preRegistrationId=" + preRegId;
 		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
 		String regbuilder = UriComponentsBuilder.fromHttpUrl(url).toString();
 		try {
-			log.info("sessionId", "idType", "id", "In callBookingService method of DemographicServiceUtil"+regbuilder);
+			log.info("sessionId", "idType", "id",
+					"In callBookingService method of DemographicServiceUtil" + regbuilder);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			headers.set("Cookie", getAuthToken());
@@ -651,7 +649,7 @@ public class DemographicServiceUtil {
 		requestFactory.setHttpClient(httpClient);
 		return new RestTemplate(requestFactory);
 	}
-	
+
 	public boolean isDemographicBookedOrExpired(DemographicEntity demographicEntity, ValidationUtil validationUtil) {
 		return validationUtil.isStatusBookedOrExpired(demographicEntity.getStatusCode());
 	}
