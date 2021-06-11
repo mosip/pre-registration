@@ -682,9 +682,7 @@ public class DemographicService implements DemographicServiceIntf {
 					userValidation(userId, demographicEntity.getCreatedBy());
 					if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
 						getDocumentServiceToDeleteAllByPreId(preregId);
-						if (!(demographicEntity.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())
-								|| demographicEntity.getStatusCode()
-										.equals(StatusCodes.APPLICATION_INCOMPLETE.getCode()))) {
+						if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
 							getBookingServiceToDeleteAllByPreId(preregId);
 						}
 						int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
@@ -702,6 +700,7 @@ public class DemographicService implements DemographicServiceIntf {
 					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
 				}
+
 			}
 			isDeleteSuccess = true;
 		} catch (Exception ex) {

@@ -37,7 +37,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
-
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.CryptoUtil;
@@ -74,7 +73,6 @@ import io.mosip.preregistration.datasync.dto.ReverseDataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
 import io.mosip.preregistration.datasync.entity.InterfaceDataSyncEntity;
 import io.mosip.preregistration.datasync.entity.InterfaceDataSyncTablePK;
-import io.mosip.preregistration.datasync.entity.MachineEntity;
 import io.mosip.preregistration.datasync.entity.ProcessedPreRegEntity;
 import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
@@ -85,7 +83,6 @@ import io.mosip.preregistration.datasync.exception.RecordNotFoundForDateRange;
 import io.mosip.preregistration.datasync.exception.ZipFileCreationException;
 import io.mosip.preregistration.datasync.exception.system.SystemFileIOException;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
-import io.mosip.preregistration.datasync.repository.MachineRepository;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 
 /**
@@ -118,9 +115,6 @@ public class DataSyncServiceUtil {
 
 	@Autowired
 	private ClientCryptoManagerService clientCryptoManagerService;
-
-	@Autowired
-	private MachineRepository machineRepository;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -241,7 +235,7 @@ public class DataSyncServiceUtil {
 	 */
 	public boolean validateReverseDataSyncRequest(ReverseDataSyncRequestDTO reverseDataSyncRequest,
 			MainResponseDTO<?> mainResponseDTO) {
-		log.info("sessionId", "idType", "id", "In validateReverseDataSyncRequest method of datasync service util");
+		log.info("In validateReverseDataSyncRequest sync preregids {}",reverseDataSyncRequest.getPreRegistrationIds());
 		List<String> preRegIdsList = reverseDataSyncRequest.getPreRegistrationIds();
 		if (preRegIdsList == null || isNull(preRegIdsList)) {
 			throw new InvalidRequestParameterException(ErrorCodes.PRG_DATA_SYNC_011.getCode(),
@@ -259,8 +253,8 @@ public class DataSyncServiceUtil {
 	 * @param regCenterId
 	 * @return preRegIdsByRegCenterIdResponseDTO
 	 */
-	public BookingDataByRegIdDto getBookedPreIdsByDateAndRegCenterIdRestService(String fromDate,
-			String toDate, String regCenterId) {
+	public BookingDataByRegIdDto getBookedPreIdsByDateAndRegCenterIdRestService(String fromDate, String toDate,
+			String regCenterId) {
 		log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method of datasync service util");
 		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = null;
 		try {
@@ -277,8 +271,8 @@ public class DataSyncServiceUtil {
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
 			log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method URL- " + uriBuilder);
-			ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = restTemplate.exchange(
-					uriBuilder, HttpMethod.GET, httpEntity,
+			ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 					}, params);
 			if (respEntity.getBody().getErrors() != null) {
@@ -958,36 +952,6 @@ public class DataSyncServiceUtil {
 		}
 		return applicationInfo;
 
-	}
-
-	public String getEncryptionPublicKey(String machineId) {
-		log.info("sessionId", "idType", "id",
-				"In getEncryptionPublicKey method of datasync service util for machineId" + machineId);
-		MachineEntity entity = new MachineEntity();
-		String encryptionKey = null;
-		try {
-			if (machineRepository.existsById(machineId)) {
-				log.info("sessionId", "idType", "id", "Is EncryptionPublicKey for machineId is present" + machineId);
-				entity = machineRepository.findById(machineId).get();
-				log.info("sessionId", "idType", "id", "EncryptionPublicKey is present" + entity);
-			} else {
-				log.info("sessionId", "idType", "id", "EncryptionPublicKey is not present for machineId" + machineId);
-				encryptionKey = getEncryptionKey(machineId);
-				System.out.println(encryptionKey);
-				entity.setMachineId(machineId);
-				entity.setEncryptedPublicKey(encryptionKey);
-				machineRepository.save(entity);
-				log.info("sessionId", "idType", "id", "EncryptionPublicKey  for machineId is saved" + entity);
-			}
-
-		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id",
-					"Error while saving EncryptionPublicKey  for machineId" + ex.getCause());
-			entity.setMachineId(machineId);
-			entity.setEncryptedPublicKey(encryptionKey);
-		}
-
-		return entity.getEncryptedPublicKey();
 	}
 
 }

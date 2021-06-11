@@ -14,7 +14,9 @@ public enum ApplicationErrorMessages {
 
 	UI_SPEC_VALUE_PARSE_ERROR("Error while parsing json"),
 
-	AUDIT_FAILED("Audit Failed");
+	AUDIT_FAILED("Audit Failed"),
+	
+	DEPRECATED_MESSAGE("The requested resource has been Deprecated");
 
 	private ApplicationErrorMessages(String message) {
 		this.message = message;

@@ -14,7 +14,9 @@ public enum ApplicationErrorCodes {
 
 	PRG_APP_006("PRG_APP_006"), // UI_SPEC_VALUE_PARSE_ERROR
 	
-	PRG_APP_007("PRG_APP_007"); // Audit from UI Failed
+	PRG_APP_007("PRG_APP_007"), // Audit from UI Failed
+	
+	PRG_APP_008("PRG_APP_008"); // deprecated error code
 
 	private ApplicationErrorCodes(String code) {
 		this.code = code;

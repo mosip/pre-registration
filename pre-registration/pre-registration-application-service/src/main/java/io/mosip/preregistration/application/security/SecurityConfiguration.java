@@ -26,7 +26,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 			new AntPathRequestMatcher("/applications/**"), new AntPathRequestMatcher("/documents/**"),
 			new AntPathRequestMatcher("/qrCode/**"), new AntPathRequestMatcher("/notification/**"),
 			new AntPathRequestMatcher("/transliteration/**"), new AntPathRequestMatcher("/uispec/**"),
-			new AntPathRequestMatcher("/logAudit"));
+			new AntPathRequestMatcher("/logAudit"), new AntPathRequestMatcher("/login/refreshconfig/"));
 
 	AuthenticationProvider provider;
 
