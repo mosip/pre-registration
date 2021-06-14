@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -219,7 +220,7 @@ public class DocumentService implements DocumentServiceIntf {
 		responseDto.setId(uploadId);
 		responseDto.setVersion(ver);
 		try {
-			log.info("calling serviceUtil createUploadDto  preRegistrationId {}",preRegistrationId);
+			log.info("calling serviceUtil createUploadDto  preRegistrationId {}", preRegistrationId);
 			docReqDto = serviceUtil.createUploadDto(documentJsonString, preRegistrationId);
 			responseDto.setId(docReqDto.getId());
 			responseDto.setVersion(docReqDto.getVersion());
@@ -231,7 +232,7 @@ public class DocumentService implements DocumentServiceIntf {
 				if (serviceUtil.fileSizeCheck(file.getSize()) && serviceUtil.fileExtensionCheck(file)) {
 					serviceUtil.isValidRequest(docReqDto.getRequest(), preRegistrationId);
 					validationUtil.langvalidation(docReqDto.getRequest().getLangCode());
-					log.info("calling validationUtil.validateDocuments preRegistrationId {}",preRegistrationId);
+					log.info("calling validationUtil.validateDocuments preRegistrationId {}", preRegistrationId);
 					validationUtil.validateDocuments(docReqDto.getRequest().getLangCode(),
 							docReqDto.getRequest().getDocCatCode(), docReqDto.getRequest().getDocTypCode(),
 							preRegistrationId);
@@ -347,11 +348,13 @@ public class DocumentService implements DocumentServiceIntf {
 				DocumentEntity documentEntity = documnetDAO.findSingleDocument(sourcePreId, catCode);
 				DocumentEntity destEntity = documnetDAO.findSingleDocument(destinationPreId, catCode);
 				if (documentEntity != null && sourceStatus && destinationStatus) {
-					if (isDocumentEntityBookedOrExpiredStatus(destEntity)) {
+
+					if (!Objects.isNull(destEntity) && isDocumentEntityBookedOrExpiredStatus(destEntity)) {
 						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
 								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
 										.getMessage());
 					}
+					
 					DocumentEntity copyDocumentEntity = documnetDAO.saveDocument(
 							serviceUtil.documentEntitySetter(destinationPreId, documentEntity, destEntity));
 					sourceKey = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
@@ -562,9 +565,9 @@ public class DocumentService implements DocumentServiceIntf {
 		List<DocumentMultipartResponseDTO> allDocRes = new ArrayList<>();
 		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
 		for (DocumentEntity doc : entityList) {
-			
+
 			log.info("Demographic preid: {}" , doc.getDemographicEntity().getPreRegistrationId());
-			
+
 			DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
 			allDocDto.setDocCatCode(doc.getDocCatCode());
 			allDocDto.setDocName(doc.getDocName());
