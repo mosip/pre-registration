@@ -36,7 +36,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
-import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
 import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
@@ -166,6 +165,7 @@ public class LoginService {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
+
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
 				userOtpRequest.getRequest().getUserId(), language);
 
@@ -200,6 +200,7 @@ public class LoginService {
 						EventType.BUSINESS.toString(), "Otp send sucessfully", AuditLogVariables.NO_ID.toString(),
 						userid, userid);
 			} else {
+
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(LoginErrorCodes.PRG_AUTH_001.getCode(),
 						LoginErrorMessages.SEND_OTP_FAILED.getMessage());
 				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
@@ -213,9 +214,10 @@ public class LoginService {
 		return response;
 	}
 
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
+
 		log.info("In validateCaptchaAndSendOtp method with userId and langCode{}", request.getRequest().getUserId(),
 				request.getRequest().getUserId());
 		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
@@ -248,9 +250,8 @@ public class LoginService {
 			authRes.setStatus(PreRegLoginConstant.SUCCESS);
 			response.setResponse(authRes);
 
-		} catch (
+		} catch (PreRegLoginException ex) {
 
-		PreRegLoginException ex) {
 			log.error("In validateCaptchaAndSendOtp method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} catch (Exception ex) {
@@ -309,7 +310,7 @@ public class LoginService {
 			} else {
 				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(PreRegLoginConstant.VALIDATE_ERROR_CODE,
 						PreRegLoginConstant.VALIDATE_ERROR_MESSAGE);
-				List<ExceptionJSONInfoDTO> lst = new ArrayList();
+				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
 				lst.add(errors);
 				response.setErrors(lst);
 				response.setResponse(null);
