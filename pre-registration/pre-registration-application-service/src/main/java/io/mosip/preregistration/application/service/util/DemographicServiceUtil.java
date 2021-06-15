@@ -4,6 +4,7 @@
  */
 package io.mosip.preregistration.application.service.util;
 
+import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -13,10 +14,14 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
 
@@ -25,6 +30,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -47,6 +53,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
@@ -528,8 +535,8 @@ public class DemographicServiceUtil {
 
 	}
 
-	public String getSchema() {
-		String response = null;
+	public IdSchemaDto getSchema() {
+		IdSchemaDto response = null;
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(idSchemaConfig);
 			HttpHeaders headers = new HttpHeaders();
@@ -546,9 +553,9 @@ public class DemographicServiceUtil {
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
 
-			response = responseEntity.getBody().getResponse().getSchemaJson();
+			response = responseEntity.getBody().getResponse();
 
-			if (response == null || response.isEmpty()) {
+			if (response == null) {
 				throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 						DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
 			}
@@ -653,4 +660,24 @@ public class DemographicServiceUtil {
 	public boolean isDemographicBookedOrExpired(DemographicEntity demographicEntity, ValidationUtil validationUtil) {
 		return validationUtil.isStatusBookedOrExpired(demographicEntity.getStatusCode());
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public JSONObject constructNewDemographicRequest(List<String> identityKeys, JSONObject demographicDetails)
+			throws ParseException {
+
+		List<Object> demographicKeys = Arrays.asList(((HashMap) demographicDetails.get("identity")).keySet().toArray());
+		log.debug("IdentitySchemakeys: {} and PreRegIdentitykeys: {}", identityKeys, demographicKeys);
+		JSONObject demographicJson = new JSONObject();
+		for (String key : identityKeys) {
+			if (demographicKeys.contains(key)) {
+				demographicJson.put(key, getIdJSONValue(demographicDetails.toString(), key));
+			}
+		}
+
+		JSONObject constructedJSon = new JSONObject();
+		constructedJSon.put("identity", demographicJson);
+
+		return constructedJSon;
+	}
+
 }

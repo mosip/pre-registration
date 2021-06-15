@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -27,6 +28,7 @@ import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -40,6 +42,7 @@ import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.preregistration.application.code.DemographicRequestCodes;
+import io.mosip.preregistration.application.dto.IdSchemaDto;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
@@ -103,11 +106,6 @@ public class DemographicService implements DemographicServiceIntf {
 	 * logger instance
 	 */
 	private Logger log = LoggerConfiguration.logConfig(DemographicService.class);
-	/**
-	 * Autowired reference for {@link #MosipPridGenerator<String>}
-	 */
-//	@Autowired
-//	private PridGenerator<String> pridGenerator;
 
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
@@ -269,7 +267,6 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Override
 	public AuthUserDetails authUserDetails() {
-		System.out.println((AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
@@ -301,8 +298,9 @@ public class DemographicService implements DemographicServiceIntf {
 		boolean isSuccess = false;
 		try {
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
-			String idSchema = serviceUtil.getSchema();
+			IdSchemaDto idSchema = serviceUtil.getSchema();
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
+
 			ArrayList<String> list = Pattern.compile("\\s*,\\s*").splitAsStream(preRegNewRegIdJson)
 					.collect(Collectors.toCollection(ArrayList<String>::new));
 
@@ -311,12 +309,21 @@ public class DemographicService implements DemographicServiceIntf {
 			validationUtil.langvalidation(demographicRequest.getLangCode());
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-			jsonValidator.validateIdObject(idSchema, demographicRequest.getDemographicDetails(), list);
+
+			List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText()).distinct()
+					.collect(Collectors.toList());
+
+			JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
+					demographicRequest.getDemographicDetails());
+
+			System.out.println(constructedObject);
+
+			jsonValidator.validateIdObject(idSchema.getSchemaJson(), constructedObject, list);
+
 			log.info("sessionId", "idType", "id",
 					"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 			log.info("sessionId", "idType", "id",
 					"Pre ID generation start time : " + DateUtils.getUTCCurrentDateTimeString());
-			// String preId = pridGenerator.generateId();
 			String preId = serviceUtil.generateId();
 			log.info("sessionId", "idType", "id",
 					"Pre ID generation end time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -389,7 +396,7 @@ public class DemographicService implements DemographicServiceIntf {
 		boolean isSuccess = false;
 		try {
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
-			String idSchema = serviceUtil.getSchema();
+			IdSchemaDto idSchema = serviceUtil.getSchema();
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
 			ArrayList<String> list = Pattern.compile("\\s*,\\s*").splitAsStream(preRegNewRegIdJson)
 					.collect(Collectors.toCollection(ArrayList<String>::new));
@@ -400,7 +407,16 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicRequestDTO demographicRequest = request.getRequest();
 				log.info("sessionId", "idType", "id",
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-				jsonValidator.validateIdObject(idSchema, demographicRequest.getDemographicDetails(), list);
+
+				List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText())
+						.distinct().collect(Collectors.toList());
+
+				JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
+						demographicRequest.getDemographicDetails());
+
+				log.debug("Constructed Object {}", constructedObject);
+
+				jsonValidator.validateIdObject(idSchema.getSchemaJson(), constructedObject, list);
 				log.info("sessionId", "idType", "id",
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
