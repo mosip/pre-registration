@@ -28,7 +28,6 @@ public class ProxyMasterdataController {
 	@Autowired
 	private io.mosip.preregistration.application.service.ProxyMasterDataService service;
 
-	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@RequestMapping(path = "/**", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.GET,
 			RequestMethod.POST })
 	public ResponseEntity<?> masterDataProxyController(@RequestBody(required = false) String body,

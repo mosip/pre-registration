@@ -34,7 +34,6 @@ import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
-import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
@@ -107,8 +106,8 @@ public class DemographicService implements DemographicServiceIntf {
 	/**
 	 * Autowired reference for {@link #MosipPridGenerator<String>}
 	 */
-	@Autowired
-	private PridGenerator<String> pridGenerator;
+//	@Autowired
+//	private PridGenerator<String> pridGenerator;
 
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
@@ -270,6 +269,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Override
 	public AuthUserDetails authUserDetails() {
+		System.out.println((AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
@@ -322,7 +322,7 @@ public class DemographicService implements DemographicServiceIntf {
 					"Pre ID generation end time : " + DateUtils.getUTCCurrentDateTimeString());
 			DemographicEntity demographicEntity = demographicRepository
 					.save(serviceUtil.prepareDemographicEntityForCreate(demographicRequest,
-							StatusCodes.PENDING_APPOINTMENT.getCode(), authUserDetails().getUserId(), preId));
+							StatusCodes.APPLICATION_INCOMPLETE.getCode(), authUserDetails().getUserId(), preId));
 			DemographicCreateResponseDTO res = serviceUtil.setterForCreatePreRegistration(demographicEntity,
 					demographicRequest.getDemographicDetails());
 
@@ -411,7 +411,7 @@ public class DemographicService implements DemographicServiceIntf {
 								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
 								authUserDetails().getUserId(), preRegistrationId));
 					} else {
-						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(), 
+						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(),
 								DemographicErrorMessages.NOT_POSSIBLE_TO_UPDATE.getMessage());
 					}
 				} else {
@@ -682,7 +682,7 @@ public class DemographicService implements DemographicServiceIntf {
 					userValidation(userId, demographicEntity.getCreatedBy());
 					if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
 						getDocumentServiceToDeleteAllByPreId(preregId);
-						if (!(demographicEntity.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode()))) {
+						if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
 							getBookingServiceToDeleteAllByPreId(preregId);
 						}
 						int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
@@ -700,6 +700,7 @@ public class DemographicService implements DemographicServiceIntf {
 					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
 				}
+
 			}
 			isDeleteSuccess = true;
 		} catch (Exception ex) {

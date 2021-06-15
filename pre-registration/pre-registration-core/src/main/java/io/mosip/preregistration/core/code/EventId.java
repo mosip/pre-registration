@@ -47,6 +47,10 @@ public enum EventId {
 	PRE_412,
 	
 	/** Id for update the expired status event . */
-	PRE_413
+	PRE_413,
+	
+	/** Id for UI event ex. consent . */
+	PRE_414;
+	
 
 }

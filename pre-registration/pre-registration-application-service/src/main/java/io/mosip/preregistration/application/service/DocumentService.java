@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -189,11 +190,9 @@ public class DocumentService implements DocumentServiceIntf {
 	 * parameters.
 	 */
 	public void setup() {
-		log.info("sessionId", "idType", "id", "In setup method of document service");
+
 		HttpHeaders headers = new HttpHeaders();
 		requiredRequestMap.put("version", ver);
-		log.info("sessionId", "idType", "id",
-				"In setup method of document service calling getAllDocCategoriesAndTypes of validationUtil");
 		validationUtil.getAllDocCategoriesAndTypes(primaryLang, headers);
 	}
 
@@ -213,17 +212,15 @@ public class DocumentService implements DocumentServiceIntf {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
 	public MainResponseDTO<DocumentResponseDTO> uploadDocument(MultipartFile file, String documentJsonString,
 			String preRegistrationId) {
-		log.info("sessionId", "idType", "id", "In service");
-		log.info("sessionId", "idType", "id",
-				"In uploadDocument method of document service with document string " + documentJsonString);
+
+		log.info("In uploadDocument method of document service with document string {}", documentJsonString);
 		MainResponseDTO<DocumentResponseDTO> responseDto = new MainResponseDTO<>();
 		MainRequestDTO<DocumentRequestDTO> docReqDto = null;
 		boolean isUploadSuccess = false;
 		responseDto.setId(uploadId);
 		responseDto.setVersion(ver);
 		try {
-			log.info("sessionId", "idType", "id",
-					"calling serviceUtil.createUploadDto  preRegistrationId" + preRegistrationId);
+			log.info("calling serviceUtil createUploadDto  preRegistrationId {}", preRegistrationId);
 			docReqDto = serviceUtil.createUploadDto(documentJsonString, preRegistrationId);
 			responseDto.setId(docReqDto.getId());
 			responseDto.setVersion(docReqDto.getVersion());
@@ -235,8 +232,7 @@ public class DocumentService implements DocumentServiceIntf {
 				if (serviceUtil.fileSizeCheck(file.getSize()) && serviceUtil.fileExtensionCheck(file)) {
 					serviceUtil.isValidRequest(docReqDto.getRequest(), preRegistrationId);
 					validationUtil.langvalidation(docReqDto.getRequest().getLangCode());
-					log.info("sessionId", "idType", "id",
-							"calling validationUtil.validateDocuments preRegistrationId" + preRegistrationId);
+					log.info("calling validationUtil.validateDocuments preRegistrationId {}", preRegistrationId);
 					validationUtil.validateDocuments(docReqDto.getRequest().getLangCode(),
 							docReqDto.getRequest().getDocCatCode(), docReqDto.getRequest().getDocTypCode(),
 							preRegistrationId);
@@ -247,8 +243,8 @@ public class DocumentService implements DocumentServiceIntf {
 			isUploadSuccess = true;
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In uploadDoucment method of document service - " + ex.getMessage());
+			log.error("Exception", ExceptionUtils.getStackTrace(ex));
+			log.error("In uploadDoucment method of document service - ", ex.getMessage());
 			new DocumentExceptionCatcher().handle(ex, responseDto);
 		} finally {
 
@@ -279,7 +275,7 @@ public class DocumentService implements DocumentServiceIntf {
 	@Transactional(propagation = Propagation.MANDATORY)
 	public DocumentResponseDTO createDoc(DocumentRequestDTO document, MultipartFile file, String preRegistrationId)
 			throws IOException, EncryptionFailedException {
-		log.info("sessionId", "idType", "id", "In createDoc method of document service");
+
 		DocumentResponseDTO docResponseDto = new DocumentResponseDTO();
 		if (serviceUtil.getPreRegInfoRestService(preRegistrationId)) {
 			DocumentEntity getentity = documnetDAO.findSingleDocument(preRegistrationId, document.getDocCatCode());
@@ -288,7 +284,8 @@ public class DocumentService implements DocumentServiceIntf {
 			if (getentity != null) {
 				if (isDocumentEntityBookedOrExpiredStatus(getentity)) {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
-							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
+									.getMessage());
 				}
 				documentEntity.setDocumentId(String.valueOf(getentity.getDocumentId()));
 			}
@@ -330,7 +327,7 @@ public class DocumentService implements DocumentServiceIntf {
 	@Transactional(rollbackFor = Exception.class)
 	public MainResponseDTO<DocumentResponseDTO> copyDocument(String catCode, String sourcePreId,
 			String destinationPreId) {
-		log.info("sessionId", "idType", "id", "In copyDocument method of document service");
+
 		String sourceBucketName;
 		String sourceKey;
 		MainResponseDTO<DocumentResponseDTO> responseDto = new MainResponseDTO<>();
@@ -351,10 +348,13 @@ public class DocumentService implements DocumentServiceIntf {
 				DocumentEntity documentEntity = documnetDAO.findSingleDocument(sourcePreId, catCode);
 				DocumentEntity destEntity = documnetDAO.findSingleDocument(destinationPreId, catCode);
 				if (documentEntity != null && sourceStatus && destinationStatus) {
-					if (isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
+
+					if (!Objects.isNull(destEntity) && isDocumentEntityBookedOrExpiredStatus(destEntity)) {
 						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
-								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
+										.getMessage());
 					}
+					
 					DocumentEntity copyDocumentEntity = documnetDAO.saveDocument(
 							serviceUtil.documentEntitySetter(destinationPreId, documentEntity, destEntity));
 					sourceKey = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
@@ -378,8 +378,8 @@ public class DocumentService implements DocumentServiceIntf {
 			isCopySuccess = true;
 
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In copyDoucment method of document service - " + ex.getMessage());
+			log.error("Exception", ExceptionUtils.getStackTrace(ex));
+			log.error("In copyDoucment method of document service - ", ex.getMessage());
 			new DocumentExceptionCatcher().handle(ex, responseDto);
 		} finally {
 			if (isCopySuccess) {
@@ -434,7 +434,7 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Override
 	public MainResponseDTO<DocumentsMetaData> getAllDocumentForPreId(String preId) {
-		log.info("sessionId", "idType", "id", "In getAllDocumentForPreId method of document service");
+
 		MainResponseDTO<DocumentsMetaData> responseDto = new MainResponseDTO<>();
 		responseDto.setId(fetchMetaDataId);
 		responseDto.setVersion(ver);
@@ -451,9 +451,8 @@ public class DocumentService implements DocumentServiceIntf {
 			isRetrieveSuccess = true;
 
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
+			log.error("Exception ", ExceptionUtils.getStackTrace(ex));
+			log.error("In getAllDocumentForPreId method of document service - ", ex.getMessage());
 			if (ex instanceof DocumentNotFoundException || ex instanceof RecordNotFoundException) {
 				isDocNotFound = true;
 				new DocumentExceptionCatcher().handle(ex, responseDto);
@@ -488,7 +487,7 @@ public class DocumentService implements DocumentServiceIntf {
 	 */
 	@Override
 	public MainResponseDTO<DocumentDTO> getDocumentForDocId(String docId, String preId) {
-		log.info("sessionId", "idType", "id", "In getAllDocumentForDocId method of document service");
+
 		MainResponseDTO<DocumentDTO> responseDto = new MainResponseDTO<>();
 		DocumentDTO docDto = new DocumentDTO();
 		responseDto.setId(fetchContentId);
@@ -516,8 +515,8 @@ public class DocumentService implements DocumentServiceIntf {
 					docDto.setDocument(cryptoUtil.decrypt(cephBytes, documentEntity.getEncryptedDateTime()));
 					responseDto.setResponse(docDto);
 				} else {
-					log.error("sessionId", "idType", "id", "In dtoSetter method of document service - "
-							+ io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
+					log.error("In dtoSetter method of document service - ",
+							io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
 					throw new HashingException(
 							io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
 							io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
@@ -527,9 +526,8 @@ public class DocumentService implements DocumentServiceIntf {
 			isRetrieveSuccess = true;
 
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In getAllDocumentForPreId method of document service - " + ex.getMessage());
+			log.error("Exception ", ExceptionUtils.getStackTrace(ex));
+			log.error("In getAllDocumentForPreId method of document service - ", ex.getMessage());
 			if (ex instanceof DocumentNotFoundException)
 				isDocNotFound = true;
 			new DocumentExceptionCatcher().handle(ex, responseDto);
@@ -567,7 +565,9 @@ public class DocumentService implements DocumentServiceIntf {
 		List<DocumentMultipartResponseDTO> allDocRes = new ArrayList<>();
 		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
 		for (DocumentEntity doc : entityList) {
-			log.info("","","","Demographic preid:" + doc.getDemographicEntity().getStatusCode());
+
+			log.info("Demographic preid: {}" , doc.getDemographicEntity().getPreRegistrationId());
+
 			DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
 			allDocDto.setDocCatCode(doc.getDocCatCode());
 			allDocDto.setDocName(doc.getDocName());
@@ -591,7 +591,7 @@ public class DocumentService implements DocumentServiceIntf {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public MainResponseDTO<DocumentDeleteResponseDTO> deleteDocument(String documentId, String preRegistrationId) {
-		log.info("sessionId", "idType", "id", "In deleteDocument method of document service");
+
 		MainResponseDTO<DocumentDeleteResponseDTO> delResponseDto = new MainResponseDTO<>();
 		delResponseDto.setId(deleteSpecificId);
 		delResponseDto.setVersion(ver);
@@ -660,7 +660,6 @@ public class DocumentService implements DocumentServiceIntf {
 	@Override
 	@Transactional(rollbackFor = Exception.class)
 	public MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId(String preregId) {
-		log.info("sessionId", "idType", "id", "In deleteAllByPreId method of document service");
 		boolean isDeleteSuccess = false;
 		boolean isDocNotFound = false;
 		MainResponseDTO<DocumentDeleteResponseDTO> deleteRes = new MainResponseDTO<>();
@@ -679,9 +678,8 @@ public class DocumentService implements DocumentServiceIntf {
 
 			isDeleteSuccess = true;
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In deleteAllByPreId method of document service - " + ex.getMessage());
+			log.error("In deleteAllByPreId method of document service - ", ExceptionUtils.getStackTrace(ex));
+			log.error("In deleteAllByPreId method of document service - ", ex.getMessage());
 			if (ex instanceof DocumentNotFoundException)
 				isDocNotFound = true;
 			new DocumentExceptionCatcher().handle(ex, deleteRes);
@@ -708,7 +706,7 @@ public class DocumentService implements DocumentServiceIntf {
 	}
 
 	public DocumentDeleteResponseDTO deleteFile(List<DocumentEntity> documentEntityList, String preregId) {
-		log.info("sessionId", "idType", "id", "In pre-registration service inside delete File method " + preregId);
+		log.info("In pre-registration service inside delete File for preregid {} ", preregId);
 		DocumentDeleteResponseDTO deleteDTO = new DocumentDeleteResponseDTO();
 		if (documnetDAO.deleteAllBypreregId(preregId) >= 0) {
 			for (DocumentEntity documentEntity : documentEntityList) {
@@ -770,7 +768,6 @@ public class DocumentService implements DocumentServiceIntf {
 
 	@Override
 	public MainResponseDTO<String> updateDocRefId(String documentId, String preId, String docRefId) {
-		log.info("sessionId", "idType", "id", "In updateDocRefId method of document service");
 		MainResponseDTO<String> response = new MainResponseDTO<>();
 		Map<String, String> requestParamMap = new HashMap<>();
 		response.setResponsetime(serviceUtil.getCurrentResponseTime());
@@ -783,7 +780,8 @@ public class DocumentService implements DocumentServiceIntf {
 				if (documentEntity != null) {
 					if (isDocumentEntityBookedOrExpiredStatus(documentEntity)) {
 						throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_024.toString(),
-								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS.getMessage());
+								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
+										.getMessage());
 					}
 					documentEntity.setDocRefId(docRefId);
 					documnetDAO.updateDocument(documentEntity);
@@ -796,9 +794,8 @@ public class DocumentService implements DocumentServiceIntf {
 						DocumentErrorMessages.INVALID_DOCUMENT_ID.getMessage());
 			}
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
+			log.error("Exception", ExceptionUtils.getStackTrace(ex));
+			log.error("In updatePreRegistrationStatus method of pre-registration service- ", ex.getMessage());
 			new DocumentExceptionCatcher().handle(ex, response);
 		}
 
@@ -806,7 +803,7 @@ public class DocumentService implements DocumentServiceIntf {
 		return response;
 
 	}
-	
+
 	public boolean isDocumentEntityBookedOrExpiredStatus(DocumentEntity documentEntity) {
 		return validationUtil.isStatusBookedOrExpired(documentEntity.getDemographicEntity().getStatusCode());
 	}

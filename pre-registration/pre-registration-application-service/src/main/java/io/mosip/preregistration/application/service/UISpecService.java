@@ -1,30 +1,19 @@
 package io.mosip.preregistration.application.service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.PageDTO;
-import io.mosip.preregistration.application.dto.UISpecDTO;
 import io.mosip.preregistration.application.dto.UISpecMetaDataDTO;
 import io.mosip.preregistration.application.dto.UISpecResponseDTO;
-import io.mosip.preregistration.application.dto.UISpecficationRequestDTO;
-import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
-import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
-
 import io.mosip.preregistration.application.exception.UISpecException;
 import io.mosip.preregistration.application.service.util.UISpecServiceUtil;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
@@ -46,96 +35,6 @@ public class UISpecService {
 	private Logger log = LoggerConfiguration.logConfig(UISpecService.class);
 
 	private final String domain = "pre-registration";
-
-	public MainResponseDTO<UISpecResponseDTO> saveUIspec(UISpecDTO request) {
-		log.info("In UISpec service saveUIspec method");
-		MainResponseDTO<UISpecResponseDTO> response = new MainResponseDTO<UISpecResponseDTO>();
-		response.setVersion(version);
-		response.setResponsetime(LocalDateTime.now().toString());
-		UISpecResponseDTO uispecReq = new UISpecResponseDTO();
-		try {
-			log.info("Saving the UiSpec request {}", request);
-			isJSONValid(request.getJsonspec().toString());
-			uispecReq = serviceUtil.saveUISchema(getMasterDataUISpecRequest(request));
-			response.setResponse(uispecReq);
-		} catch (UISpecException ex) {
-			log.error("Exception occured while saving the UiSpec request {}", request);
-			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
-			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
-			exception.setErrorCode(ex.getErrorCode());
-			exception.setMessage(ex.getMessage());
-			log.error("Exception {}", exception);
-			explist.add(exception);
-			response.setErrors(explist);
-		}
-		return response;
-	}
-
-	public MainResponseDTO<UISpecResponseDTO> updateUISpec(UISpecDTO updateRequest, String id) {
-		log.info("In UISpec service updateUIspec method");
-		MainResponseDTO<UISpecResponseDTO> response = new MainResponseDTO<UISpecResponseDTO>();
-		response.setVersion(version);
-		response.setResponsetime(LocalDateTime.now().toString());
-		UISpecResponseDTO uispecResponse = new UISpecResponseDTO();
-		try {
-			log.info("updating the UiSpec request {}", updateRequest);
-			isJSONValid(updateRequest.getJsonspec().toString());
-			uispecResponse = serviceUtil.updateUISchema(getMasterDataUISpecRequest(updateRequest), id);
-			response.setResponse(uispecResponse);
-		} catch (UISpecException ex) {
-			log.error("Exception occured while updating the UiSpec request {}", updateRequest);
-			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
-			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
-			exception.setErrorCode(ex.getErrorCode());
-			exception.setMessage(ex.getMessage());
-			log.error("Exception {}", exception);
-			explist.add(exception);
-			response.setErrors(explist);
-		}
-		return response;
-	}
-
-	public MainResponseDTO<String> publishUISpec(String id) {
-		log.info("In UISpec service publishUIspec method");
-		MainResponseDTO<String> response = new MainResponseDTO<String>();
-		response.setVersion(version);
-		response.setResponsetime(LocalDateTime.now().toString());
-		try {
-			log.info("publish the UiSpec request id {}", id);
-			response.setResponse(serviceUtil.publishUISchema(id));
-		} catch (UISpecException ex) {
-			log.error("Exception occured while publishing the UiSpec id {}", id);
-			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
-			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
-			exception.setErrorCode(ex.getErrorCode());
-			exception.setMessage(ex.getMessage());
-			log.error("Exception {}", exception);
-			explist.add(exception);
-			response.setErrors(explist);
-		}
-		return response;
-	}
-
-	public MainResponseDTO<String> deleteUISpec(String id) {
-		log.info("In UISpec service deleteUISpec method");
-		MainResponseDTO<String> response = new MainResponseDTO<String>();
-		response.setVersion(this.version);
-		response.setResponsetime(LocalDateTime.now().toString());
-		try {
-			log.info("deleting the UiSpec id {}", id);
-			response.setResponse(serviceUtil.deleteUISchema(id));
-		} catch (UISpecException ex) {
-			log.error("Exception occured while deleting the UiSpec");
-			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
-			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
-			exception.setErrorCode(ex.getErrorCode());
-			exception.setMessage(ex.getMessage());
-			log.error("Exception {}", exception);
-			explist.add(exception);
-			response.setErrors(explist);
-		}
-		return response;
-	}
 
 	public MainResponseDTO<UISpecMetaDataDTO> getLatestUISpec(double version, double identitySchemaVersion) {
 		log.info("In UISpec service getUIspec method");
@@ -189,18 +88,6 @@ public class UISpecService {
 		return response;
 	}
 
-	private UISpecficationRequestDTO getMasterDataUISpecRequest(UISpecDTO request) {
-		UISpecficationRequestDTO masterDataRequest = new UISpecficationRequestDTO();
-		masterDataRequest.setDomain(domain);
-		masterDataRequest.setDescription(request.getDescription());
-		masterDataRequest.setIdentitySchemaId(request.getIdentitySchemaId());
-		masterDataRequest.setTitle(request.getTitle());
-		masterDataRequest.setType(request.getType());
-		masterDataRequest.setJsonspec(request.getJsonspec());
-
-		return masterDataRequest;
-	}
-
 	private List<UISpecMetaDataDTO> prepareResponse(List<UISpecResponseDTO> uiSchema) {
 		List<UISpecMetaDataDTO> res = new ArrayList<>();
 		uiSchema.forEach(spec -> {
@@ -236,22 +123,6 @@ public class UISpecService {
 			}
 		});
 		return prepareResponse(filteredData);
-	}
-
-	/**
-	 * Validates string is valid json or not
-	 * 
-	 * @param jsonInString
-	 */
-	private void isJSONValid(String jsonInString) {
-		ObjectMapper objectMapper = new ObjectMapper();
-		try {
-			objectMapper.readTree(jsonInString);
-		} catch (IOException e) {
-			log.error("Given jsonSpec is not a valid json objec", e);
-			throw new UISpecException(ApplicationErrorCodes.PRG_APP_006.getCode(),
-					ApplicationErrorMessages.UI_SPEC_VALUE_PARSE_ERROR.getMessage());
-		}
 	}
 
 }

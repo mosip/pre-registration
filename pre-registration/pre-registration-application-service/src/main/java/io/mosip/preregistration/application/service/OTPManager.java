@@ -1,7 +1,6 @@
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
-
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -9,7 +8,6 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
-
 
 import javax.xml.bind.DatatypeConverter;
 
@@ -56,8 +54,20 @@ public class OTPManager {
 	/** The Constant USER_BLOCKED. */
 	private static final String USER_BLOCKED = "USER_BLOCKED";
 
+	@Value("${secretKey}")
+	private String secretKey;
+
+	@Value("${clientId}")
+	private String clientId;
+
+	@Value("${version}")
+	private String version;
+
 	@Value("${sendOtp.resource.url}")
 	private String sendOtpResourceUrl;
+
+	@Value("${appId}")
+	private String appId;
 
 	private static final String OTP = "otp";
 
@@ -104,8 +114,7 @@ public class OTPManager {
 					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
 		}
 		String otp = generateOTP(requestDTO, token);
-		logger.info("sessionId", "idType", "id",
-				"In generateOTP method of otpmanager service OTP generated");
+		logger.info("sessionId", "idType", "id", "In generateOTP method of otpmanager service OTP generated");
 		String otpHash = digestAsPlainText(
 				(userId + environment.getProperty(PreRegLoginConstant.KEY_SPLITTER) + otp).getBytes());
 
@@ -133,19 +142,18 @@ public class OTPManager {
 		}
 		Map<String, Object> mp = new HashMap();
 
-		Integer validTime = environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Integer.class)/60;
+		Integer validTime = environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Integer.class)
+				/ 60;
 		LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(environment.getProperty("timeZone")));
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
-		
 
 		mp.put("otp", otp);
-		mp.put("date",dateFormatter.format(dateTime));
+		mp.put("date", dateFormatter.format(dateTime));
 		mp.put("validTime", validTime);
 		mp.put("name", userId);
 		mp.put("username", userId);
 		mp.put("time", timeFormatter.format(dateTime));
-
 
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
 			logger.info("sessionId", "idType", "id",
@@ -241,6 +249,7 @@ public class OTPManager {
 
 	}
 
+	@SuppressWarnings("unchecked")
 	public String generateToken() throws Exception {
 		logger.info("sessionId", "idType", "id", "In generateToken method of otpmanager service ");
 		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
@@ -251,11 +260,11 @@ public class OTPManager {
 		jsonObject.put("id", tokenUrl);
 		jsonObject.put("metadata", new JSONObject());
 		JSONObject jsonObject1 = new JSONObject();
-		jsonObject1.put("clientId", environment.getProperty("clientId"));
-		jsonObject1.put("secretKey", environment.getProperty("secretKey"));
-		jsonObject1.put("appId", environment.getProperty("appId"));
-		jsonObject.put("requesttime", environment.getProperty("secret_url.requesttime"));
-		jsonObject.put("version", environment.getProperty("secret_url.version"));
+		jsonObject1.put("clientId", clientId);
+		jsonObject1.put("secretKey", secretKey);
+		jsonObject1.put("appId", appId);
+		jsonObject.put("requesttime", LocalDateTime.now().toString());
+		jsonObject.put("version", version);
 		jsonObject.put("request", jsonObject1);
 
 		HttpEntity<String> entity = new HttpEntity<String>(jsonObject.toString(), headers);
