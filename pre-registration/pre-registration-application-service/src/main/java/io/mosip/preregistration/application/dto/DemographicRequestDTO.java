@@ -5,6 +5,7 @@
 package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
+import java.util.List;
 
 import org.json.simple.JSONObject;
 
@@ -40,4 +41,5 @@ public class DemographicRequestDTO implements Serializable {
 	 */
 	private JSONObject demographicDetails;
 
+	private List<String> requiredFields;
 }
