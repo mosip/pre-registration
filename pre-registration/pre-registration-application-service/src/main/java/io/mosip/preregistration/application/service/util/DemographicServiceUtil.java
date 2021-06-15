@@ -242,9 +242,10 @@ public class DemographicServiceUtil {
 	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
-	public DemographicEntity prepareDemographicEntityForCreate(
-			io.mosip.preregistration.application.dto.DemographicRequestDTO demographicRequest, String statuscode,
-			String userId, String preRegistrationId) {
+
+	public DemographicEntity prepareDemographicEntityForCreate(DemographicRequestDTO demographicRequest,
+			String statuscode, String userId, String preRegistrationId) {
+
 		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
 		DemographicEntity demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId(preRegistrationId);
@@ -677,6 +678,7 @@ public class DemographicServiceUtil {
 		constructedJson.put(DemographicRequestCodes.IDENTITY.getCode(), demographicJson);
 
 		return constructedJson;
+
 	}
 
 }
