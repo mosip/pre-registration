@@ -107,11 +107,6 @@ public class LoginCommonUtil {
 
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
-<<<<<<< HEAD
-
-=======
->>>>>>> implemented code review comments changes
-
 
 	@Value("${mosip.preregistration.login.service.version}")
 	private String version;
@@ -481,8 +476,6 @@ public class LoginCommonUtil {
 		requestFactory.setHttpClient(httpClient);
 		return new RestTemplate(requestFactory);
 	}
-
-
 
 	public MainResponseDTO<CaptchaResposneDTO> validateCaptchaToken(String captchaToken) {
 

@@ -310,13 +310,13 @@ public class DemographicService implements DemographicServiceIntf {
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
 
-			List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText()).distinct()
+			List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText())
 					.collect(Collectors.toList());
 
 			JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
 					demographicRequest.getDemographicDetails());
 
-			System.out.println(constructedObject);
+			log.debug("Constructed Object {}", constructedObject);
 
 			jsonValidator.validateIdObject(idSchema.getSchemaJson(), constructedObject, list);
 
@@ -409,7 +409,7 @@ public class DemographicService implements DemographicServiceIntf {
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
 
 				List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText())
-						.distinct().collect(Collectors.toList());
+						.collect(Collectors.toList());
 
 				JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
 						demographicRequest.getDemographicDetails());

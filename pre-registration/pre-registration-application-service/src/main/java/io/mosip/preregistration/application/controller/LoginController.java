@@ -36,7 +36,6 @@ import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 import io.mosip.preregistration.application.exception.DeprecatedException;
-import io.mosip.preregistration.application.exception.SendOtpFailedException;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -237,7 +236,7 @@ public class LoginController {
 		if (Objects.isNull(response.getErrors())) {
 			Cookie resCookie = new Cookie("canAuthorise",
 					loginService.sendOTPSuccessJwtToken(sendOtpRequestWithCaptcha.getRequest().getUserId()));
-			resCookie.setMaxAge((int)  otpExpiryTime/ 60);
+			resCookie.setMaxAge((int) otpExpiryTime/ 60);
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
 			resCookie.setPath("/");
