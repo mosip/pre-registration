@@ -694,7 +694,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }} # required
         if: failure() # Pick up events even if the job fails or is canceled.
 
-  sonar analysis:
+  sonar_analysis:
 
     runs-on: ubuntu-latest
     steps:
@@ -712,7 +712,7 @@ jobs:
           # Strip git ref prefix from version
           echo "BRANCH_NAME=$(echo ${{ github.ref }} | sed -e 's,.*/\(.*\),\1,')" >> $GITHUB_ENV
           echo "GPG_TTY=$(tty)" >> $GITHUB_ENV
-          
+
       - uses: actions/cache@v1
         with:
           path: ~/.m2/repository
