@@ -236,7 +236,7 @@ public class LoginController {
 		if (Objects.isNull(response.getErrors())) {
 			Cookie resCookie = new Cookie("canAuthorise",
 					loginService.sendOTPSuccessJwtToken(sendOtpRequestWithCaptcha.getRequest().getUserId()));
-			resCookie.setMaxAge((int)  otpExpiryTime/ 60);
+			resCookie.setMaxAge((int) otpExpiryTime/ 60);
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
 			resCookie.setPath("/");
