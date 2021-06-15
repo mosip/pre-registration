@@ -67,7 +67,6 @@ jobs:
         name: release
         path: ./release.zip
 
-
     - uses: 8398a7/action-slack@v3
       with:
         status: ${{ job.status }}
