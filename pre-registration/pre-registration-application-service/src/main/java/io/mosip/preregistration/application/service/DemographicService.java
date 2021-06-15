@@ -460,6 +460,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 * @see io.mosip.preregistration.demographic.service.DemographicServiceIntf#
 	 * getAllApplicationDetails(java.lang.String, java.lang.String)
 	 */
+	@SuppressWarnings("static-access")
 	@Override
 	public MainResponseDTO<DemographicMetadataDTO> getAllApplicationDetails(String userId, String pageIdx) {
 		log.info("sessionId", "idType", "id", "In getAllApplicationDetails method of pre-registration service ");
