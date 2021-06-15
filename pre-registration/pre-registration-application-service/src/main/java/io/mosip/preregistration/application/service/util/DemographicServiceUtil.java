@@ -678,6 +678,7 @@ public class DemographicServiceUtil {
 		constructedJson.put(DemographicRequestCodes.IDENTITY.getCode(), demographicJson);
 
 		return constructedJson;
+
 	}
 
 }
