@@ -665,9 +665,13 @@ public class DemographicServiceUtil {
 	public JSONObject constructNewDemographicRequest(List<String> identityKeys, JSONObject demographicDetails)
 			throws ParseException {
 
-		List<Object> demographicKeys = Arrays.asList(((HashMap) demographicDetails.get("identity")).keySet().toArray());
+		List<Object> demographicKeys = Arrays.asList(
+				((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
+		
 		log.debug("IdentitySchemakeys: {} and PreRegIdentitykeys: {}", identityKeys, demographicKeys);
+		
 		JSONObject demographicJson = new JSONObject();
+		
 		for (String key : identityKeys) {
 			if (demographicKeys.contains(key)) {
 				demographicJson.put(key, ((HashMap) demographicDetails.get("identity")).get(key));
@@ -675,7 +679,7 @@ public class DemographicServiceUtil {
 		}
 
 		JSONObject constructedJson = new JSONObject();
-		constructedJson.put("identity", demographicJson);
+		constructedJson.put(DemographicRequestCodes.IDENTITY.getCode(), demographicJson);
 
 		return constructedJson;
 	}
