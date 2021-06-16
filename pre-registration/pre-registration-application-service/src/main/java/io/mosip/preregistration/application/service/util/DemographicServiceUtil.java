@@ -242,8 +242,9 @@ public class DemographicServiceUtil {
 	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
-	public DemographicEntity prepareDemographicEntityForCreate(io.mosip.preregistration.application.dto.DemographicRequestDTO demographicRequest,
-			String statuscode, String userId, String preRegistrationId) {
+	public DemographicEntity prepareDemographicEntityForCreate(
+			io.mosip.preregistration.application.dto.DemographicRequestDTO demographicRequest, String statuscode,
+			String userId, String preRegistrationId) {
 		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
 		DemographicEntity demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId(preRegistrationId);
@@ -660,14 +661,15 @@ public class DemographicServiceUtil {
 
 		List<Object> demographicKeys = Arrays.asList(
 				((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
-		
+
 		log.debug("IdentitySchemakeys: {} and PreRegIdentitykeys: {}", identityKeys, demographicKeys);
-		
+
 		JSONObject demographicJson = new JSONObject();
-		
+
 		for (String key : identityKeys) {
 			if (demographicKeys.contains(key)) {
-				demographicJson.put(key, ((HashMap) demographicDetails.get("identity")).get(key));
+				demographicJson.put(key,
+						((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).get(key));
 			}
 		}
 
@@ -675,7 +677,6 @@ public class DemographicServiceUtil {
 		constructedJson.put(DemographicRequestCodes.IDENTITY.getCode(), demographicJson);
 
 		return constructedJson;
-
 	}
 
 }
