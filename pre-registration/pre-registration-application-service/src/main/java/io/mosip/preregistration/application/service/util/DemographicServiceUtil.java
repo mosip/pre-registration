@@ -670,14 +670,14 @@ public class DemographicServiceUtil {
 		JSONObject demographicJson = new JSONObject();
 		for (String key : identityKeys) {
 			if (demographicKeys.contains(key)) {
-				demographicJson.put(key, getIdJSONValue(demographicDetails.toString(), key));
+				demographicJson.put(key, ((HashMap) demographicDetails.get("identity")).get(key));
 			}
 		}
 
-		JSONObject constructedJSon = new JSONObject();
-		constructedJSon.put("identity", demographicJson);
+		JSONObject constructedJson = new JSONObject();
+		constructedJson.put("identity", demographicJson);
 
-		return constructedJSon;
+		return constructedJson;
 	}
 
 }
