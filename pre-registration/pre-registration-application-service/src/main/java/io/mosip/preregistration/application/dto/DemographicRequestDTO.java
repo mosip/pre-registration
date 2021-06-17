@@ -29,7 +29,7 @@ import lombok.ToString;
 public class DemographicRequestDTO implements Serializable {
 
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 6705845720255847210L;
+	private static final long serialVersionUID = 7630110702438594707L;
 
 	/**
 	 * language code
@@ -42,4 +42,5 @@ public class DemographicRequestDTO implements Serializable {
 	private JSONObject demographicDetails;
 
 	private List<String> requiredFields;
+
 }
