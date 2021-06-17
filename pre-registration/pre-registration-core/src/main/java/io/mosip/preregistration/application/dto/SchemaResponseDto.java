@@ -1,4 +1,4 @@
-package io.mosip.preregistration.demographic.dto;
+package io.mosip.preregistration.application.dto;
 
 import org.json.simple.JSONObject;
 

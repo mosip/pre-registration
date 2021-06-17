@@ -4,7 +4,6 @@
  */
 package io.mosip.preregistration.application.service.util;
 
-import java.io.IOException;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -14,14 +13,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import javax.net.ssl.SSLContext;
 
@@ -50,10 +45,8 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
@@ -65,6 +58,7 @@ import io.mosip.preregistration.application.dto.IdSchemaDto;
 import io.mosip.preregistration.application.dto.PridFetchResponseDto;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
+import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
@@ -80,10 +74,9 @@ import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
-import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
-import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
-import io.mosip.preregistration.application.exception.OperationNotAllowedException;
+import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
+import io.mosip.preregistration.application.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.demographic.exception.system.DateParseException;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
@@ -249,8 +242,9 @@ public class DemographicServiceUtil {
 	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
-	public DemographicEntity prepareDemographicEntityForCreate(DemographicRequestDTO demographicRequest,
-			String statuscode, String userId, String preRegistrationId) {
+	public DemographicEntity prepareDemographicEntityForCreate(
+			io.mosip.preregistration.application.dto.DemographicRequestDTO demographicRequest, String statuscode,
+			String userId, String preRegistrationId) {
 		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
 		DemographicEntity demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId(preRegistrationId);
@@ -667,14 +661,15 @@ public class DemographicServiceUtil {
 
 		List<Object> demographicKeys = Arrays.asList(
 				((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
-		
+
 		log.debug("IdentitySchemakeys: {} and PreRegIdentitykeys: {}", identityKeys, demographicKeys);
-		
+
 		JSONObject demographicJson = new JSONObject();
-		
+
 		for (String key : identityKeys) {
 			if (demographicKeys.contains(key)) {
-				demographicJson.put(key, ((HashMap) demographicDetails.get("identity")).get(key));
+				demographicJson.put(key,
+						((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).get(key));
 			}
 		}
 
