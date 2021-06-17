@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,7 +37,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
-import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
@@ -237,7 +237,6 @@ public class LoginService {
 		AuthNResponse authRes = new AuthNResponse();
 		try {
 			if (isCaptchaEnabled) {
-
 				captchaResponse = this.loginCommonUtil.validateCaptchaToken(captchaToken);
 				authRes.setMessage(captchaResponse.getMessage().concat("\sand\s"));
 			}
@@ -248,6 +247,7 @@ public class LoginService {
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
+
 			if (Objects.isNull(authRes.getMessage()))
 				authRes.setMessage(sendOtpResponse.getResponse().getMessage());
 			else
