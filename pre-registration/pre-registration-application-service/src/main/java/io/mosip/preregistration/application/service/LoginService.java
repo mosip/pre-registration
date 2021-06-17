@@ -216,7 +216,7 @@ public class LoginService {
 		return response;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
 
@@ -248,8 +248,10 @@ public class LoginService {
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
-
-			authRes.setMessage(authRes.getMessage().concat(sendOtpResponse.getResponse().getMessage()));
+			if (Objects.isNull(authRes.getMessage()))
+				authRes.setMessage(sendOtpResponse.getResponse().getMessage());
+			else
+				authRes.setMessage(authRes.getMessage().concat(sendOtpResponse.getResponse().getMessage()));
 			authRes.setStatus(PreRegLoginConstant.SUCCESS);
 			response.setResponse(authRes);
 
