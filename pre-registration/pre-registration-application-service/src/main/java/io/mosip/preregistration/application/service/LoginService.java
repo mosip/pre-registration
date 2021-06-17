@@ -37,7 +37,6 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
-import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
