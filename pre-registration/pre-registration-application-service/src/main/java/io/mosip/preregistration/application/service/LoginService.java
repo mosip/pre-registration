@@ -239,7 +239,7 @@ public class LoginService {
 			if (isCaptchaEnabled) {
 
 				captchaResponse = this.loginCommonUtil.validateCaptchaToken(captchaToken);
-				authRes.setMessage(captchaResponse.getMessage().concat("\\sand\\s"));
+				authRes.setMessage(captchaResponse.getMessage().concat("\sand\s"));
 			}
 
 			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
