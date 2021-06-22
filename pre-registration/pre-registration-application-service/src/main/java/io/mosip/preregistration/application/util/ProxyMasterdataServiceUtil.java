@@ -90,11 +90,11 @@ public class ProxyMasterdataServiceUtil {
 		return httpMethod;
 	}
 
-	@Cacheable(value = "masterdata-cache", key = "'MasterdataCache'+#uri")
+	@Cacheable(value = "masterdata-cache", key = "'MasterdataCache'+#uri" , condition = "!#uri.toString().contains('getApplicantType')" )
 	public Object masterDataRestCall(URI uri, String body, HttpMethod methodType) {
 
 		log.info("In masterDataRestCall method with request url {} body : {}", uri, body);
-
+      
 		ResponseEntity<?> response = null;
 
 		HttpHeaders headers = new HttpHeaders();

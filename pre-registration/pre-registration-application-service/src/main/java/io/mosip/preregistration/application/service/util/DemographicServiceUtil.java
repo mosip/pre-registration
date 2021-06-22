@@ -25,6 +25,7 @@ import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
+import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -44,7 +45,6 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponents;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -58,6 +58,7 @@ import io.mosip.preregistration.application.dto.IdSchemaDto;
 import io.mosip.preregistration.application.dto.PridFetchResponseDto;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
+import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
@@ -73,10 +74,9 @@ import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
-import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
-import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
-import io.mosip.preregistration.application.exception.OperationNotAllowedException;
+import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
+import io.mosip.preregistration.application.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.demographic.exception.system.DateParseException;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
@@ -242,8 +242,10 @@ public class DemographicServiceUtil {
 	 * @param entityType         pass entityType
 	 * @return demographic entity with values
 	 */
+
 	public DemographicEntity prepareDemographicEntityForCreate(DemographicRequestDTO demographicRequest,
 			String statuscode, String userId, String preRegistrationId) {
+
 		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
 		DemographicEntity demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId(preRegistrationId);
@@ -528,8 +530,8 @@ public class DemographicServiceUtil {
 
 	}
 
-	public String getSchema() {
-		String response = null;
+	public IdSchemaDto getSchema() {
+		IdSchemaDto response = null;
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(idSchemaConfig);
 			HttpHeaders headers = new HttpHeaders();
@@ -546,9 +548,9 @@ public class DemographicServiceUtil {
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
 
-			response = responseEntity.getBody().getResponse().getSchemaJson();
+			response = responseEntity.getBody().getResponse();
 
-			if (response == null || response.isEmpty()) {
+			if (response == null) {
 				throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 						DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
 			}
@@ -653,4 +655,29 @@ public class DemographicServiceUtil {
 	public boolean isDemographicBookedOrExpired(DemographicEntity demographicEntity, ValidationUtil validationUtil) {
 		return validationUtil.isStatusBookedOrExpired(demographicEntity.getStatusCode());
 	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public JSONObject constructNewDemographicRequest(List<String> identityKeys, JSONObject demographicDetails)
+			throws ParseException {
+
+		List<Object> demographicKeys = Arrays.asList(
+				((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
+
+		log.debug("IdentitySchemakeys: {} and PreRegIdentitykeys: {}", identityKeys, demographicKeys);
+
+		JSONObject demographicJson = new JSONObject();
+
+		for (String key : identityKeys) {
+			if (demographicKeys.contains(key)) {
+				demographicJson.put(key,
+						((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).get(key));
+			}
+		}
+
+		JSONObject constructedJson = new JSONObject();
+		constructedJson.put(DemographicRequestCodes.IDENTITY.getCode(), demographicJson);
+
+		return constructedJson;
+	}
+
 }
