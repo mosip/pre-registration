@@ -108,7 +108,6 @@ public class LoginCommonUtil {
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
 
-
 	@Value("${mosip.preregistration.login.service.version}")
 	private String version;
 
@@ -478,9 +477,7 @@ public class LoginCommonUtil {
 		return new RestTemplate(requestFactory);
 	}
 
-
-
-	public MainResponseDTO<CaptchaResposneDTO> validateCaptchaToken(String captchaToken) {
+	public CaptchaResposneDTO validateCaptchaToken(String captchaToken) {
 
 		if (captchaToken == null || captchaToken.isBlank()) {
 			log.error("Validating Captcha token is null or blank");
@@ -507,7 +504,7 @@ public class LoginCommonUtil {
 					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
 					});
 
-			if (responseEntity.getBody().getErrors() != null || !responseEntity.getBody().getErrors().isEmpty()) {
+			if (responseEntity.getBody().getErrors() != null) {
 				log.error("validateCaptchaToken has an error {}", responseEntity.getBody().getErrors());
 				throw new PreRegLoginException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
@@ -519,7 +516,7 @@ public class LoginCommonUtil {
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
 		}
 
-		return responseEntity.getBody();
+		return responseEntity.getBody().getResponse();
 
 	}
 

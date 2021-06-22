@@ -8,7 +8,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
@@ -16,7 +15,6 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.env.Environment;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
@@ -24,7 +22,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
-import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -40,6 +37,14 @@ import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.preregistration.application.code.DemographicRequestCodes;
+import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
+import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
+import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
+import io.mosip.preregistration.application.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
+import io.mosip.preregistration.application.dto.DemographicViewDTO;
+import io.mosip.preregistration.application.dto.IdSchemaDto;
+import io.mosip.preregistration.application.dto.SchemaResponseDto;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
@@ -77,13 +82,6 @@ import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.demographic.dto.DeletePreRegistartionDTO;
-import io.mosip.preregistration.demographic.dto.DemographicCreateResponseDTO;
-import io.mosip.preregistration.demographic.dto.DemographicMetadataDTO;
-import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
-import io.mosip.preregistration.demographic.dto.DemographicUpdateResponseDTO;
-import io.mosip.preregistration.demographic.dto.DemographicViewDTO;
-import io.mosip.preregistration.demographic.dto.SchemaResponseDto;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
 
 /**
@@ -96,6 +94,7 @@ import io.mosip.preregistration.demographic.exception.system.SystemFileIOExcepti
  * @author Ravi C Balaji
  * @since 1.0.0
  */
+
 @Service
 public class DemographicService implements DemographicServiceIntf {
 
@@ -103,11 +102,6 @@ public class DemographicService implements DemographicServiceIntf {
 	 * logger instance
 	 */
 	private Logger log = LoggerConfiguration.logConfig(DemographicService.class);
-	/**
-	 * Autowired reference for {@link #MosipPridGenerator<String>}
-	 */
-//	@Autowired
-//	private PridGenerator<String> pridGenerator;
 
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
@@ -225,20 +219,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	protected String trueStatus = "true";
 
-	@Value("${mosip.kernel.idobjectvalidator.mandatory-attributes.pre-registration.new-registration}")
-	private String preRegNewRegIdJson;
-
 	private String getIdentityJsonString = "";
-
-	/**
-	 * Environment instance
-	 */
-	@Autowired
-	private Environment env;
-
-	/** The rest template. */
-	@Autowired
-	private RestTemplate restTemplate;
 
 	@Autowired
 	private ObjectMapper objectMapper;
@@ -269,7 +250,6 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Override
 	public AuthUserDetails authUserDetails() {
-		System.out.println((AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal());
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}
 
@@ -291,6 +271,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 * @see io.mosip.preregistration.demographic.service.DemographicServiceIntf#
 	 * addPreRegistration(io.mosip.preregistration.core.common.dto.MainRequestDTO)
 	 */
+	@SuppressWarnings({ "unchecked" })
 	@Override
 	public MainResponseDTO<DemographicCreateResponseDTO> addPreRegistration(
 			MainRequestDTO<DemographicRequestDTO> request) {
@@ -301,22 +282,32 @@ public class DemographicService implements DemographicServiceIntf {
 		boolean isSuccess = false;
 		try {
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
-			String idSchema = serviceUtil.getSchema();
+			IdSchemaDto idSchema = serviceUtil.getSchema();
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
-			ArrayList<String> list = Pattern.compile("\\s*,\\s*").splitAsStream(preRegNewRegIdJson)
-					.collect(Collectors.toCollection(ArrayList<String>::new));
 
 			mainResponseDTO = (MainResponseDTO<DemographicCreateResponseDTO>) serviceUtil.getMainResponseDto(request);
 			DemographicRequestDTO demographicRequest = request.getRequest();
 			validationUtil.langvalidation(demographicRequest.getLangCode());
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-			jsonValidator.validateIdObject(idSchema, demographicRequest.getDemographicDetails(), list);
+
+			List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText())
+					.collect(Collectors.toList());
+
+			List<String> requiredFields = demographicRequest.getRequiredFields().stream()
+					.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
+
+			JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
+					demographicRequest.getDemographicDetails());
+
+			log.debug("Constructed Object {}", constructedObject);
+
+			jsonValidator.validateIdObject(idSchema.getSchemaJson(), constructedObject, requiredFields);
+
 			log.info("sessionId", "idType", "id",
 					"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 			log.info("sessionId", "idType", "id",
 					"Pre ID generation start time : " + DateUtils.getUTCCurrentDateTimeString());
-			// String preId = pridGenerator.generateId();
 			String preId = serviceUtil.generateId();
 			log.info("sessionId", "idType", "id",
 					"Pre ID generation end time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -378,6 +369,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 * updatePreRegistration(io.mosip.preregistration.core.common.dto.
 	 * MainRequestDTO, java.lang.String, java.lang.String)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public MainResponseDTO<DemographicUpdateResponseDTO> updatePreRegistration(
 			MainRequestDTO<DemographicRequestDTO> request, String preRegistrationId, String userId) {
@@ -389,10 +381,8 @@ public class DemographicService implements DemographicServiceIntf {
 		boolean isSuccess = false;
 		try {
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
-			String idSchema = serviceUtil.getSchema();
+			IdSchemaDto idSchema = serviceUtil.getSchema();
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
-			ArrayList<String> list = Pattern.compile("\\s*,\\s*").splitAsStream(preRegNewRegIdJson)
-					.collect(Collectors.toCollection(ArrayList<String>::new));
 			validationUtil.langvalidation(request.getRequest().getLangCode());
 			Map<String, String> requestParamMap = new HashMap<>();
 			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegistrationId);
@@ -400,7 +390,19 @@ public class DemographicService implements DemographicServiceIntf {
 				DemographicRequestDTO demographicRequest = request.getRequest();
 				log.info("sessionId", "idType", "id",
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-				jsonValidator.validateIdObject(idSchema, demographicRequest.getDemographicDetails(), list);
+
+				List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText())
+						.collect(Collectors.toList());
+
+				List<String> requiredFields = demographicRequest.getRequiredFields().stream()
+						.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
+
+				JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
+						demographicRequest.getDemographicDetails());
+
+				log.debug("Constructed Object {}", constructedObject);
+
+				jsonValidator.validateIdObject(idSchema.getSchemaJson(), constructedObject, requiredFields);
 				log.info("sessionId", "idType", "id",
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
@@ -493,6 +495,7 @@ public class DemographicService implements DemographicServiceIntf {
 						 */
 						log.info("sessionId", "idType", "id",
 								"pagination start time : " + DateUtils.getUTCCurrentDateTimeString());
+						@SuppressWarnings("static-access")
 						Page<DemographicEntity> demographicEntityPage = demographicRepository
 								.findByCreatedByOrderByCreateDateTime(userId, StatusCodes.CONSUMED.getCode(),
 										PageRequest.of(serviceUtil.parsePageIndex(pageIdx),
@@ -540,6 +543,7 @@ public class DemographicService implements DemographicServiceIntf {
 		return response;
 	}
 
+	@SuppressWarnings({ "unchecked" })
 	private void prepareDemographicResponse(DemographicMetadataDTO demographicMetadataDTO,
 			List<DemographicEntity> demographicEntities)
 			throws ParseException, EncryptionFailedException, IOException, JsonProcessingException {

@@ -29,10 +29,10 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Service
 public class CaptchaServiceImpl implements CaptchaService {
 
-	@Value("${google.recaptcha.secret.key}")
+	@Value("${mosip.preregistration.captcha.secretkey}")
 	public String recaptchaSecret;
 
-	@Value("${google.recaptcha.verify.url}")
+	@Value("${mosip.preregistration.captcha.recaptcha.verify.url}")
 	public String recaptchaVerifyUrl;
 
 	@Value("${mosip.preregistration.captcha.id.validate}")
@@ -93,7 +93,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 			response.setSuccess(captchaResponse.isSuccess());
 			mainResponse.setResponse(response);
 		} else {
-			log.info("sessionId", "idType", "id",
+			log.error("sessionId", "idType", "id",
 					"In pre-registration captcha service token request has failed --->" + captchaResponse.isSuccess());
 			mainResponse.setId(mosipcaptchaValidateId);
 			mainResponse.setResponsetime(getCurrentResponseTime());

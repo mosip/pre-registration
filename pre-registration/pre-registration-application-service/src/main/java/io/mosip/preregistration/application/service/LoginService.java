@@ -15,6 +15,7 @@ import java.util.HashMap;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
@@ -36,6 +37,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
+import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
@@ -214,7 +216,7 @@ public class LoginService {
 		return response;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
+	@SuppressWarnings({ "unchecked" })
 	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
 
@@ -231,22 +233,25 @@ public class LoginService {
 		otpRequest.setUserId(userId);
 		MainRequestDTO<OtpRequestDTO> userOtpRequest = new MainRequestDTO<OtpRequestDTO>();
 		userOtpRequest.setRequest(otpRequest);
-
+		CaptchaResposneDTO captchaResponse = null;
+		AuthNResponse authRes = new AuthNResponse();
 		try {
 			if (isCaptchaEnabled) {
-
-				this.loginCommonUtil.validateCaptchaToken(captchaToken);
+				captchaResponse = this.loginCommonUtil.validateCaptchaToken(captchaToken);
+				authRes.setMessage(captchaResponse.getMessage().concat(" and "));
 			}
 
 			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
 
-			if (sendOtpResponse.getErrors() != null || !sendOtpResponse.getErrors().isEmpty()) {
+			if (sendOtpResponse.getErrors() != null) {
 				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
 						sendOtpResponse.getErrors().get(0).getMessage());
 			}
 
-			AuthNResponse authRes = new AuthNResponse();
-			authRes.setMessage(PreRegLoginConstant.SEND_OTP_AND_CAPTCHA_SUCCESS + otpChannel.get(0).toUpperCase());
+			if (Objects.isNull(authRes.getMessage()))
+				authRes.setMessage(sendOtpResponse.getResponse().getMessage());
+			else
+				authRes.setMessage(authRes.getMessage().concat(sendOtpResponse.getResponse().getMessage()));
 			authRes.setStatus(PreRegLoginConstant.SUCCESS);
 			response.setResponse(authRes);
 

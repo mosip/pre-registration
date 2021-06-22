@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import lombok.Data;
 
@@ -15,4 +16,5 @@ public class IdSchemaDto {
 	private double idVersion;
 	private String schemaJson;
 	private LocalDateTime effectiveFrom;
+	private List<JsonNode> schema;
 }
