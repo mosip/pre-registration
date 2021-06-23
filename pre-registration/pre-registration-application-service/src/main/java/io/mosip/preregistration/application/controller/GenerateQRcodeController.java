@@ -64,7 +64,8 @@ public class GenerateQRcodeController {
 	 * @param errors 
 	 * @return QRCodeResponseDTO the response entity
 	 */
-	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostqrcodegenerate())")
 	@PostMapping(path="/generate" ,consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MainResponseDTO<QRCodeResponseDTO>> generateQRCode(@Validated @RequestBody MainRequestDTO<String> data,@ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",

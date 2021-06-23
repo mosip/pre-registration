@@ -216,8 +216,9 @@ public class LoginController {
 	 * 
 	 * @return the response entity
 	 */
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetrefreshconfig())")
 	@GetMapping(path = "/refreshconfig", produces = MediaType.APPLICATION_JSON_VALUE)
-	@PreAuthorize("hasAnyRole('PRE_REGISTRATION_ADMIN')")
+	//@PreAuthorize("hasAnyRole('PRE_REGISTRATION_ADMIN')")
 	@Operation(summary = "Refresh global and Pre-Registration config data")
 	@ApiResponses(value = {
 			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully updated") })
