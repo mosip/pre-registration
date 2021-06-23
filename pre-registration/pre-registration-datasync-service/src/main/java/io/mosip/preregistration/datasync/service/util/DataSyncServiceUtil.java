@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -235,7 +236,7 @@ public class DataSyncServiceUtil {
 	 */
 	public boolean validateReverseDataSyncRequest(ReverseDataSyncRequestDTO reverseDataSyncRequest,
 			MainResponseDTO<?> mainResponseDTO) {
-		log.info("In validateReverseDataSyncRequest sync preregids {}",reverseDataSyncRequest.getPreRegistrationIds());
+		log.info("In validateReverseDataSyncRequest sync preregids {}", reverseDataSyncRequest.getPreRegistrationIds());
 		List<String> preRegIdsList = reverseDataSyncRequest.getPreRegistrationIds();
 		if (preRegIdsList == null || isNull(preRegIdsList)) {
 			throw new InvalidRequestParameterException(ErrorCodes.PRG_DATA_SYNC_011.getCode(),
@@ -496,10 +497,12 @@ public class DataSyncServiceUtil {
 		log.info("sessionId", "idType", "id", "In preparePreRegArchiveDTO method of datasync service util");
 		PreRegArchiveDTO preRegArchiveDTO = new PreRegArchiveDTO();
 		preRegArchiveDTO.setPreRegistrationId(preRegistrationDTO.getPreRegistrationId());
-		preRegArchiveDTO.setRegistrationCenterId(bookingRegistrationDTO.getRegistrationCenterId());
-		preRegArchiveDTO.setAppointmentDate(bookingRegistrationDTO.getRegDate());
-		preRegArchiveDTO.setTimeSlotFrom(bookingRegistrationDTO.getSlotFromTime());
-		preRegArchiveDTO.setTimeSlotTo(bookingRegistrationDTO.getSlotToTime());
+		if (!Objects.isNull(bookingRegistrationDTO)) {
+			preRegArchiveDTO.setRegistrationCenterId(bookingRegistrationDTO.getRegistrationCenterId());
+			preRegArchiveDTO.setAppointmentDate(bookingRegistrationDTO.getRegDate());
+			preRegArchiveDTO.setTimeSlotFrom(bookingRegistrationDTO.getSlotFromTime());
+			preRegArchiveDTO.setTimeSlotTo(bookingRegistrationDTO.getSlotToTime());
+		}
 		return preRegArchiveDTO;
 	}
 
@@ -913,7 +916,6 @@ public class DataSyncServiceUtil {
 			tpmCryptoRequestDto.setValue(CryptoUtil.encodeBase64(data));
 			tpmCryptoRequestDto.setPublicKey(encryptionPublickey);
 			tpmCryptoRequestDto.setTpm(false);
-			System.out.println(tpmCryptoRequestDto);
 			TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
 			return CryptoUtil.decodeBase64(tpmCryptoResponseDto.getValue());
 		} else

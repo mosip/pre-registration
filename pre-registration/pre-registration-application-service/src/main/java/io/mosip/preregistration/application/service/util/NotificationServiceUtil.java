@@ -424,7 +424,6 @@ public class NotificationServiceUtil {
 			responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 					});
-			System.out.println("ResponseEntity: " + responseEntity);
 			log.debug("sessionId", "idType", "id", responseEntity.toString());
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
 				log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
@@ -444,9 +443,7 @@ public class NotificationServiceUtil {
 		RegistrationCenterDto centerDto = null;
 		ResponseWrapper<RegistrationCenterResponseDto> getRegistrationCenter = getRegistrationCenter(
 				registrationCenterId, langCode);
-		System.out.println("Res: " + getRegistrationCenter);
 		RegistrationCenterResponseDto registrationCenterResponseDto = getRegistrationCenter.getResponse();
-		System.out.println("Res1: " + registrationCenterResponseDto);
 		if (registrationCenterResponseDto != null) {
 			if (registrationCenterResponseDto.getRegistrationCenters() != null
 					&& !registrationCenterResponseDto.getRegistrationCenters().isEmpty()) {

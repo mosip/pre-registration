@@ -8,8 +8,10 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -29,43 +31,42 @@ import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
  */
 @Component
 public class TransliterationServiceUtil {
-	
-	
+
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
-	
-	@Value("#{'${mosip.supported-languages}'.split(',')}")
-	private List<String> supportedLang;
-	
+
+	@Value("${mosip.mandatory-languages}")
+	private String mandatoryLangCodes;
+
+	@Value("${mosip.optional-languages}")
+	private String optionalLangCodes;
+
 	/**
 	 * This method is used to add the initial request values into a map for input
 	 * validations.
 	 * 
-	 * @param MainRequestDTO 
-	 * 						pass requestDTO
+	 * @param MainRequestDTO pass requestDTO
 	 * @return a map for request input validation
 	 */
-	public Map<String, String> prepareRequestParamMap(
-			MainRequestDTO<TransliterationRequestDTO> requestDTO) {
+	public Map<String, String> prepareRequestParamMap(MainRequestDTO<TransliterationRequestDTO> requestDTO) {
 		Map<String, String> inputValidation = new HashMap<>();
 		inputValidation.put(TransliterationRequestCodes.ID.getCode(), requestDTO.getId());
 		inputValidation.put(TransliterationRequestCodes.VER.getCode(), requestDTO.getVersion());
-		if(!(requestDTO.getRequesttime()==null || requestDTO.getRequesttime().toString().isEmpty())) {
+		if (!(requestDTO.getRequesttime() == null || requestDTO.getRequesttime().toString().isEmpty())) {
 			LocalDate date = requestDTO.getRequesttime().toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
 			inputValidation.put(TransliterationRequestCodes.REQ_TIME.getCode(), date.toString());
-		}
-		else {
-			inputValidation.put(TransliterationRequestCodes.REQ_TIME.getCode(),null);
+		} else {
+			inputValidation.put(TransliterationRequestCodes.REQ_TIME.getCode(), null);
 		}
 		inputValidation.put(TransliterationRequestCodes.REQUEST.getCode(), requestDTO.getRequest().toString());
 		return inputValidation;
 	}
-	
+
 	public boolean isEntryFieldsNull(TransliterationRequestDTO requestFields) {
 		return (!requestFields.getFromFieldLang().equals("") && !requestFields.getFromFieldValue().equals("")
-				 && !requestFields.getToFieldLang().equals(""));
+				&& !requestFields.getToFieldLang().equals(""));
 	}
-	
+
 	/**
 	 * @return date.
 	 */
@@ -98,15 +99,20 @@ public class TransliterationServiceUtil {
 		transliterationResponseDTO.setToFieldLang(transliterationRequestDTO.getToFieldLang());
 		return transliterationResponseDTO;
 	}
-	
+
 	/**
 	 * @param dto
 	 * @return true if dto contains supported languages.
 	 */
 	public boolean supportedLanguageCheck(TransliterationRequestDTO dto) {
-		return supportedLang.contains(dto.getFromFieldLang())&&supportedLang.contains(dto.getToFieldLang());
+		Set<String> supportedLang = new HashSet<>();
+		for (String optionalLang : optionalLangCodes.split(",")) {
+			supportedLang.add(optionalLang);
+		}
+		for (String manLang : mandatoryLangCodes.split(",")) {
+			supportedLang.add(manLang);
+		}
+		return supportedLang.contains(dto.getFromFieldLang()) && supportedLang.contains(dto.getToFieldLang());
 	}
-	
-
 
 }

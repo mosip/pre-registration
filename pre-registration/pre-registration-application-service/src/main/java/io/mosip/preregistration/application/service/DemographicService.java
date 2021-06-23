@@ -233,9 +233,8 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 
 	public void setup() {
-		log.info("sessionId", "idType", "id", "In setup method of demographic service");
 		getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
-		log.info("sessionId", "idType", "id", "Fetched the identity json from config server" + getIdentityJsonString);
+		log.info("Fetched the identity json from config server" + getIdentityJsonString);
 
 	}
 
