@@ -72,7 +72,7 @@
 		<jackson.version>2.9.5</jackson.version>
 
 		<!-- Swagger -->
-		<swagger.version>3.0.3</swagger.version>
+		<swagger.version>3.0.0</swagger.version>
 
 		<!-- Data Access -->
 		<eclipselink.version>2.5.0</eclipselink.version>
