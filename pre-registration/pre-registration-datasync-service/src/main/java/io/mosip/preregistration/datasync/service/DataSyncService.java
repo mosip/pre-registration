@@ -22,6 +22,7 @@ import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
+import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -54,9 +55,9 @@ import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
  */
 @Service
 public class DataSyncService {
-	
+
 	private static final String UTC_DATETIME_PATTERN = "yyyy-MM-dd'T'HH:mm:ss.SSS";
-	
+
 	/**
 	 * Autowired reference for {@link #DataSyncServiceUtil}
 	 */
@@ -141,12 +142,13 @@ public class DataSyncService {
 				if (serviceUtil.isNull(dataSyncRequestDTO.getToDate())) {
 					dataSyncRequestDTO.setToDate(dataSyncRequestDTO.getFromDate());
 				}
-				BookingDataByRegIdDto preRegIdsDTO = serviceUtil
-						.getBookedPreIdsByDateAndRegCenterIdRestService(dataSyncRequestDTO.getFromDate(),
-								dataSyncRequestDTO.getToDate(), dataSyncRequestDTO.getRegistrationCenterId());				
+				BookingDataByRegIdDto preRegIdsDTO = serviceUtil.getBookedPreIdsByDateAndRegCenterIdRestService(
+						dataSyncRequestDTO.getFromDate(), dataSyncRequestDTO.getToDate(),
+						dataSyncRequestDTO.getRegistrationCenterId());
 				preRegistrationIdsDTO = new PreRegistrationIdsDTO();
-				preRegistrationIdsDTO.setPreRegistrationIds(getIdsWithTime(preRegIdsDTO));				
-				preRegistrationIdsDTO.setCountOfPreRegIds(String.valueOf(preRegIdsDTO.getIdsWithAppointmentDate().size()));
+				preRegistrationIdsDTO.setPreRegistrationIds(getIdsWithTime(preRegIdsDTO));
+				preRegistrationIdsDTO
+						.setCountOfPreRegIds(String.valueOf(preRegIdsDTO.getIdsWithAppointmentDate().size()));
 				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 				responseDto.setResponse(preRegistrationIdsDTO);
 			}
@@ -186,10 +188,11 @@ public class DataSyncService {
 			idWithTime.put(preRegWithTime.getKey(), getUTCTimeStamp(preRegWithTime.getValue()));
 		}
 		return idWithTime;
-	}	
-	
+	}
+
 	/**
 	 * Assuming one pre-reg id will have one appointTime and single time slot
+	 * 
 	 * @param value
 	 * @return
 	 */
@@ -218,8 +221,8 @@ public class DataSyncService {
 			DemographicResponseDTO preRegistrationDTO = serviceUtil.getPreRegistrationData(preId.trim());
 			DocumentsMetaData documentsMetaData = serviceUtil.getDocDetails(preId.trim());
 			BookingRegistrationDTO bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
-			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO,
-					documentsMetaData,null);
+			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO, documentsMetaData,
+					null);
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
@@ -248,6 +251,7 @@ public class DataSyncService {
 	 * @param preId
 	 * @return PreRegArchiveDTO contain all Zipped File
 	 */
+	@SuppressWarnings("unlikely-arg-type")
 	public MainResponseDTO<PreRegArchiveDTO> fetchPreRegistrationData(String preId, String machineId) {
 		MainResponseDTO<PreRegArchiveDTO> responseDto = new MainResponseDTO<>();
 		PreRegArchiveDTO preRegArchiveDTO = null;
@@ -259,14 +263,18 @@ public class DataSyncService {
 			ApplicationInfoMetadataDTO preRegInfo = serviceUtil.getPreRegistrationInfo(preId.trim());
 			DemographicResponseDTO preRegistrationDTO = preRegInfo.getDemographicResponse();
 			DocumentsMetaData documentsMetaData = preRegInfo.getDocumentsMetaData();
-			BookingRegistrationDTO bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
-			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO,
-					documentsMetaData,machineId);
+			BookingRegistrationDTO bookingRegistrationDTO = null;
+			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.BOOKED)
+					|| preRegistrationDTO.getStatusCode().equals(StatusCodes.EXPIRED)) {
+				bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
+			}
+			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO, documentsMetaData,
+					machineId);
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id"+ ExceptionUtils.getStackTrace(ex));
+			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
 			log.error("In getPreRegistrationData method of datasync service -" + ex.getMessage());
 			new DataSyncExceptionCatcher().handle(ex, responseDto);
 		} finally {

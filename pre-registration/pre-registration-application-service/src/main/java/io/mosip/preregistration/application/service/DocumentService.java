@@ -18,7 +18,6 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpHeaders;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -137,12 +136,6 @@ public class DocumentService implements DocumentServiceIntf {
 	private String ver;
 
 	/**
-	 * primaryLang
-	 */
-	@Value("${mosip.primary-language}")
-	private String primaryLang;
-
-	/**
 	 * Autowired reference for {@link #FileSystemAdapter}
 	 */
 
@@ -190,10 +183,8 @@ public class DocumentService implements DocumentServiceIntf {
 	 * parameters.
 	 */
 	public void setup() {
-
-		HttpHeaders headers = new HttpHeaders();
 		requiredRequestMap.put("version", ver);
-		validationUtil.getAllDocCategoriesAndTypes(primaryLang, headers);
+		validationUtil.getAllDocCategoriesAndTypes();
 	}
 
 	public AuthUserDetails authUserDetails() {

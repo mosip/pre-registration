@@ -17,7 +17,6 @@ public class PreRegLoginConstant {
 	public static final String MOSIP_PRE_REG_CLIENTID = "mosip.pre.reg.clientId";
 	public static final String USED_STATUS = "used";
 	public static final String SUCCESS = "success";
-	public static final String MOSIP_PRIMARY_LANGUAGE = "mosip.primary-language";
 	public static final String SMS_SUCCESS = "Sms Request Sent";
 	public static final String EMAIL_SUCCESS = "Email Request submitted";
 	public static final String VALIDATION_SUCCESS = "VALIDATION_SUCCESSFUL";
@@ -25,4 +24,5 @@ public class PreRegLoginConstant {
 	public static final String UNSUCCESS = "failure";
 	public static final String VALIDATE_ERROR_MESSAGE = "Validation can't be performed against this key. Generate OTP first.";
 	public static final String VALIDATE_ERROR_CODE = "KER-OTV-005";
+	public static final String MOSIP_PRIMARY_LANGUAGE = "mosip.primary-language";
 }
