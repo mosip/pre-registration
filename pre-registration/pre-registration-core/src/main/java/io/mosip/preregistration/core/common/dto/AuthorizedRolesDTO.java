@@ -52,24 +52,12 @@ public class AuthorizedRolesDTO {
     
     private List<String> postqrcodegenerate;
     
-    private List<String> postloginsendotp;
-    
-    private List<String> postloginsendotplangcode;
-    
-    private List<String> postloginvalidateotp;
-    
-    private List<String> postlogininvalidatetoken;
-    
-    private List<String> getconfig;
-    
     private List<String> getrefreshconfig;
     
     private List<String> postnotificationnotify;
     
     private List<String> postnotification;
-    
-    private List<String> getpostproxy;
-    
+
     private List<String> posttransliterationtransliterate;
     
     private List<String> getuispeclatest;
