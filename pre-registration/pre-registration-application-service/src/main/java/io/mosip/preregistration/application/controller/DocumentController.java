@@ -70,7 +70,8 @@ public class DocumentController {
 	 * @return response in a format specified in API document
 	 * 
 	 */
-	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostdocumentspreregistrationid())")
 	@PostMapping(path = "/documents/{preRegistrationId}", consumes = { "multipart/form-data" })
 	@Operation(summary  = "Document Upload")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document uploaded successfully") })
@@ -99,7 +100,8 @@ public class DocumentController {
 	 * 
 	 * @return response in a format specified in API document
 	 */
-	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPutdocumentspreregistrationid())")
 	@PutMapping(path = "/documents/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary  = "Copy uploaded document")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document successfully copied") })
@@ -121,7 +123,8 @@ public class DocumentController {
 	 * @param pre_registration_id pass preRegistrationId
 	 * @return response in a format specified in API document
 	 */
-	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetdocumentspreregistrationid())")
 	@GetMapping(path = "/documents/preregistration/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary  = "Get All Document for Pre-Registration Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Documents reterived successfully") })
@@ -141,7 +144,8 @@ public class DocumentController {
 	 * @param preRegistrationId pass preRegistrationId as request param
 	 * @return response in a format specified in API document
 	 */
-	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetdocumentsdocumentid())")
 	@GetMapping(path = "/documents/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary  = "Get All Document for Document Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Documents reterived successfully") })
@@ -164,7 +168,8 @@ public class DocumentController {
 	 * @return response in a format specified in API document
 	 */
 
-	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getDeletedocumentsdocumentid())")
 	@DeleteMapping(path = "/documents/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary  = "Delete document by document Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document successfully deleted") })
@@ -185,9 +190,9 @@ public class DocumentController {
 	 * @return response in a format specified in API document
 	 */
 
-	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getDeletedocumentspreregistrationid())")
 	@DeleteMapping(path = "/documents/preregistration/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-
 	@Operation(summary  = "Delete all documents by pre-registration Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Documents successfully deleted") })
 	public ResponseEntity<MainResponseDTO<DocumentDeleteResponseDTO>> deleteAllByPreId(
@@ -198,7 +203,8 @@ public class DocumentController {
 		return ResponseEntity.status(HttpStatus.OK).body(documentUploadService.deleteAllByPreId(preRegistrationId));
 	}
 
-	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPutdocumentsdocumentid())")
 	@PutMapping(path = "/documents/document/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary  = "update document reference Id")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Document Reference Id successfully updated ") })

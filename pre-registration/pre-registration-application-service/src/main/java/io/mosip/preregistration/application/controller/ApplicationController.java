@@ -34,7 +34,8 @@ public class ApplicationController {
 
 	private Logger log = LoggerConfiguration.logConfig(ApplicationController.class);
 
-	@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsinfo())")
 	@GetMapping(path = "/applications/info/{preregistrationId}")
 	@Operation(summary = "Retrive Application demographic and document info for given prid")
 	public ResponseEntity<MainResponseDTO<?>> getPreregistrationofPrid(
@@ -43,7 +44,8 @@ public class ApplicationController {
 		return ResponseEntity.status(HttpStatus.OK).body(service.getPregistrationInfo(preregistrationId));
 	}
 
-	@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostlogaudit())")
 	@PostMapping(path = "/logAudit")
 	@Operation(summary = "log audit events from ui")
 	public ResponseEntity<MainResponseDTO<String>> logAugit(@Valid  @RequestBody(required = true) MainRequestDTO<UIAuditRequest> auditRequest) {

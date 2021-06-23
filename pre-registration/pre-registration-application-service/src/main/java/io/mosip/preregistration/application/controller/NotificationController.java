@@ -51,7 +51,8 @@ public class NotificationController {
 	 * @param file        the file to send.
 	 * @return the response entity.
 	 */
-	@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotificationnotify())")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(path = "/notify", consumes = { "multipart/form-data" })
 	@Operation(summary  = "Trigger notification")
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotification(
@@ -73,7 +74,8 @@ public class NotificationController {
 	 * @param file        the file to send.
 	 * @return the response entity.
 	 */
-	@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotification())")
+	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(consumes = { "multipart/form-data" })
 	@Operation(summary  = "Trigger notification")
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotifications(
