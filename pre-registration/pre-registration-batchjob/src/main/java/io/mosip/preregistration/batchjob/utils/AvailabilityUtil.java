@@ -767,6 +767,27 @@ public class AvailabilityUtil {
 		}
 	}
 
+	private List<String> getWorkingsDaysList(String langCode) {
+
+		String workingDayUrl = workingDayListUrl + "/" + langCode;
+		UriComponentsBuilder builder3 = UriComponentsBuilder.fromHttpUrl(workingDayUrl);
+		HttpHeaders headers = new HttpHeaders();
+		HttpEntity<RequestWrapper<WorkingDaysResponseDto>> httpWorkingDayEntity = new HttpEntity<>(headers);
+		String uriBuilder3 = builder3.build().encode().toUriString();
+
+		ResponseEntity<ResponseWrapper<WorkingDaysResponseDto>> response = restTemplate.exchange(uriBuilder3,
+				HttpMethod.GET, httpWorkingDayEntity,
+				new ParameterizedTypeReference<ResponseWrapper<WorkingDaysResponseDto>>() {
+				});
+
+		if (response.getBody().getErrors() != null && !response.getBody().getErrors().isEmpty()) {
+			throw new NoRecordFoundException(response.getBody().getErrors().get(0).getErrorCode(),
+					response.getBody().getErrors().get(0).getMessage());
+		}
+		return null;
+
+	}
+
 	public String getCurrentResponseTime() {
 		log.info("sessionId", "idType", "id", "In getCurrentResponseTime method of AvailabilityUtil");
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), utcDateTimePattern);
