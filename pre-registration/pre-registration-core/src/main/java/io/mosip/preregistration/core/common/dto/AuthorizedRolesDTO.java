@@ -42,6 +42,8 @@ public class AuthorizedRolesDTO {
     
     private List<String> putdocumentspreregistrationid;
     
+    private List<String> getdocumentspreregistrationid;
+    
     private List<String> getdocumentsdocumentid;
     
     private List<String> deletedocumentsdocumentid;
