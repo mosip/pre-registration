@@ -266,7 +266,6 @@ public class DataSyncService {
 			BookingRegistrationDTO bookingRegistrationDTO = null;
 			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.BOOKED.getCode())
 					|| preRegistrationDTO.getStatusCode().equals(StatusCodes.EXPIRED.getCode())) {
-
 				bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
 			}
 			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO, documentsMetaData,
