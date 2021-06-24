@@ -264,7 +264,8 @@ public class DataSyncService {
 			DemographicResponseDTO preRegistrationDTO = preRegInfo.getDemographicResponse();
 			DocumentsMetaData documentsMetaData = preRegInfo.getDocumentsMetaData();
 			BookingRegistrationDTO bookingRegistrationDTO = null;
-			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.BOOKED.getCode())
+					|| preRegistrationDTO.getStatusCode().equals(StatusCodes.EXPIRED.getCode())) {
 				bookingRegistrationDTO = serviceUtil.getAppointmentDetails(preId.trim());
 			}
 			preRegArchiveDTO = serviceUtil.archivingFiles(preRegistrationDTO, bookingRegistrationDTO, documentsMetaData,
