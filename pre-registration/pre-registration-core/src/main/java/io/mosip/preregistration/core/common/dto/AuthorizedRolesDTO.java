@@ -28,7 +28,7 @@ public class AuthorizedRolesDTO {
 	
     private List<String> getapplicationsstatus;
     
-    private List<String> getDeleteapplications;
+    private List<String> deleteapplications;
     
     private List<String> preregdemodeleteapplications;
 	
