@@ -21,6 +21,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
+import io.mosip.kernel.auth.defaultadapter.config.RequesterTokenRestInterceptor;
 
 @Configuration
 public class RestTemplateConfig {
