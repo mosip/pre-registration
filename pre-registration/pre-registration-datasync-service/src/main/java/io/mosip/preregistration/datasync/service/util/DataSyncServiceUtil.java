@@ -112,6 +112,7 @@ public class DataSyncServiceUtil {
 	 * Autowired reference for {@link #RestTemplate}
 	 */
 	@Autowired
+	@Qualifier("dataSyncRestTemplate")
 	RestTemplate restTemplate;
 
 	@Autowired
