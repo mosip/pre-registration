@@ -21,7 +21,7 @@ import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.client.RestTemplate;
-
+import org.springframework.context.annotation.Primary;
 /**
  * Configuration class for Pre-registration
  * 
@@ -36,6 +36,7 @@ public class SSLConfig {
 	private boolean bypassInterceptor;
 
 	@Bean
+	@Primary
 	public RestTemplate restTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
 		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
