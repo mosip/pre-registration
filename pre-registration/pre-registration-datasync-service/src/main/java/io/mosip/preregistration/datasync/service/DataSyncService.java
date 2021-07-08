@@ -370,7 +370,7 @@ public class DataSyncService {
 			auditRequestDto.setModuleId(AuditLogVariables.REV.toString());
 			auditRequestDto.setModuleName(AuditLogVariables.REVERSE_DATASYNC_SERVICE.toString());
 		}
-		auditLogUtil.saveAuditDetails(auditRequestDto,"Authorization=" + authUserDetails().getToken());
+		auditLogUtil.saveAuditDetails(auditRequestDto);
 	}
 
 }
