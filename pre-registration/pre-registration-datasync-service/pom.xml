@@ -22,7 +22,7 @@
 		<java.version>11</java.version>
 		<pre.registration.core.version>1.2.0-SNAPSHOT</pre.registration.core.version>
 		<kernel.crypto.signature.version>1.2.0-SNAPSHOT</kernel.crypto.signature.version>
-        <kernel.keymanager.version>1.2.0-SNAPSHOT</kernel.keymanager.version>
+		<kernel.keymanager.version>1.2.0-SNAPSHOT</kernel.keymanager.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -86,18 +86,23 @@
 			<artifactId>kernel-crypto-signature</artifactId>
 			<version>${kernel.crypto.signature.version}</version>
 		</dependency>
-	<dependency>
-		<groupId>io.mosip.kernel</groupId>
-		<artifactId>kernel-keymanager-service</artifactId>
-		<version>${kernel.keymanager.version}</version>
-		<exclusions>
-			<exclusion>
-				<groupId>org.springframework.security</groupId>
-				<artifactId>spring-security-config</artifactId>
-			</exclusion>
-		</exclusions>
-		<classifier>lib</classifier>
-	</dependency>
+		<dependency>
+			<groupId>io.mosip.kernel</groupId>
+			<artifactId>kernel-auth-adapter</artifactId>
+			<version>1.2.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>io.mosip.kernel</groupId>
+			<artifactId>kernel-keymanager-service</artifactId>
+			<version>${kernel.keymanager.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.security</groupId>
+					<artifactId>spring-security-config</artifactId>
+				</exclusion>
+			</exclusions>
+			<classifier>lib</classifier>
+		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
