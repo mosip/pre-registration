@@ -16,7 +16,7 @@ public class DataSyncRestInterceptor implements ClientHttpRequestInterceptor {
 
 	@Autowired
 	@Lazy
-	AuthTokenUtil tokenUtil;
+	private AuthTokenUtil tokenUtil;
 
 	@Override
 	public ClientHttpResponse intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution)
@@ -28,8 +28,10 @@ public class DataSyncRestInterceptor implements ClientHttpRequestInterceptor {
 	private void addHeadersToRequest(HttpRequest httpRequest, byte[] bytes) {
 		HttpHeaders headers = httpRequest.getHeaders();
 		String token = tokenUtil.getToken();
-		if (token != null)
-			headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
+		if (token != null) {
+			headers.set(HttpHeaders.COOKIE, token);
+		}
+
 	}
 
 }
