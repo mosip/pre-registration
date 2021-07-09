@@ -52,7 +52,7 @@ public class AuthTokenUtil {
 	@Value("${version}")
 	String version;
 
-	private String authToken;
+	private volatile String authToken;
 
 	private Logger log = LoggerConfiguration.logConfig(AuthTokenUtil.class);
 
