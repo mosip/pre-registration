@@ -28,10 +28,8 @@ public class DataSyncRestInterceptor implements ClientHttpRequestInterceptor {
 	private void addHeadersToRequest(HttpRequest httpRequest, byte[] bytes) {
 		HttpHeaders headers = httpRequest.getHeaders();
 		String token = tokenUtil.getToken();
-		if (token != null) {
-			headers.set(HttpHeaders.COOKIE, token);
-		}
-
+		System.out.println(token);
+		headers.set(HttpHeaders.COOKIE, token);
 	}
 
 }
