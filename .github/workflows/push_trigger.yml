@@ -687,6 +687,7 @@ jobs:
         env:
           SLACK_WEBHOOK_URL: ${{ SLACK_DEVOPS_WEBHOOK }} # required
         if: failure() # Pick up events even if the job fails or is canceled.
+        
   sonar_analysis:
 
     runs-on: ubuntu-latest
