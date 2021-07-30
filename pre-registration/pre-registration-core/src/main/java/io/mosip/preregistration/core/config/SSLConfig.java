@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
-import org.springframework.beans.factory.annotation.Value;
+
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
@@ -16,6 +16,7 @@ import org.apache.http.ssl.TrustStrategy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.http.client.SimpleClientHttpRequestFactory;
@@ -31,11 +32,12 @@ import org.springframework.web.client.RestTemplate;
  */
 @Configuration
 public class SSLConfig {
-	
+
 	@Value("${preregistration.core.restinterceptor.bypass:false}")
 	private boolean bypassInterceptor;
 
 	@Bean
+	@Primary
 	public RestTemplate restTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
 
 		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
@@ -52,22 +54,31 @@ public class SSLConfig {
 		requestFactory.setHttpClient(httpClient);
 
 		RestTemplate restTemplate = new RestTemplate(requestFactory);
-		
+
 		List<ClientHttpRequestInterceptor> interceptors = restTemplate.getInterceptors();
 		if (CollectionUtils.isEmpty(interceptors)) {
 			interceptors = new ArrayList<>();
 		}
 		if (!bypassInterceptor) {
-		interceptors.add(restInterceptor());
+			interceptors.add(applictionRestInterceptor());
+		} else {
+			interceptors.add(datasyncRestInterceptor());
+
 		}
+
 		restTemplate.setInterceptors(interceptors);
 		return restTemplate;
 
 	}
 
 	@Bean
-	public RestInterceptor restInterceptor() {
-		return new RestInterceptor();
+	public ApplicationRestInterceptor applictionRestInterceptor() {
+		return new ApplicationRestInterceptor();
+	}
+
+	@Bean
+	public DataSyncRestInterceptor datasyncRestInterceptor() {
+		return new DataSyncRestInterceptor();
 	}
 
 	@Bean

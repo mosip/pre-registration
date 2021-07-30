@@ -3,11 +3,19 @@ package io.mosip.preregistration.batchjob.utils;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.time.format.TextStyle;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.apache.commons.collections4.ListUtils;
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -42,7 +50,6 @@ import io.mosip.preregistration.batchjob.model.HolidayDto;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterDto;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterHolidayDto;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterResponseDto;
-import io.mosip.preregistration.batchjob.model.WorkingDaysDto;
 import io.mosip.preregistration.batchjob.model.WorkingDaysResponseDto;
 import io.mosip.preregistration.batchjob.repository.utils.BatchJpaRepositoryImpl;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -84,8 +91,11 @@ public class AvailabilityUtil {
 	@Value("${mosip.preregistration.booking.availability.sync.id}")
 	String idUrlSync;
 
-	@Value("${mosip.primary-language}")
-	String primaryLang;
+	@Value("${mosip.mandatory-languages}")
+	private String mandatoryLangCodes;
+
+	@Value("${mosip.optional-languages}")
+	private String optionalLangCodes;
 
 	@Value("${notification.url}")
 	private String notificationResourseurl;
@@ -141,7 +151,15 @@ public class AvailabilityUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
-	private static final String[] DAYS = { "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" };
+	private String langCode;
+
+	private static String[] DAYS = { "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" };
+
+	@PostConstruct
+	private void setup() {
+		langCode = mandatoryLangCodes.split(",").length > 0 ? mandatoryLangCodes.split(",")[0]
+				: optionalLangCodes.split(",")[0];
+	}
 
 	private Logger log = LoggerConfiguration.logConfig(AvailabilityUtil.class);
 
@@ -155,8 +173,7 @@ public class AvailabilityUtil {
 			LocalDate endDate = LocalDate.now().plusDays(syncDays - 1);
 			List<RegistrationCenterDto> regCenter = getRegCenterMasterData(headers);
 			List<RegistrationCenterDto> regCenterDtos = regCenter.stream()
-					.filter(regCenterDto -> regCenterDto.getLangCode().equals(primaryLang))
-					.collect(Collectors.toList());
+					.filter(regCenterDto -> regCenterDto.getLangCode().equals(langCode)).collect(Collectors.toList());
 			List<String> regCenterDumped = batchServiceDAO.findRegCenter(LocalDate.now());
 			for (RegistrationCenterDto regDto : regCenterDtos) {
 				try {
@@ -512,24 +529,31 @@ public class AvailabilityUtil {
 			UriComponentsBuilder builder3 = UriComponentsBuilder.fromHttpUrl(workingDayUrl);
 			HttpEntity<RequestWrapper<WorkingDaysResponseDto>> httpWorkingDayEntity = new HttpEntity<>(headers);
 			String uriBuilder3 = builder3.build().encode().toUriString();
+
 			ResponseEntity<ResponseWrapper<WorkingDaysResponseDto>> responseEntity3 = restTemplate.exchange(uriBuilder3,
 					HttpMethod.GET, httpWorkingDayEntity,
 					new ParameterizedTypeReference<ResponseWrapper<WorkingDaysResponseDto>>() {
 					});
+
 			if (responseEntity3.getBody().getErrors() != null && !responseEntity3.getBody().getErrors().isEmpty()) {
 				throw new NoRecordFoundException(responseEntity3.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity3.getBody().getErrors().get(0).getMessage());
 			}
+
 			// Code to retrive date of days and add it to holidays.
-			if (responseEntity3.getBody().getResponse().getWorkingdays() != null) {
-				List<String> workingDays = responseEntity3.getBody().getResponse().getWorkingdays().stream()
+			if (responseEntity3.getBody().getResponse().getWeekdays() != null) {
+				List<String> workingDays = responseEntity3.getBody().getResponse().getWeekdays().stream()
+						.filter(regCenterWorkingDays -> regCenterWorkingDays.isWorking())
 						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
-				List<String> nonWorkingDays = ListUtils.subtract(Arrays.asList(DAYS), workingDays);
+				List<String> nonWorkingDays = responseEntity3.getBody().getResponse().getWeekdays().stream()
+						.filter(regCenterWorkingDays -> !regCenterWorkingDays.isWorking())
+						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
 				log.info("sessionId", "idType", "id", "nonWorkingDays >>> " + nonWorkingDays);
 				for (String nonWorkingDay : nonWorkingDays) {
 					for (LocalDate date = LocalDate.now(); date
 							.isBefore(LocalDate.now().plusDays(syncDays)); date = date.plusDays(1)) {
-						if (nonWorkingDay.equalsIgnoreCase(date.getDayOfWeek().toString().substring(0, 3))) {
+						if (nonWorkingDay.equalsIgnoreCase(date.getDayOfWeek()
+								.getDisplayName(TextStyle.SHORT, new Locale(langCode.substring(0, 2))).toString())) {
 							holidaylist.add(date.toString());
 						}
 					}
@@ -700,7 +724,7 @@ public class AvailabilityUtil {
 		notification.setAppointmentTime(time);
 		notification.setAdditionalRecipient(false);
 		notification.setIsBatch(true);
-		emailNotification(notification, primaryLang, headers);
+		emailNotification(notification, registrationBookingEntity.getDemographicEntity().getLangCode(), headers);
 	}
 
 	/**

@@ -7,20 +7,24 @@ import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.IntStream;
 
 import javax.persistence.LockModeType;
 
+import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.collections4.SetValuedMap;
 import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,6 +40,8 @@ import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.core.code.RequestCodes;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.PageDTO;
+import io.mosip.preregistration.core.common.dto.ValidDocumentsResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
@@ -46,32 +52,34 @@ import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 public class ValidationUtil {
 
 	@Value("${mosip.id.validation.identity.email}")
-	private  String emailRegex;
+	private String emailRegex;
 
 	@Value("${mosip.id.validation.identity.phone}")
-	private  String phoneRegex;
+	private String phoneRegex;
 
-	@Value("${mosip.supported-languages}")
-	private  String langCodes;
+	@Value("${mosip.mandatory-languages}")
+	private String mandatoryLangCodes;
+
+	@Value("${mosip.optional-languages}")
+	private String optionalLangCodes;
 
 	@Value("${mosip.kernel.idobjectvalidator.masterdata.documenttypes.rest.uri}")
-	private  String documentTypeUri;
+	private String documentTypeUri;
 
 	@Value("${mosip.kernel.masterdata.validdoc.rest.uri}")
-	private  String masterdataUri;
+	private String masterdataUri;
 
 	private static Logger log = LoggerConfiguration.logConfig(ValidationUtil.class);
 
-
-	public  boolean emailValidator(String email) {
+	public boolean emailValidator(String email) {
 		return email.matches(emailRegex);
 	}
 
-	public  boolean phoneValidator(String phone) {
+	public boolean phoneValidator(String phone) {
 		return phone.matches(phoneRegex);
 	}
 
-	public  boolean idValidation(String value, String regex) {
+	public boolean idValidation(String value, String regex) {
 		if (!isNull(value)) {
 			return value.matches(regex);
 		}
@@ -79,7 +87,7 @@ public class ValidationUtil {
 	}
 
 	/** The validDocsMap. */
-	private static SetValuedMap<String, String> validDocsMap = new HashSetValuedHashMap<>();
+	private static MultiValueMap validDocsMap = new MultiValueMap();;
 
 	@Autowired
 	RestTemplate restTemplate;
@@ -96,7 +104,7 @@ public class ValidationUtil {
 
 	private static final String NAME = "name";
 
-	public  boolean requestValidator(MainRequestDTO<?> mainRequest) {
+	public boolean requestValidator(MainRequestDTO<?> mainRequest) {
 		log.info("sessionId", "idType", "id",
 				"In requestValidator method of pre-registration core with mainRequest " + mainRequest);
 		if (mainRequest.getId() == null) {
@@ -157,7 +165,7 @@ public class ValidationUtil {
 
 	}
 
-	public  boolean requstParamValidator(Map<String, String> requestMap) {
+	public boolean requstParamValidator(Map<String, String> requestMap) {
 		log.info("sessionId", "idType", "id",
 				"In requstParamValidator method of pre-registration core with requestMap " + requestMap);
 		for (String key : requestMap.keySet()) {
@@ -207,8 +215,7 @@ public class ValidationUtil {
 	/**
 	 * This method is used as Null checker for different input keys.
 	 *
-	 * @param key
-	 *            pass the key
+	 * @param key pass the key
 	 * @return true if key not null and return false if key is null.
 	 */
 	public static boolean isNull(Object key) {
@@ -227,10 +234,12 @@ public class ValidationUtil {
 	}
 
 	public boolean langvalidation(String langCode) {
-		List<String> reqParams = new ArrayList<>();
-		String[] langList = langCodes.split(",");
-		for (int i = 0; i < langList.length; i++) {
-			reqParams.add(langList[i]);
+		Set<String> reqParams = new HashSet<>();
+		for (String optionalLang : optionalLangCodes.split(",")) {
+			reqParams.add(optionalLang);
+		}
+		for (String manLang : mandatoryLangCodes.split(",")) {
+			reqParams.add(manLang);
 		}
 
 		if (reqParams.contains(langCode)) {
@@ -241,24 +250,16 @@ public class ValidationUtil {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	@Lock(LockModeType.READ)
 	public boolean validateDocuments(String langCode, String catCode, String typeCode, String preRegistrationId) {
-		log.debug("sessionId", "idType", "id", "beforegetAllDocCategories preRegistrationId " + preRegistrationId);
-		log.debug("sessionId", "idType", "id", "aftergetAllDocCategories preRegistrationId " + preRegistrationId);
-		log.debug("sessionId", "idType", "id", "In validateDocuments method with docCatMap " + validDocsMap
-				+ " preRegistrationId " + preRegistrationId);
-		log.debug("sessionId", "idType", "id", "In validateDocuments method with langCode " + langCode + " and catCode "
-				+ catCode + " preRegistrationId " + preRegistrationId);
+		log.debug("In validateDocuments method with docCatMap:{} preRegistrationId: {} ", validDocsMap,
+				preRegistrationId);
+		log.debug("In validateDocuments method with typeCode: {} catCode: {} preRegistrationId: {}", typeCode, catCode,
+				preRegistrationId);
 		if (validDocsMap.containsKey(catCode)) {
-			log.debug("sessionId", "idType", "id",
-					"inside validateDocuments inside if preRegistrationId " + preRegistrationId);
-			log.debug("sessionId", "idType", "id",
-					"inside validateDocuments after getAllDocumentTypes  preRegistrationId " + preRegistrationId);
-			log.debug("sessionId", "idType", "id", "In validateDocuments method with docTypeMap " + validDocsMap
-					+ " preRegistrationId " + preRegistrationId);
-			log.debug("sessionId", "idType", "id", "In validateDocuments method with typeCode " + typeCode
-					+ " and catCode " + catCode + " preRegistrationId " + preRegistrationId);
-			if (validDocsMap.get(catCode).contains(typeCode)) {
+			List<String> docTypes = (List<String>) validDocsMap.get(catCode);
+			if (docTypes.contains(typeCode)) {
 				log.debug("sessionId", "idType", "id",
 						"inside validateDocuments inside second if preRegistrationId " + preRegistrationId);
 				return true;
@@ -282,8 +283,8 @@ public class ValidationUtil {
 
 	public Map<String, String> getDocumentTypeNameByTypeCode(String langCode, String catCode) {
 		Map<String, String> documentTypeMap = new HashMap<>();
-		String uri = UriComponentsBuilder.fromUriString(documentTypeUri)
-				.buildAndExpand(catCode, langCode).toUriString();
+		String uri = UriComponentsBuilder.fromUriString(documentTypeUri).buildAndExpand(catCode, langCode)
+				.toUriString();
 		@SuppressWarnings("unchecked")
 		ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>> responseBody = restTemplate
 				.getForObject(uri, ResponseWrapper.class);
@@ -313,39 +314,27 @@ public class ValidationUtil {
 		return true;
 	}
 
-	public void getAllDocCategoriesAndTypes(String langcode, HttpHeaders headers) {
+	@SuppressWarnings("unchecked")
+	public void getAllDocCategoriesAndTypes() {
 		try {
-			log.debug("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes preRegistrationId ");
-			String uri = UriComponentsBuilder.fromUriString(masterdataUri).buildAndExpand(langcode)
-					.toUriString();
-			HttpEntity entity = new HttpEntity<>(headers);
-			log.info("sessionId", "idType", "id", "inside getAllDocCategoriesAndTypes with url " + uri);
+			log.debug("In getAllDocCategoriesAndTypes");
+			String uri = UriComponentsBuilder.fromUriString(masterdataUri).toUriString();
+			HttpHeaders headers = new HttpHeaders();
+			HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
+			log.info("getAllDocCategoriesAndTypes url: {} ", uri);
 
-			@SuppressWarnings("unchecked")
+			ResponseEntity<ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>>> response = restTemplate.exchange(uri,
+					HttpMethod.GET, entity,
+					new ParameterizedTypeReference<ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>>>() {
+					});
 
-			ResponseEntity<ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>>> response = restTemplate
-					.exchange(uri, HttpMethod.GET, entity,
-							new ParameterizedTypeReference<ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>>>() {
-							});
+			if (Objects.isNull(response.getBody().getErrors())) {
 
-			if (Objects.isNull(response.getBody().getErrors()) || response.getBody().getErrors().isEmpty()) {
-				log.debug("sessionId", "idType", "id",
-						"inside getAllDocCategoriesAndTypes inside if preRegistrationId ");
-				ArrayList<LinkedHashMap<String, Object>> resp = response.getBody().getResponse()
-						.get(DOCUMENTCATEGORIES);
-				ArrayList<Object> typeList = new ArrayList<>();
-				validDocsMap = new HashSetValuedHashMap<>();
-				IntStream.range(0, resp.size()).filter(index -> (Boolean) resp.get(index).get(IS_ACTIVE))
-						.forEach(index -> {
-							typeList.clear();
-							ArrayList<LinkedHashMap<String, Object>> intResponse = (ArrayList<LinkedHashMap<String, Object>>) resp
-									.get(index).get(DOC_TYPES);
-							IntStream.range(0, intResponse.size())
-									.filter(secIndex -> (Boolean) intResponse.get(secIndex).get(IS_ACTIVE))
-									.forEach(secIndex -> validDocsMap.put(String.valueOf(resp.get(index).get(CODE)),
-											String.valueOf(intResponse.get(secIndex).get(CODE))));
-						});
-				log.info("sessionId", "idType", "id", " validDocsMap " + validDocsMap);
+				PageDTO<ValidDocumentsResponseDTO> resp = response.getBody().getResponse();
+
+				resp.getData().stream().filter(docs -> docs.getIsActive()).forEach(
+						activeDocs -> validDocsMap.put(activeDocs.getDocCategoryCode(), activeDocs.getDocTypeCode()));
+				log.info("validDocsMap {}", validDocsMap);
 			} else {
 				log.debug("sessionId", "idType", "id", "inside getAllDocCategories inside else  preRegistrationId ");
 				log.debug("sessionId", "idType", "id", " cat code" + response.getBody().getErrors().toString());
@@ -379,7 +368,7 @@ public class ValidationUtil {
 	public String getCurrentResponseTime() {
 		return LocalDateTime.now(ZoneId.of("UTC")).toString();
 	}
-	
+
 	public boolean isStatusBookedOrExpired(String status) {
 		boolean isStatusBookedOrExpired = false;
 		if (StatusCodes.BOOKED.getCode().equals(status)) {
