@@ -21,7 +21,6 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
 		<pre.registration.core.version>1.2.0-rc1-SNAPSHOT</pre.registration.core.version>
-		<kernel.crypto.signature.version>1.2.0-rc1-SNAPSHOT</kernel.crypto.signature.version>
 		<kernel.keymanager.version>1.2.0-rc1-SNAPSHOT</kernel.keymanager.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
@@ -80,11 +79,6 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>io.mosip.kernel</groupId>
-			<artifactId>kernel-crypto-signature</artifactId>
-			<version>${kernel.crypto.signature.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
