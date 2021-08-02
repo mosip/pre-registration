@@ -49,10 +49,6 @@ import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.SignRequestDto;
 import io.mosip.kernel.signature.dto.SignResponseDto;
-<<<<<<< HEAD
-=======
-import io.mosip.kernel.signature.dto.SignatureResponseDto;
->>>>>>> adding changes to resposnesignature
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -139,7 +135,7 @@ public class DataSyncServiceUtil {
 
 	@Value("${syncdata.resource.url}")
 	private String syncdataResourceUrl;
-	
+
 	@Value("${cryptoResource.url}")
 	private String keymanagerResourceUrl;
 
@@ -990,7 +986,7 @@ public class DataSyncServiceUtil {
 				log.info("sessionId", "idType", "id",
 						"In signData method of datasync service util - unable to get sign data");
 			} else {
-				System.out.println(" Sign Response : --> "+ respEntity.getBody().getResponse());
+				System.out.println(" Sign Response : --> " + respEntity.getBody().getResponse());
 				signatureResponse = respEntity.getBody().getResponse();
 			}
 		} catch (RestClientException ex) {
