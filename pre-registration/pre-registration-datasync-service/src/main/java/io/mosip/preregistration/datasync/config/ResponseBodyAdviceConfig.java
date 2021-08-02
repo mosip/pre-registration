@@ -12,7 +12,6 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.signature.dto.SignResponseDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -22,7 +21,7 @@ import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.exception.ParseResponseException;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 
-@RestControllerAdvice("dataSyncResponseBodyAdviceConfig")
+@RestControllerAdvice
 public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponseDTO<?>> {
 
 	@Autowired
