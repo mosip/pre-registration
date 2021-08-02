@@ -32,7 +32,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.beans.factory.annotation.Qualifier;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
@@ -46,6 +46,9 @@ import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
+import io.mosip.kernel.signature.dto.SignRequestDto;
+import io.mosip.kernel.signature.dto.SignResponseDto;
+import io.mosip.kernel.signature.dto.SignatureResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -953,6 +956,43 @@ public class DataSyncServiceUtil {
 					ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
 		}
 		return applicationInfo;
+
+	}
+
+	public SignResponseDto signData(String data) {
+		log.info("sessionId", "idType", "id", "In SignData  method of datasync service util");
+		SignResponseDto signatureResponse = null;
+		SignRequestDto request = new SignRequestDto();
+		request.setData(data);
+		MainRequestDTO<SignRequestDto> mainRequestDTO = new MainRequestDTO<>();
+		mainRequestDTO.setRequest(request);
+		mainRequestDTO.setVersion(version);
+		mainRequestDTO.setRequesttime(new Date());
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(syncdataResourceUrl + "/keymanager/sign");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			HttpEntity<?> httpEntity = new HttpEntity<MainRequestDTO<SignRequestDto>>(mainRequestDTO, headers);
+			String uriBuilder = builder.build().encode().toUriString();
+			log.info("sessionId", "idType", "id", "In signDta method URL- {}" + uriBuilder);
+			ResponseEntity<MainResponseDTO<SignResponseDto>> respEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.POST, httpEntity, new ParameterizedTypeReference<MainResponseDTO<SignResponseDto>>() {
+					});
+			if (respEntity.getBody().getErrors() != null) {
+				log.info("sessionId", "idType", "id",
+						"In signData method of datasync service util - unable to get sign data");
+			} else {
+				signatureResponse = respEntity.getBody().getResponse();
+			}
+		} catch (RestClientException ex) {
+			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In signData method of datasync service util - {} " + ex.getMessage());
+
+			throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_020.getCode(),
+					ErrorMessages.UNABLE_TO_SIGN_DATA.getMessage(), null);
+		}
+		return signatureResponse;
 
 	}
 
