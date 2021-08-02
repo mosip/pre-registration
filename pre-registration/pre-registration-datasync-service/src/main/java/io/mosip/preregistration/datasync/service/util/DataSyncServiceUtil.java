@@ -22,6 +22,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -48,7 +49,6 @@ import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.SignRequestDto;
 import io.mosip.kernel.signature.dto.SignResponseDto;
-import io.mosip.kernel.signature.dto.SignatureResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -118,6 +118,7 @@ public class DataSyncServiceUtil {
 	RestTemplate restTemplate;
 
 	@Autowired
+	@Lazy
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	/**
