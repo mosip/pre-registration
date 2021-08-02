@@ -24,7 +24,8 @@ public enum ErrorCodes {
 	PRG_DATA_SYNC_016("PRG_DATA_SYNC_016"), // BOOKING_NOT_FOUND
 	PRG_DATA_SYNC_017("PRG_DATA_SYNC_017"), // PARSING_FAILED
 	PRG_DATA_SYNC_018("PRG_DATA_SYNC_018"),//Failed to fetch machine encryptionpublickey
-	PRG_DATA_SYNC_019("PRG_DATA_SYNC_019");//Failed to fetch machine encryptionpublickey
+	PRG_DATA_SYNC_019("PRG_DATA_SYNC_019"),//Failed to fetch machine encryptionpublickey
+	PRG_DATA_SYNC_020("PRG_DATA_SYNC_020");//Failed to fetch machine encryptionpublickey
 
 	/**
 	 * @param code
