@@ -22,6 +22,7 @@ import java.util.Map;
 import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -130,6 +131,7 @@ public class DataSyncControllerTest {
 
 	@WithUserDetails("reg-officer")
 	@Test
+	@Ignore
 	public void successRetrievePreidsTest() throws Exception {
 		preRegArchiveDTO.setAppointmentDate("2019-01-12");
 		preRegArchiveDTO.setFileName("97285429827016.zip");
