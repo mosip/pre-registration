@@ -135,6 +135,9 @@ public class DataSyncServiceUtil {
 
 	@Value("${syncdata.resource.url}")
 	private String syncdataResourceUrl;
+	
+	@Value("${cryptoResource.url")
+	private String keymanagerResourceUrl;
 
 	@Value("${cryptoResource.url}")
 	private String keymanagerResourceUrl;
