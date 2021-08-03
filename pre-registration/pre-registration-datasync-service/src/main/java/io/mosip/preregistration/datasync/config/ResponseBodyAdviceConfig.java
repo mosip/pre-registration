@@ -12,9 +12,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.signature.dto.SignResponseDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.util.ResponseFilter;
 import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
@@ -45,10 +47,13 @@ public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponse
 				String timestamp = DateUtils.getUTCCurrentDateTimeString();
 				body.setResponsetime(timestamp);
 				SignResponseDto responseDto = serviceUtil.signData(objectMapper.writeValueAsString(body));
-				response.getHeaders().add("Response-Signature", responseDto.getSignature());
+				response.getHeaders().add("Response-Signature", responseDto.getSignature().toString());
 			} catch (JsonProcessingException e) {
 				throw new ParseResponseException(ErrorCodes.PRG_DATA_SYNC_017.toString(),
 						ErrorMessages.ERROR_WHILE_PARSING.getMessage(), body);
+			} catch (Exception e) {
+				throw new PreRegistrationException(ErrorCodes.PRG_DATA_SYNC_020.toString(),
+						ErrorMessages.UNABLE_TO_SIGN_DATA.getMessage(), body);
 			}
 		}
 		return body;
