@@ -23,7 +23,7 @@ import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.exception.ParseResponseException;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 
-@RestControllerAdvice("dataSyncResponseBodyAdviceConfig")
+@RestControllerAdvice
 public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponseDTO<?>> {
 
 	@Autowired
