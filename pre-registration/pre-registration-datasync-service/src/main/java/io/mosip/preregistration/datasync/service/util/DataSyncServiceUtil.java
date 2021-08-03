@@ -139,9 +139,6 @@ public class DataSyncServiceUtil {
 	@Value("${cryptoResource.url}")
 	private String keymanagerResourceUrl;
 
-	@Value("${cryptoResource.url}")
-	private String keymanagerResourceUrl;
-
 	/**
 	 * Reference for ${poa.url} from property file
 	 */
@@ -976,7 +973,7 @@ public class DataSyncServiceUtil {
 		mainRequestDTO.setVersion(version);
 		mainRequestDTO.setRequesttime(new Date());
 		try {
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(keymanagerResourceUrl + "/sign";);
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(keymanagerResourceUrl + "/sign");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<?> httpEntity = new HttpEntity<MainRequestDTO<SignRequestDto>>(mainRequestDTO, headers);
