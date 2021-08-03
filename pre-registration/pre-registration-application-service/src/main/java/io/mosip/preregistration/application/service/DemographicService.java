@@ -25,6 +25,7 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
@@ -227,6 +228,10 @@ public class DemographicService implements DemographicServiceIntf {
 	@Value("${preregistration.demographic.idschema-json-filename}")
 	private String fileName;
 
+	private static final String INDENTITY = "identity";
+
+	private static final String PROPERTIES = "properties";
+
 	/**
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
@@ -290,8 +295,9 @@ public class DemographicService implements DemographicServiceIntf {
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
 
-			List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText())
-					.collect(Collectors.toList());
+			List<String> identityKeys = convertSchemaJsonToArray(idSchema.getSchemaJson());
+
+			log.info("IDENTITY KEYS: {}", identityKeys);
 
 			List<String> requiredFields = demographicRequest.getRequiredFields().stream()
 					.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
@@ -390,8 +396,9 @@ public class DemographicService implements DemographicServiceIntf {
 				log.info("sessionId", "idType", "id",
 						"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
 
-				List<String> identityKeys = idSchema.getSchema().stream().map(json -> json.get("id").asText())
-						.collect(Collectors.toList());
+				List<String> identityKeys = convertSchemaJsonToArray(idSchema.getSchemaJson());
+
+				log.info("IDENTITY KEYS: {}", identityKeys);
 
 				List<String> requiredFields = demographicRequest.getRequiredFields().stream()
 						.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
@@ -1040,6 +1047,28 @@ public class DemographicService implements DemographicServiceIntf {
 		responseDto.setResponse(schemaResponseDto);
 		return responseDto;
 
+	}
+
+	private List<String> convertSchemaJsonToArray(String schemaJson) {
+		List<String> idschemaAttributes = new ArrayList<String>();
+		try {
+			JsonNode node = objectMapper.readValue(schemaJson, JsonNode.class);
+
+			node.get(PROPERTIES).get(INDENTITY).get(PROPERTIES).fieldNames()
+					.forEachRemaining(field -> idschemaAttributes.add(field));
+
+		} catch (JsonParseException ex) {
+			throw new io.mosip.preregistration.demographic.exception.system.JsonParseException(
+					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage());
+		} catch (JsonMappingException e) {
+			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
+					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+		} catch (IOException e) {
+			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
+					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+		}
+
+		return idschemaAttributes;
 	}
 
 }

@@ -135,8 +135,8 @@ public class DataSyncServiceUtil {
 
 	@Value("${syncdata.resource.url}")
 	private String syncdataResourceUrl;
-	
-	@Value("${cryptoResource.url")
+
+	@Value("${cryptoResource.url}")
 	private String keymanagerResourceUrl;
 
 	@Value("${cryptoResource.url}")
@@ -976,7 +976,7 @@ public class DataSyncServiceUtil {
 		mainRequestDTO.setVersion(version);
 		mainRequestDTO.setRequesttime(new Date());
 		try {
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(keymanagerResourceUrl + "/sign");
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(keymanagerResourceUrl + "/sign";);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<?> httpEntity = new HttpEntity<MainRequestDTO<SignRequestDto>>(mainRequestDTO, headers);
