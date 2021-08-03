@@ -49,6 +49,7 @@ import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.SignRequestDto;
 import io.mosip.kernel.signature.dto.SignResponseDto;
+
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -136,6 +137,9 @@ public class DataSyncServiceUtil {
 
 	@Value("${syncdata.resource.url}")
 	private String syncdataResourceUrl;
+	
+	@Value("${cryptoResource.url")
+	private String keymanagerResourceUrl;
 
 	@Value("${cryptoResource.url}")
 	private String keymanagerResourceUrl;
@@ -994,7 +998,6 @@ public class DataSyncServiceUtil {
 			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In signData method of datasync service util - {} " + ex.getMessage());
-
 			throw new PreRegistrationException(ErrorCodes.PRG_DATA_SYNC_020.getCode(),
 					ErrorMessages.UNABLE_TO_SIGN_DATA.getMessage());
 		}
