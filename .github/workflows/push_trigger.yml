@@ -131,7 +131,7 @@ jobs:
         status: ${{ job.status }}
         fields: repo,message,commit,workflow,job # selectable (default: repo,message)
       env:
-        SLACK_WEBHOOK_URL: ${{ SLACK_DEVOPS_WEBHOOK }} # required
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEVOPS_WEBHOOK }} # required
       if: failure() # Pick up events even if the job fails or is canceled.
 
 
@@ -245,7 +245,7 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,commit,workflow,job # selectable (default: repo,message)
         env:
-          SLACK_WEBHOOK_URL: ${{ SLACK_DEVOPS_WEBHOOK }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEVOPS_WEBHOOK }} # required
         if: failure() # Pick up events even if the job fails or is canceled.
 
           #   docker-pre-registration-login-service:
@@ -356,7 +356,7 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,commit,workflow,job # selectable (default: repo,message)
         env:
-          SLACK_WEBHOOK_URL: ${{ SLACK_DEVOPS_WEBHOOK }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEVOPS_WEBHOOK }} # required
         if: failure() # Pick up events even if the job fails or is canceled.
 
   docker-pre-registration-datasync-service:
@@ -417,7 +417,7 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,commit,workflow,job # selectable (default: repo,message)
         env:
-          SLACK_WEBHOOK_URL: ${{ SLACK_DEVOPS_WEBHOOK }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEVOPS_WEBHOOK }} # required
         if: failure() # Pick up events even if the job fails or is canceled.
 
           #   docker-pre-registration-demographic-service:
@@ -683,7 +683,7 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,commit,workflow,job # selectable (default: repo,message)
         env:
-          SLACK_WEBHOOK_URL: ${{ SLACK_DEVOPS_WEBHOOK }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEVOPS_WEBHOOK }} # required
         if: failure() # Pick up events even if the job fails or is canceled.
 
   sonar_analysis:
@@ -732,5 +732,5 @@ jobs:
           status: ${{ job.status }}
           fields: repo,message,commit,workflow,job # selectable (default: repo,message)
         env:
-          SLACK_WEBHOOK_URL: ${{ SLACK_DEVOPS_WEBHOOK }} # required
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_DEVOPS_WEBHOOK }} # required
         if: failure() # Pick up events even if the job fails or is canceled.
