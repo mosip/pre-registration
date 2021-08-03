@@ -45,11 +45,13 @@ public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponse
 				String timestamp = DateUtils.getUTCCurrentDateTimeString();
 				body.setResponsetime(timestamp);
 				SignResponseDto responseDto = serviceUtil.signData(objectMapper.writeValueAsString(body));
-				response.getHeaders().add("Response-Signature", responseDto.getSignature());
+				response.getHeaders().add("Response-Signature", responseDto.getSignature().toString());
 			} catch (JsonProcessingException e) {
 				throw new ParseResponseException(ErrorCodes.PRG_DATA_SYNC_017.toString(),
 						ErrorMessages.ERROR_WHILE_PARSING.getMessage(), body);
-			}
+			} catch (Exception e) {
+				System.out.println(ExceptionUtils.getStackTrace(e));
+			} 
 		}
 		return body;
 	}
