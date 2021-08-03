@@ -135,7 +135,7 @@ public class DataSyncServiceUtil {
 
 	@Value("${syncdata.resource.url}")
 	private String syncdataResourceUrl;
-	
+
 	@Value("${cryptoResource.url}")
 	private String keymanagerResourceUrl;
 
@@ -986,7 +986,7 @@ public class DataSyncServiceUtil {
 				log.info("sessionId", "idType", "id",
 						"In signData method of datasync service util - unable to get sign data");
 			} else {
-				System.out.println(" Sign Response : --> "+ respEntity.getBody().getResponse());
+				System.out.println(" Sign Response : --> " + respEntity.getBody().getResponse());
 				signatureResponse = respEntity.getBody().getResponse();
 			}
 		} catch (RestClientException ex) {

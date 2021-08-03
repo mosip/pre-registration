@@ -12,6 +12,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.signature.dto.SignResponseDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -21,7 +22,7 @@ import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.exception.ParseResponseException;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 
-@RestControllerAdvice
+@RestControllerAdvice("dataSyncResponseBodyAdviceConfig")
 public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponseDTO<?>> {
 
 	@Autowired
@@ -45,14 +46,14 @@ public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponse
 				String timestamp = DateUtils.getUTCCurrentDateTimeString();
 				body.setResponsetime(timestamp);
 				SignResponseDto responseDto = serviceUtil.signData(objectMapper.writeValueAsString(body));
-				System.out.println( responseDto.getSignature().toString());
+				System.out.println(responseDto.getSignature().toString());
 				response.getHeaders().add("Response-Signature", responseDto.getSignature().toString());
 			} catch (JsonProcessingException e) {
 				throw new ParseResponseException(ErrorCodes.PRG_DATA_SYNC_017.toString(),
 						ErrorMessages.ERROR_WHILE_PARSING.getMessage(), body);
 			} catch (Exception e) {
 				System.out.println(e);
-			} 
+			}
 		}
 		return body;
 	}
