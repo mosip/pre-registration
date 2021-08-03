@@ -18,7 +18,7 @@ import org.springframework.context.annotation.FilterType;
 				"io\\.mosip\\.kernel\\.signature\\..*", "io\\.mosip\\.kernel\\.partnercertservice\\..*",
 				"io\\.mosip\\.kernel\\.lkeymanager\\..*", "io\\.mosip\\.kernel\\.keymanagerservice\\..*",
 				"io\\.mosip\\.kernel\\.keymanager\\..*", "io\\.mosip\\.kernel\\.keygenerator\\..*",
-				"io\\.mosip\\.kernel\\.cryptomanager\\..*", "io\\.mosip\\.kernel\\.crypto\\..*" }) })
+				"io\\.mosip\\.kernel\\.cryptomanager\\..*" }) })
 public class DataSyncApplication {
 
 	public static void main(String[] args) {

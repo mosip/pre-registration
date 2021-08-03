@@ -55,7 +55,9 @@ public enum ErrorMessages {
 	
 	FAILED_TO_FETCH_INFO_FOR_PRID("Failed to fetch the info the preregistration Id"),
 	
-	FAILED_TO_FETCH_MACHINE_ENCRYPTION_PUBLICKEY("Failed to fetch machines encryption publickey");
+	FAILED_TO_FETCH_MACHINE_ENCRYPTION_PUBLICKEY("Failed to fetch machines encryption publickey"),
+	
+	UNABLE_TO_SIGN_DATA("Failed to sign the data");
 
 	private ErrorMessages(String message) {
 		this.message = message;
