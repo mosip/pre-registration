@@ -50,7 +50,7 @@ public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponse
 				throw new ParseResponseException(ErrorCodes.PRG_DATA_SYNC_017.toString(),
 						ErrorMessages.ERROR_WHILE_PARSING.getMessage(), body);
 			} catch (Exception e) {
-				System.out.println(ExceptionUtils.getStackTrace(e));
+				System.out.println(e);
 			} 
 		}
 		return body;
