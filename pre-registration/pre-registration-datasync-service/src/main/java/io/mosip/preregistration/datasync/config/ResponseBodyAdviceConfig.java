@@ -51,9 +51,6 @@ public class ResponseBodyAdviceConfig implements ResponseBodyAdvice<MainResponse
 			} catch (JsonProcessingException e) {
 				throw new ParseResponseException(ErrorCodes.PRG_DATA_SYNC_017.toString(),
 						ErrorMessages.ERROR_WHILE_PARSING.getMessage(), body);
-			} catch (Exception e) {
-				throw new PreRegistrationException(ErrorCodes.PRG_DATA_SYNC_020.toString(),
-						ErrorMessages.UNABLE_TO_SIGN_DATA.getMessage(), body);
 			}
 		}
 		return body;
