@@ -399,7 +399,7 @@ public class NotificationService {
 				for (int i = 0; i < nameKeys.length; i++) {
 					JsonNode arrayNode = responseNode.get(nameKeys[i]);
 					for (JsonNode jsonNode : arrayNode) {
-						if (notificationDto.getName().equals(jsonNode.get("value").asText().trim())) {
+						if (notificationDto.getName().trim().equals(jsonNode.get("value").asText().trim())) {
 							isNameMatchFound = true;
 							break;
 						}

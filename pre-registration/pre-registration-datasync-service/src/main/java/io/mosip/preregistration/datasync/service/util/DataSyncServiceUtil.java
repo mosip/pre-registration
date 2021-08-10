@@ -8,6 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -47,9 +48,10 @@ import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
+import io.mosip.kernel.signature.dto.JWTSignatureRequestDto;
+import io.mosip.kernel.signature.dto.JWTSignatureResponseDto;
 import io.mosip.kernel.signature.dto.SignRequestDto;
 import io.mosip.kernel.signature.dto.SignResponseDto;
-
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -137,8 +139,8 @@ public class DataSyncServiceUtil {
 
 	@Value("${syncdata.resource.url}")
 	private String syncdataResourceUrl;
-	
-	@Value("${cryptoResource.url")
+
+	@Value("${cryptoResource.url}")
 	private String keymanagerResourceUrl;
 
 	/**
@@ -179,6 +181,12 @@ public class DataSyncServiceUtil {
 
 	@Value("${version:1.0}")
 	private String version;
+
+	@Value("${mosip.preregistration.sync.sign.appid}")
+	private String signAppId;
+
+	@Value("${mosip.preregistration.sync.sign.refid}")
+	private String signRefId;
 
 	@Value("${moispDemographicRequestId:mosip.pre-registration.demographic.retrieve.date}")
 	private String moispDemographicRequestId;
@@ -932,7 +940,7 @@ public class DataSyncServiceUtil {
 	}
 
 	public ApplicationInfoMetadataDTO getPreRegistrationInfo(String prid) {
-		log.info("sessionId", "idType", "id", "In getPreRegistrationInfo  method of datasync service util");
+		log.info("In getPreRegistrationInfo  method of datasync service util");
 		ApplicationInfoMetadataDTO applicationInfo = null;
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder
@@ -941,22 +949,18 @@ public class DataSyncServiceUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
-			log.info("sessionId", "idType", "id", "In getPreRegistrationInfo method URL- {}" + uriBuilder);
+			log.info("In getPreRegistrationInfo method URL- {}", uriBuilder);
 			ResponseEntity<MainResponseDTO<ApplicationInfoMetadataDTO>> respEntity = restTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<ApplicationInfoMetadataDTO>>() {
 					});
 			if (respEntity.getBody().getErrors() != null) {
-				log.info("sessionId", "idType", "id",
-						"In getPreRegistrationInfo method of datasync service util - unable to get preregistration data for the prid {}"
-								+ prid);
+				log.info("unable to get preregistration data for the prid {}", prid);
 			} else {
 				applicationInfo = respEntity.getBody().getResponse();
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In getPreRegistrationInfo method of datasync service util - {} " + ex.getMessage());
+			log.error("In getPreRegistrationInfo method of datasync service util ", ex);
 
 			throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
 					ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
@@ -965,40 +969,42 @@ public class DataSyncServiceUtil {
 
 	}
 
-	public SignResponseDto signData(String data) {
-		log.info("sessionId", "idType", "id", "In SignData  method of datasync service util");
-		SignResponseDto signatureResponse = null;
-		SignRequestDto request = new SignRequestDto();
-		request.setData(data);
-		MainRequestDTO<SignRequestDto> mainRequestDTO = new MainRequestDTO<>();
+	public String signData(String data) {
+		log.info("In SignData  method of datasync service util");
+		JWTSignatureResponseDto signatureResponse = null;
+		JWTSignatureRequestDto request = new JWTSignatureRequestDto();
+		request.setApplicationId(signAppId);
+		request.setReferenceId(signRefId);
+		request.setDataToSign(Base64.getEncoder().encodeToString(data.getBytes()));
+
+		MainRequestDTO<JWTSignatureRequestDto> mainRequestDTO = new MainRequestDTO<>();
 		mainRequestDTO.setRequest(request);
 		mainRequestDTO.setVersion(version);
 		mainRequestDTO.setRequesttime(new Date());
 		try {
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(keymanagerResourceUrl + "/sign");
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(keymanagerResourceUrl + "/jwtSign");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			HttpEntity<?> httpEntity = new HttpEntity<MainRequestDTO<SignRequestDto>>(mainRequestDTO, headers);
+			HttpEntity<?> httpEntity = new HttpEntity<MainRequestDTO<JWTSignatureRequestDto>>(mainRequestDTO, headers);
 			String uriBuilder = builder.build().encode().toUriString();
-			log.info("sessionId", "idType", "id", "In signData method URL- {}" + uriBuilder);
-			ResponseEntity<MainResponseDTO<SignResponseDto>> respEntity = restTemplate.exchange(uriBuilder,
-					HttpMethod.POST, httpEntity, new ParameterizedTypeReference<MainResponseDTO<SignResponseDto>>() {
+			log.info("In signData method URL- {}", uriBuilder);
+			ResponseEntity<MainResponseDTO<JWTSignatureResponseDto>> respEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.POST, httpEntity,
+					new ParameterizedTypeReference<MainResponseDTO<JWTSignatureResponseDto>>() {
 					});
 			if (respEntity.getBody().getErrors() != null) {
-				log.info("sessionId", "idType", "id",
-						"In signData method of datasync service util - unable to get sign data");
+				log.error("In signData method of datasync service util - unable to get sign data {}",
+						respEntity.getBody().getErrors());
 			} else {
 				signatureResponse = respEntity.getBody().getResponse();
 				log.debug(" Sign Response : --> {}", signatureResponse);
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In signData method of datasync service util - {} " + ex.getMessage());
+			log.error("In signData method of datasync service util -", ex);
 			throw new PreRegistrationException(ErrorCodes.PRG_DATA_SYNC_020.getCode(),
 					ErrorMessages.UNABLE_TO_SIGN_DATA.getMessage());
 		}
-		return signatureResponse;
+		return signatureResponse.getJwtSignedData();
 
 	}
 
