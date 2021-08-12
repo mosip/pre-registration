@@ -55,7 +55,7 @@ jobs:
     - name: Build with Maven
       run: |
         cd pre-registration
-        mvn -B package -DskipTests -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
+        mvn -B package  -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
 
 
     - name: Ready the springboot artifacts
@@ -136,7 +136,7 @@ jobs:
         mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/settings.xml
     - name: Publish the maven package
       run: |
-        cd pre-registration && mvn deploy -DskipTests -DaltDeploymentRepository=ossrh::default::${{ secrets.RELEASE_URL }} -s $GITHUB_WORKSPACE/settings.xml -f pom.xml
+        cd pre-registration && mvn deploy  -DaltDeploymentRepository=ossrh::default::${{ secrets.RELEASE_URL }} -s $GITHUB_WORKSPACE/settings.xml -f pom.xml
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_token }}
         GPG_TTY: $(tty)
