@@ -8,12 +8,16 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapsId;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.NamedQuery;
@@ -51,12 +55,9 @@ public class DemographicEntity implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "demographicEntity")
 	private List<DocumentEntity> documentEntity;
 
-	@OneToOne(fetch = FetchType.EAGER, mappedBy = "demographicEntity")
-	private RegistrationBookingEntity registrationBookingEntity;
-
 	/** The pre registration id. */
-	@Column(name = "prereg_id", nullable = false)
 	@Id
+	@Column(name = "prereg_id")
 	private String preRegistrationId;
 
 	/** The JSON */
@@ -99,14 +100,6 @@ public class DemographicEntity implements Serializable {
 
 	@Column(name = "demog_detail_hash")
 	private String demogDetailHash;
-
-	public String getPreRegistrationId() {
-		return preRegistrationId;
-	}
-
-	public void setPreRegistrationId(String preRegistrationId) {
-		this.preRegistrationId = preRegistrationId;
-	}
 
 	public byte[] getApplicantDetailJson() {
 		return (byte[]) applicantDetailJson.clone();
@@ -200,12 +193,13 @@ public class DemographicEntity implements Serializable {
 		this.documentEntity = documentEntity;
 	}
 
-	public RegistrationBookingEntity getRegistrationBookingEntity() {
-		return registrationBookingEntity;
+	public String getPreRegistrationId() {
+		return preRegistrationId;
 	}
 
-	public void setRegistrationBookingEntity(RegistrationBookingEntity registrationBookingEntity) {
-		this.registrationBookingEntity = registrationBookingEntity;
+	public void setPreRegistrationId(String preRegistrationId) {
+		this.preRegistrationId = preRegistrationId;
 	}
+
 
 }

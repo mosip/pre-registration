@@ -16,7 +16,19 @@ public enum ApplicationErrorMessages {
 
 	AUDIT_FAILED("Audit Failed"),
 	
-	DEPRECATED_MESSAGE("The requested resource has been Deprecated");
+	DEPRECATED_MESSAGE("The requested resource has been Deprecated"),
+	
+	FAILED_TO_UPDATE_APPLICATIONS("Save/Update failed for applications table"),
+	
+	STATUS_UPDATE_FOR_APPLICATIONS_FAILED("Status update failed in applications table"),
+	
+	DELETE_FAILED_FOR_APPLICATION("Failed to delete an appllication in applications table"),
+	
+	INVAILD_REQUEST_ARGUMENT("Invaild Request Argument"),
+	
+	NO_RECORD_FOUND("No Records Found"),
+	
+	INVALID_REQUEST_APPLICATION_ID("Invalid application Id");
 
 	private ApplicationErrorMessages(String message) {
 		this.message = message;

@@ -153,8 +153,6 @@ public class AvailabilityUtil {
 
 	private String langCode;
 
-	private static String[] DAYS = { "MON", "TUE", "WED", "THU", "FRI", "SAT", "SUN" };
-
 	@PostConstruct
 	private void setup() {
 		langCode = mandatoryLangCodes.split(",").length > 0 ? mandatoryLangCodes.split(",")[0]
@@ -195,10 +193,11 @@ public class AvailabilityUtil {
 									.findAllPreIds(regDto.getId(), sDate);
 							if (!regBookingEntityList.isEmpty()) {
 								for (int i = 0; i < regBookingEntityList.size(); i++) {
-									if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
-											.equals(StatusCodes.BOOKED.getCode())) {
-										cancelBooking(regBookingEntityList.get(i).getDemographicEntity()
-												.getPreRegistrationId(), headers);
+									if (batchServiceDAO
+											.getApplicantEntityDetails(
+													regBookingEntityList.get(i).getPreregistrationId())
+											.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+										cancelBooking(regBookingEntityList.get(i).getPreregistrationId(), headers);
 										sendNotification(regBookingEntityList.get(i), headers);
 									}
 								}
@@ -236,10 +235,12 @@ public class AvailabilityUtil {
 													regSlots.get(0).getFromTime(), lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
-													.equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getDemographicEntity()
-														.getPreRegistrationId(), headers);
+											if (batchServiceDAO
+													.getApplicantEntityDetails(
+															regBookingEntityList.get(i).getPreregistrationId())
+													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
+														headers);
 												sendNotification(regBookingEntityList.get(i), headers);
 											}
 										}
@@ -260,10 +261,12 @@ public class AvailabilityUtil {
 													regDto.getLunchStartTime(), lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
-													.equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getDemographicEntity()
-														.getPreRegistrationId(), headers);
+											if (batchServiceDAO
+													.getApplicantEntityDetails(
+															regBookingEntityList.get(i).getPreregistrationId())
+													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
+														headers);
 												sendNotification(regBookingEntityList.get(i), headers);
 											}
 										}
@@ -291,10 +294,12 @@ public class AvailabilityUtil {
 													lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
-													.equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getDemographicEntity()
-														.getPreRegistrationId(), headers);
+											if (batchServiceDAO
+													.getApplicantEntityDetails(
+															regBookingEntityList.get(i).getPreregistrationId())
+													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
+														headers);
 												sendNotification(regBookingEntityList.get(i), headers);
 											}
 										}
@@ -314,10 +319,12 @@ public class AvailabilityUtil {
 													lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (regBookingEntityList.get(i).getDemographicEntity().getStatusCode()
-													.equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getDemographicEntity()
-														.getPreRegistrationId(), headers);
+											if (batchServiceDAO
+													.getApplicantEntityDetails(
+															regBookingEntityList.get(i).getPreregistrationId())
+													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
+														headers);
 												sendNotification(regBookingEntityList.get(i), headers);
 											}
 										}
@@ -344,9 +351,9 @@ public class AvailabilityUtil {
 							.findAllPreIdsByregID(regCenterDumped.get(i), LocalDate.now());
 					if (!entityList.isEmpty()) {
 						for (int j = 0; j < entityList.size(); j++) {
-							if (entityList.get(j).getDemographicEntity().getStatusCode()
-									.equals(StatusCodes.BOOKED.getCode())) {
-								cancelBooking(entityList.get(j).getDemographicEntity().getPreRegistrationId(), headers);
+							if (batchServiceDAO.getApplicantEntityDetails(entityList.get(j).getPreregistrationId())
+									.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+								cancelBooking(entityList.get(j).getPreregistrationId(), headers);
 								sendNotification(entityList.get(j), headers);
 							}
 						}
@@ -545,10 +552,12 @@ public class AvailabilityUtil {
 				List<String> workingDays = responseEntity3.getBody().getResponse().getWeekdays().stream()
 						.filter(regCenterWorkingDays -> regCenterWorkingDays.isWorking())
 						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
+				log.info("WorkingDays >>> {}", workingDays);
+				log.info("Weekdays Response {}", responseEntity3.getBody().getResponse().getWeekdays());
 				List<String> nonWorkingDays = responseEntity3.getBody().getResponse().getWeekdays().stream()
 						.filter(regCenterWorkingDays -> !regCenterWorkingDays.isWorking())
 						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
-				log.info("sessionId", "idType", "id", "nonWorkingDays >>> " + nonWorkingDays);
+				log.info("nonWorkingDays >>> {}", nonWorkingDays);
 				for (String nonWorkingDay : nonWorkingDays) {
 					for (LocalDate date = LocalDate.now(); date
 							.isBefore(LocalDate.now().plusDays(syncDays)); date = date.plusDays(1)) {
@@ -717,14 +726,14 @@ public class AvailabilityUtil {
 		log.info("sessionId", "idType", "id", "In sendNotification method of AvailabilityUtil");
 		NotificationDTO notification = new NotificationDTO();
 		notification.setAppointmentDate(registrationBookingEntity.getRegDate().toString());
-		notification.setPreRegistrationId(registrationBookingEntity.getDemographicEntity().getPreRegistrationId());
+		notification.setPreRegistrationId(registrationBookingEntity.getPreregistrationId());
 		String time = LocalTime
 				.parse(registrationBookingEntity.getSlotFromTime().toString(), DateTimeFormatter.ofPattern("HH:mm"))
 				.format(DateTimeFormatter.ofPattern("hh:mm a"));
 		notification.setAppointmentTime(time);
 		notification.setAdditionalRecipient(false);
 		notification.setIsBatch(true);
-		emailNotification(notification, registrationBookingEntity.getDemographicEntity().getLangCode(), headers);
+		emailNotification(notification, langCode, headers);
 	}
 
 	/**

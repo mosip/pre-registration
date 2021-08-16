@@ -52,6 +52,9 @@ public class PreregistrationBatchJobScheduler {
 
 	@Autowired
 	private Job expiredStatusJob;
+	
+	@Autowired
+	private Job updateApplicationForBookingCheckJob;
 
 	@Scheduled(cron = "${preregistration.job.schedule.cron.consumedStatusJob}")
 	public void consumedStatusScheduler() {
@@ -104,6 +107,25 @@ public class PreregistrationBatchJobScheduler {
 				| JobParametersInvalidException e) {
 
 			LOGGER.error(LOGDISPLAY, "Expired Status Job failed to read data from service", e.getMessage(),null);
+		}
+
+	}
+	
+	@Scheduled(cron = "${preregistration.job.schedule.cron.updateApplicationsBookingJob:5 * * * * ?}")
+	public void applicationsBookingStatusScheduler() {
+
+		JobParameters jobParam = new JobParametersBuilder().addLong("updateApplicationsBookingStatusJobTime", System.currentTimeMillis())
+				.toJobParameters();
+		try {
+
+			JobExecution jobExecution = jobLauncher.run(updateApplicationForBookingCheckJob, jobParam);
+
+			LOGGER.info(LOGDISPLAY, JOB_STATUS, jobExecution.getId().toString(), jobExecution.getStatus().toString());
+
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+				| JobParametersInvalidException e) {
+
+			LOGGER.error(LOGDISPLAY, "Applications Booking  Status Job failed to read data from service", e.getMessage(),null);
 		}
 
 	}

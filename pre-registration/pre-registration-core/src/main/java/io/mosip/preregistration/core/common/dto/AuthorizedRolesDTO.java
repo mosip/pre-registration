@@ -76,4 +76,20 @@ public class AuthorizedRolesDTO {
     
     private List<String> postsyncconsumedpreregids;
     
+    private List<String> getslotsavailablity;
+    
+    private List<String> getappointmentdetailspreregid;
+    
+    private List<String> postappointmentpregid;
+    
+    private List<String> deleteappointmentpreregid;
+    
+    private List<String> cancelappointmentpreregid;
+    
+    private List<String> postappointmentmulti;
+    
+    private List<String> updateapplicationstatusappid;
+    
+    private List<String> getapplicationdetailsappid;
+    
 }

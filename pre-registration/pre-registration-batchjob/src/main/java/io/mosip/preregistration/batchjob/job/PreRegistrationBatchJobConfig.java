@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.mosip.preregistration.batchjob.tasklets.ApplicationsBookingCheckTasklet;
 import io.mosip.preregistration.batchjob.tasklets.AvailabilitySyncTasklet;
 import io.mosip.preregistration.batchjob.tasklets.ConsumedStatusTasklet;
 import io.mosip.preregistration.batchjob.tasklets.ExpiredStatusTasklet;
@@ -28,62 +29,69 @@ import io.mosip.preregistration.batchjob.tasklets.ExpiredStatusTasklet;
 @Configuration
 @EnableBatchProcessing
 public class PreRegistrationBatchJobConfig {
-	
-	
+
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
-	
+
 	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
-	
+
 	@Autowired
 	private DataSource dataSource;
-	
+
 	@Autowired
 	private ConsumedStatusTasklet consumedStatusTasklet;
-	
+
 	@Autowired
 	private AvailabilitySyncTasklet availabilitySyncTasklet;
-	
+
 	@Autowired
 	private ExpiredStatusTasklet expiredStatusTasklet;
 	
-	
+	@Autowired
+	private ApplicationsBookingCheckTasklet applicationBookingCheckTasklet;
+
 	@Bean
 	public Step consumedStatusStep() {
 		return stepBuilderFactory.get("consumedStatusStep").tasklet(consumedStatusTasklet).build();
 	}
-	
+
 	@Bean
 	public Step availabilitySyncStep() {
 		return stepBuilderFactory.get("availabilitySyncStep").tasklet(availabilitySyncTasklet).build();
 	}
-	
+
 	@Bean
 	public Step expiredStatusStep() {
 		return stepBuilderFactory.get("expiredStatusStep").tasklet(expiredStatusTasklet).build();
 	}
-	
+
 	@Bean
-	public Job availabilitySyncJob(){
-		return this.jobBuilderFactory.get("availabilitySyncJob")
-				   .incrementer(new RunIdIncrementer())
-				   .start(availabilitySyncStep())
-				   .build();
+	public Step updateBookingInApplicationsStep() {
+		return stepBuilderFactory.get("updateBookingInApplicationsStep").tasklet(applicationBookingCheckTasklet).build();
 	}
+
+	@Bean
+	public Job availabilitySyncJob() {
+		return this.jobBuilderFactory.get("availabilitySyncJob").incrementer(new RunIdIncrementer())
+				.start(availabilitySyncStep()).build();
+	}
+
 	@Bean
 	public Job consumedStatusJob() {
-		return this.jobBuilderFactory.get("consumedStatusJob")
-				   .incrementer(new RunIdIncrementer())
-				   .start(consumedStatusStep())
-				   .build();
+		return this.jobBuilderFactory.get("consumedStatusJob").incrementer(new RunIdIncrementer())
+				.start(consumedStatusStep()).build();
 	}
-	
+
 	@Bean
 	public Job expiredStatusJob() {
-		return this.jobBuilderFactory.get("expiredStatusJob")
-				   .incrementer(new RunIdIncrementer())
-				   .start(expiredStatusStep())
-				   .build();
+		return this.jobBuilderFactory.get("expiredStatusJob").incrementer(new RunIdIncrementer())
+				.start(expiredStatusStep()).build();
+	}
+
+	@Bean
+	public Job updateApplicationForBookingCheckJob() {
+		return this.jobBuilderFactory.get("updateApplicationForBookingCheckJob").incrementer(new RunIdIncrementer())
+				.start(updateBookingInApplicationsStep()).build();
 	}
 }

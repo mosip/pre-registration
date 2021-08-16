@@ -72,6 +72,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
 import io.mosip.preregistration.core.common.dto.PreRegistartionStatusDTO;
 import io.mosip.preregistration.core.common.dto.identity.DemographicIdentityRequestDTO;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
@@ -227,10 +228,13 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Value("${preregistration.demographic.idschema-json-filename}")
 	private String fileName;
-
+	
 	private static final String INDENTITY = "identity";
 
 	private static final String PROPERTIES = "properties";
+
+	@Autowired
+	CryptoUtil cryptoUtil;
 
 	/**
 	 * This method acts as a post constructor to initialize the required request
@@ -242,9 +246,6 @@ public class DemographicService implements DemographicServiceIntf {
 		log.info("Fetched the identity json from config server" + getIdentityJsonString);
 
 	}
-
-	@Autowired
-	CryptoUtil cryptoUtil;
 
 	/*
 	 * (non-Javadoc)
@@ -287,6 +288,7 @@ public class DemographicService implements DemographicServiceIntf {
 		try {
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata called");
 			IdSchemaDto idSchema = serviceUtil.getSchema();
+
 			log.info("sessionId", "idType", "id", "Get Schema from syncdata successful");
 
 			mainResponseDTO = (MainResponseDTO<DemographicCreateResponseDTO>) serviceUtil.getMainResponseDto(request);
@@ -294,7 +296,7 @@ public class DemographicService implements DemographicServiceIntf {
 			validationUtil.langvalidation(demographicRequest.getLangCode());
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-
+			
 			List<String> identityKeys = convertSchemaJsonToArray(idSchema.getSchemaJson());
 
 			log.info("IDENTITY KEYS: {}", identityKeys);
@@ -305,7 +307,7 @@ public class DemographicService implements DemographicServiceIntf {
 			JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
 					demographicRequest.getDemographicDetails());
 
-			log.debug("Constructed Object {}", constructedObject);
+			log.info("Constructed Object {}", constructedObject);
 
 			jsonValidator.validateIdObject(idSchema.getSchemaJson(), constructedObject, requiredFields);
 
@@ -316,6 +318,7 @@ public class DemographicService implements DemographicServiceIntf {
 			String preId = serviceUtil.generateId();
 			log.info("sessionId", "idType", "id",
 					"Pre ID generation end time : " + DateUtils.getUTCCurrentDateTimeString());
+
 			DemographicEntity demographicEntity = demographicRepository
 					.save(serviceUtil.prepareDemographicEntityForCreate(demographicRequest,
 							StatusCodes.APPLICATION_INCOMPLETE.getCode(), authUserDetails().getUserId(), preId));
@@ -601,16 +604,18 @@ public class DemographicService implements DemographicServiceIntf {
 
 	private BookingRegistrationDTO getAppointmentData(DemographicEntity demographicEntity) {
 
-		if (!serviceUtil.isNull(demographicEntity.getRegistrationBookingEntity())) {
-			BookingRegistrationDTO bookingRegistrationDTO = new BookingRegistrationDTO();
-			bookingRegistrationDTO.setRegDate(demographicEntity.getRegistrationBookingEntity().getRegDate().toString());
-			bookingRegistrationDTO.setRegistrationCenterId(
-					demographicEntity.getRegistrationBookingEntity().getRegistrationCenterId());
-			bookingRegistrationDTO
-					.setSlotFromTime(demographicEntity.getRegistrationBookingEntity().getSlotFromTime().toString());
-			bookingRegistrationDTO
-					.setSlotToTime(demographicEntity.getRegistrationBookingEntity().getSlotToTime().toString());
-			return bookingRegistrationDTO;
+		if (!serviceUtil.isNull(demographicEntity.getPreRegistrationId())) {
+			ApplicationEntity applicationEntity = serviceUtil
+					.findApplicationById(demographicEntity.getPreRegistrationId());
+			log.info("In applicationEnity fetched {} in getAppointmentData method ", applicationEntity);
+			if (applicationEntity.getAppointmentDate() != null) {
+				BookingRegistrationDTO bookingRegistrationDTO = new BookingRegistrationDTO();
+				bookingRegistrationDTO.setRegDate(applicationEntity.getAppointmentDate().toString());
+				bookingRegistrationDTO.setRegistrationCenterId(applicationEntity.getRegistrationCenterId());
+				bookingRegistrationDTO.setSlotFromTime(applicationEntity.getSlotFromTime().toString());
+				bookingRegistrationDTO.setSlotToTime(applicationEntity.getSlotToTime().toString());
+				return bookingRegistrationDTO;
+			}
 		}
 		return null;
 
@@ -696,9 +701,10 @@ public class DemographicService implements DemographicServiceIntf {
 							getBookingServiceToDeleteAllByPreId(preregId);
 						}
 						int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
+						serviceUtil.deleteApplicationFromApplications(preregId);
 						if (isDeletedDemo > 0) {
-							deleteDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
-							deleteDto.setDeletedBy(demographicEntity.getCreatedBy());
+							deleteDto.setPreRegistrationId(preregId);
+							deleteDto.setDeletedBy(userId);
 							deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
 
 						} else {
@@ -834,6 +840,7 @@ public class DemographicService implements DemographicServiceIntf {
 			if (serviceUtil.isStatusValid(status)) {
 				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
 				demographicRepository.update(demographicEntity);
+				serviceUtil.updateApplicationStatus(demographicEntity.getPreRegistrationId(), status, userId);
 			} else {
 				throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 						DemographicErrorMessages.INVALID_STATUS_CODE.getMessage());
@@ -889,14 +896,17 @@ public class DemographicService implements DemographicServiceIntf {
 		auditLogUtil.saveAuditDetails(auditRequestDto);
 	}
 
-	private void getBookingServiceToDeleteAllByPreId(String preregId) {
+	private void getBookingServiceToDeleteAllByPreId(String preregId) throws Exception {
 		log.info("sessionId", "idType", "id",
 				"In callBookingServiceToDeleteAllByPreId method of pre-registration service ");
-		MainResponseDTO<DeleteBookingDTO> deleteBooking = serviceUtil.deleteBooking(preregId);
+		MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
+
+		deleteBooking = serviceUtil.deleteBooking(preregId);
 		if (deleteBooking.getErrors() != null) {
 			throw new BookingDeletionFailedException(deleteBooking.getErrors().get(0).getErrorCode(),
 					deleteBooking.getErrors().get(0).getMessage());
 		}
+
 	}
 
 	/*

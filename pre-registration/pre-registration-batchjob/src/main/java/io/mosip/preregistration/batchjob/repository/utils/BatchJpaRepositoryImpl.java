@@ -18,6 +18,7 @@ import io.mosip.preregistration.batchjob.entity.DocumentEntityConsumed;
 import io.mosip.preregistration.batchjob.entity.ProcessedPreRegEntity;
 import io.mosip.preregistration.batchjob.entity.RegistrationBookingEntityConsumed;
 import io.mosip.preregistration.batchjob.exception.NoPreIdAvailableException;
+import io.mosip.preregistration.batchjob.repository.ApplicationRepository;
 import io.mosip.preregistration.batchjob.repository.AvailabilityRepository;
 import io.mosip.preregistration.batchjob.repository.DemographicConsumedRepository;
 import io.mosip.preregistration.batchjob.repository.DemographicRepository;
@@ -27,6 +28,7 @@ import io.mosip.preregistration.batchjob.repository.ProcessedPreIdRepository;
 import io.mosip.preregistration.batchjob.repository.RegAppointmentConsumedRepository;
 import io.mosip.preregistration.batchjob.repository.RegAppointmentRepository;
 import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
@@ -45,6 +47,10 @@ public class BatchJpaRepositoryImpl {
 	@Autowired
 	@Qualifier("demographicRepository")
 	private DemographicRepository demographicRepository;
+
+	@Autowired
+	@Qualifier("applicationRepository")
+	private ApplicationRepository applicationRepository;
 
 	/** Autowired reference for {@link #bookingRepository}. */
 	@Autowired
@@ -114,6 +120,60 @@ public class BatchJpaRepositoryImpl {
 		return entity;
 	}
 
+	public ApplicationEntity getApplicantEntityDetails(String applicationID) {
+
+		ApplicationEntity entity = null;
+		try {
+			entity = applicationRepository.findByApplicationId(applicationID);
+			if (entity == null) {
+				throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+						ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
+
+			}
+
+		} catch (DataAccessLayerException e) {
+			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+					ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
+		}
+		return entity;
+	}
+
+	public RegistrationBookingEntity getRegistrationAppointmentDetails(String applicationID) {
+
+		RegistrationBookingEntity entity = null;
+		try {
+			entity = regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(applicationID);
+			if (entity == null) {
+				throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+						ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
+
+			}
+
+		} catch (DataAccessLayerException e) {
+			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+					ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
+		}
+		return entity;
+	}
+	
+	public List<RegistrationBookingEntity> getAllRegistrationAppointmentDetails(LocalDate bookingDate) {
+
+		List<RegistrationBookingEntity> entity = null;
+		try {
+			entity = regAppointmentRepository.findByBookingPKBookingDate(bookingDate);
+			if (entity == null || entity.size() == 0) {
+				throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+						ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
+
+			}
+
+		} catch (DataAccessLayerException e) {
+			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+					ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
+		}
+		return entity;
+	}
+
 	/**
 	 * @param statusComment
 	 * @return List of ProcessedPreRegEntity for given statusComment
@@ -161,10 +221,16 @@ public class BatchJpaRepositoryImpl {
 
 	/**
 	 * @param applicantDemographic
+	 * @return
 	 * @return updated demographic details.
 	 */
-	public DemographicEntity updateApplicantDemographic(DemographicEntity applicantDemographic) {
-		return demographicRepository.save(applicantDemographic);
+	public DemographicEntity updateApplicantDemographic(DemographicEntity demographicEntity) {
+		return demographicRepository.save(demographicEntity);
+
+	}
+
+	public ApplicationEntity updateApplicantEntity(ApplicationEntity applicantEntity) {
+		return applicationRepository.save(applicantEntity);
 	}
 
 	/**
@@ -308,16 +374,18 @@ public class BatchJpaRepositoryImpl {
 		}
 		return deletedSlots;
 	}
+
 	/**
 	 * 
 	 * @param regId
 	 * @param regDate
 	 * @return number of deleted items
 	 */
-	public int deleteSlotsBetweenHours(String regId, LocalDate regDate,LocalTime fromTime,LocalTime toTime) {
+	public int deleteSlotsBetweenHours(String regId, LocalDate regDate, LocalTime fromTime, LocalTime toTime) {
 		int deletedSlots = 0;
 		try {
-			deletedSlots = availabilityRepository.deleteByRegcntrIdAndRegDateAndFromTimeBetween(regId, regDate,fromTime,toTime);
+			deletedSlots = availabilityRepository.deleteByRegcntrIdAndRegDateAndFromTimeBetween(regId, regDate,
+					fromTime, toTime);
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_013.getCode(),
 					ErrorMessages.AVAILABILITY_TABLE_NOT_ACCESSABLE.getMessage());

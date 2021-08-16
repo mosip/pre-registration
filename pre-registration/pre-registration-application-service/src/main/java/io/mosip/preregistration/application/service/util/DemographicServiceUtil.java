@@ -4,10 +4,6 @@
  */
 package io.mosip.preregistration.application.service.util;
 
-import java.security.KeyManagementException;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,14 +13,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.net.ssl.SSLContext;
+import java.util.Objects;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -32,51 +23,57 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
+import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Component;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.code.DemographicRequestCodes;
-import io.mosip.preregistration.application.dto.ClientSecretDTO;
+import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
+import io.mosip.preregistration.application.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.IdSchemaDto;
 import io.mosip.preregistration.application.dto.PridFetchResponseDto;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
+import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
+import io.mosip.preregistration.application.exception.RecordNotFoundException;
+import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
+import io.mosip.preregistration.core.code.ApplicationStatusCode;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.code.StatusCodes;
-import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.DatabaseOperationException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
+import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
-import io.mosip.preregistration.application.dto.DemographicRequestDTO;
-import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.demographic.exception.system.DateParseException;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
@@ -90,6 +87,7 @@ import io.mosip.preregistration.demographic.exception.system.SystemIllegalArgume
  * @since 1.0.0
  */
 @Component
+@RefreshScope
 public class DemographicServiceUtil {
 
 	@Value("${mosip.utc-datetime-pattern}")
@@ -104,12 +102,6 @@ public class DemographicServiceUtil {
 	@Autowired
 	private RestTemplate restTemplate;
 
-	@Value("${clientId}")
-	private String clientId;
-
-	@Value("${secretKey}")
-	private String secretKey;
-
 	@Value("${mosip.io.prid.url}")
 	private String pridURl;
 
@@ -122,14 +114,14 @@ public class DemographicServiceUtil {
 	@Value("${mosip.preregistration.id-schema}")
 	private String idSchemaConfig;
 
-	@Value("${appId}")
-	private String appId;
-
-	@Autowired
-	private ObjectMapper objectMapper;
-
 	@Value("${booking.resource.url}")
 	private String deleteAppointmentResourseUrl;
+
+	@Autowired
+	private AppointmentService appointmentService;
+
+	@Autowired
+	private ApplicationRepostiory applicationRepostiory;
 	/**
 	 * Logger instance
 	 */
@@ -248,6 +240,9 @@ public class DemographicServiceUtil {
 
 		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
 		DemographicEntity demographicEntity = new DemographicEntity();
+		saveAndUpdateApplicationEntity(preRegistrationId, BookingTypeCodes.NEW_PREREGISTRATION.getBookingTypeCode(),
+				ApplicationStatusCode.DRAFT.getApplicationStatusCode(), StatusCodes.APPLICATION_INCOMPLETE.getCode(),
+				userId);
 		demographicEntity.setPreRegistrationId(preRegistrationId);
 		LocalDateTime encryptionDateTime = DateUtils.getUTCCurrentDateTime();
 		log.info("sessionId", "idType", "id", "Encryption start time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -282,6 +277,9 @@ public class DemographicServiceUtil {
 			DemographicRequestDTO demographicRequest, String statuscode, String userId, String preRegistrationId)
 			throws EncryptionFailedException {
 		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
+		saveAndUpdateApplicationEntity(preRegistrationId, BookingTypeCodes.NEW_PREREGISTRATION.getBookingTypeCode(),
+				ApplicationStatusCode.DRAFT.getApplicationStatusCode(), StatusCodes.APPLICATION_INCOMPLETE.getCode(),
+				userId);
 		demographicEntity.setPreRegistrationId(preRegistrationId);
 		LocalDateTime encryptionDateTime = DateUtils.getUTCCurrentDateTime();
 		log.info("sessionId", "idType", "id", "Encryption start time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -536,11 +534,10 @@ public class DemographicServiceUtil {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(idSchemaConfig);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			headers.set("Cookie", getAuthToken());
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = getRestTemplate().exchange(uriBuilder,
+			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = restTemplate.exchange(uriBuilder,
 					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -555,7 +552,7 @@ public class DemographicServiceUtil {
 						DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
 			}
 
-		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+		} catch (RestClientException ex) {
 
 			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 					DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
@@ -564,20 +561,20 @@ public class DemographicServiceUtil {
 
 	}
 
-	private String getAuthToken() {
-		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
-		ClientSecretDTO clientSecretDto = new ClientSecretDTO(clientId, secretKey, appId);
-		RequestWrapper<ClientSecretDTO> requestKernel = new RequestWrapper<>();
-		requestKernel.setRequest(clientSecretDto);
-		requestKernel.setRequesttime(LocalDateTime.now());
-		ResponseEntity<ResponseWrapper<AuthNResponse>> response = (ResponseEntity<ResponseWrapper<AuthNResponse>>) callAuthService(
-				tokenUrl, HttpMethod.POST, MediaType.APPLICATION_JSON, requestKernel, null, ResponseWrapper.class);
-		if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
-			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
-					DemographicErrorMessages.PRID_RESTCALL_FAIL.getMessage());
-		}
-		return response.getHeaders().get("Set-Cookie").get(0);
-	}
+//	private String getAuthToken() {
+//		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
+//		ClientSecretDTO clientSecretDto = new ClientSecretDTO(clientId, secretKey, appId);
+//		RequestWrapper<ClientSecretDTO> requestKernel = new RequestWrapper<>();
+//		requestKernel.setRequest(clientSecretDto);
+//		requestKernel.setRequesttime(LocalDateTime.now());
+//		ResponseEntity<ResponseWrapper<AuthNResponse>> response = (ResponseEntity<ResponseWrapper<AuthNResponse>>) callAuthService(
+//				tokenUrl, HttpMethod.POST, MediaType.APPLICATION_JSON, requestKernel, null, ResponseWrapper.class);
+//		if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
+//			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+//					DemographicErrorMessages.PRID_RESTCALL_FAIL.getMessage());
+//		}
+//		return response.getHeaders().get("Set-Cookie").get(0);
+//	}
 
 	public ResponseEntity<?> callAuthService(String url, HttpMethod httpMethodType, MediaType mediaType, Object body,
 			Map<String, String> headersMap, Class<?> responseClass) {
@@ -596,8 +593,8 @@ public class DemographicServiceUtil {
 				request = new HttpEntity<>(headers);
 			}
 			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
-			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
-		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+			response = restTemplate.exchange(url, httpMethodType, request, responseClass);
+		} catch (RestClientException ex) {
 			log.error("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
@@ -605,51 +602,8 @@ public class DemographicServiceUtil {
 
 	}
 
-	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegId) {
-		MainResponseDTO<DeleteBookingDTO> response = new MainResponseDTO<>();
-		String url = deleteAppointmentResourseUrl + '/' + "appointment" + "?preRegistrationId=" + preRegId;
-		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
-		String regbuilder = UriComponentsBuilder.fromHttpUrl(url).toString();
-		try {
-			log.info("sessionId", "idType", "id",
-					"In callBookingService method of DemographicServiceUtil" + regbuilder);
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			headers.set("Cookie", getAuthToken());
-			HttpEntity<?> entity = new HttpEntity<>(headers);
-
-			ResponseEntity<MainResponseDTO<DeleteBookingDTO>> responseEntity = getRestTemplate().exchange(url,
-					HttpMethod.DELETE, entity, new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
-					});
-			log.debug("sessionId", "idType", "id", responseEntity.toString());
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
-			}
-			response.setResponse(responseEntity.getBody().getResponse());
-			log.info("sessionId", "idType", "id", "In call to booking rest service :" + regbuilder);
-		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
-			log.error("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
-			throw new RestClientException("rest call failed");
-		}
-		return response;
-
-	}
-
-	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-
-		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-
-		SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy)
-				.build();
-
-		SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
-
-		CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-
-		requestFactory.setHttpClient(httpClient);
-		return new RestTemplate(requestFactory);
+	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegId) throws Exception {
+		return appointmentService.deleteBooking(preRegId);
 	}
 
 	public boolean isDemographicBookedOrExpired(DemographicEntity demographicEntity, ValidationUtil validationUtil) {
@@ -678,6 +632,76 @@ public class DemographicServiceUtil {
 		constructedJson.put(DemographicRequestCodes.IDENTITY.getCode(), demographicJson);
 
 		return constructedJson;
+	}
+
+	public ApplicationEntity saveAndUpdateApplicationEntity(String preId, String bookingTypeCode,
+			String applicationStatusCode, String bookingStatusCode, String userId) {
+		log.info("Creating/Updating an applications in applications table with ID: {}", preId);
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(preId);
+		applicationEntity.setApplicationStatusCode(applicationStatusCode);
+		applicationEntity.setBookingType(bookingTypeCode);
+		applicationEntity.setBookingStatusCode(bookingStatusCode);
+		applicationEntity.setCrBy(userId);
+		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		applicationEntity.setUpdBy(userId);
+		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		try {
+			applicationEntity = applicationRepostiory.save(applicationEntity);
+		} catch (Exception ex) {
+			log.error("Error while persisting applications entity");
+			log.error("Excepction {}", ex);
+			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_009.getCode(),
+					ApplicationErrorMessages.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
+		}
+		return applicationEntity;
+	}
+
+	public void updateApplicationStatus(String applicationId, String status, String userId) {
+		log.info("Updating applications status in applications table with statuscode: {} for applicationId: {}", status,
+				applicationId);
+		try {
+			ApplicationEntity applicationEntity = findApplicationById(applicationId);
+			applicationEntity.setBookingStatusCode(status);
+			applicationEntity.setUpdBy(userId);
+			applicationEntity.setUpdDtime(LocalDateTime.now());
+			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
+				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
+			}
+			applicationRepostiory.save(applicationEntity);
+		} catch (Exception ex) {
+			log.error("Error while updating status for applications");
+			log.error("Excepction {}", ex);
+			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
+					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
+		}
+
+	}
+
+	public ApplicationEntity findApplicationById(String applicationId) {
+		log.info("Fetching applications entry for applicationID: {}", applicationId);
+		ApplicationEntity applicationEntity = null;
+		try {
+			applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
+			if (Objects.isNull(applicationEntity)) {
+				throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+						DemographicErrorMessages.NO_RECORD_FOUND_FOR_USER_ID.getMessage());
+			}
+		} catch (DataAccessException ex) {
+			throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+					DemographicErrorMessages.NO_RECORD_FOUND_FOR_USER_ID.getMessage());
+		}
+		return applicationEntity;
+	}
+
+	public void deleteApplicationFromApplications(String applicationId) {
+		log.info("Deleting applications entry for applicationID: {}", applicationId);
+		try {
+			applicationRepostiory.deleteById(applicationId);
+		} catch (DatabaseOperationException e) {
+			throw new RecordFailedToDeleteException(ApplicationErrorCodes.PRG_APP_011.getCode(),
+					ApplicationErrorMessages.DELETE_FAILED_FOR_APPLICATION.getMessage());
+		}
 	}
 
 }
