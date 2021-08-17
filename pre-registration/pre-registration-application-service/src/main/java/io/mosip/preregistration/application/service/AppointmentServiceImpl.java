@@ -178,6 +178,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			log.info("Cancelling appointment for ID:{}", preRegistrationId);
 			CancelBookingResponseDTO response = appointmentUtils.cancelAppointment(preRegistrationId);
+
 			if (response != null && (response.getMessage() != null && response.getTransactionId() != null)) {
 				log.info("In appointment cancelled successfully , updating the applications and demographic tables",
 						preRegistrationId);
