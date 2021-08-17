@@ -68,7 +68,6 @@ public class UpdateApplicationsForBookingUtil {
 				log.info("Fetching applications for APPLICATION-ID: {}", regEntity.getPreregistrationId());
 				ApplicationEntity applicationEntity = applicationRepository
 						.findByApplicationId(regEntity.getPreregistrationId());
-
 				if (Objects.isNull(applicationEntity.getAppointmentDate())
 						|| applicationEntity.getSlotFromTime() == null || applicationEntity.getSlotToTime() == null) {
 					log.info("Mismatch in appointment details for APPLICATION-ID: {}",
@@ -134,5 +133,4 @@ public class UpdateApplicationsForBookingUtil {
 		applicationEntity.setUpdDtime(LocalDateTime.now());
 		return applicationEntity;
 	}
-
 }
