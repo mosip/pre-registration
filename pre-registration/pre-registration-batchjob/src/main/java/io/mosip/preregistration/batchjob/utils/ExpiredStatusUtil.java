@@ -19,6 +19,8 @@ import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
+import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
@@ -50,7 +52,7 @@ public class ExpiredStatusUtil {
 
 	@Autowired
 	private AuthTokenUtil tokenUtil;
-	
+
 	@Value("${mosip.batch.token.authmanager.userName}")
 	private String auditUsername;
 
@@ -75,18 +77,30 @@ public class ExpiredStatusUtil {
 			bookedPreIdList = batchServiceDAO.getAllOldDateBooking();
 
 			bookedPreIdList.forEach(iterate -> {
-				String preRegId = iterate.getDemographicEntity().getPreRegistrationId();
-				if (iterate.getDemographicEntity() != null) {
+				String preRegId = iterate.getPreregistrationId();
+				ApplicationEntity applicationEntity = batchServiceDAO.getApplicantEntityDetails(preRegId);
+				DemographicEntity demographicEntity = batchServiceDAO.getApplicantDemographicDetails(preRegId);
+				if (applicationEntity != null && demographicEntity != null) {
 
-					if (iterate.getDemographicEntity().getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
-						iterate.getDemographicEntity().setStatusCode(StatusCodes.EXPIRED.getCode());
-						iterate.getDemographicEntity().setUpdatedBy(auditUserId);
-						iterate.getDemographicEntity().setUpdateDateTime(DateUtils.parseDateToLocalDateTime(new Date()));
-						batchServiceDAO.updateApplicantDemographic(iterate.getDemographicEntity());
+					if (applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+						applicationEntity.setBookingStatusCode(StatusCodes.EXPIRED.getCode());
+						applicationEntity.setUpdBy(auditUserId);
+						applicationEntity.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
+						batchServiceDAO.updateApplicantEntity(applicationEntity);
+					}
+					log.info("sessionId", "idType", "id",
+							"Update the status successfully into Registration Appointment table and Applications table for Application-Id: "
+									+ preRegId);
+					if (demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+						demographicEntity.setStatusCode(StatusCodes.EXPIRED.getCode());
+						demographicEntity.setUpdatedBy(auditUserId);
+						demographicEntity.setUpdateDateTime(DateUtils.parseDateToLocalDateTime(new Date()));
+						batchServiceDAO.updateApplicantDemographic(demographicEntity);
 					}
 					log.info("sessionId", "idType", "id",
 							"Update the status successfully into Registration Appointment table and Demographic table for Pre-RegistrationId: "
 									+ preRegId);
+
 				}
 			});
 			isSaveSuccess = true;
@@ -98,12 +112,11 @@ public class ExpiredStatusUtil {
 				setAuditValues(EventId.PRE_413.toString(), EventName.EXPIREDSTATUS.toString(),
 						EventType.BUSINESS.toString(),
 						"Updated the expired status & the expired PreRegistration ids successfully saved in the database",
-						AuditLogVariables.PRE_REGISTRATION_ID.toString(), auditUserId,
-						auditUsername, null, headers);
+						AuditLogVariables.PRE_REGISTRATION_ID.toString(), auditUserId, auditUsername, null, headers);
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
-						"Expired status failed to update", AuditLogVariables.NO_ID.toString(),
-						auditUserId, auditUsername, null, headers);
+						"Expired status failed to update", AuditLogVariables.NO_ID.toString(), auditUserId,
+						auditUsername, null, headers);
 			}
 		}
 		response.setResponsetime(GenericUtil.getCurrentResponseTime());

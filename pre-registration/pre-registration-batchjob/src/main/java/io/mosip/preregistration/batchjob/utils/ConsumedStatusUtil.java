@@ -143,10 +143,11 @@ public class ConsumedStatusUtil {
 						});
 
 					}
-					RegistrationBookingEntity bookingEntity = demographicEntity.getRegistrationBookingEntity();
+					RegistrationBookingEntity bookingEntity = batchJpaRepositoryImpl
+							.getRegistrationAppointmentDetails(demographicEntity.getPreRegistrationId());
 					RegistrationBookingPKConsumed consumedPk = new RegistrationBookingPKConsumed();
 					consumedPk.setBookingDateTime(bookingEntity.getBookingPK().getBookingDateTime());
-					consumedPk.setPreregistrationId(bookingEntity.getDemographicEntity().getPreRegistrationId());
+					consumedPk.setPreregistrationId(bookingEntity.getPreregistrationId());
 					bookingEntityConsumed.setBookingPK(consumedPk);
 					bookingEntityConsumed.setCrBy(bookingEntity.getCrBy());
 					bookingEntityConsumed.setCrDate(bookingEntity.getCrDate());

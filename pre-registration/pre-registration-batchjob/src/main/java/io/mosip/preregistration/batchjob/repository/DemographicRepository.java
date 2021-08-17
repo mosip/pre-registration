@@ -14,5 +14,5 @@ import io.mosip.preregistration.core.common.entity.DemographicEntity;
 @Repository("demographicRepository")
 public interface DemographicRepository extends BaseRepository<DemographicEntity, String> {
 
-	DemographicEntity findBypreRegistrationId(@Param("preRegId")String preRegId);
+	DemographicEntity findBypreRegistrationId(@Param("preRegId") String preRegId);
 }

@@ -16,8 +16,20 @@ public enum ApplicationErrorCodes {
 	
 	PRG_APP_007("PRG_APP_007"), // Audit from UI Failed
 	
-	PRG_APP_008("PRG_APP_008"); // deprecated error code
+	PRG_APP_008("PRG_APP_008"), // deprecated error code
+	
+	PRG_APP_009("PRG_APP_009"), // failed to save/update applications table
+	
+	PRG_APP_010("PRG_APP_009"), // status update in applications table failed
+	
+	PRG_APP_011("PRG_APP_011"), //  delete operation failed for application in applications table
+	
+	PRG_APP_012("PRG_APP_012"), // No Record found 
 
+	PRG_APP_013("PRG_APP_013"), // Invalid request argument
+	
+	PRG_APP_014("PRG_APP_014"); // Invalid request application Id
+	
 	private ApplicationErrorCodes(String code) {
 		this.code = code;
 	}

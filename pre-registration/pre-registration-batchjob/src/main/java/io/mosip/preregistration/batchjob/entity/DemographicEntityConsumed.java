@@ -19,6 +19,7 @@ import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
 
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import lombok.AccessLevel;
@@ -45,8 +46,8 @@ public class DemographicEntityConsumed implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
 	private List<DocumentEntity> documentEntity;
 
-	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
-	private RegistrationBookingEntity registrationBookingEntity;
+	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
+	private ApplicationEntity applicationEntity;
 
 	/** The pre registration id. */
 	@Column(name = "prereg_id", nullable = false)
