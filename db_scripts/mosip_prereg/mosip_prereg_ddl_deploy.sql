@@ -21,6 +21,7 @@
 \ir ddl/prereg-prid_seed.sql
 \ir ddl/prereg-prid_seq.sql
 \ir ddl/prereg-otp_transaction.sql
+\ir ddl/prereg-applications.sql
 
 
 \ir ddl/prereg-fk.sql
