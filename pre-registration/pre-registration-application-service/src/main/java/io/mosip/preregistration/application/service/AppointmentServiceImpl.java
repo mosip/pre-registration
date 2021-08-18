@@ -206,6 +206,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			BookingStatus bookingStatus = appointmentUtils.multiAppointmentBooking(bookingRequest);
 			if (bookingStatus != null && bookingStatus.getBookingStatusResponse().size() > 0) {
+
 				bookingRequest.getRequest().getBookingRequest().stream().forEach(action -> {
 					String preRegistrationId = action.getPreRegistrationId();
 					BookingRequestDTO bookRequest = new BookingRequestDTO();
