@@ -166,11 +166,8 @@ public class AppointmentUtil {
 
 	public DeleteBookingDTO deleteBooking(String preRegId) {
 
-		Map<String, String> params = new LinkedHashMap<>();
-		params.put("preRegistrationId", preRegId.trim());
-
-		String constructedAppointmentUrl = UriComponentsBuilder.fromHttpUrl(appointmentUrl).buildAndExpand(params)
-				.toUriString();
+		String constructedAppointmentUrl = UriComponentsBuilder.fromHttpUrl(multiBookingUrl)
+				.queryParam("preRegistrationId", preRegId.trim()).toUriString();
 
 		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> responseEntity = null;
 
