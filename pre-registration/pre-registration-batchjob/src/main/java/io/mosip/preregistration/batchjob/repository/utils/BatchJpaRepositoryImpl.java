@@ -278,6 +278,17 @@ public class BatchJpaRepositoryImpl {
 					ErrorMessages.REG_APPOINTMENT_TABLE_NOT_ACCESSIBLE.getMessage());
 		}
 	}
+	
+	/** Deleting Booking details the consumed demographic data. */
+	public void deleteApplications(ApplicationEntity applicationEntity) {
+		try {
+			applicationRepository.delete(applicationEntity);
+			log.info("sessionId", "idType", "id", "In deleteapplications to delete consumed demographic details");
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_019.getCode(),
+					ErrorMessages.APPLICATIONS_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
 
 	/**
 	 * @param bookingEntityConsumed
