@@ -30,7 +30,8 @@ public enum ErrorMessages {
 	RECORD_NOT_FOUND_FOR_DATE_RANGE_AND_REG_CENTER_ID("Record not found for date range and reg center id"),//PRG_PAM_BAT_015
 	BOOKING_DATA_NOT_FOUND("Booking data not found"),//PRG_PAM_BAT_016
 	APPOINTMENT_CANNOT_BE_CANCELED("Appointment cannot be canceled"),//PRG_PAM_BAT_017
-	CANCEL_BOOKING_BATCH_CALL_FAILED("Cancel appointment service call failed");//PRG_PAM_BAT_018
+	CANCEL_BOOKING_BATCH_CALL_FAILED("Cancel appointment service call failed"),//PRG_PAM_BAT_018
+	APPLICATIONS_TABLE_NOT_ACCESSIBLE("Applications table not accessible"); //PRG_PAM_BAT_019
 	
 	/**
 	 * @param code

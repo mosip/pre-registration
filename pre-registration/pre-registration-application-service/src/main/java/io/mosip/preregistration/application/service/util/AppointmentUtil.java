@@ -139,7 +139,7 @@ public class AppointmentUtil {
 		HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> responseEntity = null;
-		
+
 		log.info("Fetching appointment details rest call for url : {}", constructedAppointmentUrl);
 
 		try {
@@ -177,7 +177,7 @@ public class AppointmentUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 
 			HttpEntity<?> entity = new HttpEntity<>(headers);
-			
+
 			log.info("Delete an appointment rest call for url : {}", constructedAppointmentUrl);
 
 			responseEntity = restTemplate.exchange(constructedAppointmentUrl, HttpMethod.DELETE, entity,
@@ -213,7 +213,7 @@ public class AppointmentUtil {
 		HttpEntity<?> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> responseEntity = null;
-		
+
 		log.info("Cancel an appointment rest call for url : {}", constructedAppointmentUrl);
 
 		try {
@@ -246,7 +246,7 @@ public class AppointmentUtil {
 		HttpEntity<?> entity = new HttpEntity<>(bookingRequest, headers);
 
 		ResponseEntity<MainResponseDTO<BookingStatus>> responseEntity = null;
-		
+
 		log.info("Multi Booking appointment rest call for url : {}", constructedAppointmentUrl);
 
 		try {

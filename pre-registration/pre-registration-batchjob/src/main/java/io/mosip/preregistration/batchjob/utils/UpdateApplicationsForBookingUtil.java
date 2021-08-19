@@ -69,22 +69,22 @@ public class UpdateApplicationsForBookingUtil {
 				ApplicationEntity applicationEntity = applicationRepository
 						.findByApplicationId(regEntity.getPreregistrationId());
 
-				if (!(Objects.nonNull(applicationEntity.getAppointmentDate())
+				if (Objects.isNull(applicationEntity.getAppointmentDate())
+						|| applicationEntity.getSlotFromTime() == null || applicationEntity.getSlotToTime() == null) {
+					log.info("Mismatch in appointment details for APPLICATION-ID: {}",
+							regEntity.getPreregistrationId());
+					ApplicationEntity appnEntity = setbookingData(applicationEntity, regEntity);
+					log.info("updating appointment details for  APPLICATION-ID: {}", regEntity.getPreregistrationId());
+					applicationRepository.save(appnEntity);
+				} else if (!(Objects.nonNull(applicationEntity.getAppointmentDate())
 						&& applicationEntity.getAppointmentDate().isEqual(regEntity.getRegDate())
 						&& applicationEntity.getSlotFromTime().equals(regEntity.getSlotFromTime())
 						&& applicationEntity.getSlotToTime().equals(regEntity.getSlotToTime()))) {
 					log.info("Mismatch in appointment details for APPLICATION-ID: {}",
 							regEntity.getPreregistrationId());
-					applicationEntity.setBookingDate(regEntity.getUpdDate().toLocalDate());
-					applicationEntity.setRegistrationCenterId(regEntity.getRegistrationCenterId());
-					applicationEntity.setSlotFromTime(regEntity.getSlotFromTime());
-					applicationEntity.setSlotToTime(regEntity.getSlotToTime());
-					applicationEntity.setAppointmentDate(regEntity.getRegDate());
-					applicationEntity.setBookingStatusCode(StatusCodes.BOOKED.getCode());
-					applicationEntity.setUpdBy("PRERIGISTRATION_JOB");
-					applicationEntity.setUpdDtime(LocalDateTime.now());
+					ApplicationEntity appnEntity = setbookingData(applicationEntity, regEntity);
 					log.info("updating appointment details for  APPLICATION-ID: {}", regEntity.getPreregistrationId());
-					applicationRepository.save(applicationEntity);
+					applicationRepository.save(appnEntity);
 				}
 			});
 			isSaveSuccess = true;
@@ -121,6 +121,18 @@ public class UpdateApplicationsForBookingUtil {
 		auditRequestDto.setModuleName(AuditLogVariables.PREREGISTRATION.toString());
 		auditRequestDto.setId(ref_id);
 		auditLogUtil.saveAuditDetails(auditRequestDto, headers);
+	}
+
+	private ApplicationEntity setbookingData(ApplicationEntity applicationEntity, RegistrationBookingEntity regEntity) {
+		applicationEntity.setBookingDate(regEntity.getUpdDate().toLocalDate());
+		applicationEntity.setRegistrationCenterId(regEntity.getRegistrationCenterId());
+		applicationEntity.setSlotFromTime(regEntity.getSlotFromTime());
+		applicationEntity.setSlotToTime(regEntity.getSlotToTime());
+		applicationEntity.setAppointmentDate(regEntity.getRegDate());
+		applicationEntity.setBookingStatusCode(StatusCodes.BOOKED.getCode());
+		applicationEntity.setUpdBy("PRERIGISTRATION_JOB");
+		applicationEntity.setUpdDtime(LocalDateTime.now());
+		return applicationEntity;
 	}
 
 }

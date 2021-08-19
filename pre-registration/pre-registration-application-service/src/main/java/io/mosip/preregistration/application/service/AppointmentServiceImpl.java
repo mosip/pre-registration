@@ -153,7 +153,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			log.info("Deleting appointment for ID:{}", preRegistrationId);
 			DeleteBookingDTO res = appointmentUtils.deleteBooking(preRegistrationId);
-			if (res != null) {
+			if (res != null && (res.getDeletedBy() != null && res.getDeletedDateTime() != null
+					&& res.getPreRegistrationId() != null)) {
 				log.info(
 						"In appointment deleted successfully for ID:{}, updating the applications and demographic tables",
 						preRegistrationId);
@@ -177,7 +178,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			log.info("Cancelling appointment for ID:{}", preRegistrationId);
 			CancelBookingResponseDTO response = appointmentUtils.cancelAppointment(preRegistrationId);
-			if (response != null) {
+			if (response != null && (response.getMessage() != null && response.getTransactionId() != null)) {
 				log.info("In appointment cancelled successfully , updating the applications and demographic tables",
 						preRegistrationId);
 				this.updateApplicationEntity(preRegistrationId, null);
@@ -203,7 +204,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		multiBookingResponse.setVersion(version);
 		try {
 			BookingStatus bookingStatus = appointmentUtils.multiAppointmentBooking(bookingRequest);
-			if (bookingStatus != null  && bookingStatus.getBookingStatusResponse().size() > 0) {
+			if (bookingStatus != null && bookingStatus.getBookingStatusResponse().size() > 0) {
 				bookingRequest.getRequest().getBookingRequest().stream().forEach(action -> {
 					String preRegistrationId = action.getPreRegistrationId();
 					BookingRequestDTO bookRequest = new BookingRequestDTO();
