@@ -8,8 +8,7 @@ import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 
 @Repository("applicationRepository")
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
-	
-	
+
 	@Query("SELECT e FROM ApplicationEntity e WHERE e.applicationId = ?1")
 	public ApplicationEntity findByApplicationId(String applicationId);
 	
