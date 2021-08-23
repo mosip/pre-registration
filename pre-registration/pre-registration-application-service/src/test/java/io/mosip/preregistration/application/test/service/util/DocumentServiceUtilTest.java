@@ -25,57 +25,51 @@
 //import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
 //import io.mosip.preregistration.application.service.DemographicServiceIntf;
 //import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
-////import io.mosip.preregistration.booking.service.BookingServiceIntf;
 //import io.mosip.preregistration.core.common.entity.DocumentEntity;
 //import io.mosip.preregistration.core.exception.InvalidRequestException;
 //import io.mosip.preregistration.core.util.AuthTokenUtil;
 //import io.mosip.preregistration.core.util.RequestValidator;
 //import io.mosip.preregistration.core.util.ValidationUtil;
 //
-//
 ///**
 // * @author Sanober Noor
-// *@since 1.0.0
+// * @since 1.0.0
 // */
 //@RunWith(SpringRunner.class)
-//@SpringBootTest
 //public class DocumentServiceUtilTest {
-//	
+//
 //	@MockBean
 //	private VirusScanner<Boolean, InputStream> virusScan;
-//	
+//
 //	List<DocumentEntity> docEntity = new ArrayList<>();
-//	
+//
 //	@MockBean
 //	private AuthTokenUtil authTokenUtil;
-//	
+//
 //	@MockBean
 //	private ValidationUtil util;
-//	
+//
 //	@Autowired
 //	private DocumentServiceUtil serviceUtil;
-//	
+//
 //	private MockMultipartFile mockMultipartFile;
-//	
+//
 //	@MockBean
 //	private RequestValidator requestValidator;
-//	
+//
 //	@MockBean
 //	private DemographicServiceIntf demographicServiceIntf;
-//	
-////	@MockBean
-////	private BookingServiceIntf bookingServiceIntf;
 //	
 //	/**
 //	 * Mocking the JsonValidatorImpl bean
 //	 */
-//	@MockBean(name="idObjectValidator")
+//	@MockBean(name = "idObjectValidator")
 //	private IdObjectValidator jsonValidator;
-//	
-//	String preRegistrationId="48690172097498";
-//	DocumentRequestDTO documentDto = new DocumentRequestDTO("address", "POA", "ENG");
+//
+//	String preRegistrationId = "48690172097498";
+//	DocumentRequestDTO documentDto = new DocumentRequestDTO("address", "POA", "ENG", "test");
 //	File file;
-//	
+//
 //	@Before
 //	public void setUp() throws Exception {
 //		ClassLoader classLoader = getClass().getClassLoader();
@@ -88,31 +82,31 @@
 //	public void getDateStringTest() {
 //		serviceUtil.getDateString(new Date());
 //	}
-//	
+//
 //	@Test
 //	public void parseDocumentIdTest() {
 //		serviceUtil.parseDocumentId("1234");
 //	}
 //
-//	@Test(expected=InvalidDocumentIdExcepion.class)
+//	@Test(expected = InvalidDocumentIdExcepion.class)
 //	public void parseDocumentIdFailureTest() throws Exception {
 //		serviceUtil.parseDocumentId("1234!@#$&^$$~~~~~~#@!$^%");
 //	}
-//	
-//	@Test(expected=InvalidRequestException.class)
-//	public void isValidCatCodeTest() throws Exception{
+//
+//	@Test(expected = InvalidRequestException.class)
+//	public void isValidCatCodeTest() throws Exception {
 //		serviceUtil.isValidCatCode("13fww");
 //	}
-//	
-////	@Test(expected=InvalidRequestException.class)
-////	public void inValidPreIDTest() throws Exception {
-////		serviceUtil.isValidRequest(documentDto,null);
-////	}
-//	
-//	@Test(expected=VirusScannerException.class)
-//	public void virusscannerFailureTest() throws Exception{
+//
+//	@Test(expected = InvalidRequestException.class)
+//	public void inValidPreIDTest() throws Exception {
+//		serviceUtil.isValidRequest(documentDto, null);
+//	}
+//
+//	@Test(expected = VirusScannerException.class)
+//	public void virusscannerFailureTest() throws Exception {
 //		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenThrow(java.io.IOException.class);
 //		serviceUtil.isVirusScanSuccess(mockMultipartFile);
-//	}	
+//	}
 //
 //}

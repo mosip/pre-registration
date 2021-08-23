@@ -51,7 +51,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Value("${version}")
 	private String version;
 
-	@Value("${mosip.utc-datetime-pattern}")
+	@Value("${mosip.utc-datetime-pattern:yyyy-MM-dd'T'hh:mm:ss.SSS'Z'}")
 	private String mosipDateTimeFormat;
 
 	@Value("${mosip.preregistration.booking.fetch.availability.id}")
