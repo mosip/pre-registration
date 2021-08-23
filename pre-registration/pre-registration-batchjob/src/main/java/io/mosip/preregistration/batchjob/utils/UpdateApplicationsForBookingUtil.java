@@ -134,8 +134,5 @@ public class UpdateApplicationsForBookingUtil {
 		applicationEntity.setUpdDtime(LocalDateTime.now());
 		return applicationEntity;
 	}
-<<<<<<< HEAD
-=======
 
->>>>>>> MOSIP-11719 (#270)
 }
