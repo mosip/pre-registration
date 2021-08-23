@@ -68,8 +68,6 @@
 //	@Mock
 //	private DocumentServiceIntf demoservice;
 //
-////	@MockBean
-////	private BookingServiceIntf bookingServiceIntf;
 //	/**
 //	 * /** Creating Mock Bean for NotificationService
 //	 */

@@ -16,31 +16,31 @@
 //import org.mockito.Mock;
 //import org.mockito.Mockito;
 //import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-//import org.springframework.boot.test.context.SpringBootTest;
+//import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 //import org.springframework.boot.test.mock.mockito.MockBean;
 //import org.springframework.http.MediaType;
 //import org.springframework.mock.web.MockMultipartFile;
-//import org.springframework.security.test.context.support.WithUserDetails;
+//import org.springframework.security.test.context.support.WithMockUser;
 //import org.springframework.test.context.junit4.SpringRunner;
 //import org.springframework.test.web.servlet.MockMvc;
 //import org.springframework.test.web.servlet.RequestBuilder;
 //import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+//import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+//import org.springframework.web.context.WebApplicationContext;
 //
-//import io.mosip.kernel.auth.adapter.handler.AuthHandler;
 //import io.mosip.kernel.core.fsadapter.spi.FileSystemAdapter;
-//import io.mosip.preregistration.application.code.DocumentStatusMessages;
+//import io.mosip.preregistration.application.dto.DocumentRequestDTO;
+//import io.mosip.preregistration.application.dto.DocumentResponseDTO;
 //import io.mosip.preregistration.application.service.DemographicServiceIntf;
 //import io.mosip.preregistration.application.service.DocumentServiceIntf;
 //import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
-//import io.mosip.preregistration.application.test.PreRegistrationApplicationTest;
+//import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
+//import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 ////import io.mosip.preregistration.booking.service.BookingServiceIntf;
 //import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 //import io.mosip.preregistration.core.common.entity.DocumentEntity;
 //import io.mosip.preregistration.core.util.AuthTokenUtil;
 //import io.mosip.preregistration.core.util.RequestValidator;
-//import io.mosip.preregistration.document.dto.DocumentRequestDTO;
-//import io.mosip.preregistration.document.dto.DocumentResponseDTO;
 //
 ///**
 // * Test class to test the DocumentUploader Controller methods
@@ -52,50 +52,42 @@
 // * @since 1.0.0
 // * 
 // */
-//@SpringBootTest
 //@RunWith(SpringRunner.class)
-//@AutoConfigureMockMvc
+//@WebMvcTest(DocumentControllerTest.class)
+//@WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
 //public class DocumentControllerTest {
 //
-//
-//	/**
-//	 * Autowired reference for {@link #MockMvc}
-//	 */
-//	@Autowired
 //	private MockMvc mockMvc;
 //
-//	@MockBean
+//	@Autowired
+//	private WebApplicationContext webApplicationContext;
 //
-//	private  AuthHandler authProvider;
-//	
 //	@Mock
 //	private AuthTokenUtil authTokenUtil;
-//	
+//
 //	@Mock
 //	private RequestValidator requestValidator;
 //
-//
 //	private MockMultipartFile mockMultipartFile;
-//
 //
 //	/**
 //	 * Creating Mock Bean for DemographicService
 //	 */
 //	@Mock
 //	private DemographicServiceIntf preRegistrationService;
-//	
+//
 //	/**
 //	 * Creating Mock Bean for DocumentUploadService
 //	 */
 //	@Mock
 //	private DocumentServiceIntf service;
-//	
+//
 ////	@MockBean
 ////	private BookingServiceIntf bookingServiceIntf;
 //
 //	@Mock
 //	private DocumentServiceUtil serviceutil;
-//	
+//
 //	/**
 //	 * Creating Mock Bean for FilesystemCephAdapterImpl
 //	 */
@@ -107,13 +99,14 @@
 //
 //	String documentId;
 //	boolean flag;
-//	
+//
 //	String docJson = "";
 //
 //	Map<String, String> map = new HashMap<>();
-//	MainResponseDTO responseCopy = new MainResponseDTO<>();
-//	MainResponseDTO responseDelete = new MainResponseDTO<>();
-//	MainResponseDTO<DocumentResponseDTO> responseMain = new MainResponseDTO<>();
+//	MainResponseDTO<DocumentResponseDTO> responseCopy = new MainResponseDTO<>();
+//	MainResponseDTO<DocumentsMetaData> responseAllDoc = new MainResponseDTO<>();
+//	MainResponseDTO<DocumentDeleteResponseDTO> responseDelete = new MainResponseDTO<>();
+//	MainResponseDTO<io.mosip.preregistration.application.dto.DocumentResponseDTO> responseMain = new MainResponseDTO<>();
 //	DocumentRequestDTO documentDto = null;
 //	List<DocumentResponseDTO> docResponseDtos = new ArrayList<>();
 //
@@ -122,13 +115,12 @@
 //	 */
 //	@Before
 //	public void setUp() throws IOException {
-//
-//		documentDto = new DocumentRequestDTO("POA", "address", "ENG");
+//		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
+//		documentDto = new DocumentRequestDTO("POA", "address", "ENG", "Test");
 //		// "59276903416082",
 //		docJson = "{\"id\": \"mosip.pre-registration.document.upload\",\"version\" : \"1.0\","
 //				+ "\"requesttime\" : \"2018-12-28T05:23:08.019Z\",\"request\" :" + "{\"docCatCode\" "
 //				+ ": \"POA\",\"docTypCode\" : \"address\",\"langCode\":\"ENG\"}}";
-//
 //
 //		response = new HashMap<String, String>();
 //		response.put("DocumentId", "1");
@@ -136,13 +128,13 @@
 //		documentId = response.get("DocumentId");
 //		flag = true;
 //
-//		List responseCopyList = new ArrayList<>();
-//		responseCopyList.add(DocumentStatusMessages.DOCUMENT_UPLOAD_SUCCESSFUL);
-//		responseCopy.setResponse(responseCopyList);
-//
-//		List responseDeleteList = new ArrayList<>();
-//		responseCopyList.add(DocumentStatusMessages.DOCUMENT_DELETE_SUCCESSFUL);
-//		responseDelete.setResponse(responseDeleteList);
+////		List responseCopyList = new ArrayList<>();
+////		responseCopyList.add(DocumentStatusMessages.DOCUMENT_UPLOAD_SUCCESSFUL);
+////		responseCopy.setResponse(responseCopyList);
+////
+////		List responseDeleteList = new ArrayList<>();
+////		responseCopyList.add(DocumentStatusMessages.DOCUMENT_DELETE_SUCCESSFUL);
+////		responseDelete.setResponse(responseDeleteList);
 //
 //		DocumentResponseDTO responseDto = new DocumentResponseDTO();
 //		responseDto.setDocCatCode("POA");
@@ -152,7 +144,6 @@
 //		responseMain.setResponse(responseDto);
 //	}
 //
-//	@WithUserDetails("individual")
 //	@Test
 //	public void successFileupload() throws Exception {
 //		String preRegistrationId = "123546987412563";
@@ -170,17 +161,15 @@
 //				.file(mockMultipartFile).contentType(MediaType.MULTIPART_FORM_DATA);
 //		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 //	}
-//	
 //
 //	/**
 //	 * @throws Exception
 //	 */
-//	@WithUserDetails("INDIVIDUAL")
 //	@Test
 //	public void successDelete() throws Exception {
 //		String preRegistrationId = "1234567847847";
 //		String documentId = "2ebbd74e-55e3-11e9-a7b4-b1f3d4442a79";
-//		Mockito.when(service.deleteDocument(documentId, preRegistrationId)).thenReturn(responseCopy);
+//		Mockito.when(service.deleteDocument(documentId, preRegistrationId)).thenReturn(responseDelete);
 //		RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/documents/{documentId}", documentId)
 //				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 //				.accept(MediaType.APPLICATION_JSON_VALUE).param("preRegistrationId", preRegistrationId);
@@ -191,41 +180,40 @@
 //	 * @throws Exception
 //	 */
 //
-//	@WithUserDetails("INDIVIDUAL")
 //	@Test
 //	public void getAllDocumentforPreidTest() throws Exception {
 //		String preRegistrationId = "48690172097498";
-//		Mockito.when(service.getAllDocumentForPreId("48690172097498")).thenReturn(responseCopy);
-//		
-//		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/documents/preregistration/{preRegistrationId}", preRegistrationId).contentType(MediaType.APPLICATION_JSON_VALUE);
+//		Mockito.when(service.getAllDocumentForPreId("48690172097498")).thenReturn(responseAllDoc);
+//
+//		RequestBuilder requestBuilder = MockMvcRequestBuilders
+//				.get("/documents/preregistration/{preRegistrationId}", preRegistrationId)
+//				.contentType(MediaType.APPLICATION_JSON_VALUE);
 //		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 //	}
-//	
-//	
+//
 //	/**
 //	 * @throws Exception
 //	 */
-//	@WithUserDetails("INDIVIDUAL")
+//
 //	@Test
 //	public void getAllDocumentforDocidTest() throws Exception {
 //		String preRegistrationId = "1234567847847";
 //		String documentId = "2ebbd74e-55e3-11e9-a7b4-b1f3d4442a79";
-//		Mockito.when(service.deleteDocument(documentId, preRegistrationId)).thenReturn(responseCopy);
+//		Mockito.when(service.deleteDocument(documentId, preRegistrationId)).thenReturn(responseDelete);
 //		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/documents/{documentId}", documentId)
 //				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 //				.accept(MediaType.APPLICATION_JSON_VALUE).param("preRegistrationId", preRegistrationId);
 //		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 //	}
 //
-//
 //	/**
 //	 * @throws Exception
 //	 */
-//	@WithUserDetails("INDIVIDUAL")
 //	@Test
 //	public void deletetAllDocumentByPreidTest() throws Exception {
 //		String preRegistrationId = "48690172097498";
 //		Mockito.when(service.deleteAllByPreId("48690172097498")).thenReturn(responseDelete);
+//		
 //		RequestBuilder requestBuilder = MockMvcRequestBuilders
 //				.delete("/documents/preregistration/{preRegistrationId}", preRegistrationId)
 //				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
@@ -237,7 +225,6 @@
 //	 * @throws Exception
 //	 */
 //
-//	@WithUserDetails("INDIVIDUAL")
 //	@Test
 //	public void copyDocumentTest() throws Exception {
 //		Mockito.when(service.copyDocument("POA", "48690172097498", "1234567891")).thenReturn(responseCopy);
@@ -245,36 +232,34 @@
 //		String preRegistrationId = "1232462566658";
 //		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/documents/{preRegistrationId}", preRegistrationId)
 //				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
-//				.accept(MediaType.APPLICATION_JSON_VALUE).param("catCode", "POA").param("sourcePreId", "48690172097498");
+//				.accept(MediaType.APPLICATION_JSON_VALUE).param("catCode", "POA")
+//				.param("sourcePreId", "48690172097498");
 //		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 //	}
 //
-//
 //	/**
 //	 * @throws Exception
 //	 */
-//	@WithUserDetails("INDIVIDUAL")
 //	@Test(expected = Exception.class)
 //	public void failureGetAllDocumentforPreidTest() throws Exception {
 //		Mockito.when(service.getAllDocumentForPreId("2")).thenThrow(Exception.class);
-//		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/documents").contentType(MediaType.APPLICATION_JSON_VALUE).param("preId", "2");
+//		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/documents")
+//				.contentType(MediaType.APPLICATION_JSON_VALUE).param("preId", "2");
 //		mockMvc.perform(requestBuilder).andExpect(status().isInternalServerError());
-//		
 //
 //	}
 //
 //	/**
 //	 * @throws Exception
 //	 */
-//	@WithUserDetails("INDIVIDUAL")
 //	@Test(expected = Exception.class)
 //	public void FailurecopyDocumentTest() throws Exception {
 //		Mockito.when(service.copyDocument(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
 //				.thenThrow(Exception.class);
 //
-//		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/documents/copy").contentType(MediaType.APPLICATION_JSON_VALUE)
-//				.param("catCype", Mockito.anyString()).param("sourcePrId", Mockito.anyString())
-//				.param("destinationPreId", Mockito.anyString());
+//		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/documents/copy")
+//				.contentType(MediaType.APPLICATION_JSON_VALUE).param("catCype", Mockito.anyString())
+//				.param("sourcePrId", Mockito.anyString()).param("destinationPreId", Mockito.anyString());
 //		mockMvc.perform(requestBuilder).andExpect(status().isBadRequest());
 //	}
 //

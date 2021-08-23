@@ -30,9 +30,9 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- object: fk_rappmnt_id | type: CONSTRAINT --
 -- ALTER TABLE prereg.reg_appointment DROP CONSTRAINT IF EXISTS fk_rappmnt_id CASCADE;
-ALTER TABLE prereg.reg_appointment ADD CONSTRAINT fk_rappmnt_id FOREIGN KEY (prereg_id)
-REFERENCES prereg.applicant_demographic (prereg_id) MATCH SIMPLE
-ON DELETE NO ACTION ON UPDATE NO ACTION;
+--ALTER TABLE prereg.reg_appointment ADD CONSTRAINT fk_rappmnt_id FOREIGN KEY (prereg_id)
+--REFERENCES prereg.applicant_demographic (prereg_id) MATCH SIMPLE
+--ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 -- object: fk_rappmntc_id | type: CONSTRAINT --

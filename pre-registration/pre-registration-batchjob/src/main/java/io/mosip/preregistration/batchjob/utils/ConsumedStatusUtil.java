@@ -23,6 +23,7 @@ import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
@@ -143,10 +144,11 @@ public class ConsumedStatusUtil {
 						});
 
 					}
-					RegistrationBookingEntity bookingEntity = demographicEntity.getRegistrationBookingEntity();
+					RegistrationBookingEntity bookingEntity = batchJpaRepositoryImpl
+							.getRegistrationAppointmentDetails(demographicEntity.getPreRegistrationId());
 					RegistrationBookingPKConsumed consumedPk = new RegistrationBookingPKConsumed();
 					consumedPk.setBookingDateTime(bookingEntity.getBookingPK().getBookingDateTime());
-					consumedPk.setPreregistrationId(bookingEntity.getDemographicEntity().getPreRegistrationId());
+					consumedPk.setPreregistrationId(bookingEntity.getPreregistrationId());
 					bookingEntityConsumed.setBookingPK(consumedPk);
 					bookingEntityConsumed.setCrBy(bookingEntity.getCrBy());
 					bookingEntityConsumed.setCrDate(bookingEntity.getCrDate());
@@ -165,6 +167,8 @@ public class ConsumedStatusUtil {
 					}
 					batchJpaRepositoryImpl.deleteBooking(bookingEntity);
 					batchJpaRepositoryImpl.deleteDemographic(demographicEntity);
+					ApplicationEntity applicationEntity= batchJpaRepositoryImpl.getApplicantEntityDetails(preRegId);
+					batchJpaRepositoryImpl.deleteApplications(applicationEntity);
 					log.info("sessionId", "idType", "id",
 							"Update the status successfully into Consumed tables for Pre-RegistrationId: " + preRegId);
 

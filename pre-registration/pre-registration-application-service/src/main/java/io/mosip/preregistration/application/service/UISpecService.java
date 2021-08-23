@@ -1,6 +1,7 @@
 package io.mosip.preregistration.application.service;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -26,6 +27,15 @@ public class UISpecService {
 	@Value("${version}")
 	private String version;
 
+	@Value("${mosip.utc-datetime-pattern}")
+	private String mosipDateTimeFormat;
+
+	@Value("${mosip.preregistration.uispec.latest}")
+	private String uiSpecLatestId;
+
+	@Value("${mosip.preregistration.uispec.all}")
+	private String uiSpecAllId;
+
 	@Autowired
 	UISpecServiceUtil serviceUtil;
 
@@ -40,7 +50,7 @@ public class UISpecService {
 		log.info("In UISpec service getUIspec method");
 		MainResponseDTO<UISpecMetaDataDTO> response = new MainResponseDTO<UISpecMetaDataDTO>();
 		response.setVersion(this.version);
-		response.setResponsetime(LocalDateTime.now().toString());
+		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			log.info("fetching the UiSpec version {} and identitySchemaVersion {}", version, identitySchemaVersion);
 			List<UISpecResponseDTO> uiSchema = serviceUtil.getUISchema(version, identitySchemaVersion);
@@ -63,7 +73,7 @@ public class UISpecService {
 		log.info("In UISpec service getAllUISpec method");
 		MainResponseDTO<PageDTO<UISpecMetaDataDTO>> response = new MainResponseDTO<PageDTO<UISpecMetaDataDTO>>();
 		response.setVersion(this.version);
-		response.setResponsetime(LocalDateTime.now().toString());
+		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			log.info("fetching the All published UiSpec");
 			PageDTO<UISpecResponseDTO> res = serviceUtil.getAllUISchema(pageNumber, pageSize);

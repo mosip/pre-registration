@@ -15,7 +15,6 @@ import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.SchemaResponseDto;
 
-
 public interface DemographicServiceIntf {
 
 	AuthUserDetails authUserDetails();
@@ -48,9 +47,8 @@ public interface DemographicServiceIntf {
 	/**
 	 * This Method is used to fetch all the applications created by User
 	 * 
-	 * @param userId
-	 *            pass a userId through which user has logged in which can be either
-	 *            email Id or phone number
+	 * @param userId pass a userId through which user has logged in which can be
+	 *               either email Id or phone number
 	 * @return List of groupIds
 	 * 
 	 */
@@ -59,8 +57,7 @@ public interface DemographicServiceIntf {
 	/**
 	 * This Method is used to fetch status of particular preId
 	 * 
-	 * @param preRegId
-	 *            pass preRegId of the user
+	 * @param preRegId pass preRegId of the user
 	 * @return response status of the preRegId
 	 * 
 	 * 
@@ -71,8 +68,7 @@ public interface DemographicServiceIntf {
 	 * This Method is used to delete the Individual Application and documents
 	 * associated with it
 	 * 
-	 * @param preregId
-	 *            pass the preregId of individual
+	 * @param preregId pass the preregId of individual
 	 * @return response
 	 * 
 	 */
@@ -81,8 +77,7 @@ public interface DemographicServiceIntf {
 	/**
 	 * This Method is used to retrieve the demographic
 	 * 
-	 * @param preRegId
-	 *            pass the preregId of individual
+	 * @param preRegId pass the preregId of individual
 	 * @return response DemographicData of preRegId
 	 */
 	MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId);
@@ -90,10 +85,8 @@ public interface DemographicServiceIntf {
 	/**
 	 * This Method is used to update status of particular preId
 	 * 
-	 * @param preRegId
-	 *            pass the preregId of individual
-	 * @param status
-	 *            pass the status of individual
+	 * @param preRegId pass the preregId of individual
+	 * @param status   pass the status of individual
 	 * @return response
 	 * 
 	 * 
@@ -102,12 +95,18 @@ public interface DemographicServiceIntf {
 
 	MainResponseDTO<Map<String, String>> getUpdatedDateTimeForPreIds(
 			PreRegIdsByRegCenterIdDTO preRegIdsByRegCenterIdDTO);
-	
+
 	/**
 	 * Gets the schemaconfig.
 	 *
 	 * @return {@link SchemaResponseDto}
 	 */
 	MainResponseDTO<SchemaResponseDto> getSchemaconfig();
+
+	/**
+	 * This method acts as a post constructor to initialize the required request
+	 * parameters.
+	 */
+	void setup();
 
 }

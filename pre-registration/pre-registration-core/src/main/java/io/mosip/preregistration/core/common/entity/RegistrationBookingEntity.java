@@ -13,8 +13,6 @@ import javax.persistence.Column;
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 import lombok.Getter;
@@ -38,10 +36,6 @@ public class RegistrationBookingEntity implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7886669943207769620L;
 
-	@OneToOne
-	@JoinColumn(name = "prereg_id", nullable = false)
-	private DemographicEntity demographicEntity;
-
 	/** Id. */
 	@Id
 	@Column(name = "id")
@@ -50,6 +44,12 @@ public class RegistrationBookingEntity implements Serializable {
 	/** Booking primary Key. */
 	@Embedded
 	private RegistrationBookingPK bookingPK;
+
+	/**
+	 * Pre registration Id
+	 */
+	@Column(name = "prereg_id")
+	private String preregistrationId;
 
 	/** Registration center id. */
 	@Column(name = "regcntr_id")
