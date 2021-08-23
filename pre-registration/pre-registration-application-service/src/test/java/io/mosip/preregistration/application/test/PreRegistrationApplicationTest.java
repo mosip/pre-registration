@@ -6,8 +6,6 @@ package io.mosip.preregistration.application.test;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 
 /**
  * This class is used to define the start of the demographic service
@@ -15,8 +13,12 @@ import org.springframework.context.annotation.FilterType;
  * @author Rajath KR
  * @since 1.0.0
  */
-@SpringBootApplication
-@ComponentScan(basePackages = "io.mosip.*", excludeFilters = @ComponentScan.Filter(type = FilterType.REGEX, pattern = "io.mosip.kernel.idobjectvalidator.*"))
+@SpringBootApplication(scanBasePackages = { "io.mosip.preregistration.core.*",
+		"io.mosip.preregistration.application.controller.*", "io.mosip.preregistration.application.service.*",
+		"io.mosip.preregistration.application.entity.*", "io.mosip.preregistration.application.repository.*",
+		"io.mosip.kernel.core.*", "io.mosip.kernel.idobjectvalidator.*", "io.mosip.commons.*",
+		"io.mosip.preregistration.application.security.*" })
+
 public class PreRegistrationApplicationTest {
 	/**
 	 * 

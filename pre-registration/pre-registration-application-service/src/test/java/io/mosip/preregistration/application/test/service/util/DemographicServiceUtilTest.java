@@ -10,17 +10,11 @@
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
 //import org.mockito.Mockito;
-//import org.springframework.beans.factory.annotation.Autowired;
-//import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.boot.test.mock.mockito.MockBean;
 //import org.springframework.test.context.junit4.SpringRunner;
-//import org.springframework.web.client.RestTemplate;
 //
-//import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 //import io.mosip.preregistration.application.exception.OperationNotAllowedException;
-//import io.mosip.preregistration.application.service.DocumentServiceIntf;
 //import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
-//import io.mosip.preregistration.application.test.PreRegistrationApplicationTest;
 ////import io.mosip.preregistration.booking.service.BookingServiceIntf;
 //import io.mosip.preregistration.core.code.StatusCodes;
 //import io.mosip.preregistration.core.common.entity.DemographicEntity;
@@ -39,30 +33,32 @@
 // * 
 // */
 //@RunWith(SpringRunner.class)
-//@SpringBootTest(classes = { PreRegistrationApplicationTest.class })
 //public class DemographicServiceUtilTest {
 //
 //	/**
 //	 * Autowired reference for $link{DemographicServiceUtil}
 //	 */
-//	@Autowired
+//	@MockBean
 //	private DemographicServiceUtil demographicServiceUtil;
 //
-//	@MockBean(name="idObjectValidator")
-//	private IdObjectValidator jsonValidator;
-//	
-//	@MockBean(name="restTemplate")
-//	RestTemplate restTemplate;
-//	
-//	@MockBean
-//	private DocumentServiceIntf documentServiceIntf;
-//	
+//	/**
+//	 * Mocking the JsonValidatorImpl bean
+//	 */
+////	@MockBean(name = "idObjectValidator")
+////	private IdObjectValidator jsonValidator;
+////	
 ////	@MockBean
-////	private BookingServiceIntf bookingServiceIntf;
-//	
+////	private VirusScanner<Boolean, InputStream> virusScan;
+//
+////	@MockBean(name = "restTemplate")
+////	RestTemplate restTemplate;
+////
+////	@MockBean
+////	private DocumentServiceIntf documentServiceIntf;
+//
 //	@MockBean
 //	private RequestValidator requestValidator;
-//	
+//
 //	private DemographicRequestDTO saveDemographicRequest = null;
 //	private DemographicRequestDTO updateDemographicRequest = null;
 //	private DemographicEntity demographicEntity = null;
@@ -77,8 +73,7 @@
 //	private CryptoUtil cryptoUtil;
 //
 //	/**
-//	 * @throws Exception
-//	 *             on Any Exception
+//	 * @throws Exception on Any Exception
 //	 */
 //	@Before
 //	public void setUp() throws Exception {
@@ -114,7 +109,6 @@
 //		Mockito.when(demographicServiceUtil.checkStatusForDeletion(StatusCodes.EXPIRED.getCode()))
 //				.thenThrow(OperationNotAllowedException.class);
 //	}
-//
 //
 //	@Test(expected = DateParseException.class)
 //	public void getDateFromStringFailureTest() throws Exception {
