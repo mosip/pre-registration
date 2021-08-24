@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.json.simple.JSONObject;
@@ -228,7 +229,7 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Value("${preregistration.demographic.idschema-json-filename}")
 	private String fileName;
-	
+
 	private static final String INDENTITY = "identity";
 
 	private static final String PROPERTIES = "properties";
@@ -296,7 +297,7 @@ public class DemographicService implements DemographicServiceIntf {
 			validationUtil.langvalidation(demographicRequest.getLangCode());
 			log.info("sessionId", "idType", "id",
 					"JSON validator start time : " + DateUtils.getUTCCurrentDateTimeString());
-			
+
 			List<String> identityKeys = convertSchemaJsonToArray(idSchema.getSchemaJson());
 
 			log.info("IDENTITY KEYS: {}", identityKeys);
@@ -581,6 +582,7 @@ public class DemographicService implements DemographicServiceIntf {
 			for (int i = 0; i < nameKeys.length; i++) {
 				demographicMetadata.put(nameKeys[i], serviceUtil.getValueFromIdentity(decryptedString, nameKeys[i]));
 			}
+			Set<String> dataCaptureLang = serviceUtil.getDataCaptureLaanguage(jsonObj);
 			demographicMetadata.put(postalCodeValue,
 					serviceUtil.getIdJSONValue(jsonObj.toJSONString(), postalCodeValue));
 			demographicMetadata.put(poaValue, documentJsonObject);
@@ -588,6 +590,7 @@ public class DemographicService implements DemographicServiceIntf {
 			viewDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
 			viewDto.setStatusCode(demographicEntity.getStatusCode());
 			viewDto.setDemographicMetadata(demographicMetadata);
+			viewDto.setDataCaptureLanguage(dataCaptureLang);
 			log.info("sessionId", "idType", "id",
 					"get booking details start time : " + DateUtils.getUTCCurrentDateTimeString());
 			BookingRegistrationDTO bookingRegistrationDTO = getAppointmentData(demographicEntity);
