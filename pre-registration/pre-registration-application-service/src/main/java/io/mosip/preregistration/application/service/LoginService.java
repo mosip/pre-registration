@@ -246,7 +246,6 @@ public class LoginService {
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} catch (RuntimeException ex) {
 			log.error("In calluserIdOtp method of login service- ", ex);
-
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} finally {
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
