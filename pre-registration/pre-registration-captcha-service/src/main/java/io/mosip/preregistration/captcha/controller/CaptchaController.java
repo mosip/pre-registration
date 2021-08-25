@@ -20,6 +20,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.swagger.annotations.ApiOperation;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
@@ -29,24 +30,24 @@ public class CaptchaController {
 	private static final String VALIDATE = "validate";
 
 	private Logger log = LoggerConfiguration.logConfig(CaptchaController.class);
-	
+
 	@Autowired
 	private RequestValidator requestValidator;
-	
+
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.addValidators(requestValidator);
 	}
-	
+
 	@Autowired
 	private CaptchaService captchaService;
 
-	@PostMapping(path = "/validatecaptcha" , consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> validateCaptcha(
-		@Validated	@RequestBody MainRequestDTO<CaptchaRequestDTO> captchaRequest, @ApiIgnore Errors errors) {
+	@PostMapping(path = "/validatecaptcha", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value =  "validate captcha")
+	public ResponseEntity<?> validateCaptcha(@Validated @RequestBody MainRequestDTO<CaptchaRequestDTO> captchaRequest,
+			@ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration captcha controller to validate the recaptcha token" + captchaRequest);
-		//System.out.println("In pre-registration captcha controller to validate the recaptcha token" + "  "+captchaRequest);
 		requestValidator.validateId(VALIDATE, captchaRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATE);
 		return new ResponseEntity<>(this.captchaService.validateCaptcha(captchaRequest.getRequest()), HttpStatus.OK);
