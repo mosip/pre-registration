@@ -1,12 +1,15 @@
 package io.mosip.preregistration.application.controller;
 
 import java.util.Map;
+import java.util.Objects;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -25,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
+import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.User;
@@ -63,6 +67,9 @@ public class LoginController {
 
 	@Autowired
 	private RequestValidator loginValidator;
+	
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int otpExpiryTime;
 
 	/** The Constant SENDOTP. */
 	private static final String SENDOTP = "preregistration.login.sendotp";
@@ -205,6 +212,24 @@ public class LoginController {
 		log.info("sessionId", "idType", "id", "In Login controller for updating config values ");
 		return new ResponseEntity<>(loginService.refreshConfig(), HttpStatus.OK);
 
+	}
+	
+	@PostMapping(path = "/sendOtpWithCaptcha", produces = MediaType.APPLICATION_JSON_VALUE)
+	public ResponseEntity<MainResponseDTO<?>> sendOtpWithCaptcha(
+			@Validated @Valid @RequestBody MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> sendOtpRequestWithCaptcha,
+			HttpServletResponse res, @ApiIgnore Errors errors) {
+
+		MainResponseDTO<AuthNResponse> response = loginService.validateCaptchaAndSendOtp(sendOtpRequestWithCaptcha);
+		if (Objects.isNull(response.getErrors())) {
+			Cookie resCookie = new Cookie("canAuthorise",
+					loginService.sendOTPSuccessJwtToken(sendOtpRequestWithCaptcha.getRequest().getUserId()));
+			resCookie.setMaxAge((int) otpExpiryTime / 60);
+			resCookie.setHttpOnly(true);
+			resCookie.setSecure(true);
+			resCookie.setPath("/");
+			res.addCookie(resCookie);
+		}
+		return new ResponseEntity<>(response, HttpStatus.OK);
 	}
 
 }

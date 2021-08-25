@@ -13,8 +13,9 @@ public enum PreRegLoginErrorConstants {
 	MISSING_INPUT_PARAMETER("PRE-REG-OTP-405", "Missing Input Parameter - %s"),
 	BLOCKED_OTP_VALIDATE("PRE-REG-OTP-405", "Missing Input Parameter - %s"),
 	UNABLE_TO_PROCESS("PRE-REG-OTP-405", "Missing Input Parameter - %s"),
-	SERVER_ERROR("PRE-REG-OTP-405", "Missing Input Parameter - %s");
-	
+	SERVER_ERROR("PRE-REG-OTP-405", "Missing Input Parameter - %s"),
+	CAPTCHA_SEVER_ERROR("PRE-REG-CAP-102", "Captcha could not be validated"),
+	CAPTCHA_ERROR("PRE-REG-CAP-101", "Captcha token is empty");
 
 	final String errorCode;
 	private final String errorMessage;

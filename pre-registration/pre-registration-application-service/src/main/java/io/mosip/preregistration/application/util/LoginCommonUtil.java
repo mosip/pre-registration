@@ -6,10 +6,15 @@ import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.security.cert.X509Certificate;
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
+<<<<<<< HEAD
+=======
+import java.util.Date;
+>>>>>>> MOSIP16977
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +30,9 @@ import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -41,13 +48,21 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.jsonwebtoken.Jwts;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
+import io.mosip.preregistration.application.dto.CaptchaRequestDTO;
+import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.MosipUserDTO;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 import io.mosip.preregistration.application.exception.LanguagePropertiesException;
+<<<<<<< HEAD
+=======
+import io.mosip.preregistration.application.exception.PreRegLoginException;
+>>>>>>> MOSIP16977
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
@@ -71,6 +86,7 @@ public class LoginCommonUtil {
 	private Environment env;
 
 	@Autowired
+	@Qualifier(value = "restTemplateConfig")
 	private RestTemplate restTemplate;
 
 	@Autowired
@@ -93,6 +109,24 @@ public class LoginCommonUtil {
 	@Value("${sendOtp.resource.url}")
 	private String sendOtpResourceUrl;
 
+<<<<<<< HEAD
+=======
+	@Value("${prereg.auth.jwt.audience}")
+	private String jwtAudience;
+
+	@Value("${mosip.kernel.otp.expiry-time}")
+	private int otpExpiryTime;
+
+	@Value("${mosip.preregistration.login.service.version}")
+	private String version;
+
+	@Value("${mosip.preregistration.captcha.resourse.url}")
+	private String captchaUrl;
+
+	@Value("${mosip.preregistration.captcha.id.validate}")
+	private String captchaRequestId;
+
+>>>>>>> MOSIP16977
 	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
 	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
 	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
@@ -333,7 +367,11 @@ public class LoginCommonUtil {
 		return userDetailsDto.getUserId();
 	}
 
+<<<<<<< HEAD
 		public void validateLanguageProperties(Map<String, String> configParams) {
+=======
+	public void validateLanguageProperties(Map<String, String> configParams) {
+>>>>>>> MOSIP16977
 		try {
 			log.info("In validateLanguageProperties method of  logincommon util");
 
@@ -453,4 +491,56 @@ public class LoginCommonUtil {
 		return new RestTemplate(requestFactory);
 	}
 
+<<<<<<< HEAD
+=======
+	public CaptchaResposneDTO validateCaptchaToken(String captchaToken) throws PreRegLoginException {
+
+		if (captchaToken == null || captchaToken.isBlank()) {
+			log.error("Validating Captcha token is null or blank");
+			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorCode(),
+					PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorMessage());
+		}
+
+		CaptchaRequestDTO captcha = new CaptchaRequestDTO();
+		captcha.setCaptchaToken(captchaToken);
+		MainRequestDTO<CaptchaRequestDTO> captchaRequest = new MainRequestDTO<CaptchaRequestDTO>();
+		captchaRequest.setRequest(captcha);
+		captchaRequest.setRequesttime(new Date());
+
+		captchaRequest.setVersion(version);
+		captchaRequest.setId(captchaRequestId);
+		HttpHeaders header = new HttpHeaders();
+		header.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
+		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
+		try {
+			log.debug("Calling captcha service to validate token {}", captchaRequest);
+
+			responseEntity = restTemplate.exchange(captchaUrl, HttpMethod.POST, entity,
+					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
+					});
+
+			if (responseEntity.getBody().getErrors() != null) {
+				log.error("validateCaptchaToken has an error {}", responseEntity.getBody().getErrors());
+				throw new PreRegLoginException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
+
+		} catch (RestClientException ex) {
+			log.error("Error while Calling captcha service to validate token {}", ex);
+			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
+					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
+		}
+
+		return responseEntity.getBody().getResponse();
+
+	}
+
+	public String sendOtpJwtToken(String userId) {
+		return Jwts.builder().setIssuedAt(Date.from(Instant.now())).setSubject(userId)
+				.setExpiration(Date.from(Instant.now().plusSeconds(otpExpiryTime))).setAudience(jwtAudience).compact();
+
+	}
+
+>>>>>>> MOSIP16977
 }
