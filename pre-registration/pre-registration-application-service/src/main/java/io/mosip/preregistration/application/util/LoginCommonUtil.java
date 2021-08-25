@@ -11,10 +11,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.Arrays;
-<<<<<<< HEAD
-=======
 import java.util.Date;
->>>>>>> MOSIP16977
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +46,6 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.jsonwebtoken.Jwts;
-import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
 import io.mosip.preregistration.application.dto.CaptchaRequestDTO;
@@ -59,10 +55,7 @@ import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 import io.mosip.preregistration.application.exception.LanguagePropertiesException;
-<<<<<<< HEAD
-=======
 import io.mosip.preregistration.application.exception.PreRegLoginException;
->>>>>>> MOSIP16977
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
@@ -109,8 +102,6 @@ public class LoginCommonUtil {
 	@Value("${sendOtp.resource.url}")
 	private String sendOtpResourceUrl;
 
-<<<<<<< HEAD
-=======
 	@Value("${prereg.auth.jwt.audience}")
 	private String jwtAudience;
 
@@ -126,7 +117,6 @@ public class LoginCommonUtil {
 	@Value("${mosip.preregistration.captcha.id.validate}")
 	private String captchaRequestId;
 
->>>>>>> MOSIP16977
 	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
 	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
 	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
@@ -367,11 +357,8 @@ public class LoginCommonUtil {
 		return userDetailsDto.getUserId();
 	}
 
-<<<<<<< HEAD
-		public void validateLanguageProperties(Map<String, String> configParams) {
-=======
 	public void validateLanguageProperties(Map<String, String> configParams) {
->>>>>>> MOSIP16977
+
 		try {
 			log.info("In validateLanguageProperties method of  logincommon util");
 
@@ -491,8 +478,6 @@ public class LoginCommonUtil {
 		return new RestTemplate(requestFactory);
 	}
 
-<<<<<<< HEAD
-=======
 	public CaptchaResposneDTO validateCaptchaToken(String captchaToken) throws PreRegLoginException {
 
 		if (captchaToken == null || captchaToken.isBlank()) {
@@ -542,5 +527,4 @@ public class LoginCommonUtil {
 
 	}
 
->>>>>>> MOSIP16977
 }

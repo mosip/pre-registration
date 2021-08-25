@@ -35,7 +35,6 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.impl.TextCodec;
-import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
@@ -164,12 +163,8 @@ public class LoginService {
 		MainResponseDTO<AuthNResponse> response = null;
 		String userid = null;
 		boolean isSuccess = false;
-<<<<<<< HEAD
-		log.info("In callsendOtp method of login service  with request {}" , userOtpRequest);
-=======
 
 		log.info("In callsendOtp method of login service  with request {}", userOtpRequest);
->>>>>>> MOSIP16977
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
@@ -191,17 +186,10 @@ public class LoginService {
 
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-<<<<<<< HEAD
-			log.error("In callsendOtp method of login service- " , ex.getResponseBodyAsString());
-			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
-		} catch (Exception ex) {
-			log.error("In callsendOtp method of login service- ",  ex);
-=======
 			log.error("In callsendOtp method of login service- ", ex.getResponseBodyAsString());
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} catch (Exception ex) {
 			log.error("In callsendOtp method of login service- ", ex);
->>>>>>> MOSIP16977
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} finally {
 			if (isSuccess) {
@@ -247,29 +235,18 @@ public class LoginService {
 				authresponse.setStatus(PreRegLoginConstant.SUCCESS);
 
 			} else {
-<<<<<<< HEAD
-				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),PreRegLoginConstant.VALIDATION_UNSUCCESS,
-						response);
-=======
 				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),
 						PreRegLoginConstant.VALIDATION_UNSUCCESS, response);
->>>>>>> MOSIP16977
 
 			}
 			response.setResponse(authresponse);
 			isSuccess = true;
 		} catch (PreRegLoginException ex) {
-<<<<<<< HEAD
-			log.error("In calluserIdOtp method of login service- " , ex);
-			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
-		} catch (RuntimeException ex) {
-			log.error("In calluserIdOtp method of login service- " ,ex);
-=======
 			log.error("In calluserIdOtp method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} catch (RuntimeException ex) {
 			log.error("In calluserIdOtp method of login service- ", ex);
->>>>>>> MOSIP16977
+
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} finally {
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
@@ -378,15 +355,9 @@ public class LoginService {
 			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
 			auditLogUtil.saveAuditDetails(auditRequestDto, token);
 		} catch (LoginServiceException ex) {
-<<<<<<< HEAD
-			log.error("In setAuditvalue of login service:" , StringUtils.join(ex.getValidationErrorList(), ","));
-		} catch (Exception ex) {
-			log.error("In setAuditvalue of login service:" ,ex);
-=======
 			log.error("In setAuditvalue of login service:", StringUtils.join(ex.getValidationErrorList(), ","));
 		} catch (Exception ex) {
 			log.error("In setAuditvalue of login service:", ex);
->>>>>>> MOSIP16977
 		}
 	}
 
@@ -444,11 +415,7 @@ public class LoginService {
 			globalConfig = loginCommonUtil.getConfig(globalFileName);
 			preregConfig = loginCommonUtil.getConfig(preRegFileName);
 		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-<<<<<<< HEAD
-			log.error("In login service of refreshConfig " , ex);
-=======
 			log.error("In login service of refreshConfig ", ex);
->>>>>>> MOSIP16977
 			new LoginExceptionCatcher().handle(ex, "refreshConfig", res);
 		}
 		res.setResponse("success");
@@ -457,12 +424,8 @@ public class LoginService {
 	}
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
-<<<<<<< HEAD
-		log.info("In generateJWTToken method of loginservice:{} {}" ,userId , issuerUrl);
-=======
 		log.info("In generateJWTToken method of loginservice:{} {}", userId, issuerUrl);
 
->>>>>>> MOSIP16977
 		Map<String, Object> claims = new HashMap<String, Object>();
 		claims.put("userId", userId);
 		claims.put("scope", PreRegLoginConstant.JWT_SCOPE);
