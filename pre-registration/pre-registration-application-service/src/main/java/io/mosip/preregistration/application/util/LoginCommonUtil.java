@@ -117,7 +117,6 @@ public class LoginCommonUtil {
 	@Value("${mosip.preregistration.captcha.id.validate}")
 	private String captchaRequestId;
 
-	
 	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
 	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
 	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
@@ -478,7 +477,6 @@ public class LoginCommonUtil {
 		requestFactory.setHttpClient(httpClient);
 		return new RestTemplate(requestFactory);
 	}
-
 
 	public CaptchaResposneDTO validateCaptchaToken(String captchaToken) throws PreRegLoginException {
 
