@@ -68,7 +68,7 @@ import net.minidev.json.parser.ParseException;
  * 
  */
 @RunWith(SpringRunner.class)
-@WebMvcTest(DemographicControllerTest.class)
+@WebMvcTest(DemographicController.class)
 public class DemographicControllerTest {
 
 	/**

@@ -170,10 +170,10 @@ public class AvailabilityUtil {
 		try {
 			LocalDate endDate = LocalDate.now().plusDays(syncDays - 1);
 			List<RegistrationCenterDto> regCenter = getRegCenterMasterData(headers);
-			List<RegistrationCenterDto> regCenterDtos = regCenter.stream()
-					.filter(regCenterDto -> regCenterDto.getLangCode().equals(langCode)).collect(Collectors.toList());
+//			List<RegistrationCenterDto> regCenterDtos = regCenter.stream()
+//					.filter(regCenterDto -> regCenterDto.getLangCode().equals(langCode)).collect(Collectors.toList());
 			List<String> regCenterDumped = batchServiceDAO.findRegCenter(LocalDate.now());
-			for (RegistrationCenterDto regDto : regCenterDtos) {
+			for (RegistrationCenterDto regDto : regCenter) {
 				try {
 					List<LocalDate> insertedDate = batchServiceDAO.findDistinctDate(LocalDate.now(), regDto.getId());
 					List<String> holidaylist = getHolidayListMasterData(regDto, headers);

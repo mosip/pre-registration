@@ -75,9 +75,8 @@ public class LoginController {
 	@Value("${mosip.preregistration.sendotp.allowapi:false}")
 	private boolean allowSendOtpApi;
 	
-	
-	@Value("${mosip.preregistration.sendotp.allowapi:false}")
-	private boolean contextPath;
+	@Value("${server.servlet.context-path}")
+	private String contextPath;
 
 	@Autowired
 	private RequestValidator loginValidator;
@@ -172,7 +171,7 @@ public class LoginController {
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
-		responseCookie.setPath("contextPath");
+		responseCookie.setPath(contextPath);
 		res.addCookie(responseCookie);
 
 		return ResponseEntity.status(HttpStatus.OK).body(loginService.validateWithUserIdOtp(userIdOtpRequest));
