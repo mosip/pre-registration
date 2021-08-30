@@ -171,7 +171,7 @@ public class LoginController {
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
-		responseCookie.setPath("/pre-registration-ui");
+		responseCookie.setPath("/preregistration");
 		res.addCookie(responseCookie);
 
 		return ResponseEntity.status(HttpStatus.OK).body(loginService.validateWithUserIdOtp(userIdOtpRequest));
