@@ -20,6 +20,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.v3.oas.annotations.Operation;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -43,7 +44,7 @@ public class CaptchaController {
 	private CaptchaService captchaService;
 
 	@PostMapping(path = "/validatecaptcha", consumes = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "validate captcha")
+	@ApiOperation(value = "validate captcha")
 	public ResponseEntity<?> validateCaptcha(@Validated @RequestBody MainRequestDTO<CaptchaRequestDTO> captchaRequest,
 			@ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",

@@ -21,7 +21,9 @@ public enum LoginErrorMessages {
 	ERROR_WHILE_PARSING("Error while Parsing the kernel response"),//PRE_AUTH_011
 	CONFIG_FILE_NOT_FOUND_EXCEPTION("Config file not found in the config server"),//PRE_AUTH_011
 	TOKEN_NOT_PRESENT("Token is not present in the header"),//PRE_AUTH_014
+	DEPRECATED_MESSAGE("The requested resource has been Deprecated"),//PRE_AUTH_016
 	LANGUAGE_PROPERTIES_NOT_FOUND("mosip language properties not defined"); // PRE_AUTH_015
+	
 	private LoginErrorMessages(String message) {
 		this.message = message;
 	}

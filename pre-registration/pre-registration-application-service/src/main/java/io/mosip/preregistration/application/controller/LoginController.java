@@ -32,6 +32,9 @@ import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptcha
 import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.User;
+import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
+import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
+import io.mosip.preregistration.application.exception.DeprecatedException;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -67,9 +70,12 @@ public class LoginController {
 
 	@Autowired
 	private RequestValidator loginValidator;
-	
+
 	@Value("${mosip.kernel.otp.expiry-time}")
 	private int otpExpiryTime;
+
+	@Value("${mosip.preregistration.sendotp.allowapi:false}")
+	private boolean allowSendOtpApi;
 
 	/** The Constant SENDOTP. */
 	private static final String SENDOTP = "preregistration.login.sendotp";
@@ -96,6 +102,7 @@ public class LoginController {
 	 * @param errors
 	 * @return AuthNResponse
 	 */
+	@Deprecated(since = "1.1.5", forRemoval = true)
 	@PostMapping(value = "/sendOtp", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Send Otp to UserId")
 	@ResponseStatus(value = HttpStatus.OK)
@@ -104,8 +111,12 @@ public class LoginController {
 		log.info("sessionId", "idType", "id", "In sendOtp method of Login controller for sending Otp ");
 		loginValidator.validateId(SENDOTP, userOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, SENDOTP);
-		return ResponseEntity.status(HttpStatus.OK).body(loginService.sendOTP(userOtpRequest,
-				environment.getProperty(PreRegLoginConstant.MOSIP_PRIMARY_LANGUAGE)));
+		if (!allowSendOtpApi)
+			throw new DeprecatedException(LoginErrorCodes.PRG_AUTH_016.getCode(),
+					LoginErrorMessages.DEPRECATED_MESSAGE.getMessage());
+		else
+			return ResponseEntity.status(HttpStatus.OK).body(loginService.sendOTP(userOtpRequest,
+					environment.getProperty(PreRegLoginConstant.MOSIP_PRIMARY_LANGUAGE)));
 	}
 
 	/**
@@ -173,8 +184,7 @@ public class LoginController {
 	public ResponseEntity<MainResponseDTO<String>> invalidateToken(HttpServletRequest req, HttpServletResponse res) {
 		log.info("sessionId", "idType", "id",
 				"In invalidateToken method of Login controller for invalidating access token ");
-		Cookie responseCookie = new Cookie("Authorization",
-				loginService.getLogoutToken(req.getHeader("Cookie")));
+		Cookie responseCookie = new Cookie("Authorization", loginService.getLogoutToken(req.getHeader("Cookie")));
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
@@ -213,7 +223,7 @@ public class LoginController {
 		return new ResponseEntity<>(loginService.refreshConfig(), HttpStatus.OK);
 
 	}
-	
+
 	@PostMapping(path = "/sendOtpWithCaptcha", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<MainResponseDTO<?>> sendOtpWithCaptcha(
 			@Validated @Valid @RequestBody MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> sendOtpRequestWithCaptcha,
