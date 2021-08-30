@@ -117,6 +117,7 @@ public class DocumentControllerTest {
 	@Test
 	public void successFileupload() throws Exception {
 		String preRegistrationId = "123546987412563";
+		
 		MockMultipartFile jsonMultiPart = new MockMultipartFile("Document request", "docJson", "application/json",
 				docJson.getBytes());
 
