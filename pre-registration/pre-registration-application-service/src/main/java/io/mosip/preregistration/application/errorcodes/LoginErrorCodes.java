@@ -22,7 +22,8 @@ public enum LoginErrorCodes {
 	PRG_AUTH_012("PRG_PAM_LGN_012"),
 	PRG_AUTH_013("PRG_PAM_LGN_013"),
 	PRG_AUTH_014("PRG_PAM_LGN_014"),
-	PRG_AUTH_015("PRG_PAM_LGN_015");
+	PRG_AUTH_015("PRG_PAM_LGN_015"),
+	PRG_AUTH_016("PRG_PAM_LGN_016"); // deprecated error code
 	
 	
 	
