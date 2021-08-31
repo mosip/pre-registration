@@ -77,6 +77,7 @@ public class LoginController {
 	
 	@Value("${preregistration.cookie.contextpath}")
 	private String cookieContextPath;
+
 	@Autowired
 	private RequestValidator loginValidator;
 
