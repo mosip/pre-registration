@@ -173,9 +173,6 @@ public class LoginController {
 		responseCookie.setSecure(true);
 		//responseCookie.setPath("/");
 		responseCookie.setPath("/preregistration/");
-		//responseCookie.setPath("/preregistration");
-		//responseCookie.setPath("/pre-registration-ui");
-		//responseCookie.setPath("/pre-registration-ui/");
 		res.addCookie(responseCookie);
 
 		return ResponseEntity.status(HttpStatus.OK).body(loginService.validateWithUserIdOtp(userIdOtpRequest));
