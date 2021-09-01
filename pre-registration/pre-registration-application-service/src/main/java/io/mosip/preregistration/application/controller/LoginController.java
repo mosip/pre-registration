@@ -57,7 +57,7 @@ import springfox.documentation.annotations.ApiIgnore;
  *
  */
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/login") 
 @Tag(name = "Login Controller")
 @CrossOrigin("*")
 public class LoginController {
@@ -74,6 +74,9 @@ public class LoginController {
 
 	@Value("${mosip.preregistration.sendotp.allowapi:false}")
 	private boolean allowSendOtpApi;
+	
+	@Value("${preregistration.cookie.contextpath}")
+	private String cookieContextPath;
 
 	@Autowired
 	private RequestValidator loginValidator;
@@ -168,7 +171,7 @@ public class LoginController {
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
-		responseCookie.setPath("/");
+		responseCookie.setPath(cookieContextPath);
 		res.addCookie(responseCookie);
 
 		return ResponseEntity.status(HttpStatus.OK).body(loginService.validateWithUserIdOtp(userIdOtpRequest));
@@ -189,7 +192,7 @@ public class LoginController {
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
-		responseCookie.setPath("/");
+		responseCookie.setPath(cookieContextPath);
 		res.addCookie(responseCookie);
 		return ResponseEntity.status(HttpStatus.OK).body(loginService.invalidateToken(req.getHeader("Cookie")));
 
@@ -240,7 +243,8 @@ public class LoginController {
 			resCookie.setMaxAge((int) otpExpiryTime / 60);
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
-			resCookie.setPath("/");
+			resCookie.setPath(cookieContextPath);
+		
 			res.addCookie(resCookie);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);

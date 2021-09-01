@@ -56,7 +56,7 @@ jobs:
     - name: Build with Maven
       run: |
         cd pre-registration
-        mvn -B package -DskipTests -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
+        mvn -B package -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
 
 
     - name: Ready the springboot artifacts

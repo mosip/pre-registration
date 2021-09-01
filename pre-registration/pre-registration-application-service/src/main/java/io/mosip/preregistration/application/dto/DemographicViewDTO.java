@@ -5,6 +5,7 @@
 package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
+import java.util.Set;
 
 import org.json.simple.JSONObject;
 
@@ -47,5 +48,11 @@ public class DemographicViewDTO implements Serializable {
 	 * Document response DTO
 	 */
 	private JSONObject demographicMetadata;
+
+	/**
+	 * data captured langauage
+	 */
+
+	private Set<String> dataCaptureLanguage;
 
 }
