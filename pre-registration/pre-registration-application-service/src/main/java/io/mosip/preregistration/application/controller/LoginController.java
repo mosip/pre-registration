@@ -171,8 +171,7 @@ public class LoginController {
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
-		//responseCookie.setPath("/");
-		responseCookie.setPath("/preregistration/");
+		responseCookie.setPath(cookieContextPath);
 		res.addCookie(responseCookie);
 
 		return ResponseEntity.status(HttpStatus.OK).body(loginService.validateWithUserIdOtp(userIdOtpRequest));
@@ -193,8 +192,7 @@ public class LoginController {
 		responseCookie.setMaxAge((int) -1);
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
-		//responseCookie.setPath("/");
-		responseCookie.setPath("/preregistration/");
+		responseCookie.setPath(cookieContextPath);
 		res.addCookie(responseCookie);
 		return ResponseEntity.status(HttpStatus.OK).body(loginService.invalidateToken(req.getHeader("Cookie")));
 
