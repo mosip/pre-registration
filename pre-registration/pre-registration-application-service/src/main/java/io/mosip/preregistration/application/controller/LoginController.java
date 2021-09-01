@@ -172,7 +172,8 @@ public class LoginController {
 		responseCookie.setHttpOnly(true);
 		responseCookie.setSecure(true);
 		//responseCookie.setPath("/");
-		responseCookie.setPath("/preregistration/");
+		responseCookie.setPath("//preregistration/");
+		//responseCookie.setPath("/preregistration/");
 		//responseCookie.setPath("/preregistration");
 		//responseCookie.setPath("/pre-registration-ui");
 		//responseCookie.setPath("/pre-registration-ui/");
