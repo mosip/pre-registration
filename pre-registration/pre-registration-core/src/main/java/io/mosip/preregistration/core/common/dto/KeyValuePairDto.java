@@ -5,15 +5,15 @@ import java.io.Serializable;
 import lombok.Data;
 
 @Data
-public class KeyValuePairDto implements Serializable{
+public class KeyValuePairDto<T> implements Serializable{
 
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	private String key;
+	private T key;
 	
-	private String value;
+	private T value;
 
 }

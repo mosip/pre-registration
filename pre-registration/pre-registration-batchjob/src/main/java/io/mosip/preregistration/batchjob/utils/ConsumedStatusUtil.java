@@ -138,7 +138,7 @@ public class ConsumedStatusUtil {
 							documentEntityConsumed.setStatusCode(documentEntity.getStatusCode());
 							documentEntityConsumed.setUpdBy(auditUserId);
 							documentEntityConsumed.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
-							documentEntityConsumed.setDocRefId(documentEntity.getDocRefId());
+							documentEntityConsumed.setDocRefId(documentEntity.getRefNumber());
 							batchJpaRepositoryImpl.updateConsumedDocument(documentEntityConsumed);
 
 						});
