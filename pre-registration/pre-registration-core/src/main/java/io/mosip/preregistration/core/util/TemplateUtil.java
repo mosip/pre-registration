@@ -67,8 +67,9 @@ public class TemplateUtil {
 	 * @param templatetypecode
 	 * @return
 	 */
-	public String getTemplate(String langCode, String templatetypecode) {
-		String url = resourceUrl + "/" +  langCode + "/" + templatetypecode;
+
+	public String getTemplate(Object object, String templatetypecode) {
+		String url = resourceUrl + "/" + (String) object + "/" + templatetypecode;
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<RequestWrapper<TemplateResponseListDTO>> httpEntity = new HttpEntity<>(headers);
 		log.info("sessionId", "idType", "id", "In getTemplate method of TemplateUtil service url: " + url);
