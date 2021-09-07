@@ -181,11 +181,15 @@ jobs:
       
 #       - name: Unzip and extract the pre-registration-booking-service
 #         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
-      
+        
+#       - name: Get current date
+#         id: date
+#         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+                 
 #       - name: Build image
 #         run: |
 #           cd "./${{env.SERVICE_LOCATION}}"
-#           docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+#           docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
 #       - name: Log into registry
 #         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -233,11 +237,15 @@ jobs:
       
       - name: Unzip and extract the pre-registration-application-service
         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
-      
+        
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        
       - name: Build image
         run: |
           cd "./${{env.SERVICE_LOCATION}}"
-          docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+          docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
       - name: Log into registry
         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -292,11 +300,14 @@ jobs:
       
 #       - name: Unzip and extract the pre-registration-login-service
 #         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
-      
+ 
+#       - name: Get current date
+#         id: date
+#         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 #       - name: Build image
 #         run: |
 #           cd "./${{env.SERVICE_LOCATION}}"
-#           docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+#           docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
 #       - name: Log into registry
 #         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -344,10 +355,15 @@ jobs:
       - name: Unzip and extract the pre-registration-batchjob
         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
       
+      
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        
       - name: Build image
         run: |
           cd "./${{env.SERVICE_LOCATION}}"
-          docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+          docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
       - name: Log into registry
         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -403,10 +419,14 @@ jobs:
       - name: Unzip and extract the pre-registration-datasync-service
         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
       
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+        
       - name: Build image
         run: |
           cd "./${{env.SERVICE_LOCATION}}"
-          docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+          docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
       - name: Log into registry
         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -460,11 +480,15 @@ jobs:
       
 #       - name: Unzip and extract the pre-registration-demographic-service
 #         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
-      
+              
+#        - name: Get current date
+#          id: date
+#          run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          
 #       - name: Build image
 #         run: |
 #           cd "./${{env.SERVICE_LOCATION}}"
-#           docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+#           docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
 #       - name: Log into registry
 #         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -511,11 +535,15 @@ jobs:
       
 #       - name: Unzip and extract the pre-registration-document-service
 #         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
-      
+              
+#       - name: Get current date
+#         id: date
+#         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          
 #       - name: Build image
 #         run: |
 #           cd "./${{env.SERVICE_LOCATION}}"
-#           docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+#           docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
 #       - name: Log into registry
 #         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -562,11 +590,15 @@ jobs:
       
 #       - name: Unzip and extract the pre-registration-generateqrcode-service
 #         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
-      
+                
+#       - name: Get current date
+#         id: date
+#         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+          
 #       - name: Build image
 #         run: |
 #           cd "./${{env.SERVICE_LOCATION}}"
-#           docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+#           docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
 #       - name: Log into registry
 #         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
@@ -613,14 +645,16 @@ jobs:
       
 #       - name: Unzip and extract the pre-registration-notification-service
 #         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
-      
+#       - name: Get current date
+#         id: date
+#         run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
 #       - name: Build image
 #         run: |
 #           cd "./${{env.SERVICE_LOCATION}}"
-#           docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+#           docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
 #       - name: Log into registry
 #         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
-        
+          
 #       - name: Push image
 #         run: |
 #           IMAGE_ID=$NAMESPACE/$SERVICE_NAME
@@ -667,10 +701,14 @@ jobs:
       - name: Unzip and extract the pre-registration-transliteration-service
         run: unzip -uj "release.zip" "${{ env.SERVICE_LOCATION }}/target/*" -d "./${{ env.SERVICE_LOCATION }}/target"
       
+      - name: Get current date
+        id: date
+        run: echo "::set-output name=date::$(date +'%Y-%m-%d')"
+         
       - name: Build image
         run: |
           cd "./${{env.SERVICE_LOCATION}}"
-          docker build . --file Dockerfile --tag ${{ env.SERVICE_NAME }}
+          docker build . --build-arg SOURCE=mosip --build-arg COMMIT_HASH=$(git rev-parse HEAD) --build-arg COMMIT_ID=$(git rev-parse --short HEAD) --build-arg BUILD_TIME=${{steps.date.outputs.date}} --file Dockerfile --tag ${{ env.SERVICE_NAME }}
       - name: Log into registry
         run: echo "${{ secrets.release_docker_hub }}" | docker login -u ${{ secrets.actor_docker_hub }} --password-stdin
         
