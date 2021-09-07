@@ -358,7 +358,7 @@ public class DocumentService implements DocumentServiceIntf {
 					documentResponseDTO.setDocCatCode(copyDocumentEntity.getDocCatCode());
 					documentResponseDTO.setDocTypCode(copyDocumentEntity.getDocTypeCode());
 					documentResponseDTO.setDocFileFormat(copyDocumentEntity.getDocFileFormat());
-					documentResponseDTO.setDocRefId(copyDocumentEntity.getDocRefId());
+					documentResponseDTO.setRefNumber(copyDocumentEntity.getRefNumber());
 					responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 					responseDto.setResponse(documentResponseDTO);
 				} else {
@@ -565,7 +565,7 @@ public class DocumentService implements DocumentServiceIntf {
 			allDocDto.setDocumentId(doc.getDocumentId());
 			allDocDto.setDocTypCode(doc.getDocTypeCode());
 			allDocDto.setLangCode(doc.getLangCode());
-			allDocDto.setDocRefId(doc.getDocRefId());
+			allDocDto.setRefNumber(doc.getRefNumber());
 			allDocRes.add(allDocDto);
 		}
 		documentsMetaData.setDocumentsMetaData(allDocRes);
@@ -758,7 +758,7 @@ public class DocumentService implements DocumentServiceIntf {
 	}
 
 	@Override
-	public MainResponseDTO<String> updateDocRefId(String documentId, String preId, String docRefId) {
+	public MainResponseDTO<String> updateDocRefId(String documentId, String preId, String refNumber) {
 		MainResponseDTO<String> response = new MainResponseDTO<>();
 		Map<String, String> requestParamMap = new HashMap<>();
 		response.setResponsetime(serviceUtil.getCurrentResponseTime());
@@ -774,7 +774,7 @@ public class DocumentService implements DocumentServiceIntf {
 								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
 										.getMessage());
 					}
-					documentEntity.setDocRefId(docRefId);
+					documentEntity.setRefNumber(refNumber);
 					documnetDAO.updateDocument(documentEntity);
 				} else {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),

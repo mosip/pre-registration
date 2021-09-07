@@ -34,20 +34,13 @@ import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
-
-
-
-
-
-
-
 /**
  * @author Sanober Noor
- *@since 1.0.0 
+ * @since 1.0.0
  */
 @Component
 public class TemplateUtil {
-	
+
 	private Logger log = LoggerConfiguration.logConfig(TemplateUtil.class);
 	/**
 	 * Reference for ${resource.template.url} from property file
@@ -55,7 +48,7 @@ public class TemplateUtil {
 
 	@Value("${resource.template.url}")
 	private String resourceUrl;
-	
+
 	@Value("${timeZone}")
 	private String timeZone;
 	/**
@@ -63,51 +56,53 @@ public class TemplateUtil {
 	 */
 	@Autowired
 	RestTemplate restTemplate;
-	
+
 	@Autowired
 	private TemplateManager templateManager;
 
 	/**
 	 * This method is used for getting template
-	 * @param langCode
+	 * 
+	 * @param object
 	 * @param templatetypecode
 	 * @return
 	 */
-	public String getTemplate(String langCode,String templatetypecode)  {
-		String url = resourceUrl + "/" + langCode + "/" + templatetypecode;		
+	public String getTemplate(String langCode, String templatetypecode) {
+		String url = resourceUrl + "/" +  langCode + "/" + templatetypecode;
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<RequestWrapper<TemplateResponseListDTO>> httpEntity = new HttpEntity<>(headers);
-		log.info("sessionId", "idType", "id", "In getTemplate method of TemplateUtil service url: "+url);
-		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> respEntity = restTemplate.exchange(url,HttpMethod.GET,httpEntity,new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
-		});
+		log.info("sessionId", "idType", "id", "In getTemplate method of TemplateUtil service url: " + url);
+		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> respEntity = restTemplate.exchange(url, HttpMethod.GET,
+				httpEntity, new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
+				});
 
 		List<TemplateResponseDTO> response = respEntity.getBody().getResponse().getTemplates();
 
 		return response.get(0).getFileText().replaceAll("^\"|\"$", "");
-		
+
 	}
-	
+
 	/**
 	 * This method merging the template
 	 * 
 	 * @param fileText
 	 * @param acknowledgementDTO
 	 * @return
-	 * @throws IOException 
+	 * @throws IOException
 	 */
 	public String templateMerge(String fileText, NotificationDTO acknowledgementDTO) throws IOException {
 		log.info("sessionId", "idType", "id", "In templateMerge method of TemplateUtil service ");
 		String mergeTemplate = null;
 		Map<String, Object> map = mapSetting(acknowledgementDTO);
-			InputStream templateInputStream = new ByteArrayInputStream(fileText.getBytes(Charset.forName("UTF-8")));
+		InputStream templateInputStream = new ByteArrayInputStream(fileText.getBytes(Charset.forName("UTF-8")));
 
-			InputStream resultedTemplate = templateManager.merge(templateInputStream, map);
+		InputStream resultedTemplate = templateManager.merge(templateInputStream, map);
 
-			mergeTemplate = IOUtils.toString(resultedTemplate, StandardCharsets.UTF_8.name());
-		
+		mergeTemplate = IOUtils.toString(resultedTemplate, StandardCharsets.UTF_8.name());
+
 		return mergeTemplate;
 	}
-	
+
 	/**
 	 * This method will set the user detail for the template merger
 	 * 
@@ -116,7 +111,7 @@ public class TemplateUtil {
 	 */
 	public Map<String, Object> mapSetting(NotificationDTO acknowledgementDTO) {
 		Map<String, Object> responseMap = new HashMap<>();
-		log.info("sessionId", "idType", "id", "In mapSetting method of TemplateUtil service {}",acknowledgementDTO);
+		log.info("sessionId", "idType", "id", "In mapSetting method of TemplateUtil service {}", acknowledgementDTO);
 		DateTimeFormatter dateFormate = DateTimeFormatter.ofPattern("dd MMM yyyy");
 		DateTimeFormatter timeFormate = DateTimeFormatter.ofPattern("h:mma");
 
@@ -124,7 +119,7 @@ public class TemplateUtil {
 		Instant nowUtc = Instant.now();
 		ZoneId countryZoneId = ZoneId.of(timeZone);
 		ZonedDateTime nowCountryTime = ZonedDateTime.ofInstant(nowUtc, countryZoneId);
-		
+
 		responseMap.put("name", acknowledgementDTO.getName());
 		responseMap.put("PRID", acknowledgementDTO.getPreRegistrationId());
 		responseMap.put("Date", dateFormate.format(now));
@@ -137,4 +132,3 @@ public class TemplateUtil {
 	}
 
 }
-

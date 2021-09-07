@@ -55,6 +55,6 @@ public class DocumentMultipartResponseDTO implements Serializable {
 	/**
 	 * Document Reference
 	 */
-	private String docRefId;
+	private String refNumber;
 	
 }
