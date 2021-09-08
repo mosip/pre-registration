@@ -629,7 +629,7 @@ public class DataSyncServiceUtil {
 		documentMetaDataDTO.setType(getTypeName(documentMultipartResponseDTO.getLangCode(),
 				documentMultipartResponseDTO.getDocCatCode(), documentMultipartResponseDTO.getDocTypCode()));
 		documentMetaDataDTO.setFormat(getFileFormat(documentMultipartResponseDTO.getDocName()));
-		documentMetaDataDTO.setDocRefId(documentMultipartResponseDTO.getDocRefId());
+		documentMetaDataDTO.setRefNumber(documentMultipartResponseDTO.getRefNumber());
 		try {
 			return JsonUtils.jsonStringToJavaMap(JsonUtils.javaObjectToJsonString(documentMetaDataDTO));
 		} catch (JsonParseException | JsonMappingException | io.mosip.kernel.core.exception.IOException
@@ -956,6 +956,8 @@ public class DataSyncServiceUtil {
 					});
 			if (respEntity.getBody().getErrors() != null) {
 				log.info("unable to get preregistration data for the prid {}", prid);
+				throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
+						ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
 			} else {
 				applicationInfo = respEntity.getBody().getResponse();
 			}

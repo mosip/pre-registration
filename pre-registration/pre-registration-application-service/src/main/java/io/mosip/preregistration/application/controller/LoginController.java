@@ -57,7 +57,7 @@ import springfox.documentation.annotations.ApiIgnore;
  *
  */
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/login") 
 @Tag(name = "Login Controller")
 @CrossOrigin("*")
 public class LoginController {
@@ -74,7 +74,7 @@ public class LoginController {
 
 	@Value("${mosip.preregistration.sendotp.allowapi:false}")
 	private boolean allowSendOtpApi;
-	
+
 	@Autowired
 	private RequestValidator loginValidator;
 
@@ -241,6 +241,7 @@ public class LoginController {
 			resCookie.setHttpOnly(true);
 			resCookie.setSecure(true);
 			resCookie.setPath("/");
+		
 			res.addCookie(resCookie);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);

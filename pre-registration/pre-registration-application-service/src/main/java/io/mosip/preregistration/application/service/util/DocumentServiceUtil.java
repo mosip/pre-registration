@@ -173,7 +173,7 @@ public class DocumentServiceUtil {
 		documentEntity.setCrBy(userId);
 		documentEntity.setUpdBy(userId);
 		documentEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
-		documentEntity.setDocRefId(dto.getDocRefId());
+		documentEntity.setRefNumber(dto.getRefNumber());
 		// documentEntity.setEncryptedDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		return documentEntity;
 	}
@@ -272,7 +272,7 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDocTypeCode(sourceEntity.getDocTypeCode());
 		copyDocumentEntity.setDocCatCode(sourceEntity.getDocCatCode());
 		copyDocumentEntity.setDocFileFormat(sourceEntity.getDocFileFormat());
-		copyDocumentEntity.setDocRefId(sourceEntity.getDocRefId());
+		copyDocumentEntity.setRefNumber(sourceEntity.getRefNumber());
 		copyDocumentEntity.setCrBy(sourceEntity.getCrBy());
 		copyDocumentEntity.setUpdBy(sourceEntity.getUpdBy());
 		copyDocumentEntity.setLangCode(sourceEntity.getLangCode());
