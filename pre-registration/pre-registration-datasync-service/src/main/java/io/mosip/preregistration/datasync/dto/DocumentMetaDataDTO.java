@@ -31,5 +31,5 @@ public class DocumentMetaDataDTO implements Serializable {
 	/**
 	 * document reference Id
 	 */
-	private String docRefId;
+	private String refNumber;
 }

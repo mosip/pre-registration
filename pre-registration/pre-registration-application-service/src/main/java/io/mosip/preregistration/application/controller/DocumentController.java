@@ -211,12 +211,12 @@ public class DocumentController {
 	public ResponseEntity<MainResponseDTO<String>> updateDocRefId(
 			@Valid @PathVariable(required = true) String documentId,
 			@Valid @RequestParam(required = true, value = "preRegistrationId") String preRegistrationId,
-			@Valid @RequestParam(required = true, value = "docRefId") String docRefId) {
+			@Valid @RequestParam(required = true, value = "refNumber") String refNumebr) {
 		log.info("sessionId", "idType", "id",
 				"In updateDocRefId method of document controller to update the docRefId for documentId " + documentId
-						+ "preregistrationId " + preRegistrationId + "DocRefId " + docRefId);
+						+ "preregistrationId " + preRegistrationId + "DocRefId " + refNumebr);
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(documentUploadService.updateDocRefId(documentId, preRegistrationId, docRefId));
+				.body(documentUploadService.updateDocRefId(documentId, preRegistrationId, refNumebr));
 
 	}
 }

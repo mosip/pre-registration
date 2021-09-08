@@ -143,7 +143,7 @@ public class DocumentEntity implements Serializable {
 	 * Hash value of row
 	 */
 	@Column(name = "doc_ref_id")
-	private String docRefId;
+	private String refNumber;
 
 
 }
