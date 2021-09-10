@@ -16,7 +16,7 @@ import lombok.Data;
  */
 @Data
 @Component
-public class Identity implements Serializable{
+public class Identity implements Serializable {
 
 	/**
 	 * constant serialVersion UID
@@ -26,10 +26,28 @@ public class Identity implements Serializable{
 	/** The name. */
 	private IdentityJsonValues name;
 
-	/** The poa. */
+	/** The POA. */
 	private IdentityJsonValues proofOfAddress;
 
 	/** The postal code. */
 	private IdentityJsonValues postalCode;
+
+	/** The gender. */
+	private IdentityJsonValues gender;
+
+	/** The date of birth. */
+	private IdentityJsonValues dateOfBirth;
+
+	/** The preferredLanguages. */
+	private IdentityJsonValues preferredLanguage;
+
+	/** The locationHierarchyForProfiling fields. */
+	private IdentityJsonValues locationHierarchyForProfiling;
+
+	/** The phone. */
+	private IdentityJsonValues phone;
+
+	/** The email. */
+	private IdentityJsonValues email;
 
 }
