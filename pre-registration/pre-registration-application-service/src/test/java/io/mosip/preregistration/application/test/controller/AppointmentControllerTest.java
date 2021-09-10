@@ -86,7 +86,7 @@ public class AppointmentControllerTest {
 
 		MainResponseDTO<BookingStatusDTO> response = new MainResponseDTO<BookingStatusDTO>();
 
-		Mockito.when(appointmentService.makeAppointment(Mockito.anyObject(), Mockito.anyString())).thenReturn(response);
+		Mockito.when(appointmentService.makeAppointment(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString())).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders
 				.post("/applications/appointment/{preRegistrationId}", "98765432101234")
@@ -133,7 +133,7 @@ public class AppointmentControllerTest {
 
 		MainResponseDTO<BookingStatus> response = new MainResponseDTO<BookingStatus>();
 
-		Mockito.when(appointmentService.makeMultiAppointment(Mockito.any())).thenReturn(response);
+		Mockito.when(appointmentService.makeMultiAppointment(Mockito.any(), Mockito.anyString())).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders.post("/applications/appointment").content(
 				"{\"id\":\"mosip.pre-registration.booking.book\",\"request\":{\"bookingRequest\":[{\"preRegistrationId\":\"38047351465865\",\"registration_center_id\":\"10001\",\"appointment_date\":\"2021-07-19\",\"time_slot_from\":\"09:00:00\",\"time_slot_to\":\"09:15:00\"}]},\"version\":\"1.0\",\"requesttime\":\"2021-07-12T14:04:58.429Z\"}")

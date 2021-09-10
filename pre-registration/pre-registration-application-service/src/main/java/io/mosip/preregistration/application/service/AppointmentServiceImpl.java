@@ -8,12 +8,15 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import io.mosip.analytics.event.anonymous.exception.AnonymousProfileException;
+import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
@@ -30,8 +33,11 @@ import io.mosip.preregistration.booking.dto.BookingStatusDTO;
 import io.mosip.preregistration.booking.dto.MultiBookingRequest;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
+import io.mosip.preregistration.core.common.dto.BrowserInfoDTO;
 import io.mosip.preregistration.core.common.dto.CancelBookingResponseDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -47,6 +53,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
 	private DemographicService demographicService;
+	
+	@Autowired
+	private DocumentService documentService;
+	
+	/**
+	 * Autowired reference for {@link #AnonymousProfileUtil}
+	 */
+	@Autowired
+	AnonymousProfileUtil anonymousProfileUtil;
 
 	@Value("${version}")
 	private String version;
@@ -118,7 +133,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Override
 	public MainResponseDTO<BookingStatusDTO> makeAppointment(MainRequestDTO<BookingRequestDTO> bookingDTO,
-			String preRegistrationId) {
+			String preRegistrationId, String userAgent) {
 		MainResponseDTO<BookingStatusDTO> bookAppointmentResponse = new MainResponseDTO<BookingStatusDTO>();
 		bookAppointmentResponse.setId(appointmentBookId);
 		bookAppointmentResponse.setVersion(version);
@@ -132,6 +147,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 						"In appointment booked successfully , updating the applications and demographic tables for ID:{}",
 						preRegistrationId);
 				this.updateApplicationEntity(preRegistrationId, bookingDTO.getRequest());
+				createAnonymousProfile(userAgent, preRegistrationId, bookingDTO.getRequest());
 				this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
 						authUserDetails().getUserId());
 				bookAppointmentResponse.setResponse(bookingResponse);
@@ -139,7 +155,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		} catch (AppointmentExecption ex) {
 			log.error("Exception has occurred while booking appointment : ", ex);
 			bookAppointmentResponse.setErrors(setErrors(ex));
-		}
+		} catch (AnonymousProfileException apex) {
+			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
+			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
+		} 
 
 		return bookAppointmentResponse;
 	}
@@ -197,7 +216,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest) {
+	public MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest, 
+			String userAgent) {
 		MainResponseDTO<BookingStatus> multiBookingResponse = new MainResponseDTO<BookingStatus>();
 		multiBookingResponse.setId(appointmentBookId);
 		multiBookingResponse
@@ -215,6 +235,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 					bookRequest.setSlotToTime(action.getSlotToTime());
 					bookRequest.setSlotFromTime(action.getSlotFromTime());
 					this.updateApplicationEntity(preRegistrationId, bookRequest);
+					createAnonymousProfile(userAgent, preRegistrationId, bookRequest);
 					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
 							authUserDetails().getUserId());
 				});
@@ -223,8 +244,32 @@ public class AppointmentServiceImpl implements AppointmentService {
 		} catch (AppointmentExecption ex) {
 			log.error("Exception has occured while booking an appointment : {}", ex);
 			multiBookingResponse.setErrors(setErrors(ex));
-		}
+		} catch (AnonymousProfileException apex) {
+			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
+			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
+		} 
 		return multiBookingResponse;
+	}
+
+	private void createAnonymousProfile(String userAgent, String preRegistrationId, BookingRequestDTO bookRequest) {
+		log.info("In createAnonymousProfile()");
+		// get the demographic data, documents data, booking data to create anonymous
+		// profile
+		BrowserInfoDTO browserInfo = new BrowserInfoDTO();
+		browserInfo.setBrowserName(userAgent);
+		DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId).getResponse();
+		DocumentsMetaData documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
+		BookingRegistrationDTO bookingData = new BookingRegistrationDTO();
+		bookingData.setRegistrationCenterId(bookRequest.getRegistrationCenterId());
+		bookingData.setRegDate(bookRequest.getRegDate());
+		bookingData.setSlotFromTime(bookRequest.getSlotFromTime());
+		bookingData.setSlotToTime(bookRequest.getSlotToTime());
+		log.info("In createAnonymousProfile() Status of application: " + demographicData.getStatusCode());
+		// insert the anonymous profile only if the appointment is being booked for the
+		// only for the first time
+		if (demographicData != null && demographicData.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
+			anonymousProfileUtil.saveAnonymousProfile(demographicData, documentsData, bookingData, browserInfo);
+		}
 	}
 
 	private void updateApplicationEntity(String preRegistrationId, BookingRequestDTO bookingInfo) {
