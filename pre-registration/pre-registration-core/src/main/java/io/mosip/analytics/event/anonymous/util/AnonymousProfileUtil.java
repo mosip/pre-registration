@@ -143,9 +143,10 @@ public class AnonymousProfileUtil {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getIdentityMapping() method of AnonymousProfileUtil - " + ex.getMessage());
-			throw new AnonymousProfileException(AnonymousProfileErrorCodes.PRG_ANO_002.getCode(),
-					AnonymousProfileErrorMessages.UNBALE_TO_READ_IDENTITY_JSON.getMessage());
+//			throw new AnonymousProfileException(AnonymousProfileErrorCodes.PRG_ANO_002.getCode(),
+//					AnonymousProfileErrorMessages.UNBALE_TO_READ_IDENTITY_JSON.getMessage());
 		}
+		return null;
 	}
 
 	/**
@@ -168,8 +169,9 @@ public class AnonymousProfileUtil {
 		log.info("sessionId", "idType", "id",
 				"The bookingData in saveAnonymousProfile() method of AnonymousProfileUtil service - " + bookingData);
 		try {
-			Identity identityMapping = populateIdentityMappingDto().getIdentity();
-			if (!isNull(identityMapping) && !isNull(demographicData)) {
+			DemographicIdentityRequestDTO identityDto = populateIdentityMappingDto(); 
+			if (!isNull(identityDto) && !isNull(identityDto.getIdentity()) && !isNull(demographicData)) {
+				Identity identityMapping = populateIdentityMappingDto().getIdentity();
 				JsonNode identityData = objectMapper.readTree(demographicData.getDemographicDetails().toJSONString());
 				identityData = identityData.get(identityKey);
 				RegistrationProfileDTO registrationProfile = new RegistrationProfileDTO();

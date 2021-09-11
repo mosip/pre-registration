@@ -1,14 +1,13 @@
 {
-	"identity": {
-		"name": {
-			"value": "fullName",
-			"isMandatory" : true
-		},
-		"proofOfAddress": {
-			"value" : "proofOfAddress"
-		},
-		"postalCode": {
-			"value" : "postalCode"
-		}
-	}
-}  
+  "identity": {
+    "name": { "value": "fullName", "isMandatory": true },
+    "proofOfAddress": { "value": "proofOfAddress" },
+    "postalCode": { "value": "postalCode" },
+    "dateOfBirth": { "value": "dateOfBirth" },
+    "gender": { "value": "gender" },
+    "preferredLanguage": { "value": "preferredLang" },
+    "locationHierarchyForProfiling": { "value": "region,province,city" },
+    "phone": { "value": "phone" },
+    "email": { "value": "email" }
+  }
+}
