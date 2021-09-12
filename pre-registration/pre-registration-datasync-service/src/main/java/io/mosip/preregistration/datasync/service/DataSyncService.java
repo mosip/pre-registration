@@ -285,7 +285,8 @@ public class DataSyncService {
 			// first time or being prefetched for the first time
 			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.APPLICATION_INCOMPLETE.getCode())  
 				|| preRegistrationDTO.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
-				//TODO set the status of the application as Prefetched
+				//TODO call the service to update status of the application to "Prefetched"
+				preRegistrationDTO.setStatusCode(StatusCodes.PREFETCHED.getCode());
 				anonymousProfileUtil.saveAnonymousProfile(preRegistrationDTO, documentsMetaData,
 						bookingRegistrationDTO, null);
 			}
