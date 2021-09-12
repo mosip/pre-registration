@@ -32,6 +32,9 @@ public enum StatusCodes {
 	/* Consumed */
 	CONSUMED("Consumed"), 
 	
+	/* Prefetched */
+	PREFETCHED("Prefetched"), 
+	
 	/**
 	 * Canceled
 	 */

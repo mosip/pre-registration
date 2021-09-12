@@ -268,6 +268,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 		// insert the anonymous profile only if the appointment is being booked for the
 		// only for the first time
 		if (demographicData != null && demographicData.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
+			//set the status as Booked to be saved in the Anonymous Profile
+			demographicData.setStatusCode(StatusCodes.BOOKED.getCode());
 			anonymousProfileUtil.saveAnonymousProfile(demographicData, documentsData, bookingData, browserInfo);
 		}
 	}
