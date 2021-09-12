@@ -936,9 +936,10 @@ public class DemographicService implements DemographicServiceIntf {
 				List<String> preIds = preRegIdsByRegCenterIdDTO.getPreRegistrationIds();
 
 				List<String> statusCodes = new ArrayList<>();
-				statusCodes.add(StatusCodes.BOOKED.getCode());
-				statusCodes.add(StatusCodes.EXPIRED.getCode());
-
+				for(StatusCodes codes : StatusCodes.values()) {
+					 statusCodes.add(codes.getCode());
+				}
+				
 				List<DemographicEntity> demographicEntities = demographicRepository
 						.findByStatusCodeInAndPreRegistrationIdIn(statusCodes, preIds);
 				if (demographicEntities != null && !demographicEntities.isEmpty()) {
