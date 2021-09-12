@@ -253,7 +253,8 @@ public class DataSyncServiceUtil {
 	 */
 	public boolean validateReverseDataSyncRequest(ReverseDataSyncRequestDTO reverseDataSyncRequest,
 			MainResponseDTO<?> mainResponseDTO) {
-		log.info("In validateReverseDataSyncRequest sync preregids {}", reverseDataSyncRequest.getPreRegistrationIds());
+		log.info("sessionId", "idType", "id",
+				"In validateReverseDataSyncRequest sync preregids" + reverseDataSyncRequest.getPreRegistrationIds());
 		List<String> preRegIdsList = reverseDataSyncRequest.getPreRegistrationIds();
 		if (preRegIdsList == null || isNull(preRegIdsList)) {
 			throw new InvalidRequestParameterException(ErrorCodes.PRG_DATA_SYNC_011.getCode(),

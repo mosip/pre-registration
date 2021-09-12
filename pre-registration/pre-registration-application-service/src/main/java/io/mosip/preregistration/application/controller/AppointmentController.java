@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -59,10 +60,11 @@ public class AppointmentController {
 	public ResponseEntity<MainResponseDTO<BookingStatusDTO>> bookAppoinment(
 			@PathVariable("preRegistrationId") String preRegistrationId,
 			@Validated @RequestBody(required = true) MainRequestDTO<BookingRequestDTO> bookingDTO,
-			@ApiIgnore Errors errors) {
+			@ApiIgnore Errors errors,
+			@RequestHeader(value = "User-Agent") String userAgent) {
 		log.info("Book an appointment for preRegId: {}", preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(appointmentService.makeAppointment(bookingDTO, preRegistrationId));
+				.body(appointmentService.makeAppointment(bookingDTO, preRegistrationId, userAgent));
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetappointmentdetailspreregid())")
@@ -101,8 +103,9 @@ public class AppointmentController {
 	@ApiOperation(value = "Booking Appointment")
 	@ApiResponses(value = { @ApiResponse(code = 200, message = "Appointment Booked Successfully") })
 	public ResponseEntity<MainResponseDTO<BookingStatus>> bookMultiAppoinment(
-			@Validated @RequestBody(required = true) MainRequestDTO<MultiBookingRequest> bookingRequest) {
-		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.makeMultiAppointment(bookingRequest));
+			@Validated @RequestBody(required = true) MainRequestDTO<MultiBookingRequest> bookingRequest,
+			@RequestHeader(value = "User-Agent") String userAgent) {
+		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.makeMultiAppointment(bookingRequest, userAgent));
 	}
 
 }

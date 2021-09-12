@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -85,14 +86,17 @@ public class AppointmentControllerTest {
 	public void bookAppointmentForPridTest() throws Exception {
 
 		MainResponseDTO<BookingStatusDTO> response = new MainResponseDTO<BookingStatusDTO>();
+		
+		HttpHeaders header = new HttpHeaders();
+		header.add("User-Agent", "test");
 
-		Mockito.when(appointmentService.makeAppointment(Mockito.anyObject(), Mockito.anyString())).thenReturn(response);
+		Mockito.when(appointmentService.makeAppointment(Mockito.anyObject(), Mockito.anyString(), Mockito.anyString())).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders
 				.post("/applications/appointment/{preRegistrationId}", "98765432101234")
 				.content(
 						"{\"id\":\"mosip.pre-registration.booking.book\",\"request\":{\"registration_center_id\":\"10009\",\"appointment_date\":\"2021-08-23\",\"time_slot_from\":\"10:15:00\",\"time_slot_to\":\"10:30:00\"},\"version\":\"1.0\",\"requesttime\":\"2021-08-19T08:09:04.674Z\"}")
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8);
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).headers(header);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 
 	}
@@ -132,12 +136,15 @@ public class AppointmentControllerTest {
 	public void multiAppointmentTest() throws Exception {
 
 		MainResponseDTO<BookingStatus> response = new MainResponseDTO<BookingStatus>();
+		
+		HttpHeaders header = new HttpHeaders();
+		header.add("User-Agent", "test");
 
-		Mockito.when(appointmentService.makeMultiAppointment(Mockito.any())).thenReturn(response);
+		Mockito.when(appointmentService.makeMultiAppointment(Mockito.any(), Mockito.anyString())).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders.post("/applications/appointment").content(
 				"{\"id\":\"mosip.pre-registration.booking.book\",\"request\":{\"bookingRequest\":[{\"preRegistrationId\":\"38047351465865\",\"registration_center_id\":\"10001\",\"appointment_date\":\"2021-07-19\",\"time_slot_from\":\"09:00:00\",\"time_slot_to\":\"09:15:00\"}]},\"version\":\"1.0\",\"requesttime\":\"2021-07-12T14:04:58.429Z\"}")
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8);
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).headers(header);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 
 	}

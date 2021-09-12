@@ -32,6 +32,7 @@ import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ParseException;
@@ -81,6 +82,9 @@ public class DataSyncServiceTest {
 
 	@MockBean
 	RestTemplateBuilder restTemplateBuilder;
+	
+	@MockBean
+	AnonymousProfileUtil profileUtil;
 
 	/**
 	 * Autowired reference for $link{DataSyncServiceUtil}

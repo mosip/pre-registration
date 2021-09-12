@@ -39,6 +39,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
+import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -104,6 +105,10 @@ public class DataSyncServiceUtilTest {
 	@MockBean
 	@Qualifier(value = "restTemplate")
 	RestTemplate restTemplate;
+	
+	@MockBean
+	AnonymousProfileUtil profileUtil;
+
 
 	/**
 	 * Reference for ${mosip.id.preregistration.datasync.fetch.ids} from property

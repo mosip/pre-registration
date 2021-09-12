@@ -20,11 +20,9 @@ import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.application.service.ApplicationService;
-import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
