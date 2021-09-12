@@ -25,6 +25,6 @@ CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
     is_deleted boolean,
     del_dtimes timestamp without time zone,
     CONSTRAINT anonymous_profile_pkey PRIMARY KEY (id)
-)
+);
 
 -- ddl-end --
