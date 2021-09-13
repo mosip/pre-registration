@@ -117,9 +117,9 @@ public class AnonymousProfileUtil {
 	 */
 	@PostConstruct
 	public void setup() {
-		//log.info("Fetching file: " + identityMappingJsonFileName);
+		log.info("Fetching file: " + identityMappingJsonFileName);
 		identityMappingJsonString = getJsonFile(identityMappingJsonFileName);
-		//log.info("Fetched the identity JSON from config server" + identityMappingJsonString);
+		log.info("Fetched the identity JSON from config server" + identityMappingJsonString);
 	}
 
 	/**
@@ -143,8 +143,6 @@ public class AnonymousProfileUtil {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getIdentityMapping() method of AnonymousProfileUtil - " + ex.getMessage());
-//			throw new AnonymousProfileException(AnonymousProfileErrorCodes.PRG_ANO_002.getCode(),
-//					AnonymousProfileErrorMessages.UNBALE_TO_READ_IDENTITY_JSON.getMessage());
 		}
 		return null;
 	}

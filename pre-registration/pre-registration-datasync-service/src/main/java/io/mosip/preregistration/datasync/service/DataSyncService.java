@@ -285,13 +285,12 @@ public class DataSyncService {
 			// first time or being prefetched for the first time
 			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.APPLICATION_INCOMPLETE.getCode())  
 				|| preRegistrationDTO.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
-				//TODO call the service to update status of the application to "Prefetched"
 				preRegistrationDTO.setStatusCode(StatusCodes.PREFETCHED.getCode());
 				anonymousProfileUtil.saveAnonymousProfile(preRegistrationDTO, documentsMetaData,
 						bookingRegistrationDTO, null);
-				// update status to prefetched
-				serviceUtil.updateApplicationStatusToPreFectched(preId);
 			}
+			// update status to prefetched
+			serviceUtil.updateApplicationStatusToPreFectched(preId);
 		} catch (AnonymousProfileException apex) {
 			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
 			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
