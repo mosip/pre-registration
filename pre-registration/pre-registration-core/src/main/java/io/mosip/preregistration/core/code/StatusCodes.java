@@ -15,20 +15,19 @@ package io.mosip.preregistration.core.code;
  *
  */
 public enum StatusCodes {
-	
-	
+
 	/* Application_Incomplete */
 	APPLICATION_INCOMPLETE("Application_Incomplete"),
-	
+
 	/* Pending_Appointment */
 	PENDING_APPOINTMENT("Pending_Appointment"),
-	
+
 	/* Booked */
 	BOOKED("Booked"),
-	
+
 	/* Expired */
-	EXPIRED("Expired"), 
-	
+	EXPIRED("Expired"),
+
 	/* Consumed */
 	CONSUMED("Consumed"), 
 	
@@ -40,12 +39,12 @@ public enum StatusCodes {
 	 */
 
 	CANCELLED("Cancelled"),
-	
+
 	/**
 	 * Document_Uploaded
 	 */
 	DOCUMENT_UPLOADED("Document_Uploaded");
-	
+
 	/**
 	 * @param code
 	 */

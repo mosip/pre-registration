@@ -117,9 +117,9 @@ public class AnonymousProfileUtil {
 	 */
 	@PostConstruct
 	public void setup() {
-		log.info("Fetching file: " + identityMappingJsonFileName);
+		//log.info("Fetching file: " + identityMappingJsonFileName);
 		identityMappingJsonString = getJsonFile(identityMappingJsonFileName);
-		log.info("Fetched the identity JSON from config server" + identityMappingJsonString);
+		//log.info("Fetched the identity JSON from config server" + identityMappingJsonString);
 	}
 
 	/**
@@ -179,7 +179,7 @@ public class AnonymousProfileUtil {
 				registrationProfile.setProcessStage(PREREGISTRATION_APP_NAME);
 				registrationProfile.setDate(LocalDateTime.now(ZoneId.of("UTC")));
 				registrationProfile.setYearOfBirth(extractYear(
-						getValueFromDemographicData(identityMapping.getDateOfBirth().getValue(), identityData)));
+						getValueFromDemographicData(identityMapping.getDob().getValue(), identityData)));
 				registrationProfile
 						.setGender(getValueFromDemographicData(identityMapping.getGender().getValue(), identityData));
 				registrationProfile.setPreferredLanguage(

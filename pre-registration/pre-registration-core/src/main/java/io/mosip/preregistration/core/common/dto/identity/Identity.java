@@ -4,6 +4,9 @@ import java.io.Serializable;
 
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import io.mosip.preregistration.core.common.dto.DocumentIdentity;
 import lombok.Data;
 
 /**
@@ -16,6 +19,7 @@ import lombok.Data;
  */
 @Data
 @Component
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Identity implements Serializable {
 
 	/**
@@ -26,17 +30,11 @@ public class Identity implements Serializable {
 	/** The name. */
 	private IdentityJsonValues name;
 
-	/** The POA. */
-	private IdentityJsonValues proofOfAddress;
-
-	/** The postal code. */
-	private IdentityJsonValues postalCode;
-
 	/** The gender. */
 	private IdentityJsonValues gender;
 
 	/** The date of birth. */
-	private IdentityJsonValues dateOfBirth;
+	private IdentityJsonValues dob;
 
 	/** The preferredLanguages. */
 	private IdentityJsonValues preferredLanguage;

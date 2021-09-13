@@ -235,9 +235,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 					bookRequest.setSlotToTime(action.getSlotToTime());
 					bookRequest.setSlotFromTime(action.getSlotFromTime());
 					this.updateApplicationEntity(preRegistrationId, bookRequest);
-					createAnonymousProfile(userAgent, preRegistrationId, bookRequest);
 					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
 							authUserDetails().getUserId());
+					createAnonymousProfile(userAgent, preRegistrationId, bookRequest);
 				});
 			}
 			multiBookingResponse.setResponse(bookingStatus);
@@ -299,7 +299,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			applicationEntity.setSlotToTime(
 					LocalTime.parse(bookingInfo.getSlotToTime(), DateTimeFormatter.ofPattern("H:mm:ss")));
 			applicationEntity.setRegistrationCenterId(bookingInfo.getRegistrationCenterId());
-			applicationEntity.setBookingStatusCode(StatusCodes.BOOKED.getCode());
+			//applicationEntity.setBookingStatusCode(StatusCodes.BOOKED.getCode());
 		}
 		applicationEntity.setUpdBy(authUserDetails().getUserId());
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));

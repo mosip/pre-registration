@@ -289,6 +289,8 @@ public class DataSyncService {
 				preRegistrationDTO.setStatusCode(StatusCodes.PREFETCHED.getCode());
 				anonymousProfileUtil.saveAnonymousProfile(preRegistrationDTO, documentsMetaData,
 						bookingRegistrationDTO, null);
+				// update status to prefetched
+				serviceUtil.updateApplicationStatusToPreFectched(preId);
 			}
 		} catch (AnonymousProfileException apex) {
 			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
