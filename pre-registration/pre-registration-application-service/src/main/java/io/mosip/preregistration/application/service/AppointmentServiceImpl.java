@@ -155,11 +155,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		} catch (AppointmentExecption ex) {
 			log.error("Exception has occurred while booking appointment : ", ex);
 			bookAppointmentResponse.setErrors(setErrors(ex));
-		} catch (AnonymousProfileException apex) {
-			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
-			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
-		} 
-
+		}
 		return bookAppointmentResponse;
 	}
 
@@ -244,33 +240,38 @@ public class AppointmentServiceImpl implements AppointmentService {
 		} catch (AppointmentExecption ex) {
 			log.error("Exception has occured while booking an appointment : {}", ex);
 			multiBookingResponse.setErrors(setErrors(ex));
-		} catch (AnonymousProfileException apex) {
-			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
-			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
-		} 
+		}
 		return multiBookingResponse;
 	}
 
 	private void createAnonymousProfile(String userAgent, String preRegistrationId, BookingRequestDTO bookRequest) {
 		log.info("In createAnonymousProfile()");
-		// get the demographic data, documents data, booking data to create anonymous
-		// profile
-		BrowserInfoDTO browserInfo = new BrowserInfoDTO();
-		browserInfo.setBrowserName(userAgent);
-		DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId).getResponse();
-		DocumentsMetaData documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
-		BookingRegistrationDTO bookingData = new BookingRegistrationDTO();
-		bookingData.setRegistrationCenterId(bookRequest.getRegistrationCenterId());
-		bookingData.setRegDate(bookRequest.getRegDate());
-		bookingData.setSlotFromTime(bookRequest.getSlotFromTime());
-		bookingData.setSlotToTime(bookRequest.getSlotToTime());
-		log.info("In createAnonymousProfile() Status of application: " + demographicData.getStatusCode());
-		// insert the anonymous profile only if the appointment is being booked for the
-		// only for the first time
-		if (demographicData != null && demographicData.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
-			//set the status as Booked to be saved in the Anonymous Profile
-			demographicData.setStatusCode(StatusCodes.BOOKED.getCode());
-			anonymousProfileUtil.saveAnonymousProfile(demographicData, documentsData, bookingData, browserInfo);
+		try {
+			// get the demographic data, documents data, booking data to create anonymous
+			// profile
+			BrowserInfoDTO browserInfo = new BrowserInfoDTO();
+			browserInfo.setBrowserName(userAgent);
+			DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId)
+					.getResponse();
+			DocumentsMetaData documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
+			BookingRegistrationDTO bookingData = new BookingRegistrationDTO();
+			bookingData.setRegistrationCenterId(bookRequest.getRegistrationCenterId());
+			bookingData.setRegDate(bookRequest.getRegDate());
+			bookingData.setSlotFromTime(bookRequest.getSlotFromTime());
+			bookingData.setSlotToTime(bookRequest.getSlotToTime());
+			log.info("In createAnonymousProfile() Status of application: " + demographicData.getStatusCode());
+			// insert the anonymous profile only if the appointment is being booked for the
+			// only for the first time
+			if (demographicData != null
+					&& demographicData.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
+				// set the status as Booked to be saved in the Anonymous Profile
+				demographicData.setStatusCode(StatusCodes.BOOKED.getCode());
+				anonymousProfileUtil.saveAnonymousProfile(demographicData, documentsData, bookingData, browserInfo);
+			}
+		} catch (AnonymousProfileException apex) {
+			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
+			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -"
+					+ apex.getMessage());
 		}
 	}
 
@@ -299,7 +300,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			applicationEntity.setSlotToTime(
 					LocalTime.parse(bookingInfo.getSlotToTime(), DateTimeFormatter.ofPattern("H:mm:ss")));
 			applicationEntity.setRegistrationCenterId(bookingInfo.getRegistrationCenterId());
-			applicationEntity.setBookingStatusCode(StatusCodes.BOOKED.getCode());
+			//applicationEntity.setBookingStatusCode(StatusCodes.BOOKED.getCode());
 		}
 		applicationEntity.setUpdBy(authUserDetails().getUserId());
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));

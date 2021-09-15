@@ -377,6 +377,8 @@ public class ValidationUtil {
 			isStatusBookedOrExpired = !isStatusBookedOrExpired;
 		} else if (StatusCodes.CANCELLED.getCode().equals(status)) {
 			isStatusBookedOrExpired = !isStatusBookedOrExpired;
+		} else if (StatusCodes.PREFETCHED.getCode().equals(status)) {
+			isStatusBookedOrExpired = !isStatusBookedOrExpired;
 		}
 		return isStatusBookedOrExpired;
 	}

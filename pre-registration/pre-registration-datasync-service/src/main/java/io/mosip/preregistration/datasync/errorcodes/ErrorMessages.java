@@ -52,12 +52,14 @@ public enum ErrorMessages {
 	 * ErrorMessage for PRG_DATA_SYNC_017
 	 */
 	ERROR_WHILE_PARSING("Error occured while parsing data"),
-	
+
 	FAILED_TO_FETCH_INFO_FOR_PRID("Failed to fetch the info the preregistration Id"),
-	
+
 	FAILED_TO_FETCH_MACHINE_ENCRYPTION_PUBLICKEY("Failed to fetch machines encryption publickey"),
-	
-	UNABLE_TO_SIGN_DATA("Failed to sign the data");
+
+	UNABLE_TO_SIGN_DATA("Failed to sign the data"),
+
+	PREFETCHED_UPDATE_FAILED("Prefetch update failed");
 
 	private ErrorMessages(String message) {
 		this.message = message;

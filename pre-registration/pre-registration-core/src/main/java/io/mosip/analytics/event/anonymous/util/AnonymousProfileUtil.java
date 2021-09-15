@@ -143,8 +143,6 @@ public class AnonymousProfileUtil {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"In getIdentityMapping() method of AnonymousProfileUtil - " + ex.getMessage());
-//			throw new AnonymousProfileException(AnonymousProfileErrorCodes.PRG_ANO_002.getCode(),
-//					AnonymousProfileErrorMessages.UNBALE_TO_READ_IDENTITY_JSON.getMessage());
 		}
 		return null;
 	}
@@ -179,7 +177,7 @@ public class AnonymousProfileUtil {
 				registrationProfile.setProcessStage(PREREGISTRATION_APP_NAME);
 				registrationProfile.setDate(LocalDateTime.now(ZoneId.of("UTC")));
 				registrationProfile.setYearOfBirth(extractYear(
-						getValueFromDemographicData(identityMapping.getDateOfBirth().getValue(), identityData)));
+						getValueFromDemographicData(identityMapping.getDob().getValue(), identityData)));
 				registrationProfile
 						.setGender(getValueFromDemographicData(identityMapping.getGender().getValue(), identityData));
 				registrationProfile.setPreferredLanguage(
