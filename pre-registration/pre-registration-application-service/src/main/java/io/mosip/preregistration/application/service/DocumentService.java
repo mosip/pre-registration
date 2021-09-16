@@ -610,7 +610,9 @@ public class DocumentService implements DocumentServiceIntf {
 							documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
 					if (demographicResponse.getStatusCode().toLowerCase()
 							.equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
+						log.info("check if mandatory document deleted");
 						if (isMandatoryDocumentDeleted(documentEntity.getDemographicEntity())) {
+							log.info("mandatory document deleted");
 							serviceUtil.updateApplicationStatusToIncomplete(documentEntity);
 						}
 					}
@@ -655,7 +657,9 @@ public class DocumentService implements DocumentServiceIntf {
 	}
 
 	private boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity) {
-		return !(serviceUtil.isMandatoryDocumentDeleted(demographicEntity));
+		boolean isDeleted = !(serviceUtil.isMandatoryDocumentDeleted(demographicEntity));
+		log.info("Mandatory document Deleted {}", isDeleted);
+		return isDeleted;
 
 	}
 
