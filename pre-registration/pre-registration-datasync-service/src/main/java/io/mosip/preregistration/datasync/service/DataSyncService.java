@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import io.mosip.analytics.event.anonymous.exception.AnonymousProfileException;
+import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -72,7 +74,13 @@ public class DataSyncService {
 	 */
 	@Autowired
 	AuditLogUtil auditLogUtil;
-
+	
+	/**
+	 * Autowired reference for {@link #AnonymousProfileUtil}
+	 */
+	@Autowired
+	AnonymousProfileUtil anonymousProfileUtil;
+	
 	/**
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
@@ -273,6 +281,19 @@ public class DataSyncService {
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
+			// insert the anonymous profile only if the appointment is being booked for the
+			// first time or being prefetched for the first time
+			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.APPLICATION_INCOMPLETE.getCode())  
+				|| preRegistrationDTO.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
+				preRegistrationDTO.setStatusCode(StatusCodes.PREFETCHED.getCode());
+				anonymousProfileUtil.saveAnonymousProfile(preRegistrationDTO, documentsMetaData,
+						bookingRegistrationDTO, null);
+			}
+			// update status to prefetched
+			serviceUtil.updateApplicationStatusToPreFectched(preId);
+		} catch (AnonymousProfileException apex) {
+			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
+			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
 		} catch (Exception ex) {
 			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
 			log.error("In getPreRegistrationData method of datasync service -" + ex.getMessage());
@@ -366,7 +387,6 @@ public class DataSyncService {
 		if (!eventName.equalsIgnoreCase("REVERSESYNC")) {
 			auditRequestDto.setModuleId(AuditLogVariables.DAT.toString());
 			auditRequestDto.setModuleName(AuditLogVariables.DATASYNC_SERVICE.toString());
-		} else {
 			auditRequestDto.setModuleId(AuditLogVariables.REV.toString());
 			auditRequestDto.setModuleName(AuditLogVariables.REVERSE_DATASYNC_SERVICE.toString());
 		}

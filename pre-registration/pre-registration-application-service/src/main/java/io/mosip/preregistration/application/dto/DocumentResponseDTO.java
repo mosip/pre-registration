@@ -43,7 +43,7 @@ public class DocumentResponseDTO implements Serializable {
 	 * Document Reference Number
 	 * 
 	 */
-	private String docRefId;
+	private String refNumber;
 
 	/**
 	 * Document Category

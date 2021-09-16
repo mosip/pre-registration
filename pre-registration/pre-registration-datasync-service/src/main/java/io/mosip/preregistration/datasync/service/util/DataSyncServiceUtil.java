@@ -253,7 +253,8 @@ public class DataSyncServiceUtil {
 	 */
 	public boolean validateReverseDataSyncRequest(ReverseDataSyncRequestDTO reverseDataSyncRequest,
 			MainResponseDTO<?> mainResponseDTO) {
-		log.info("In validateReverseDataSyncRequest sync preregids {}", reverseDataSyncRequest.getPreRegistrationIds());
+		log.info("sessionId", "idType", "id",
+				"In validateReverseDataSyncRequest sync preregids" + reverseDataSyncRequest.getPreRegistrationIds());
 		List<String> preRegIdsList = reverseDataSyncRequest.getPreRegistrationIds();
 		if (preRegIdsList == null || isNull(preRegIdsList)) {
 			throw new InvalidRequestParameterException(ErrorCodes.PRG_DATA_SYNC_011.getCode(),
@@ -629,7 +630,7 @@ public class DataSyncServiceUtil {
 		documentMetaDataDTO.setType(getTypeName(documentMultipartResponseDTO.getLangCode(),
 				documentMultipartResponseDTO.getDocCatCode(), documentMultipartResponseDTO.getDocTypCode()));
 		documentMetaDataDTO.setFormat(getFileFormat(documentMultipartResponseDTO.getDocName()));
-		documentMetaDataDTO.setDocRefId(documentMultipartResponseDTO.getDocRefId());
+		documentMetaDataDTO.setRefNumber(documentMultipartResponseDTO.getRefNumber());
 		try {
 			return JsonUtils.jsonStringToJavaMap(JsonUtils.javaObjectToJsonString(documentMetaDataDTO));
 		} catch (JsonParseException | JsonMappingException | io.mosip.kernel.core.exception.IOException
@@ -947,7 +948,7 @@ public class DataSyncServiceUtil {
 					.fromHttpUrl(demographicResourceUrl + "/applications/info/" + prid);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
+			HttpEntity httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			log.info("In getPreRegistrationInfo method URL- {}", uriBuilder);
 			ResponseEntity<MainResponseDTO<ApplicationInfoMetadataDTO>> respEntity = restTemplate.exchange(uriBuilder,
@@ -956,6 +957,8 @@ public class DataSyncServiceUtil {
 					});
 			if (respEntity.getBody().getErrors() != null) {
 				log.info("unable to get preregistration data for the prid {}", prid);
+				throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
+						ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
 			} else {
 				applicationInfo = respEntity.getBody().getResponse();
 			}
@@ -1005,6 +1008,36 @@ public class DataSyncServiceUtil {
 					ErrorMessages.UNABLE_TO_SIGN_DATA.getMessage());
 		}
 		return signatureResponse.getJwtSignedData();
+
+	}
+
+	public boolean updateApplicationStatusToPreFectched(String preId) {
+		log.info("In updateApplicationStatusToPreFectched  method of datasync service util");
+		ResponseEntity<MainResponseDTO<String>> respEntity = null;
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder
+					.fromHttpUrl(demographicResourceUrl + "/applications/status/" + preId)
+					.queryParam("statusCode", StatusCodes.PREFETCHED.getCode());
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			HttpEntity httpEntity = new HttpEntity<>(headers);
+			String uriBuilder = builder.build().encode().toUriString();
+		    log.info("In updateApplicationStatusToPreFectched method URL- {}", uriBuilder);
+			respEntity = restTemplate.exchange(uriBuilder, HttpMethod.PUT, httpEntity,
+					new ParameterizedTypeReference<MainResponseDTO<String>>() {
+					});
+			if (respEntity.getBody().getErrors() != null) {
+				log.info("unable to update preregistration status to prefetched for the prid {}", preId);
+				throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_021.getCode(),
+						ErrorMessages.PREFETCHED_UPDATE_FAILED.getMessage(), null);
+			}
+		} catch (RestClientException ex) {
+			log.error("In updateApplicationStatusToPreFectched method of datasync service util ", ex);
+
+			throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_021.getCode(),
+					ErrorMessages.PREFETCHED_UPDATE_FAILED.getMessage(), null);
+		}
+		return respEntity.getBody().getResponse() != null ? true : false;
 
 	}
 

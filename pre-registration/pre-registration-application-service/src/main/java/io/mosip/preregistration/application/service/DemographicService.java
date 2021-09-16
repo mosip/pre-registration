@@ -216,7 +216,6 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Value("${preregistartion.config.identityjson}")
 	private String preregistrationIdJson;
-
 	/**
 	 * Response status
 	 */
@@ -576,8 +575,8 @@ public class DemographicService implements DemographicServiceIntf {
 			JSONObject jsonObj = (JSONObject) jsonParser.parse(new String(decryptedString));
 			JSONObject demographicMetadata = new JSONObject();
 			String nameValue = getPreregistrationIdentityJson().getIdentity().getName().getValue();
-			String poaValue = getPreregistrationIdentityJson().getIdentity().getProofOfAddress().getValue();
-			String postalCodeValue = getPreregistrationIdentityJson().getIdentity().getPostalCode().getValue();
+			String poaValue = getPreregistrationIdentityJson().getDocuments().getPoa().getValue();
+			String postalCodeValue = getPreregistrationIdentityJson().getIdentity().getDob().getValue();
 			String[] nameKeys = nameValue.split(",");
 			for (int i = 0; i < nameKeys.length; i++) {
 				demographicMetadata.put(nameKeys[i], serviceUtil.getValueFromIdentity(decryptedString, nameKeys[i]));
@@ -936,8 +935,9 @@ public class DemographicService implements DemographicServiceIntf {
 				List<String> preIds = preRegIdsByRegCenterIdDTO.getPreRegistrationIds();
 
 				List<String> statusCodes = new ArrayList<>();
-				statusCodes.add(StatusCodes.BOOKED.getCode());
-				statusCodes.add(StatusCodes.EXPIRED.getCode());
+				for (StatusCodes codes : StatusCodes.values()) {
+					statusCodes.add(codes.getCode());
+				}
 
 				List<DemographicEntity> demographicEntities = demographicRepository
 						.findByStatusCodeInAndPreRegistrationIdIn(statusCodes, preIds);

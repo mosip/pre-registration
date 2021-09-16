@@ -23,9 +23,11 @@ import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.AppointmentServiceImpl;
 import io.mosip.preregistration.application.service.DemographicService;
+import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.BookingRequestDTO;
@@ -51,6 +53,12 @@ public class AppointmentServiceTest {
 
 	@MockBean
 	private DemographicService demoService;
+
+	@MockBean
+	private DocumentService documentService;
+	
+	@MockBean
+	private AnonymousProfileUtil profileUtil;
 
 	@MockBean
 	private ApplicationRepostiory applicationRepostiory;

@@ -115,8 +115,10 @@ public class NotificationUtil {
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
 			if (acknowledgementDTO.getIsBatch()) {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
+				fileText.concat("\n");
 			} else {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgement);
+				fileText.concat("\n");
 			}
 
 			String languageWiseTemplate = templateUtil.templateMerge(fileText, acknowledgementDTO);

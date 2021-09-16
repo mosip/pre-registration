@@ -18,12 +18,12 @@ public interface AppointmentService {
 	MainResponseDTO<BookingRegistrationDTO> getAppointmentDetails(String preRegistrationId);
 
 	MainResponseDTO<BookingStatusDTO> makeAppointment(MainRequestDTO<BookingRequestDTO> bookingDTO,
-			String preRegistrationId);
+			String preRegistrationId, String userAgent);
 
 	MainResponseDTO<DeleteBookingDTO> deleteBooking(String preId);
 
 	MainResponseDTO<CancelBookingResponseDTO> cancelAppointment(String preRegistrationId);
 
-	MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest);
+	MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest, String userAgent);
 
 }
