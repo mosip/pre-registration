@@ -157,26 +157,30 @@ public enum DemographicErrorMessages {
 	 * PRG_PAM_APP_018
 	 */
 	UBALE_TO_READ_IDENTITY_JSON("Failed to read the identity json from the server"),
-	
+
 	/**
 	 * PRG_PAM_APP_020
 	 */
 	PRID_RESTCALL_FAIL("Rest call to get prid failed"),
 	
+	MASTERDATA_RESTCALL_FAIL("masterdata restcall failed"),
+
 	ID_SCHEMA_FETCH_FAILED("Id schema fetch failed"),
-	
+
 	/**
 	 * PRG_PAM_APP_019
 	 */
 	INVALID_PAGE_INDEX_VALUE("Invalid page index value"),
-	
+
 	/**
 	 * PRG_PAM_APP_021
 	 */
 	DUPLICATE_KEY("Duplicate key for prid"),
-	
+
 	SERVER_ERROR("Error while calling config server"),
-	
+
+	FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT("Failed to update status to pending appointment"),
+
 	NOT_POSSIBLE_TO_UPDATE("Application can not be updated!!");
 
 	private DemographicErrorMessages(String message) {

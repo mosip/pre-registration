@@ -41,6 +41,7 @@ import io.mosip.preregistration.application.exception.DemographicGetDetailsExcep
 import io.mosip.preregistration.application.exception.DocumentNotValidException;
 import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DemographicServiceIntf;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -95,7 +96,7 @@ public class DocumentServiceUtil {
 	ValidationUtil validationUtil;
 
 	@Autowired
-	private DemographicServiceIntf demographgicServiceItf;
+	private DemographicService demographgicService;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -351,15 +352,24 @@ public class DocumentServiceUtil {
 		}
 	}
 
-	public boolean getPreRegInfoRestService(String preId) {
+	public DemographicResponseDTO getPreRegInfoRestService(String preId) {
 		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of document service util");
 
-		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicServiceItf.getDemographicData(preId);
+		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicService.getDemographicData(preId);
 		if (getDemographicData.getErrors() != null) {
 			throw new DemographicGetDetailsException(getDemographicData.getErrors().get(0).getErrorCode(),
 					getDemographicData.getErrors().get(0).getMessage());
 		}
-		return true;
+		return getDemographicData.getResponse();
+	}
+
+	public boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity) {
+		return demographgicService.isupdateStausToPendingAppointmentValid(demographicEntity);
+	}
+
+	public void updateApplicationStatusToIncomplete(DocumentEntity documentEntity) {
+		demographgicService.updatePreRegistrationStatus(documentEntity.getDemographicEntity().getPreRegistrationId(),
+				StatusCodes.APPLICATION_INCOMPLETE.getCode(), documentEntity.getDemographicEntity().getCreatedBy());
 	}
 
 }

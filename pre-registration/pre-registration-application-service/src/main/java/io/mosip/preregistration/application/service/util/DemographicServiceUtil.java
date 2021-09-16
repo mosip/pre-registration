@@ -10,8 +10,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -46,21 +48,28 @@ import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.code.DemographicRequestCodes;
+import io.mosip.preregistration.application.dto.ApplicantTypeKeyValueDTO;
+import io.mosip.preregistration.application.dto.ApplicantTypeRequestDTO;
+import io.mosip.preregistration.application.dto.ApplicantTypeResponseDTO;
+import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.IdSchemaDto;
 import io.mosip.preregistration.application.dto.LanguageValueDto;
 import io.mosip.preregistration.application.dto.PridFetchResponseDto;
+import io.mosip.preregistration.application.dto.UISpecMetaDataDTO;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
+import io.mosip.preregistration.application.exception.MasterDataException;
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.AppointmentService;
+import io.mosip.preregistration.application.service.UISpecService;
 import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
 import io.mosip.preregistration.core.code.ApplicationStatusCode;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
@@ -123,8 +132,14 @@ public class DemographicServiceUtil {
 	@Value("${booking.resource.url}")
 	private String deleteAppointmentResourseUrl;
 
+	@Value("${masterdata.resource.url}")
+	private String masterdataResourseUrl;
+
 	@Autowired
 	private AppointmentService appointmentService;
+
+	@Autowired
+	private UISpecService uiSpecService;
 
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
@@ -567,21 +582,6 @@ public class DemographicServiceUtil {
 
 	}
 
-//	private String getAuthToken() {
-//		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
-//		ClientSecretDTO clientSecretDto = new ClientSecretDTO(clientId, secretKey, appId);
-//		RequestWrapper<ClientSecretDTO> requestKernel = new RequestWrapper<>();
-//		requestKernel.setRequest(clientSecretDto);
-//		requestKernel.setRequesttime(LocalDateTime.now());
-//		ResponseEntity<ResponseWrapper<AuthNResponse>> response = (ResponseEntity<ResponseWrapper<AuthNResponse>>) callAuthService(
-//				tokenUrl, HttpMethod.POST, MediaType.APPLICATION_JSON, requestKernel, null, ResponseWrapper.class);
-//		if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
-//			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
-//					DemographicErrorMessages.PRID_RESTCALL_FAIL.getMessage());
-//		}
-//		return response.getHeaders().get("Set-Cookie").get(0);
-//	}
-
 	public ResponseEntity<?> callAuthService(String url, HttpMethod httpMethodType, MediaType mediaType, Object body,
 			Map<String, String> headersMap, Class<?> responseClass) {
 		ResponseEntity<?> response = null;
@@ -674,10 +674,10 @@ public class DemographicServiceUtil {
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
 			}
-			applicationRepostiory.save(applicationEntity);
+			applicationRepostiory.update(applicationEntity);
 		} catch (Exception ex) {
-			log.error("Error while updating status for applications");
-			log.error("Excepction {}", ex);
+			log.info("Error while updating status for applications");
+			log.info("Excepction {}", ex);
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
 					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
 		}
@@ -740,12 +740,140 @@ public class DemographicServiceUtil {
 					}
 					return language;
 				}).collect(Collectors.toSet());
-				
+
 				break;
 
 			}
 		}
 		return dataCaptureLang;
+	}
+
+	@SuppressWarnings("rawtypes")
+	public ApplicantTypeRequestDTO createApplicantTypeRequest(DemographicEntity demographicEntity)
+			throws ParseException {
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(new String(cryptoUtil
+				.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime())));
+
+		List<Object> demographicKeys = Arrays
+				.asList(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
+
+		ApplicantTypeRequestDTO attributes = new ApplicantTypeRequestDTO();
+		List<ApplicantTypeKeyValueDTO<String, Object>> attributeList = new ArrayList<>();
+
+		for (Object key : demographicKeys) {
+			ApplicantTypeKeyValueDTO<String, Object> attribute = new ApplicantTypeKeyValueDTO<>();
+			attribute.setAttribute((String) key);
+			attribute.setValue(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).get(key));
+			attributeList.add(attribute);
+
+		}
+
+		attributes.setAttributes(attributeList);
+
+		return attributes;
+
+	}
+
+	public String getApplicantypeCode(ApplicantTypeRequestDTO applicantTypeRequest) {
+
+		log.info("In getApplicantypeCode method ");
+		String applicantTypeCode = null;
+		try {
+			UriComponentsBuilder regbuilder = UriComponentsBuilder
+					.fromHttpUrl(masterdataResourseUrl + "/getApplicantType");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			RequestWrapper<ApplicantTypeRequestDTO> request = new RequestWrapper<>();
+			request.setRequest(applicantTypeRequest);
+			HttpEntity<RequestWrapper<ApplicantTypeRequestDTO>> entity = new HttpEntity<>(request, headers);
+			String uriBuilder = regbuilder.build().encode().toUriString();
+
+			ResponseEntity<ResponseWrapper<ApplicantTypeResponseDTO>> responseEntity = restTemplate.exchange(uriBuilder,
+					HttpMethod.POST, entity,
+					new ParameterizedTypeReference<ResponseWrapper<ApplicantTypeResponseDTO>>() {
+					});
+
+			if (responseEntity.getBody().getErrors() != null) {
+
+				throw new MasterDataException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
+
+			applicantTypeCode = responseEntity.getBody().getResponse().getApplicantType().getApplicantTypeCode();
+
+		} catch (RestClientException ex) {
+			log.error("restcall failed to get applicanttype", ex);
+			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+					DemographicErrorMessages.MASTERDATA_RESTCALL_FAIL.getMessage());
+		}
+		return applicantTypeCode;
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	public ApplicantValidDocumentDto getDocCatAndTypeForApplicantCode(String applicantTypeCode, String langCode) {
+		log.info("In getDocCatAndTypeForApplicantCode method ");
+		ResponseEntity<ResponseWrapper<ApplicantValidDocumentDto>> responseEntity = null;
+		try {
+			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(
+					masterdataResourseUrl + "/applicanttype/" + applicantTypeCode + "/languages?languages=" + langCode);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			HttpEntity entity = new HttpEntity<>(headers);
+
+			String uriBuilder = regbuilder.build().encode().toUriString();
+
+			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
+					new ParameterizedTypeReference<ResponseWrapper<ApplicantValidDocumentDto>>() {
+					});
+
+			if (responseEntity.getBody().getErrors() != null) {
+
+				throw new MasterDataException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
+
+		} catch (RestClientException ex) {
+			log.error("restcall failed to get documentcategories for applicanttype code", ex);
+			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+					DemographicErrorMessages.MASTERDATA_RESTCALL_FAIL.getMessage());
+		}
+		return responseEntity.getBody().getResponse();
+	}
+
+	public Set<String> getMandatoryDocCatogery() {
+		log.info("In mandatoryDocsCategory method ");
+		Set<String> mandatoryDocs = new HashSet<>();
+		MainResponseDTO<UISpecMetaDataDTO> uiSpec = uiSpecService.getLatestUISpec(0.0, 0.0);
+		uiSpec.getResponse().getJsonSpec().get("identity").get("identity").forEach(field -> {
+			if (field.get("controlType").asText().equals("fileupload")
+					&& Boolean.valueOf(field.get("required").asText())) {
+				mandatoryDocs.add(field.get("subType").asText());
+			}
+		});
+
+		return mandatoryDocs;
+	}
+
+	public List<String> validMandatoryDocumentsForApplicant(DemographicEntity demographicEntity) throws ParseException {
+
+		String applicantTypeCode = null;
+		ApplicantValidDocumentDto applicantValidDocuments = null;
+
+		ApplicantTypeRequestDTO applicantTypeRequest = createApplicantTypeRequest(demographicEntity);
+
+		applicantTypeCode = getApplicantypeCode(applicantTypeRequest);
+
+		applicantValidDocuments = getDocCatAndTypeForApplicantCode(applicantTypeCode, demographicEntity.getLangCode());
+		Set<String> mandatoryDocCat = getMandatoryDocCatogery();
+
+		log.info("mandatory Docs category --> {}", mandatoryDocCat);
+		List<String> validMandatoryDocumentForApplicant = applicantValidDocuments.getDocumentCategories().stream()
+				.filter(docCat -> mandatoryDocCat.contains(docCat.getCode())).map(docCat -> docCat.getCode())
+				.collect(Collectors.toList());
+
+		return validMandatoryDocumentForApplicant;
 	}
 
 }

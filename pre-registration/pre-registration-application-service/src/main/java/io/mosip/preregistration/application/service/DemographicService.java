@@ -21,6 +21,8 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -837,12 +839,31 @@ public class DemographicService implements DemographicServiceIntf {
 	 * @param demographicEntity pass demographicEntity
 	 * @param status            pass status
 	 */
+	@Transactional(rollbackFor = Exception.class)
 	public void statusCheck(DemographicEntity demographicEntity, String status, String userId) {
 		if (demographicEntity != null) {
 			if (serviceUtil.isStatusValid(status)) {
 				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
-				demographicRepository.update(demographicEntity);
-				serviceUtil.updateApplicationStatus(demographicEntity.getPreRegistrationId(), status, userId);
+				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
+					if (isupdateStausToPendingAppointmentValid(demographicEntity)) {
+						String prid = demographicEntity.getPreRegistrationId();
+						serviceUtil.updateApplicationStatus(prid, status, userId);
+						log.info("Application booking status updated succesfully --> {}", status);
+						demographicRepository.update(demographicEntity);
+						log.info("demographic booking status updated succesfully --> {}", status);
+
+					} else {
+						throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
+								DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
+					}
+				} else {
+					String prid = demographicEntity.getPreRegistrationId();
+					serviceUtil.updateApplicationStatus(prid, status, userId);
+					log.info("Application booking status updated succesfully --> {}", status);
+					demographicRepository.update(demographicEntity);
+					log.info("demographic booking status updated succesfully --> {}", status);
+
+				}
 			} else {
 				throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 						DemographicErrorMessages.INVALID_STATUS_CODE.getMessage());
@@ -851,6 +872,45 @@ public class DemographicService implements DemographicServiceIntf {
 			throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 					DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
 		}
+	}
+
+	public boolean isupdateStausToPendingAppointmentValid(DemographicEntity demographicEntity) {
+		boolean isValid = false;
+		try {
+			List<String> validMandatoryDocForApplicant = serviceUtil
+					.validMandatoryDocumentsForApplicant(demographicEntity);
+
+			log.info("valid mandatory Docs category for applicant-->{}", validMandatoryDocForApplicant);
+			List<String> uploadedDocs = demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
+					.collect(Collectors.toList());
+			log.info("uploaded Docs category --> {}", uploadedDocs);
+
+			isValid = compareUploadedDocListAndValidMandatoryDocList(uploadedDocs, validMandatoryDocForApplicant);
+
+		} catch (Exception ex) {
+			
+			log.error("Exception Docs category -->", ex);
+			throw new DemographicServiceException(((DemographicServiceException) ex).getErrorCode(),
+					((DemographicServiceException) ex).getErrorText());
+
+		}
+		return isValid;
+
+	}
+
+	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> uploadedDocs,
+			List<String> validMandatoryDocForApplicant) {
+		if (validMandatoryDocForApplicant.size() == 0) {
+			return true;
+		} else {
+			uploadedDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
+			if (validMandatoryDocForApplicant.size() > 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
 	}
 
 	/**
