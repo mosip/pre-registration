@@ -367,9 +367,9 @@ public class DocumentServiceUtil {
 		return demographgicService.isupdateStausToPendingAppointmentValid(demographicEntity);
 	}
 
-	public void updateApplicationStatusToIncomplete(DocumentEntity documentEntity) {
-		demographgicService.updatePreRegistrationStatus(documentEntity.getDemographicEntity().getPreRegistrationId(),
-				StatusCodes.APPLICATION_INCOMPLETE.getCode(), documentEntity.getDemographicEntity().getCreatedBy());
+	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
+		demographgicService.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
+				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getCreatedBy());
 	}
 
 }
