@@ -266,7 +266,7 @@ public class NotificationService {
 			responseNode = responseNode.get(identity);
 
 			JsonNode arrayNode = responseNode.get("fullName");
-			List<KeyValuePairDto> langaueNamePairs = new ArrayList<KeyValuePairDto>();
+			List<KeyValuePairDto<String,String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String,String>>();
 			KeyValuePairDto langaueNamePair = null;
 			if (arrayNode.isArray()) {
 				for (JsonNode jsonNode : arrayNode) {

@@ -47,22 +47,22 @@ public class NotificationUtilTest {
 
 	@Value("${smsResourse.url}")
 	private String smsResourseUrl;
-	
+
 	@MockBean
 	private RequestValidator validator;
-	
+
 	@Autowired
 	private TemplateUtil templateUtil;
-	
+
 	@Autowired
 	private ObjectMapper mapper;
-	
-	@MockBean(name="restTemplate")
+
+	@MockBean(name = "restTemplate")
 	RestTemplate restTemplate;
-	
+
 	@Autowired
 	NotificationUtil notificationUtil;
-	
+
 	private NotificationDTO notificationDTO;
 	boolean requestValidatorFlag = false;
 	TemplateResponseDTO templateResponseDTO = new TemplateResponseDTO();
@@ -71,11 +71,11 @@ public class NotificationUtilTest {
 	List<TemplateResponseDTO> tepmlateList = new ArrayList<>();
 	TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
 	ResponseEntity<NotificationResponseDTO> resp = null;
-	
+
 	@Before
 	public void setUp() throws Exception {
-		
-		List<KeyValuePairDto> languageNamePairs = new ArrayList<KeyValuePairDto>();
+
+		List<KeyValuePairDto<String, String>> languageNamePairs = new ArrayList<KeyValuePairDto<String, String>>();
 		KeyValuePairDto languageNamePair = new KeyValuePairDto();
 		languageNamePair.setKey("eng");
 		languageNamePair.setValue("Test01");
@@ -91,68 +91,68 @@ public class NotificationUtilTest {
 		notificationDTO.setFullName(languageNamePairs);
 		responseDTO = new MainResponseDTO<>();
 		responseDTO.setResponse(notificationDTO);
-		//responseDTO.setStatus(Boolean.TRUE);
+		// responseDTO.setStatus(Boolean.TRUE);
 		templateResponseDTO.setFileText("Email message");
 		tepmlateList.add(templateResponseDTO);
 
 		notificationResponseDTO.setMessage("Notification send successfully");
 		notificationResponseDTO.setStatus("True");
-		
+
 		templateResponseListDTO.setTemplates(tepmlateList);
 	}
-	
+
 	@Test
 	public void notifyEmailsuccessTest() throws IOException {
-		
+
 		String langCode = "eng";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
 		ResponseWrapper<TemplateResponseListDTO> templateResponseListDTO = new ResponseWrapper<>();
-		TemplateResponseListDTO templates= new TemplateResponseListDTO();
+		TemplateResponseListDTO templates = new TemplateResponseListDTO();
 		templates.setTemplates(tepmlateList);
 		templateResponseListDTO.setResponse(templates);
-		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> res = new ResponseEntity<>(
-				templateResponseListDTO, HttpStatus.OK);
+		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> res = new ResponseEntity<>(templateResponseListDTO,
+				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {})))
-				.thenReturn(res);
+				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
+				}))).thenReturn(res);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-		ResponseWrapper<NotificationResponseDTO> notificationres= new ResponseWrapper<>();
+		ResponseWrapper<NotificationResponseDTO> notificationres = new ResponseWrapper<>();
 		notificationres.setResponse(notificationResponseDTO);
-		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = new ResponseEntity<>(
-				notificationres, HttpStatus.OK);
+		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = new ResponseEntity<>(notificationres,
+				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				}))).thenReturn(resp);
-		MainResponseDTO<NotificationResponseDTO> response=notificationUtil.notify("email", notificationDTO, file);
+		MainResponseDTO<NotificationResponseDTO> response = notificationUtil.notify("email", notificationDTO, file);
 		assertEquals(notificationResponseDTO.getMessage(), response.getResponse().getMessage());
 	}
-	
+
 	@Test
 	public void notifySMSsuccessTest() throws IOException {
-		
+
 		String langCode = "eng";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
 		ResponseWrapper<TemplateResponseListDTO> templateResponseListDTO = new ResponseWrapper<>();
-		TemplateResponseListDTO templates= new TemplateResponseListDTO();
+		TemplateResponseListDTO templates = new TemplateResponseListDTO();
 		templates.setTemplates(tepmlateList);
 		templateResponseListDTO.setResponse(templates);
-		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> res = new ResponseEntity<>(
-				templateResponseListDTO, HttpStatus.OK);
+		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> res = new ResponseEntity<>(templateResponseListDTO,
+				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {})))
-				.thenReturn(res);
+				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
+				}))).thenReturn(res);
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-		ResponseWrapper<NotificationResponseDTO> notificationres= new ResponseWrapper<>();
+		ResponseWrapper<NotificationResponseDTO> notificationres = new ResponseWrapper<>();
 		notificationres.setResponse(notificationResponseDTO);
-		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = new ResponseEntity<>(
-				notificationres, HttpStatus.OK);
+		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = new ResponseEntity<>(notificationres,
+				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				}))).thenReturn(resp);
-		
-		MainResponseDTO<NotificationResponseDTO> response=notificationUtil.notify("sms", notificationDTO,file);
+
+		MainResponseDTO<NotificationResponseDTO> response = notificationUtil.notify("sms", notificationDTO, file);
 		assertEquals(notificationResponseDTO.getMessage(), response.getResponse().getMessage());
 	}
 

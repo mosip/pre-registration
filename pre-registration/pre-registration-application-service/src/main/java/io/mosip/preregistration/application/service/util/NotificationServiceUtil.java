@@ -131,7 +131,7 @@ public class NotificationServiceUtil {
 		JSONObject notificationData = new JSONObject(jsonString);
 		JSONObject notificationDtoData = (JSONObject) notificationData.get("request");
 		NotificationDTO notificationDto = null;
-		List<KeyValuePairDto> langaueNamePairs = new ArrayList<KeyValuePairDto>();
+		List<KeyValuePairDto<String, String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String,String>>();
 		if (isLatest) {
 			HashMap<String, String> result = objectMapper.readValue(notificationDtoData.toString(), HashMap.class);
 			KeyValuePairDto langaueNamePair = null;
@@ -387,19 +387,32 @@ public class NotificationServiceUtil {
 
 	}
 
+	@SuppressWarnings("null")
 	public NotificationDTO modifyCenterNameAndAddress(NotificationDTO notificationDto, String registrationCenterId,
 			String langCode) {
 
 		if (notificationDto != null) {
-			String centerName = notificationDto.getRegistrationCenterName();
-			String address = notificationDto.getAddress();
+			List<KeyValuePairDto<String, String>> centerName = notificationDto.getRegistrationCenterName();
+			List<KeyValuePairDto<String, String>> address = notificationDto.getAddress();
 			if (centerName == null && address == null) {
-				RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId, langCode);
-				System.out.println("NotificationCenterDTO: " + centerDto);
-				centerName = centerDto.getName();
-				StringBuilder sb = new StringBuilder(centerDto.getAddressLine1());
-				sb.append(" ").append(centerDto.getAddressLine2()).append(" ").append(centerDto.getAddressLine3());
-				address = sb.toString();
+				centerName = new ArrayList<>();
+				address = new ArrayList<>();
+				for (KeyValuePairDto<String, String> key : notificationDto.getFullName()) {
+					RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId,
+							(String) key.getKey());
+					System.out.println("NotificationCenterDTO: " + centerDto);
+					KeyValuePairDto<String, String> regCenterDetailsName = new KeyValuePairDto<>();
+					regCenterDetailsName.setKey((String) key.getKey());
+					regCenterDetailsName.setValue(centerDto.getName());
+					centerName.add(regCenterDetailsName);
+					KeyValuePairDto<String, String> regCenterDetailsAddress = new KeyValuePairDto<>();
+					regCenterDetailsAddress.setKey((String) key.getKey());
+					StringBuilder sb = new StringBuilder(centerDto.getAddressLine1());
+					sb.append(" ").append(centerDto.getAddressLine2()).append(" ").append(centerDto.getAddressLine3());
+					regCenterDetailsAddress.setValue(sb.toString());
+					address.add(regCenterDetailsAddress);
+				}
+
 			}
 			notificationDto.setRegistrationCenterName(centerName);
 			notificationDto.setAddress(address);
