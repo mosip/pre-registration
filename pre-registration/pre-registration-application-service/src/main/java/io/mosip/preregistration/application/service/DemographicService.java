@@ -61,7 +61,6 @@ import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsExc
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
 import io.mosip.preregistration.application.repository.DemographicRepository;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
-//import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
@@ -841,7 +840,6 @@ public class DemographicService implements DemographicServiceIntf {
 	 * @param demographicEntity pass demographicEntity
 	 * @param status            pass status
 	 */
-	@Transactional(rollbackFor = Exception.class)
 	public void statusCheck(DemographicEntity demographicEntity, String status, String userId) {
 		if (demographicEntity != null) {
 			if (serviceUtil.isStatusValid(status)) {
