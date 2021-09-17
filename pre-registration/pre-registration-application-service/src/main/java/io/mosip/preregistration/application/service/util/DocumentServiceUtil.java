@@ -371,20 +371,24 @@ public class DocumentServiceUtil {
 			throws org.json.simple.parser.ParseException {
 		List<String> availableDocuments = demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
 				.collect(Collectors.toList());
+		log.info("uploaded documents for user {} ----> {}", demographicEntity.getPreRegistrationId(),
+				availableDocuments);
 		List<String> mandatoryDoc = demographgicService.validMandatoryDocumentsForApplicant(demographicEntity);
+		log.info("mandatory documents for user {} ----> {}", demographicEntity.getPreRegistrationId(), mandatoryDoc);
 		return compareUploadedDocListAndValidMandatoryDocList(availableDocuments, mandatoryDoc);
+
 	}
 
 	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> availableDocs,
 			List<String> validMandatoryDocForApplicant) {
 		if (validMandatoryDocForApplicant.size() == 0) {
-			return true;
+			return false;
 		} else {
 			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
 			if (validMandatoryDocForApplicant.size() > 0) {
-				return false;
-			} else {
 				return true;
+			} else {
+				return false;
 			}
 		}
 
