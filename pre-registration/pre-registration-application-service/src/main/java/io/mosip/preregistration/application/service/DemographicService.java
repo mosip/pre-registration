@@ -41,6 +41,8 @@ import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.preregistration.application.code.DemographicRequestCodes;
+import io.mosip.preregistration.application.dto.ApplicantTypeRequestDTO;
+import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
@@ -877,8 +879,7 @@ public class DemographicService implements DemographicServiceIntf {
 	public boolean isupdateStausToPendingAppointmentValid(DemographicEntity demographicEntity) {
 		boolean isValid = false;
 		try {
-			List<String> validMandatoryDocForApplicant = serviceUtil
-					.validMandatoryDocumentsForApplicant(demographicEntity);
+			List<String> validMandatoryDocForApplicant = validMandatoryDocumentsForApplicant(demographicEntity);
 
 			log.info("valid mandatory Docs category for applicant-->{}", validMandatoryDocForApplicant);
 			List<String> uploadedDocs = demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
@@ -888,7 +889,7 @@ public class DemographicService implements DemographicServiceIntf {
 			isValid = compareUploadedDocListAndValidMandatoryDocList(uploadedDocs, validMandatoryDocForApplicant);
 
 		} catch (Exception ex) {
-			
+
 			log.error("Exception Docs category -->", ex);
 			throw new DemographicServiceException(((DemographicServiceException) ex).getErrorCode(),
 					((DemographicServiceException) ex).getErrorText());
@@ -896,6 +897,27 @@ public class DemographicService implements DemographicServiceIntf {
 		}
 		return isValid;
 
+	}
+
+	public List<String> validMandatoryDocumentsForApplicant(DemographicEntity demographicEntity) throws ParseException {
+
+		String applicantTypeCode = null;
+		ApplicantValidDocumentDto applicantValidDocuments = null;
+
+		ApplicantTypeRequestDTO applicantTypeRequest = serviceUtil.createApplicantTypeRequest(demographicEntity);
+
+		applicantTypeCode = serviceUtil.getApplicantypeCode(applicantTypeRequest);
+
+		applicantValidDocuments = serviceUtil.getDocCatAndTypeForApplicantCode(applicantTypeCode,
+				demographicEntity.getLangCode());
+		Set<String> mandatoryDocCat = serviceUtil.getMandatoryDocCatogery();
+
+		log.info("mandatory Docs category --> {}", mandatoryDocCat);
+		List<String> validMandatoryDocumentForApplicant = applicantValidDocuments.getDocumentCategories().stream()
+				.filter(docCat -> mandatoryDocCat.contains(docCat.getCode())).map(docCat -> docCat.getCode())
+				.collect(Collectors.toList());
+
+		return validMandatoryDocumentForApplicant;
 	}
 
 	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> uploadedDocs,
