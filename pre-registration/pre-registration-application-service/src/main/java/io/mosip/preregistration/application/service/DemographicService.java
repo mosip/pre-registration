@@ -840,6 +840,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 * @param demographicEntity pass demographicEntity
 	 * @param status            pass status
 	 */
+
 	public void statusCheck(DemographicEntity demographicEntity, String status, String userId) {
 		if (demographicEntity != null) {
 			if (serviceUtil.isStatusValid(status)) {
