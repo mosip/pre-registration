@@ -385,7 +385,7 @@ public class DocumentServiceUtil {
 			return false;
 		} else {
 			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (validMandatoryDocForApplicant.size() > 0 || validMandatoryDocForApplicant.size() == 0) {
+			if (validMandatoryDocForApplicant.size() > 0) {
 				return true;
 			} else {
 				return false;
