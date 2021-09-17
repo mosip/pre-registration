@@ -63,17 +63,10 @@ public class SwaggerConfig {
 	public OpenAPI customOpenAPI() {
 
 		return new OpenAPI()
-
-				.info(new Info()
-
-						.title(TITLE)
-
-						.version(buildProperties.getVersion())
-
-						.description(DESCRIPTION));
+				.info(new Info().title(TITLE).version(buildProperties.getVersion()).description(DESCRIPTION));
 
 	}
-	
+
 	@Bean
 	public RestTemplate restTemplateBean() {
 		return new RestTemplate();

@@ -12,6 +12,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -363,8 +364,27 @@ public class DocumentServiceUtil {
 		return getDemographicData.getResponse();
 	}
 
-	public boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity) {
-		return demographgicService.isupdateStausToPendingAppointmentValid(demographicEntity);
+	public boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity)
+			throws org.json.simple.parser.ParseException {
+		List<String> availableDocuments = demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
+				.collect(Collectors.toList());
+		List<String> mandatoryDoc = demographgicService.validMandatoryDocumentsForApplicant(demographicEntity);
+		return compareUploadedDocListAndValidMandatoryDocList(availableDocuments, mandatoryDoc);
+	}
+
+	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> availableDocs,
+			List<String> validMandatoryDocForApplicant) {
+		if (validMandatoryDocForApplicant.size() == 0) {
+			return true;
+		} else {
+			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
+			if (validMandatoryDocForApplicant.size() > 0) {
+				return false;
+			} else {
+				return true;
+			}
+		}
+
 	}
 
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {

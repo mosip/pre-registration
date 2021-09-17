@@ -9,11 +9,15 @@ import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Info;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.spi.DocumentationType;
@@ -73,34 +77,44 @@ public class DataSyncConfig {
 	int port = -1;
 	String hostWithPort = "localhost:9094";
 
+//	@Bean
+//	public Docket api() {
+//
+//		boolean swaggerBaseUrlSet = false;
+//		if (!localEnv && swaggerBaseUrl != null && !swaggerBaseUrl.isEmpty()) {
+//			try {
+//				proto = new URL(swaggerBaseUrl).getProtocol();
+//				host = new URL(swaggerBaseUrl).getHost();
+//				port = new URL(swaggerBaseUrl).getPort();
+//				if (port == -1) {
+//					hostWithPort = host;
+//				} else {
+//					hostWithPort = host + ":" + port;
+//				}
+//				swaggerBaseUrlSet = true;
+//			} catch (MalformedURLException e) {
+//				logger.error("SwaggerUrlException: ", e);
+//			}
+//		}
+//
+//		Docket docket = new Docket(DocumentationType.SWAGGER_2).groupName("Pre-Registration-Datasync").select()
+//				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.regex("(?!/(error).*).*")).build();
+//
+//		if (swaggerBaseUrlSet) {
+//			docket.protocols(protocols()).host(hostWithPort);
+//			logger.info("Swagger Base URL: {}://{}", proto, hostWithPort);
+//		}
+//		return docket;
+//	}
+
+	@Autowired
+	BuildProperties buildProperties;
+
 	@Bean
-	public Docket api() {
+	public OpenAPI customOpenAPI() {
+		return new OpenAPI().info(new Info().title(buildProperties.getName()).version(buildProperties.getVersion())
+				.description("Maven Spring Boot Project of MOSIP Pre-Registration Service"));
 
-		boolean swaggerBaseUrlSet = false;
-		if (!localEnv && swaggerBaseUrl != null && !swaggerBaseUrl.isEmpty()) {
-			try {
-				proto = new URL(swaggerBaseUrl).getProtocol();
-				host = new URL(swaggerBaseUrl).getHost();
-				port = new URL(swaggerBaseUrl).getPort();
-				if (port == -1) {
-					hostWithPort = host;
-				} else {
-					hostWithPort = host + ":" + port;
-				}
-				swaggerBaseUrlSet = true;
-			} catch (MalformedURLException e) {
-				logger.error("SwaggerUrlException: ", e);
-			}
-		}
-
-		Docket docket = new Docket(DocumentationType.SWAGGER_2).groupName("Pre-Registration-Datasync").select()
-				.apis(RequestHandlerSelectors.any()).paths(PathSelectors.regex("(?!/(error).*).*")).build();
-
-		if (swaggerBaseUrlSet) {
-			docket.protocols(protocols()).host(hostWithPort);
-			logger.info("Swagger Base URL: {}://{}", proto, hostWithPort);
-		}
-		return docket;
 	}
 
 	private Set<String> protocols() {

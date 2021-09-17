@@ -298,9 +298,10 @@ public class DemographicServiceUtil {
 			DemographicRequestDTO demographicRequest, String statuscode, String userId, String preRegistrationId)
 			throws EncryptionFailedException {
 		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
-		saveAndUpdateApplicationEntity(preRegistrationId, BookingTypeCodes.NEW_PREREGISTRATION.getBookingTypeCode(),
-				ApplicationStatusCode.DRAFT.getApplicationStatusCode(), StatusCodes.APPLICATION_INCOMPLETE.getCode(),
-				userId);
+		ApplicationEntity applicationEntity = findApplicationById(preRegistrationId);
+		saveAndUpdateApplicationEntity(preRegistrationId, applicationEntity.getBookingType(),
+				applicationEntity.getApplicationStatusCode(), applicationEntity.getBookingStatusCode(),
+				applicationEntity.getCrBy());
 		demographicEntity.setPreRegistrationId(preRegistrationId);
 		LocalDateTime encryptionDateTime = DateUtils.getUTCCurrentDateTime();
 		log.info("sessionId", "idType", "id", "Encryption start time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -854,26 +855,6 @@ public class DemographicServiceUtil {
 		});
 
 		return mandatoryDocs;
-	}
-
-	public List<String> validMandatoryDocumentsForApplicant(DemographicEntity demographicEntity) throws ParseException {
-
-		String applicantTypeCode = null;
-		ApplicantValidDocumentDto applicantValidDocuments = null;
-
-		ApplicantTypeRequestDTO applicantTypeRequest = createApplicantTypeRequest(demographicEntity);
-
-		applicantTypeCode = getApplicantypeCode(applicantTypeRequest);
-
-		applicantValidDocuments = getDocCatAndTypeForApplicantCode(applicantTypeCode, demographicEntity.getLangCode());
-		Set<String> mandatoryDocCat = getMandatoryDocCatogery();
-
-		log.info("mandatory Docs category --> {}", mandatoryDocCat);
-		List<String> validMandatoryDocumentForApplicant = applicantValidDocuments.getDocumentCategories().stream()
-				.filter(docCat -> mandatoryDocCat.contains(docCat.getCode())).map(docCat -> docCat.getCode())
-				.collect(Collectors.toList());
-
-		return validMandatoryDocumentForApplicant;
 	}
 
 }

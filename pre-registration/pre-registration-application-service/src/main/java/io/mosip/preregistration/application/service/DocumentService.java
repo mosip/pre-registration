@@ -15,6 +15,7 @@ import java.util.Objects;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -611,7 +612,15 @@ public class DocumentService implements DocumentServiceIntf {
 					if (demographicResponse.getStatusCode().toLowerCase()
 							.equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 						log.info("check if mandatory document deleted");
-						List<DocumentEntity> updatedDocumentEntity = documnetDAO.findBypreregId(preRegistrationId);
+						List<DocumentEntity> updatedDocumentEntity = null;
+						try {
+							updatedDocumentEntity = documnetDAO.findBypreregId(preRegistrationId);
+						} catch (DocumentNotFoundException ex) {
+							if (demographicResponse.getStatusCode().toLowerCase()
+									.equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
+								serviceUtil.updateApplicationStatusToIncomplete(documentEntity.getDemographicEntity());
+							}
+						}
 						if (isMandatoryDocumentDeleted(updatedDocumentEntity.get(0).getDemographicEntity())) {
 							log.info("mandatory document deleted");
 							serviceUtil.updateApplicationStatusToIncomplete(
@@ -658,8 +667,8 @@ public class DocumentService implements DocumentServiceIntf {
 		return delResponseDto;
 	}
 
-	private boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity) {
-		boolean isDeleted = !(serviceUtil.isMandatoryDocumentDeleted(demographicEntity));
+	private boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity) throws ParseException {
+		boolean isDeleted = serviceUtil.isMandatoryDocumentDeleted(demographicEntity);
 		log.info("Mandatory document Deleted {}", isDeleted);
 		return isDeleted;
 

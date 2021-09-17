@@ -18,16 +18,8 @@ public class LoginConfig {
 
 	@Bean
 	public OpenAPI customOpenAPI() {
-
-		return new OpenAPI()
-
-				.info(new Info()
-
-						.title(buildProperties.getName())
-
-						.version(buildProperties.getVersion())
-
-						.description("Maven Spring Boot Project of MOSIP Pre-Registration Service"));
+		return new OpenAPI().info(new Info().title(buildProperties.getName()).version(buildProperties.getVersion())
+				.description("Maven Spring Boot Project of MOSIP Pre-Registration Service"));
 
 	}
 
