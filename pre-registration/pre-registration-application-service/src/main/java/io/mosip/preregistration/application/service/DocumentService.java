@@ -627,7 +627,7 @@ public class DocumentService implements DocumentServiceIntf {
 									updatedDocumentEntity.get(0).getDemographicEntity());
 						}
 					}
-					if (isDeleted) {
+					if (!isDeleted) {
 						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
 								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
 					}
