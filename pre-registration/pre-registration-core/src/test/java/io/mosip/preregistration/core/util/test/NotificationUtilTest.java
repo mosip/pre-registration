@@ -80,6 +80,18 @@ public class NotificationUtilTest {
 		languageNamePair.setKey("eng");
 		languageNamePair.setValue("Test01");
 		languageNamePairs.add(languageNamePair);
+
+		List<KeyValuePairDto<String, String>> regCenterName = new ArrayList<KeyValuePairDto<String, String>>();
+		List<KeyValuePairDto<String, String>> regCenterAddress = new ArrayList<KeyValuePairDto<String, String>>();
+		KeyValuePairDto<String, String> registrationCenterName = new KeyValuePairDto();
+		KeyValuePairDto<String, String> registrationCenterAdd = new KeyValuePairDto();
+		registrationCenterName.setKey("eng");
+		registrationCenterName.setValue("abc");
+		registrationCenterAdd.setKey("eng");
+		registrationCenterAdd.setValue("xyz");
+		regCenterAddress.add(registrationCenterAdd);
+		regCenterName.add(registrationCenterName);
+		KeyValuePairDto<String, String> address= new KeyValuePairDto();
 		notificationDTO = new NotificationDTO();
 		notificationDTO.setName("sanober Noor");
 		notificationDTO.setPreRegistrationId("1234567890");
@@ -88,6 +100,8 @@ public class NotificationUtilTest {
 		notificationDTO.setAppointmentDate("2019-01-22");
 		notificationDTO.setAppointmentTime("22:57");
 		notificationDTO.setIsBatch(false);
+		notificationDTO.setRegistrationCenterName(regCenterName);
+		notificationDTO.setAddress(regCenterAddress);
 		notificationDTO.setFullName(languageNamePairs);
 		responseDTO = new MainResponseDTO<>();
 		responseDTO.setResponse(notificationDTO);
