@@ -13,6 +13,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -91,10 +92,11 @@ public class TemplateUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public String templateMerge(String fileText, NotificationDTO acknowledgementDTO) throws IOException {
+	public String templateMerge(String fileText, NotificationDTO acknowledgementDTO, String langCode)
+			throws IOException {
 		log.info("sessionId", "idType", "id", "In templateMerge method of TemplateUtil service ");
 		String mergeTemplate = null;
-		Map<String, Object> map = mapSetting(acknowledgementDTO);
+		Map<String, Object> map = mapSetting(langCode, acknowledgementDTO);
 		InputStream templateInputStream = new ByteArrayInputStream(fileText.getBytes(Charset.forName("UTF-8")));
 
 		InputStream resultedTemplate = templateManager.merge(templateInputStream, map);
@@ -110,7 +112,7 @@ public class TemplateUtil {
 	 * @param acknowledgementDTO
 	 * @return
 	 */
-	public Map<String, Object> mapSetting(NotificationDTO acknowledgementDTO) {
+	public Map<String, Object> mapSetting(String langCode, NotificationDTO acknowledgementDTO) {
 		Map<String, Object> responseMap = new HashMap<>();
 		log.info("sessionId", "idType", "id", "In mapSetting method of TemplateUtil service {}", acknowledgementDTO);
 		DateTimeFormatter dateFormate = DateTimeFormatter.ofPattern("dd MMM yyyy");
@@ -121,14 +123,21 @@ public class TemplateUtil {
 		ZoneId countryZoneId = ZoneId.of(timeZone);
 		ZonedDateTime nowCountryTime = ZonedDateTime.ofInstant(nowUtc, countryZoneId);
 
-		responseMap.put("name", acknowledgementDTO.getName());
+		responseMap.put("name", acknowledgementDTO.getFullName().stream().filter(name -> name.getKey().equals(langCode))
+				.map(name -> name.getValue()).collect(Collectors.toList()).get(0));
 		responseMap.put("PRID", acknowledgementDTO.getPreRegistrationId());
 		responseMap.put("Date", dateFormate.format(now));
 		responseMap.put("Time", timeFormate.format(nowCountryTime));
 		responseMap.put("Appointmentdate", acknowledgementDTO.getAppointmentDate());
 		responseMap.put("Appointmenttime", acknowledgementDTO.getAppointmentTime());
-		responseMap.put("RegistrationCenterName", acknowledgementDTO.getRegistrationCenterName());
-		responseMap.put("RegistrationCenterAddress", acknowledgementDTO.getAddress());
+		responseMap.put("RegistrationCenterName", acknowledgementDTO.getRegistrationCenterName().stream()
+				.filter(RegistrationCenterName -> RegistrationCenterName.getKey().equals(langCode))
+				.map(RegistrationCenterName -> RegistrationCenterName.getValue()).collect(Collectors.toList()).get(0));
+		responseMap.put("RegistrationCenterAddress",
+				acknowledgementDTO.getAddress().stream()
+						.filter(RegistrationCenterAddress -> RegistrationCenterAddress.getKey().equals(langCode))
+						.map(RegistrationCenterAddress -> RegistrationCenterAddress.getValue())
+						.collect(Collectors.toList()).get(0));
 		return responseMap;
 	}
 
