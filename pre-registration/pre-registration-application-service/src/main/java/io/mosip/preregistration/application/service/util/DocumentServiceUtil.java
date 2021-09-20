@@ -373,10 +373,15 @@ public class DocumentServiceUtil {
 				.collect(Collectors.toList());
 		log.info("uploaded documents for user {} ----> {}", demographicEntity.getPreRegistrationId(),
 				availableDocuments);
-		List<String> mandatoryDoc = demographgicService.validMandatoryDocumentsForApplicant(demographicEntity);
+		List<String> mandatoryDoc = validMandatoryDocuments(demographicEntity);
 		log.info("mandatory documents for user {} ----> {}", demographicEntity.getPreRegistrationId(), mandatoryDoc);
 		return compareUploadedDocListAndValidMandatoryDocList(availableDocuments, mandatoryDoc);
 
+	}
+
+	public List<String> validMandatoryDocuments(DemographicEntity demographicEntity)
+			throws org.json.simple.parser.ParseException {
+		return demographgicService.validMandatoryDocumentsForApplicant(demographicEntity);
 	}
 
 	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> availableDocs,
