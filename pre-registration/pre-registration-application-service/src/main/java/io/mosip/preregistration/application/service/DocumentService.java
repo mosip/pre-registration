@@ -15,6 +15,7 @@ import java.util.Objects;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -46,13 +47,16 @@ import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.code.RequestCodes;
+import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDTO;
 import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
@@ -268,7 +272,7 @@ public class DocumentService implements DocumentServiceIntf {
 			throws IOException, EncryptionFailedException {
 
 		DocumentResponseDTO docResponseDto = new DocumentResponseDTO();
-		if (serviceUtil.getPreRegInfoRestService(preRegistrationId)) {
+		if (serviceUtil.getPreRegInfoRestService(preRegistrationId) != null) {
 			DocumentEntity getentity = documnetDAO.findSingleDocument(preRegistrationId, document.getDocCatCode());
 			DocumentEntity documentEntity = serviceUtil.dtoToEntity(file, document, authUserDetails().getUserId(),
 					preRegistrationId, getentity);
@@ -333,8 +337,9 @@ public class DocumentService implements DocumentServiceIntf {
 						io.mosip.preregistration.core.errorcodes.ErrorMessages.MISSING_REQUEST_PARAMETER.getMessage(),
 						null);
 			} else if (serviceUtil.isValidCatCode(catCode)) {
-				boolean sourceStatus = serviceUtil.getPreRegInfoRestService(sourcePreId);
-				boolean destinationStatus = serviceUtil.getPreRegInfoRestService(destinationPreId);
+				boolean sourceStatus = serviceUtil.getPreRegInfoRestService(sourcePreId) != null ? true : false;
+				boolean destinationStatus = serviceUtil.getPreRegInfoRestService(destinationPreId) != null ? true
+						: false;
 
 				DocumentEntity documentEntity = documnetDAO.findSingleDocument(sourcePreId, catCode);
 				DocumentEntity destEntity = documnetDAO.findSingleDocument(destinationPreId, catCode);
@@ -345,7 +350,7 @@ public class DocumentService implements DocumentServiceIntf {
 								DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS
 										.getMessage());
 					}
-					
+
 					DocumentEntity copyDocumentEntity = documnetDAO.saveDocument(
 							serviceUtil.documentEntitySetter(destinationPreId, documentEntity, destEntity));
 					sourceKey = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
@@ -434,7 +439,8 @@ public class DocumentService implements DocumentServiceIntf {
 		Map<String, String> requestParamMap = new HashMap<>();
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preId);
-			if (validationUtil.requstParamValidator(requestParamMap) && serviceUtil.getPreRegInfoRestService(preId)) {
+			if (validationUtil.requstParamValidator(requestParamMap)
+					&& serviceUtil.getPreRegInfoRestService(preId) != null) {
 				List<DocumentEntity> documentEntities = documnetDAO.findBypreregId(preId);
 				responseDto.setResponse(createDocumentResponse(documentEntities));
 				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
@@ -488,7 +494,8 @@ public class DocumentService implements DocumentServiceIntf {
 		Map<String, String> requestParamMap = new HashMap<>();
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preId);
-			if (validationUtil.requstParamValidator(requestParamMap) && serviceUtil.getPreRegInfoRestService(preId)) {
+			if (validationUtil.requstParamValidator(requestParamMap)
+					&& serviceUtil.getPreRegInfoRestService(preId) != null) {
 				DocumentEntity documentEntity = documnetDAO.findBydocumentId(docId);
 				if (!documentEntity.getDemographicEntity().getPreRegistrationId().equals(preId)) {
 					throw new InvalidDocumentIdExcepion(DocumentErrorCodes.PRG_PAM_DOC_022.name(),
@@ -557,7 +564,7 @@ public class DocumentService implements DocumentServiceIntf {
 		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
 		for (DocumentEntity doc : entityList) {
 
-			log.info("Demographic preid: {}" , doc.getDemographicEntity().getPreRegistrationId());
+			log.info("Demographic preid: {}", doc.getDemographicEntity().getPreRegistrationId());
 
 			DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
 			allDocDto.setDocCatCode(doc.getDocCatCode());
@@ -591,8 +598,8 @@ public class DocumentService implements DocumentServiceIntf {
 		Map<String, String> requestParamMap = new HashMap<>();
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preRegistrationId);
-			if (validationUtil.requstParamValidator(requestParamMap)
-					&& serviceUtil.getPreRegInfoRestService(preRegistrationId)) {
+			DemographicResponseDTO demographicResponse = serviceUtil.getPreRegInfoRestService(preRegistrationId);
+			if (validationUtil.requstParamValidator(requestParamMap) && demographicResponse != null) {
 				DocumentEntity documentEntity = documnetDAO.findBydocumentId(documentId);
 				if (!documentEntity.getDemographicEntity().getPreRegistrationId().equals(preRegistrationId)) {
 					throw new InvalidDocumentIdExcepion(DocumentErrorCodes.PRG_PAM_DOC_022.name(),
@@ -602,6 +609,25 @@ public class DocumentService implements DocumentServiceIntf {
 					String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,
 							documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+					if (demographicResponse.getStatusCode().toLowerCase()
+							.equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
+						log.info("check if mandatory document deleted");
+						DemographicEntity demographicEntity = null;
+						try {
+							demographicEntity = documnetDAO.getDemographicEntityForPrid(preRegistrationId);
+						} catch (DocumentNotFoundException ex) {
+							if (demographicResponse.getStatusCode().toLowerCase()
+									.equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())
+									&& serviceUtil.validMandatoryDocuments(documentEntity.getDemographicEntity())
+											.size() > 0) {
+								serviceUtil.updateApplicationStatusToIncomplete(documentEntity.getDemographicEntity());
+							}
+						}
+						if (isMandatoryDocumentDeleted(demographicEntity)) {
+							log.info("mandatory document deleted");
+							serviceUtil.updateApplicationStatusToIncomplete(demographicEntity);
+						}
+					}
 					if (!isDeleted) {
 						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
 								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
@@ -642,6 +668,13 @@ public class DocumentService implements DocumentServiceIntf {
 		return delResponseDto;
 	}
 
+	private boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity) throws ParseException {
+		boolean isDeleted = serviceUtil.isMandatoryDocumentDeleted(demographicEntity);
+		log.info("Mandatory document Deleted {}", isDeleted);
+		return isDeleted;
+
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -660,7 +693,7 @@ public class DocumentService implements DocumentServiceIntf {
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preregId);
 			if (validationUtil.requstParamValidator(requestParamMap)
-					&& serviceUtil.getPreRegInfoRestService(preregId)) {
+					&& serviceUtil.getPreRegInfoRestService(preregId) != null) {
 				List<DocumentEntity> documentEntityList = documnetDAO.findBypreregId(preregId);
 				DocumentDeleteResponseDTO deleteDTO = deleteFile(documentEntityList, preregId);
 				deleteRes.setResponse(deleteDTO);

@@ -21,6 +21,7 @@ import org.springframework.web.client.RestTemplate;
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.AppointmentService;
+import io.mosip.preregistration.application.service.UISpecService;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
@@ -60,6 +61,9 @@ public class DemographicServiceUtilTest {
 
 	@MockBean
 	private RequestValidator requestValidator;
+	
+	@MockBean
+	private UISpecService uiSpecService;
 
 	private DemographicRequestDTO saveDemographicRequest = null;
 	private DemographicRequestDTO updateDemographicRequest = null;

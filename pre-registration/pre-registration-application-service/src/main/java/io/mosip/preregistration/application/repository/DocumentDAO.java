@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
@@ -116,12 +117,22 @@ public class DocumentDAO {
 					DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage(), ex.getCause());
 		}
 	}
-	
+
 	public DocumentEntity updateDocument(DocumentEntity entity) {
 		try {
 			return documentRepository.update(entity);
 		} catch (DataAccessLayerException ex) {
 			log.error("sessionId", "idType", "id", "In updateDocument method of DocumnetDAO - " + ex);
+			throw new TableNotAccessibleException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
+					DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage(), ex.getCause());
+		}
+	}
+
+	public DemographicEntity getDemographicEntityForPrid(String prid) {
+		try {
+			return documentRepository.getDemographicEntityForPreRegistrationId(prid);
+		} catch (DataAccessLayerException ex) {
+			log.error("sessionId", "idType", "id", "In getDemographicEntityForPrid method of DocumnetDAO - " + ex);
 			throw new TableNotAccessibleException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
 					DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage(), ex.getCause());
 		}

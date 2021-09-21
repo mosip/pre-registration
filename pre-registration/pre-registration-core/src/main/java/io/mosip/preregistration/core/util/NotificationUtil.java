@@ -115,13 +115,14 @@ public class NotificationUtil {
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
 			if (acknowledgementDTO.getIsBatch()) {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
-				fileText.concat("\n");
+				fileText.concat(System.lineSeparator() + System.lineSeparator());
 			} else {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgement);
-				fileText.concat("\n");
+				fileText.concat(System.lineSeparator() + System.lineSeparator());
 			}
 
-			String languageWiseTemplate = templateUtil.templateMerge(fileText, acknowledgementDTO);
+			String languageWiseTemplate = templateUtil.templateMerge(fileText, acknowledgementDTO,
+					(String) keyValuePair.getKey());
 			if (mergeTemplate == null) {
 				mergeTemplate = languageWiseTemplate;
 			} else {
@@ -165,9 +166,16 @@ public class NotificationUtil {
 	 */
 	public String getEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
 		log.info("sessionId", "idType", "id", "In getEmailSubject method of NotificationUtil service");
-		return templateUtil.templateMerge(
-				templateUtil.getTemplate(acknowledgementDTO.getFullName().get(0).getKey(), emailAcknowledgementSubject),
-				acknowledgementDTO);
+		String emailSubject = null;
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			emailSubject = templateUtil.templateMerge(
+					templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgementSubject), acknowledgementDTO,
+					(String) keyValuePair.getKey());
+			if (acknowledgementDTO.getFullName().size() > 1) {
+				emailSubject.concat(" / ");
+			}
+		}
+		return emailSubject;
 	}
 
 	/**
@@ -187,10 +195,12 @@ public class NotificationUtil {
 			String languageWiseTemplate = null;
 			if (acknowledgementDTO.getIsBatch()) {
 				languageWiseTemplate = templateUtil.templateMerge(
-						templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment), acknowledgementDTO);
+						templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment), acknowledgementDTO,
+						(String) keyValuePair.getKey());
 			} else {
 				languageWiseTemplate = templateUtil.templateMerge(
-						templateUtil.getTemplate(keyValuePair.getKey(), smsAcknowledgement), acknowledgementDTO);
+						templateUtil.getTemplate(keyValuePair.getKey(), smsAcknowledgement), acknowledgementDTO,
+						(String) keyValuePair.getKey());
 			}
 			if (mergeTemplate == null) {
 				mergeTemplate = languageWiseTemplate;

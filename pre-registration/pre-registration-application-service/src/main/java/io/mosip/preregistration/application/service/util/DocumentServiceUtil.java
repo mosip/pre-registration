@@ -12,6 +12,7 @@ import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -22,6 +23,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +45,7 @@ import io.mosip.preregistration.application.exception.DemographicGetDetailsExcep
 import io.mosip.preregistration.application.exception.DocumentNotValidException;
 import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DemographicServiceIntf;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -95,7 +100,7 @@ public class DocumentServiceUtil {
 	ValidationUtil validationUtil;
 
 	@Autowired
-	private DemographicServiceIntf demographgicServiceItf;
+	private DemographicService demographgicService;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -351,15 +356,53 @@ public class DocumentServiceUtil {
 		}
 	}
 
-	public boolean getPreRegInfoRestService(String preId) {
+	public DemographicResponseDTO getPreRegInfoRestService(String preId) {
 		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of document service util");
 
-		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicServiceItf.getDemographicData(preId);
+		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicService.getDemographicData(preId);
 		if (getDemographicData.getErrors() != null) {
 			throw new DemographicGetDetailsException(getDemographicData.getErrors().get(0).getErrorCode(),
 					getDemographicData.getErrors().get(0).getMessage());
 		}
-		return true;
+		return getDemographicData.getResponse();
+	}
+
+	public boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity)
+			throws org.json.simple.parser.ParseException {
+		List<String> availableDocuments = demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
+				.collect(Collectors.toList());
+		log.info("uploaded documents for user {} ----> {}", demographicEntity.getPreRegistrationId(),
+				availableDocuments);
+		List<String> mandatoryDoc = validMandatoryDocuments(demographicEntity);
+		log.info("mandatory documents for user {} ----> {}", demographicEntity.getPreRegistrationId(), mandatoryDoc);
+		return compareUploadedDocListAndValidMandatoryDocList(availableDocuments, mandatoryDoc);
+
+	}
+
+	public List<String> validMandatoryDocuments(DemographicEntity demographicEntity)
+			throws org.json.simple.parser.ParseException {
+		return demographgicService.validMandatoryDocumentsForApplicant(demographicEntity);
+	}
+
+	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> availableDocs,
+			List<String> validMandatoryDocForApplicant) {
+		if (validMandatoryDocForApplicant.size() == 0) {
+			return false;
+		} else {
+			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
+			if (validMandatoryDocForApplicant.size() > 0) {
+				return true;
+			} else {
+				return false;
+			}
+		}
+
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
+	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
+		demographgicService.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
+				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getCreatedBy());
 	}
 
 }

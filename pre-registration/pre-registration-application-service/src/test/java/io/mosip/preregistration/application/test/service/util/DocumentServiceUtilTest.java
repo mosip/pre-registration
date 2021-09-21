@@ -13,7 +13,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.mock.web.MockMultipartFile;
@@ -21,16 +20,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
 import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
-import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.application.dto.DocumentRequestDTO;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
-import io.mosip.preregistration.application.service.DemographicServiceIntf;
+import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
-import io.mosip.preregistration.core.util.AuthTokenUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.core.util.ValidationUtil;
 
@@ -62,7 +59,7 @@ public class DocumentServiceUtilTest {
 	private RequestValidator requestValidator;
 
 	@MockBean
-	private DemographicServiceIntf demographicServiceIntf;
+	private DemographicService demographicServiceIntf;
 
 	@MockBean(name = "S3Adapter")
 	private ObjectStoreAdapter objectStore;

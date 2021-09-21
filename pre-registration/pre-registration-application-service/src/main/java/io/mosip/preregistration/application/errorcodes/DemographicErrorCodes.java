@@ -102,7 +102,9 @@ public enum DemographicErrorCodes {
 	PRG_PAM_APP_021("PRG_PAM_APP_021"),
 	
 	/* ErrorCode for BookedorExpired status can not be update */
-	PRG_PAM_APP_022("PRG_PAM_APP_022");
+	PRG_PAM_APP_022("PRG_PAM_APP_022"),
+	
+	PRG_PAM_APP_023("PRG_PAM_APP_023"); // failed to update status to pending appointment
 
 	private DemographicErrorCodes(String code) {
 		this.code = code;
