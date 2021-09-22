@@ -115,18 +115,18 @@ public class NotificationUtil {
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
 			if (acknowledgementDTO.getIsBatch()) {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
-				fileText.concat(System.lineSeparator() + System.lineSeparator());
+//				fileText.concat(System.lineSeparator() + System.lineSeparator());
 			} else {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgement);
-				fileText.concat(System.lineSeparator() + System.lineSeparator());
+//				fileText.concat(System.lineSeparator() + System.lineSeparator());
 			}
 
 			String languageWiseTemplate = templateUtil.templateMerge(fileText, acknowledgementDTO,
 					(String) keyValuePair.getKey());
 			if (mergeTemplate == null) {
-				mergeTemplate = languageWiseTemplate;
+				mergeTemplate = languageWiseTemplate + System.lineSeparator();
 			} else {
-				mergeTemplate += System.lineSeparator() + languageWiseTemplate;
+				mergeTemplate += System.lineSeparator() + languageWiseTemplate +System.lineSeparator();
 			}
 		}
 
@@ -166,13 +166,15 @@ public class NotificationUtil {
 	 */
 	public String getEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
 		log.info("sessionId", "idType", "id", "In getEmailSubject method of NotificationUtil service");
-		String emailSubject = null;
+		String emailSubject = "";
+		int noOfLang = acknowledgementDTO.getFullName().size();
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
-			emailSubject = templateUtil.templateMerge(
+			emailSubject = emailSubject + templateUtil.templateMerge(
 					templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgementSubject), acknowledgementDTO,
 					(String) keyValuePair.getKey());
-			if (acknowledgementDTO.getFullName().size() > 1) {
-				emailSubject.concat(" / ");
+			if (noOfLang > 1) {
+				noOfLang--;
+				emailSubject = emailSubject + " / ";
 			}
 		}
 		return emailSubject;
