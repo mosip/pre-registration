@@ -103,6 +103,8 @@ public class NotificationUtilTest {
 		notificationDTO.setRegistrationCenterName(regCenterName);
 		notificationDTO.setAddress(regCenterAddress);
 		notificationDTO.setFullName(languageNamePairs);
+		notificationDTO.setRegistrationCenterName(languageNamePairs);
+		notificationDTO.setAddress(languageNamePairs);
 		responseDTO = new MainResponseDTO<>();
 		responseDTO.setResponse(notificationDTO);
 		// responseDTO.setStatus(Boolean.TRUE);
@@ -138,6 +140,7 @@ public class NotificationUtilTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				}))).thenReturn(resp);
+		
 		MainResponseDTO<NotificationResponseDTO> response = notificationUtil.notify("email", notificationDTO, file);
 		assertEquals(notificationResponseDTO.getMessage(), response.getResponse().getMessage());
 	}
