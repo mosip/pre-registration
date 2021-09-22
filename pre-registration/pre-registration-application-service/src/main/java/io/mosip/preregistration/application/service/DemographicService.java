@@ -71,6 +71,7 @@ import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
+import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
@@ -822,15 +823,24 @@ public class DemographicService implements DemographicServiceIntf {
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
 				statusCheck(demographicEntity, status, userId);
-			}
+				response.setResponse("STATUS_UPDATED_SUCESSFULLY");
+			} 
+		} catch (RecordFailedToUpdateException | RecordNotFoundException ex) {
+			response.setResponse("STATUS_NOT_UPDATED_SUCESSFULLY");
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"Error in updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
+			// new DemographicExceptionCatcher().handle(ex, response);
+			ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(ex.getErrorCode(), ex.getErrorText());
+			List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
+			errorList.add(errorDetails);
+			response.setErrors(errorList);
 		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
-					"In updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
+					"Error in updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
-		response.setResponse("STATUS_UPDATED_SUCESSFULLY");
-
 		return response;
 	}
 
@@ -846,14 +856,19 @@ public class DemographicService implements DemographicServiceIntf {
 			if (serviceUtil.isStatusValid(status)) {
 				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
 				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
-					if (isupdateStausToPendingAppointmentValid(demographicEntity)) {
-						String prid = demographicEntity.getPreRegistrationId();
-						serviceUtil.updateApplicationStatus(prid, status, userId);
-						log.info("Application booking status updated succesfully --> {}", status);
-						demographicRepository.update(demographicEntity);
-						log.info("demographic booking status updated succesfully --> {}", status);
+					try {
+						if (isupdateStausToPendingAppointmentValid(demographicEntity)) {
+							String prid = demographicEntity.getPreRegistrationId();
+							serviceUtil.updateApplicationStatus(prid, status, userId);
+							log.info("Application booking status updated succesfully --> {}", status);
+							demographicRepository.update(demographicEntity);
+							log.info("demographic booking status updated succesfully --> {}", status);
 
-					} else {
+						} else {
+							throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
+									DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
+						}	
+					} catch(Exception e) {
 						throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
 								DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
 					}
