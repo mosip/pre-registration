@@ -281,16 +281,17 @@ public class DataSyncService {
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
-			// insert the anonymous profile only if the appointment is being booked for the
-			// first time or being prefetched for the first time
-			if (preRegistrationDTO.getStatusCode().equals(StatusCodes.APPLICATION_INCOMPLETE.getCode())  
-				|| preRegistrationDTO.getStatusCode().equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
+			// insert the anonymous profile only if the appointment is being prefetched for the first time
+			if (!preRegistrationDTO.getStatusCode().equals(StatusCodes.BOOKED.getCode())
+					&& !preRegistrationDTO.getStatusCode().equals(StatusCodes.PREFETCHED.getCode())
+					&& !preRegistrationDTO.getStatusCode().equals(StatusCodes.EXPIRED.getCode())
+					&& !preRegistrationDTO.getStatusCode().equals(StatusCodes.CANCELLED.getCode())) {
 				preRegistrationDTO.setStatusCode(StatusCodes.PREFETCHED.getCode());
-				anonymousProfileUtil.saveAnonymousProfile(preRegistrationDTO, documentsMetaData,
-						bookingRegistrationDTO, null);
+				anonymousProfileUtil.saveAnonymousProfile(preRegistrationDTO, documentsMetaData, bookingRegistrationDTO,
+						null);
+				// update status to prefetched
+				serviceUtil.updateApplicationStatusToPreFectched(preId);
 			}
-			// update status to prefetched
-			serviceUtil.updateApplicationStatusToPreFectched(preId);
 		} catch (AnonymousProfileException apex) {
 			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
 			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
