@@ -294,7 +294,7 @@ public class DemographicControllerTest {
 		response.setResponse(createDto);
 		Mockito.when(preRegistrationService.authUserDetails()).thenReturn(authUserDetails);
 		Mockito.when(authUserDetails.getUserId()).thenReturn(userId);
-		Mockito.when(preRegistrationService.getDemographicData("98746563542672")).thenReturn(response);
+		Mockito.when(preRegistrationService.getDemographicData("98746563542672", false)).thenReturn(response);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get("/applications/{preRegistrationId}", createDto.getPreRegistrationId())

@@ -32,7 +32,7 @@ public class ApplicationsBookingCheckTasklet implements Tasklet {
 
 		try {
 
-			applicationBookingCheckUtil.UpdateBookingInfoInApplication();
+			//applicationBookingCheckUtil.UpdateBookingInfoInApplication();
 
 		} catch (Exception e) {
 			log.error("Sync master ", " Tasklet ", " encountered exception ", e.getMessage());

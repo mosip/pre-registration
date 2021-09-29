@@ -73,14 +73,15 @@ public interface DemographicServiceIntf {
 	 * 
 	 */
 	MainResponseDTO<DeletePreRegistartionDTO> deleteIndividual(String preregId, String userId);
-
+	
 	/**
 	 * This Method is used to retrieve the demographic
 	 * 
 	 * @param preRegId pass the preregId of individual
+	 * @param isBatch true if batch job 
 	 * @return response DemographicData of preRegId
 	 */
-	MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId);
+	MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId, Boolean isBatch);
 
 	/**
 	 * This Method is used to update status of particular preId

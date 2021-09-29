@@ -359,7 +359,7 @@ public class DocumentServiceUtil {
 	public DemographicResponseDTO getPreRegInfoRestService(String preId) {
 		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of document service util");
 
-		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicService.getDemographicData(preId);
+		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicService.getDemographicData(preId, false);
 		if (getDemographicData.getErrors() != null) {
 			throw new DemographicGetDetailsException(getDemographicData.getErrors().get(0).getErrorCode(),
 					getDemographicData.getErrors().get(0).getMessage());

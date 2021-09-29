@@ -251,7 +251,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			// profile
 			BrowserInfoDTO browserInfo = new BrowserInfoDTO();
 			browserInfo.setBrowserName(userAgent);
-			DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId)
+			DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId, false)
 					.getResponse();
 			DocumentsMetaData documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
 			BookingRegistrationDTO bookingData = new BookingRegistrationDTO();

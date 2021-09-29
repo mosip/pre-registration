@@ -41,9 +41,13 @@ public class RegistrationBookingEntity implements Serializable {
 	@Column(name = "id")
 	private String id;
 
-	/** Booking primary Key. */
-	@Embedded
-	private RegistrationBookingPK bookingPK;
+//	/** Booking primary Key. */
+//	@Embedded
+//	private RegistrationBookingPK bookingPK;
+
+	/** Registration center id. */
+	@Column(name = "regcntr_id")
+	private String registrationCenterId;
 
 	/**
 	 * Pre registration Id
@@ -51,9 +55,15 @@ public class RegistrationBookingEntity implements Serializable {
 	@Column(name = "prereg_id")
 	private String preregistrationId;
 
-	/** Registration center id. */
-	@Column(name = "regcntr_id")
-	private String registrationCenterId;
+	/**
+	 * Booking date and time
+	 */
+	@Column(name = "booking_dtimes")
+	private LocalDateTime bookingDateTime;
+
+	/** Appointment date. */
+	@Column(name = "appointment_date")
+	private LocalDate regDate;
 
 	/** Slot from time. */
 	@Column(name = "slot_from_time")
@@ -62,10 +72,6 @@ public class RegistrationBookingEntity implements Serializable {
 	/** Slot to time. */
 	@Column(name = "slot_to_time")
 	private LocalTime slotToTime;
-
-	/** Appointment date. */
-	@Column(name = "appointment_date")
-	private LocalDate regDate;
 
 	/** Language code. */
 	@Column(name = "lang_code")

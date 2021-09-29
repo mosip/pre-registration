@@ -23,7 +23,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
 	private static final RequestMatcher PROTECTED_URLS = new OrRequestMatcher(
-			new AntPathRequestMatcher("/applications/**"), new AntPathRequestMatcher("/documents/**"),
+			new AntPathRequestMatcher("/applications/**"), new AntPathRequestMatcher("/documents/**"), new AntPathRequestMatcher("/internal/**"),
 			new AntPathRequestMatcher("/qrCode/**"), new AntPathRequestMatcher("/notification/**"),
 			new AntPathRequestMatcher("/transliteration/**"), new AntPathRequestMatcher("/uispec/**"),
 			new AntPathRequestMatcher("/logAudit"), new AntPathRequestMatcher("/login/refreshconfig/"),new AntPathRequestMatcher("/appointment/**"));
