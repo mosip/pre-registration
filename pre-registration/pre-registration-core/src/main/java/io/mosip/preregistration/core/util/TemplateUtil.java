@@ -130,14 +130,18 @@ public class TemplateUtil {
 		responseMap.put("Time", timeFormate.format(nowCountryTime));
 		responseMap.put("Appointmentdate", acknowledgementDTO.getAppointmentDate());
 		responseMap.put("Appointmenttime", acknowledgementDTO.getAppointmentTime());
-		responseMap.put("RegistrationCenterName", acknowledgementDTO.getRegistrationCenterName().stream()
-				.filter(RegistrationCenterName -> RegistrationCenterName.getKey().equals(langCode))
-				.map(RegistrationCenterName -> RegistrationCenterName.getValue()).collect(Collectors.toList()).get(0));
-		responseMap.put("RegistrationCenterAddress",
-				acknowledgementDTO.getAddress().stream()
-						.filter(RegistrationCenterAddress -> RegistrationCenterAddress.getKey().equals(langCode))
-						.map(RegistrationCenterAddress -> RegistrationCenterAddress.getValue())
-						.collect(Collectors.toList()).get(0));
+		if (acknowledgementDTO.getRegistrationCenterName() != null) {
+			responseMap.put("RegistrationCenterName",
+					acknowledgementDTO.getRegistrationCenterName().stream()
+							.filter(RegistrationCenterName -> RegistrationCenterName.getKey().equals(langCode))
+							.map(RegistrationCenterName -> RegistrationCenterName.getValue())
+							.collect(Collectors.toList()).get(0));
+			responseMap.put("RegistrationCenterAddress",
+					acknowledgementDTO.getAddress().stream()
+							.filter(RegistrationCenterAddress -> RegistrationCenterAddress.getKey().equals(langCode))
+							.map(RegistrationCenterAddress -> RegistrationCenterAddress.getValue())
+							.collect(Collectors.toList()).get(0));
+		}
 		return responseMap;
 	}
 

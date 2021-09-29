@@ -39,7 +39,7 @@ public class ExpiredStatusTasklet implements Tasklet {
 
 		try {
 
-			expiredUtil.expireAppointments();
+			//expiredUtil.expireAppointments();
 
 		} catch (Exception e) {
 			log.error("Expired Status ", " Tasklet ", " encountered exception ", e.getMessage());
