@@ -43,7 +43,7 @@ public class ConsumedStatusTasklet implements Tasklet {
 
 		try {
 			
-			//consumeJob.demographicConsumedStatus();
+			consumeJob.demographicConsumedStatus();
 
 		} catch (Exception e) {
 			log.error("Update Consumed Status ", " Tasklet ", " encountered exception ", e.getMessage());
