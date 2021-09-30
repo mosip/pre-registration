@@ -754,7 +754,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 * getDemographicData(java.lang.String)
 	 */
 	@Override
-	public MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId) {
+	public MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId, Boolean isBatch) {
 		log.info("sessionId", "idType", "id", "In getDemographicData method of pre-registration service ");
 		MainResponseDTO<DemographicResponseDTO> response = new MainResponseDTO<>();
 		Map<String, String> requestParamMap = new HashMap<>();
@@ -770,7 +770,7 @@ public class DemographicService implements DemographicServiceIntf {
 					List<String> list = listAuth(authUserDetails().getAuthorities());
 					log.info("sessionId", "idType", "id",
 							"In getDemographicData method of pre-registration service with list  " + list);
-					if (list.contains("ROLE_INDIVIDUAL")) {
+					if (list.contains("ROLE_INDIVIDUAL") && !isBatch) {
 						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
 					}
 					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());

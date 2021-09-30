@@ -39,10 +39,19 @@ public class ApplicationRestInterceptor implements ClientHttpRequestInterceptor 
 		if (!httpRequest.getURI().toString().contains("authmanager")) {
 			if (httpRequest.getURI().toString().contains("preregistration")) {
 				HttpHeaders headers = httpRequest.getHeaders();
-				String token = getAuthUserDetails().getToken();
-				LOGGER.info("Reterived prereg token: ");
-				headers.set(HttpHeaders.COOKIE, "Authorization=" + token);
+				//If prereg application endpoints are called internally then use the keycloak token
+				if (httpRequest.getURI().toString().contains("internal")) {
+					String token = tokenUtil.getToken();
+					LOGGER.info("Reterived keycloak token: ");
+					headers.set(HttpHeaders.COOKIE, token);
+				} else {
+					//For all other prereg application endpoints use JWT token
+					String token = getAuthUserDetails().getToken();
+					LOGGER.info("Reterived prereg token: ");
+					headers.set(HttpHeaders.COOKIE, "Authorization=" + token);				
+				}
 			} else {
+				//For all other mosip service endpoints use JWT token
 				HttpHeaders headers = httpRequest.getHeaders();
 				String token = tokenUtil.getToken();
 				LOGGER.info("Reterived keycloak token: ");

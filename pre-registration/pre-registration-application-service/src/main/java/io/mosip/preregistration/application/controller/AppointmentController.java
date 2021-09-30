@@ -81,7 +81,17 @@ public class AppointmentController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getCancelappointmentpreregid())")
 	@PutMapping(path = "/applications/appointment/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@ApiOperation(value = "Cancel an booked appointment")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Appointment canceled successfully") })
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Appointment cancelled successfully") })
+	public ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> internalCancelBook(
+			@PathVariable("preRegistrationId") String preRegistrationId) {
+		log.info("Cancel the appointment for preRegId called internally :{} ", preRegistrationId);
+		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.cancelAppointment(preRegistrationId));
+	}
+	
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getCancelappointmentpreregid())")
+	@PutMapping(path = "/internal/applications/appointment/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@ApiOperation(value = "Cancel an booked appointment. Used internally by batch job,")
+	@ApiResponses(value = { @ApiResponse(code = 200, message = "Appointment cancelled successfully") })
 	public ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> cancelBook(
 			@PathVariable("preRegistrationId") String preRegistrationId) {
 		log.info("Cancel the appointment for preRegId:{} ", preRegistrationId);

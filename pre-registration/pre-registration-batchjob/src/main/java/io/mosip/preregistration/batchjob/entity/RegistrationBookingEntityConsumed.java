@@ -36,14 +36,26 @@ public class RegistrationBookingEntityConsumed implements Serializable {
 	@Id
 	@Column(name = "id")
 	private String id;
-	
-	/** Booking primary Key. */
-	@Embedded
-	private RegistrationBookingPKConsumed bookingPK;
+
+//	/** Booking primary Key. */
+//	@Embedded
+//	private RegistrationBookingPKConsumed bookingPK;
 
 	/** Registration center id. */
 	@Column(name = "regcntr_id")
 	private String registrationCenterId;
+
+	/**
+	 * Pre registration Id
+	 */
+	@Column(name = "prereg_id")
+	private String preregistrationId;
+
+	/**
+	 * Booking date and time
+	 */
+	@Column(name = "booking_dtimes")
+	private LocalDateTime bookingDateTime;
 
 	/** Slot from time. */
 	@Column(name = "slot_from_time")
@@ -76,6 +88,5 @@ public class RegistrationBookingEntityConsumed implements Serializable {
 	/** Updated date time. */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDate;
-
 
 }

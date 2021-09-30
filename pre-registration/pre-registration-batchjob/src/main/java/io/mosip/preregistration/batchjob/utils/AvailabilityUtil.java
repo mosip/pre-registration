@@ -22,12 +22,11 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.HttpClientErrorException;
-import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -63,9 +62,11 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
+import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegistartionStatusDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.NotificationException;
@@ -167,6 +168,9 @@ public class AvailabilityUtil {
 		response.setId(idUrlSync);
 		response.setVersion(versionUrl);
 		boolean isSaveSuccess = false;
+		List<String> cancelFailedList = new ArrayList<String>();
+		List<String> notificationFailedList = new ArrayList<String>();
+
 		try {
 			LocalDate endDate = LocalDate.now().plusDays(syncDays - 1);
 			List<RegistrationCenterDto> regCenter = getRegCenterMasterData(headers);
@@ -193,12 +197,13 @@ public class AvailabilityUtil {
 									.findAllPreIds(regDto.getId(), sDate);
 							if (!regBookingEntityList.isEmpty()) {
 								for (int i = 0; i < regBookingEntityList.size(); i++) {
-									if (batchServiceDAO
-											.getApplicantEntityDetails(
-													regBookingEntityList.get(i).getPreregistrationId())
-											.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
-										cancelBooking(regBookingEntityList.get(i).getPreregistrationId(), headers);
-										sendNotification(regBookingEntityList.get(i), headers);
+									RegistrationBookingEntity bookingEntity = regBookingEntityList.get(i);
+									String preRegId = bookingEntity.getPreregistrationId();
+									ApplicationEntity applicationEntity  = batchServiceDAO.getApplicantEntityDetails(preRegId);
+									if (applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+										if (cancelBooking(preRegId, headers, cancelFailedList)) {	
+											sendNotification(bookingEntity, headers, notificationFailedList);
+										}
 									}
 								}
 							}
@@ -235,13 +240,13 @@ public class AvailabilityUtil {
 													regSlots.get(0).getFromTime(), lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (batchServiceDAO
-													.getApplicantEntityDetails(
-															regBookingEntityList.get(i).getPreregistrationId())
-													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
-														headers);
-												sendNotification(regBookingEntityList.get(i), headers);
+											RegistrationBookingEntity bookingEntity = regBookingEntityList.get(i);
+											String preRegId = bookingEntity.getPreregistrationId();
+											ApplicationEntity applicationEntity  = batchServiceDAO.getApplicantEntityDetails(preRegId);
+											if (applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												if (cancelBooking(preRegId, headers, cancelFailedList)) {	
+													sendNotification(bookingEntity, headers, notificationFailedList);
+												}
 											}
 										}
 									}
@@ -261,13 +266,13 @@ public class AvailabilityUtil {
 													regDto.getLunchStartTime(), lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (batchServiceDAO
-													.getApplicantEntityDetails(
-															regBookingEntityList.get(i).getPreregistrationId())
-													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
-														headers);
-												sendNotification(regBookingEntityList.get(i), headers);
+											RegistrationBookingEntity bookingEntity = regBookingEntityList.get(i);
+											String preRegId = bookingEntity.getPreregistrationId();
+											ApplicationEntity applicationEntity  = batchServiceDAO.getApplicantEntityDetails(preRegId);
+											if (applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												if (cancelBooking(preRegId, headers, cancelFailedList)) {	
+													sendNotification(bookingEntity, headers, notificationFailedList);
+												}
 											}
 										}
 									}
@@ -294,13 +299,13 @@ public class AvailabilityUtil {
 													lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (batchServiceDAO
-													.getApplicantEntityDetails(
-															regBookingEntityList.get(i).getPreregistrationId())
-													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
-														headers);
-												sendNotification(regBookingEntityList.get(i), headers);
+											RegistrationBookingEntity bookingEntity = regBookingEntityList.get(i);
+											String preRegId = bookingEntity.getPreregistrationId();
+											ApplicationEntity applicationEntity  = batchServiceDAO.getApplicantEntityDetails(preRegId);
+											if (applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												if (cancelBooking(preRegId, headers, cancelFailedList)) {	
+													sendNotification(bookingEntity, headers, notificationFailedList);
+												}
 											}
 										}
 									}
@@ -319,13 +324,13 @@ public class AvailabilityUtil {
 													lastfromTime);
 									if (!regBookingEntityList.isEmpty()) {
 										for (int i = 0; i < regBookingEntityList.size(); i++) {
-											if (batchServiceDAO
-													.getApplicantEntityDetails(
-															regBookingEntityList.get(i).getPreregistrationId())
-													.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
-												cancelBooking(regBookingEntityList.get(i).getPreregistrationId(),
-														headers);
-												sendNotification(regBookingEntityList.get(i), headers);
+											RegistrationBookingEntity bookingEntity = regBookingEntityList.get(i);
+											String preRegId = bookingEntity.getPreregistrationId();
+											ApplicationEntity applicationEntity  = batchServiceDAO.getApplicantEntityDetails(preRegId);
+											if (applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+												if (cancelBooking(preRegId, headers, cancelFailedList)) {	
+													sendNotification(bookingEntity, headers, notificationFailedList);
+												}
 											}
 										}
 									}
@@ -351,10 +356,13 @@ public class AvailabilityUtil {
 							.findAllPreIdsByregID(regCenterDumped.get(i), LocalDate.now());
 					if (!entityList.isEmpty()) {
 						for (int j = 0; j < entityList.size(); j++) {
-							if (batchServiceDAO.getApplicantEntityDetails(entityList.get(j).getPreregistrationId())
-									.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
-								cancelBooking(entityList.get(j).getPreregistrationId(), headers);
-								sendNotification(entityList.get(j), headers);
+							RegistrationBookingEntity bookingEntity = entityList.get(j);
+							String preRegId = bookingEntity.getPreregistrationId();
+							ApplicationEntity applicationEntity  = batchServiceDAO.getApplicantEntityDetails(preRegId);
+							if (applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode())) {
+								if (cancelBooking(preRegId, headers, cancelFailedList)) {	
+									sendNotification(bookingEntity, headers, notificationFailedList);
+								}
 							}
 						}
 					}
@@ -367,6 +375,10 @@ public class AvailabilityUtil {
 			log.error("sessionId", "idType", "id", "In addAvailability method of AvailabilityUtil- " + ex.getMessage());
 			new BatchServiceExceptionCatcher().handle(ex);
 		} finally {
+			log.info("sessionId", "idType", "id", "cancel appointment failed for - " + cancelFailedList.size());
+			cancelFailedList.forEach((id) -> log.error("sessionId", "idType", "id", "cancel booking failed for ", id));
+			log.info("sessionId", "idType", "id", "cancel notifications failed for - " + notificationFailedList.size());
+			notificationFailedList.forEach((id) -> log.error("sessionId", "idType", "id", "cancel booking notification failed for ", id));
 			response.setResponsetime(getCurrentResponseTime());
 			if (isSaveSuccess) {
 				setAuditValues(EventId.PRE_407.toString(), EventName.PERSIST.toString(), EventType.SYSTEM.toString(),
@@ -378,58 +390,37 @@ public class AvailabilityUtil {
 						headers);
 			}
 		}
+		log.info("sessionId", "idType", "id", "Completed addAvailability");
 		response.setResponsetime(getCurrentResponseTime());
 		response.setResponse("MASTER_DATA_SYNCED_SUCCESSFULLY");
 		return response;
 	}
 
-	private boolean cancelBooking(String preRegistrationId, HttpHeaders headers) {
+	private boolean cancelBooking(String preRegistrationId, HttpHeaders headers, List<String> cancelFailedList) {
 
-		log.info("sessionId", "idType", "id", "In cancelBooking method of Availability Util");
+		log.info("sessionId", "idType", "id", "In cancelBooking method of Availability Util: " + preRegistrationId);
 		try {
 			Map<String, Object> params = new HashMap<>();
 			params.put("preRegistrationId", preRegistrationId);
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(cancelResourceUrl + "/batch/appointment/");
-			HttpEntity<MainResponseDTO<PreRegistartionStatusDTO>> httpEntity = new HttpEntity<>(headers);
-			String uriBuilder = builder.build().encode().toUriString();
-			uriBuilder += "{preRegistrationId}";
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(cancelResourceUrl);
+			String uriBuilder = builder.buildAndExpand(params).encode().toUriString();
 			log.info("sessionId", "idType", "id", "In cancelBooking method of Availability Util URL- " + uriBuilder);
-
+			HttpEntity<MainResponseDTO<PreRegistartionStatusDTO>> httpEntity = new HttpEntity<>(headers);			
 			ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> respEntity = restTemplate.exchange(uriBuilder,
 					HttpMethod.PUT, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<CancelBookingResponseDTO>>() {
-					}, params);
+					});
 
-			if (respEntity.getBody().getErrors() == null) {
-				ObjectMapper mapper = new ObjectMapper();
-				PreRegistartionStatusDTO preRegResponsestatusDto = mapper
-						.convertValue(respEntity.getBody().getResponse(), PreRegistartionStatusDTO.class);
-
-				String statusCode = preRegResponsestatusDto.getStatusCode().trim();
-
-				if (!statusCode.equals(StatusCodes.BOOKED.getCode())) {
-					if (statusCode.equals(StatusCodes.PENDING_APPOINTMENT.getCode())) {
-						throw new NoRecordFoundException(ErrorCodes.PRG_PAM_BAT_016.getCode(),
-								ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
-					}
-
-					else {
-						throw new NoRecordFoundException(ErrorCodes.PRG_PAM_BAT_017.getCode(),
-								ErrorMessages.APPOINTMENT_CANNOT_BE_CANCELED.getMessage());
-					}
-
-				}
-			} else {
+			if (respEntity.getBody().getErrors() != null) {
 				for (ExceptionJSONInfoDTO dto : respEntity.getBody().getErrors()) {
 					throw new NoRecordFoundException(dto.getErrorCode(), dto.getMessage());
 				}
-
-			}
-		} catch (RestClientException ex) {
+			} 		
+		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id",
-					"In cancelBooking method of Availability Util for HttpClientErrorException- " + ex.getMessage());
-			throw new NoRecordFoundException(ErrorCodes.PRG_PAM_BAT_018.getCode(),
-					ErrorMessages.CANCEL_BOOKING_BATCH_CALL_FAILED.getMessage());
+					"Exception in cancelBooking method of Availability Util - ", ex);
+			cancelFailedList.add(preRegistrationId);
+			return false;
 		}
 		return true;
 	}
@@ -721,8 +712,10 @@ public class AvailabilityUtil {
 	 * @param registrationBookingEntity
 	 * @throws JsonProcessingException
 	 */
-	public void sendNotification(RegistrationBookingEntity registrationBookingEntity, HttpHeaders headers)
+	public boolean sendNotification(RegistrationBookingEntity registrationBookingEntity, HttpHeaders headers,
+			List<String> notificationsFailedList)
 			throws JsonProcessingException {
+		try {
 		log.info("sessionId", "idType", "id", "In sendNotification method of AvailabilityUtil");
 		NotificationDTO notification = new NotificationDTO();
 		notification.setAppointmentDate(registrationBookingEntity.getRegDate().toString());
@@ -734,6 +727,14 @@ public class AvailabilityUtil {
 		notification.setAdditionalRecipient(false);
 		notification.setIsBatch(true);
 		emailNotification(notification, langCode, headers);
+		} catch (Exception ex) {
+			log.error("Exception in cancel ", ex);
+			log.error("sessionId", "idType", "id",
+					"Exception in sendNotification method of Availability Util - ", ex);
+			notificationsFailedList.add(registrationBookingEntity.getPreregistrationId());
+			return false;
+		}
+		return true;
 	}
 
 	/**
@@ -745,8 +746,7 @@ public class AvailabilityUtil {
 	 */
 	public void emailNotification(NotificationDTO notificationDTO, String langCode, HttpHeaders headers)
 			throws JsonProcessingException {
-		String emailResourseUrl = notificationResourseurl + "/notify";
-		ResponseEntity<String> resp = null;
+		String emailResourseUrl = notificationResourseurl;
 		MainRequestDTO<NotificationDTO> request = new MainRequestDTO<>();
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.setTimeZone(TimeZone.getDefault());
@@ -755,21 +755,30 @@ public class AvailabilityUtil {
 			request.setId("mosip.pre-registration.notification.notify");
 			request.setVersion("1.0");
 			request.setRequesttime(new Date());
-			MultiValueMap<Object, Object> emailMap = new LinkedMultiValueMap<>();
-			emailMap.add("NotificationRequestDTO", mapper.writeValueAsString(request));
-			emailMap.add("langCode", langCode);
-			HttpEntity<MultiValueMap<Object, Object>> httpEntity = new HttpEntity<>(emailMap, headers);
+			LinkedMultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
+			map.add("NotificationRequestDTO", mapper.writeValueAsString(request));
+			map.add("langCode", langCode);
+			headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+			HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(
+					map, headers);
 			log.info("sessionId", "idType", "id",
 					"In emailNotification method of NotificationUtil service emailResourseUrl: " + emailResourseUrl);
-			resp = restTemplate.exchange(emailResourseUrl, HttpMethod.POST, httpEntity, String.class);
-			List<ServiceError> validationErrorList = ExceptionUtils.getServiceErrorList(resp.getBody());
-			if (validationErrorList != null && !validationErrorList.isEmpty()) {
-				throw new NotificationException(validationErrorList, null);
-			}
-		} catch (HttpClientErrorException ex) {
+			
+			ResponseEntity<MainResponseDTO<NotificationResponseDTO>> respEntity = restTemplate.exchange(
+					emailResourseUrl, HttpMethod.POST, httpEntity,
+					new ParameterizedTypeReference<MainResponseDTO<NotificationResponseDTO>>() {
+					});
+
+			if (respEntity.getBody().getErrors() != null) {
+				List<ServiceError> validationErrorList = ExceptionUtils.getServiceErrorList(respEntity.getBody().toString());
+				if (validationErrorList != null && !validationErrorList.isEmpty()) {
+					throw new NotificationException(validationErrorList, null);
+				}
+			} 	
+			
+		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id",
-					"In emailNotification method of Booking Service Util for HttpClientErrorException- "
-							+ ex.getMessage());
+					"Exception in emailNotification method of Booking Service Util for HttpClientErrorException- ", ex);
 			throw new RestCallException(ErrorCodes.PRG_PAM_BAT_012.getCode(),
 					ErrorMessages.NOTIFICATION_CALL_FAILED.getMessage());
 
