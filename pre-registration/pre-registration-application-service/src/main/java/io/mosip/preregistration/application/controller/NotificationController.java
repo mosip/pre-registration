@@ -97,7 +97,7 @@ public class NotificationController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotification())")
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(path = "/internal/notification", consumes = { "multipart/form-data" })
-	@Operation(summary  = "Trigger notification")
+	@Operation(summary  = "Trigger notification by internal batch job")
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotificationsInternal(
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = false) String langCode,
@@ -105,7 +105,7 @@ public class NotificationController {
 		log.info("sessionId", "idType", "id",
 				"In notification controller for sendNotificationsInternal() with request notification dto  " + jsonbObject);
 		log.debug("sessionId", "idType", "id", res.getHeader("Cookie"));
-		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, true),
+		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, false),
 				HttpStatus.OK);
 	}
 }
