@@ -88,7 +88,7 @@ public class ApplicationService {
 						ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage(), response);
 			}
 			log.info("In getPregistrationInfo method of Application service fetching demographic for prid {}", prid);
-			demographicResponse = demographicService.getDemographicData(prid.trim()).getResponse();
+			demographicResponse = demographicService.getDemographicData(prid.trim(), false).getResponse();
 			applicationInfo.setDemographicResponse(demographicResponse);
 			response.setResponse(applicationInfo);
 			try {

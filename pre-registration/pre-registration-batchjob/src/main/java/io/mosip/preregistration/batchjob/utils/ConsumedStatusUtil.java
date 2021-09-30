@@ -146,10 +146,11 @@ public class ConsumedStatusUtil {
 					}
 					RegistrationBookingEntity bookingEntity = batchJpaRepositoryImpl
 							.getRegistrationAppointmentDetails(demographicEntity.getPreRegistrationId());
-					RegistrationBookingPKConsumed consumedPk = new RegistrationBookingPKConsumed();
-					consumedPk.setBookingDateTime(bookingEntity.getBookingPK().getBookingDateTime());
-					consumedPk.setPreregistrationId(bookingEntity.getPreregistrationId());
-					bookingEntityConsumed.setBookingPK(consumedPk);
+					//RegistrationBookingPKConsumed consumedPk = new RegistrationBookingPKConsumed();
+					//consumedPk.setBookingDateTime(bookingEntity.getBookingPK().getBookingDateTime());
+					bookingEntityConsumed.setBookingDateTime(bookingEntity.getBookingDateTime());
+					bookingEntityConsumed.setPreregistrationId(bookingEntity.getPreregistrationId());
+					//bookingEntityConsumed.setBookingPK(consumedPk);
 					bookingEntityConsumed.setCrBy(bookingEntity.getCrBy());
 					bookingEntityConsumed.setCrDate(bookingEntity.getCrDate());
 					bookingEntityConsumed.setId(bookingEntity.getId());
