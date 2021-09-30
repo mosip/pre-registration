@@ -37,7 +37,6 @@ import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.dto.DocumentRequestDTO;
 import io.mosip.preregistration.application.dto.DocumentResponseDTO;
-import io.mosip.preregistration.application.exception.DemographicGetDetailsException;
 import io.mosip.preregistration.application.exception.DocumentFailedToCopyException;
 import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.FSServerException;
@@ -398,7 +397,7 @@ public class DocumentServiceTest {
 				"48690172097498");
 
 	}
-	
+
 	@Test
 	public void deleteDocumentSuccessTest() {
 		demographicResponseDTO.setStatusCode("Pending_Appointment");
@@ -407,14 +406,14 @@ public class DocumentServiceTest {
 		responsedelete.setResponse(response);
 		Mockito.when(objectStore.deleteObject(Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(true);
-				Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
-				Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
-				Mockito.when(documnetDAO.findBydocumentId(Mockito.any())).thenReturn(documentEntity);
-				Mockito.when(documnetDAO.deleteAllBydocumentId(documentId)).thenReturn(1);
-				Mockito.when(documnetDAO.getDemographicEntityForPrid(preRegistrationId)).thenReturn(demographicEntity);
-				MainResponseDTO<DocumentDeleteResponseDTO> responseDto = documentUploadService.deleteDocument(documentId,
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		Mockito.when(documnetDAO.findBydocumentId(Mockito.any())).thenReturn(documentEntity);
+		Mockito.when(documnetDAO.deleteAllBydocumentId(documentId)).thenReturn(1);
+		Mockito.when(documnetDAO.getDemographicEntityForPrid(preRegistrationId)).thenReturn(demographicEntity);
+		MainResponseDTO<DocumentDeleteResponseDTO> responseDto = documentUploadService.deleteDocument(documentId,
 				"48690172097498");
-				
+
 		assertEquals(responseDto.getResponse().getMessage(), responsedelete.getResponse().getMessage());
 	}
 }
