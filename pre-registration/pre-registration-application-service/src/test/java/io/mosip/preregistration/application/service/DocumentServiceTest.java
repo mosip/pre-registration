@@ -1,0 +1,314 @@
+package io.mosip.preregistration.application.service;
+
+import static org.junit.Assert.assertEquals;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import org.apache.commons.io.IOUtils;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.util.ReflectionTestUtils;
+
+import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
+import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.preregistration.application.dto.DocumentRequestDTO;
+import io.mosip.preregistration.application.dto.DocumentResponseDTO;
+import io.mosip.preregistration.application.exception.DocumentFailedToCopyException;
+import io.mosip.preregistration.application.exception.FSServerException;
+import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
+import io.mosip.preregistration.application.repository.DocumentDAO;
+import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
+import io.mosip.preregistration.core.util.AuditLogUtil;
+import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.HashUtill;
+import io.mosip.preregistration.core.util.ValidationUtil;
+
+@RunWith(JUnit4.class)
+@SpringBootTest
+@ContextConfiguration(classes = { DocumentService.class })
+public class DocumentServiceTest {
+
+	@InjectMocks
+	private DocumentService documentUploadService;
+
+	@Mock
+	private DocumentServiceUtil serviceUtil;
+
+	@Mock
+	private DocumentDAO documnetDAO;
+
+	@Mock
+	private ValidationUtil validationutil;
+
+	@Mock
+	private AuditLogUtil auditLogUtil;
+
+	@Mock
+	private CryptoUtil cryptoUtil;
+
+	@Mock
+	private ObjectStoreAdapter objectStore;
+
+
+	@Value("${mosip.preregistration.document.scan}")
+	private Boolean scanDocument;
+
+	@Value("${mosip.kernel.objectstore.account-name}")
+	private String objectStoreAccountName;
+
+	private DocumentEntity documentEntity;
+
+	private File file;
+
+	private DemographicEntity demographicEntity;
+
+	String preRegistrationId = "48690172097498";
+
+	private MockMultipartFile mockMultipartFile;
+
+
+	//	MultipartFile multipartFile;
+	private MockMultipartFile multipartFile;
+
+	String docJson;
+
+	DocumentResponseDTO docResp = new DocumentResponseDTO();
+	DocumentRequestDTO document =new DocumentRequestDTO();
+	DemographicResponseDTO demographicResponseDTO=new  DemographicResponseDTO();
+	MainResponseDTO<DocumentResponseDTO> responseUpload = new MainResponseDTO<>();
+
+	DocumentRequestDTO documentRequestDTO = new DocumentRequestDTO("RNC", "POA", "eng","123");
+	MainRequestDTO<DocumentRequestDTO> documentRequestDTOList=new MainRequestDTO<DocumentRequestDTO>();
+	@Before
+	public void setUp() throws URISyntaxException, FileNotFoundException ,java.io.IOException{
+		MockitoAnnotations.initMocks(this);
+
+		ClassLoader classLoader = getClass().getClassLoader();
+		URI uri = new URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020", "%20"));
+		file = new File(uri.getPath());
+		InputStream sourceFile = new FileInputStream(file);
+
+		byte[] cephBytes = IOUtils.toByteArray(sourceFile);
+
+		demographicEntity = new DemographicEntity();
+
+		demographicEntity.setCreateDateTime(LocalDateTime.now());
+		demographicEntity.setCreatedBy("Jagadishwari");
+		demographicEntity.setStatusCode("Pending_Appointment");
+		demographicEntity.setUpdateDateTime(LocalDateTime.now());
+		demographicEntity.setPreRegistrationId(preRegistrationId);
+
+
+		documentEntity = new DocumentEntity(demographicEntity, "1", "Doc.pdf", "POA", "RNC", "PDF", "Pending_Appointment",
+				"eng", "Jagadishwari", DateUtils.parseDateToLocalDateTime(new Date()), "Jagadishwari",
+				DateUtils.parseDateToLocalDateTime(new Date()), DateUtils.parseDateToLocalDateTime(new Date()), "1",
+				new String(HashUtill.hashUtill(cephBytes)),"123");
+
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+
+		Date date = new Date();
+		SimpleDateFormat dateformat = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		String presentDate = dateformat.format(date);
+
+		docJson = "{\"id\": \"mosip.pre-registration.document.upload\",\"version\" : \"1.0\"," + "\"requesttime\" : \""
+				+ presentDate + "\",\"request\" :" + "{\"docCatCode\" "
+				+ ": \"POA\",\"docTypCode\" : \"RNC\",\"langCode\":\"eng\"}}";
+
+		mockMultipartFile = new MockMultipartFile("file", "Doc.pdf", "mixed/multipart", new FileInputStream(file));
+
+		ReflectionTestUtils.setField(documentUploadService, "scanDocument", true);
+
+		ReflectionTestUtils.setField(documentUploadService, "objectStoreAccountName", "abcd");
+
+		multipartFile = new MockMultipartFile("file", "Doc.pdf", "mixed/multipart", new FileInputStream(file));
+
+
+
+	}
+
+
+	@Test
+	public void getAllDocumentForPreIdSuccessTest() throws Exception {
+		List<DocumentMultipartResponseDTO> documentGetAllDtos = new ArrayList<>();
+
+		List<DocumentEntity> documentEntities = new ArrayList<>();
+		documentEntities.add(documentEntity);
+		DocumentsMetaData metadata = new DocumentsMetaData();
+		DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
+		allDocDto.setDocCatCode(documentEntity.getDocCatCode());
+		allDocDto.setDocName(documentEntity.getDocName());
+		allDocDto.setDocumentId(documentEntity.getDocumentId());
+		allDocDto.setDocTypCode(documentEntity.getDocTypeCode());
+		documentGetAllDtos.add(allDocDto);
+
+		MainResponseDTO<DocumentsMetaData> responseDto = new MainResponseDTO<>();
+		metadata.setDocumentsMetaData(documentGetAllDtos);
+		responseDto.setResponse(metadata);
+
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		DemographicResponseDTO obj=new DemographicResponseDTO();
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(obj);
+		Mockito.when(documnetDAO.findBypreregId(Mockito.any())).thenReturn(documentEntities);
+		MainResponseDTO<DocumentsMetaData> serviceResponseDto = documentUploadService
+				.getAllDocumentForPreId("48690172097498");
+		assertEquals(serviceResponseDto.getResponse().getDocumentsMetaData().get(0).getDocumentId(),
+				responseDto.getResponse().getDocumentsMetaData().get(0).getDocumentId());
+	}
+
+	@Test(expected = InvalidRequestException.class)
+	public void InvalidRequestParameterExceptionTest1() throws Exception {
+		documentUploadService.copyDocument("POA", "", "48690172097499");
+	}
+
+	@Test(expected = InvalidRequestException.class)
+	public void InvalidRequestParameterExceptionTest2() throws Exception {
+		documentUploadService.copyDocument("POA", "48690172097499", "");
+	}
+
+	@Test(expected = InvalidRequestException.class)
+	public void InvalidRequestParameterExceptionTest() throws Exception {
+		documentUploadService.copyDocument(null,null,null);
+	}
+
+	//	@Test
+	//	public void uploadDocumentSuccessTest() throws JSONException, JsonParseException, JsonMappingException, IOException, ParseException {
+	//		documentRequestDTOList.setRequest(documentRequestDTO);
+	//		documentRequestDTOList.setId("mosip.Doc");
+	//		documentRequestDTOList.setVersion("0.1");
+	//		docResp.setDocCatCode("POA");
+	//		docResp.setDocTypCode("RNC");
+	//		responseUpload.setResponse(docResp);
+	//		Map<String, String> map = new HashMap<>();
+	//		Mockito.when(serviceUtil.createUploadDto(Mockito.any(), Mockito.any())).thenReturn(documentRequestDTOList);
+	//		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+	//		Mockito.when(serviceUtil.fileExtensionCheck(Mockito.any())).thenReturn(true);
+	//		Mockito.when(serviceUtil.fileSizeCheck(Mockito.any())).thenReturn(true);
+	//		
+	//		MainResponseDTO<DocumentResponseDTO> responseDto = documentUploadService.uploadDocument(mockMultipartFile,
+	//				docJson, preRegistrationId);
+	//		assertEquals(responseUpload.getResponse().getDocCatCode(), responseDto.getResponse().getDocCatCode());
+	//	}
+
+	@Test(expected = RecordFailedToUpdateException.class)
+	public void createDocRecordFailedToUpdateExceptionTest() throws Exception {
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(documnetDAO.findSingleDocument(Mockito.any(), Mockito.any())).thenReturn(documentEntity);
+		Mockito.when(validationutil.isStatusBookedOrExpired(documentEntity.getDemographicEntity().getStatusCode())).thenReturn(true);
+		documentUploadService.createDoc(document, multipartFile, preRegistrationId);
+	}
+
+	@Test(expected = FSServerException.class)
+	public void createDocFSServerExceptionTest() throws Exception {
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(documnetDAO.findSingleDocument(Mockito.any(), Mockito.any())).thenReturn(documentEntity);
+		Mockito.when(validationutil.isStatusBookedOrExpired(documentEntity.getDemographicEntity().getStatusCode())).thenReturn(false);
+		Mockito.when(serviceUtil.dtoToEntity(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(documentEntity);
+
+		InputStream sourceFile = new FileInputStream(file);
+
+		byte[] cephBytes = IOUtils.toByteArray(sourceFile);
+		Mockito.when(cryptoUtil.encrypt( Mockito.any(), Mockito.any())).thenReturn(cephBytes);
+
+		Mockito.when(documnetDAO.saveDocument(Mockito.any())).thenReturn(documentEntity);
+
+		Mockito.when(objectStore.putObject(Mockito.any(),
+				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(false);
+
+		documentUploadService.createDoc(document, multipartFile, preRegistrationId);
+	}
+
+	@Test
+	public void createDocTest() throws Exception {
+
+		docResp.setDocName("Doc.pdf");
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(documnetDAO.findSingleDocument(Mockito.any(), Mockito.any())).thenReturn(documentEntity);
+		Mockito.when(validationutil.isStatusBookedOrExpired(documentEntity.getDemographicEntity().getStatusCode())).thenReturn(false);
+		Mockito.when(serviceUtil.dtoToEntity(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(documentEntity);
+
+		InputStream sourceFile = new FileInputStream(file);
+
+		byte[] cephBytes = IOUtils.toByteArray(sourceFile);
+		Mockito.when(cryptoUtil.encrypt( Mockito.any(), Mockito.any())).thenReturn(cephBytes);
+
+		Mockito.when(documnetDAO.saveDocument(Mockito.any())).thenReturn(documentEntity);
+
+		Mockito.when(objectStore.putObject(Mockito.any(),
+				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(true);
+
+		DocumentResponseDTO responseDto=documentUploadService.createDoc(document, multipartFile, preRegistrationId);
+
+		assertEquals(docResp.getDocName(),
+				responseDto.getDocName());
+
+	}
+
+	@Test(expected = FSServerException.class)
+	public void copyFileFSServerExceptionTest() throws Exception {
+		DocumentEntity copyDocumentEntity=new DocumentEntity();
+		DemographicEntity demographicEntity = new DemographicEntity();
+		demographicEntity.setPreRegistrationId(preRegistrationId);
+		copyDocumentEntity.setDocCatCode("POA");
+		copyDocumentEntity.setDocId("1");
+		copyDocumentEntity.setDemographicEntity(demographicEntity);
+		documentUploadService.copyFile(copyDocumentEntity, "sourseName", "key");
+	}
+
+	@Test(expected = DocumentFailedToCopyException.class)
+	public void copyFileDocumentFailedToCopyExceptionTest() throws Exception {
+		documentUploadService.copyFile(null, "sourseName", "key");
+	}
+
+
+	@Test
+	public void copyFileTest() throws Exception {
+		DocumentEntity copyDocumentEntity=new DocumentEntity();
+		DemographicEntity demographicEntity = new DemographicEntity();
+		demographicEntity.setPreRegistrationId(preRegistrationId);
+		copyDocumentEntity.setDocCatCode("POA");
+		copyDocumentEntity.setDocId("1");
+		copyDocumentEntity.setDemographicEntity(demographicEntity);
+
+		Mockito.when(objectStore.putObject(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+				Mockito.any(), Mockito.any())).thenReturn(true);
+		documentUploadService.copyFile(copyDocumentEntity, "sourseName", "key");
+
+	}
+}
