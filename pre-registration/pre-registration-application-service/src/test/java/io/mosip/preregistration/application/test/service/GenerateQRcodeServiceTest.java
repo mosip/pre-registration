@@ -128,10 +128,8 @@ assertTrue(Arrays.equals(qrCodeResponseDTO.getResponse().getQrcode(), response.g
 		responsedto.setQrcode(qrCode);
 		Mockito.when(qrCodeGenerator.generateQrCode(stringjson, QrVersion.V25)).thenReturn(qrCode);
 		service.generateQRCode(qrcodedto);
-
-		 assertEquals(ErrorMessages.INVALID_REQUEST_BODY.getMessage(), qrCodeResponseDTO.getResponse());
-
 	}
+	
 	@Test(expected = IllegalParamException.class)
 	public void generateQRCodeFailureTest() throws java.io.IOException, QrcodeGenerationException {
 
