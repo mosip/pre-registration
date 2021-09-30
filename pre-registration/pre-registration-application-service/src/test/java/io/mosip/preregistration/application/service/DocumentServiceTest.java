@@ -37,12 +37,16 @@ import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.dto.DocumentRequestDTO;
 import io.mosip.preregistration.application.dto.DocumentResponseDTO;
+import io.mosip.preregistration.application.exception.DemographicGetDetailsException;
 import io.mosip.preregistration.application.exception.DocumentFailedToCopyException;
+import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.FSServerException;
+import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -111,6 +115,12 @@ public class DocumentServiceTest {
 
 	DocumentRequestDTO documentRequestDTO = new DocumentRequestDTO("RNC", "POA", "eng","123");
 	MainRequestDTO<DocumentRequestDTO> documentRequestDTOList=new MainRequestDTO<DocumentRequestDTO>();
+
+	String documentId = "1";
+
+	MainResponseDTO<DocumentDeleteResponseDTO> responsedelete = new MainResponseDTO<>();
+
+
 	@Before
 	public void setUp() throws URISyntaxException, FileNotFoundException ,java.io.IOException{
 		MockitoAnnotations.initMocks(this);
@@ -190,6 +200,59 @@ public class DocumentServiceTest {
 				.getAllDocumentForPreId("48690172097498");
 		assertEquals(serviceResponseDto.getResponse().getDocumentsMetaData().get(0).getDocumentId(),
 				responseDto.getResponse().getDocumentsMetaData().get(0).getDocumentId());
+	}
+
+	@Test(expected=DocumentNotFoundException.class)
+	public void getAllDocumentDocumentNotFoundExceptionTest() throws Exception {
+		List<DocumentMultipartResponseDTO> documentGetAllDtos = new ArrayList<>();
+
+		List<DocumentEntity> documentEntities = new ArrayList<>();
+		documentEntities.add(documentEntity);
+		DocumentsMetaData metadata = new DocumentsMetaData();
+		DocumentMultipartResponseDTO allDocDto = new DocumentMultipartResponseDTO();
+		allDocDto.setDocCatCode(documentEntity.getDocCatCode());
+		allDocDto.setDocName(documentEntity.getDocName());
+		allDocDto.setDocumentId(documentEntity.getDocumentId());
+		allDocDto.setDocTypCode(documentEntity.getDocTypeCode());
+		documentGetAllDtos.add(allDocDto);
+
+		MainResponseDTO<DocumentsMetaData> responseDto = new MainResponseDTO<>();
+		metadata.setDocumentsMetaData(documentGetAllDtos);
+		responseDto.setResponse(metadata);
+
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		DemographicResponseDTO obj=new DemographicResponseDTO();
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(obj);
+		Mockito.when(documnetDAO.findBypreregId(Mockito.any())).thenThrow(new DocumentNotFoundException("ErrCode", "failed"));
+		MainResponseDTO<DocumentsMetaData> serviceResponseDto = documentUploadService
+				.getAllDocumentForPreId("48690172097498");
+	}
+
+	@Test(expected=DocumentNotFoundException.class)
+	public void copyDocumentDocumentNotFoundExceptionTest() throws Exception {
+
+		Mockito.when(serviceUtil.isValidCatCode(Mockito.any())).thenReturn(true);
+
+		documentUploadService.copyDocument("POA", "987654321", "48690172097499");
+	}
+
+	@Test
+	public void copyDocumentSuccesssTest() throws Exception {
+		docResp.setDocName("Doc.pdf");
+
+		Mockito.when(serviceUtil.isValidCatCode(Mockito.any())).thenReturn(true);
+		Mockito.when(documnetDAO.findSingleDocument(Mockito.any(), Mockito.any())).thenReturn(documentEntity);
+
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+
+		Mockito.when(documnetDAO.saveDocument(
+				serviceUtil.documentEntitySetter(Mockito.any(), Mockito.any(), Mockito.any()))).thenReturn(documentEntity);
+		Mockito.when(objectStore.putObject(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(true);
+		MainResponseDTO<DocumentResponseDTO> responseDto=documentUploadService.copyDocument("POA", "987654321", "48690172097499");
+		assertEquals(docResp.getDocName(),
+				responseDto.getResponse().getDocName());
+
 	}
 
 	@Test(expected = InvalidRequestException.class)
@@ -310,5 +373,48 @@ public class DocumentServiceTest {
 				Mockito.any(), Mockito.any())).thenReturn(true);
 		documentUploadService.copyFile(copyDocumentEntity, "sourseName", "key");
 
+	}
+
+	@Test(expected = InvalidDocumentIdExcepion.class)
+	public void invalidDocumentIdExcepionTest() {
+
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		Mockito.when(documnetDAO.findBydocumentId(Mockito.any())).thenReturn(documentEntity);
+		MainResponseDTO<DocumentDeleteResponseDTO> responseDto = documentUploadService.deleteDocument(documentId,
+				"1234567890");
+		assertEquals(responseDto.getResponse().getMessage(), responsedelete.getResponse().getMessage());
+	}
+
+	@Test(expected=FSServerException.class)
+	public void deleteDocumentFSServerExceptionTest() {
+		demographicResponseDTO.setStatusCode("Pending_Appointment");
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		Mockito.when(documnetDAO.findBydocumentId(Mockito.any())).thenReturn(documentEntity);
+		Mockito.when(documnetDAO.deleteAllBydocumentId(documentId)).thenReturn(1);
+		Mockito.when(documnetDAO.getDemographicEntityForPrid(preRegistrationId)).thenThrow(new DocumentNotFoundException());
+		MainResponseDTO<DocumentDeleteResponseDTO> responseDto = documentUploadService.deleteDocument(documentId,
+				"48690172097498");
+
+	}
+	
+	@Test
+	public void deleteDocumentSuccessTest() {
+		demographicResponseDTO.setStatusCode("Pending_Appointment");
+		DocumentDeleteResponseDTO response=new DocumentDeleteResponseDTO();
+		response.setMessage("Document successfully deleted");
+		responsedelete.setResponse(response);
+		Mockito.when(objectStore.deleteObject(Mockito.any(),
+				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(true);
+				Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+				Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+				Mockito.when(documnetDAO.findBydocumentId(Mockito.any())).thenReturn(documentEntity);
+				Mockito.when(documnetDAO.deleteAllBydocumentId(documentId)).thenReturn(1);
+				Mockito.when(documnetDAO.getDemographicEntityForPrid(preRegistrationId)).thenReturn(demographicEntity);
+				MainResponseDTO<DocumentDeleteResponseDTO> responseDto = documentUploadService.deleteDocument(documentId,
+				"48690172097498");
+				
+		assertEquals(responseDto.getResponse().getMessage(), responsedelete.getResponse().getMessage());
 	}
 }
