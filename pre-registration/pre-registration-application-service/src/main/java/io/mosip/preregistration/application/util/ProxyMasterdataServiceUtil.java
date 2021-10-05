@@ -102,11 +102,9 @@ public class ProxyMasterdataServiceUtil {
 		log.info("In masterDataRestCall method with request url {} body : {}", uri, body);
       
 		ResponseEntity<?> response = null;
-		
-		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 
 		HttpEntity<?> entity = new HttpEntity<>(body, headers);
 
