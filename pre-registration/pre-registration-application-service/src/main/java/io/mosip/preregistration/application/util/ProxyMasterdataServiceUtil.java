@@ -2,6 +2,7 @@ package io.mosip.preregistration.application.util;
 
 import java.net.URI;
 import java.net.URLDecoder;
+import java.nio.charset.Charset;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,6 +14,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -33,6 +35,7 @@ public class ProxyMasterdataServiceUtil {
 
 	@Autowired
 	private RestTemplate restTemplate;
+	
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterdataServiceUtil.class);
 
@@ -88,14 +91,19 @@ public class ProxyMasterdataServiceUtil {
 			break;
 		}
 		return httpMethod;
+
 	}
 
+	
+	
 	@Cacheable(value = "masterdata-cache", key = "'MasterdataCache'+#uri" , condition = "!#uri.toString().contains('getApplicantType')" )
 	public Object masterDataRestCall(URI uri, String body, HttpMethod methodType) {
-
+		
 		log.info("In masterDataRestCall method with request url {} body : {}", uri, body);
       
 		ResponseEntity<?> response = null;
+		
+		restTemplate.getMessageConverters().add(0, new StringHttpMessageConverter(Charset.forName("UTF-8")));
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_JSON);
