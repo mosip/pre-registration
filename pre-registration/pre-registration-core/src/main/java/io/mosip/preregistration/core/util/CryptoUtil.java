@@ -120,7 +120,7 @@ public class CryptoUtil {
 			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
 				throw new EncryptionFailedException(response.getBody().getErrors(), null);
 			}
-			decodedBytes = io.mosip.kernel.core.util.CryptoUtil.decodeURLSafeBase64(response.getBody().getResponse().getData().getBytes().toString());
+			decodedBytes = Base64.decodeBase64(response.getBody().getResponse().getData().getBytes());
 
 		} catch (Exception ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
