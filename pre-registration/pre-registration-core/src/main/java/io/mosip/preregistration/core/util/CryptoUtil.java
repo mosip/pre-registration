@@ -59,7 +59,7 @@ public class CryptoUtil {
 		ResponseEntity<ResponseWrapper<CryptoManagerResponseDTO>> response = null;
 		byte[] encryptedBytes = null;
 		try {
-			String encodedBytes = io.mosip.kernel.core.util.CryptoUtil.encodeBase64(originalInput);
+			String encodedBytes = io.mosip.kernel.core.util.CryptoUtil.encodeToURLSafeBase64(originalInput);
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
 			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(encodedBytes);
@@ -120,7 +120,7 @@ public class CryptoUtil {
 			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
 				throw new EncryptionFailedException(response.getBody().getErrors(), null);
 			}
-			decodedBytes = Base64.decodeBase64(response.getBody().getResponse().getData().getBytes());
+			decodedBytes = io.mosip.kernel.core.util.CryptoUtil.decodeURLSafeBase64(response.getBody().getResponse().getData().getBytes().toString());
 
 		} catch (Exception ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
