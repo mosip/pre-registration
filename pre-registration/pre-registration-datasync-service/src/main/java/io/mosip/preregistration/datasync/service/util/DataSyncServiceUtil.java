@@ -931,11 +931,11 @@ public class DataSyncServiceUtil {
 
 		if (encryptionPublickey != null) {
 			TpmCryptoRequestDto tpmCryptoRequestDto = new TpmCryptoRequestDto();
-			tpmCryptoRequestDto.setValue(CryptoUtil.encodeBase64(data));
+			tpmCryptoRequestDto.setValue(CryptoUtil.encodeToURLSafeBase64(data));
 			tpmCryptoRequestDto.setPublicKey(encryptionPublickey);
 			tpmCryptoRequestDto.setTpm(false);
 			TpmCryptoResponseDto tpmCryptoResponseDto = clientCryptoManagerService.csEncrypt(tpmCryptoRequestDto);
-			return CryptoUtil.decodeBase64(tpmCryptoResponseDto.getValue());
+			return CryptoUtil.decodeURLSafeBase64(tpmCryptoResponseDto.getValue());
 		} else
 			return data;
 	}
