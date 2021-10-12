@@ -8,14 +8,12 @@ import java.util.Collections;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
-import javax.servlet.Filter;
 
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.TrustStrategy;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.springframework.boot.context.properties.ConfigurationProperties;
-import org.springframework.boot.web.servlet.FilterRegistrationBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -52,19 +50,6 @@ public class Config {
 	@Bean
 	public Map<String, String> ic() {
 		return Collections.unmodifiableMap(id);
-	}
-
-	@Bean
-	public FilterRegistrationBean<Filter> registerCORSFilterBean() {
-		FilterRegistrationBean<Filter> corsBean = new FilterRegistrationBean<>();
-		corsBean.setFilter(registerCORSFilter());
-		corsBean.setOrder(0);
-		return corsBean;
-	}
-
-	@Bean
-	public Filter registerCORSFilter() {
-		return new CorsFilter();
 	}
 
 	@Bean
