@@ -44,9 +44,11 @@ import io.mosip.preregistration.core.common.dto.PreRegistartionStatusDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -64,7 +66,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @RequestMapping("/")
-@Tag(name = "Demographic Controller")
+@Tag(name = "demographic-controller", description = "Demographic Controller")
 @CrossOrigin("*")
 public class DemographicController {
 
@@ -111,8 +113,13 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostapplications())")
 	@PostMapping(path = "/applications", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Create form data")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Pre-Registration successfully Created") })
+	@Operation(summary = "register", description = "Create form data", tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Pre-Registration successfully Created"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<DemographicCreateResponseDTO>> register(
 			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject,
 			@ApiIgnore Errors errors) {
@@ -138,8 +145,13 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPutapplications())")
 	@PutMapping(path = "/applications/{preRegistrationId}", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Update form data")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Demographic data successfully Updated") })
+	@Operation(summary = "update", description = "Update form data", tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Demographic data successfully Updated"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<DemographicUpdateResponseDTO>> update(
 			@PathVariable("preRegistrationId") String preRegistrationId,
 			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject,
@@ -164,8 +176,12 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN','PRE_REGISTRATION_ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplications())")
 	@GetMapping(path = "/applications/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Get Pre-Registartion data")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Demographic data successfully retrieved") })
+	@Operation(summary = "getApplication", description = "Get Pre-Registartion data", tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Demographic data successfully retrieved"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<DemographicResponseDTO>> getApplication(
 			@PathVariable("preRegistrationId") String preRegistraionId) {
 		log.info("sessionId", "idType", "id",
@@ -187,8 +203,13 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPutapplicationsstatus())")
 	@PutMapping(path = "/applications/status/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Update Pre-Registartion status")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Pre-Registration Status successfully updated") })
+	@Operation(summary = "updateApplicationStatus", description = "Update Pre-Registartion status", tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Pre-Registration Status successfully updated"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<String>> updateApplicationStatus(
 			@PathVariable("preRegistrationId") String preRegId,
 			@RequestParam(value = "statusCode", required = true) String status) {
@@ -212,8 +233,12 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsall())")
 	@GetMapping(path = "/applications", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Fetch all the applications created by user")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "All applications fetched successfully") })
+	@Operation(summary = "getAllApplications", description = "Fetch all the applications created by user", tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "All applications fetched successfully"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<DemographicMetadataDTO>> getAllApplications(HttpServletRequest res,
 			@RequestParam(value = "pageIndex", required = false) String pageIdx) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
@@ -234,8 +259,12 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsstatus())")
 	@GetMapping(path = "/applications/status/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Fetch the status of a application")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "All applications status fetched successfully") })
+	@Operation(summary = "getApplicationStatus", description = "Fetch the status of a application", tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "All applications status fetched successfully"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<PreRegistartionStatusDTO>> getApplicationStatus(
 			@PathVariable("preRegistrationId") String preId) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
@@ -256,8 +285,13 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getDeleteapplications())")
 	@DeleteMapping(path = "/applications/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Discard individual")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Deletion of individual is successfully") })
+	@Operation(summary = "discardIndividual", description = "Discard individual", tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Deletion of individual is successfully"),
+			@ApiResponse(responseCode = "204", description = "No Content"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			})
 	public ResponseEntity<MainResponseDTO<DeletePreRegistartionDTO>> discardIndividual(
 			@PathVariable("preRegistrationId") String preId) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
@@ -271,9 +305,14 @@ public class DemographicController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ADMIN','REGISTRATION_PROCESSOR')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostapplicationsupdatedtime())")
 	@PostMapping(path = "/applications/updatedTime", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Get Updated Date Time for List of Pre-Registration Id")
+	@Operation(summary = "getUpdatedDateTimeByPreIds", description = "Get Updated Date Time for List of Pre-Registration Id",
+			tags = "demographic-controller")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "Updated Date Time successfully fetched for list of pre-registration ids") })
+			@ApiResponse(responseCode = "200", description = "Updated Date Time successfully fetched for list of pre-registration ids"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<Map<String, String>>> getUpdatedDateTimeByPreIds(
 			@Validated @RequestBody MainRequestDTO<PreRegIdsByRegCenterIdDTO> mainRequestDTO,
 			@ApiIgnore Errors errors) {
@@ -287,8 +326,13 @@ public class DemographicController {
 	//@PreAuthorize("hasRole('INDIVIDUAL')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsconfig())")
 	@GetMapping(path = "/applications/config", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Get IDschema config fields")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Config fetch successful") })
+	@Operation(summary = "getIdSchemaConfig", description = "Get IDschema config fields",
+			tags = "demographic-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "Config fetch successful"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<SchemaResponseDto>> getIdSchemaConfig() {
                        
 		return ResponseEntity.status(HttpStatus.OK)

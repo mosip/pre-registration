@@ -3,6 +3,7 @@ package io.mosip.preregistration.application.security;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -79,6 +80,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 	}
 
 	@Bean
+	@Primary
 	AuthenticationFilter authenticationFilter() throws Exception {
 		final AuthenticationFilter filter = new AuthenticationFilter(PROTECTED_URLS);
 		filter.setAuthenticationManager(authenticationManager());

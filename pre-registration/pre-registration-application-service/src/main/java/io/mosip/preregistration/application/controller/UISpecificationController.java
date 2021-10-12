@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +25,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @CrossOrigin("*")
-@Tag(name = "UISpecification Controller")
+@Tag(name = "UISpecification Controller", description = "UI Specification Controller")
 public class UISpecificationController {
 
 	@Autowired
@@ -31,7 +35,12 @@ public class UISpecificationController {
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetuispeclatest())")
 	@GetMapping("/uispec/latest")
-	@Operation(summary = "Service to fetch latest published ui specification")
+	@Operation(summary = "Service to fetch latest published ui specification", description = "Service to fetch latest published ui specification", tags = { "UISpecification Controller" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<UISpecMetaDataDTO>> getLatestPublishedSchema(
 			@RequestParam(name = "version", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double version,
 			@RequestParam(name = "identitySchemaVersion", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double identitySchemaVersion) {
@@ -40,9 +49,14 @@ public class UISpecificationController {
 		return ResponseEntity.status(HttpStatus.OK).body(uiSpecService.getLatestUISpec(version, identitySchemaVersion));
 	}
 
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetuispecall())")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetuispecall())" )
 	@GetMapping("/uispec/all")
-	@Operation(summary = "Service to fetch all published ui specification")
+	@Operation(summary = "Service to fetch all published ui specification", description = "Service to fetch all published ui specification", tags = { "UISpecification Controller" })
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<PageDTO<UISpecMetaDataDTO>>> getAllPublishedSchema(
 			@RequestParam(name = "pageNumber", defaultValue = "0") @ApiParam(value = "page number", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10") @ApiParam(value = "page size", defaultValue = "10") int pageSize) {

@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
@@ -43,9 +44,10 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -58,7 +60,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @RestController
 @RequestMapping("/login") 
-@Tag(name = "Login Controller")
+@Tag(name = "login-controller", description = "Login Controller")
 @CrossOrigin("*")
 public class LoginController {
 
@@ -109,7 +111,13 @@ public class LoginController {
 
 	@Deprecated(since = "1.2.0", forRemoval = true)
 	@PostMapping(value = "/sendOtp", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Send Otp to UserId")
+	@Operation(summary = "sendOTP", description = "Send Otp to UserId", tags = "login-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTP(
 			@Validated @RequestBody MainRequestDTO<OtpRequestDTO> userOtpRequest, @ApiIgnore Errors errors) {
@@ -132,7 +140,13 @@ public class LoginController {
 	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/sendOtp/langcode", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Send Otp to UserId")
+	@Operation(summary = "sendOTPWithLangCode", description = "Send Otp to UserId", tags = "login-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTPWithLangCode(
 			@Validated @RequestBody MainRequestDTO<OTPWithLangCodeDTO> userOtpRequest, @ApiIgnore Errors errors) {
@@ -158,7 +172,13 @@ public class LoginController {
 	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/validateOtp", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Validate UserId and Otp")
+	@Operation(summary = "validateWithUserIdOtp", description = "Validate UserId and Otp", tags = "login-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> validateWithUserIdOtp(
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiIgnore Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
@@ -184,7 +204,13 @@ public class LoginController {
 	 * @return AuthNResponse
 	 */
 	@PostMapping(value = "/invalidateToken", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Invalidate the token")
+	@Operation(summary = "invalidateToken", description = "Invalidate the token", tags = "login-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	@ResponseStatus(value = HttpStatus.OK)
 	public ResponseEntity<MainResponseDTO<String>> invalidateToken(HttpServletRequest req, HttpServletResponse res) {
 
@@ -205,9 +231,13 @@ public class LoginController {
 	 */
 
 	@GetMapping(path = "/config", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Get global and Pre-Registration config data")
+	@Operation(summary = "configParams", description = "Get global and Pre-Registration config data", tags = "login-controller")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully retrieved") })
+			@ApiResponse(responseCode = "200", description = "global and Pre-Registration config data successfully retrieved"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<Map<String, String>>> configParams() {
 
 		return new ResponseEntity<>(loginService.getConfig(), HttpStatus.OK);
@@ -222,9 +252,12 @@ public class LoginController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetrefreshconfig())")
 	@GetMapping(path = "/refreshconfig", produces = MediaType.APPLICATION_JSON_VALUE)
 	//@PreAuthorize("hasAnyRole('PRE_REGISTRATION_ADMIN')")
-	@Operation(summary = "Refresh global and Pre-Registration config data")
+	@Operation(summary = "refreshConfigParams", description = "Refresh global and Pre-Registration config data", tags = "login-controller")
 	@ApiResponses(value = {
-			@ApiResponse(code = 200, message = "global and Pre-Registration config data successfully updated") })
+			@ApiResponse(responseCode = "200", description = "global and Pre-Registration config data successfully updated"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<String>> refreshConfigParams() {
 
 		return new ResponseEntity<>(loginService.refreshConfig(), HttpStatus.OK);
@@ -232,6 +265,13 @@ public class LoginController {
 	}
 
 	@PostMapping(path = "/sendOtpWithCaptcha", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "sendOtpWithCaptcha", description = "sendOtpWithCaptcha", tags = "login-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<?>> sendOtpWithCaptcha(
 			@Validated @Valid @RequestBody MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> sendOtpRequestWithCaptcha,
 			HttpServletResponse res, @ApiIgnore Errors errors) {

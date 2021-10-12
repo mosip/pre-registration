@@ -4,6 +4,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,7 +32,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @CrossOrigin("*")
-@Tag(name = "Application Controller")
+@Tag(name = "application-controller", description = "Application Controller")
 public class ApplicationController {
 
 	@Autowired
@@ -38,7 +42,13 @@ public class ApplicationController {
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsinfo())")
 	@GetMapping(path = "/applications/info/{preregistrationId}")
-	@Operation(summary = "Retrive Application demographic and document info for given prid")
+	@Operation(summary = "getPreregistrationofPrid", description = "Retrive Application demographic and document info for given prid", tags = "application-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<?>> getPreregistrationofPrid(
 			@PathVariable("preregistrationId") String preregistrationId) {
 		log.info("In application controller to getpreregistrationInfo {}", preregistrationId);
@@ -47,7 +57,13 @@ public class ApplicationController {
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostlogaudit())")
 	@PostMapping(path = "/logAudit")
-	@Operation(summary = "log audit events from ui")
+	@Operation(summary = "logAugit", description = "log audit events from ui", tags = "application-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<String>> logAugit(
 			@Valid @RequestBody(required = true) MainRequestDTO<UIAuditRequest> auditRequest) {
 		log.info("In application controller to log UI audit capture {}", auditRequest);
@@ -56,7 +72,12 @@ public class ApplicationController {
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getUpdateapplicationstatusappid())")
 	@GetMapping(path = "/applications/status/info/{applicationId}")
-	@Operation(summary = "update booking status code in applications table")
+	@Operation(summary = "getApplicationStatusInfo", description = "update booking status code in applications table", tags = "application-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<String>> getApplicationStatusInfo(
 			@PathVariable("applicationId") String applicationId) {
 		return ResponseEntity.status(HttpStatus.OK).body(service.getApplicationsStatusForApplicationId(applicationId));
@@ -64,7 +85,12 @@ public class ApplicationController {
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationdetailsappid())")
 	@GetMapping(path = "/applications/appointment/info/{regCenterId}")
-	@Operation(summary = "Fetch application details for applicationId")
+	@Operation(summary = "getApplicationInfo", description = "Fetch application details for applicationId", tags = "application-controller")
+	@ApiResponses(value = {
+			@ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> getApplicationInfo(
 			@PathVariable("regCenterId") String regCenterId, @RequestParam("appointmentDate") String appointmentDate) {
 		return ResponseEntity.status(HttpStatus.OK)
