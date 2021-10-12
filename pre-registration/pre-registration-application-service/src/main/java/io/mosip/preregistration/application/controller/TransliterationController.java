@@ -4,6 +4,19 @@
  */
 package io.mosip.preregistration.application.controller;
 
+import io.mosip.preregistration.application.dto.TransliterationRequestDTO;
+import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
+import io.mosip.preregistration.application.service.TransliterationService;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.util.DataValidationUtil;
+import io.mosip.preregistration.core.util.RequestValidator;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -12,26 +25,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.InitBinder;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.util.DataValidationUtil;
-import io.mosip.preregistration.core.util.RequestValidator;
-import io.mosip.preregistration.application.dto.TransliterationRequestDTO;
-import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
-import io.mosip.preregistration.application.service.TransliterationService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.web.bind.annotation.*;
 import springfox.documentation.annotations.ApiIgnore;
 
 /**
@@ -44,7 +38,7 @@ import springfox.documentation.annotations.ApiIgnore;
  */
 @RestController
 @RequestMapping("/transliteration")
-@Tag(name = "Transliteration Controller")
+@Tag(name = "Transliteration Controller", description = "Transliteration Controller")
 @CrossOrigin("*")
 public class TransliterationController {
 
@@ -76,8 +70,12 @@ public class TransliterationController {
 	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPosttransliterationtransliterate())")
 	@PostMapping(path = "/transliterate", consumes = MediaType.APPLICATION_JSON_VALUE,produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary  = "Get Pre-Registartion-Translitration data")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Given key is translitrated successfully") })
+	@Operation(summary  = "Get Pre-Registartion-Translitration data", description = "Get Pre-Registartion-Translitration data", tags = "Transliteration Controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Given key is translitrated successfully"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<TransliterationResponseDTO>> translitrator(
 			@Validated @RequestBody(required = true) MainRequestDTO<TransliterationRequestDTO> requestDTO, @ApiIgnore Errors errors) {
 		requestValidator.validateId(TRANS, requestDTO.getId(), errors);

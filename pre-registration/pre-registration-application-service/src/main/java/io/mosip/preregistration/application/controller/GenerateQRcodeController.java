@@ -1,5 +1,10 @@
 package io.mosip.preregistration.application.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,7 +40,7 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/qrCode")
 @CrossOrigin("*")
-@Tag(name = "Generate QRCode Controller")
+@Tag(name = "generate-q-rcode-controller", description = "Generate Q Rcode Controller")
 public class GenerateQRcodeController {
 
 	private Logger log = LoggerConfiguration.logConfig(GenerateQRcodeController.class);
@@ -67,6 +72,12 @@ public class GenerateQRcodeController {
 	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostqrcodegenerate())")
 	@PostMapping(path="/generate" ,consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary  = "Generate QR Code", description = "Generate QR Code", tags = "generate-q-rcode-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
 	public ResponseEntity<MainResponseDTO<QRCodeResponseDTO>> generateQRCode(@Validated @RequestBody MainRequestDTO<String> data,@ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",
 				"In generateQRCode controller for generateQRCode generation with request " + data);
