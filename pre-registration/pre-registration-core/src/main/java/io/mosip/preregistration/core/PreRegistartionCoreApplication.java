@@ -14,7 +14,8 @@ import org.springframework.context.annotation.FilterType;
 @SpringBootApplication
 @ComponentScan(basePackages = "io.mosip.*", excludeFilters = {
 		@ComponentScan.Filter(type = FilterType.REGEX,
-				pattern = {"io\\.mosip\\.kernel\\.zkcryptoservice\\..*",
+				pattern = {"io\\.mosip\\.kernel\\.keymigrate\\..*",
+						"io\\.mosip\\.kernel\\.zkcryptoservice\\..*",
 						"io\\.mosip\\.kernel\\.tokenidgenerator\\..*",
 						"io\\.mosip\\.kernel\\.signature\\..*",
 						"io\\.mosip\\.kernel\\.partnercertservice\\..*",
