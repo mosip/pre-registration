@@ -322,38 +322,34 @@ public class ValidationUtil {
 			HttpHeaders headers = new HttpHeaders();
 			HttpEntity<HttpHeaders> entity = new HttpEntity<>(headers);
 			log.info("getAllDocCategoriesAndTypes url: {} ", uri);
-			
-			int pageNo=0;
-			int totalPage=0;
-			
-			do{
-				ResponseEntity<ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>>> response = 
-						restTemplate.exchange(uri+"?pageNumber="+pageNo+"&pageSize=10",
-						HttpMethod.GET, entity,
+
+			int pageNo = 0;
+			int totalPage = 0;
+			do {
+				ResponseEntity<ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>>> response = restTemplate.exchange(
+						uri + "&pageNumber=" + pageNo, HttpMethod.GET, entity,
 						new ParameterizedTypeReference<ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>>>() {
-						});	
-				
+						});
+
 				if (Objects.isNull(response.getBody().getErrors())) {
 
 					PageDTO<ValidDocumentsResponseDTO> resp = response.getBody().getResponse();
-					
-					totalPage= resp.getTotalPages();
-					
-					resp.getData().stream().filter(docs -> docs.getIsActive()).forEach(
-							activeDocs -> validDocsMap.put(activeDocs.getDocCategoryCode(), activeDocs.getDocTypeCode()));
+
+					totalPage = resp.getTotalPages();
+
+					resp.getData().stream().filter(docs -> docs.getIsActive()).forEach(activeDocs -> validDocsMap
+							.put(activeDocs.getDocCategoryCode(), activeDocs.getDocTypeCode()));
 					log.info("validDocsMap {}", validDocsMap);
 				} else {
-					log.debug("sessionId", "idType", "id", "inside getAllDocCategories inside else  preRegistrationId ");
+					log.debug("sessionId", "idType", "id",
+							"inside getAllDocCategories inside else  preRegistrationId ");
 					log.debug("sessionId", "idType", "id", " cat code" + response.getBody().getErrors().toString());
 					throw new MasterDataNotAvailableException(response.getBody().getErrors().get(0).getErrorCode(),
 							response.getBody().getErrors().get(0).getMessage());
 				}
-				
 				pageNo++;
-		
-			}while(pageNo!=totalPage);
-			
-			
+			} while (pageNo != totalPage);
+
 		} catch (RestClientException e) {
 			log.debug("sessionId", "idType", "id", "inside getAllDocCategories inside catch preRegistrationId ");
 			log.debug("sessionId", "idType", "id", "---- " + ExceptionUtils.getStackTrace(e));
