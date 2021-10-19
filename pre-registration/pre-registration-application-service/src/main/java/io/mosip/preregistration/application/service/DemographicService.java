@@ -11,8 +11,6 @@ import java.util.Map;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -248,23 +246,17 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Value("${preregistration.demographic.idschema-json-filename}")
 	private String fileName;
-	
-	private String demographicJsonString = "";
 
 	/**
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
 	 */
-	
-	@PostConstruct
+
 	public void setup() {
 		log.info("sessionId", "idType", "id", "In setup method of demographic service");
 		getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
 		log.info("sessionId", "idType", "id", "Fetched the identity json from config server" + getIdentityJsonString);
 
-		log.info("Fetching file: " + fileName);
-		demographicJsonString = serviceUtil.getJson(fileName);
-		log.info("Fetched the Demographic JSON from config server" + demographicJsonString);
 	}
 
 	@Autowired
