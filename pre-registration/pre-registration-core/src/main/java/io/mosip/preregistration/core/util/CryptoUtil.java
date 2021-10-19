@@ -59,7 +59,7 @@ public class CryptoUtil {
 		ResponseEntity<ResponseWrapper<CryptoManagerResponseDTO>> response = null;
 		byte[] encryptedBytes = null;
 		try {
-			String encodedBytes = io.mosip.kernel.core.util.CryptoUtil.encodeBase64(originalInput);
+			String encodedBytes = io.mosip.kernel.core.util.CryptoUtil.encodeToURLSafeBase64(originalInput);
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
 			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(encodedBytes);
