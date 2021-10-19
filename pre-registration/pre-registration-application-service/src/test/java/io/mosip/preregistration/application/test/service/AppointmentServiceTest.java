@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.json.simple.JSONObject;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -20,10 +21,16 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 
+import io.mosip.analytics.event.anonymous.exception.AnonymousProfileException;
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.AppointmentServiceImpl;
 import io.mosip.preregistration.application.service.DemographicService;
@@ -36,6 +43,7 @@ import io.mosip.preregistration.booking.dto.DateTimeDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.CancelBookingResponseDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
@@ -52,8 +60,8 @@ public class AppointmentServiceTest {
 	private AppointmentUtil util;
 
 	@MockBean
-	private DemographicService demoService;
-
+	private DemographicService demographicService;
+	
 	@MockBean
 	private DocumentService documentService;
 	
@@ -66,12 +74,22 @@ public class AppointmentServiceTest {
 	@Value("${version}")
 	private String version;
 
+	@Value("${mosip.preregistration.booking.cancel.id}")
+	private String appointmentCancelId;
+	
 	@Value("${mosip.preregistration.booking.fetch.availability.id}")
 	private String availablityFetchId;
 
+	@Value("${mosip.utc-datetime-pattern:yyyy-MM-dd'T'hh:mm:ss.SSS'Z'}")
+	private String mosipDateTimeFormat;
+	
+	@Value("${mosip.preregistration.booking.delete.id}")
+	private String appointmentDeletelId;
+	
 	@Before
 	public void setup() {
-
+		ReflectionTestUtils.setField(appointmentService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		
 	}
 
 	@Test
@@ -122,49 +140,7 @@ public class AppointmentServiceTest {
 		Assert.assertEquals(appointmentService.getAppointmentDetails(prid).getResponse(), bookingResponse);
 	}
 
-	@Test
-	public void makeAppointmentTest() {
-
-		String prid = "98765432101234";
-
-		MainRequestDTO<BookingRequestDTO> bookingDTO = new MainRequestDTO<BookingRequestDTO>();
-		BookingRequestDTO bookingRequest = new BookingRequestDTO();
-
-		bookingRequest.setRegDate(LocalDate.now().toString());
-		bookingRequest.setRegistrationCenterId("10001");
-		bookingRequest.setSlotFromTime("10:15:00");
-		bookingRequest.setSlotToTime("10:30:00");
-
-		bookingDTO.setId("");
-		bookingDTO.setVersion("1.0");
-		bookingDTO.setRequesttime(new Date());
-		bookingDTO.setRequest(bookingRequest);
-
-		MainResponseDTO<BookingStatusDTO> bookAppointmentResponse = new MainResponseDTO<BookingStatusDTO>();
-
-		BookingStatusDTO bookingStatus = new BookingStatusDTO();
-		bookingStatus.setBookingMessage("Appointment Booked Succesfully");
-		bookAppointmentResponse.setResponse(bookingStatus);
-
-		Mockito.when(util.makeAppointment(bookingDTO, prid)).thenReturn(bookingStatus);
-
-		ApplicationEntity applicationEntity = new ApplicationEntity();
-		applicationEntity.setApplicationId("98765432101234");
-		applicationEntity.setBookingDate(LocalDate.now());
-		applicationEntity.setRegistrationCenterId("10001");
-		applicationEntity.setSlotFromTime(LocalTime.parse("10:15:00", DateTimeFormatter.ofPattern("H:mm:ss")));
-		applicationEntity.setSlotToTime(LocalTime.parse("10:30:00", DateTimeFormatter.ofPattern("H:mm:ss")));
-
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-
-		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
-
-		assertEquals(appEntity2, applicationEntity);
-
-//		MainResponseDTO<BookingStatusDTO> bookingStatusRes = appointmentService.makeAppointment(bookingDTO, prid);
-//		assertEquals(bookingStatusRes, bookAppointmentResponse);
-
-	}
+	
 
 	@Test
 	public void cancelAppointmentTest() {
@@ -176,7 +152,9 @@ public class AppointmentServiceTest {
 		CancelBookingResponseDTO cancelStatus = new CancelBookingResponseDTO();
 		cancelStatus.setMessage("Appointment Cancelled Succesfully");
 		cancelStatus.setTransactionId("1234");
-
+		cancelAppointmentResponse.setResponse(cancelStatus);
+		cancelAppointmentResponse.setVersion(version);
+		cancelAppointmentResponse.setId(appointmentCancelId);
 		Mockito.when(util.cancelAppointment(prid)).thenReturn(cancelStatus);
 
 		ApplicationEntity applicationEntity = new ApplicationEntity();
@@ -187,13 +165,22 @@ public class AppointmentServiceTest {
 		applicationEntity.setSlotToTime(null);
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-
+		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+	
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
 		assertEquals(appEntity2, applicationEntity);
 
-//		MainResponseDTO<CancelBookingResponseDTO> bookingStatusRes = appointmentService.cancelAppointment(prid);
-//		assertEquals(bookingStatusRes, cancelAppointmentResponse);
+		MainResponseDTO<CancelBookingResponseDTO> bookingStatusRes = appointmentService.cancelAppointment(prid);
+		cancelAppointmentResponse.setResponsetime(bookingStatusRes.getResponsetime());
+		
+		assertEquals(bookingStatusRes.getResponse(), cancelAppointmentResponse.getResponse());
 
 	}
 
@@ -203,12 +190,13 @@ public class AppointmentServiceTest {
 		String prid = "98765432101234";
 
 		MainResponseDTO<DeleteBookingDTO> deleteAppointmentResponse = new MainResponseDTO<DeleteBookingDTO>();
-
 		DeleteBookingDTO deleteStatus = new DeleteBookingDTO();
 		deleteStatus.setDeletedBy("test");
 		deleteStatus.setPreRegistrationId("98765432101234");
 		deleteStatus.setDeletedDateTime(new Date());
-
+		deleteAppointmentResponse.setResponse(deleteStatus);
+		deleteAppointmentResponse.setId(appointmentDeletelId);
+		deleteAppointmentResponse.setVersion(version);
 		Mockito.when(util.deleteBooking(prid)).thenReturn(deleteStatus);
 
 		ApplicationEntity applicationEntity = new ApplicationEntity();
@@ -219,13 +207,23 @@ public class AppointmentServiceTest {
 		applicationEntity.setSlotToTime(null);
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-
+		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+	
+		
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
 		assertEquals(appEntity2, applicationEntity);
 
-//		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentService.deleteBooking(prid);
-//		assertEquals(deleteRes, deleteAppointmentResponse);
+		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentService.deleteBooking(prid);
+		deleteRes.setResponsetime(null);
+		assertEquals(deleteRes.getResponse().getPreRegistrationId(), deleteAppointmentResponse.getResponse().getPreRegistrationId());
 
 	}
 
