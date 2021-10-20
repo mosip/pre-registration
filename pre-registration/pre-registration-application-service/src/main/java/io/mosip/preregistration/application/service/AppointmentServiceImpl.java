@@ -31,6 +31,7 @@ import io.mosip.preregistration.booking.dto.BookingRequestDTO;
 import io.mosip.preregistration.booking.dto.BookingStatus;
 import io.mosip.preregistration.booking.dto.BookingStatusDTO;
 import io.mosip.preregistration.booking.dto.MultiBookingRequest;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.BrowserInfoDTO;
@@ -146,10 +147,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 				log.info(
 						"In appointment booked successfully , updating the applications and demographic tables for ID:{}",
 						preRegistrationId);
-				this.updateApplicationEntity(preRegistrationId, bookingDTO.getRequest());
-				createAnonymousProfile(userAgent, preRegistrationId, bookingDTO.getRequest());
-				this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
+				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, bookingDTO.getRequest(), StatusCodes.BOOKED.getCode());
+				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
+					createAnonymousProfile(userAgent, preRegistrationId, bookingDTO.getRequest());
+					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
 						authUserDetails().getUserId());
+				}
 				bookAppointmentResponse.setResponse(bookingResponse);
 			}
 		} catch (AppointmentExecption ex) {
@@ -173,7 +176,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 				log.info(
 						"In appointment deleted successfully for ID:{}, updating the applications and demographic tables",
 						preRegistrationId);
-				this.updateApplicationEntity(preRegistrationId, null);
+				this.updateApplicationEntity(preRegistrationId, null, null);
 				deleteResponse.setResponse(res);
 			}
 
@@ -197,9 +200,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 			if (response != null && (response.getMessage() != null && response.getTransactionId() != null)) {
 				log.info("In appointment cancelled successfully , updating the applications and demographic tables",
 						preRegistrationId);
-				this.updateApplicationEntity(preRegistrationId, null);
-				this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
+				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null, StatusCodes.CANCELLED.getCode());
+				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
+					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
 						authUserDetails().getUserId());
+				}
 				cancelResponse.setResponse(response);
 			}
 
@@ -230,10 +235,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 					bookRequest.setRegistrationCenterId(action.getRegistrationCenterId());
 					bookRequest.setSlotToTime(action.getSlotToTime());
 					bookRequest.setSlotFromTime(action.getSlotFromTime());
-					this.updateApplicationEntity(preRegistrationId, bookRequest);
-					createAnonymousProfile(userAgent, preRegistrationId, bookRequest);
-					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
+					ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, bookRequest, StatusCodes.BOOKED.getCode());
+					if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
+						createAnonymousProfile(userAgent, preRegistrationId, bookRequest);
+						this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
 							authUserDetails().getUserId());
+					}	
 				});
 			}
 			multiBookingResponse.setResponse(bookingStatus);
@@ -275,7 +282,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 	}
 
-	private void updateApplicationEntity(String preRegistrationId, BookingRequestDTO bookingInfo) {
+	private ApplicationEntity updateApplicationEntity(String preRegistrationId, BookingRequestDTO bookingInfo,
+			String newStatus) {
 		ApplicationEntity applicationEntity = null;
 		try {
 			applicationEntity = applicationRepostiory.getOne(preRegistrationId);
@@ -291,7 +299,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 			applicationEntity.setSlotFromTime(null);
 			applicationEntity.setSlotToTime(null);
 			applicationEntity.setRegistrationCenterId(null);
-
+			if ((applicationEntity.getBookingType().equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
+					|| applicationEntity.getBookingType()
+							.equals(BookingTypeCodes.UPDATE_REGISTRATION_DETAILS.toString()))
+					&& newStatus != null) {
+				applicationEntity.setBookingStatusCode(newStatus);
+			}
 		} else {
 			applicationEntity.setAppointmentDate(LocalDate.parse(bookingInfo.getRegDate()));
 			applicationEntity.setBookingDate(LocalDate.now());
@@ -300,12 +313,17 @@ public class AppointmentServiceImpl implements AppointmentService {
 			applicationEntity.setSlotToTime(
 					LocalTime.parse(bookingInfo.getSlotToTime(), DateTimeFormatter.ofPattern("H:mm:ss")));
 			applicationEntity.setRegistrationCenterId(bookingInfo.getRegistrationCenterId());
-			//applicationEntity.setBookingStatusCode(StatusCodes.BOOKED.getCode());
+			if ((applicationEntity.getBookingType().equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
+					|| applicationEntity.getBookingType()
+							.equals(BookingTypeCodes.UPDATE_REGISTRATION_DETAILS.toString()))
+					&& newStatus != null) {
+				applicationEntity.setBookingStatusCode(newStatus);
+			}
 		}
 		applicationEntity.setUpdBy(authUserDetails().getUserId());
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		try {
-			applicationRepostiory.save(applicationEntity);
+			return applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
 			log.error("Failed to update application for the preregistrationId:{}", preRegistrationId);
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),

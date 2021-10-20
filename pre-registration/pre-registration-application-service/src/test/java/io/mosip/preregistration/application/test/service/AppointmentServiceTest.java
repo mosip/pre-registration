@@ -163,6 +163,8 @@ public class AppointmentServiceTest {
 		applicationEntity.setRegistrationCenterId(null);
 		applicationEntity.setSlotFromTime(null);
 		applicationEntity.setSlotToTime(null);
+		applicationEntity.setBookingType("NEW_PREREGISTRATION");
+		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
@@ -205,6 +207,8 @@ public class AppointmentServiceTest {
 		applicationEntity.setRegistrationCenterId(null);
 		applicationEntity.setSlotFromTime(null);
 		applicationEntity.setSlotToTime(null);
+		applicationEntity.setBookingType("NEW_PREREGISTRATION");
+		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
