@@ -1,5 +1,7 @@
 package io.mosip.preregistration.core.util;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 
 import org.springframework.lang.NonNull;
@@ -8,6 +10,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
@@ -18,6 +21,10 @@ public class RequestValidator extends BaseValidator implements Validator {
 
 	/** The Constant REQUEST. */
 	private static final String ID = "id";
+	
+
+	/** The Constant REQUEST. */
+	private static final String BOOKING_TYPE = "bookingType";
 
 	/**
 	 * Logger configuration for BaseValidator
@@ -60,6 +67,27 @@ public class RequestValidator extends BaseValidator implements Validator {
 			mosipLogger.error("", "", "validateId", "\n" + "Id is null");
 			errors.rejectValue(ID, ErrorCodes.PRG_CORE_REQ_001.getCode(),
 					String.format(ErrorMessages.INVALID_REQUEST_ID.getMessage(), ID));
+		}
+	}
+	
+	public void validateBookingType(String bookingType, Errors errors) {
+		if (Objects.nonNull(bookingType)) {
+			List<BookingTypeCodes> bookingTypes = Arrays.asList(BookingTypeCodes.values());
+			boolean found = false;
+			for (BookingTypeCodes typeCode : bookingTypes) {
+				if (typeCode.toString().equals(bookingType)) {
+					found = true;
+				}
+			}
+			if (!found) {
+				mosipLogger.error("", "", "validateBookingType", "\n" + "BookingType is not correct");
+				errors.rejectValue(ID, ErrorCodes.PRG_CORE_REQ_023.getCode(),
+						String.format(ErrorMessages.INVALID_BOOKING_TYPE.getMessage(), BOOKING_TYPE));
+			}
+		} else {
+			mosipLogger.error("", "", "validateId", "\n" + "Id is null");
+			errors.rejectValue(ID, ErrorCodes.PRG_CORE_REQ_001.getCode(),
+					String.format(ErrorMessages.INVALID_REQUEST_ID.getMessage(), BOOKING_TYPE));
 		}
 	}
 

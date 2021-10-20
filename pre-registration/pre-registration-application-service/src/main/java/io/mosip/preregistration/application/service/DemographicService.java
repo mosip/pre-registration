@@ -21,8 +21,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
@@ -51,6 +49,8 @@ import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicViewDTO;
 import io.mosip.preregistration.application.dto.IdSchemaDto;
 import io.mosip.preregistration.application.dto.SchemaResponseDto;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
@@ -59,9 +59,11 @@ import io.mosip.preregistration.application.exception.RecordFailedToUpdateExcept
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
+import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DemographicRepository;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
@@ -115,7 +117,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Autowired
 	private DemographicRepository demographicRepository;
-
+	
 	/**
 	 * Autowired reference for {@link #DemographicServiceUtil}
 	 */
@@ -363,6 +365,7 @@ public class DemographicService implements DemographicServiceIntf {
 
 	}
 
+	
 	/*
 	 * This method is used to update the demographic data by PreId
 	 * 
@@ -698,31 +701,44 @@ public class DemographicService implements DemographicServiceIntf {
 		try {
 			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preregId);
 			if (validationUtil.requstParamValidator(requestParamMap)) {
-				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preregId);
-				if (!serviceUtil.isNull(demographicEntity)) {
-					userValidation(userId, demographicEntity.getCreatedBy());
-					if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
-						getDocumentServiceToDeleteAllByPreId(preregId);
-						if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
-							getBookingServiceToDeleteAllByPreId(preregId);
+				ApplicationEntity applicationEntity = serviceUtil.findApplicationById(preregId);
+				String bookingType = applicationEntity.getBookingType();
+				if (bookingType.equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
+					DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preregId);
+					if (!serviceUtil.isNull(demographicEntity)) {
+						userValidation(userId, demographicEntity.getCreatedBy());
+						if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
+							getDocumentServiceToDeleteAllByPreId(preregId);
+							if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
+								getBookingServiceToDeleteAllByPreId(preregId);
+							}
+							int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
+							serviceUtil.deleteApplicationFromApplications(preregId);
+							if (isDeletedDemo > 0) {
+								deleteDto.setPreRegistrationId(preregId);
+								deleteDto.setDeletedBy(userId);
+								deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
+	
+							} else {
+								throw new RecordFailedToDeleteException(DemographicErrorCodes.PRG_PAM_APP_004.getCode(),
+										DemographicErrorMessages.FAILED_TO_DELETE_THE_PRE_REGISTRATION_RECORD.getMessage());
+							}
 						}
-						int isDeletedDemo = demographicRepository.deleteByPreRegistrationId(preregId);
-						serviceUtil.deleteApplicationFromApplications(preregId);
-						if (isDeletedDemo > 0) {
-							deleteDto.setPreRegistrationId(preregId);
-							deleteDto.setDeletedBy(userId);
-							deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
-
-						} else {
-							throw new RecordFailedToDeleteException(DemographicErrorCodes.PRG_PAM_APP_004.getCode(),
-									DemographicErrorMessages.FAILED_TO_DELETE_THE_PRE_REGISTRATION_RECORD.getMessage());
-						}
+					} else {
+						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+								DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
 					}
-				} else {
-					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
-							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
+				} else if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
+						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION_DETAILS.toString())) {
+					userValidation(userId, applicationEntity.getCrBy());
+					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
+						getBookingServiceToDeleteAllByPreId(preregId);
+					}
+					serviceUtil.deleteApplicationFromApplications(preregId);
+					deleteDto.setPreRegistrationId(preregId);
+					deleteDto.setDeletedBy(userId);
+					deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
 				}
-
 			}
 			isDeleteSuccess = true;
 		} catch (Exception ex) {
@@ -733,7 +749,7 @@ public class DemographicService implements DemographicServiceIntf {
 			response.setResponsetime(serviceUtil.getCurrentResponseTime());
 			if (isDeleteSuccess) {
 				setAuditValues(EventId.PRE_403.toString(), EventName.DELETE.toString(), EventType.BUSINESS.toString(),
-						"Pre-Registration data is successfully deleted from demographic table",
+						"Pre-Registration data is successfully deleted from applications and demographic table",
 						AuditLogVariables.NO_ID.toString(), authUserDetails().getUserId(),
 						authUserDetails().getUsername());
 			} else {

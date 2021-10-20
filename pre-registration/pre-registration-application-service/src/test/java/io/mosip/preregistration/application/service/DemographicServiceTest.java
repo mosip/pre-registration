@@ -473,6 +473,8 @@ public class DemographicServiceTest {
 		applicationEntity.setRegistrationCenterId("1");
 		LocalTime fDate = LocalTime.now();
 		LocalTime tDate = LocalTime.now();
+		applicationEntity.setBookingType("NEW_PREREGISTRATION");
+		applicationEntity.setBookingStatusCode("Booked");
 		applicationEntity.setSlotFromTime(fDate);
 		applicationEntity.setSlotToTime(tDate);
 		Mockito.when(serviceUtil

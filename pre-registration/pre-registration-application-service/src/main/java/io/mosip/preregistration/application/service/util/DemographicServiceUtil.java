@@ -653,6 +653,7 @@ public class DemographicServiceUtil {
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		applicationEntity.setUpdBy(userId);
 		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		applicationEntity.setContactInfo(userId);
 		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
