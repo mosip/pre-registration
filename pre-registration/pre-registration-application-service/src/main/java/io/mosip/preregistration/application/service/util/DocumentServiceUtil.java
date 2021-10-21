@@ -53,6 +53,7 @@ import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
+
 /**
  * This class provides the utility methods for DocumentService
  * 
@@ -104,6 +105,7 @@ public class DocumentServiceUtil {
 
 // 	@Autowired
 // 	private FileSystemAdapter fs;
+
 	@Value("${mosip.kernel.objectstore.account-name}")
 	private String objectStoreAccountName;
 
