@@ -46,9 +46,12 @@ public class DemographicEntityConsumed implements Serializable {
 	@OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
 	private List<DocumentEntity> documentEntity;
 
-	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL)
-	private ApplicationEntity applicationEntity;
+//	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "applicationId")
+//	private ApplicationEntity applicationEntity;
 
+//	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
+//	private RegistrationBookingEntity registrationBookingEntity;
+	
 	/** The pre registration id. */
 	@Column(name = "prereg_id", nullable = false)
 	@Id
