@@ -11,7 +11,8 @@ import java.util.List;
 @Data
 public class OpenApiProperties {
     private InfoProperty info;
-    private PreRegistrationServer preRegistrationServer;
+    private Service service;
+    private Group group;
 }
 
 @Data
@@ -29,7 +30,7 @@ class LicenseProperty {
 }
 
 @Data
-class PreRegistrationServer {
+class Service {
     private List<Server> servers;
 }
 
@@ -37,4 +38,10 @@ class PreRegistrationServer {
 class Server {
     private String description;
     private String url;
+}
+
+@Data
+class Group {
+    private String name;
+    private List<String> paths;
 }
