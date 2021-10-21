@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
@@ -74,7 +75,11 @@ public class NotificationUtilTest {
 	@Before
 	public void setUp() throws Exception {
 		
-		
+		List<KeyValuePairDto> languageNamePairs = new ArrayList<KeyValuePairDto>();
+		KeyValuePairDto languageNamePair = new KeyValuePairDto();
+		languageNamePair.setKey("eng");
+		languageNamePair.setValue("Test01");
+		languageNamePairs.add(languageNamePair);
 		notificationDTO = new NotificationDTO();
 		notificationDTO.setName("sanober Noor");
 		notificationDTO.setPreRegistrationId("1234567890");
@@ -83,6 +88,7 @@ public class NotificationUtilTest {
 		notificationDTO.setAppointmentDate("2019-01-22");
 		notificationDTO.setAppointmentTime("22:57");
 		notificationDTO.setIsBatch(false);
+		notificationDTO.setFullName(languageNamePairs);
 		responseDTO = new MainResponseDTO<>();
 		responseDTO.setResponse(notificationDTO);
 		//responseDTO.setStatus(Boolean.TRUE);
@@ -118,7 +124,7 @@ public class NotificationUtilTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				}))).thenReturn(resp);
-		MainResponseDTO<NotificationResponseDTO> response=notificationUtil.notify("email", notificationDTO, langCode, file);
+		MainResponseDTO<NotificationResponseDTO> response=notificationUtil.notify("email", notificationDTO, file);
 		assertEquals(notificationResponseDTO.getMessage(), response.getResponse().getMessage());
 	}
 	
@@ -146,7 +152,7 @@ public class NotificationUtilTest {
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				}))).thenReturn(resp);
 		
-		MainResponseDTO<NotificationResponseDTO> response=notificationUtil.notify("sms", notificationDTO, langCode, file);
+		MainResponseDTO<NotificationResponseDTO> response=notificationUtil.notify("sms", notificationDTO,file);
 		assertEquals(notificationResponseDTO.getMessage(), response.getResponse().getMessage());
 	}
 

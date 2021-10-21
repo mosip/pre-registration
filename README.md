@@ -2,10 +2,6 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mosip_pre-registration&metric=alert_status)](https://sonarcloud.io/dashboard?id=mosip_pre-registration)
 [![Join the chat at https://gitter.im/mosip-community/Pre-registration](https://badges.gitter.im/mosip-community/Pre-registration.svg)](https://gitter.im/mosip-community/Pre-registration?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mosip_pre-registration&metric=alert_status)](https://sonarcloud.io/dashboard?id=mosip_pre-registration)
-
-[![Join the chat at https://gitter.im/mosip-community/Pre-registration](https://badges.gitter.im/mosip-community/Pre-registration.svg)](https://gitter.im/mosip-community/Pre-registration?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 # Pre-Registration 
 This repository contains the source code and design documents for MOSIP Pre-Registration module. 
 

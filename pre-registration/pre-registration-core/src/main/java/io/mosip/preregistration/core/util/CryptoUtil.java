@@ -42,6 +42,16 @@ public class CryptoUtil {
 
 	@Value("${cryptoResource.url}")
 	public String cryptoResourceUrl;
+	
+	@Value("${preregistration.crypto.applicationId}")
+	public String cryptoApplcationId;
+	
+	@Value("${preregistration.crypto.referenceId}")
+	public String cryptoReferenceId;
+	
+	@Value("${preregistration.crypto.PrependThumbprint}")
+	public boolean cryptoPrependThumbprint;
+
 
 	public byte[] encrypt(byte[] originalInput, LocalDateTime localDateTime) {
 		log.info("sessionId", "idType", "id", "In encrypt method of CryptoUtil service ");
@@ -51,10 +61,11 @@ public class CryptoUtil {
 		try {
 			String encodedBytes = io.mosip.kernel.core.util.CryptoUtil.encodeBase64(originalInput);
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
-			dto.setApplicationId("REGISTRATION");
+			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(encodedBytes);
-			dto.setReferenceId("");
+			dto.setReferenceId(cryptoReferenceId);
 			dto.setTimeStamp(localDateTime);
+			dto.setPrependThumbprint(cryptoPrependThumbprint);
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);
 			HttpHeaders headers = new HttpHeaders();
@@ -89,10 +100,11 @@ public class CryptoUtil {
 		try {
 
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
-			dto.setApplicationId("REGISTRATION");
+			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(new String(originalInput, StandardCharsets.UTF_8));
-			dto.setReferenceId("");
+			dto.setReferenceId(cryptoReferenceId);
 			dto.setTimeStamp(localDateTime);
+			dto.setPrependThumbprint(cryptoPrependThumbprint);
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);
 
