@@ -6,11 +6,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.validation.Errors;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,19 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
-import io.mosip.preregistration.application.dto.ApplicationRequestDTO;
-import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
-import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
-import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
-import io.mosip.preregistration.application.service.ApplicationService;
 import io.mosip.preregistration.application.service.ApplicationServiceIntf;
-import io.mosip.preregistration.application.service.DemographicServiceIntf;
-import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -43,7 +32,6 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @CrossOrigin("*")
@@ -57,10 +45,11 @@ public class ApplicationController {
 	ApplicationServiceIntf applicationService;
 
 	/** The Constant CREATE_LOST_FORGOTTEN_UIN application. */
-	private static final String CREATE_LOST_FORGOTTEN_UIN = "preregistration.lost.applications.create";
+	//private static final String CREATE_LOST_FORGOTTEN_UIN = "preregistration.lost.applications.create";
 
+	
 	/** The Constant UPDATE_REGISTRATION_DETAILS application. */
-	private static final String CREATE_UPDATE_REGISTRATION_DETAILS = "preregistration.update.applications.create";
+	//private static final String CREATE_UPDATE_REGISTRATION_DETAILS = "preregistration.update.applications.create";
 
 	private Logger log = LoggerConfiguration.logConfig(ApplicationController.class);
 
@@ -136,7 +125,6 @@ public class ApplicationController {
 	 * @param jsonObject the json object
 	 * @param errors     Errors
 	 * @return List of response dto containing pre-id and group-id
-	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostapplications())")
 	@PostMapping(path = "/applications/createLostApplication", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "new application", description = "Creates a new application with Booking Type as LOST_FORGOTTEN_UIN", tags = "application-controller")
@@ -156,7 +144,8 @@ public class ApplicationController {
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateApplication(jsonObject,
 				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
 	}
-
+	 */
+	
 	/**
 	 * This Post API is use to create a new application with booking type as
 	 * UPDATE_REGISTRATION_DETAILS.
@@ -164,7 +153,6 @@ public class ApplicationController {
 	 * @param jsonObject the json object
 	 * @param errors     Errors
 	 * @return List of response dto containing pre-id and group-id
-	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostapplications())")
 	@PostMapping(path = "/applications/createUpdateApplication", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "new application", description = "Creates a new application with Booking Type as UPDATE_REGISTRATION_DETAILS", tags = "application-controller")
@@ -184,4 +172,6 @@ public class ApplicationController {
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateApplication(jsonObject,
 				BookingTypeCodes.UPDATE_REGISTRATION_DETAILS.toString()));
 	}
+	 */
+	
 }
