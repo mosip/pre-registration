@@ -390,17 +390,36 @@ public class NotificationServiceUtil {
 	@SuppressWarnings("null")
 	public NotificationDTO modifyCenterNameAndAddress(NotificationDTO notificationDto, String registrationCenterId,
 			String langCode) {
-
+		log.info("In modifyCenterNameAndAddress of NotificationServiceUtil for registrationCenterId {}", registrationCenterId);
 		if (notificationDto != null) {
 			List<KeyValuePairDto<String, String>> centerName = notificationDto.getRegistrationCenterName();
 			List<KeyValuePairDto<String, String>> address = notificationDto.getAddress();
 			if (centerName == null && address == null) {
 				centerName = new ArrayList<>();
 				address = new ArrayList<>();
+				String firstRegCenterLangCode = null;
+				Map<String, RegistrationCenterDto> regCentersMap = new HashMap<String, RegistrationCenterDto>();
 				for (KeyValuePairDto<String, String> key : notificationDto.getFullName()) {
+					String regCenterLangCode = (String) key.getKey();
 					RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId,
-							(String) key.getKey());
-					System.out.println("NotificationCenterDTO: " + centerDto);
+							regCenterLangCode);
+					if (centerDto != null) {
+						if (firstRegCenterLangCode == null) {
+							firstRegCenterLangCode = regCenterLangCode;	
+						}
+						regCentersMap.put(regCenterLangCode, centerDto);
+					}
+				}
+				RegistrationCenterDto defaultCenterDto = null;
+				if (regCentersMap.size() > 0) {
+					defaultCenterDto = regCentersMap.get(firstRegCenterLangCode);
+				}
+				for (KeyValuePairDto<String, String> key : notificationDto.getFullName()) {
+					String regCenterLangCode = (String) key.getKey();
+					if (!regCentersMap.containsKey(regCenterLangCode)) {
+						regCentersMap.put(regCenterLangCode, defaultCenterDto);
+					}
+					RegistrationCenterDto centerDto = regCentersMap.get(regCenterLangCode);
 					KeyValuePairDto<String, String> regCenterDetailsName = new KeyValuePairDto<>();
 					regCenterDetailsName.setKey((String) key.getKey());
 					regCenterDetailsName.setValue(centerDto.getName());
@@ -411,13 +430,31 @@ public class NotificationServiceUtil {
 					sb.append(" ").append(centerDto.getAddressLine2()).append(" ").append(centerDto.getAddressLine3());
 					regCenterDetailsAddress.setValue(sb.toString());
 					address.add(regCenterDetailsAddress);
-				}
+				}	
+				
+//				for (KeyValuePairDto<String, String> key : notificationDto.getFullName()) {
+//					RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId,
+//							(String) key.getKey());
+//					System.out.println("NotificationCenterDTO: " + centerDto);
+//					if (centerDto != null) {
+//						KeyValuePairDto<String, String> regCenterDetailsName = new KeyValuePairDto<>();
+//						regCenterDetailsName.setKey((String) key.getKey());
+//						regCenterDetailsName.setValue(centerDto.getName());
+//						centerName.add(regCenterDetailsName);
+//						KeyValuePairDto<String, String> regCenterDetailsAddress = new KeyValuePairDto<>();
+//						regCenterDetailsAddress.setKey((String) key.getKey());
+//						StringBuilder sb = new StringBuilder(centerDto.getAddressLine1());
+//						sb.append(" ").append(centerDto.getAddressLine2()).append(" ").append(centerDto.getAddressLine3());
+//						regCenterDetailsAddress.setValue(sb.toString());
+//						address.add(regCenterDetailsAddress);
+//					}
+//				}
 
 			}
 			notificationDto.setRegistrationCenterName(centerName);
 			notificationDto.setAddress(address);
 		}
-		System.out.println("NotificationDto: " + notificationDto);
+		//System.out.println("NotificationDto: " + notificationDto);
 		return notificationDto;
 	}
 
