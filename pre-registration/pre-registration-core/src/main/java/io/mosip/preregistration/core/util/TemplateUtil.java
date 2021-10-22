@@ -50,7 +50,7 @@ public class TemplateUtil {
 	@Value("${resource.template.url}")
 	private String resourceUrl;
 
-	@Value("${timeZone}")
+	@Value("${mosip.notification.timezone}")
 	private String timeZone;
 	/**
 	 * Autowired reference for {@link #restTemplateBuilder}
