@@ -144,7 +144,8 @@ public class OTPManager {
 
 		Integer validTime = environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Integer.class)
 				/ 60;
-		LocalDateTime dateTime = LocalDateTime.parse("mosip.notification.timezone");
+		LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(environment.getProperty("mosip.notification.timezone")));
+		
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
