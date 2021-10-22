@@ -264,8 +264,8 @@ public class NotificationService {
 					.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
 			responseNode = responseNode.get(identity);
-
-			JsonNode arrayNode = responseNode.get("fullName");
+			
+			JsonNode arrayNode = responseNode.get(fullName);
 			List<KeyValuePairDto<String,String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String,String>>();
 			KeyValuePairDto langaueNamePair = null;
 			if (arrayNode.isArray()) {
