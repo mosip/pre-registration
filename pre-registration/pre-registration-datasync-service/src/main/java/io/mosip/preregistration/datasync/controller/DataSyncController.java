@@ -26,21 +26,23 @@ import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
 import io.mosip.preregistration.datasync.service.DataSyncService;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 
 /**
  * This class provides different api to perform operation for datasync
- * 
+ *
  * @author M1046129 - Jagadishwari
  * @since 1.0.0
  *
  */
 @RestController
 @RequestMapping("/")
-@Api(tags = "Data-Sync")
+@Tag(name = "Data-Sync", description = "Data-Sync Controller")
 @CrossOrigin("*")
 public class DataSyncController {
 
@@ -52,7 +54,7 @@ public class DataSyncController {
 	/**
 	 * This POST api use to retrieve all PreRegistrationIds based on registration
 	 * center id, from date and to date
-	 * 
+	 *
 	 * @param DataSyncDTO
 	 * @return responseDto
 	 */
@@ -60,8 +62,12 @@ public class DataSyncController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostpreregsync())")
 	@ResponseFilter
 	@PostMapping(path = "/sync", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "All PreRegistrationIds fetched successfully") })
-	@ApiOperation(value = "Fetch all PreRegistrationIds")
+	@Operation(summary = "Fetch all PreRegistrationIds", description = "Fetch all PreRegistrationIds", tags = "Data-Sync")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "All PreRegistrationIds fetched successfully"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<PreRegistrationIdsDTO>> retrieveAllPreRegids(
 			@RequestBody(required = true) MainRequestDTO<DataSyncRequestDTO> dataSyncDto) {
 		log.info("sessionId", "idType", "id",
@@ -71,7 +77,7 @@ public class DataSyncController {
 
 	/**
 	 * This Get api use to retrieve the details for an PreRegistrationId
-	 * 
+	 *
 	 * @param preRegistrationId
 	 * @return zip file to download
 	 */
@@ -79,8 +85,12 @@ public class DataSyncController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetsyncpreregistrationid())")
 	@ResponseFilter
 	@GetMapping(path = "/sync/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Retrieve Pre-Registrations")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Data Sync records fetched") })
+	@Operation(summary = "Retrieve Pre-Registrations", description = "Retrieve Pre-Registrations", tags = "Data-Sync")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Data Sync records fetched"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<PreRegArchiveDTO>> retrievePreRegistrations(
 			@PathVariable(required = true, value = "preRegistrationId") String preRegistrationId) {
 		log.info("sessionId", "idType", "id",
@@ -93,8 +103,12 @@ public class DataSyncController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetsyncpreregistrationidmachineid())")
 	@ResponseFilter
 	@GetMapping(path = "/sync/{preRegistrationId}/{machineId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Retrieve Pre-Registrations")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Data Sync records fetched") })
+	@Operation(summary = "Retrieve Pre-Registrations", description = "Retrieve Pre-Registrations", tags = "Data-Sync")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Data Sync records fetched"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<PreRegArchiveDTO>> retrievePreRegistrations(
 			@PathVariable(required = true, value = "preRegistrationId") String preRegistrationId,
 			@PathVariable(required = true, value = "machineId") String machineId) {
@@ -108,7 +122,7 @@ public class DataSyncController {
 	/**
 	 * This POST api is used to retrieve all processed pre-registration ids and
 	 * store in pre-registration database
-	 * 
+	 *
 	 * @param consumedData
 	 * @return response object
 	 */
@@ -116,8 +130,12 @@ public class DataSyncController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostsyncconsumedpreregids())")
 	@ResponseFilter
 	@PostMapping(path = "/sync/consumedPreRegIds", consumes = MediaType.APPLICATION_JSON_VALUE)
-	@ApiOperation(value = "Store consumed Pre-Registrations")
-	@ApiResponses(value = { @ApiResponse(code = 200, message = "Consumed Pre-Registrations saved") })
+	@Operation(summary = "Store consumed Pre-Registrations", description = "Store consumed Pre-Registrations", tags = "Data-Sync")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Consumed Pre-Registrations saved"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<ReverseDatasyncReponseDTO>> storeConsumedPreRegistrationsIds(
 			@NotNull @RequestBody(required = true) MainRequestDTO<ReverseDataSyncRequestDTO> consumedData) {
 		log.info("sessionId", "idType", "id",
