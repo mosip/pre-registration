@@ -120,6 +120,9 @@ public class NotificationServiceTest {
 	@Value("${preregistartion.identity}")
 	private String identity;
 	
+	@Value("${preregistartion.identity.name}")
+	private String fullName;
+
 	@Mock
 	private NotificationUtil NotificationUtil;
 	private NotificationDTO notificationDTO;
@@ -149,7 +152,9 @@ public class NotificationServiceTest {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(notificationService, "Id", "1");
 		ReflectionTestUtils.setField(notificationService, "identity", "identity");
-
+		ReflectionTestUtils.setField(notificationService, "fullName", "fullName");
+		
+		
 		
 		ClassLoader classLoader = getClass().getClassLoader();
 		File fileTest = new File(classLoader.getResource("pre-registration.json").getFile());
