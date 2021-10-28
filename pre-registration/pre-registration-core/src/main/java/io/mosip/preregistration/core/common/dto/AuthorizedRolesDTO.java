@@ -91,5 +91,23 @@ public class AuthorizedRolesDTO {
     private List<String> updateapplicationstatusappid;
     
     private List<String> getapplicationdetailsappid;
-    
+
+    private List<String> getappointmentavailability;
+
+    private List<String> postappointmentpreregistrationid;
+
+    private List<String> postappointment;
+
+    private List<String> getappointmentpreregistrationid;
+
+    private List<String> putappointmentpreregistrationid;
+
+    private List<String> putbatchappointmentpreregistrationid;
+
+    private List<String> deleteappointment;
+
+    private List<String> getappointmentpreregistrationidregistrationcenterid;
+
+    private List<String> getappointmentregistrationcenterid;
+
 }
