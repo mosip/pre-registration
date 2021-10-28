@@ -8,13 +8,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
+import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.batchjob.entity.DemographicEntityConsumed;
 import io.mosip.preregistration.batchjob.entity.DocumentEntityConsumed;
 import io.mosip.preregistration.batchjob.entity.ProcessedPreRegEntity;
 import io.mosip.preregistration.batchjob.entity.RegistrationBookingEntityConsumed;
-import io.mosip.preregistration.batchjob.entity.RegistrationBookingPKConsumed;
 import io.mosip.preregistration.batchjob.exception.util.BatchServiceExceptionCatcher;
 import io.mosip.preregistration.batchjob.repository.utils.BatchJpaRepositoryImpl;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -94,7 +94,7 @@ public class ConsumedStatusUtil {
 			preRegList = batchJpaRepositoryImpl.getAllConsumedPreIds(STATUS_COMMENTS);
 			log.info("sdfsdf", "arg1", "arg2", "arg3");
 
-			preRegList.forEach(iterate -> {
+			for (ProcessedPreRegEntity iterate : preRegList) {
 				String preRegId = iterate.getPreRegistrationId();
 
 				DemographicEntityConsumed demographicEntityConsumed = new DemographicEntityConsumed();
@@ -119,8 +119,7 @@ public class ConsumedStatusUtil {
 
 					List<DocumentEntity> documentEntityList = demographicEntity.getDocumentEntity();
 					if (documentEntityList != null) {
-						documentEntityList.forEach(documentEntity -> {
-
+						for (DocumentEntity documentEntity : documentEntityList) {
 							DocumentEntityConsumed documentEntityConsumed = new DocumentEntityConsumed();
 							documentEntityConsumed.setCrBy(documentEntity.getCrBy());
 							documentEntityConsumed.setCrDtime(documentEntity.getCrDtime());
@@ -141,49 +140,53 @@ public class ConsumedStatusUtil {
 							documentEntityConsumed.setDocRefId(documentEntity.getRefNumber());
 							batchJpaRepositoryImpl.updateConsumedDocument(documentEntityConsumed);
 
-						});
-
+						}
 					}
-					RegistrationBookingEntity bookingEntity = batchJpaRepositoryImpl
-							.getRegistrationAppointmentDetails(demographicEntity.getPreRegistrationId());
-					//RegistrationBookingPKConsumed consumedPk = new RegistrationBookingPKConsumed();
-					//consumedPk.setBookingDateTime(bookingEntity.getBookingPK().getBookingDateTime());
-					bookingEntityConsumed.setBookingDateTime(bookingEntity.getBookingDateTime());
-					bookingEntityConsumed.setPreregistrationId(bookingEntity.getPreregistrationId());
-					//bookingEntityConsumed.setBookingPK(consumedPk);
-					bookingEntityConsumed.setCrBy(bookingEntity.getCrBy());
-					bookingEntityConsumed.setCrDate(bookingEntity.getCrDate());
-					bookingEntityConsumed.setId(bookingEntity.getId());
-					bookingEntityConsumed.setLangCode(bookingEntity.getLangCode());
-					bookingEntityConsumed.setRegDate(bookingEntity.getRegDate());
-					bookingEntityConsumed.setRegistrationCenterId(bookingEntity.getRegistrationCenterId());
-					bookingEntityConsumed.setSlotFromTime(bookingEntity.getSlotFromTime());
-					bookingEntityConsumed.setSlotToTime(bookingEntity.getSlotToTime());
-					bookingEntityConsumed.setUpBy(auditUserId);
-					bookingEntityConsumed.setUpdDate(DateUtils.parseDateToLocalDateTime(new Date()));
-					batchJpaRepositoryImpl.updateConsumedBooking(bookingEntityConsumed);
-
+					RegistrationBookingEntity bookingEntity = null;
+					if (!demographicEntity.getStatusCode().equals(StatusCodes.PREFETCHED.getCode())) {
+						bookingEntity = batchJpaRepositoryImpl
+								.getRegistrationAppointmentDetails(demographicEntity.getPreRegistrationId());
+						//RegistrationBookingPKConsumed consumedPk = new RegistrationBookingPKConsumed();
+						//consumedPk.setBookingDateTime(bookingEntity.getBookingPK().getBookingDateTime());
+						bookingEntityConsumed.setBookingDateTime(bookingEntity.getBookingDateTime());
+						bookingEntityConsumed.setPreregistrationId(bookingEntity.getPreregistrationId());
+						//bookingEntityConsumed.setBookingPK(consumedPk);
+						bookingEntityConsumed.setCrBy(bookingEntity.getCrBy());
+						bookingEntityConsumed.setCrDate(bookingEntity.getCrDate());
+						bookingEntityConsumed.setId(bookingEntity.getId());
+						bookingEntityConsumed.setLangCode(bookingEntity.getLangCode());
+						bookingEntityConsumed.setRegDate(bookingEntity.getRegDate());
+						bookingEntityConsumed.setRegistrationCenterId(bookingEntity.getRegistrationCenterId());
+						bookingEntityConsumed.setSlotFromTime(bookingEntity.getSlotFromTime());
+						bookingEntityConsumed.setSlotToTime(bookingEntity.getSlotToTime());
+						bookingEntityConsumed.setUpBy(auditUserId);
+						bookingEntityConsumed.setUpdDate(DateUtils.parseDateToLocalDateTime(new Date()));
+						batchJpaRepositoryImpl.updateConsumedBooking(bookingEntityConsumed);
+					}	
 					if (documentEntityList != null) {
 						batchJpaRepositoryImpl.deleteDocument(documentEntityList);
 					}
-					batchJpaRepositoryImpl.deleteBooking(bookingEntity);
+					if (!demographicEntity.getStatusCode().equals(StatusCodes.PREFETCHED.getCode())) {
+						batchJpaRepositoryImpl.deleteBooking(bookingEntity);
+					}
 					batchJpaRepositoryImpl.deleteDemographic(demographicEntity);
 					ApplicationEntity applicationEntity= batchJpaRepositoryImpl.getApplicantEntityDetails(preRegId);
 					batchJpaRepositoryImpl.deleteApplications(applicationEntity);
 					log.info("sessionId", "idType", "id",
-							"Update the status successfully into Consumed tables for Pre-RegistrationId: " + preRegId);
+							"Update the status successfully into Consumed tables for Pre-RegistrationId: ", preRegId);
 
 					iterate.setStatusComments(NEW_STATUS_COMMENTS);
 					batchJpaRepositoryImpl.updateProcessedList(iterate);
 					log.info("sessionId", "idType", "id",
 							"Update the comment successfully into Processed PreId List table for Pre-RegistrationId: "
-									+ preRegId);
+									, preRegId);
 				}
 
-			});
+			}
 			isSaveSuccess = true;
 
 		} catch (Exception e) {
+			log.error("Consumed status Error trace {}", ExceptionUtils.getStackTrace(e));
 			new BatchServiceExceptionCatcher().handle(e);
 		} finally {
 			if (isSaveSuccess) {

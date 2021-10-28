@@ -1,4 +1,4 @@
-package io.mosip.preregistration.application.config;
+package io.mosip.preregistration.captcha.config;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;

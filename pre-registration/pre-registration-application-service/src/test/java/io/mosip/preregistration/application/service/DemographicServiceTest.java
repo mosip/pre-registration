@@ -17,9 +17,12 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TimeZone;
 
 import org.json.simple.JSONArray;
@@ -55,6 +58,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
@@ -63,9 +70,11 @@ import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
 import io.mosip.preregistration.application.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DocumentCategoryAndTypeResponseDto;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
@@ -129,7 +138,9 @@ import org.mockito.InjectMocks;
  * 
  */
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
+@JsonIgnoreProperties
 @RunWith(JUnit4.class)
 @SpringBootTest
 @ContextConfiguration(classes = { DemographicServiceIntf.class })
@@ -141,6 +152,9 @@ public class DemographicServiceTest {
 	@InjectMocks
 	private DemographicServiceIntf preRegistrationService= new DemographicService();
 
+	@InjectMocks
+	DemographicService demographicService;
+	
 	/**
 	 * Mocking the DemographicRepository bean
 	 */
@@ -459,6 +473,8 @@ public class DemographicServiceTest {
 		applicationEntity.setRegistrationCenterId("1");
 		LocalTime fDate = LocalTime.now();
 		LocalTime tDate = LocalTime.now();
+		applicationEntity.setBookingType("NEW_PREREGISTRATION");
+		applicationEntity.setBookingStatusCode("Booked");
 		applicationEntity.setSlotFromTime(fDate);
 		applicationEntity.setSlotToTime(tDate);
 		Mockito.when(serviceUtil
@@ -783,5 +799,162 @@ public class DemographicServiceTest {
 		.thenReturn(userEntityDetails);
 		preRegistrationService.getUpdatedDateTimeForPreIds(preRegIdsByRegCenterIdDTO);
 
+	}
+	
+	@Test(expected = BookingDeletionFailedException.class)
+	public void deleteRecordRestCallException() throws Exception {
+		String preRegId = "98746563542672";
+		ExceptionJSONInfoDTO err = new ExceptionJSONInfoDTO("PRG_PAM_DOC_015", "");
+		List<ExceptionJSONInfoDTO> errlist = new ArrayList<>();
+		errlist.add(err);
+		Mockito.when(demographicRepository.findBypreRegistrationId(preRegId)).thenReturn(preRegistrationEntity);
+		preRegistrationEntity.setCreateDateTime(times);
+		preRegistrationEntity.setCreatedBy("9988905444");
+		preRegistrationEntity.setStatusCode("Booked");
+		preRegistrationEntity.setUpdateDateTime(times);
+		preRegistrationEntity.setApplicantDetailJson(jsonTestObject.toJSONString().getBytes());
+		preRegistrationEntity.setPreRegistrationId("98746563542672");
+
+		DocumentDeleteResponseDTO deleteDTO = new DocumentDeleteResponseDTO();
+		List<DocumentDeleteResponseDTO> deleteAllList = new ArrayList<>();
+		deleteAllList.add(deleteDTO);
+		MainResponseDTO<DeleteBookingDTO> delBookingResponseDTO = new MainResponseDTO<>();
+		DeleteBookingDTO deleteBookingDTO = new DeleteBookingDTO();
+		deleteBookingDTO.setPreRegistrationId("98746563542672");
+		List<DeleteBookingDTO> list = new ArrayList<>();
+		list.add(deleteBookingDTO);
+		delBookingResponseDTO.setResponse(deleteBookingDTO);
+		delBookingResponseDTO.setErrors(errlist);
+		MainResponseDTO<DocumentDeleteResponseDTO> delResponseDto = new MainResponseDTO<>();
+
+		delResponseDto.setErrors(null);
+		delResponseDto.setResponse(deleteDTO);
+		delResponseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
+
+		ResponseEntity<MainResponseDTO<DocumentDeleteResponseDTO>> res = new ResponseEntity<>(delResponseDto,
+				HttpStatus.OK);
+		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
+				HttpStatus.OK);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId1 = new MainResponseDTO<>();
+		deleteAllByPreId1.setErrors(null);
+		Mockito.when(documentServiceIntf.deleteAllByPreId(Mockito.anyString())).thenReturn(deleteAllByPreId1);
+		MainResponseDTO<DeleteBookingDTO> deleteBooking = new MainResponseDTO<>();
+		deleteBooking.setErrors(errlist);
+		Mockito.when(serviceUtil.deleteBooking(preRegistrationEntity.getPreRegistrationId()))
+				.thenReturn(deleteBooking);
+		Mockito.when(serviceUtil.checkStatusForDeletion(Mockito.any()))
+		.thenReturn(true);
+		
+		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
+				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
+				}), Mockito.anyMap())).thenReturn(res);
+		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
+				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
+				}))).thenReturn(res1);
+		Mockito.when(demographicRepository.deleteByPreRegistrationId(preRegistrationEntity.getPreRegistrationId()))
+				.thenReturn(1);
+
+		Mockito.when(demographicRepository.deleteByPreRegistrationId(preRegId)).thenReturn(0);
+		preRegistrationService.deleteIndividual(preRegId, userId);
+	}
+	
+//	@Test
+//	public void getSchemaconfigTest() throws JsonParseException, JsonMappingException, IOException {
+//		String jsonString ="{\"identity\":{\"name\":{\"value\":\"abcd\"},\"dob\":{\"value\":\"2021\"}},\"documents\":{\"poa\":{\"value\":\"poa\"}}}";
+//		Mockito.when(serviceUtil.getJson(Mockito.any())).thenReturn("");
+//			try {
+//				org.json.JSONObject jsonObject1 =new org.json.JSONObject(jsonString);
+//			
+//		String response;
+////		objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
+////		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+////		
+//		ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
+//		Mockito.when(objectMapper.readValue(jsonString, org.json.JSONObject.class)).thenReturn(jsonObject1);
+//		
+//		Mockito.when(objectMapper.readValue("{\"identity\": null,\"documents\": null}", org.json.JSONObject.class)).thenReturn(jsonObject1);
+//		preRegistrationService.getSchemaconfig();
+//			} catch (Exception e) {
+//				// TODO Auto-generated catch block
+//				e.printStackTrace();
+//			}
+//		
+//	}
+	
+	@Test
+	public void statusCheckTest() {
+		DemographicEntity demographicEntity = new DemographicEntity();
+		demographicEntity.setPreRegistrationId("987654321");
+		List<DocumentEntity> documentEntitys=new ArrayList<DocumentEntity>();
+		DocumentEntity documentEntity=new DocumentEntity();
+	
+		documentEntity.setDocCatCode("");
+		documentEntitys.add(documentEntity);
+		demographicEntity.setDocumentEntity(documentEntitys);
+		demographicEntity.setLangCode("");
+		String status=StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
+		String userId="987654321";
+		Mockito.when(serviceUtil.isStatusValid(status)).thenReturn(true);
+		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
+		Collection<DocumentCategoryAndTypeResponseDto> documentCategories =new ArrayList<DocumentCategoryAndTypeResponseDto>();
+		DocumentCategoryAndTypeResponseDto documentCategoryAndTypeResponseDto = new DocumentCategoryAndTypeResponseDto();
+		
+		documentCategories.add(documentCategoryAndTypeResponseDto );
+		applicantValidDocuments.setDocumentCategories(documentCategories );
+		Mockito.when(serviceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(),Mockito.any())).thenReturn(applicantValidDocuments);
+		demographicService.statusCheck(demographicEntity, status, userId);
+	}
+	
+	@Test
+	public void statusCheckTest2() {
+		DemographicEntity demographicEntity = new DemographicEntity();
+		demographicEntity.setPreRegistrationId("987654321");
+		List<DocumentEntity> documentEntitys=new ArrayList<DocumentEntity>();
+		DocumentEntity documentEntity=new DocumentEntity();
+	
+		documentEntity.setDocCatCode("");
+		documentEntitys.add(documentEntity);
+		demographicEntity.setDocumentEntity(documentEntitys);
+		demographicEntity.setLangCode("");
+		String status=StatusCodes.APPLICATION_INCOMPLETE.getCode().toLowerCase();
+		String userId="987654321";
+		Mockito.when(serviceUtil.isStatusValid(status)).thenReturn(true);
+		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
+		Collection<DocumentCategoryAndTypeResponseDto> documentCategories =new ArrayList<DocumentCategoryAndTypeResponseDto>();
+		DocumentCategoryAndTypeResponseDto documentCategoryAndTypeResponseDto = new DocumentCategoryAndTypeResponseDto();
+		
+		documentCategories.add(documentCategoryAndTypeResponseDto );
+		applicantValidDocuments.setDocumentCategories(documentCategories );
+		Mockito.when(serviceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(),Mockito.any())).thenReturn(applicantValidDocuments);
+		demographicService.statusCheck(demographicEntity, status, userId);
+	}
+	
+	@Test(expected = RecordFailedToUpdateException.class)
+	public void statusCheckRecordFailedToUpdateExceptionTest() {
+		DemographicEntity demographicEntity = new DemographicEntity();
+		demographicEntity.setPreRegistrationId("987654321");
+		List<DocumentEntity> documentEntitys=new ArrayList<DocumentEntity>();
+		DocumentEntity documentEntity=new DocumentEntity();
+	
+		documentEntity.setDocCatCode("");
+		documentEntitys.add(documentEntity);
+		demographicEntity.setDocumentEntity(documentEntitys);
+		demographicEntity.setLangCode("");
+		String status=StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
+		String userId="987654321";
+		Mockito.when(serviceUtil.isStatusValid(status)).thenReturn(true);
+		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
+		Collection<DocumentCategoryAndTypeResponseDto> documentCategories =new ArrayList<DocumentCategoryAndTypeResponseDto>();
+		DocumentCategoryAndTypeResponseDto documentCategoryAndTypeResponseDto = new DocumentCategoryAndTypeResponseDto();
+		documentCategoryAndTypeResponseDto.setCode("abc");
+		Set<String> mandatoryDocCat= new HashSet<>();
+		mandatoryDocCat.add("abc");
+		Mockito.when(serviceUtil.getMandatoryDocCatogery()).thenReturn(mandatoryDocCat);
+		documentCategories.add(documentCategoryAndTypeResponseDto );
+		applicantValidDocuments.setDocumentCategories(documentCategories );
+		Mockito.when(serviceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(),Mockito.any())).thenReturn(applicantValidDocuments);
+		demographicService.statusCheck(demographicEntity, status, userId);
 	}
 }

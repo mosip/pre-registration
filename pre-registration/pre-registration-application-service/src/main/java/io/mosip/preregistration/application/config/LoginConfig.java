@@ -2,6 +2,7 @@ package io.mosip.preregistration.application.config;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springdoc.core.GroupedOpenApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,36 +23,28 @@ public class LoginConfig {
 
 	@Bean
 	public OpenAPI openApi() {
-		String msg = "Swagger open api, ";
 		OpenAPI api = new OpenAPI()
-				.components(new Components());
-		if (null != openApiProperties.getInfo()) {
-			api.info(new Info()
-					.title(openApiProperties.getInfo().getTitle())
-					.version(openApiProperties.getInfo().getVersion())
-					.description(openApiProperties.getInfo().getDescription()));
-			if (null != openApiProperties.getInfo().getLicense()) {
-				api.getInfo().license(new License()
-						.name(openApiProperties.getInfo().getLicense().getName())
-						.url(openApiProperties.getInfo().getLicense().getUrl()));
-				logger.info(msg + "info license property is added");
-			} else {
-				logger.error(msg + "info license property is empty");
-			}
-			logger.info(msg + "info property is added");
-		} else {
-			logger.error(msg + "info property is empty");
-		}
+				.components(new Components())
+				.info(new Info()
+						.title(openApiProperties.getInfo().getTitle())
+						.version(openApiProperties.getInfo().getVersion())
+						.description(openApiProperties.getInfo().getDescription())
+						.license(new License()
+								.name(openApiProperties.getInfo().getLicense().getName())
+								.url(openApiProperties.getInfo().getLicense().getUrl())));
 
-		if (null != openApiProperties.getPreRegistrationServer().getServers()) {
-			openApiProperties.getPreRegistrationServer().getServers().forEach(server -> {
-				api.addServersItem(new Server().description(server.getDescription()).url(server.getUrl()));
-			});
-			logger.info(msg + "server property is added");
-		} else {
-			logger.error(msg + "server property is empty");
-		}
+		openApiProperties.getService().getServers().forEach(server -> {
+			api.addServersItem(new Server().description(server.getDescription()).url(server.getUrl()));
+		});
+		logger.info("swagger open api bean is ready");
 		return api;
+	}
+
+	@Bean
+	public GroupedOpenApi groupedOpenApi() {
+		return GroupedOpenApi.builder().group(openApiProperties.getGroup().getName())
+				.pathsToMatch(openApiProperties.getGroup().getPaths().stream().toArray(String[]::new))
+				.build();
 	}
 
 }
