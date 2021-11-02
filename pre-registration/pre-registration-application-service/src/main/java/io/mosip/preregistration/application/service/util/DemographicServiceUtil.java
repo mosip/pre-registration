@@ -326,8 +326,8 @@ public class DemographicServiceUtil {
 	 * @param identityKey     pass identityKey
 	 * @return values from JSON based on key
 	 * 
-	 * @throws ParseException On json Parsing Failed
-	 * @throws                org.json.simple.parser.ParseException
+	 * @throws ParseException                        On json Parsing Failed
+	 * @throws org.json.simple.parser.ParseException
 	 * 
 	 */
 	public JSONArray getValueFromIdentity(byte[] demographicData, String identityKey)
@@ -346,8 +346,8 @@ public class DemographicServiceUtil {
 	 * @param identityKey     pass postalcode
 	 * @return values from JSON
 	 * 
-	 * @throws ParseException On json Parsing Failed
-	 * @throws                org.json.simple.parser.ParseException
+	 * @throws ParseException                        On json Parsing Failed
+	 * @throws org.json.simple.parser.ParseException
 	 * 
 	 */
 
@@ -537,7 +537,7 @@ public class DemographicServiceUtil {
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = getRestTemplate().exchange(uriBuilder,
+			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = restTemplate.exchange(uriBuilder,
 					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -552,7 +552,7 @@ public class DemographicServiceUtil {
 						DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
 			}
 
-		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+		} catch (RestClientException ex) {
 
 			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 					DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
@@ -593,8 +593,8 @@ public class DemographicServiceUtil {
 				request = new HttpEntity<>(headers);
 			}
 			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
-			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
-		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+			response = restTemplate.exchange(url, httpMethodType, request, responseClass);
+		} catch (RestClientException ex) {
 			log.error("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
@@ -602,19 +602,20 @@ public class DemographicServiceUtil {
 
 	}
 
-		public MainResponseDTO<DeleteBookingDTO> deleteBooking (String preRegId)  {
+	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegId) {
 		MainResponseDTO<DeleteBookingDTO> response = new MainResponseDTO<>();
-		String url = deleteAppointmentResourseUrl + '/' + "appointment"+"?preRegistrationId=" + preRegId;
+		String url = deleteAppointmentResourseUrl + '/' + "appointment" + "?preRegistrationId=" + preRegId;
 		MultiValueMap<String, String> param = new LinkedMultiValueMap<>();
 		String regbuilder = UriComponentsBuilder.fromHttpUrl(url).toString();
 		try {
-			log.info("sessionId", "idType", "id", "In callBookingService method of DemographicServiceUtil"+regbuilder);
+			log.info("sessionId", "idType", "id",
+					"In callBookingService method of DemographicServiceUtil" + regbuilder);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			headers.set("Cookie", getAuthToken());
 			HttpEntity<?> entity = new HttpEntity<>(headers);
 
-			ResponseEntity<MainResponseDTO<DeleteBookingDTO>> responseEntity = getRestTemplate().exchange(url,
+			ResponseEntity<MainResponseDTO<DeleteBookingDTO>> responseEntity = restTemplate.exchange(url,
 					HttpMethod.DELETE, entity, new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
 					});
 			log.debug("sessionId", "idType", "id", responseEntity.toString());
@@ -624,7 +625,7 @@ public class DemographicServiceUtil {
 			}
 			response.setResponse(responseEntity.getBody().getResponse());
 			log.info("sessionId", "idType", "id", "In call to booking rest service :" + regbuilder);
-		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
+		} catch (RestClientException ex) {
 			log.error("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
@@ -632,19 +633,4 @@ public class DemographicServiceUtil {
 
 	}
 
-	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-
-		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-
-		SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy)
-				.build();
-
-		SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
-
-		CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-
-		requestFactory.setHttpClient(httpClient);
-		return new RestTemplate(requestFactory);
-	}
 }
