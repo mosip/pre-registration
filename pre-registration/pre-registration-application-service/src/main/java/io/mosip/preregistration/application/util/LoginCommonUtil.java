@@ -169,8 +169,8 @@ public class LoginCommonUtil {
 				request = new HttpEntity<>(headers);
 			}
 			log.info("In call to kernel rest service :{}", url);
-			response = restTemplate.exchange(url, httpMethodType, request, responseClass);
-		} catch (RestClientException ex) {
+			response = getRestTemplate().exchange(url, httpMethodType, request, responseClass);
+		} catch (RestClientException | KeyManagementException | NoSuchAlgorithmException | KeyStoreException ex) {
 			log.debug("Kernel rest call exception ", ex);
 			throw new RestClientException("rest call failed");
 		}
@@ -459,6 +459,22 @@ public class LoginCommonUtil {
 			}
 
 		}
+	}
+
+	public RestTemplate getRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+
+		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+
+		SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy)
+				.build();
+
+		SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+
+		CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+
+		requestFactory.setHttpClient(httpClient);
+		return new RestTemplate(requestFactory);
 	}
 
 	public CaptchaResposneDTO validateCaptchaToken(String captchaToken) {
