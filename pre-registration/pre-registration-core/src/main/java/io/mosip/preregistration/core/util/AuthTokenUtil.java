@@ -32,8 +32,7 @@ import io.mosip.preregistration.core.exception.LoginServiceException;
 @Component
 public class AuthTokenUtil {
 
-	@Autowired
-	private RestTemplate restTemplate;
+	private RestTemplate restTemplate = new RestTemplate();
 
 	@Value("${mosip.batch.token.authmanager.url}")
 	String tokenUrl;
