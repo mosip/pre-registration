@@ -5,7 +5,6 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -40,9 +39,7 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationProvider.class);
 
-	@Autowired
-	@Qualifier(value = "restTemplateConfig")
-	private RestTemplate restTemplate;
+	private RestTemplate restTemplate = new RestTemplate();
 
 	@Value("${prereg.auth.jwt.secret}")
 	private String jwtSecret;
