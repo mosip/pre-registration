@@ -39,7 +39,8 @@ public class AuthenticationProvider extends AbstractUserDetailsAuthenticationPro
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationProvider.class);
 
-	private RestTemplate restTemplate = new RestTemplate();
+	@Autowired
+	private RestTemplate restTemplate;
 
 	@Value("${prereg.auth.jwt.secret}")
 	private String jwtSecret;
