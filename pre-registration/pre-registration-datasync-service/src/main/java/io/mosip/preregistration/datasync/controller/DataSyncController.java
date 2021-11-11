@@ -41,7 +41,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  *
  */
 @RestController
-@RequestMapping("/")
 @Tag(name = "Data-Sync", description = "Data-Sync Controller")
 @CrossOrigin("*")
 public class DataSyncController {
@@ -61,7 +60,7 @@ public class DataSyncController {
 	//@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostpreregsync())")
 	@ResponseFilter
-	@PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch all PreRegistrationIds", description = "Fetch all PreRegistrationIds", tags = "Data-Sync")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "All PreRegistrationIds fetched successfully"),
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
