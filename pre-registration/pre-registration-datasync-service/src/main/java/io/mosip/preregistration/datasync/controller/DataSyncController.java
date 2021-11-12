@@ -61,7 +61,7 @@ public class DataSyncController {
 	//@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostpreregsync())")
 	@ResponseFilter
-	@PostMapping(path = "/", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/sync", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Fetch all PreRegistrationIds", description = "Fetch all PreRegistrationIds", tags = "Data-Sync")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "All PreRegistrationIds fetched successfully"),
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
@@ -84,7 +84,7 @@ public class DataSyncController {
 	//@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetsyncpreregistrationid())")
 	@ResponseFilter
-	@GetMapping(path = "/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/sync/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Retrieve Pre-Registrations", description = "Retrieve Pre-Registrations", tags = "Data-Sync")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Data Sync records fetched"),
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
@@ -102,7 +102,7 @@ public class DataSyncController {
 	//@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetsyncpreregistrationidmachineid())")
 	@ResponseFilter
-	@GetMapping(path = "/{preRegistrationId}/{machineId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@GetMapping(path = "/sync/{preRegistrationId}/{machineId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Retrieve Pre-Registrations", description = "Retrieve Pre-Registrations", tags = "Data-Sync")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Data Sync records fetched"),
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
@@ -129,7 +129,7 @@ public class DataSyncController {
 	//@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN','REGISTRATION_PROCESSOR')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostsyncconsumedpreregids())")
 	@ResponseFilter
-	@PostMapping(path = "/consumedPreRegIds", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/sync/consumedPreRegIds", consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Store consumed Pre-Registrations", description = "Store consumed Pre-Registrations", tags = "Data-Sync")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Consumed Pre-Registrations saved"),
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
