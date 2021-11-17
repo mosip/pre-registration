@@ -20,10 +20,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
+import io.mosip.preregistration.application.dto.ApplicationsListDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.application.service.ApplicationServiceIntf;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.swagger.v3.oas.annotations.Operation;
@@ -44,13 +46,6 @@ public class ApplicationController {
 	@Autowired
 	ApplicationServiceIntf applicationService;
 
-	/** The Constant CREATE_LOST_FORGOTTEN_UIN application. */
-	//private static final String CREATE_LOST_FORGOTTEN_UIN = "preregistration.lost.applications.create";
-
-	
-	/** The Constant UPDATE_REGISTRATION_DETAILS application. */
-	//private static final String CREATE_UPDATE_REGISTRATION_DETAILS = "preregistration.update.applications.create";
-
 	private Logger log = LoggerConfiguration.logConfig(ApplicationController.class);
 
 	/**
@@ -61,20 +56,6 @@ public class ApplicationController {
 	@InitBinder
 	public void initBinder(WebDataBinder binder) {
 		binder.addValidators(requestValidator);
-	}
-
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsinfo())")
-	@GetMapping(path = "/applications/info/{preregistrationId}")
-	@Operation(summary = "getPreregistrationofPrid", description = "Retrive Application demographic and document info for given prid", tags = "application-controller")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
-			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<?>> getPreregistrationofPrid(
-			@PathVariable("preregistrationId") String preregistrationId) {
-		log.info("In application controller to getpreregistrationInfo {}", preregistrationId);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.getPregistrationInfo(preregistrationId));
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostlogaudit())")
@@ -92,86 +73,44 @@ public class ApplicationController {
 				.body(applicationService.saveUIEventAudit(auditRequest.getRequest()));
 	}
 
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getUpdateapplicationstatusappid())")
-	@GetMapping(path = "/applications/status/info/{applicationId}")
-	@Operation(summary = "getApplicationStatusInfo", description = "update booking status code in applications table", tags = "application-controller")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationdetailsappid())")
+	@GetMapping(path = "/applications/{applicationId}")
+	@Operation(summary = "getApplication", description = "Fetch application details for applicationId", tags = "application-controller")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<String>> getApplicationStatusInfo(
+	public ResponseEntity<MainResponseDTO<ApplicationEntity>> getApplication(
 			@PathVariable("applicationId") String applicationId) {
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(applicationService.getApplicationsStatusForApplicationId(applicationId));
+		return ResponseEntity.status(HttpStatus.OK).body(applicationService.getApplicationInfo(applicationId));
 	}
 
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationdetailsappid())")
-	@GetMapping(path = "/applications/appointment/info/{regCenterId}")
-	@Operation(summary = "getApplicationInfo", description = "Fetch application details for applicationId", tags = "application-controller")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetappointmentregistrationcenterid())")
+	@GetMapping(path = "/applications/bookings/{regCenterId}")
+	@Operation(summary = "getBookingsForRegCenter", description = "Fetch all bookings for regCenterId on the given appointmentDate", tags = "application-controller")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> getApplicationInfo(
+	public ResponseEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> getBookingsForRegCenter(
 			@PathVariable("regCenterId") String regCenterId, @RequestParam("appointmentDate") String appointmentDate) {
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(applicationService.getApplicationsForApplicationId(regCenterId, appointmentDate));
+				.body(applicationService.getBookingsForRegCenter(regCenterId, appointmentDate));
 	}
 
-	/**
-	 * This Post API is use to create a new application with booking type as
-	 * LOST_FORGOTTEN_UIN.
-	 *
-	 * @param jsonObject the json object
-	 * @param errors     Errors
-	 * @return List of response dto containing pre-id and group-id
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostapplications())")
-	@PostMapping(path = "/applications/createLostApplication", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "new application", description = "Creates a new application with Booking Type as LOST_FORGOTTEN_UIN", tags = "application-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "New application with booking type as LOST_FORGOTTEN_UIN successfully Created"),
-			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsall())")
+	@GetMapping(path = "/applications")
+	@Operation(summary = "getAllApplications", description = "Fetch all applications for current user", tags = "application-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> createLostApplication(
-			@Validated @RequestBody(required = true) MainRequestDTO<ApplicationRequestDTO> jsonObject,
-			@ApiIgnore Errors errors) {
-		log.info("sessionId", "idType", "id",
-				"In pre-registration controller for createLostApplication with json object" + jsonObject);
-		requestValidator.validateId(CREATE_LOST_FORGOTTEN_UIN, jsonObject.getId(), errors);
-		DataValidationUtil.validate(errors, CREATE_LOST_FORGOTTEN_UIN);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateApplication(jsonObject,
-				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
+	public ResponseEntity<MainResponseDTO<ApplicationsListDTO>> getAllApplications(@RequestParam(required = false) String type) {
+		if (type != null) {
+			return ResponseEntity.status(HttpStatus.OK)
+					.body(applicationService.getAllApplicationsForUserForBookingType(type));
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(applicationService.getAllApplicationsForUser());
 	}
-	 */
-	
-	/**
-	 * This Post API is use to create a new application with booking type as
-	 * UPDATE_REGISTRATION_DETAILS.
-	 * 
-	 * @param jsonObject the json object
-	 * @param errors     Errors
-	 * @return List of response dto containing pre-id and group-id
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostapplications())")
-	@PostMapping(path = "/applications/createUpdateApplication", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "new application", description = "Creates a new application with Booking Type as UPDATE_REGISTRATION_DETAILS", tags = "application-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "New Application with booking type as UPDATE_REGISTRATION_DETAILS successfully Created"),
-			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> createUpdateApplication(
-			@Validated @RequestBody(required = true) MainRequestDTO<ApplicationRequestDTO> jsonObject,
-			@ApiIgnore Errors errors) {
-		log.info("sessionId", "idType", "id",
-				"In pre-registration controller for createUpdateApplication with json object" + jsonObject);
-		requestValidator.validateId(CREATE_UPDATE_REGISTRATION_DETAILS, jsonObject.getId(), errors);
-		DataValidationUtil.validate(errors, CREATE_UPDATE_REGISTRATION_DETAILS);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateApplication(jsonObject,
-				BookingTypeCodes.UPDATE_REGISTRATION_DETAILS.toString()));
-	}
-	 */
-	
+
 }

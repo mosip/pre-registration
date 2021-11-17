@@ -28,8 +28,14 @@ public enum ApplicationErrorCodes {
 
 	PRG_APP_013("PRG_APP_013"), // Invalid request argument
 	
-	PRG_APP_014("PRG_APP_014"); // Invalid request application Id
+	PRG_APP_014("PRG_APP_014"), // Invalid request application Id
 	
+	/* ErrorCode for INVALID_APPLICATION_ID_FOR_USER */
+	PRG_APP_015("PRG_APP_015"),
+	
+	/* ErrorCode for INVALID_BOOKING_TYPE */
+	PRG_APP_016("PRG_APP_016");
+
 	private ApplicationErrorCodes(String code) {
 		this.code = code;
 	}

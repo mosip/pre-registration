@@ -39,6 +39,7 @@ import org.springframework.web.context.WebApplicationContext;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.preregistration.application.controller.DemographicController;
+import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
@@ -155,7 +156,7 @@ public class DemographicControllerTest {
 		reqDto.setRequest(req);
 		Mockito.when(preRegistrationService.addPreRegistration(Mockito.any())).thenReturn(response);
 
-		mockMvc.perform(post("/applications").contentType(MediaType.APPLICATION_JSON_VALUE)
+		mockMvc.perform(post("/applications/prereg").contentType(MediaType.APPLICATION_JSON_VALUE)
 				.content("{\"demographicDetails\":{\"identity\":{\"IDSchemaVersion\":0.1}}}"))
 				.andExpect(status().isOk());
 
@@ -196,7 +197,7 @@ public class DemographicControllerTest {
 		reqDto.setRequest(req);
 
 		mockMvc.perform(
-				put("/applications/{preRegistrationId}", "98746563542672").contentType(MediaType.APPLICATION_JSON)
+				put("/applications/prereg/{preRegistrationId}", "98746563542672").contentType(MediaType.APPLICATION_JSON)
 						.content("{\"demographicDetails\":{\"identity\":{\"IDSchemaVersion\":0.1}}}"))
 				.andExpect(status().isOk());
 
@@ -221,7 +222,7 @@ public class DemographicControllerTest {
 		Mockito.when(authUserDetails.getUserId()).thenReturn(userId);
 		Mockito.when(preRegistrationService.getAllApplicationDetails(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(response);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/applications")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/applications/prereg")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE);
 
@@ -248,7 +249,7 @@ public class DemographicControllerTest {
 		Mockito.when(preRegistrationService.getApplicationStatus(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(response);
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/applications/status/{preRegistrationId}", preId)
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/applications/prereg/status/{preRegistrationId}", preId)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE);
 
@@ -263,7 +264,7 @@ public class DemographicControllerTest {
 	public void discardIndividualTest() throws Exception {
 		String preId = "3";
 		MainResponseDTO<DeletePreRegistartionDTO> response = new MainResponseDTO<>();
-		List<DeletePreRegistartionDTO> DeleteList = new ArrayList<DeletePreRegistartionDTO>();
+		List<DeleteApplicationDTO> DeleteList = new ArrayList<DeleteApplicationDTO>();
 		DeletePreRegistartionDTO deleteDto = new DeletePreRegistartionDTO();
 
 		deleteDto.setPreRegistrationId("3");
@@ -274,7 +275,7 @@ public class DemographicControllerTest {
 		Mockito.when(authUserDetails.getUserId()).thenReturn(userId);
 		Mockito.when(preRegistrationService.deleteIndividual("3", userId)).thenReturn(response);
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/applications/{preRegistrationId}", preId)
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.delete("/applications/prereg/{preRegistrationId}", preId)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE);
 
@@ -297,7 +298,7 @@ public class DemographicControllerTest {
 		Mockito.when(preRegistrationService.getDemographicData("98746563542672", false)).thenReturn(response);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.get("/applications/{preRegistrationId}", createDto.getPreRegistrationId())
+				.get("/applications/prereg/{preRegistrationId}", createDto.getPreRegistrationId())
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE);
 
@@ -320,7 +321,7 @@ public class DemographicControllerTest {
 				.thenReturn(response);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
-				.put("/applications/status/{preRegistrationId}", "98746563542672").contentType(MediaType.ALL)
+				.put("/applications/prereg/status/{preRegistrationId}", "98746563542672").contentType(MediaType.ALL)
 				.characterEncoding("UTF-8").accept(MediaType.ALL).param("statusCode", "Booked");
 
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
@@ -348,7 +349,7 @@ public class DemographicControllerTest {
 
 		Mockito.when(preRegistrationService.getUpdatedDateTimeForPreIds(byRegCenterIdDTO)).thenReturn(response);
 
-		mockMvc.perform(post("/applications/updatedTime").contentType(MediaType.APPLICATION_JSON)
+		mockMvc.perform(post("/applications/prereg/updatedTime").contentType(MediaType.APPLICATION_JSON)
 				.content("{\"registrationCenterId\":\"regCenterId\",\"preregistrationId\":\"prid\"}"))
 				.andExpect(status().isOk());
 
