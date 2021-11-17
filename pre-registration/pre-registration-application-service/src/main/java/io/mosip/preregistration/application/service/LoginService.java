@@ -283,7 +283,7 @@ public class LoginService {
 
 		try {
 			User user = userIdOtpRequest.getRequest();
-			userid = user.getUserId().toLowerCase();
+			userid = user.getUserId().toString();
 
 			loginCommonUtil.validateOtpAndUserid(user);
 			boolean validated = otpmanager.validateOtp(user.getOtp(), user.getUserId());
