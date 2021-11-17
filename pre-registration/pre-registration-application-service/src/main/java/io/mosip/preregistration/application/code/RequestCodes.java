@@ -48,7 +48,9 @@ public enum RequestCodes {
 	STATUSCODE("statusCode"),
 
 	/* language Code */
-	LANGCODE("langCode");
+	LANGCODE("langCode"),
+	
+	APPLICATION_ID("applicationId");
 	
 	private RequestCodes(String code) {
 		this.code = code;

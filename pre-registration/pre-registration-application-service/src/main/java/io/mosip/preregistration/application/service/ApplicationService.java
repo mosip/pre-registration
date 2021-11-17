@@ -5,7 +5,10 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,7 +17,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 
-import com.amazonaws.services.pinpoint.model.ApplicationResponse;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -24,18 +26,18 @@ import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.HMACUtils2;
+import io.mosip.preregistration.application.code.RequestCodes;
 import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
-import io.mosip.preregistration.application.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.application.dto.ApplicationRequestDTO;
 import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
+import io.mosip.preregistration.application.dto.ApplicationsListDTO;
+import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
-import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
-import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.AuditFailedException;
+import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
 import io.mosip.preregistration.application.exception.DemographicServiceException;
-import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.InvalidDateFormatException;
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
@@ -44,19 +46,20 @@ import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.ApplicationStatusCode;
 import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
-import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
-import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
+import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.InvalidPreRegistrationIdException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
-import io.mosip.preregistration.core.exception.PreRegistrationException;
+import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 
@@ -67,12 +70,6 @@ public class ApplicationService implements ApplicationServiceIntf {
 	private String version;
 
 	@Autowired
-	DemographicServiceIntf demographicService;
-
-	@Autowired
-	DocumentServiceIntf documentService;
-
-	@Autowired
 	ApplicationRepostiory applicationRepository;
 
 	@Autowired
@@ -80,13 +77,24 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	@Autowired
 	ValidationUtil validationUtil;
-	
+
+	/**
+	 * Reference for ${lostUinDeleteId} from property file
+	 */
+	@Value("${mosip.id.preregistration.lostuin.delete}")
+	private String lostUinDeleteId;
+
+	/**
+	 * Reference for ${updateRegistrationDeleteId} from property file
+	 */
+	@Value("${mosip.id.preregistration.updateregistration.delete}")
+	private String updateRegistrationDeleteId;
+
 	/**
 	 * Autowired reference for {@link #DemographicServiceUtil}
 	 */
 	@Autowired
 	private DemographicServiceUtil serviceUtil;
-
 
 	@Value("${mosip.utc-datetime-pattern}")
 	private String mosipDateTimeFormat;
@@ -96,55 +104,23 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	@Value("${mosip.preregistration.applications.details.get}")
 	private String applicationDetailsId;
+
+	@Value("${mosip.preregistration.applications.all.get}")
+	private String allApplicationsId;
 	/**
 	 * logger instance
 	 */
 	private Logger log = LoggerConfiguration.logConfig(ApplicationService.class);
-	
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see io.mosip.preregistration.demographic.service.DemographicServiceIntf#
+	 * @see io.mosip.preregistration.application.service.ApplicationServiceIntf#
 	 * authUserDetails()
 	 */
 	@Override
 	public AuthUserDetails authUserDetails() {
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-	}
-
-	public MainResponseDTO<ApplicationInfoMetadataDTO> getPregistrationInfo(String prid) {
-		log.info("In getPregistrationInfo method of Application service for prid {}", prid);
-		MainResponseDTO<ApplicationInfoMetadataDTO> response = new MainResponseDTO<ApplicationInfoMetadataDTO>();
-		response.setVersion(version);
-		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
-		ApplicationInfoMetadataDTO applicationInfo = new ApplicationInfoMetadataDTO();
-		DocumentsMetaData documentsMetaData = null;
-		DemographicResponseDTO demographicResponse = null;
-		try {
-			if (prid == null) {
-				throw new InvalidRequestParameterException(DemographicErrorCodes.PRG_PAM_APP_013.getCode(),
-						ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage(), response);
-			}
-			log.info("In getPregistrationInfo method of Application service fetching demographic for prid {}", prid);
-			demographicResponse = demographicService.getDemographicData(prid.trim(), false).getResponse();
-			applicationInfo.setDemographicResponse(demographicResponse);
-			response.setResponse(applicationInfo);
-			try {
-				log.info("In getPregistrationInfo method of Application service fetching documents for prid {}", prid);
-				documentsMetaData = documentService.getAllDocumentForPreId(prid.trim()).getResponse();
-				applicationInfo.setDocumentsMetaData(documentsMetaData);
-			} catch (PreRegistrationException | DocumentNotFoundException ex) {
-				log.error("Exception occured while fetching documents for prid {}", prid);
-				log.error("{}", ex);
-				applicationInfo.setDocumentsMetaData(documentsMetaData);
-			}
-		} catch (Exception ex) {
-			log.error("Exception occured while fetching demographic for prid {}", prid);
-			log.error("{}", ex);
-			new DemographicExceptionCatcher().handle(ex, response);
-		}
-		return response;
 	}
 
 	public MainResponseDTO<String> saveUIEventAudit(UIAuditRequest auditRequest) {
@@ -189,36 +165,50 @@ public class ApplicationService implements ApplicationServiceIntf {
 		return auditRequestDto;
 	}
 
-	public MainResponseDTO<String> getApplicationsStatusForApplicationId(String applicationId) {
-		MainResponseDTO<String> response = new MainResponseDTO<String>();
-		response.setId(applicationStatusId);
+	/**
+	 * Gives application details for the given applicationId
+	 * 
+	 * @param applicationId
+	 * @return
+	 */
+	public MainResponseDTO<ApplicationEntity> getApplicationInfo(String applicationId) {
+		MainResponseDTO<ApplicationEntity> response = new MainResponseDTO<ApplicationEntity>();
+		response.setId(applicationDetailsId);
 		response.setVersion(version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
-		String bookingStatusCode = null;
+		ApplicationEntity applicationEntity = null;
 		try {
 			if (applicationId == null) {
 				throw new InvalidRequestParameterException(ApplicationErrorCodes.PRG_APP_014.getCode(),
 						ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage(), response);
 			}
-			bookingStatusCode = applicationRepository.findBookingStatusCodeById(applicationId);
-			if (bookingStatusCode == null) {
+			applicationEntity = applicationRepository.findByApplicationId(applicationId);
+			if (applicationEntity == null) {
 				throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_013.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
-			log.info("Application Booking status: {} for the Application Id : {}", bookingStatusCode, applicationId);
-			response.setResponse(bookingStatusCode);
+			if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
+				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
+						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
+			}
+			log.info("Application Info: {} for the Application Id: {}", applicationEntity, applicationId);
+			response.setResponse(applicationEntity);
 		} catch (Exception ex) {
-			log.error("Error while Getting the Booking statuscode for applicationId ", applicationId);
+			log.error("Error while Getting the Application Info for applicationId ", applicationId);
 			log.error("Exception trace", ex);
-			log.error("Error while updating status for applications");
-			log.error("Excepction {}", ex);
-			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
-					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
+			new DemographicExceptionCatcher().handle(ex, response);
 		}
 		return response;
 	}
 
-	public MainResponseDTO<List<ApplicationDetailResponseDTO>> getApplicationsForApplicationId(String regCenterId,
+	/**
+	 * Get all bookings for the given regCenterId in the given appointmentDate
+	 * 
+	 * @param regCenterId
+	 * @param appointmentDate
+	 * @return
+	 */
+	public MainResponseDTO<List<ApplicationDetailResponseDTO>> getBookingsForRegCenter(String regCenterId,
 			String appointmentDate) {
 		MainResponseDTO<List<ApplicationDetailResponseDTO>> mainResponse = new MainResponseDTO<>();
 		mainResponse.setId(applicationDetailsId);
@@ -268,23 +258,14 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 		return mainResponse;
 	}
-	
-	/*
+
+	/**
 	 * This method is used to create the a new application with booking type as
-	 * UPDATE_REGISTRATION_DETAILS or LOST_FORGOTTEN_UIN
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
 	 * 
-	 * 
-	 * @param request pass application request
-	 * 
-	 * @param bookingType UPDATE_REGISTRATION_DETAILS or LOST_FORGOTTEN_UIN
-	 * 
+	 * @param request
+	 * @param bookingType
 	 * @return MainResponseDTO<ApplicationResponseDTO>
-	 */
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.mosip.preregistration.demographic.service.DemographicServiceIntf#
-	 * addApplication(io.mosip.preregistration.core.common.dto.MainRequestDTO)
 	 */
 	@SuppressWarnings({ "unchecked" })
 	@Override
@@ -333,19 +314,21 @@ public class ApplicationService implements ApplicationServiceIntf {
 			new DemographicExceptionCatcher().handle(ex, mainResponseDTO);
 		} finally {
 			if (isSuccess) {
-				createAuditValues(EventId.PRE_407.toString(), EventName.PERSIST.toString(), EventType.BUSINESS.toString(),
+				createAuditValues(EventId.PRE_407.toString(), EventName.PERSIST.toString(),
+						EventType.BUSINESS.toString(),
 						"Application data is sucessfully saved in the applications table",
 						AuditLogVariables.NO_ID.toString(), authUserDetails().getUserId(),
 						authUserDetails().getUsername());
 			} else {
-				createAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
-						"Failed to save the Application data", AuditLogVariables.NO_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername());
+				createAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(),
+						EventType.SYSTEM.toString(), "Failed to save the Application data",
+						AuditLogVariables.NO_ID.toString(), authUserDetails().getUserId(),
+						authUserDetails().getUsername());
 			}
 		}
 		return mainResponseDTO;
 	}
-	
+
 	/**
 	 * This method is used to audit all the demographic events
 	 * 
@@ -369,6 +352,141 @@ public class ApplicationService implements ApplicationServiceIntf {
 		auditRequestDto.setModuleName(AuditLogVariables.DEMOGRAPHY_SERVICE.toString());
 		auditUtil.saveAuditDetails(auditRequestDto);
 	}
-	
 
+	/**
+	 * This method is used to delete the application with booking type as
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
+	 * 
+	 * @param applicationId
+	 * @param bookingType   UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
+	 * @return MainResponseDTO<DeleteApplicationDTO>
+	 */
+	@Override
+	public MainResponseDTO<DeleteApplicationDTO> deleteLostOrUpdateApplication(String applicationId,
+			String bookingType) {
+		log.info("sessionId", "idType", "id", "In deleteLostOrUpdateApplication method of pre-registration service ");
+		MainResponseDTO<DeleteApplicationDTO> response = new MainResponseDTO<>();
+		DeleteApplicationDTO deleteDto = new DeleteApplicationDTO();
+		Map<String, String> requestParamMap = new HashMap<>();
+		boolean isDeleteSuccess = false;
+		if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())) {
+			response.setId(lostUinDeleteId);
+		}
+		if (bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
+			response.setId(updateRegistrationDeleteId);
+		}
+		response.setVersion(version);
+		try {
+			requestParamMap.put(RequestCodes.APPLICATION_ID.getCode(), applicationId);
+			if (validationUtil.requstParamValidator(requestParamMap)) {
+				ApplicationEntity applicationEntity = serviceUtil.findApplicationById(applicationId);
+				if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
+						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
+					if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
+						throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
+								ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
+					}
+					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
+						MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
+						deleteBooking = serviceUtil.deleteBooking(applicationId);
+						if (deleteBooking.getErrors() != null) {
+							throw new BookingDeletionFailedException(deleteBooking.getErrors().get(0).getErrorCode(),
+									deleteBooking.getErrors().get(0).getMessage());
+						}
+					}
+					serviceUtil.deleteApplicationFromApplications(applicationId);
+					deleteDto.setPreRegistrationId(applicationId);
+					deleteDto.setDeletedBy(authUserDetails().getUserId());
+					deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
+				}
+			} else {
+				throw new InvalidPreRegistrationIdException(ApplicationErrorCodes.PRG_APP_016.getCode(),
+						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
+			}
+			isDeleteSuccess = true;
+		} catch (Exception ex) {
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In pre-registration deleteLostOrUpdateApplication service- " + ex.getMessage());
+			new DemographicExceptionCatcher().handle(ex, response);
+		} finally {
+			response.setResponsetime(serviceUtil.getCurrentResponseTime());
+			if (isDeleteSuccess) {
+				createAuditValues(EventId.PRE_403.toString(), EventName.DELETE.toString(),
+						EventType.BUSINESS.toString(),
+						"Application data is successfully deleted from applications table",
+						AuditLogVariables.NO_ID.toString(), authUserDetails().getUserId(),
+						authUserDetails().getUsername());
+			} else {
+				createAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(),
+						EventType.SYSTEM.toString(), "Deletion of Application data failed",
+						AuditLogVariables.NO_ID.toString(), authUserDetails().getUserId(),
+						authUserDetails().getUsername());
+			}
+		}
+
+		response.setResponse(deleteDto);
+		return response;
+	}
+
+	/**
+	 * Gives all the application details for the logged in user.
+	 * 
+	 * @return
+	 */
+	@Override
+	public MainResponseDTO<ApplicationsListDTO> getAllApplicationsForUser() {
+		String userId = authUserDetails().getUserId();
+		MainResponseDTO<ApplicationsListDTO> response = new MainResponseDTO<ApplicationsListDTO>();
+		ApplicationsListDTO applicationsListDTO = new ApplicationsListDTO();
+		response.setId(allApplicationsId);
+		response.setVersion(version);
+		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
+		try {
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedBy(userId);
+			log.info("Number of applications found for the current user: {}", applicationEntities.size());
+			applicationsListDTO.setAllApplications(applicationEntities);
+			response.setResponse(applicationsListDTO);
+		} catch (Exception ex) {
+			log.error("Error while Getting the Applications for the userId: {} ", userId);
+			log.error("Exception trace", ex);
+			new DemographicExceptionCatcher().handle(ex, response);
+		}
+		return response;
+	}
+
+	/**
+	 * Gives all the application details for the logged in user for the given type.
+	 * 
+	 * @return
+	 */
+	@Override
+	public MainResponseDTO<ApplicationsListDTO> getAllApplicationsForUserForBookingType(String type) {
+		String userId = authUserDetails().getUserId();
+		MainResponseDTO<ApplicationsListDTO> response = new MainResponseDTO<ApplicationsListDTO>();
+		ApplicationsListDTO applicationsListDTO = new ApplicationsListDTO();
+		response.setId(allApplicationsId);
+		response.setVersion(version);
+		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
+		try {
+			if (!type.equalsIgnoreCase(BookingTypeCodes.NEW_PREREGISTRATION.toString())
+					&& !type.equalsIgnoreCase(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
+					&& !type.equalsIgnoreCase(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
+				throw new InvalidPreRegistrationIdException(ApplicationErrorCodes.PRG_APP_016.getCode(),
+						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
+
+			}
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(userId,
+					type.toUpperCase());
+			log.info("Number of applications found for the current user: {} and booking type: {}",
+					applicationEntities.size(), type);
+			applicationsListDTO.setAllApplications(applicationEntities);
+			response.setResponse(applicationsListDTO);
+		} catch (Exception ex) {
+			log.error("Error while Getting the Applications for the userId: {} ", userId);
+			log.error("Exception trace", ex);
+			new DemographicExceptionCatcher().handle(ex, response);
+		}
+		return response;
+	}
 }

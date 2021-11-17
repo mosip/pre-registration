@@ -417,7 +417,7 @@ public class DataSyncServiceUtil {
 			Map<String, Object> params = new HashMap<>();
 			params.put("preRegistrationId", preId);
 
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(demographicResourceUrl + "/applications/");
+			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(demographicResourceUrl + "/applications/prereg/");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<MainResponseDTO<DemographicResponseDTO>> httpEntity = new HttpEntity<>(headers);
@@ -750,7 +750,7 @@ public class DataSyncServiceUtil {
 			mainRequestDTO.setRequesttime(new Date());
 			mainRequestDTO.setRequest(preRegIdsDTO);
 			UriComponentsBuilder builder = UriComponentsBuilder
-					.fromHttpUrl(demographicResourceUrl + "/applications/updatedTime");
+					.fromHttpUrl(demographicResourceUrl + "/applications/prereg/updatedTime");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<MainResponseDTO<Map<String, String>>> httpEntity = new HttpEntity(mainRequestDTO, headers);
@@ -945,7 +945,7 @@ public class DataSyncServiceUtil {
 		ApplicationInfoMetadataDTO applicationInfo = null;
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder
-					.fromHttpUrl(demographicResourceUrl + "/applications/info/" + prid);
+					.fromHttpUrl(demographicResourceUrl + "/applications/prereg/info/" + prid);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity httpEntity = new HttpEntity<>(headers);
@@ -1016,7 +1016,7 @@ public class DataSyncServiceUtil {
 		ResponseEntity<MainResponseDTO<String>> respEntity = null;
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder
-					.fromHttpUrl(demographicResourceUrl + "/applications/status/" + preId)
+					.fromHttpUrl(demographicResourceUrl + "/applications/prereg/status/" + preId)
 					.queryParam("statusCode", StatusCodes.PREFETCHED.getCode());
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
