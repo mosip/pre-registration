@@ -163,6 +163,27 @@ public class ApplicationServiceTest {
 		applicationService.getApplicationsForApplicationId("",LocalDate.now().toString());
 	}
 
+
+//	@Test(expected = InvalidRequestParameterException.class)
+//	public void testgetPregistrationInfoInvalidRequestParameterException() {
+//		demographicService.getPregistrationInfo(null);
+//	}
+
+//	@Test
+//	public void testgetPregistrationInfoPreRegistrationException() {
+//		MainResponseDTO<DemographicResponseDTO> reponseDto=new MainResponseDTO<DemographicResponseDTO>();
+//		reponseDto.setResponse(demographicResponse);
+//		MainResponseDTO<DocumentsMetaData>  mainDocumentsMetaData=new MainResponseDTO<DocumentsMetaData>();
+//		mainDocumentsMetaData.setResponse(documentsMetaData);
+//		Mockito.when(demographicService.getDemographicData(Mockito.any(), Mockito.any())).thenReturn(reponseDto);
+//		Mockito.when(documentService.getAllDocumentForPreId(Mockito.any())).thenThrow(new DocumentNotFoundException());
+//
+//		MainResponseDTO<ApplicationInfoMetadataDTO> response = demographicService.getPregistrationInfo("987654321");
+//		Assert.assertEquals(response.getResponse().getDemographicResponse(), demographicResponse);
+//
+//	}
+
+
 	@Test(expected = AuditFailedException.class)
 	public void testsaveUIEventAuditAuditFailedException() {
 		UIAuditRequest auditRequest=new UIAuditRequest();
@@ -181,13 +202,24 @@ public class ApplicationServiceTest {
 	public void testgetApplicationsStatusForApplicationIdInvalidRequestParameterException() {
 		MainResponseDTO<String> response = applicationService.getApplicationsStatusForApplicationId(null);
 	}
-	
+
 	@Test(expected=RecordFailedToUpdateException.class)
 	public void testgetApplicationsStatusForApplicationIdRecordNotFoundException() {
 		Mockito.when(applicationRepository.findBookingStatusCodeById(Mockito.any())).thenReturn(null);
 		MainResponseDTO<String> response = applicationService.getApplicationsStatusForApplicationId("987654321");
 		Assert.assertEquals(response.getResponse(), "123456789");
 	}
+
+
+
+//	@Test
+//	public void testgetApplicationsStatusForApplicationIdSuccess() {
+//		Mockito.when(applicationRepository.findBookingStatusCodeById(Mockito.any())).thenReturn("123456789");
+//		MainResponseDTO<ApplicationEntity> response = applicationService.getApplicationInfo("987654321");
+//		ApplicationEntity applicationEntity = response.getResponse();
+//		Assert.assertEquals(applicationEntity.getApplicationStatusCode(), "123456789");
+//
+//	}
 
 	@Test
 	public void testsaveUIEventAuditSuccess() {
@@ -210,6 +242,21 @@ public class ApplicationServiceTest {
 		Assert.assertEquals(response.getResponse().getDocumentsMetaData(), documentsMetaData);
 		Assert.assertEquals(response.getResponse().getDemographicResponse(), demographicResponse);
 	}
+
+
+//	@Test
+//	public void testgetPregistrationInfoSuccess() {
+//		MainResponseDTO<DemographicResponseDTO> reponseDto=new MainResponseDTO<DemographicResponseDTO>();
+//		reponseDto.setResponse(demographicResponse);
+//		MainResponseDTO<DocumentsMetaData>  mainDocumentsMetaData=new MainResponseDTO<DocumentsMetaData>();
+//		mainDocumentsMetaData.setResponse(documentsMetaData);
+//		Mockito.when(demographicService.getDemographicData(Mockito.any(), Mockito.any())).thenReturn(reponseDto);
+//		Mockito.when(documentService.getAllDocumentForPreId(Mockito.any())).thenReturn(mainDocumentsMetaData);
+//		MainResponseDTO<ApplicationInfoMetadataDTO> response = demographicService.getPregistrationInfo("987654321");
+//		Assert.assertEquals(response.getResponse().getDocumentsMetaData(), documentsMetaData);
+//		Assert.assertEquals(response.getResponse().getDemographicResponse(), demographicResponse);
+//
+//	}
 
 	@Test
 	public void testAddLostOrUpdateApplicationSuccess() {

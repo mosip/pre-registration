@@ -4,38 +4,71 @@ import java.util.List;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
-import io.mosip.preregistration.application.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.application.dto.ApplicationRequestDTO;
 import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
+import io.mosip.preregistration.application.dto.ApplicationsListDTO;
+import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 
 public interface ApplicationServiceIntf {
-	
-	AuthUserDetails authUserDetails();
 
-	public MainResponseDTO<ApplicationInfoMetadataDTO> getPregistrationInfo(String prid);
+	AuthUserDetails authUserDetails();
 
 	MainResponseDTO<String> saveUIEventAudit(UIAuditRequest auditRequest);
 
-	MainResponseDTO<String> getApplicationsStatusForApplicationId(String applicationId);
+	/**
+	 * Gives application details for the given applicationId
+	 * 
+	 * @param applicationId
+	 * @return
+	 */
+	MainResponseDTO<ApplicationEntity> getApplicationInfo(String applicationId);
 
-	MainResponseDTO<List<ApplicationDetailResponseDTO>> getApplicationsForApplicationId(String regCenterId,
+	/**
+	 * Gives all the application details for the logged in user.
+	 * 
+	 * @return
+	 */
+	MainResponseDTO<ApplicationsListDTO> getAllApplicationsForUser();
+	
+	/**
+	 * Gives all the application details for the logged in user for the given type.
+	 * 
+	 * @return
+	 */
+	MainResponseDTO<ApplicationsListDTO> getAllApplicationsForUserForBookingType(String type);
+
+	/**
+	 * Get all bookings for the given regCenterId in the given appointmentDate
+	 * 
+	 * @param regCenterId
+	 * @param appointmentDate
+	 * @return
+	 */
+	MainResponseDTO<List<ApplicationDetailResponseDTO>> getBookingsForRegCenter(String regCenterId,
 			String appointmentDate);
 
-	/*
+	/**
 	 * This method is used to create the a new application with booking type as
-	 * UPDATE_REGISTRATION_DETAILS or LOST_FORGOTTEN_UIN
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
 	 * 
-	 * 
-	 * @param request pass application request
-	 * 
-	 * @param bookingType UPDATE_REGISTRATION_DETAILS or LOST_FORGOTTEN_UIN
-	 * 
+	 * @param request
+	 * @param bookingType
 	 * @return MainResponseDTO<ApplicationResponseDTO>
 	 */
 	MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateApplication(MainRequestDTO<ApplicationRequestDTO> request,
 			String bookingType);
 
+	/**
+	 * This method is used to delete the application with booking type as
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
+	 * 
+	 * @param applicationId
+	 * @param bookingType   UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
+	 * @return MainResponseDTO<DeleteApplicationDTO>
+	 */
+	MainResponseDTO<DeleteApplicationDTO> deleteLostOrUpdateApplication(String applicationId, String bookingType);
 }

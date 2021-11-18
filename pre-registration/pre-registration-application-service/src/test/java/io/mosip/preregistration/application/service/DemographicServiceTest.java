@@ -71,6 +71,7 @@ import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
+import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
 import io.mosip.preregistration.application.dto.DemographicRequestDTO;

@@ -206,6 +206,11 @@ public class ValidationUtil {
 							ErrorMessages.INVALID_REQUEST_DATETIME.getMessage() + "_FORMAT --> yyyy-MM-dd HH:mm:ss",
 							null);
 				}
+			} else if (key.equals(RequestCodes.APPLICATION_ID)
+					&& (requestMap.get(RequestCodes.APPLICATION_ID) == null
+							|| requestMap.get(RequestCodes.APPLICATION_ID).equals(""))) {
+				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
+						ErrorMessages.MISSING_REQUEST_PARAMETER.getMessage(), null);
 			}
 
 		}
