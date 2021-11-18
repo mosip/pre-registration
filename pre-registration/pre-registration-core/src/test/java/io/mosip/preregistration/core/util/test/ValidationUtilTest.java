@@ -57,13 +57,13 @@ public class ValidationUtilTest {
 
 	@Test
 	public void emailValidatorTest() {
-		String loginId = "user@gmail.com";
+		String loginId = "mosiptestuser@gmail.com";
 		assertThat(validationUtil.emailValidator(loginId), is(true));
 	}
 
 	@Test
 	public void emailValidatorFailureTest() {
-		String loginId = "user@gmailcom";
+		String loginId = "mosiptestuser@gmail.com";
 		assertThat(validationUtil.emailValidator(loginId), is(false));
 	}
 
