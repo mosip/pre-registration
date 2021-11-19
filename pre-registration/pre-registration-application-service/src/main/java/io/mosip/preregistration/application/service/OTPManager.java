@@ -106,6 +106,15 @@ public class OTPManager {
 		logger.info("sessionId", "idType", "id", "In sendOtp method of otpmanager service ");
 		String userId = requestDTO.getRequest().getUserId();
 
+		String refId = hash(userId);
+
+		if ((otpRepo.checkotpsent(refId, PreRegLoginConstant.ACTIVE_STATUS, DateUtils.getUTCCurrentDateTime()) > 0)) {
+			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
+					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(), OTP_ALREADY_SENT);
+			throw new PreRegLoginException(PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(),
+					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorMessage());
+		}
+
 		String token = "";
 		try {
 			token = generateToken();
@@ -115,15 +124,6 @@ public class OTPManager {
 					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
 			throw new PreRegLoginException(PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorCode(),
 					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
-		}
-
-		String refId = hash(userId);
-
-		if ((otpRepo.checkotpsent(refId, PreRegLoginConstant.ACTIVE_STATUS, DateUtils.getUTCCurrentDateTime()) > 0)) {
-			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
-					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(), OTP_ALREADY_SENT);
-			throw new PreRegLoginException(PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(),
-					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorMessage());
 		}
 
 		String otp = generateOTP(requestDTO, token);
