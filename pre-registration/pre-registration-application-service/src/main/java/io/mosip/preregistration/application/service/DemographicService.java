@@ -2,6 +2,8 @@
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -41,6 +43,8 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.preregistration.application.code.DemographicRequestCodes;
 import io.mosip.preregistration.application.dto.ApplicantTypeRequestDTO;
 import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
+import io.mosip.preregistration.application.dto.ApplicationInfoMetadataDTO;
+import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
@@ -55,6 +59,7 @@ import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
 import io.mosip.preregistration.application.exception.DemographicServiceException;
+import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsException;
@@ -73,6 +78,7 @@ import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -85,7 +91,10 @@ import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
+import io.mosip.preregistration.core.exception.InvalidPreRegistrationIdException;
+import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
@@ -241,6 +250,10 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Autowired
 	CryptoUtil cryptoUtil;
+	
+	@Value("${mosip.utc-datetime-pattern}")
+	private String mosipDateTimeFormat;
+
 
 	/**
 	 * This method acts as a post constructor to initialize the required request
@@ -718,29 +731,24 @@ public class DemographicService implements DemographicServiceIntf {
 								deleteDto.setPreRegistrationId(preregId);
 								deleteDto.setDeletedBy(userId);
 								deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
-	
+
 							} else {
 								throw new RecordFailedToDeleteException(DemographicErrorCodes.PRG_PAM_APP_004.getCode(),
-										DemographicErrorMessages.FAILED_TO_DELETE_THE_PRE_REGISTRATION_RECORD.getMessage());
+										DemographicErrorMessages.FAILED_TO_DELETE_THE_PRE_REGISTRATION_RECORD
+												.getMessage());
 							}
 						}
 					} else {
 						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 								DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
 					}
-				} else if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
-						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION_DETAILS.toString())) {
-					userValidation(userId, applicationEntity.getCrBy());
-					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
-						getBookingServiceToDeleteAllByPreId(preregId);
-					}
-					serviceUtil.deleteApplicationFromApplications(preregId);
-					deleteDto.setPreRegistrationId(preregId);
-					deleteDto.setDeletedBy(userId);
-					deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
+					isDeleteSuccess = true;
+				} else {
+					throw new InvalidPreRegistrationIdException(ApplicationErrorCodes.PRG_APP_016.getCode(),
+							ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
 				}
 			}
-			isDeleteSuccess = true;
+
 		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id", "In pre-registration deleteIndividual service- " + ex.getMessage());
@@ -1195,5 +1203,40 @@ public class DemographicService implements DemographicServiceIntf {
 
 		return idschemaAttributes;
 	}
+	
+	public MainResponseDTO<ApplicationInfoMetadataDTO> getPregistrationInfo(String prid) {
+		log.info("In getPregistrationInfo method of DemographicService for prid {}", prid);
+		MainResponseDTO<ApplicationInfoMetadataDTO> response = new MainResponseDTO<ApplicationInfoMetadataDTO>();
+		response.setVersion(version);
+		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
+		ApplicationInfoMetadataDTO applicationInfo = new ApplicationInfoMetadataDTO();
+		DocumentsMetaData documentsMetaData = null;
+		DemographicResponseDTO demographicResponse = null;
+		try {
+			if (prid == null) {
+				throw new InvalidRequestParameterException(DemographicErrorCodes.PRG_PAM_APP_013.getCode(),
+						ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage(), response);
+			}
+			log.info("In getPregistrationInfo method of DemographicService fetching demographic for prid {}", prid);
+			demographicResponse = getDemographicData(prid.trim(), false).getResponse();
+			applicationInfo.setDemographicResponse(demographicResponse);
+			response.setResponse(applicationInfo);
+			try {
+				log.info("In getPregistrationInfo method of DemographicService fetching documents for prid {}", prid);
+				documentsMetaData = documentServiceImpl.getAllDocumentForPreId(prid.trim()).getResponse();
+				applicationInfo.setDocumentsMetaData(documentsMetaData);
+			} catch (PreRegistrationException | DocumentNotFoundException ex) {
+				log.error("Exception occured while fetching documents for prid {}", prid);
+				log.error("{}", ex);
+				applicationInfo.setDocumentsMetaData(documentsMetaData);
+			}
+		} catch (Exception ex) {
+			log.error("Exception occured while fetching demographic for prid {}", prid);
+			log.error("{}", ex);
+			new DemographicExceptionCatcher().handle(ex, response);
+		}
+		return response;
+	}
+
 
 }

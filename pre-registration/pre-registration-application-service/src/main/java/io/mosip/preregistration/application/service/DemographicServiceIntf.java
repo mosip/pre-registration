@@ -3,17 +3,18 @@ package io.mosip.preregistration.application.service;
 import java.util.Map;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
-import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
-import io.mosip.preregistration.core.common.dto.PreRegistartionStatusDTO;
+import io.mosip.preregistration.application.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
 import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.SchemaResponseDto;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
+import io.mosip.preregistration.core.common.dto.PreRegistartionStatusDTO;
 
 public interface DemographicServiceIntf {
 
@@ -103,6 +104,9 @@ public interface DemographicServiceIntf {
 	 * @return {@link SchemaResponseDto}
 	 */
 	MainResponseDTO<SchemaResponseDto> getSchemaconfig();
+	
+	public MainResponseDTO<ApplicationInfoMetadataDTO> getPregistrationInfo(String prid);
+
 
 	/**
 	 * This method acts as a post constructor to initialize the required request
