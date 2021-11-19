@@ -51,6 +51,9 @@ public class OTPManager {
 	/** The Constant OTP_EXPIRED. */
 	private static final String OTP_EXPIRED = "OTP_EXPIRED";
 
+	/** The Constant OTP_ALREADY_SENT. */
+	private static final String OTP_ALREADY_SENT = "OTP_ALREADY_SENT";
+
 	/** The Constant USER_BLOCKED. */
 	private static final String USER_BLOCKED = "USER_BLOCKED";
 
@@ -113,6 +116,16 @@ public class OTPManager {
 			throw new PreRegLoginException(PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorCode(),
 					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
 		}
+
+		String refId = hash(userId);
+
+		if ((otpRepo.checkotpsent(refId, PreRegLoginConstant.ACTIVE_STATUS, DateUtils.getUTCCurrentDateTime()) > 0)) {
+			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
+					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(), OTP_ALREADY_SENT);
+			throw new PreRegLoginException(PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(),
+					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorMessage());
+		}
+
 		String otp = generateOTP(requestDTO, token);
 		logger.info("sessionId", "idType", "id", "In generateOTP method of otpmanager service OTP generated");
 		String otpHash = digestAsPlainText(
@@ -145,7 +158,7 @@ public class OTPManager {
 		Integer validTime = environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Integer.class)
 				/ 60;
 		LocalDateTime dateTime = LocalDateTime.now(ZoneId.of(environment.getProperty("mosip.notification.timezone")));
-		
+
 		DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd-MM-yyyy");
 		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 
