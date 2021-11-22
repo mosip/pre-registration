@@ -10,14 +10,14 @@ import org.springframework.data.repository.query.Param;
 import io.mosip.kernel.core.dataaccess.spi.repository.BaseRepository;
 
 public interface OtpTxnRepository extends BaseRepository<OtpTransaction, String> {
-	
+
 	Boolean existsByOtpHashAndStatusCode(String otpHash, String statusCode);
-	
+
 	OtpTransaction findByOtpHashAndStatusCode(String otpHash, String statusCode);
-	
+
 	/**
-	 * Obtain the number of count of request_dTtimes for particular userId
-	 * with within the otpRequestDTime and oneMinuteBeforeTime.
+	 * Obtain the number of count of request_dTtimes for particular userId with
+	 * within the otpRequestDTime and oneMinuteBeforeTime.
 	 *
 	 * @param otpRequestDTime     the otp request D time
 	 * @param oneMinuteBeforeTime the one minute before time
@@ -29,5 +29,8 @@ public interface OtpTxnRepository extends BaseRepository<OtpTransaction, String>
 	public int countRequestDTime(@Param("otpRequestDTime") LocalDateTime otpRequestDTime,
 			@Param("oneMinuteBeforeTime") LocalDateTime oneMinuteBeforeTime, @Param("refId") String refId);
 
-	
+	@Query("Select count(1) from OtpTransaction  where refId = :refId and " + "statusCode = :statusCode and "
+			+ "expiryDtimes > :currenttime")
+	int checkotpsent(@Param("refId") String userid, @Param("statusCode") String statusCode,
+			@Param("currenttime") LocalDateTime currenttime);
 }
