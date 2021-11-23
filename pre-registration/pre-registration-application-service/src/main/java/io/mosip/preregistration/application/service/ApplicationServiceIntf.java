@@ -26,6 +26,14 @@ public interface ApplicationServiceIntf {
 	 * @return
 	 */
 	MainResponseDTO<ApplicationEntity> getApplicationInfo(String applicationId);
+	
+	/**
+	 * This Method is used to fetch status of particular application
+	 * 
+	 *  @param applicationId
+	 * @return response status of the application
+	 */
+	MainResponseDTO<String> getApplicationStatus(String applicationId);
 
 	/**
 	 * Gives all the application details for the logged in user.
