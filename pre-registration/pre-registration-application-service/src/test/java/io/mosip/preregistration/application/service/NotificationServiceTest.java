@@ -117,10 +117,10 @@ public class NotificationServiceTest {
 	@Value("${mosip.pre-registration.notification.id}")
 	private String Id;
 	
-	@Value("${preregistartion.identity}")
+	@Value("${preregistration.identity}")
 	private String identity;
 	
-	@Value("${preregistartion.identity.name}")
+	@Value("${preregistration.identity.name}")
 	private String fullName;
 
 	@Mock
