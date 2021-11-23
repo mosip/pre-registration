@@ -111,7 +111,7 @@ public class PreregistrationBatchJobScheduler {
 
 	}
 	
-	@Scheduled(cron = "${preregistration.job.schedule.cron.updateApplicationsBookingJob:5 * * * * ?}")
+	/* @Scheduled(cron = "${preregistration.job.schedule.cron.updateApplicationsBookingJob:5 * * * * ?}")
 	public void applicationsBookingStatusScheduler() {
 
 		JobParameters jobParam = new JobParametersBuilder().addLong("updateApplicationsBookingStatusJobTime", System.currentTimeMillis())
@@ -128,6 +128,6 @@ public class PreregistrationBatchJobScheduler {
 			LOGGER.error(LOGDISPLAY, "Applications Booking  Status Job failed to read data from service", e.getMessage(),null);
 		}
 
-	}
+	} */
 
 }

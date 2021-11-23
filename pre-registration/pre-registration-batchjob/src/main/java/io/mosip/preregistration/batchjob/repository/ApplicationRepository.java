@@ -12,4 +12,5 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 	@Query("SELECT e FROM ApplicationEntity e WHERE e.applicationId = ?1")
 	public ApplicationEntity findByApplicationId(String applicationId);
 	
+	public ApplicationEntity findByApplicationIdAndBookingStatusCode(String applicationId, String bookingStatusCode);
 }

@@ -138,6 +138,18 @@ public class BatchJpaRepositoryImpl {
 		return entity;
 	}
 
+	public ApplicationEntity getBookedApplicantEntityDetails(String applicationID) {
+
+		ApplicationEntity entity = null;
+		try {
+			entity = applicationRepository.findByApplicationIdAndBookingStatusCode(applicationID, StatusCodes.BOOKED.getCode());
+		} catch (DataAccessLayerException e) {
+			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+					ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
+		}
+		return entity;
+	}
+
 	public RegistrationBookingEntity getRegistrationAppointmentDetails(String applicationID) {
 
 		RegistrationBookingEntity entity = null;
