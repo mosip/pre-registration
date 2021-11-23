@@ -39,7 +39,6 @@ import io.mosip.preregistration.application.exception.AuditFailedException;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
 import io.mosip.preregistration.application.exception.DemographicServiceException;
 import io.mosip.preregistration.application.exception.InvalidDateFormatException;
-import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
@@ -449,6 +448,41 @@ public class ApplicationService implements ApplicationServiceIntf {
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
 			log.error("Error while Getting the Applications for the userId: {} ", userId);
+			log.error("Exception trace", ex);
+			new DemographicExceptionCatcher().handle(ex, response);
+		}
+		return response;
+	}
+	
+	/**
+	 * This Method is used to fetch status of particular application
+	 * 
+	 *  @param applicationId
+	 * @return response status of the application
+	 */
+	@Override
+	public MainResponseDTO<String> getApplicationStatus(String applicationId) {
+		MainResponseDTO<String> response = new MainResponseDTO<String>();
+		response.setId(applicationStatusId);
+		response.setVersion(version);
+		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
+		ApplicationEntity applicationEntity = null;
+		String applicationBookingStatus = null;
+		try {
+			if (applicationId == null) {
+				throw new InvalidRequestParameterException(ApplicationErrorCodes.PRG_APP_014.getCode(),
+						ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage(), response);
+			}
+			applicationEntity = applicationRepository.findByApplicationId(applicationId);
+			if (applicationEntity == null) {
+				throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_013.getCode(),
+						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
+			}
+			applicationBookingStatus= applicationEntity.getBookingStatusCode();
+			log.info("Application STATUS : {} for the Application Id: {}", applicationBookingStatus, applicationId);
+			response.setResponse(applicationBookingStatus);
+		} catch (Exception ex) {
+			log.error("Error while Getting the Application Info for applicationId ", applicationId);
 			log.error("Exception trace", ex);
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
