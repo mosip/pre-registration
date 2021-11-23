@@ -249,7 +249,7 @@ public class DemographicController {
 	}
 
 	/**
-	 * Post API to fetch the status of a application.
+	 * Get API to fetch the status of a application.
 	 *
 	 * @param preId
 	 *            the pre id
