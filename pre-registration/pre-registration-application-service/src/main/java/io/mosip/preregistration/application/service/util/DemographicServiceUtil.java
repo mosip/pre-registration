@@ -120,7 +120,7 @@ public class DemographicServiceUtil {
 	@Value("${mosip.io.prid.url}")
 	private String pridURl;
 
-	@Value("${preregistartion.config.identityjson}")
+	@Value("${preregistration.config.identityjson}")
 	private String preregistrationIdJson;
 
 	@Value("${sendOtp.resource.url}")
