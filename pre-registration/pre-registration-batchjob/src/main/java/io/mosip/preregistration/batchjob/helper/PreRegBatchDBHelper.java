@@ -39,7 +39,7 @@ public class PreRegBatchDBHelper {
             Short noOfKiosks, LocalDate date, LocalTime slotStartTime, LocalTime slotEndTime) {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
-                 "Saveing Slot Generation for Date: " + date);
+                 "Saving Slot Generation for Date: " + date);
 		AvailibityEntity avaEntity = new AvailibityEntity();
 		avaEntity.setRegDate(date);
 		avaEntity.setRegcntrId(regCenterId);

@@ -21,13 +21,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
-import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -92,6 +94,10 @@ public class RestHelper {
     @Autowired
     private WebClient webClient; 
 
+    @Qualifier("selfTokenRestTemplate")
+    @Autowired
+    private RestTemplate restTemplate;
+
     public List<RegistrationCenterDto> getRegistrationCenterDetails() {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
@@ -105,11 +111,11 @@ public class RestHelper {
             List<RegistrationCenterDto> regCenterDetails = objectMapper.convertValue(responseNode.get(PreRegBatchContants.RESPONSE), 
                     RegistrationCenterResponseDto.class).getRegistrationCenters();
             LOGGER.info("Received the Registration Center details from Master Data Service.");
-            //return regCenterDetails;
-            List<RegistrationCenterDto> tempTestList = //new ArrayList<>();
-            regCenterDetails.stream().filter(regCenter -> regCenter.getId().equals("10001")).collect(Collectors.toList());
+            return regCenterDetails;
+            /* List<RegistrationCenterDto> tempTestList = //new ArrayList<>();
+            regCenterDetails.stream().filter(regCenter -> regCenter.getId().equals("10021")).collect(Collectors.toList());
             //tempTestList.add(regCenterDetails.get(0));
-            return tempTestList;
+            return tempTestList; */
         } catch (Exception exp) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                     "Unknown Error in fetching registration center details." + exp.getMessage(), exp);
@@ -268,10 +274,36 @@ public class RestHelper {
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
                 "Cancelling Booked Application endpoint: " + uriBuilder);
 
-            ClientResponse response =  webClient.method(HttpMethod.PUT)
+            ResponseEntity<ObjectNode> response =  restTemplate.exchange(uriBuilder, HttpMethod.PUT, null, ObjectNode.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                ObjectNode responseObjNode = response.getBody();
+                if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
+                    LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier,
+                        "Error in response for URL: " + uriBuilder + ", Errors:" 
+                            +  responseObjNode.get(PreRegBatchContants.ERRORS).toString());
+                    return false;
+                }
+                CancelBookingResponseDTO cancelResponse = objectMapper.convertValue(
+                                responseObjNode.get(PreRegBatchContants.RESPONSE), CancelBookingResponseDTO.class);
+                LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+                            "Booked Application cancelled for pre reg Id: " + preRegId + 
+                            ", Server Tranaction Id: " + cancelResponse.getTransactionId() +
+                            ", Server Response Message: " + cancelResponse.getMessage());
+                return true; 
+            } else {
+                LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                        "Response Code: " + response.getStatusCode() +
+                        ", Error in response for URL: " + uriBuilder + ", Errors:" 
+                            + response.getBody().get(PreRegBatchContants.ERRORS).toString());
+                return false;
+            } 
+
+           /*  ClientResponse response =  webClient.method(HttpMethod.PUT)
                                                 .uri(uriBuilder)
-                                                .contentType(MediaType.APPLICATION_JSON)
-                                                .exchange().block();
+                                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                .exchange()
+                                                .block();
                                                 
             ObjectNode responseObjNode = response.bodyToMono(ObjectNode.class).block();
             if (response.statusCode() == HttpStatus.OK) {
@@ -294,7 +326,7 @@ public class RestHelper {
                         ", Error in response for URL: " + uriBuilder + ", Errors:" 
                             + responseObjNode.get(PreRegBatchContants.ERRORS).toString());
                 return false;
-            }
+            } */
         } catch (Throwable t) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                     "Unknown Error in fetching data for endpoint: " + uriBuilder + ", Error: "  + t.getMessage(), t);
@@ -303,17 +335,49 @@ public class RestHelper {
     }
 
     public boolean sendCancelledNotification(String preRegId, String regDate, String regTime, String langCode, String logIdentifier) {
-        LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
-                "Sending Cancelling Notification for Booked Application Pre Reg Id: " + preRegId);
         try {
 
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
-                "Cancelling Booked Application endpoint: " + sendNotificationURL);
+                "Sending Cancelling Notification for Booked Application Pre Reg Id: " + sendNotificationURL + ", Pre Reg Id: " + preRegId);
+ 
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-            MultiValueMap<String, String> requestValueMap = buildNotificationRequest(preRegId, regDate, regTime, langCode, logIdentifier);
+            LinkedMultiValueMap<String, Object> requestValueMap = buildNotificationRequest(preRegId, regDate, regTime, langCode, logIdentifier);
+            HttpEntity<LinkedMultiValueMap<String, Object>> httpEntity = new HttpEntity<LinkedMultiValueMap<String, Object>>(requestValueMap, headers);
+
+            String notifyEailResourseUrl = UriComponentsBuilder.fromUriString(sendNotificationURL).toUriString();
+            ResponseEntity<ObjectNode> response = restTemplate.exchange(notifyEailResourseUrl, HttpMethod.POST, httpEntity, ObjectNode.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                ObjectNode responseObjNode = response.getBody();
+                if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
+                    LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier,
+                        "Error in response for URL: " + sendNotificationURL + ", Errors:" 
+                            +  responseObjNode.get(PreRegBatchContants.ERRORS).toString());
+                    return false;
+                }
+                NotificationResponseDTO notifyResponse = objectMapper.convertValue(
+                                responseObjNode.get(PreRegBatchContants.RESPONSE), NotificationResponseDTO.class);
+                LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+                            "Nofitication Sent for cancelled Application for pre reg Id: " + preRegId + 
+                            ", Notification Status: " + notifyResponse.getStatus() +
+                            ", Notification Response Message: " + notifyResponse.getMessage());
+                return true; 
+            } else {
+                LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                        "Response Code: " + response.getStatusCode() +
+                        ", Error in response for URL: " + sendNotificationURL + ", Errors:" 
+                            + response.getBody().get(PreRegBatchContants.ERRORS).toString());
+                return false;
+            } 
+
+            /* MultiValueMap<String, String> requestValueMap = buildNotificationRequest(preRegId, regDate, regTime, langCode, logIdentifier);
             ClientResponse response =  webClient.method(HttpMethod.POST)
                                                 .uri(UriComponentsBuilder.fromUriString(sendNotificationURL).toUriString())
-                                                .contentType(MediaType.MULTIPART_FORM_DATA)
+                                                .headers(httpHeaders -> {
+                                                    httpHeaders.addAll(headers);
+                                                 })
                                                 .body(BodyInserters.fromFormData(requestValueMap))
                                                 .exchange().block();
             ObjectNode responseObjNode = response.bodyToMono(ObjectNode.class).block();
@@ -337,7 +401,7 @@ public class RestHelper {
                         ", Error in response for URL: " + sendNotificationURL + ", Errors:" 
                             + responseObjNode.get(PreRegBatchContants.ERRORS).toString());
                 return false;
-            }
+            } */
         } catch (Throwable t) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                     "Unknown Error in fetching data for endpoint: " + sendNotificationURL + ", Error: "  + t.getMessage(), t);
@@ -346,7 +410,7 @@ public class RestHelper {
 
     }
 
-    private MultiValueMap<String, String>  buildNotificationRequest(String preRegId, String regDate, String regTime, String langCode, String logIdentifier) {
+    private LinkedMultiValueMap<String, Object>  buildNotificationRequest(String preRegId, String regDate, String regTime, String langCode, String logIdentifier) {
         NotificationDTO notificationDetails = new NotificationDTO();
         notificationDetails.setAppointmentDate(regDate);
         notificationDetails.setPreRegistrationId(preRegId);
@@ -361,7 +425,8 @@ public class RestHelper {
             request.setId(PreRegBatchContants.NOTIFICATION_PRE_REG_ID);
             request.setVersion(PreRegBatchContants.NOTIFICATION_PRE_REG_VER);
             request.setRequesttime(new Date());
-            MultiValueMap<String, String> valueMap = new LinkedMultiValueMap<>();
+
+            LinkedMultiValueMap<String, Object> valueMap = new LinkedMultiValueMap<>();
             valueMap.add(PreRegBatchContants.NOTIFICATION_REQ_DTO, objectMapper.writeValueAsString(request));
             valueMap.add(PreRegBatchContants.LANG_CODE, langCode);
             return valueMap;

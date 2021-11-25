@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,7 @@ public class SlotAvailabilityGenerator {
 
 	@Autowired
 	private PreRegBatchDBHelper batchDBHelper;
+
 
     public void generateRegistrationAvailabilitySlots() {
 
@@ -130,8 +132,33 @@ public class SlotAvailabilityGenerator {
 			LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
 						"Time took to complete slot generation for registration center: " + (endTime - startTime) + " in ms");
 		});
+
+		// Deleting all the added slots for the expired registration centers. 
+		List<String> slotsAddedRegCenters = batchServiceDAO.findRegCenter(LocalDate.now());
+		slotsAddedRegCenters.stream().filter(regCenterId ->  !processingRegCentersList.contains(regCenterId))
+									 .forEach(regCenterId -> purgeExpiredRegCenterSlots(regCenterId, cancelledTracker, notifierTracker));
+		
+		// Printing the cancelled & notification status
+		printCancelNotifyStatus(cancelledTracker, "CANCEL-TRACKER");
+		printCancelNotifyStatus(notifierTracker, "NOTIFY-TRACKER");
+		
     }
 
+	private void purgeExpiredRegCenterSlots(String regCenterId,  Map<String, Boolean> cancelledTracker,	
+					Map<String, Boolean> notifierTracker) {
+		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+						"Deleting Slots for expired reg Center: " + regCenterId);
+		List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO.findAllPreIdsByregID(regCenterId, LocalDate.now());
+		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+						"Total Number of bookings available for the reg center: " + regBookingEntityList.size());
+		regBookingEntityList.stream().forEach(bookedSlot -> {
+			cancelAndNotifyApplicant(bookedSlot, PreRegBatchContants.EMPTY, cancelledTracker, notifierTracker);
+		});
+		int deletedSlots = batchServiceDAO.deleteAllSlotsByRegId(regCenterId, LocalDate.now());
+		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+												"Deleted All Slots for expired reg Center: " + regCenterId + 
+												", Deleted Slot Count: " + deletedSlots);
+	}
 
 	private void checkAndSaveEmptySlot(RegistrationCenterDto regCenterDetails, List<AvailibityEntity> slotsAvailableList, 
 				LocalDate slotGenCurrentDay, String logIdentifier, Map<String, Boolean> cancelledTracker,
@@ -252,6 +279,9 @@ public class SlotAvailabilityGenerator {
 		LocalTime slotEndTime = startTime.plusHours(perKioskProcessTime.getHour()).plusMinutes(perKioskProcessTime.getMinute());
 		int slotsCnt = 0;
 		do {
+			if (slotEndTime.isAfter(endTime)) {
+				break;
+			}
 			slotsCnt++;
 			batchDBHelper.saveAvailability(regCenterDetails.getId(), regCenterDetails.getContactPerson(),
 					regCenterDetails.getNumberOfKiosks(), slotGenCurrentDay, slotStartTime, slotEndTime);
@@ -259,7 +289,7 @@ public class SlotAvailabilityGenerator {
 			slotEndTime = slotEndTime.plusHours(perKioskProcessTime.getHour()).plusMinutes(perKioskProcessTime.getMinute());
 		} while(slotEndTime.isBefore(endTime) || slotEndTime.equals(endTime));
 
-		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("hh:mm:ss");
+		DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
 						"Total Slots Saved : " + slotsCnt + 
 						", startTime: " + startTime.format(timeFormatter) + 
@@ -304,10 +334,36 @@ public class SlotAvailabilityGenerator {
 		
 		LocalTime firstSlotStartTime = slotsAvailableList.get(0).getFromTime();
 		LocalTime lastSlotEndTime = slotsAvailableList.get(slotsAvailableList.size() - 1).getToTime();
+		
+		// To Handle already generated slots. Existing slots generation did not have the lunch slot. 
+		LocalTime lunchSlotStartTime = centerLunchStartTime;
+		LocalTime lunchSlotEndTime = centerLunchEndTime;
 
-		AvailibityEntity lunchSlotTiming = slotsAvailableList.stream().filter(slot -> slot.getAvailableKiosks() == 0).findFirst().get();
-		LocalTime lunchSlotStartTime = lunchSlotTiming.getFromTime();
-		LocalTime lunchSlotEndTime = lunchSlotTiming.getToTime();
+		Optional<AvailibityEntity> lunchSlotTiming = slotsAvailableList.stream().filter(slot -> slot.getAvailableKiosks() == 0).findFirst();
+		if (lunchSlotTiming.isPresent()) {
+			lunchSlotStartTime = lunchSlotTiming.get().getFromTime();
+			lunchSlotEndTime = lunchSlotTiming.get().getToTime();
+		} else {
+			Object[] lunchTime = findLunchTimes(slotsAvailableList);
+			if (Objects.nonNull(lunchTime[0])) {
+				lunchSlotStartTime = (LocalTime) lunchTime[0];
+				long mins = MINUTES.between(lunchSlotStartTime, centerLunchStartTime);
+				// Scenario -- slot end time = 12:20 and lunch start time = 12:30 and perkiosk time = 20 mins.
+				// as 10 mins slot cannot be added so updating the lunch start time if there is difference.
+				if (mins != 0) {
+					LocalTime perKioskTime = regCenterDetails.getPerKioskProcessTime();
+					int perKioskTimeInMins =  perKioskTime.getHour() * 60 + perKioskTime.getMinute();
+					if (mins < perKioskTimeInMins) {
+						lunchSlotStartTime = centerLunchStartTime;
+					}
+				}
+			}
+			if (Objects.nonNull(lunchTime[1]))
+				lunchSlotEndTime = (LocalTime) lunchTime[1];
+			// save lunch slot, will be useful in next calculation.
+			batchDBHelper.saveAvailability(regCenterDetails.getId(), regCenterDetails.getContactPerson(),
+					PreRegBatchContants.ZERO_KIOSK, slotGenCurrentDay, lunchSlotStartTime, lunchSlotEndTime);
+		}
 
 		if (centerStartTime.equals(firstSlotStartTime) && centerEndTime.equals(lastSlotEndTime) && 
 					centerLunchStartTime.equals(lunchSlotStartTime) && centerLunchEndTime.equals(lunchSlotEndTime)) {
@@ -400,5 +456,31 @@ public class SlotAvailabilityGenerator {
 											"Total Number of new bookings slots added between hours: " + totalSlotAdded);
 	}
 
+	private Object[] findLunchTimes(List<AvailibityEntity> slotsAvailableList) {
+		int listSize = slotsAvailableList.size();
+		LocalTime lunchSlotStartTime = null;
+		LocalTime lunchSlotEndTime = null;
+		for (int i = 0; i < listSize; i++) {
+			if (i == listSize) {
+				break;
+			}
+			long diffMins = MINUTES.between(slotsAvailableList.get(i + 1).getFromTime(), slotsAvailableList.get(i).getToTime());
+			if (diffMins != 0) {
+				lunchSlotStartTime = slotsAvailableList.get(i).getToTime();
+				lunchSlotEndTime = slotsAvailableList.get(i + 1).getFromTime();
+				break;
+			}
+		}
+		return new Object[] {lunchSlotStartTime, lunchSlotEndTime};
+	}
+
+	private void printCancelNotifyStatus(Map<String, Boolean> tracker, String trackerLog) {
+
+		tracker.entrySet().stream().forEach(trackerKey -> {
+			String mesg = trackerKey.getValue() == Boolean.TRUE ? "Success" : "Failed";
+			LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, trackerLog, 
+						"For Pre Reg Id: " + trackerKey.getKey() + ", Status: " + mesg);
+		});
+	}
 
 }
