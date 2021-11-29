@@ -39,7 +39,7 @@ public class UISpecServiceTest {
 
 	@Value("${mosip.utc-datetime-pattern}")
 	private String mosipDateTimeFormat;
-	
+
 	@Mock
 	UISpecServiceUtil serviceUtil;
 
@@ -48,9 +48,9 @@ public class UISpecServiceTest {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(uISpecService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
-		
+
 	}
-	
+
 	@Test
 	public void testSuccessGetAllUISchema() {
 		PageDTO<UISpecResponseDTO> res=new PageDTO<UISpecResponseDTO>();
@@ -64,17 +64,19 @@ public class UISpecServiceTest {
 		UISpecResponseDTO uISpecResponseDTO=new UISpecResponseDTO();
 		uISpecResponseDTO.setTitle("abc");
 		uISpecResponseDTO.setDomain("pre-registration");
-		
+
 		List<UISpecKeyValuePair> jsonSpec=new ArrayList<UISpecKeyValuePair>();
 		JsonNode jsonNode=null;
 		UISpecKeyValuePair e=new UISpecKeyValuePair("", jsonNode);
 		jsonSpec.add(e);
 		uISpecResponseDTO.setJsonSpec(jsonSpec);
 		data.add(uISpecResponseDTO);
-		
+
 		res.setData(data);
 		Mockito.when(serviceUtil.getAllUISchema(1,1)).thenReturn(res);
-		uISpecService.getAllUISpec(1, 1);
+		MainResponseDTO<PageDTO<UISpecMetaDataDTO>> response = uISpecService.getAllUISpec(1, 1);
+		assertEquals(response.getResponse().getPageNo(),1);
+
 	}
 
 	@Test
@@ -83,7 +85,7 @@ public class UISpecServiceTest {
 		MainResponseDTO<PageDTO<UISpecMetaDataDTO>> response = uISpecService.getAllUISpec(1, 1);
 		assertEquals(response.getErrors().get(0).getMessage(),"ErrorCode --> exception");
 	}
-	
+
 	@Test
 	public void testgetLatestUISpecTest() {
 		List<UISpecResponseDTO> uiSchemas = new ArrayList<UISpecResponseDTO>();
@@ -98,9 +100,9 @@ public class UISpecServiceTest {
 		Mockito.when(serviceUtil.getUISchema(Mockito.any(), Mockito.any())).thenReturn(uiSchemas);
 		MainResponseDTO<UISpecMetaDataDTO> response = uISpecService.getLatestUISpec(0, 0.0);
 		assertEquals(response.getResponse().getStatus(),"PUBLISHED");
-		
+
 	}
-	
+
 	@Test
 	public void testgetLatestUISpecExceptionTest() {
 		List<UISpecResponseDTO> uiSchemas = new ArrayList<UISpecResponseDTO>();
@@ -115,6 +117,6 @@ public class UISpecServiceTest {
 		Mockito.when(serviceUtil.getUISchema(Mockito.any(), Mockito.any())).thenThrow(new UISpecException("ErrorCode","exception"));
 		MainResponseDTO<UISpecMetaDataDTO> response = uISpecService.getLatestUISpec(0, 0.0);
 		assertEquals(response.getErrors().get(0).getMessage(),"ErrorCode --> exception");
-		
+
 	}
 }
