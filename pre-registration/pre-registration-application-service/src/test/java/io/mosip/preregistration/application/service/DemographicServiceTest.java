@@ -272,7 +272,7 @@ public class DemographicServiceTest {
 	@Value("${mosip.pregistration.pagesize}")
 	private String pageSize;
 
-	@Value("${preregistartion.config.identityjson}")
+	@Value("${preregistration.config.identityjson}")
 	private String preregistrationIdJson;
 
 	/**

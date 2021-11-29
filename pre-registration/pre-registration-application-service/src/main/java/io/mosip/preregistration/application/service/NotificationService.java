@@ -107,22 +107,22 @@ public class NotificationService {
 	/**
 	 * 
 	 */
-	@Value("${preregistartion.response}")
+	@Value("${preregistration.response}")
 	private String demographicResponse;
 
-	@Value("${preregistartion.demographicDetails}")
+	@Value("${preregistration.demographicDetails}")
 	private String demographicDetails;
 
-	@Value("${preregistartion.identity}")
+	@Value("${preregistration.identity}")
 	private String identity;
 
-	@Value("${preregistartion.identity.email}")
+	@Value("${preregistration.identity.email}")
 	private String email;
 
-	@Value("${preregistartion.identity.name}")
+	@Value("${preregistration.identity.name}")
 	private String fullName;
 
-	@Value("${preregistartion.identity.phone}")
+	@Value("${preregistration.identity.phone}")
 	private String phone;
 
 	@Value("${preregistration.notification.nameFormat}")

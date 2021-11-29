@@ -91,7 +91,7 @@ public class AnonymousProfileUtil {
 	/**
 	 * Name of the identity mapping JSON file
 	 */
-	@Value("${preregistartion.config.identityjson}")
+	@Value("${preregistration.config.identityjson}")
 	private String identityMappingJsonFileName;
 
 	/**
@@ -102,7 +102,7 @@ public class AnonymousProfileUtil {
 	/**
 	 * Root attribute name under for which identity mapping fields are available
 	 */
-	@Value("${preregistartion.identity}")
+	@Value("${preregistration.identity}")
 	private String identityKey;
 
 	/**
