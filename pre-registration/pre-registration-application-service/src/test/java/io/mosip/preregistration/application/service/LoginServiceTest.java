@@ -100,10 +100,8 @@ public class LoginServiceTest {
 	@Value("${prereg.auth.jwt.token.expiration}")
 	private String jwtTokenExpiryTime;
 
-	@InjectMocks
 	private String globalConfig;
 
-	@InjectMocks
 	private String preregConfig;
 
 	@InjectMocks
