@@ -3,6 +3,7 @@ package io.mosip.preregistration.application.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -26,6 +27,8 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
+import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
+import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.OtpUser;
 import io.mosip.preregistration.application.dto.User;
@@ -33,6 +36,7 @@ import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
 import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
+import io.mosip.preregistration.application.exception.SendOtpFailedException;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -87,6 +91,21 @@ public class LoginServiceTest {
 	@Mock
 	private HttpHeaders headers;
 
+	@Mock
+	MainResponseDTO<AuthNResponse> sendOtpResponse;
+
+	@Mock
+	OTPRequestWithLangCodeAndCaptchaToken otpRequestlang;
+
+	@Value("${prereg.auth.jwt.token.expiration}")
+	private String jwtTokenExpiryTime;
+
+	@InjectMocks
+	private String globalConfig;
+
+	@InjectMocks
+	private String preregConfig;
+
 	@InjectMocks
 	private LoginService authService;
 
@@ -120,6 +139,8 @@ public class LoginServiceTest {
 	@Value("${pre.reg.config.file}")
 	private String preRegFileName;
 
+	MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request = new MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken>();
+
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
@@ -128,8 +149,8 @@ public class LoginServiceTest {
 		spyAuthService = Mockito.spy(authService);
 		requestMap = new HashMap<>();
 		requestMap.put("version", version);
-		//		ReflectionTestUtils.setField(spyAuthService, "uiConfigParams", "abcd");
-		//		ReflectionTestUtils.setField(this, "uiConfigParams", "abcd");
+		// ReflectionTestUtils.setField(spyAuthService, "uiConfigParams", "abcd");
+		// ReflectionTestUtils.setField(this, "uiConfigParams", "abcd");
 		ReflectionTestUtils.setField(authService, "uiConfigParams", "abcd");
 		ReflectionTestUtils.setField(authService, "globalFileName", "abcd");
 		ReflectionTestUtils.setField(authService, "preRegFileName", "abcd");
@@ -138,12 +159,15 @@ public class LoginServiceTest {
 
 	@Test
 	public void sendOtpTest() throws Exception {
+		boolean otpSent = true;
+		boolean isSuccess = true;
 		list.add("mobile");
 		requestMap.put("id", sendOtpId);
 		Mockito.when(authCommonUtil.createRequestMap(otpRequest)).thenReturn(requestMap);
 		Mockito.when(otpRequest.getRequest()).thenReturn(otp);
 		Mockito.when(otp.getUserId()).thenReturn("a@a.com");
 		Mockito.when(authCommonUtil.validateUserId(Mockito.any())).thenReturn(list);
+		Mockito.when(otpmanager.sendOtp(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(otpSent);
 		Mockito.doReturn(responseEntity).when(authCommonUtil).callAuthService(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		Mockito.doReturn(mainResponseDTO).when(authCommonUtil).getMainResponseDto(Mockito.any());
@@ -156,7 +180,7 @@ public class LoginServiceTest {
 		Mockito.when(authCommonUtil.responseToString(Mockito.any())).thenReturn("MOSIP");
 		authNResposne.setMessage("success");
 		Mockito.doNothing().when(mainResponseDTO).setResponse(Mockito.any());
-		assertNotNull(spyAuthService.sendOTP(otpRequest,"eng"));
+		assertNotNull(spyAuthService.sendOTP(otpRequest, "eng"));
 	}
 
 	@Test
@@ -183,14 +207,15 @@ public class LoginServiceTest {
 		Map<String, String> configParams = new HashMap<>();
 		configParams.put("mosip.secondary-language", "fra");
 		MainResponseDTO<Map<String, String>> response = new MainResponseDTO<>();
-		//		Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(String.class))).thenReturn(res);
+		// Mockito.when(restTemplate.getForEntity(Mockito.anyString(),
+		// Mockito.eq(String.class))).thenReturn(res);
 		Mockito.when(authCommonUtil.getConfig(Mockito.any())).thenReturn("fileReturn");
 		Mockito.doNothing().when(authCommonUtil).getConfigParams(Mockito.any(), Mockito.any(), Mockito.any());
 		Mockito.when(authCommonUtil.parsePropertiesString(Mockito.any())).thenReturn(prop);
 		response = authService.getConfig();
 
 		assertNotNull(response.getResponse());
-		//		assertEquals(response.getResponse().get("mosip.secondary-language"), "fra");
+		// assertEquals(response.getResponse().get("mosip.secondary-language"), "fra");
 	}
 
 	@Test(expected = ConfigFileNotFoundException.class)
@@ -200,12 +225,13 @@ public class LoginServiceTest {
 		Map<String, String> configParams = new HashMap<>();
 		configParams.put("mosip.secondary-language", "fra");
 		MainResponseDTO<Map<String, String>> response = new MainResponseDTO<>();
-		//		Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(String.class))).thenReturn(res);
-		Mockito.when(authCommonUtil.getConfig(Mockito.any())).thenThrow(new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.name(),
-				LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.name(), null));
+		// Mockito.when(restTemplate.getForEntity(Mockito.anyString(),
+		// Mockito.eq(String.class))).thenReturn(res);
+		Mockito.when(authCommonUtil.getConfig(Mockito.any())).thenThrow(new ConfigFileNotFoundException(
+				LoginErrorCodes.PRG_AUTH_012.name(), LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.name(), null));
 		Mockito.doThrow(new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.name(),
 				LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.name(), null)).when(authCommonUtil)
-		.getConfigParams(Mockito.any(), Mockito.any(), Mockito.any());
+				.getConfigParams(Mockito.any(), Mockito.any(), Mockito.any());
 		Mockito.when(authCommonUtil.parsePropertiesString(Mockito.any())).thenReturn(prop);
 		response = authService.getConfig();
 	}
@@ -223,18 +249,14 @@ public class LoginServiceTest {
 		LoginService spyAuthService = Mockito.mock(LoginService.class);
 		Mockito.doNothing().when(spyAuthService).
 
-		setAuditValues(Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class));
+				setAuditValues(Mockito.isA(String.class), Mockito.isA(String.class), Mockito.isA(String.class),
+						Mockito.isA(String.class), Mockito.isA(String.class), Mockito.isA(String.class),
+						Mockito.isA(String.class));
 
 		spyAuthService.setAuditValues("eventId", "eventName", "eventType", "description", "idType", "userId",
 				"userName");
-		Mockito.verify(spyAuthService, Mockito.times(1)).setAuditValues("eventId", "eventName", "eventType", "description", "idType", "userId",
-				"userName");
+		Mockito.verify(spyAuthService, Mockito.times(1)).setAuditValues("eventId", "eventName", "eventType",
+				"description", "idType", "userId", "userName");
 
 	}
 
@@ -251,18 +273,14 @@ public class LoginServiceTest {
 		LoginService spyAuthService = Mockito.mock(LoginService.class);
 		Mockito.doNothing().when(spyAuthService).
 
-		setAuditValues(Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class),
-				Mockito.isA(String.class));
+				setAuditValues(Mockito.isA(String.class), Mockito.isA(String.class), Mockito.isA(String.class),
+						Mockito.isA(String.class), Mockito.isA(String.class), Mockito.isA(String.class),
+						Mockito.isA(String.class));
 
 		spyAuthService.setAuditValues("eventId", "eventName", "eventType", "description", "idType", "userId",
 				"userName");
-		Mockito.verify(spyAuthService, Mockito.times(1)).setAuditValues("eventId", "eventName", "eventType", "description", "idType", "userId",
-				"userName");
+		Mockito.verify(spyAuthService, Mockito.times(1)).setAuditValues("eventId", "eventName", "eventType",
+				"description", "idType", "userId", "userName");
 
 	}
 
@@ -275,7 +293,7 @@ public class LoginServiceTest {
 	@Test(expected = ConfigFileNotFoundException.class)
 	public void refreshConfigException() {
 		Mockito.when(authCommonUtil.getConfig(Mockito.any()))
-		.thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
+				.thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
 		assertEquals(spyAuthService.refreshConfig().getResponse(), "success");
 	}
 
@@ -318,6 +336,61 @@ public class LoginServiceTest {
 		Mockito.doNothing().when(spyAuthService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		spyAuthService.validateWithUserIdOtp(userRequest);
+	}
+
+	@Test
+	public void testValidateCaptchaAndSendOtp() {
+		LoginService spyAuthService1 = Mockito.spy(authService);
+		otpRequestlang.setUserId("123");
+		otpRequestlang.setCaptchaToken("temp");
+		otpRequestlang.setLangCode("1234");
+		request.setRequest(otpRequestlang);
+		String captchaToken = request.getRequest().getCaptchaToken();
+		Mockito.when((MainResponseDTO<AuthNResponse>) authCommonUtil.getMainResponseDto(request))
+				.thenReturn(mainResponseDTO);
+		CaptchaResposneDTO captchaResponse = new CaptchaResposneDTO();
+		mainResponseDTO.setResponsetime(LocalDateTime.now().toString());
+		Mockito.when(authCommonUtil.validateCaptchaToken(captchaToken)).thenReturn(captchaResponse);
+		Mockito.when(authCommonUtil.createRequestMap(otpRequest)).thenReturn(requestMap);
+		Mockito.doReturn(sendOtpResponse).when(spyAuthService1).sendOTP(otpRequest, "eng");
+		Mockito.when(user.getUserId()).thenReturn("a@a.com");
+		Mockito.doReturn(mainResponseDTO).when(authCommonUtil).getMainResponseDto(userRequest);
+		assertNotNull(spyAuthService.validateCaptchaAndSendOtp(request));
+		spyAuthService.validateCaptchaAndSendOtp(request);
+	}
+
+	@Test(expected = SendOtpFailedException.class)
+	public void testValidateCaptchaAndSendOtpException() {
+		LoginService spyAuthService1 = Mockito.spy(authService);
+		MainResponseDTO<AuthNResponse> response = new MainResponseDTO<AuthNResponse>();
+		otpRequestlang.setUserId("123");
+		otpRequestlang.setCaptchaToken("temp");
+		otpRequestlang.setLangCode("1234");
+		request.setRequest(otpRequestlang);
+		otp.setUserId(userIdOtpId);
+		otpRequest.setRequest(otp);
+		Mockito.when((MainResponseDTO<AuthNResponse>) authCommonUtil.getMainResponseDto(Mockito.any()))
+				.thenReturn(response);
+		Mockito.doReturn(sendOtpResponse).when(spyAuthService1).sendOTP(otpRequest, "eng");
+		Mockito.when(authCommonUtil.createRequestMap(otpRequest)).thenReturn(requestMap);
+		Mockito.when(user.getUserId()).thenReturn("a@a.com");
+		Mockito.doReturn(mainResponseDTO).when(authCommonUtil).getMainResponseDto(userRequest);
+		spyAuthService.validateCaptchaAndSendOtp(request);
+	}
+
+	@Test
+	public void testsetupLoginService() {
+		Mockito.when(authCommonUtil.getConfig(globalFileName)).thenReturn(globalConfig);
+		Mockito.when(authCommonUtil.getConfig(preRegFileName)).thenReturn(preregConfig);
+		spyAuthService.setupLoginService();
+	}
+
+	@Test
+	public void testSendOTPSuccessJwtToken() {
+		String userId = "123";
+		Mockito.when(authCommonUtil.sendOtpJwtToken(userId)).thenReturn(userId);
+		assertEquals(spyAuthService.sendOTPSuccessJwtToken(userId), userId);
+		spyAuthService.sendOTPSuccessJwtToken(userId);
 	}
 
 }
