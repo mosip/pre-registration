@@ -37,4 +37,14 @@ public class PreRegBatchContants {
 	public static final String NOTIFICATION_REQ_DTO = "NotificationRequestDTO";
 
 	public static final String LANG_CODE = "langCode";
+
+	public static final String PROCESSED_STATUS_COMMENTS = "Processed by registration processor";
+
+	public static final String NEW_STATUS_COMMENTS = "Application consumed";
+
+	public static final String APPLICATION_CONSUMED_JOB = "ApplicationConsumedJob";
+
+	public static final String EXPIRED_STATUS_JOB = "ExpiredStatusJob";
+
+	public static final String APPOINTMENT_MISMATCH_JOB = "AppointmentMismatchJob";
 }

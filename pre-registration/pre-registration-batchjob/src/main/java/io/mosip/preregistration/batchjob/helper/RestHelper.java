@@ -1,7 +1,11 @@
 package io.mosip.preregistration.batchjob.helper;
 
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
 import java.util.ArrayList;
@@ -13,6 +17,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
+
+import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -41,10 +47,14 @@ import io.mosip.preregistration.batchjob.model.RegistrationCenterDto;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterHolidayDto;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterResponseDto;
 import io.mosip.preregistration.batchjob.model.WorkingDaysResponseDto;
+import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.common.dto.AuditRequestDto;
+import io.mosip.preregistration.core.common.dto.AuditResponseDto;
 import io.mosip.preregistration.core.common.dto.CancelBookingResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
+import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 /**
@@ -87,6 +97,12 @@ public class RestHelper {
     @Value("${notification.url}")
 	private String sendNotificationURL;
 
+    @Value("${audit.url}")
+	private String auditEntryURL;
+
+    @Value("#{${mosip.kernel.masterdata.day.codes.map}}")
+	private Map<String, String> dayCodesMap;
+
     @Autowired
 	private ObjectMapper objectMapper;
     
@@ -98,7 +114,21 @@ public class RestHelper {
     @Autowired
     private RestTemplate restTemplate;
 
-    public List<RegistrationCenterDto> getRegistrationCenterDetails() {
+    private String hostIP;
+
+	private String hostName;
+
+    @PostConstruct
+	public void init() {
+		hostIP = getServerIp();
+		hostName = getServerName();
+        if(Objects.isNull(dayCodesMap)){
+            dayCodesMap = new HashMap<>();
+        }
+	}
+
+
+    public List<RegistrationCenterDto> getRegistrationCenterDetails(List<String> filterIds) {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                     "Fetching the Registration Center Details from Master Data Service. Configured URL: " + regCenterDetailsURL);
@@ -111,11 +141,18 @@ public class RestHelper {
             List<RegistrationCenterDto> regCenterDetails = objectMapper.convertValue(responseNode.get(PreRegBatchContants.RESPONSE), 
                     RegistrationCenterResponseDto.class).getRegistrationCenters();
             LOGGER.info("Received the Registration Center details from Master Data Service.");
-            return regCenterDetails;
+            
             /* List<RegistrationCenterDto> tempTestList = //new ArrayList<>();
-            regCenterDetails.stream().filter(regCenter -> regCenter.getId().equals("10021")).collect(Collectors.toList());
-            //tempTestList.add(regCenterDetails.get(0));
-            return tempTestList; */
+            regCenterDetails.stream().filter(regCenter -> regCenter.getId().equals("10001")).collect(Collectors.toList());
+            return tempTestList;
+            */
+            if (Objects.isNull(filterIds) || filterIds.size() == 0)
+                return regCenterDetails;
+            
+            // Added below filtering because of Spring Batch partitioning serialization issue for 'LocalTime' object.
+            List<RegistrationCenterDto> filteredRegCentersList = 
+            regCenterDetails.stream().filter(regCenter -> filterIds.contains(regCenter.getId())).collect(Collectors.toList());
+            return filteredRegCentersList;
         } catch (Exception exp) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                     "Unknown Error in fetching registration center details." + exp.getMessage(), exp);
@@ -208,20 +245,19 @@ public class RestHelper {
 
             List<String> workingDaysList = new ArrayList<>();
             workingDaysResponseDto.getWeekdays().stream().filter(weekDay -> weekDay.isWorking())
-                    .forEach(weekDay -> workingDaysList.add(weekDay.getName()));
+                    .forEach(weekDay -> workingDaysList.add(weekDay.getDayCode()));
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                 "Working Days: " + workingDaysList);
 
             List<String> weekOffDaysList = new ArrayList<>();
             workingDaysResponseDto.getWeekdays().stream().filter(weekDay -> !weekDay.isWorking())
-                .forEach(weekDay -> weekOffDaysList.add(weekDay.getName().toUpperCase()));
+                .forEach(weekDay -> weekOffDaysList.add(weekDay.getDayCode()));
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                 "Weekoff Days: " + weekOffDaysList);
 
             LocalDate.now().datesUntil(LocalDate.now().plusDays(noOfDaysToSync))
                                                       .forEach(weekDay -> {
-                                                        if (weekOffDaysList.contains(weekDay.getDayOfWeek()
-                                                                        .getDisplayName(TextStyle.SHORT, Locale.ENGLISH).toUpperCase())){
+                                                        if (weekOffDaysList.contains(dayCodesMap.get(weekDay.getDayOfWeek().toString()))){
                                                             holidaysLst.add(weekDay.toString());
                                                         }});
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
@@ -436,4 +472,89 @@ public class RestHelper {
         }
         return null;
     }
+
+    public boolean sendAuditDetails(String eventId, String eventName, String eventType, String description, String idType,
+                            String userId, String userName, String regCenterIds, String moduleId, String moduleName) {
+        try {
+
+            LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+                "Sending Audit details for : " + moduleName + ", For Job: " +  auditEntryURL);
+            
+            AuditRequestDto requestDto = buildAuditRequestDto(eventId, eventName, eventType, description, idType,
+			                                        userId, userName, regCenterIds, moduleId, moduleName);
+            RequestWrapper<AuditRequestDto> requestAudit = new RequestWrapper<>();
+			requestAudit.setRequest(requestDto);
+            HttpHeaders headers = new HttpHeaders();
+            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            HttpEntity<RequestWrapper<AuditRequestDto>> requestEntity = new HttpEntity<>(requestAudit, headers);
+
+            String notifyEailResourseUrl = UriComponentsBuilder.fromUriString(auditEntryURL).toUriString();
+            ResponseEntity<ObjectNode> response = restTemplate.exchange(notifyEailResourseUrl, HttpMethod.POST, requestEntity, ObjectNode.class);
+
+            if (response.getStatusCode().is2xxSuccessful()) {
+                ObjectNode responseObjNode = response.getBody();
+                if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
+                    LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                        "Error in response for URL: " + sendNotificationURL + ", Errors:" 
+                            +  responseObjNode.get(PreRegBatchContants.ERRORS).toString());
+                    return false;
+                }
+                AuditResponseDto auditResponse = objectMapper.convertValue(
+                                responseObjNode.get(PreRegBatchContants.RESPONSE), AuditResponseDto.class);
+                LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+                            "Audit Sent for Job Completion, Job Name: " + moduleName + 
+                            ", Notification Status: " + auditResponse.isStatus());
+                return true; 
+            } else {
+                LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                        "Response Code: " + response.getStatusCode() +
+                        ", Error in response for URL: " + sendNotificationURL + ", Errors:" 
+                            + response.getBody().get(PreRegBatchContants.ERRORS).toString());
+                return false;
+            } 
+        } catch (Throwable t) {
+            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+                    "Unknown Error in fetching data for endpoint: " + sendNotificationURL + ", Error: "  + t.getMessage(), t);
+        }
+        return false;
+    }
+
+    private AuditRequestDto buildAuditRequestDto(String eventId, String eventName, String eventType, String description, String idType,
+			String userId, String userName, String regCenterIds, String moduleId, String moduleName) {
+		AuditRequestDto auditRequestDto = new AuditRequestDto();
+		auditRequestDto.setEventId(eventId);
+		auditRequestDto.setEventName(eventName);
+		auditRequestDto.setEventType(eventType);
+		auditRequestDto.setDescription(description + " " + regCenterIds);
+		auditRequestDto.setId(idType);
+		auditRequestDto.setSessionUserId(userId);
+		auditRequestDto.setSessionUserName(userName);
+		auditRequestDto.setModuleId(moduleId);
+		auditRequestDto.setModuleName(moduleName);
+        auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
+		auditRequestDto.setApplicationId(AuditLogVariables.MOSIP_1.toString());
+		auditRequestDto.setApplicationName(AuditLogVariables.PREREGISTRATION.toString());
+		auditRequestDto.setHostIp(hostIP);
+		auditRequestDto.setHostName(hostName);
+		auditRequestDto.setCreatedBy(AuditLogVariables.SYSTEM.toString());
+	    auditRequestDto.setIdType(AuditLogVariables.PRE_REGISTRATION_ID.toString());
+        return auditRequestDto;
+	}
+
+    private String getServerIp() {
+		try {
+			return InetAddress.getLocalHost().getHostAddress();
+		} catch (UnknownHostException e) {
+			return "UNKNOWN-IP";
+		}
+	}
+	
+	private String getServerName() {
+		try {
+			return InetAddress.getLocalHost().getHostName();
+		} catch (UnknownHostException e) {
+			return "UNKNOWN-HOST";
+		}
+	}
+
 }

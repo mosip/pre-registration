@@ -21,11 +21,15 @@ import org.springframework.stereotype.Component;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
 import io.mosip.preregistration.batchjob.entity.AvailibityEntity;
+import io.mosip.preregistration.batchjob.helper.CancelAndNotifyHelper;
 import io.mosip.preregistration.batchjob.helper.PreRegBatchDBHelper;
 import io.mosip.preregistration.batchjob.helper.RestHelper;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterDto;
 import io.mosip.preregistration.batchjob.repository.utils.BatchJpaRepositoryImpl;
-import io.mosip.preregistration.core.common.entity.ApplicationEntity;
+import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.code.EventId;
+import io.mosip.preregistration.core.code.EventName;
+import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
@@ -69,31 +73,37 @@ public class SlotAvailabilityGenerator {
 	@Autowired
 	private PreRegBatchDBHelper batchDBHelper;
 
+	@Autowired
+	private CancelAndNotifyHelper cancelAndNotifyHelper;
 
-    public void generateRegistrationAvailabilitySlots() {
+
+    public void generateRegistrationAvailabilitySlots(String partName, List<String> regCenterIdsPartList) {
 
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
 		 			"No of days configured to generate slots availability: " + noOfDaysToSync);
 
-		List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails();
+		List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails(regCenterIdsPartList);
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
-		 				"Total Number of registration Found available in Master Data: <" + regCentersList.size() + ">");
+		 				"Total Number of registration Found available in Master Data: <" + regCentersList.size() + 
+						 ">, on partition Name: " + partName);
 
-		List<String> processingRegCentersList = new ArrayList<>();
+		long partStartTime = System.currentTimeMillis();
 		Map<String, Boolean> cancelledTracker = new HashMap<>();
 		Map<String, Boolean> notifierTracker = new HashMap<>();
+		List<String> errorredRegCenters = new ArrayList<>();
+		final AtomicInteger procCounter = new AtomicInteger(1);
 		regCentersList.stream().forEach(regCenter -> {
 			long startTime = System.currentTimeMillis();
 			// identifier for debugging
-			String logIdentifier = regCenter.getId() + "_" + System.currentTimeMillis();
+			String logIdentifier = partName + "_" + regCenter.getId() + "_" + System.currentTimeMillis();
 			try {
+				
 				List<String> regCenterholidaysList = restHelper.getRegistrationHolidayList(regCenter.getId(), regCenter.getLangCode(), 
 						noOfDaysToSync);
 				
 				LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
 						"Processing Generation of Slots for Reg Center Id: " + regCenter.getId() + 
 						", Reg Center Holiday List: " + regCenterholidaysList);
-				processingRegCentersList.add(regCenter.getId());
 				
 				LocalDate slotGenStartDate = LocalDate.now();
 				LocalDate slotGenEndDate = slotGenStartDate.plusDays(noOfDaysToSync);
@@ -127,38 +137,39 @@ public class SlotAvailabilityGenerator {
 				});
 			} catch(Throwable t) {
 				LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, "Unknown Error: " + t.getMessage(), t);
-			} 
+				errorredRegCenters.add(regCenter.getId());
+			}
+			batchServiceDAO.flushAvailability();
 			long endTime = System.currentTimeMillis();
 			LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
-						"Time took to complete slot generation for registration center: " + (endTime - startTime) + " in ms");
+						"Time took to complete slot generation for registration center: " + (endTime - startTime) + " in ms," +
+						" procCounter: " + procCounter.getAndIncrement());
 		});
-
+		long partEndTime = System.currentTimeMillis();
+		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+						"Total Time Took to process partition: " + partName + ", Time(In millis): " + (partEndTime - partStartTime));
 		// Deleting all the added slots for the expired registration centers. 
-		List<String> slotsAddedRegCenters = batchServiceDAO.findRegCenter(LocalDate.now());
+		/* List<String> slotsAddedRegCenters = batchServiceDAO.findRegCenter(LocalDate.now());
 		slotsAddedRegCenters.stream().filter(regCenterId ->  !processingRegCentersList.contains(regCenterId))
-									 .forEach(regCenterId -> purgeExpiredRegCenterSlots(regCenterId, cancelledTracker, notifierTracker));
+									 .forEach(regCenterId -> purgeExpiredRegCenterSlots(regCenterId, cancelledTracker, notifierTracker)); */
 		
 		// Printing the cancelled & notification status
 		printCancelNotifyStatus(cancelledTracker, "CANCEL-TRACKER");
 		printCancelNotifyStatus(notifierTracker, "NOTIFY-TRACKER");
-		
-    }
 
-	private void purgeExpiredRegCenterSlots(String regCenterId,  Map<String, Boolean> cancelledTracker,	
-					Map<String, Boolean> notifierTracker) {
-		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
-						"Deleting Slots for expired reg Center: " + regCenterId);
-		List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO.findAllPreIdsByregID(regCenterId, LocalDate.now());
-		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
-						"Total Number of bookings available for the reg center: " + regBookingEntityList.size());
-		regBookingEntityList.stream().forEach(bookedSlot -> {
-			cancelAndNotifyApplicant(bookedSlot, PreRegBatchContants.EMPTY, cancelledTracker, notifierTracker);
-		});
-		int deletedSlots = batchServiceDAO.deleteAllSlotsByRegId(regCenterId, LocalDate.now());
-		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
-												"Deleted All Slots for expired reg Center: " + regCenterId + 
-												", Deleted Slot Count: " + deletedSlots);
-	}
+		if (errorredRegCenters.size() > 0) {
+			String regCenterIds = String.join(",", errorredRegCenters);
+			restHelper.sendAuditDetails(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
+						"Add Availability Slots Failed, List of Reg Centers.", AuditLogVariables.NO_ID.toString(), 
+						auditUserId, auditUsername, regCenterIds, AuditLogVariables.BOOK.toString(), AuditLogVariables.BOOKING_SERVICE.toString());
+			return;
+		}
+		// No Reg Center has resulted in Error.
+		restHelper.sendAuditDetails(EventId.PRE_407.toString(), EventName.PERSIST.toString(), EventType.SYSTEM.toString(),
+						"Add Availability Slots Successfull.", AuditLogVariables.MULTIPLE_ID.toString(), 
+						auditUserId, auditUsername, PreRegBatchContants.EMPTY, AuditLogVariables.BOOK.toString(), 
+						AuditLogVariables.BOOKING_SERVICE.toString());
+    }
 
 	private void checkAndSaveEmptySlot(RegistrationCenterDto regCenterDetails, List<AvailibityEntity> slotsAvailableList, 
 				LocalDate slotGenCurrentDay, String logIdentifier, Map<String, Boolean> cancelledTracker,
@@ -204,7 +215,7 @@ public class SlotAvailabilityGenerator {
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
 						"Total Number of bookings available on the day: " + regBookingEntityList.size());
 		regBookingEntityList.stream().forEach(bookedSlot -> {
-			cancelAndNotifyApplicant(bookedSlot, logIdentifier, cancelledTracker, notifierTracker);
+			cancelAndNotifyHelper.cancelAndNotifyApplicant(bookedSlot, logIdentifier, cancelledTracker, notifierTracker);
 		});
 		batchServiceDAO.deleteSlots(regCenterDetails.getId(), slotGenCurrentDay);
 		batchDBHelper.saveAvailability(regCenterDetails.getId(), regCenterDetails.getContactPerson(),
@@ -213,21 +224,7 @@ public class SlotAvailabilityGenerator {
 				"Deleted & Inserted Empty slot for the date (Existing All Slots available): " + slotGenCurrentDay);
 	}
 
-	private void cancelAndNotifyApplicant(RegistrationBookingEntity bookedSlot, String logIdentifier, Map<String, Boolean> cancelledTracker,
-						Map<String, Boolean> notifierTracker) {
-
-		String preRegId = bookedSlot.getPreregistrationId();
-		ApplicationEntity bookedApplication  = batchServiceDAO.getBookedApplicantEntityDetails(preRegId);
-		if (Objects.nonNull(bookedApplication)) {
-			boolean cancelled = restHelper.cancelBookedApplication(preRegId, logIdentifier);
-			if (cancelled) {
-				boolean notified = restHelper.sendCancelledNotification(bookedSlot.getPreregistrationId(), bookedSlot.getRegDate().toString(), 
-							bookedSlot.getSlotFromTime().toString(), bookedSlot.getLangCode(), logIdentifier);
-				notifierTracker.put(bookedSlot.getPreregistrationId(), notified);
-			}
-			cancelledTracker.put(bookedSlot.getPreregistrationId(), cancelled);
-		}
-	}
+	
 
 	private void calculateFullDaySlotsAndSave(RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, 
 					String logIdentifier) {
@@ -443,7 +440,7 @@ public class SlotAvailabilityGenerator {
 				LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
 								"Cancelling Application for PreReg Id: " + bookedSlot.getPreregistrationId());
 				counter.incrementAndGet();
-				cancelAndNotifyApplicant(bookedSlot, logIdentifier, cancelledTracker, notifierTracker);
+				cancelAndNotifyHelper.cancelAndNotifyApplicant(bookedSlot, logIdentifier, cancelledTracker, notifierTracker);
 			});
 			batchServiceDAO.deleteSlotsBetweenHours(regCenterDetails.getId(), slotGenCurrentDay, slotCalculatedTime, centerConfiguredTime);
 			LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 

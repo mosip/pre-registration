@@ -9,14 +9,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.batchjob.utils.UpdateApplicationsForBookingUtil;
+import io.mosip.preregistration.batchjob.impl.ApplicationMismatchDataUpdater;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 @Component
 public class ApplicationsBookingCheckTasklet implements Tasklet {
 
 	@Autowired
-	private UpdateApplicationsForBookingUtil applicationBookingCheckUtil;
+	private ApplicationMismatchDataUpdater mismatchDataUpdater;
 
 	private Logger log = LoggerConfiguration.logConfig(ApplicationsBookingCheckTasklet.class);
 
@@ -31,14 +31,11 @@ public class ApplicationsBookingCheckTasklet implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 
 		try {
-
-			applicationBookingCheckUtil.UpdateBookingInfoInApplication();
-
+			mismatchDataUpdater.updateMismatchData();
 		} catch (Exception e) {
 			log.error("Sync master ", " Tasklet ", " encountered exception ", e.getMessage());
 			contribution.setExitStatus(new ExitStatus(e.getMessage()));
 		}
-
 		return RepeatStatus.FINISHED;
 	}
 

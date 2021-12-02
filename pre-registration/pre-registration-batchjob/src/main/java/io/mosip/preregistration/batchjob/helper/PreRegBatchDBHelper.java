@@ -38,8 +38,8 @@ public class PreRegBatchDBHelper {
     public void saveAvailability(String regCenterId, String contactPerson, 
             Short noOfKiosks, LocalDate date, LocalTime slotStartTime, LocalTime slotEndTime) {
 
-        LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
-                 "Saving Slot Generation for Date: " + date);
+        /* LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                 "Saving Slot Generation for Date: " + date); */
 		AvailibityEntity avaEntity = new AvailibityEntity();
 		avaEntity.setRegDate(date);
 		avaEntity.setRegcntrId(regCenterId);
