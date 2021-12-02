@@ -160,7 +160,6 @@ public class LoginServiceTest {
 	@Test
 	public void sendOtpTest() throws Exception {
 		boolean otpSent = true;
-		boolean isSuccess = true;
 		list.add("mobile");
 		requestMap.put("id", sendOtpId);
 		Mockito.when(authCommonUtil.createRequestMap(otpRequest)).thenReturn(requestMap);
