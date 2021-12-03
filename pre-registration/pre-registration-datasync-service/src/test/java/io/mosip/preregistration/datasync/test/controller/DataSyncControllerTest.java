@@ -169,7 +169,7 @@ public class DataSyncControllerTest {
 		mainDataSyncResponseDTO.setResponse(preRegistrationIdsDTO);
 
 		Mockito.when(dataSyncService.retrieveAllPreRegIds(mainDataSyncRequestDTO)).thenReturn(mainDataSyncResponseDTO);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/sync")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE).content(jsonObject.toString());
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
@@ -192,7 +192,7 @@ public class DataSyncControllerTest {
 		mainReverseDataSyncResponseDTO.setResponse(reverseDatasyncReponseDTO);
 		Mockito.when(dataSyncService.storeConsumedPreRegistrations(mainReverseDataSyncRequestDTO))
 				.thenReturn(mainReverseDataSyncResponseDTO);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/consumedPreRegIds")
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/sync/consumedPreRegIds")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE).content(jsonObjectRev.toString());
 		System.out.println(requestBuilder);
