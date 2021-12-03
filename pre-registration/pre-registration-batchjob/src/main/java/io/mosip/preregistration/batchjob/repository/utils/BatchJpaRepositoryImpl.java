@@ -112,12 +112,31 @@ public class BatchJpaRepositoryImpl {
 				processedPreIdRepository.deleteBypreRegistrationId(preRegId);
 				log.info("sessionId", "idType", "id", "Deleted Invalid Pre-Registration ID");
 			}
-
+			demographicRepository.flush();
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_004.getCode(),
 					ErrorMessages.DEMOGRAPHIC_TABLE_NOT_ACCESSIBLE.getMessage());
 		}
 		return entity;
+	}
+
+	public DemographicEntity getApplicantDemographicObject(String preRegId) {
+		try {
+			DemographicEntity entity = demographicRepository.findBypreRegistrationId(preRegId);
+			return entity;
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_004.getCode(),
+					ErrorMessages.DEMOGRAPHIC_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
+
+	public int deleteInvalidProcessedPreReg(String preRegId) {
+		try {
+			return processedPreIdRepository.deleteBypreRegistrationId(preRegId);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_004.getCode(),
+					ErrorMessages.DEMOGRAPHIC_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
 	}
 
 	public ApplicationEntity getApplicantEntityDetails(String applicationID) {
@@ -131,6 +150,18 @@ public class BatchJpaRepositoryImpl {
 
 			}
 
+		} catch (DataAccessLayerException e) {
+			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
+					ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
+		}
+		return entity;
+	}
+
+	public ApplicationEntity getBookedApplicantEntityDetails(String applicationID) {
+
+		ApplicationEntity entity = null;
+		try {
+			entity = applicationRepository.findByApplicationIdAndBookingStatusCode(applicationID, StatusCodes.BOOKED.getCode());
 		} catch (DataAccessLayerException e) {
 			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
 					ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
@@ -157,21 +188,13 @@ public class BatchJpaRepositoryImpl {
 	}
 	
 	public List<RegistrationBookingEntity> getAllRegistrationAppointmentDetails(LocalDate bookingDate) {
-
-		List<RegistrationBookingEntity> entity = null;
 		try {
-			entity = regAppointmentRepository.findByBookingPKBookingDate(bookingDate);
-			if (entity == null || entity.size() == 0) {
-				throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
-						ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
-
-			}
-
+			List<RegistrationBookingEntity> entity = regAppointmentRepository.findByBookingPKBookingDate(bookingDate);
+			return entity;
 		} catch (DataAccessLayerException e) {
 			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
 					ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
 		}
-		return entity;
 	}
 
 	/**
@@ -201,22 +224,14 @@ public class BatchJpaRepositoryImpl {
 	 * @return List of RegistrationBookingEntity based date less then currentDate
 	 */
 	public List<RegistrationBookingEntity> getAllOldDateBooking() {
-		List<RegistrationBookingEntity> entityList = null;
-
 		try {
-			entityList = regAppointmentRepository.findByRegDateBetween(StatusCodes.BOOKED.getCode(), LocalDate.now());
-			if (entityList == null || entityList.isEmpty()) {
-				log.info("sessionId", "idType", "id",
-						"There are currently no Pre-Registration-Ids to update status to consumed");
-				throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
-						ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
-			}
-
+			List<RegistrationBookingEntity> entityList = regAppointmentRepository.findByRegDateBetween(StatusCodes.BOOKED.getCode(), 
+									LocalDate.now());
+			return entityList;			
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_005.getCode(),
 					ErrorMessages.REG_APPOINTMENT_TABLE_NOT_ACCESSIBLE.getMessage());
 		}
-		return entityList;
 	}
 
 	/**
@@ -266,6 +281,15 @@ public class BatchJpaRepositoryImpl {
 					ErrorMessages.DOCUMENT_TABLE_NOT_ACCESSIBLE.getMessage());
 		}
 
+	}
+
+	public void deleteApplicantDocument(DocumentEntity documentEntity) {
+		try {
+			documentRespository.delete(documentEntity);
+		} catch (Exception e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_007.getCode(),
+					ErrorMessages.DOCUMENT_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
 	}
 
 	/** Deleting Booking details the consumed demographic data. */
@@ -493,6 +517,11 @@ public class BatchJpaRepositoryImpl {
 	 */
 	public AvailibityEntity saveAvailability(AvailibityEntity entity) {
 		return availabilityRepository.save(entity);
+	}
+
+	public void flushAvailability() {
+		log.info("Flushing Availability...");
+		availabilityRepository.flush();
 	}
 
 }
