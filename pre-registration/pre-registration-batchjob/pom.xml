@@ -59,6 +59,11 @@
 			<scope>runtime</scope>
 		</dependency>
 		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-webflux</artifactId>
+			<version>${spring.boot.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
 			<version>${pre.registration.core.version}</version>
@@ -82,6 +87,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<executable>true</executable>
+					<layout>ZIP</layout>
 				</configuration>
 				<executions>
 					<execution>
