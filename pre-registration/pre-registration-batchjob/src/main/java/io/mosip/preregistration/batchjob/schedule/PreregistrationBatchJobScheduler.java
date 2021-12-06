@@ -45,7 +45,7 @@ public class PreregistrationBatchJobScheduler {
 	private JobLauncher jobLauncher;
 
 	@Autowired
-	private Job availabilitySyncJob;
+	private Job regCenterPartitionerJob;
 
 	@Autowired
 	private Job consumedStatusJob;
@@ -55,6 +55,9 @@ public class PreregistrationBatchJobScheduler {
 	
 	@Autowired
 	private Job updateApplicationForBookingCheckJob;
+
+	@Autowired
+	private Job purgeExpiredSlotsJob;
 
 	@Scheduled(cron = "${preregistration.job.schedule.cron.consumedStatusJob}")
 	public void consumedStatusScheduler() {
@@ -71,7 +74,7 @@ public class PreregistrationBatchJobScheduler {
 
 			LOGGER.error(LOGDISPLAY, "Consumed status job failed to read Processed_pre_registration_list", e.getMessage(),null);
 		}
-	}
+	} 
 
 	@Scheduled(cron = "${preregistration.job.schedule.cron.slotavailability}")
 	public void availabilitySyncScheduler() {
@@ -80,7 +83,7 @@ public class PreregistrationBatchJobScheduler {
 				.toJobParameters();
 		try {
 
-			JobExecution jobExecution = jobLauncher.run(availabilitySyncJob, jobParam);
+			JobExecution jobExecution = jobLauncher.run(regCenterPartitionerJob, jobParam);
 
 			LOGGER.info(LOGDISPLAY, JOB_STATUS, jobExecution.getId().toString(), jobExecution.getStatus().toString());
 
@@ -111,7 +114,7 @@ public class PreregistrationBatchJobScheduler {
 
 	}
 	
-	@Scheduled(cron = "${preregistration.job.schedule.cron.updateApplicationsBookingJob:5 * * * * ?}")
+	@Scheduled(cron = "${preregistration.job.schedule.cron.updateApplicationsBookingJob}")
 	public void applicationsBookingStatusScheduler() {
 
 		JobParameters jobParam = new JobParametersBuilder().addLong("updateApplicationsBookingStatusJobTime", System.currentTimeMillis())
@@ -130,4 +133,17 @@ public class PreregistrationBatchJobScheduler {
 
 	}
 
+	@Scheduled(cron = "${preregistration.job.schedule.cron.purgeExpiredRegCenterSlots}")
+	public void purgeExpiredSlotsScheduler() {
+
+		JobParameters jobParam = new JobParametersBuilder().addLong("purgeExpiredSlotsJob", System.currentTimeMillis())
+				.toJobParameters();
+		try {
+			JobExecution jobExecution = jobLauncher.run(purgeExpiredSlotsJob, jobParam);
+			LOGGER.info(LOGDISPLAY, JOB_STATUS, jobExecution.getId().toString(), jobExecution.getStatus().toString());
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+				| JobParametersInvalidException e) {
+			LOGGER.error(LOGDISPLAY, "Applications Booking  Status Job failed to read data from service", e.getMessage(),null);
+		}
+	}
 }
