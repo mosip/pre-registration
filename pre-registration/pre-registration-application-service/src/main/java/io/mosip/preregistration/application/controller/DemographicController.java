@@ -185,7 +185,7 @@ public class DemographicController {
 	public ResponseEntity<MainResponseDTO<DemographicResponseDTO>> getPreRegDemographicData(
 			@PathVariable("preRegistrationId") String preRegistraionId) {
 		log.info("sessionId", "idType", "id",
-				"In pre-registration controller for fetching all demographic data with preregistartionId"
+				"In pre-registration controller for fetching all demographic data with preregistrationId"
 						+ preRegistraionId);
 		return ResponseEntity.status(HttpStatus.OK).body(preRegistrationService.getDemographicData(preRegistraionId, false));
 	}
@@ -249,7 +249,7 @@ public class DemographicController {
 	}
 
 	/**
-	 * Post API to fetch the status of a application.
+	 * Get API to fetch the status of a application.
 	 *
 	 * @param preId
 	 *            the pre id

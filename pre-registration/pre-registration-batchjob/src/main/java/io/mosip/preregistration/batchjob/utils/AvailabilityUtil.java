@@ -499,7 +499,7 @@ public class AvailabilityUtil {
 			}
 
 			/** Rest call to master for exceptional holidays. */
-			String exceptionalHolidayUrl = exceptionalHolidayListUrl + "/" + regDto.getId() + "/"
+			String exceptionalHolidayUrl = exceptionalHolidayListUrl + regDto.getId() + "/"
 					+ regDto.getLangCode();
 			UriComponentsBuilder builder2 = UriComponentsBuilder.fromHttpUrl(exceptionalHolidayUrl);
 			HttpEntity<RequestWrapper<RegistrationCenterHolidayDto>> httpExceptionalHolidayEntity = new HttpEntity<>(
@@ -523,7 +523,7 @@ public class AvailabilityUtil {
 			}
 
 			/** Rest call to master for working holidays. */
-			String workingDayUrl = workingDayListUrl + "/" + regDto.getId() + "/" + regDto.getLangCode();
+			String workingDayUrl = workingDayListUrl  + regDto.getId() + "/" + regDto.getLangCode();
 			UriComponentsBuilder builder3 = UriComponentsBuilder.fromHttpUrl(workingDayUrl);
 			HttpEntity<RequestWrapper<WorkingDaysResponseDto>> httpWorkingDayEntity = new HttpEntity<>(headers);
 			String uriBuilder3 = builder3.build().encode().toUriString();

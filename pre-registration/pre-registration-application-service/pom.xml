@@ -6,22 +6,22 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.0-rc2-SNAPSHOT</version>
+		<version>1.2.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>pre-registration-application-service</artifactId>
 	<name>Pre-Registration Application Service Project</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
-	<version>1.2.0-rc2-SNAPSHOT</version>
+	<version>1.2.0-SNAPSHOT</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.core.version>1.2.0-rc2-SNAPSHOT</kernel.core.version>
-		<kernel.khazana.version>1.2.0-rc2-SNAPSHOT</kernel.khazana.version>
-		<kernel.virusscanner.clamav.version>1.2.0-rc2-SNAPSHOT</kernel.virusscanner.clamav.version>
-		<kernel.idobjectvalidator.version>1.2.0-rc2-SNAPSHOT</kernel.idobjectvalidator.version>
-		<kernel.templatemanager.velocity.version>1.2.0-rc2-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.qrcodegenerator.zxing.version>1.2.0-rc2-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
-		<pre.registration.core.version>1.2.0-rc2-SNAPSHOT</pre.registration.core.version>
+		<kernel.core.version>1.2.0-SNAPSHOT</kernel.core.version>
+		<kernel.khazana.version>1.2.0-SNAPSHOT</kernel.khazana.version>
+		<kernel.virusscanner.clamav.version>1.2.0-SNAPSHOT</kernel.virusscanner.clamav.version>
+		<kernel.idobjectvalidator.version>1.2.0-SNAPSHOT</kernel.idobjectvalidator.version>
+		<kernel.templatemanager.velocity.version>1.2.0-SNAPSHOT</kernel.templatemanager.velocity.version>
+		<kernel.qrcodegenerator.zxing.version>1.2.0-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
+		<pre.registration.core.version>1.2.0-SNAPSHOT</pre.registration.core.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -76,16 +76,6 @@
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
 			<version>${pre.registration.core.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>io.springfox</groupId>
-					<artifactId>springfox-swagger2</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>io.springfox</groupId>
-					<artifactId>springfox-swagger-ui</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
@@ -173,5 +163,86 @@
 			</plugin>
 		</plugins>
 	</build>
-
+	<profiles>
+		<profile>
+			<id>openapi-doc-generate-profile</id>
+			<dependencies>
+				<dependency>
+					<groupId>io.mosip.kernel</groupId>
+					<artifactId>kernel-auth-adapter</artifactId>
+					<version>${project.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>io.mosip.kernel</groupId>
+					<artifactId>kernel-ref-idobjectvalidator</artifactId>
+					<version>1.2.0-rc1</version>
+				</dependency>
+				<dependency>
+					<groupId>io.mosip.kernel</groupId>
+					<artifactId>kernel-transliteration-icu4j</artifactId>
+					<version>1.2.0-rc1</version>
+				</dependency>
+			</dependencies>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-maven-plugin</artifactId>
+						<version>${spring.boot.version}</version>
+						<configuration>
+							<executable>true</executable>
+							<layout>ZIP</layout>
+						</configuration>
+						<executions>
+							<execution>
+								<id>pre-integration-test</id>
+								<goals>
+									<goal>start</goal>
+								</goals>
+								<configuration>
+									<folders>
+										<folder>src/test/resources</folder>
+									</folders>
+									<profiles>
+										<profile>mz</profile>
+									</profiles>
+								</configuration>
+							</execution>
+							<execution>
+								<id>post-integration-test</id>
+								<goals>
+									<goal>stop</goal>
+								</goals>
+							</execution>
+							<execution>
+								<goals>
+									<goal>build-info</goal>
+									<goal>repackage</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.springdoc</groupId>
+						<artifactId>springdoc-openapi-maven-plugin</artifactId>
+						<version>0.2</version>
+						<executions>
+							<execution>
+								<id>integration-test</id>
+								<goals>
+									<goal>generate</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<apiDocsUrl>http://localhost:9090/preregistration/v1/application-service/v3/api-docs/Pre-Registration</apiDocsUrl>
+							<outputFileName>openapi.json</outputFileName>
+							<outputDir>${project.build.directory}</outputDir>
+							<skip>false</skip>
+						</configuration>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
 </project>
