@@ -856,28 +856,6 @@ public class DemographicServiceTest {
 		preRegistrationService.deleteIndividual(preRegId, userId);
 	}
 
-	//	@Test
-	//	public void getSchemaconfigTest() throws JsonParseException, JsonMappingException, IOException {
-	//		String jsonString ="{\"identity\":{\"name\":{\"value\":\"abcd\"},\"dob\":{\"value\":\"2021\"}},\"documents\":{\"poa\":{\"value\":\"poa\"}}}";
-	//		Mockito.when(serviceUtil.getJson(Mockito.any())).thenReturn("");
-	//			try {
-	//				org.json.JSONObject jsonObject1 =new org.json.JSONObject(jsonString);
-	//			
-	//		String response;
-	////		objectMapper.configure(MapperFeature.ACCEPT_CASE_INSENSITIVE_PROPERTIES, true);
-	////		objectMapper.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
-	////		
-	//		ObjectMapper objectMapper = Mockito.mock(ObjectMapper.class);
-	//		Mockito.when(objectMapper.readValue(jsonString, org.json.JSONObject.class)).thenReturn(jsonObject1);
-	//		
-	//		Mockito.when(objectMapper.readValue("{\"identity\": null,\"documents\": null}", org.json.JSONObject.class)).thenReturn(jsonObject1);
-	//		preRegistrationService.getSchemaconfig();
-	//			} catch (Exception e) {
-	//				// TODO Auto-generated catch block
-	//				e.printStackTrace();
-	//			}
-	//		
-	//	}
 
 	@Test
 	public void statusCheckTest() {

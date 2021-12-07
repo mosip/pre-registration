@@ -321,23 +321,7 @@ public class DemographicController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.getUpdatedDateTimeForPreIds(mainRequestDTO.getRequest()));
 	}
-
-
-	//@PreAuthorize("hasRole('INDIVIDUAL')")
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsconfig())")
-	@GetMapping(path = "/applications/config", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "getIdSchemaConfig", description = "Get IDschema config fields",
-			tags = "demographic-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Config fetch successful"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
-	public ResponseEntity<MainResponseDTO<SchemaResponseDto>> getIdSchemaConfig() {
-                       
-		return ResponseEntity.status(HttpStatus.OK)
-				.body(preRegistrationService.getSchemaconfig());
-	}
+	
 	
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsinfo())")
 	@GetMapping(path = "/applications/prereg/info/{preregistrationId}")
