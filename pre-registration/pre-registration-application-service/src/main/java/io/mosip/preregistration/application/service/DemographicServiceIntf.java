@@ -98,12 +98,6 @@ public interface DemographicServiceIntf {
 	MainResponseDTO<Map<String, String>> getUpdatedDateTimeForPreIds(
 			PreRegIdsByRegCenterIdDTO preRegIdsByRegCenterIdDTO);
 
-	/**
-	 * Gets the schemaconfig.
-	 *
-	 * @return {@link SchemaResponseDto}
-	 */
-	MainResponseDTO<SchemaResponseDto> getSchemaconfig();
 	
 	public MainResponseDTO<ApplicationInfoMetadataDTO> getPregistrationInfo(String prid);
 
