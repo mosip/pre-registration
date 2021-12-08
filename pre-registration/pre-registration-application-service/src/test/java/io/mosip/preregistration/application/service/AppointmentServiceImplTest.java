@@ -419,10 +419,8 @@ public class AppointmentServiceImplTest {
 		documentsData.setResponse(documentsMetaData);
 		Mockito.when(documentService.getAllDocumentForPreId(preRegistrationId)).thenReturn(documentsData);
 		assertNotNull(appointmentServiceImpl.makeAppointment(bookingDTO, preRegistrationId, userAgent));
-		MainResponseDTO<BookingStatusDTO> makeAppointment = appointmentServiceImpl.makeAppointment(bookingDTO,
-				preRegistrationId, userAgent);
 	}
- 
+
 	@Test
 	public void makeMultiAppointmentTest() {
 		MainRequestDTO<MultiBookingRequest> bookingRequest = new MainRequestDTO<MultiBookingRequest>();
@@ -442,8 +440,6 @@ public class AppointmentServiceImplTest {
 		bookingStatus.setBookingStatusResponse(bookingStatusResponse);
 		Mockito.when(appointmentUtils.multiAppointmentBooking(bookingRequest)).thenReturn(bookingStatus);
 		assertNotNull(appointmentServiceImpl.makeMultiAppointment(bookingRequest, userAgent));
-		MainResponseDTO<BookingStatus> makeAppointment = appointmentServiceImpl.makeMultiAppointment(bookingRequest,
-				userAgent);
 	}
 
 }
