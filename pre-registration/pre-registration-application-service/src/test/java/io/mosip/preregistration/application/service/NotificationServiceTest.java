@@ -1,6 +1,5 @@
 package io.mosip.preregistration.application.service;
 
-
 import static org.junit.Assert.assertEquals;
 
 import java.io.File;
@@ -17,18 +16,17 @@ import java.util.TimeZone;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -36,7 +34,6 @@ import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,10 +45,7 @@ import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.IOException;
 import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
-import io.mosip.preregistration.application.service.NotificationService;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
-import io.mosip.preregistration.application.test.PreRegistrationApplicationTest;
-//import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -62,26 +56,21 @@ import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
-import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.NotificationUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.application.service.DemographicServiceIntf;
-import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.application.dto.QRCodeResponseDTO;
-import io.mosip.preregistration.application.exception.DemographicDetailsNotFoundException;
 import io.mosip.preregistration.application.exception.MandatoryFieldException;
-import io.mosip.preregistration.application.exception.RestCallException;
-import io.mosip.preregistration.application.exception.util.NotificationExceptionCatcher;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.springframework.test.context.ContextConfiguration;
+
 /**
  * @author Sanober Noor
  * @since 1.0.0
  */
+
 @RunWith(JUnit4.class)
 @SpringBootTest
 @ContextConfiguration(classes = { NotificationService.class })
@@ -89,16 +78,16 @@ public class NotificationServiceTest {
 
 	@InjectMocks
 	private NotificationService notificationService;
-	
+
 	@Mock
 	private NotificationUtil notificationUtil;
 
 	@Mock
 	private ValidationUtil validationUtil;
-	
+
 	@Mock
 	private DemographicServiceIntf demographicServiceIntf;
-	
+
 	@Mock
 	private NotificationServiceUtil notificationServiceUtil;
 
@@ -110,16 +99,16 @@ public class NotificationServiceTest {
 
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
-	
+
 	@Value("#{'${mosip.notificationtype}'.split('\\|')}")
 	private List<String> notificationTypeList;
 
 	@Value("${mosip.pre-registration.notification.id}")
 	private String Id;
-	
+
 	@Value("${preregistration.identity}")
 	private String identity;
-	
+
 	@Value("${preregistration.identity.name}")
 	private String fullName;
 
@@ -140,7 +129,7 @@ public class NotificationServiceTest {
 	private JSONObject jsonTestObject;
 	private JSONObject jsonObject;
 	AuditRequestDto auditRequestDto = new AuditRequestDto();
-	
+
 	@Mock
 	private AuditLogUtil auditLogUtil;
 	MainResponseDTO<BookingRegistrationDTO> bookingResultDto = new MainResponseDTO<>();
@@ -153,9 +142,7 @@ public class NotificationServiceTest {
 		ReflectionTestUtils.setField(notificationService, "Id", "1");
 		ReflectionTestUtils.setField(notificationService, "identity", "identity");
 		ReflectionTestUtils.setField(notificationService, "fullName", "fullName");
-		
-		
-		
+
 		ClassLoader classLoader = getClass().getClassLoader();
 		File fileTest = new File(classLoader.getResource("pre-registration.json").getFile());
 		FileReader reader = new FileReader(fileTest);
@@ -206,23 +193,22 @@ public class NotificationServiceTest {
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 
-
 		BookingRegistrationDTO bookingResponse = new BookingRegistrationDTO();
 		bookingResponse.setRegDate("2019-01-22");
 		bookingResponse.setRegistrationCenterId("1");
 		bookingResponse.setSlotFromTime("09:00");
 		bookingResponse.setSlotToTime("10:00");
 		bookingResultDto.setResponse(bookingResponse);
-		
-		DemographicResponseDTO demo= new DemographicResponseDTO();
+
+		DemographicResponseDTO demo = new DemographicResponseDTO();
 		demo.setPreRegistrationId("20180396713560");
 		JSONParser jsonParser = new JSONParser();
 		JSONObject demoString = (JSONObject) jsonParser.parse(jsonTestObject.toJSONString());
 		JSONObject demoResponseData = (JSONObject) demoString.get("request");
-		org.json.simple.JSONObject demoDetailsData= (JSONObject) demoResponseData.get("demographicDetails");
+		org.json.simple.JSONObject demoDetailsData = (JSONObject) demoResponseData.get("demographicDetails");
 		demo.setDemographicDetails(demoDetailsData);
 		demographicdto.setResponse(demo);
-		
+
 	}
 
 	/**
@@ -241,36 +227,30 @@ public class NotificationServiceTest {
 //		String stringjson = mapper.writeValueAsString(mainReqDto);
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(),Mockito.any())).thenReturn(demographicdto);
-		Mockito.when( notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+				.thenReturn(demographicdto);
+		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
 //		String stringjson = mapper.writeValueAsString(mainReqDto);
-		String stringjson=null;
+		String stringjson = null;
 		try {
 			stringjson = mapper.writeValueAsString(mainReqDto);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenReturn(true);
-		
-		try{	Mockito.when(notificationServiceUtil.createNotificationDetails(null,
-				"fra", false)).thenReturn(mainReqDto);
-	}catch (
-			RuntimeException
-			| io.mosip.kernel.core.util.exception.JsonMappingException 
-			| io.mosip.kernel.core.exception.IOException
-			| JSONException
-			| java.text.ParseException 
-			| io.mosip.kernel.core.util.exception.JsonParseException
-			ex) {
-	}
-		catch (
-				 com.fasterxml.jackson.core.JsonParseException
-				|com.fasterxml.jackson.databind.JsonMappingException ex) {
+
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(null, "fra", false)).thenReturn(mainReqDto);
+		} catch (RuntimeException | io.mosip.kernel.core.util.exception.JsonMappingException
+				| io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException
+				| io.mosip.kernel.core.util.exception.JsonParseException ex) {
+		} catch (com.fasterxml.jackson.core.JsonParseException
+				| com.fasterxml.jackson.databind.JsonMappingException ex) {
 		}
-		
+
 		TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
 		templateResponseListDTO.setTemplates(tepmlateList);
 		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file)).thenReturn(responselist);
@@ -285,10 +265,11 @@ Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenR
 				notificationResponseDTO, HttpStatus.OK);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
 //				Mockito.eq(NotificationResponseDTO.class))).thenReturn(resp);
-		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> response = notificationService.sendNotification(stringjson, langCode, file,false);
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> response = notificationService
+				.sendNotification(stringjson, langCode, file, false);
 		assertEquals(responseDTO.getResponse().getMessage(), response.getResponse().getMessage());
 	}
-	
+
 	@Test(expected = MandatoryFieldException.class)
 	public void sendNotificationExceptionTest4() throws java.io.IOException {
 		notificationDTO = new NotificationDTO();
@@ -305,35 +286,29 @@ Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenR
 		response.setMessage("Email and sms request successfully submitted");
 		responseDTO.setResponse(response);
 		responseDTO.setResponsetime(validationUtil.getCurrentResponseTime());
-		String stringjson=null;
+		String stringjson = null;
 		try {
 			stringjson = mapper.writeValueAsString(mainReqDto);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(),Mockito.any())).thenReturn(demographicdto);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
-		
-		Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenReturn(true);
-		
-		try{	Mockito.when(notificationServiceUtil.createNotificationDetails(null,
-				"fra", false)).thenReturn(mainReqDto);
-	}catch (
-			RuntimeException
-			| io.mosip.kernel.core.util.exception.JsonMappingException 
-			| io.mosip.kernel.core.exception.IOException
-			| JSONException
-			| java.text.ParseException 
-			| io.mosip.kernel.core.util.exception.JsonParseException
-			ex) {
-	}
-		catch (
-				 com.fasterxml.jackson.core.JsonParseException
-				|com.fasterxml.jackson.databind.JsonMappingException ex) {
+
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(null, "fra", false)).thenReturn(mainReqDto);
+		} catch (RuntimeException | io.mosip.kernel.core.util.exception.JsonMappingException
+				| io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException
+				| io.mosip.kernel.core.util.exception.JsonParseException ex) {
+		} catch (com.fasterxml.jackson.core.JsonParseException
+				| com.fasterxml.jackson.databind.JsonMappingException ex) {
 		}
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-        notificationService.sendNotification(stringjson, "fra", file,false);
+		notificationService.sendNotification(stringjson, "fra", file, false);
 
 	}
 
@@ -354,38 +329,32 @@ Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenR
 		responseDTO.setResponse(response);
 		responseDTO.setResponsetime(validationUtil.getCurrentResponseTime());
 //		String stringjson = mapper.writeValueAsString(mainReqDto);
-		String stringjson=null;
+		String stringjson = null;
 		try {
 			stringjson = mapper.writeValueAsString(mainReqDto);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(),Mockito.any())).thenReturn(demographicdto);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
-Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenReturn(true);
-		
-		try{	Mockito.when(notificationServiceUtil.createNotificationDetails(null,
-				"fra", true)).thenReturn(mainReqDto);
-	}catch (
-			RuntimeException
-			| io.mosip.kernel.core.util.exception.JsonMappingException 
-			| io.mosip.kernel.core.exception.IOException
-			| JSONException
-			| java.text.ParseException 
-			| io.mosip.kernel.core.util.exception.JsonParseException
-			ex) {
-	}
-		catch (
-				 com.fasterxml.jackson.core.JsonParseException
-				|com.fasterxml.jackson.databind.JsonMappingException ex) {
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(null, "fra", true)).thenReturn(mainReqDto);
+		} catch (RuntimeException | io.mosip.kernel.core.util.exception.JsonMappingException
+				| io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException
+				| io.mosip.kernel.core.util.exception.JsonParseException ex) {
+		} catch (com.fasterxml.jackson.core.JsonParseException
+				| com.fasterxml.jackson.databind.JsonMappingException ex) {
 		}
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		notificationService.sendNotification(stringjson, "fra", file,true);
+		notificationService.sendNotification(stringjson, "fra", file, true);
 
 	}
-	
+
 	@Test(expected = MandatoryFieldException.class)
 	public void sendNotificationExceptionTest6() throws java.io.IOException, JsonProcessingException {
 		notificationDTO = new NotificationDTO();
@@ -403,37 +372,32 @@ Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenR
 		responseDTO.setResponse(response);
 		responseDTO.setResponsetime(validationUtil.getCurrentResponseTime());
 //		String stringjson = mapper.writeValueAsString(mainReqDto);
-		String stringjson=null;
+		String stringjson = null;
 		try {
 			stringjson = mapper.writeValueAsString(mainReqDto);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(),Mockito.any())).thenReturn(demographicdto);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
-Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenReturn(true);
-		
-		try{	Mockito.when(notificationServiceUtil.createNotificationDetails(null,
-				"fra", true)).thenReturn(mainReqDto);
-	}catch (
-			RuntimeException
-			| io.mosip.kernel.core.util.exception.JsonMappingException 
-			| io.mosip.kernel.core.exception.IOException
-			| JSONException
-			| java.text.ParseException 
-			| io.mosip.kernel.core.util.exception.JsonParseException
-			ex) {
-	}
-		catch (
-				 com.fasterxml.jackson.core.JsonParseException
-				|com.fasterxml.jackson.databind.JsonMappingException ex) {
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(null, "fra", true)).thenReturn(mainReqDto);
+		} catch (RuntimeException | io.mosip.kernel.core.util.exception.JsonMappingException
+				| io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException
+				| io.mosip.kernel.core.util.exception.JsonParseException ex) {
+		} catch (com.fasterxml.jackson.core.JsonParseException
+				| com.fasterxml.jackson.databind.JsonMappingException ex) {
 		}
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		notificationService.sendNotification(stringjson, "fra", file,true);
+		notificationService.sendNotification(stringjson, "fra", file, true);
 
 	}
+
 	@Test(expected = MandatoryFieldException.class)
 	public void sendNotificationExceptionTest7() throws java.io.IOException, JsonProcessingException {
 		notificationDTO = new NotificationDTO();
@@ -451,36 +415,38 @@ Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenR
 		responseDTO.setResponse(response);
 		responseDTO.setResponsetime(validationUtil.getCurrentResponseTime());
 //		String stringjson = mapper.writeValueAsString(mainReqDto);
-		String stringjson=null;
+		String stringjson = null;
 		try {
 			stringjson = mapper.writeValueAsString(mainReqDto);
 		} catch (JsonProcessingException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(),Mockito.any())).thenReturn(demographicdto);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
-Mockito.when(validationUtil.requestValidator(Mockito.any(),Mockito.any())).thenReturn(true);
-		
-		try{	Mockito.when(notificationServiceUtil.createNotificationDetails(null,
-				"fra", true)).thenReturn(mainReqDto);
-	}catch (
-			RuntimeException
-			| io.mosip.kernel.core.util.exception.JsonMappingException 
-			| io.mosip.kernel.core.exception.IOException
-			| JSONException
-			| java.text.ParseException 
-			| io.mosip.kernel.core.util.exception.JsonParseException
-			ex) {
-	}
-		catch (
-				 com.fasterxml.jackson.core.JsonParseException
-				|com.fasterxml.jackson.databind.JsonMappingException ex) {
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(null, "fra", true)).thenReturn(mainReqDto);
+		} catch (RuntimeException | io.mosip.kernel.core.util.exception.JsonMappingException
+				| io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException
+				| io.mosip.kernel.core.util.exception.JsonParseException ex) {
+		} catch (com.fasterxml.jackson.core.JsonParseException
+				| com.fasterxml.jackson.databind.JsonMappingException ex) {
 		}
-		
+
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		notificationService.sendNotification(stringjson, "fra", file,true);
+		notificationService.sendNotification(stringjson, "fra", file, true);
 
 	}
+
+	@Test
+	public void getAppointmentDetailsRestServiceTest() {
+		String preId = "1234";
+		Mockito.when(notificationUtil.getAppointmentDetails(preId)).thenReturn(bookingResultDto);
+		Assert.assertNotNull(notificationService.getAppointmentDetailsRestService(preId));
+	}
+
 }
