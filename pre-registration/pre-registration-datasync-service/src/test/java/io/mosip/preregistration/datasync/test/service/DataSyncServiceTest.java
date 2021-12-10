@@ -50,6 +50,7 @@ import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
+import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
@@ -82,7 +83,7 @@ public class DataSyncServiceTest {
 
 	@MockBean
 	RestTemplateBuilder restTemplateBuilder;
-	
+
 	@MockBean
 	AnonymousProfileUtil profileUtil;
 
@@ -91,7 +92,7 @@ public class DataSyncServiceTest {
 	 */
 	@MockBean
 	DataSyncServiceUtil serviceUtil;
-	
+
 	@MockBean
 	ClientCryptoManagerService clientCryptoManagerService;
 
@@ -133,6 +134,7 @@ public class DataSyncServiceTest {
 
 	// new
 	String preId = "23587986034785";
+	String machineId = "12345";
 	String fromDate = "2018-01-17 00:00:00";
 	String toDate = "2019-01-17 00:00:00";
 	DocumentMultipartResponseDTO multipartResponseDTOs = new DocumentMultipartResponseDTO();
@@ -144,8 +146,6 @@ public class DataSyncServiceTest {
 	PreRegArchiveDTO archiveDTO = new PreRegArchiveDTO();
 	MainResponseDTO<PreRegArchiveDTO> mainResponseDTO = new MainResponseDTO<>();
 
-	
-	
 	BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = new BookingDataByRegIdDto();
 	MainRequestDTO<DataSyncRequestDTO> datasyncReqDto = new MainRequestDTO<>();
 	DataSyncRequestDTO dataSyncRequestDTO = new DataSyncRequestDTO();
@@ -160,6 +160,7 @@ public class DataSyncServiceTest {
 	MainResponseDTO<ReverseDatasyncReponseDTO> reverseResponseDTO = new MainResponseDTO<>();
 	ReverseDataSyncRequestDTO reverseDataSyncRequestDTO = new ReverseDataSyncRequestDTO();
 	ReverseDatasyncReponseDTO reverseDatasyncReponse = new ReverseDatasyncReponseDTO();
+	ApplicationInfoMetadataDTO preRegInfo = new ApplicationInfoMetadataDTO();
 
 	@Before
 	public void setUp() throws URISyntaxException, IOException, org.json.simple.parser.ParseException, ParseException,
@@ -177,7 +178,7 @@ public class DataSyncServiceTest {
 		timeDto.setToTime(LocalTime.now().plusMinutes(120));
 		appointDateWithFromTime.put(LocalDate.now(), timeDto);
 		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
-		
+
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -271,11 +272,10 @@ public class DataSyncServiceTest {
 
 		Mockito.when(serviceUtil.getPreRegistrationData(Mockito.anyString())).thenReturn(demography);
 		Mockito.when(serviceUtil.getDocDetails(Mockito.anyString())).thenReturn(documentsMetaData);
-		Mockito.when(serviceUtil.getDocBytesDetails(Mockito.anyString(), Mockito.anyString()))
-				.thenReturn(documentDTO);
-		Mockito.when(serviceUtil.getAppointmentDetails(Mockito.anyString()))
-				.thenReturn(bookingRegistrationDTO);
-		Mockito.when(serviceUtil.archivingFiles(Mockito.any(), Mockito.any(), Mockito.any(),Mockito.any())).thenReturn(archiveDTO);
+		Mockito.when(serviceUtil.getDocBytesDetails(Mockito.anyString(), Mockito.anyString())).thenReturn(documentDTO);
+		Mockito.when(serviceUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingRegistrationDTO);
+		Mockito.when(serviceUtil.archivingFiles(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+				.thenReturn(archiveDTO);
 		Mockito.doNothing().when(spyDataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		MainResponseDTO<PreRegArchiveDTO> response = dataSyncService.getPreRegistrationData(preId);
@@ -301,7 +301,8 @@ public class DataSyncServiceTest {
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		MainResponseDTO<PreRegistrationIdsDTO> response = dataSyncService.retrieveAllPreRegIds(datasyncReqDto);
 
-		assertEquals(preRegistrationIdsDTO.getCountOfPreRegIds().length(), response.getResponse().getCountOfPreRegIds().length());
+		assertEquals(preRegistrationIdsDTO.getCountOfPreRegIds().length(),
+				response.getResponse().getCountOfPreRegIds().length());
 	}
 
 	@Test(expected = InvalidRequestParameterException.class)
@@ -309,7 +310,8 @@ public class DataSyncServiceTest {
 		InvalidRequestParameterException ex = new InvalidRequestParameterException(
 				ErrorCodes.PRG_DATA_SYNC_009.toString(), ErrorMessages.INVALID_REGISTRATION_CENTER_ID.toString(), null);
 		Mockito.when(serviceUtil.validateDataSyncRequest(Mockito.any(), Mockito.any())).thenThrow(ex);
-		Mockito.doNothing().when(spyDataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+		Mockito.doNothing().when(spyDataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
+				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		dataSyncService.retrieveAllPreRegIds(datasyncReqDto);
 	}
 
@@ -324,6 +326,41 @@ public class DataSyncServiceTest {
 
 		assertEquals(reverseDatasyncReponse.getPreRegistrationIds().size(),
 				reverseResponseDTO.getResponse().getPreRegistrationIds().size());
+	}
+
+	@Test
+	public void fetchPreRegistrationDataTest() {
+		mainResponseDTO.setId(fetchId);
+		mainResponseDTO.setVersion(version);
+		mainResponseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
+		mainResponseDTO.setResponse(archiveDTO);
+		preRegInfo.setDocumentsMetaData(documentsMetaData);
+		Mockito.when(serviceUtil.getPreRegistrationInfo(Mockito.any())).thenReturn(preRegInfo);
+		Mockito.when(serviceUtil.getAppointmentDetails(Mockito.any())).thenReturn(bookingRegistrationDTO);
+		Mockito.when(serviceUtil.archivingFiles(demography, bookingRegistrationDTO, documentsMetaData, machineId))
+				.thenReturn(archiveDTO);
+		MainResponseDTO<PreRegArchiveDTO> response = dataSyncService.fetchPreRegistrationData(preid, machineId);
+		assertEquals(mainResponseDTO.getId().length(), response.getId().length());
+	}
+
+	@Test
+	public void fetchPreRegistrationDataPendingStatusTest() {
+		String preregId = "12345";
+		mainResponseDTO.setId(fetchId);
+		mainResponseDTO.setVersion(version);
+		mainResponseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
+		mainResponseDTO.setResponse(archiveDTO);
+		preRegInfo.setDocumentsMetaData(documentsMetaData);
+		demography.setPreRegistrationId(preregId);
+		demography.setStatusCode("Pending");
+		demography.setCreatedDateTime(fromDate);
+		preRegInfo.setDemographicResponse(demography);
+		Mockito.when(serviceUtil.getPreRegistrationInfo(Mockito.any())).thenReturn(preRegInfo);
+		Mockito.when(serviceUtil.getAppointmentDetails(Mockito.any())).thenReturn(bookingRegistrationDTO);
+		Mockito.when(serviceUtil.archivingFiles(demography, bookingRegistrationDTO, documentsMetaData, machineId))
+				.thenReturn(archiveDTO);
+		MainResponseDTO<PreRegArchiveDTO> response = dataSyncService.fetchPreRegistrationData(preregId, machineId);
+		assertEquals(mainResponseDTO.getId().length(), response.getId().length());
 	}
 
 }
