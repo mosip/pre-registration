@@ -104,7 +104,7 @@ public class AnonymousProfileServiceTest {
 
 		AnonymousProfileEntity responseEntity = new AnonymousProfileEntity();
 		Mockito.when(anonymousProfileRepostiory.save(Mockito.any())).thenReturn(responseEntity);
-		AnonymousProfileResponseDTO response = anonymousProfileService.saveAnonymousProfile(requestDto);
+		assertNotNull(anonymousProfileService.saveAnonymousProfile(requestDto));
 	}
 
 }
