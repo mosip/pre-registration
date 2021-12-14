@@ -46,10 +46,10 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     
     sed -i 's/<service_name>/pre-registration-datasync-service/g' glowroot/glowroot.properties ; \
     java -Dloader.path=/kernel-auth-adapter.jar \
-    java -jar -javaagent:glowroot/glowroot.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
+    java -jar -javaagent:glowroot/glowroot.jar -Dlog4j2.formatMsgNoLookups=true -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
     else \
     wget "${iam_adapter_url_env}" -O kernel-auth-adapter.jar; \
-    java -jar -Dloader.path=/kernel-auth-adapter.jar -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
+    java -jar -Dloader.path=/kernel-auth-adapter.jar -Dlog4j2.formatMsgNoLookups=true -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
     fi
 
 
