@@ -241,9 +241,6 @@ public class DemographicService implements DemographicServiceIntf {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	@Value("${preregistration.demographic.idschema-json-filename}")
-	private String fileName;
-
 	private static final String INDENTITY = "identity";
 
 	private static final String PROPERTIES = "properties";
@@ -1143,17 +1140,6 @@ public class DemographicService implements DemographicServiceIntf {
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
 		}
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see io.mosip.preregistration.demographic.service.DemographicServiceIntf#
-	 * getSchemaconfig()
-	 */
-	@Override
-	public MainResponseDTO<SchemaResponseDto> getSchemaconfig() {
-		return getConfigDetailsResponse(fileName);
 	}
 
 	private MainResponseDTO<SchemaResponseDto> getConfigDetailsResponse(String fileName) {
