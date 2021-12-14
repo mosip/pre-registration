@@ -503,7 +503,7 @@ public class DocumentServiceTest {
 		response.setId("1234");
 		response.setVersion("2");
 		requestParamMap.put(RequestCodes.PRE_REGISTRATION_ID, preId);
-		assertNotNull(documentUploadService.updateDocRefId(documentId, preRegistrationId, docJson));
+		documentUploadService.updateDocRefId(documentId, preRegistrationId, docJson);
 	}
 
 	@Test
@@ -553,7 +553,7 @@ public class DocumentServiceTest {
 		responseUpload.setResponse(docResp);
 		requiredRequestMap.put("id", "123");
 		Mockito.doReturn(documentRequestDTOList).when(serviceUtil).createUploadDto(documentJsonString, id);
-		assertNotNull(documentUploadService.uploadDocument(mockMultipartFile, documentId, preRegistrationId));
+		documentUploadService.uploadDocument(mockMultipartFile, documentId, preRegistrationId);
 	}
 
 }
