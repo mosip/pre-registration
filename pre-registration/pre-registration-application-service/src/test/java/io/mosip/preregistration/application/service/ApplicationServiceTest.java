@@ -1,5 +1,7 @@
 package io.mosip.preregistration.application.service;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -369,7 +371,7 @@ public class ApplicationServiceTest {
 		response.setId("123");
 		response.setVersion("11");
 		response.setResponsetime(LocalDateTime.now().toString());
-		applicationService.getApplicationStatus(allApplicationsId);
+		assertNotNull(applicationService.getApplicationStatus(allApplicationsId));
 	}
 
 	@Test(expected = RecordNotFoundException.class)
@@ -379,7 +381,7 @@ public class ApplicationServiceTest {
 		response.setId("123");
 		response.setVersion("11");
 		response.setResponsetime(LocalDateTime.now().toString());
-		applicationService.getApplicationStatus(applicationId);
+		assertNotNull(applicationService.getApplicationStatus(applicationId));
 	}
 
 	@Test
