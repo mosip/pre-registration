@@ -321,7 +321,7 @@ public class DemographicController {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.getUpdatedDateTimeForPreIds(mainRequestDTO.getRequest()));
 	}
-
+	
 	
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsinfo())")
 	@GetMapping(path = "/applications/prereg/info/{preregistrationId}")

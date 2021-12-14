@@ -857,7 +857,6 @@ public class DemographicServiceTest {
 	}
 
 
-
 	@Test
 	public void statusCheckTest() {
 		DemographicEntity demographicEntity = new DemographicEntity();
