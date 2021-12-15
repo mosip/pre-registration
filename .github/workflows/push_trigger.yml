@@ -56,7 +56,7 @@ jobs:
     - name: Build with Maven
       run: |
         cd pre-registration
-        mvn -B package -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
+        mvn -B clean package -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
 
     - name: Ready the springboot artifacts
       run: find -name '*.jar' -executable -type f  -exec zip release.zip {} +
