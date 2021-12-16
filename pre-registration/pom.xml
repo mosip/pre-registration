@@ -72,6 +72,7 @@
 		<pre.registration.core.version>1.2.0-SNAPSHOT</pre.registration.core.version>
 		<kernel.core.version>1.2.0-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<sonar.skip>true</sonar.skip>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
@@ -132,11 +133,28 @@
 		<icu.version>63.1</icu.version>
 
 
-		<sonar.coverage.exclusions>
-			**/code/**,**/config/**,**/dao/**,**/dto/**,**/entity/**,**/errorcodes/**,
-			**/exception/**,**/exception/system/**,**/exception/util/**,**/repository/**,
-			**/*Config.java,**/*Application.java,**/batchjob/**,**/util/**,**/stateUtil/**,
-			**/preregistration/application/dto/*.java
+			<sonar.coverage.exclusions>
+			**/code/**,
+			**/config/**,
+			**/dao/**,
+			**/dto/**,
+			**/entity/**,
+			**/errorcodes/**,
+			**/exception/**,
+			**/exception/system/**,
+			**/exception/util/**,
+			**/repository/**,
+			**/*Config.java,
+			**/*Application.java,
+			**/batchjob/**,
+			**/util/**,
+			**/stateUtil/**,
+			**/preregistration/application/dto/*.java,
+			**/preregistration/application/dto/ApplicantTypeCodeDTO.java,
+			**/preregistration/application/dto/ApplicantTypeKeyValueDTO.java,
+			**/preregistration/application/dto/**,
+			**/preregistration/datasync/dto/*.java,
+			**/preregistration/booking/dto/*.java
 		</sonar.coverage.exclusions>
 		<sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
 
@@ -388,8 +406,6 @@
 			<id>sonar</id>
 			<properties>
 				<sonar.sources>.</sonar.sources>
-				<sonar.inclusions>src/main/java/**,src/main/resources/**</sonar.inclusions>
-				<sonar.exclusions>${sonar.coverage.exclusions}</sonar.exclusions>
 				<sonar.host.url>https://sonarcloud.io</sonar.host.url>
 			</properties>
 			<activation>
