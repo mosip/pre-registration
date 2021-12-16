@@ -9,7 +9,9 @@ import org.springframework.context.annotation.FilterType;
 @ComponentScan(basePackages = { "io.mosip.preregistration.captcha.*",
 		"io.mosip.preregistration.core.*" }, excludeFilters = @ComponentScan.Filter(type = FilterType.ASPECTJ, pattern = {
 				"io.mosip.preregistration.core.config.RestInterceptor",
-				"io.mosip.preregistration.core.config.SSLConfig", "io.mosip.preregistration.core.util.AuditLogUtil" }))
+				"io.mosip.preregistration.core.config.SSLConfig", "io.mosip.preregistration.core.util.AuditLogUtil",
+				"io.mosip.preregistration.core.util.ValidationUtil", "io.mosip.preregistration.core.util.CryptoUtil",
+				"io.mosip.preregistration.core.util.TemplateUtil", "io.mosip.preregistration.core.util.NotificationUtil" }))
 public class PreRegistrationCaptchaServiceApplication {
 
 	public static void main(String[] args) {
