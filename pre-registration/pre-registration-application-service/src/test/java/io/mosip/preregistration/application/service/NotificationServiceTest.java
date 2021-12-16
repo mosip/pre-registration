@@ -94,7 +94,7 @@ public class NotificationServiceTest {
 	@Mock
 	private ObjectMapper mapper;
 
-	@MockBean(name = "restTemplate")
+	@MockBean(name = "restTemplateConfig")
 	private RestTemplate restTemplate;
 
 	@Value("${mosip.utc-datetime-pattern}")

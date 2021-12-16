@@ -43,7 +43,8 @@ public class AuditLogUtilTest {
 	private RequestValidator validator;
 	
 	private AuditLogUtil auditLogUtilSpy;
-	@MockBean(name="restTemplate")
+	
+	@MockBean(name="selfTokenRestTemplate")
 	RestTemplate restTemplate;
 	
 	AuditRequestDto auditRequestDto=new AuditRequestDto();

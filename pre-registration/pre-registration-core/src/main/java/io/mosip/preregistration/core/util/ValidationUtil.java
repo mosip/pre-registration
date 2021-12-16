@@ -18,13 +18,11 @@ import java.util.stream.IntStream;
 import javax.persistence.LockModeType;
 
 import org.apache.commons.collections.map.MultiValueMap;
-import org.apache.commons.collections4.SetValuedMap;
-import org.apache.commons.collections4.multimap.HashSetValuedHashMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.Lock;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -89,16 +87,13 @@ public class ValidationUtil {
 	/** The validDocsMap. */
 	private static MultiValueMap validDocsMap = new MultiValueMap();;
 
+	@Qualifier("selfTokenRestTemplate")
 	@Autowired
 	RestTemplate restTemplate;
 
 	private static final String DOCUMENTS = "documents";
 
-	private static final String DOCUMENTCATEGORIES = "documentcategories";
-
 	private static final String IS_ACTIVE = "isActive";
-
-	private static final String DOC_TYPES = "documenttypes";
 
 	private static final String CODE = "code";
 

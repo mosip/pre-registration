@@ -10,7 +10,6 @@ import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.core.util.AuthTokenUtil;
 
 @Configuration
 public class ApplicationEventListerner {

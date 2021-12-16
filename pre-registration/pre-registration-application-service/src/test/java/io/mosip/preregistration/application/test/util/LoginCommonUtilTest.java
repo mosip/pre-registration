@@ -8,6 +8,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,13 +22,8 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.application.dto.User;
-import io.mosip.preregistration.application.exception.JsonParseException;
 import io.mosip.preregistration.application.service.DemographicServiceIntf;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -42,7 +40,7 @@ public class LoginCommonUtilTest {
 	@Value("${mosip.id.validation.identity.phone}")
 	private static String phoneRegex;
 
-	@MockBean(name = "restTemplateConfig")
+	@MockBean(name = "plainRestTemplate")
 	private RestTemplate restTemplate;
 
 	@Autowired

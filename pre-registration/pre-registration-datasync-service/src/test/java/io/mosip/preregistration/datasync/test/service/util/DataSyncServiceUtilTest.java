@@ -103,7 +103,7 @@ public class DataSyncServiceUtilTest {
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@MockBean
-	@Qualifier(value = "restTemplate")
+	@Qualifier(value = "selfTokenRestTemplate")
 	RestTemplate restTemplate;
 	
 	@MockBean
