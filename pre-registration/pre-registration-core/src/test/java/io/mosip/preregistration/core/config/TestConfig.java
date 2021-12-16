@@ -1,4 +1,4 @@
-package io.mosip.preregistration.application.test.config;
+package io.mosip.preregistration.core.config;
 
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
@@ -18,25 +18,6 @@ import org.springframework.web.client.RestTemplate;
 
 @Configuration
 public class TestConfig {
-
-	@Bean
-	public RestTemplate restTemplateConfig()
-			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-		
-			TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-
-			SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
-					.loadTrustMaterial(null, acceptingTrustStrategy).build();
-
-			SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
-
-			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-
-			requestFactory.setHttpClient(httpClient);
-			return new RestTemplate(requestFactory);
-	}
-
 	@Bean
 	public RestTemplate selfTokenRestTemplate()
 			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
@@ -90,5 +71,4 @@ public class TestConfig {
 			requestFactory.setHttpClient(httpClient);
 			return new RestTemplate(requestFactory);
 	}
-	
 }

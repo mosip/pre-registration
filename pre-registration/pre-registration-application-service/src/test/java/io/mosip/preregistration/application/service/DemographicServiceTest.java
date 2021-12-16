@@ -144,7 +144,7 @@ public class DemographicServiceTest {
 	/**
 	 * Mocking the RestTemplateBuilder bean
 	 */
-	@Mock(name="restTemplate")
+	@Mock(name="restTemplateConfig")
 	RestTemplate restTemplate;
 
 	/**

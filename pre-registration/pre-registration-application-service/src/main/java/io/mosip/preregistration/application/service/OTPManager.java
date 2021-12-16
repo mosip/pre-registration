@@ -78,9 +78,9 @@ public class OTPManager {
 	private Environment environment;
 
 	@Autowired
-	@Qualifier("restTemplateConfig")
+	@Qualifier("selfTokenRestTemplate")
 	RestTemplate restTemplate;
-
+ 
 	@Autowired
 	private OtpTxnRepository otpRepo;
 
@@ -115,18 +115,7 @@ public class OTPManager {
 					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorMessage());
 		}
 
-		String token = "";
-		try {
-			token = generateToken();
-		} catch (Exception e) {
-			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
-					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorCode(),
-					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
-			throw new PreRegLoginException(PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorCode(),
-					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
-		}
-
-		String otp = generateOTP(requestDTO, token);
+		String otp = generateOTP(requestDTO);
 		logger.info("sessionId", "idType", "id", "In generateOTP method of otpmanager service OTP generated");
 		String otpHash = digestAsPlainText(
 				(userId + environment.getProperty(PreRegLoginConstant.KEY_SPLITTER) + otp).getBytes());
@@ -153,7 +142,7 @@ public class OTPManager {
 			txn.setStatusCode(PreRegLoginConstant.ACTIVE_STATUS);
 			otpRepo.save(txn);
 		}
-		Map<String, Object> mp = new HashMap();
+		Map<String, Object> mp = new HashMap<>();
 
 		Integer validTime = environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Integer.class)
 				/ 60;
@@ -172,17 +161,17 @@ public class OTPManager {
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER)) {
 			logger.info("sessionId", "idType", "id",
 					"In generateOTP method of otpmanager service invoking sms notification");
-			notification.invokeSmsNotification(mp, userId, token, requestDTO, language);
+			notification.invokeSmsNotification(mp, userId, requestDTO, language);
 		}
 		if (channelType.equalsIgnoreCase(PreRegLoginConstant.EMAIL)) {
 			logger.info("sessionId", "idType", "id",
 					"In generateOTP method of otpmanager service invoking email notification");
-			notification.invokeEmailNotification(mp, userId, token, requestDTO, language);
+			notification.invokeEmailNotification(mp, userId, requestDTO, language);
 		}
 		return true;
 	}
 
-	private String generateOTP(MainRequestDTO<OtpRequestDTO> requestDTO, String token) throws PreRegLoginException {
+	private String generateOTP(MainRequestDTO<OtpRequestDTO> requestDTO) throws PreRegLoginException {
 		logger.info("sessionId", "idType", "id", "In generateOTP method of otpmanager service ");
 		try {
 			OTPGenerateRequestDTO otpRequestDTO = new OTPGenerateRequestDTO();
@@ -196,7 +185,6 @@ public class OTPManager {
 			HttpHeaders headers1 = new HttpHeaders();
 			headers1.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 			headers1.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			headers1.add("Cookie", token.substring(0, token.indexOf(";")));
 			headers1.add("user-agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 			HttpEntity<OTPGenerateRequestDTO> entity1 = new HttpEntity<OTPGenerateRequestDTO>(otpRequestDTO, headers1);
@@ -260,39 +248,6 @@ public class OTPManager {
 	private String hash(String id) throws PreRegLoginException {
 
 		return HMACUtils.digestAsPlainText(id.getBytes());
-
-	}
-
-	@SuppressWarnings("unchecked")
-	public String generateToken() throws Exception {
-		logger.info("sessionId", "idType", "id", "In generateToken method of otpmanager service ");
-		String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-		JSONObject jsonObject = new JSONObject();
-		jsonObject.put("id", tokenUrl);
-		jsonObject.put("metadata", new JSONObject());
-		JSONObject jsonObject1 = new JSONObject();
-		jsonObject1.put("clientId", clientId);
-		jsonObject1.put("secretKey", secretKey);
-		jsonObject1.put("appId", appId);
-		jsonObject.put("requesttime", LocalDateTime.now().toString());
-		jsonObject.put("version", version);
-		jsonObject.put("request", jsonObject1);
-
-		HttpEntity<String> entity = new HttpEntity<String>(jsonObject.toString(), headers);
-		HttpEntity<String> response = restTemplate.exchange(tokenUrl, HttpMethod.POST, entity, String.class);
-
-		Object obj = JSONValue.parse(response.getBody());
-
-		JSONObject jo1 = (JSONObject) ((JSONObject) obj).get("response");
-		HttpHeaders responseHeader = response.getHeaders();
-		if (!(jo1.get("status").toString().equalsIgnoreCase("Success"))) {
-
-			throw new Exception();
-		}
-		return responseHeader.get("Set-Cookie").get(0);
 
 	}
 

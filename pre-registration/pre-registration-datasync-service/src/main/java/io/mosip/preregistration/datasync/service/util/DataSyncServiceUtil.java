@@ -22,6 +22,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
@@ -118,8 +119,9 @@ public class DataSyncServiceUtil {
 	/**
 	 * Autowired reference for {@link #RestTemplate}
 	 */
+	@Qualifier("selfTokenRestTemplate")
 	@Autowired
-	RestTemplate restTemplate;
+	RestTemplate selfTokenRestTemplate;
 
 	@Autowired
 	@Lazy
@@ -290,7 +292,7 @@ public class DataSyncServiceUtil {
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
 			log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method URL- " + uriBuilder);
-			ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 					}, params);
@@ -337,7 +339,7 @@ public class DataSyncServiceUtil {
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
 			log.info("sessionId", "idType", "id", "In callGetDocRestService method URL- " + uriBuilder);
-			ResponseEntity<MainResponseDTO<DocumentsMetaData>> respEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<MainResponseDTO<DocumentsMetaData>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity, new ParameterizedTypeReference<MainResponseDTO<DocumentsMetaData>>() {
 					}, params);
 			if (respEntity.getBody().getErrors() != null) {
@@ -382,7 +384,7 @@ public class DataSyncServiceUtil {
 			HttpEntity<MainResponseDTO<DocumentDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			log.info("sessionId", "idType", "id", "In callGetBytesDocRestService method URL- " + uriBuilder);
-			ResponseEntity<MainResponseDTO<DocumentDTO>> respEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET,
+			ResponseEntity<MainResponseDTO<DocumentDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder, HttpMethod.GET,
 					httpEntity, new ParameterizedTypeReference<MainResponseDTO<DocumentDTO>>() {
 					}, params);
 			if (respEntity.getBody().getErrors() != null) {
@@ -424,7 +426,7 @@ public class DataSyncServiceUtil {
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
 			log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method URL- " + uriBuilder);
-			ResponseEntity<MainResponseDTO<DemographicResponseDTO>> respEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<MainResponseDTO<DemographicResponseDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 					}, params);
@@ -473,7 +475,7 @@ public class DataSyncServiceUtil {
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
 			log.info("sessionId", "idType", "id", "In callGetAppointmentDetailsRestService method URL- " + uriBuilder);
-			ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> respEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					}, params);
@@ -755,7 +757,7 @@ public class DataSyncServiceUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<MainResponseDTO<Map<String, String>>> httpEntity = new HttpEntity(mainRequestDTO, headers);
 			String uriBuilder = builder.build().encode().toUriString();
-			ResponseEntity<MainResponseDTO<Map<String, String>>> respEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<MainResponseDTO<Map<String, String>>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.POST, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<Map<String, String>>>() {
 					});
@@ -903,7 +905,7 @@ public class DataSyncServiceUtil {
 				HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
 				String uriBuilder = builder.build().encode().toUriString();
 				log.info("sessionId", "idType", "id", "In callGetMachinePublickey method URL-{} " + uriBuilder);
-				ResponseEntity<MainResponseDTO<ClientPublickeyDTO>> respEntity = restTemplate.exchange(uriBuilder,
+				ResponseEntity<MainResponseDTO<ClientPublickeyDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 						HttpMethod.GET, httpEntity,
 						new ParameterizedTypeReference<MainResponseDTO<ClientPublickeyDTO>>() {
 						});
@@ -951,7 +953,7 @@ public class DataSyncServiceUtil {
 			HttpEntity httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			log.info("In getPreRegistrationInfo method URL- {}", uriBuilder);
-			ResponseEntity<MainResponseDTO<ApplicationInfoMetadataDTO>> respEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<MainResponseDTO<ApplicationInfoMetadataDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<ApplicationInfoMetadataDTO>>() {
 					});
@@ -991,7 +993,7 @@ public class DataSyncServiceUtil {
 			HttpEntity<?> httpEntity = new HttpEntity<MainRequestDTO<JWTSignatureRequestDto>>(mainRequestDTO, headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			log.info("In signData method URL- {}", uriBuilder);
-			ResponseEntity<MainResponseDTO<JWTSignatureResponseDto>> respEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<MainResponseDTO<JWTSignatureResponseDto>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.POST, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<JWTSignatureResponseDto>>() {
 					});
@@ -1023,7 +1025,7 @@ public class DataSyncServiceUtil {
 			HttpEntity httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 		    log.info("In updateApplicationStatusToPreFectched method URL- {}", uriBuilder);
-			respEntity = restTemplate.exchange(uriBuilder, HttpMethod.PUT, httpEntity,
+			respEntity = selfTokenRestTemplate.exchange(uriBuilder, HttpMethod.PUT, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<String>>() {
 					});
 			if (respEntity.getBody().getErrors() != null) {
