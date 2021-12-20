@@ -23,12 +23,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -108,7 +107,6 @@ public class DataSyncServiceUtilTest {
 	
 	@MockBean
 	AnonymousProfileUtil profileUtil;
-
 
 	/**
 	 * Reference for ${mosip.id.preregistration.datasync.fetch.ids} from property
@@ -197,6 +195,7 @@ public class DataSyncServiceUtilTest {
 
 	@Before
 	public void setUp() throws Exception {
+		
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = new URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020", "%20"));
 		file = new File(uri.getPath());
@@ -521,7 +520,6 @@ public class DataSyncServiceUtilTest {
 	private JSONObject jsonObject;
 	private JSONParser parser = null;
 
-	@Ignore
 	@Test
 	public void archivingFilesTest() throws FileNotFoundException, IOException, ParseException {
 		parser = new JSONParser();
@@ -579,7 +577,6 @@ public class DataSyncServiceUtilTest {
 		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData,null);
 	}
 
-	@Ignore
 	@Test
 	public void archivingFilesFailureTest() throws FileNotFoundException, IOException, ParseException {
 		parser = new JSONParser();

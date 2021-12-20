@@ -23,7 +23,6 @@ import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -41,8 +40,6 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.signatureutil.model.SignatureResponse;
-import io.mosip.kernel.core.signatureutil.spi.SignatureUtil;
-import io.mosip.kernel.signature.service.SignatureService;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.util.RequestValidator;

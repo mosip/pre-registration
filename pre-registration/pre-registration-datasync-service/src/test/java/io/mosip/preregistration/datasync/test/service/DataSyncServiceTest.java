@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -284,7 +283,6 @@ public class DataSyncServiceTest {
 		assertEquals(response.getResponse().getPreRegistrationId(), archiveDTO.getPreRegistrationId());
 	}
 
-	@Ignore
 	@Test(expected = DemographicGetDetailsException.class)
 	public void GetPreRegistrationTest1() throws Exception {
 		DemographicGetDetailsException ex = new DemographicGetDetailsException(ErrorCodes.PRG_DATA_SYNC_007.toString(),
@@ -307,7 +305,6 @@ public class DataSyncServiceTest {
 				response.getResponse().getCountOfPreRegIds().length());
 	}
 
-	@Ignore
 	@Test(expected = InvalidRequestParameterException.class)
 	public void RetrieveAllPreRegIdTest1() throws Exception {
 		InvalidRequestParameterException ex = new InvalidRequestParameterException(
