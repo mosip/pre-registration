@@ -17,6 +17,8 @@ import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -37,6 +39,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoRequestDto;
 import io.mosip.kernel.clientcrypto.dto.TpmCryptoResponseDto;
@@ -202,7 +207,13 @@ public class DataSyncServiceUtil {
 	/**
 	 * ObjectMapper global object creation
 	 */
-	private ObjectMapper mapper = new ObjectMapper();
+	private ObjectMapper mapper;
+
+	@PostConstruct
+    public void init() {
+		mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+		mapper.registerModule(new JavaTimeModule());
+	}
 
 	/**
 	 * Logger configuration initialization
