@@ -176,11 +176,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 				log.info(
 						"In appointment deleted successfully for ID:{}, updating the applications and demographic tables",
 						preRegistrationId);
-				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null, StatusCodes.CANCELLED.getCode());
-				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
-					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
-						authUserDetails().getUserId());
-				}
+//				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null, StatusCodes.CANCELLED.getCode());
+//				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
+//					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
+//						authUserDetails().getUserId());
+//				}
+				this.updateApplicationEntity(preRegistrationId, null, null);
 				deleteResponse.setResponse(res);
 			}
 
