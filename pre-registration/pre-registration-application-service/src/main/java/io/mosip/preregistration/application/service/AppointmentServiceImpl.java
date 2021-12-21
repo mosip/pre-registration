@@ -162,8 +162,34 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return bookAppointmentResponse;
 	}
 
+	 
 	@Override
 	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegistrationId) {
+		MainResponseDTO<DeleteBookingDTO> deleteResponse = new MainResponseDTO<DeleteBookingDTO>();
+		deleteResponse.setId(appointmentDeletelId);
+		deleteResponse.setVersion(version);
+		deleteResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
+		try {
+			log.info("Deleting appointment for ID:{}", preRegistrationId);
+			DeleteBookingDTO res = appointmentUtils.deleteBooking(preRegistrationId);
+			if (res != null && (res.getDeletedBy() != null && res.getDeletedDateTime() != null
+					&& res.getPreRegistrationId() != null)) {
+				log.info(
+						"In appointment deleted successfully for ID:{}, updating the applications and demographic tables",
+						preRegistrationId);
+				this.updateApplicationEntity(preRegistrationId, null, null);
+				deleteResponse.setResponse(res);
+			}
+
+		} catch (AppointmentExecption ex) {
+			log.error("Exception has occured while deleting an appointment : {}", ex);
+			deleteResponse.setErrors(setErrors(ex));
+		}
+		return deleteResponse;
+	}
+	 
+	 @Override
+	public MainResponseDTO<DeleteBookingDTO> deleteBookingAndUpdateApplicationStatus(String preRegistrationId) {
 		MainResponseDTO<DeleteBookingDTO> deleteResponse = new MainResponseDTO<DeleteBookingDTO>();
 		deleteResponse.setId(appointmentDeletelId);
 		deleteResponse.setVersion(version);
@@ -189,7 +215,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			deleteResponse.setErrors(setErrors(ex));
 		}
 		return deleteResponse;
-	}
+	} 
 
 	@Override
 	public MainResponseDTO<CancelBookingResponseDTO> cancelAppointment(String preRegistrationId) {

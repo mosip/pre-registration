@@ -131,8 +131,29 @@
 		<java.interceptor.version>1.2</java.interceptor.version>
 		<icu.version>63.1</icu.version>
 
-
-		<sonar.coverage.exclusions>**/code/**,**/config/**,**/dao/**,**/dto/**,**/entity/**,**/errorcodes/**,**/exception/**,**/exception/system/**,**/exception/util/**,**/repository/**,**/*Config.java,**/*Application.java,**/batchjob/**,**/util/**,**/stateUtil/**</sonar.coverage.exclusions>
+		<sonar.coverage.exclusions>
+			**/code/**,
+			**/config/**,
+			**/dao/**,
+			**/dto/**,
+			**/entity/**,
+			**/errorcodes/**,
+			**/exception/**,
+			**/exception/system/**,
+			**/exception/util/**,
+			**/repository/**,
+			**/*Config.java,
+			**/*Application.java,
+			**/batchjob/**,
+			**/util/**,
+			**/stateUtil/**,
+			**/preregistration/application/dto/*.java,
+			**/preregistration/application/dto/ApplicantTypeCodeDTO.java,
+			**/preregistration/application/dto/ApplicantTypeKeyValueDTO.java,
+			**/preregistration/application/dto/**,
+			**/preregistration/datasync/dto/*.java,
+			**/preregistration/booking/dto/*.java
+		</sonar.coverage.exclusions>
 		<sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
 
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
@@ -172,6 +193,26 @@
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
 			<version>3.27.0-GA</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-databind</artifactId>
+			<version>2.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-annotations</artifactId>
+			<version>2.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.core</groupId>
+			<artifactId>jackson-core</artifactId>
+			<version>2.12.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.fasterxml.jackson.datatype</groupId>
+			<artifactId>jackson-datatype-jsr310</artifactId>
+			<version>2.12.0</version>
 		</dependency>
 	</dependencies>
 	<build>

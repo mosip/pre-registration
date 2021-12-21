@@ -26,7 +26,6 @@ import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
@@ -46,7 +45,6 @@ import io.mosip.preregistration.application.exception.DocumentNotValidException;
 import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
 import io.mosip.preregistration.application.service.DemographicService;
-import io.mosip.preregistration.application.service.DemographicServiceIntf;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -89,12 +87,6 @@ public class DocumentServiceUtil {
 
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
-
-	/**
-	 * Autowired reference for {@link #RestTemplateBuilder}
-	 */
-	@Autowired
-	RestTemplate restTemplate;
 
 	@Autowired
 	ValidationUtil validationUtil;

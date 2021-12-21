@@ -44,7 +44,7 @@ public class DocumentServiceUtilTest {
 
 	List<DocumentEntity> docEntity = new ArrayList<>();
 
-	@MockBean(name = "restTemplate")
+	@MockBean(name = "restTemplateConfig")
 	RestTemplate restTemplate;
 
 	@MockBean

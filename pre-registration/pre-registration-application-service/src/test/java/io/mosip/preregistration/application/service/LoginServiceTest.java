@@ -236,7 +236,7 @@ public class LoginServiceTest {
 	@Test
 	public void setAuditValuesTest() {
 		list.add("Mosip");
-		Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any(), Mockito.anyString());
+		Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any());
 		Mockito.doReturn(responseEntityAudit).when(authCommonUtil).callAuthService(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		Mockito.when(responseEntityAudit.getHeaders()).thenReturn(headers);
@@ -260,7 +260,7 @@ public class LoginServiceTest {
 	@Test
 	public void setAuditValuesTestLoginException() {
 		list.add("Mosip");
-		Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any(), Mockito.anyString());
+		Mockito.doNothing().when(auditLogUtil).saveAuditDetails(Mockito.any());
 		Mockito.doReturn(responseEntityAudit).when(authCommonUtil).callAuthService(Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
 		Mockito.when(responseEntityAudit.getHeaders()).thenReturn(headers);
