@@ -138,7 +138,7 @@ public class AppointmentController {
 	public ResponseEntity<MainResponseDTO<DeleteBookingDTO>> discardIndividual(
 			@RequestParam(value = "preRegistrationId") String preId) {
 		log.info("Delete booking with preId: {}", preId);
-		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.deleteBooking(preId));
+		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.deleteBookingAndUpdateApplicationStatus(preId));
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostappointmentmulti())")

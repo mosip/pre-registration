@@ -21,6 +21,8 @@ public interface AppointmentService {
 			String preRegistrationId, String userAgent);
 
 	MainResponseDTO<DeleteBookingDTO> deleteBooking(String preId);
+	
+	MainResponseDTO<DeleteBookingDTO> deleteBookingAndUpdateApplicationStatus(String preId);
 
 	MainResponseDTO<CancelBookingResponseDTO> cancelAppointment(String preRegistrationId);
 
