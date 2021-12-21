@@ -131,8 +131,7 @@
 		<java.interceptor.version>1.2</java.interceptor.version>
 		<icu.version>63.1</icu.version>
 
-
-			<sonar.coverage.exclusions>
+		<sonar.coverage.exclusions>
 			**/code/**,
 			**/config/**,
 			**/dao/**,
