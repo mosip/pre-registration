@@ -6,6 +6,7 @@ import java.time.LocalDateTime;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -37,6 +38,7 @@ public class CryptoUtil {
 	/**
 	 * Autowired reference for {@link #restTemplateBuilder}
 	 */
+	@Qualifier("selfTokenRestTemplate")
 	@Autowired
 	RestTemplate restTemplate;
 

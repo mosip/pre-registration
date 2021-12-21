@@ -57,7 +57,7 @@ public class NotificationUtilTest {
 	@Autowired
 	private ObjectMapper mapper;
 
-	@MockBean(name = "restTemplate")
+	@MockBean(name = "selfTokenRestTemplate")
 	RestTemplate restTemplate;
 
 	@Autowired

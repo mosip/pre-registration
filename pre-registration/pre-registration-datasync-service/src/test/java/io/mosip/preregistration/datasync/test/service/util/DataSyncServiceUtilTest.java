@@ -26,7 +26,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -103,12 +102,11 @@ public class DataSyncServiceUtilTest {
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@MockBean
-	@Qualifier(value = "restTemplate")
+	@Qualifier(value = "selfTokenRestTemplate")
 	RestTemplate restTemplate;
 	
 	@MockBean
 	AnonymousProfileUtil profileUtil;
-
 
 	/**
 	 * Reference for ${mosip.id.preregistration.datasync.fetch.ids} from property
@@ -197,6 +195,7 @@ public class DataSyncServiceUtilTest {
 
 	@Before
 	public void setUp() throws Exception {
+		
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = new URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020", "%20"));
 		file = new File(uri.getPath());

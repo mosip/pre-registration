@@ -11,6 +11,7 @@ import javax.annotation.PostConstruct;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -62,6 +63,7 @@ public class AuditLogUtil {
 	/**
 	 * Autowired reference for {@link #RestTemplate}
 	 */
+	@Qualifier("selfTokenRestTemplate")
 	@Autowired
 	RestTemplate restTemplate;
 
@@ -129,36 +131,6 @@ public class AuditLogUtil {
 		}
 		auditRequestDto.setIdType(AuditLogVariables.PRE_REGISTRATION_ID.toString());
 		callAuditManager(auditRequestDto);
-	}
-
-	/**
-	 * For auditing Login Services
-	 * 
-	 * @param auditRequestDto
-	 * @param token
-	 * @return
-	 */
-	public void saveAuditDetails(AuditRequestDto auditRequestDto, String token) {
-		log.info("sessionId", "idType", "id",
-				"In saveAuditDetails method of AugitLogUtil service - " + auditRequestDto);
-
-		auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
-		auditRequestDto.setApplicationId(AuditLogVariables.MOSIP_1.toString());
-		auditRequestDto.setApplicationName(AuditLogVariables.PREREGISTRATION.toString());
-		auditRequestDto.setHostIp(hostIP);
-		auditRequestDto.setHostName(hostName);
-		auditRequestDto.setCreatedBy(AuditLogVariables.SYSTEM.toString());
-		if (auditRequestDto.getId() == null || auditRequestDto.getId().toString().isEmpty()) {
-			auditRequestDto.setId(AuditLogVariables.NO_ID.toString());
-		}
-		if (auditRequestDto.getSessionUserId() == null || auditRequestDto.getSessionUserId().isEmpty()) {
-			auditRequestDto.setSessionUserId(AuditLogVariables.SYSTEM.toString());
-		}
-		if (auditRequestDto.getSessionUserName() == null || auditRequestDto.getSessionUserName().isEmpty()) {
-			auditRequestDto.setSessionUserName(AuditLogVariables.SYSTEM.toString());
-		}
-		auditRequestDto.setIdType(AuditLogVariables.PRE_REGISTRATION_ID.toString());
-		callAuditManager(auditRequestDto, token);
 	}
 
 	public boolean callAuditManager(AuditRequestDto auditRequestDto) {
@@ -256,45 +228,6 @@ public class AuditLogUtil {
 		callAuditManager(auditRequestDto, header);
 	}
 
-	/**
-	 * For Auditing Login Services
-	 * 
-	 * @param auditRequestDto
-	 * @param token
-	 * @return
-	 */
-	public boolean callAuditManager(AuditRequestDto auditRequestDto, String token) {
-		log.info("sessionId", "idType", "id",
-				"In callAuditManager method of AugitLogUtil service - " + auditRequestDto);
-
-		boolean auditFlag = false;
-		try {
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(auditUrl);
-			RequestWrapper<AuditRequestDto> requestKernel = new RequestWrapper<>();
-			requestKernel.setRequest(auditRequestDto);
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
-			headers.add("Cookie", token);
-			HttpEntity<RequestWrapper<AuditRequestDto>> requestEntity = new HttpEntity<>(requestKernel, headers);
-			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
-
-			log.info("sessionId", "idType", "id",
-					"In callAuditManager method of AugitLogUtil service auditUrl: " + uriBuilder);
-			ResponseEntity<String> responseEntity2 = restTemplate.exchange(uriBuilder, HttpMethod.POST, requestEntity,
-					new ParameterizedTypeReference<String>() {
-					});
-			ResponseWrapper<AuditResponseDto> response = requestBodyExchange(responseEntity2.getBody());
-			AuditResponseDto responseDTO = (AuditResponseDto) requestBodyExchangeObject(
-					responseToString(response.getResponse()), AuditResponseDto.class);
-			auditFlag = responseDTO.isStatus();
-		} catch (HttpClientErrorException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In callAuditManager method of AugitLogUtil Util for HttpClientErrorException- "
-							+ ex.getResponseBodyAsString());
-		}
-		return auditFlag;
-	}
 
 	/**
 	 * For Auditing Login Services

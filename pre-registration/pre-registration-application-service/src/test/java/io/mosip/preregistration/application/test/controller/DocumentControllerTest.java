@@ -82,6 +82,7 @@ public class DocumentControllerTest {
 
 	Map<String, String> map = new HashMap<>();
 	MainResponseDTO<DocumentResponseDTO> responseCopy = new MainResponseDTO<>();
+	MainResponseDTO<String> res = new MainResponseDTO<String>();
 	MainResponseDTO<DocumentsMetaData> responseAllDoc = new MainResponseDTO<>();
 	MainResponseDTO<DocumentDeleteResponseDTO> responseDelete = new MainResponseDTO<>();
 	MainResponseDTO<io.mosip.preregistration.application.dto.DocumentResponseDTO> responseMain = new MainResponseDTO<>();
@@ -117,7 +118,7 @@ public class DocumentControllerTest {
 	@Test
 	public void successFileupload() throws Exception {
 		String preRegistrationId = "123546987412563";
-		
+
 		MockMultipartFile jsonMultiPart = new MockMultipartFile("Document request", "docJson", "application/json",
 				docJson.getBytes());
 
@@ -181,6 +182,23 @@ public class DocumentControllerTest {
 	 * @throws Exception
 	 */
 	@Test
+	public void updateDocRefIdTest() throws Exception {
+		String preRegistrationId = "48690172097498";
+		String documentId = "4564";
+		String docRefId = "564";
+		Mockito.when(service.updateDocRefId(documentId, preRegistrationId, docRefId)).thenReturn(res);
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.put("/documents/document/{documentId}", documentId)
+				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
+				.accept(MediaType.APPLICATION_JSON_VALUE).param("preRegistrationId", preRegistrationId)
+				.param("refNumber", docRefId);
+		mockMvc.perform(requestBuilder).andExpect(status().isOk());
+	}
+
+	/**
+	 * @throws Exception
+	 */
+	@Test
 	public void deletetAllDocumentByPreidTest() throws Exception {
 		String preRegistrationId = "48690172097498";
 		Mockito.when(service.deleteAllByPreId("48690172097498")).thenReturn(responseDelete);
@@ -206,32 +224,6 @@ public class DocumentControllerTest {
 				.accept(MediaType.APPLICATION_JSON_VALUE).param("catCode", "POA")
 				.param("sourcePreId", "48690172097498");
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	@Test(expected = Exception.class)
-	public void failureGetAllDocumentforPreidTest() throws Exception {
-		Mockito.when(service.getAllDocumentForPreId("2")).thenThrow(Exception.class);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/documents")
-				.contentType(MediaType.APPLICATION_JSON_VALUE).param("preId", "2");
-		mockMvc.perform(requestBuilder).andExpect(status().isInternalServerError());
-
-	}
-
-	/**
-	 * @throws Exception
-	 */
-	@Test(expected = Exception.class)
-	public void FailurecopyDocumentTest() throws Exception {
-		Mockito.when(service.copyDocument(Mockito.anyString(), Mockito.anyString(), Mockito.anyString()))
-				.thenThrow(Exception.class);
-
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/documents/copy")
-				.contentType(MediaType.APPLICATION_JSON_VALUE).param("catCype", Mockito.anyString())
-				.param("sourcePrId", Mockito.anyString()).param("destinationPreId", Mockito.anyString());
-		mockMvc.perform(requestBuilder).andExpect(status().isBadRequest());
 	}
 
 }

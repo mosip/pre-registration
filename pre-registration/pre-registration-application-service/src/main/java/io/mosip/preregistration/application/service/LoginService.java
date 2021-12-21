@@ -22,9 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -38,7 +35,6 @@ import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
-import io.mosip.preregistration.application.dto.ClientSecretDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.User;
@@ -59,8 +55,6 @@ import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.dto.RequestWrapper;
-import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
@@ -107,20 +101,11 @@ public class LoginService {
 	@Value("${userIdType}")
 	private String useridtype;
 
-	@Value("${appId}")
-	private String appId;
-
 	@Value("${context}")
 	private String context;
 
 	@Autowired
 	AuditLogUtil auditLogUtil;
-
-	@Value("${clientId}")
-	private String clientId;
-
-	@Value("${secretKey}")
-	private String secretKey;
 
 	@Value("${prereg.auth.jwt.secret}")
 	private String jwtSecret;
@@ -388,19 +373,6 @@ public class LoginService {
 	public void setAuditValues(String eventId, String eventName, String eventType, String description, String idType,
 			String userId, String userName) {
 		try {
-			String tokenUrl = sendOtpResourceUrl + "/authenticate/clientidsecretkey";
-			ClientSecretDTO clientSecretDto = new ClientSecretDTO(clientId, secretKey, appId);
-			RequestWrapper<ClientSecretDTO> requestKernel = new RequestWrapper<>();
-			requestKernel.setRequest(clientSecretDto);
-			requestKernel.setRequesttime(LocalDateTime.now());
-			@SuppressWarnings("unchecked")
-			ResponseEntity<ResponseWrapper<AuthNResponse>> response = (ResponseEntity<ResponseWrapper<AuthNResponse>>) loginCommonUtil
-					.callAuthService(tokenUrl, HttpMethod.POST, MediaType.APPLICATION_JSON, requestKernel, null,
-							ResponseWrapper.class);
-			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
-				throw new LoginServiceException(response.getBody().getErrors(), null);
-			}
-			String token = response.getHeaders().get("Set-Cookie").get(0);
 			AuditRequestDto auditRequestDto = new AuditRequestDto();
 			auditRequestDto.setEventId(eventId);
 			auditRequestDto.setEventName(eventName);
@@ -411,7 +383,7 @@ public class LoginService {
 			auditRequestDto.setSessionUserName(userName);
 			auditRequestDto.setModuleId(AuditLogVariables.AUTHENTICATION.toString());
 			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
-			auditLogUtil.saveAuditDetails(auditRequestDto, token);
+			auditLogUtil.saveAuditDetails(auditRequestDto);
 		} catch (LoginServiceException ex) {
 			log.error("In setAuditvalue of login service:", StringUtils.join(ex.getValidationErrorList(), ","));
 		} catch (Exception ex) {

@@ -50,7 +50,7 @@ public class DemographicServiceUtilTest {
 	@Autowired
 	private DemographicServiceUtil demographicServiceUtil;
 
-	@MockBean(name = "restTemplate")
+	@MockBean(name = "selfTokenRestTemplate")
 	RestTemplate restTemplate;
 
 	@MockBean

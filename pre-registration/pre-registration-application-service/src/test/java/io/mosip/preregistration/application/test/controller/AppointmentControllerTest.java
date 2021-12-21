@@ -115,6 +115,21 @@ public class AppointmentControllerTest {
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 
 	}
+	
+	@Test
+	@WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
+	public void cancelAppointmentInternalForPridTest() throws Exception {
+
+		MainResponseDTO<CancelBookingResponseDTO> response = new MainResponseDTO<CancelBookingResponseDTO>();
+
+		Mockito.when(appointmentService.cancelAppointment(Mockito.anyString())).thenReturn(response);
+
+		RequestBuilder request = MockMvcRequestBuilders
+				.put("/internal/applications/appointment/{preRegistrationId}", "98765432101234")
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8);
+		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
+
+	}
 
 	@Test
 	@WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })

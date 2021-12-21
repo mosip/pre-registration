@@ -41,7 +41,7 @@ public class CryptoUtilTest {
 	@MockBean
 	private RequestValidator validator;
 
-	@MockBean(name="restTemplate")
+	@MockBean(name="selfTokenRestTemplate")
 	RestTemplate restTemplate;
 	
 	@Value("${cryptoResource.url}")
