@@ -187,7 +187,7 @@ public class LoginController {
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		MainResponseDTO<AuthNResponse> responseBody = loginService.validateWithUserIdOtp(userIdOtpRequest);
-		if (responseBody.getResponse() != null && responseBody.getErrors().isEmpty()) {
+		if (responseBody.getResponse() != null && responseBody.getErrors() == null) {
 			Cookie responseCookie = new Cookie("Authorization",
 					loginService.getLoginToken(userIdOtpRequest.getRequest().getUserId(), req.getRequestURI()));
 			responseCookie.setMaxAge((int) -1);
