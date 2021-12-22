@@ -161,15 +161,17 @@ public class LoginController {
 				"In validateWithUserIdotp method of Login controller for validating user and Otp and providing the access token ");
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
-		Cookie responseCookie = new Cookie("Authorization",
-				loginService.getLoginToken(userIdOtpRequest.getRequest().getUserId(), req.getRequestURI()));
-		responseCookie.setMaxAge((int) -1);
-		responseCookie.setHttpOnly(true);
-		responseCookie.setSecure(true);
-		responseCookie.setPath("/");
-		res.addCookie(responseCookie);
-
-		return ResponseEntity.status(HttpStatus.OK).body(loginService.validateWithUserIdOtp(userIdOtpRequest));
+		MainResponseDTO<AuthNResponse> responseBody = loginService.validateWithUserIdOtp(userIdOtpRequest);
+		if (responseBody.getResponse() != null && responseBody.getErrors() == null) {
+			Cookie responseCookie = new Cookie("Authorization",
+					loginService.getLoginToken(userIdOtpRequest.getRequest().getUserId(), req.getRequestURI()));
+			responseCookie.setMaxAge((int) -1);
+			responseCookie.setHttpOnly(true);
+			responseCookie.setSecure(true);
+			responseCookie.setPath("/");
+			res.addCookie(responseCookie);
+		}
+		return ResponseEntity.status(HttpStatus.OK).body(responseBody);
 	}
 
 	/**
