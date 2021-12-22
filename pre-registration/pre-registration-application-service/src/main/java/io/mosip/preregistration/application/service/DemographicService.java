@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -30,6 +32,9 @@ import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.BaseUncheckedException;
@@ -260,7 +265,8 @@ public class DemographicService implements DemographicServiceIntf {
 	public void setup() {
 		getIdentityJsonString = serviceUtil.getJson(preregistrationIdJson);
 		log.info("Fetched the identity json from config server" + getIdentityJsonString);
-
+		objectMapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+		objectMapper.registerModule(new JavaTimeModule());
 	}
 
 	/*
@@ -1131,9 +1137,8 @@ public class DemographicService implements DemographicServiceIntf {
 
 	public DemographicIdentityRequestDTO getPreregistrationIdentityJson() {
 
-		ObjectMapper mapIdentityJsonStringToObject = new ObjectMapper();
 		try {
-			return mapIdentityJsonStringToObject.readValue(getIdentityJsonString, DemographicIdentityRequestDTO.class);
+			return objectMapper.readValue(getIdentityJsonString, DemographicIdentityRequestDTO.class);
 		} catch (IOException ex) {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
