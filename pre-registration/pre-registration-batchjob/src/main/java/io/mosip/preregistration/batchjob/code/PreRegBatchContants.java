@@ -47,4 +47,16 @@ public class PreRegBatchContants {
 	public static final String EXPIRED_STATUS_JOB = "ExpiredStatusJob";
 
 	public static final String APPOINTMENT_MISMATCH_JOB = "AppointmentMismatchJob";
+
+	public static final String ALL = "all";
+
+	public static final String PAGE_NO = "?pageNumber=";
+
+	public static final String PAGE_SIZE = "&pageSize=10";
+
+	public static final String SORT_BY = "&sortBy=createdDateTime";
+
+	public static final String ORDER_BY = "&orderBy=desc";
+
+	public static final String DATA = "data";
 }

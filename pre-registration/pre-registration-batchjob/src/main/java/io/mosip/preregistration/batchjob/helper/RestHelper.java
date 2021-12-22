@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -56,6 +57,7 @@ import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import lombok.experimental.Tolerate;
 
 /**
  * @author Mahammed Taheer
@@ -127,31 +129,70 @@ public class RestHelper {
         }
 	}
 
+    public int getRegistrationCenterTotalPages() {
 
-    public List<RegistrationCenterDto> getRegistrationCenterDetails(List<String> filterIds) {
+        String regCentersDetailsPageNo = new StringBuilder(regCenterDetailsURL)
+                                                    .append(PreRegBatchContants.ALL)
+                                                    .append(PreRegBatchContants.PAGE_NO + "0")
+                                                    .append(PreRegBatchContants.PAGE_SIZE)
+                                                    .append(PreRegBatchContants.SORT_BY)
+                                                    .append(PreRegBatchContants.ORDER_BY).toString();
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
-                    "Fetching the Registration Center Details from Master Data Service. Configured URL: " + regCenterDetailsURL);
+                    "Fetching the Registration Center Details from Master Data Service. Configured URL: " + regCentersDetailsPageNo);
         try {
-            ObjectNode responseNode = sendWebClientRequest(regCenterDetailsURL);
+            
+            ObjectNode responseNode = sendWebClientRequest(regCentersDetailsPageNo);
             if (Objects.isNull(responseNode)) {
                 LOGGER.error("Not Received the Registration Center details from Master Data Service.");
-                return new ArrayList<RegistrationCenterDto>();
+                return 0;
             }
-            List<RegistrationCenterDto> regCenterDetails = objectMapper.convertValue(responseNode.get(PreRegBatchContants.RESPONSE), 
-                    RegistrationCenterResponseDto.class).getRegistrationCenters();
+            ObjectNode objectNode = objectMapper.convertValue(responseNode.get(PreRegBatchContants.RESPONSE), ObjectNode.class);
             LOGGER.info("Received the Registration Center details from Master Data Service.");
-            
-            /* List<RegistrationCenterDto> tempTestList = //new ArrayList<>();
-            regCenterDetails.stream().filter(regCenter -> regCenter.getId().equals("10001")).collect(Collectors.toList());
-            return tempTestList;
-            */
-            if (Objects.isNull(filterIds) || filterIds.size() == 0)
-                return regCenterDetails;
-            
-            // Added below filtering because of Spring Batch partitioning serialization issue for 'LocalTime' object.
-            List<RegistrationCenterDto> filteredRegCentersList = 
-            regCenterDetails.stream().filter(regCenter -> filterIds.contains(regCenter.getId())).collect(Collectors.toList());
+            int totalPages = objectNode.get("totalItems").asInt();
+            LOGGER.info("Total Number of Pages received: " + totalPages);
+            return totalPages;
+        } catch (Exception exp) {
+            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+                    "Unknown Error in fetching registration center details." + exp.getMessage(), exp);
+        } 
+        LOGGER.warn("Unknown error, Registration Center details not received.");
+        return 0;
+    }
+
+    public List<RegistrationCenterDto> getRegistrationCenterDetails(List<String> pageNos, RegCenterIdsHolder idsHolder) {
+
+        try {
+            List<RegistrationCenterDto> filteredRegCentersList = new ArrayList<>();
+            for (String pageNo : pageNos) {
+                String regCentersDetailsPageNo = new StringBuilder(regCenterDetailsURL)
+                                                    .append(PreRegBatchContants.ALL)
+                                                    .append(PreRegBatchContants.PAGE_NO + pageNo)
+                                                    .append(PreRegBatchContants.PAGE_SIZE)
+                                                    .append(PreRegBatchContants.SORT_BY)
+                                                    .append(PreRegBatchContants.ORDER_BY).toString();
+                LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+                        "Fetching the Registration Center Details from Master Data Service. Configured URL: " + regCentersDetailsPageNo);
+                ObjectNode responseNode = sendWebClientRequest(regCentersDetailsPageNo);
+                if (Objects.isNull(responseNode)) {
+                    LOGGER.error("Not Received the Registration Center details from Master Data Service.");
+                    return new ArrayList<RegistrationCenterDto>();
+                }
+                ObjectNode objectNode = objectMapper.convertValue(responseNode.get(PreRegBatchContants.RESPONSE), ObjectNode.class);
+                List<RegistrationCenterDto> regCenterDetails = objectMapper.readValue(objectNode.get(PreRegBatchContants.DATA).toString(), 
+                        new TypeReference<List<RegistrationCenterDto>>(){});
+                LOGGER.info("Received the Registration Center details from Master Data Service.");
+                
+                for (RegistrationCenterDto regCenterDetail : regCenterDetails) {
+                    String regCenterId = regCenterDetail.getId();
+                    if (Objects.nonNull(idsHolder) && !idsHolder.containsRegCenterId(regCenterId)){
+                        idsHolder.addRegCenterId(regCenterId);
+                        filteredRegCentersList.add(regCenterDetail);
+                    } else {
+                        filteredRegCentersList.add(regCenterDetail);
+                    }
+                }
+            }
             return filteredRegCentersList;
         } catch (Exception exp) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
@@ -167,18 +208,18 @@ public class RestHelper {
                     "Fetching the Registration Center Holidays list from Master Data Service.");
         List<String> holidaysList = new ArrayList<>();
         
-        addGeneralHolidaysList(regCenterId, regCenterLangCode, holidaysList);
+        addGeneralHolidaysList(regCenterId, holidaysList);
         
-        addExceptionalHolidaysList(regCenterId, regCenterLangCode, holidaysList);
+        addExceptionalHolidaysList(regCenterId, holidaysList);
 
         addWeekOffHolidays(regCenterId, regCenterLangCode, noOfDaysToSync, holidaysList);
         return holidaysList;
     }
 
-    private void addGeneralHolidaysList(String regCenterId, String regCenterLangCode, List<String> holidaysLst) {
+    private void addGeneralHolidaysList(String regCenterId, List<String> holidaysLst) {
         
         try {
-            String generalHolidayListUrl = new StringBuilder(holidayListUrl).append(regCenterLangCode).append("/")
+            String generalHolidayListUrl = new StringBuilder(holidayListUrl).append(PreRegBatchContants.ALL).append("/")
                                                                .append(regCenterId).append("/")
                                                                .append(LocalDate.now().getYear()).toString();
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
@@ -195,16 +236,15 @@ public class RestHelper {
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                     "Added Holiday List for URL: " + generalHolidayListUrl);
         } catch (Exception exp) {
-            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, regCenterId, 
                     "Unknown Error in fetching registration center holiday List." + exp.getMessage(), exp);
         }
     }
 
-    private void addExceptionalHolidaysList(String regCenterId, String regCenterLangCode, List<String> holidaysLst) {
+    private void addExceptionalHolidaysList(String regCenterId, List<String> holidaysLst) {
         
         try {
-            String exceptionalHolidayListEndpoint = new StringBuilder(exceptionalHolidayListUrl).append(regCenterId).append("/")
-                                                               .append(regCenterLangCode).toString();
+            String exceptionalHolidayListEndpoint = new StringBuilder(exceptionalHolidayListUrl).append(regCenterId).toString();
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                                             "Registration Center Exceptional Holidays list for URL: " + exceptionalHolidayListEndpoint);
             ObjectNode responseNode = sendWebClientRequest(exceptionalHolidayListEndpoint);
@@ -215,14 +255,12 @@ public class RestHelper {
             
             ExceptionalHolidayResponseDto exceptionalHolidayObj = objectMapper.convertValue(
                             responseNode.get(PreRegBatchContants.RESPONSE), ExceptionalHolidayResponseDto.class);
-            String currentYear = Integer.toString(LocalDate.now().getYear());
             exceptionalHolidayObj.getExceptionalHolidayList().stream()
-                                 .filter(holiday -> holiday.getHolidayYear().equals(currentYear))
                                  .forEach(holiday -> holidaysLst.add(holiday.getHolidayDate().toString()));
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                     "Added Holiday List for URL: " + exceptionalHolidayListEndpoint);
         } catch (Exception exp) {
-            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, regCenterId, 
                     "Unknown Error in fetching registration center holiday List." + exp.getMessage(), exp);
         }
     }
@@ -244,27 +282,20 @@ public class RestHelper {
                             responseNode.get(PreRegBatchContants.RESPONSE), WorkingDaysResponseDto.class);
 
             List<String> workingDaysList = new ArrayList<>();
-            workingDaysResponseDto.getWeekdays().stream().filter(weekDay -> weekDay.isWorking())
-                    .forEach(weekDay -> workingDaysList.add(weekDay.getDayCode()));
+            workingDaysResponseDto.getWorkingdays().stream().forEach(weekDay -> workingDaysList.add(weekDay.getCode()));
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                 "Working Days: " + workingDaysList);
 
-            List<String> weekOffDaysList = new ArrayList<>();
-            workingDaysResponseDto.getWeekdays().stream().filter(weekDay -> !weekDay.isWorking())
-                .forEach(weekDay -> weekOffDaysList.add(weekDay.getDayCode()));
-            LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
-                "Weekoff Days: " + weekOffDaysList);
-
             LocalDate.now().datesUntil(LocalDate.now().plusDays(noOfDaysToSync))
                                                       .forEach(weekDay -> {
-                                                        if (weekOffDaysList.contains(dayCodesMap.get(weekDay.getDayOfWeek().toString()))){
+                                                        if (!workingDaysList.contains(dayCodesMap.get(weekDay.getDayOfWeek().toString()))){
                                                             holidaysLst.add(weekDay.toString());
                                                         }});
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
                 "Added Holiday List for URL: " + workingDaysListEndpoint);
 
         } catch (Exception exp) {
-            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, regCenterId, 
                     "Unknown Error in fetching registration center holiday List." + exp.getMessage(), exp);
         }
     }

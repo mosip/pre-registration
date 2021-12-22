@@ -550,7 +550,7 @@ public class AvailabilityUtil {
 			}
 
 			// Code to retrive date of days and add it to holidays.
-			if (responseEntity3.getBody().getResponse().getWeekdays() != null) {
+			/* if (responseEntity3.getBody().getResponse().getWeekdays() != null) {
 				List<String> workingDays = responseEntity3.getBody().getResponse().getWeekdays().stream()
 						.filter(regCenterWorkingDays -> regCenterWorkingDays.isWorking())
 						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
@@ -569,7 +569,7 @@ public class AvailabilityUtil {
 						}
 					}
 				}
-			}
+			} */
 
 			/*
 			 * if (!responseEntity3.getBody().getResponse().getWorkingdays().isEmpty()) {
