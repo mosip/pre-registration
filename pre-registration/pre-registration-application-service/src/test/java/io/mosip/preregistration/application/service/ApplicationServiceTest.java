@@ -1,5 +1,7 @@
 package io.mosip.preregistration.application.service;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -280,6 +282,14 @@ public class ApplicationServiceTest {
 		MainResponseDTO<ApplicationsListDTO> response = applicationService
 				.getAllApplicationsForUserForBookingType(BookingTypeCodes.NEW_PREREGISTRATION.toString());
 		Assert.assertEquals("1234567890", response.getResponse().getAllApplications().get(0).getApplicationId());
+	}
+
+	@Test
+	public void testDeleteLostOrUpdateApplicationPreRegistrationSuccess() {
+		String applicationId = "12345";
+		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
+		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
+				BookingTypeCodes.UPDATE_REGISTRATION.toString()));
 	}
 
 	@Test(expected = PreRegistrationException.class)
