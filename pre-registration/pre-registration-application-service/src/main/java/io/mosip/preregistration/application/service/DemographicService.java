@@ -1147,31 +1147,31 @@ public class DemographicService implements DemographicServiceIntf {
 		return null;
 	}
 	
-//	private MainResponseDTO<SchemaResponseDto> getConfigDetailsResponse(String fileName) {
-//
-//		String response = serviceUtil.getJson(fileName);
-//		JSONObject jsonObject = null;
-//		SchemaResponseDto schemaResponseDto = null;
-//		try {
-//			jsonObject = objectMapper.readValue(response, JSONObject.class);
-//		} catch (JsonParseException e) {
-//			throw new io.mosip.preregistration.demographic.exception.system.JsonParseException(
-//					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage());
-//		} catch (JsonMappingException e) {
-//			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
-//					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
-//		} catch (IOException e) {
-//			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
-//					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
-//		}
-//
-//		MainResponseDTO<SchemaResponseDto> responseDto = new MainResponseDTO<>();
-//		schemaResponseDto = new SchemaResponseDto();
-//		schemaResponseDto.setIdSchema(jsonObject);
-//		responseDto.setResponse(schemaResponseDto);
-//		return responseDto;
-//
-//	}
+	private MainResponseDTO<SchemaResponseDto> getConfigDetailsResponse(String fileName) {
+
+		String response = serviceUtil.getJson(fileName);
+		JSONObject jsonObject = null;
+		SchemaResponseDto schemaResponseDto = null;
+		try {
+			jsonObject = objectMapper.readValue(response, JSONObject.class);
+		} catch (JsonParseException e) {
+			throw new io.mosip.preregistration.demographic.exception.system.JsonParseException(
+					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage());
+		} catch (JsonMappingException e) {
+			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
+					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+		} catch (IOException e) {
+			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
+					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+		}
+
+		MainResponseDTO<SchemaResponseDto> responseDto = new MainResponseDTO<>();
+		schemaResponseDto = new SchemaResponseDto();
+		schemaResponseDto.setIdSchema(jsonObject);
+		responseDto.setResponse(schemaResponseDto);
+		return responseDto;
+
+	}
 
 	private List<String> convertSchemaJsonToArray(String schemaJson) {
 		List<String> idschemaAttributes = new ArrayList<String>();
