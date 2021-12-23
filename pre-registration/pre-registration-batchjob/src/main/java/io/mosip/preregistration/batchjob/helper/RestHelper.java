@@ -132,6 +132,7 @@ public class RestHelper {
     public int getRegistrationCenterTotalPages() {
 
         String regCentersDetailsPageNo = new StringBuilder(regCenterDetailsURL)
+                                                    .append("/")
                                                     .append(PreRegBatchContants.ALL)
                                                     .append(PreRegBatchContants.PAGE_NO + "0")
                                                     .append(PreRegBatchContants.PAGE_SIZE)
@@ -166,6 +167,7 @@ public class RestHelper {
             List<RegistrationCenterDto> filteredRegCentersList = new ArrayList<>();
             for (String pageNo : pageNos) {
                 String regCentersDetailsPageNo = new StringBuilder(regCenterDetailsURL)
+                                                    .append("/")
                                                     .append(PreRegBatchContants.ALL)
                                                     .append(PreRegBatchContants.PAGE_NO + pageNo)
                                                     .append(PreRegBatchContants.PAGE_SIZE)
