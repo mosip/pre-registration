@@ -1146,7 +1146,7 @@ public class DemographicService implements DemographicServiceIntf {
 		}
 		return null;
 	}
-
+	
 	private MainResponseDTO<SchemaResponseDto> getConfigDetailsResponse(String fileName) {
 
 		String response = serviceUtil.getJson(fileName);

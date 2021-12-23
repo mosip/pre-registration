@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -33,12 +34,16 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.preregistration.application.controller.DemographicController;
+import io.mosip.preregistration.application.controller.DocumentController;
+import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
@@ -68,8 +73,11 @@ import net.minidev.json.parser.ParseException;
  * @since 1.0.0
  * 
  */
+
 @RunWith(SpringRunner.class)
-@WebMvcTest(DemographicController.class)
+@WebMvcTest(controllers = DemographicController.class)
+@Import(DemographicController.class)
+@WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
 public class DemographicControllerTest {
 
 	/**
@@ -90,9 +98,6 @@ public class DemographicControllerTest {
 	 */
 	@MockBean
 	private DemographicServiceIntf preRegistrationService;
-
-	@MockBean
-	private DocumentServiceIntf documentServiceIntf;
 
 	@MockBean
 	private PridGenerator<String> pridGenerator;
@@ -196,9 +201,9 @@ public class DemographicControllerTest {
 		reqDto.setRequesttime(new Date());
 		reqDto.setRequest(req);
 
-		mockMvc.perform(
-				put("/applications/prereg/{preRegistrationId}", "98746563542672").contentType(MediaType.APPLICATION_JSON)
-						.content("{\"demographicDetails\":{\"identity\":{\"IDSchemaVersion\":0.1}}}"))
+		mockMvc.perform(put("/applications/prereg/{preRegistrationId}", "98746563542672")
+				.contentType(MediaType.APPLICATION_JSON)
+				.content("{\"demographicDetails\":{\"identity\":{\"IDSchemaVersion\":0.1}}}"))
 				.andExpect(status().isOk());
 
 	}
@@ -249,7 +254,8 @@ public class DemographicControllerTest {
 		Mockito.when(preRegistrationService.getApplicationStatus(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(response);
 
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/applications/prereg/status/{preRegistrationId}", preId)
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.get("/applications/prereg/status/{preRegistrationId}", preId)
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE);
 
@@ -353,6 +359,18 @@ public class DemographicControllerTest {
 				.content("{\"registrationCenterId\":\"regCenterId\",\"preregistrationId\":\"prid\"}"))
 				.andExpect(status().isOk());
 
+	}
+
+	@Test
+	public void getPreRegDemographicDataTest() throws Exception {
+		MainResponseDTO<DemographicResponseDTO> response = new MainResponseDTO<DemographicResponseDTO>();
+		String preRegistrationId = "123456";
+		Mockito.when(preRegistrationService.getDemographicData(preRegistrationId, false)).thenReturn(response);
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/applications/prereg/{preRegistrationId}", preRegistrationId)
+				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON_UTF8)
+				.contentType(MediaType.APPLICATION_JSON_UTF8);
+		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
 }
