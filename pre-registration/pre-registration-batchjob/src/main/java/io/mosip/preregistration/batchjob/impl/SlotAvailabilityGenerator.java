@@ -23,6 +23,7 @@ import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
 import io.mosip.preregistration.batchjob.entity.AvailibityEntity;
 import io.mosip.preregistration.batchjob.helper.CancelAndNotifyHelper;
 import io.mosip.preregistration.batchjob.helper.PreRegBatchDBHelper;
+import io.mosip.preregistration.batchjob.helper.RegCenterIdsHolder;
 import io.mosip.preregistration.batchjob.helper.RestHelper;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterDto;
 import io.mosip.preregistration.batchjob.repository.utils.BatchJpaRepositoryImpl;
@@ -82,10 +83,11 @@ public class SlotAvailabilityGenerator {
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
 		 			"No of days configured to generate slots availability: " + noOfDaysToSync);
 
-		List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails(regCenterIdsPartList);
+		RegCenterIdsHolder idsHolder = RegCenterIdsHolder.getInstance();
+		List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails(regCenterIdsPartList, idsHolder);
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
 		 				"Total Number of registration Found available in Master Data: <" + regCentersList.size() + 
-						 ">, on partition Name: " + partName);
+						 ">, on partition Name: " + partName + ", regCenterIdsPartList (Page Nos): " + regCenterIdsPartList);
 
 		long partStartTime = System.currentTimeMillis();
 		Map<String, Boolean> cancelledTracker = new HashMap<>();
@@ -156,7 +158,9 @@ public class SlotAvailabilityGenerator {
 		// Printing the cancelled & notification status
 		printCancelNotifyStatus(cancelledTracker, "CANCEL-TRACKER");
 		printCancelNotifyStatus(notifierTracker, "NOTIFY-TRACKER");
-
+		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+						"Total Unique Registration Centers Found...");
+		idsHolder.printAllRegCenterIds();
 		if (errorredRegCenters.size() > 0) {
 			String regCenterIds = String.join(",", errorredRegCenters);
 			restHelper.sendAuditDetails(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),

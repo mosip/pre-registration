@@ -12,6 +12,7 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
+import io.mosip.preregistration.batchjob.helper.RegCenterIdsHolder;
 import io.mosip.preregistration.batchjob.helper.RestHelper;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterDto;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
@@ -34,12 +35,26 @@ public class SlotAvailabilityPartitioner implements Partitioner {
 	public Map<String, ExecutionContext> partition(int gridSize) {
         Map<String, ExecutionContext> regCentersMap = new HashMap<String, ExecutionContext>(gridSize);
 
-        List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails(null);
-        int regCentersCount = regCentersList.size();
-        int partitionSize = getPartitionSize(regCentersCount, gridSize);
+        RegCenterIdsHolder idsHolder = RegCenterIdsHolder.getInstance();
+        LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                        "Ids before deleting all elements");
+        idsHolder.printAllRegCenterIds();
+        // call delete all elements
+        idsHolder.deleteAllRegCenterIds();
+        LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                        "Ids after deleting all elements");
+        idsHolder.printAllRegCenterIds();
+
+        int totalNoOfPages = restHelper.getRegistrationCenterTotalPages();
+		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
+		 				"Total Number of Pages Found in Master Data: <" + totalNoOfPages + ">");
+
+        //List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails(null);
+        //int regCentersCount = regCentersList.size();
+        int partitionSize = getPartitionSize(totalNoOfPages, gridSize);
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
-		 				"Total Number of registration Found available in Master Data: <" + regCentersCount + 
+		 				"Total Number of Pages Found in Master Data: <" + totalNoOfPages + 
                          ">, GridSize Configured: <" + gridSize + ">, partitionSize:: <" + partitionSize + ">");
         
         int regCenterCounter = 0;
@@ -48,16 +63,16 @@ public class SlotAvailabilityPartitioner implements Partitioner {
 
             List<String> partRegCentersList = new ArrayList<>();
             for (int j = 0; j < partitionSize; j++) {
-                if (regCenterCounter >= regCentersCount){
+                if (regCenterCounter >= totalNoOfPages){
                     break;
                 }
-                partRegCentersList.add(regCentersList.get(regCenterCounter++).getId());
+                partRegCentersList.add(Integer.toString(regCenterCounter++));
             } 
             execContext.put("regCenterIdsPartList", partRegCentersList);
             execContext.putString("name", "regCenterIdsPartList-" + i);
 
             regCentersMap.put("regCenterPartition" + i, execContext);
-            if (regCenterCounter >= regCentersCount){
+            if (regCenterCounter >= totalNoOfPages){
 				break;
 			}
         }
