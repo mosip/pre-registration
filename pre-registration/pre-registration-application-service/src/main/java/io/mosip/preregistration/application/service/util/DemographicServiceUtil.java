@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
@@ -44,6 +46,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -147,6 +152,17 @@ public class DemographicServiceUtil {
 	@Autowired
 	CryptoUtil cryptoUtil;
 
+	/**
+	 * ObjectMapper global object creation
+	 */
+	private ObjectMapper mapper;
+
+	@PostConstruct
+    public void init() {
+		mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+		mapper.registerModule(new JavaTimeModule());
+	}
+	
 	/**
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
@@ -714,8 +730,6 @@ public class DemographicServiceUtil {
 		log.info("In getDataCaputureLanguage method");
 
 		Set<String> dataCaptureLang = null;
-
-		ObjectMapper mapper = new ObjectMapper();
 
 		List<Object> demographicKeys = Arrays
 				.asList(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());

@@ -150,7 +150,6 @@
 			**/preregistration/application/dto/*.java,
 			**/preregistration/application/dto/ApplicantTypeCodeDTO.java,
 			**/preregistration/application/dto/ApplicantTypeKeyValueDTO.java,
-			**/preregistration/application/dto/**,
 			**/preregistration/datasync/dto/*.java,
 			**/preregistration/booking/dto/*.java
 		</sonar.coverage.exclusions>

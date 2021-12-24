@@ -10,6 +10,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -19,6 +21,9 @@ import org.springframework.web.client.HttpServerErrorException;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ExceptionUtils;
@@ -78,6 +83,11 @@ public class ApplicationService implements ApplicationServiceIntf {
 	ValidationUtil validationUtil;
 
 	/**
+	 * ObjectMapper global object creation
+	 */
+	private ObjectMapper mapper;
+	
+	/**
 	 * Reference for ${lostUinDeleteId} from property file
 	 */
 	@Value("${mosip.id.preregistration.lostuin.delete}")
@@ -129,7 +139,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		try {
 			String description = auditRequest.getDescription();
-			JsonNode node = new ObjectMapper().readTree(description);
+			mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+			mapper.registerModule(new JavaTimeModule());
+			JsonNode node = mapper.readTree(description);
 			String template = node.get("template").toString();
 			String hashedDescription = node.get("description").asText().concat("  ")
 					.concat("Request_url :" + node.get("url").asText()).concat("  ")

@@ -332,6 +332,45 @@ public class AppointmentServiceImplTest {
 	}
 
 	@Test
+	public void deleteBookingAndUpdateApplicationStatus() {
+		String prid = "98765432101234";
+		MainResponseDTO<DeleteBookingDTO> deleteAppointmentResponse = new MainResponseDTO<DeleteBookingDTO>();
+		DeleteBookingDTO deleteStatus = new DeleteBookingDTO();
+		deleteStatus.setDeletedBy("test");
+		deleteStatus.setPreRegistrationId("98765432101234");
+		deleteStatus.setDeletedDateTime(new Date());
+		deleteAppointmentResponse.setResponse(deleteStatus);
+		deleteAppointmentResponse.setId(appointmentDeletelId);
+		deleteAppointmentResponse.setVersion(version);
+		Mockito.when(appointmentUtils.deleteBooking(prid)).thenReturn(deleteStatus);
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("98765432101234");
+		applicationEntity.setBookingDate(null);
+		applicationEntity.setRegistrationCenterId(null);
+		applicationEntity.setSlotFromTime(null);
+		applicationEntity.setSlotToTime(null);
+		applicationEntity.setBookingType("NEW_PREREGISTRATION");
+		applicationEntity.setBookingStatusCode("Pending_Appointment");
+
+		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
+		assertEquals(appEntity2, applicationEntity);
+		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentServiceImpl
+				.deleteBookingAndUpdateApplicationStatus(prid);
+		deleteRes.setResponsetime(null);
+		assertEquals(deleteRes.getResponse().getPreRegistrationId(),
+				deleteAppointmentResponse.getResponse().getPreRegistrationId());
+	}
+
+	@Test
 	public void deleteAppointmentAppointmentExecptionTest() {
 
 		String prid = "98765432101234";
@@ -372,6 +411,53 @@ public class AppointmentServiceImplTest {
 		assertEquals(appEntity2, applicationEntity);
 
 		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentServiceImpl.deleteBooking(prid);
+		deleteRes.setResponsetime(null);
+		assertEquals(deleteRes.getErrors().get(0).getErrorCode(),
+				AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode());
+	}
+
+	@Test
+	public void deleteBookingAndUpdateApplicationExecptionTest() {
+
+		String prid = "98765432101234";
+
+		MainResponseDTO<DeleteBookingDTO> deleteAppointmentResponse = new MainResponseDTO<DeleteBookingDTO>();
+		DeleteBookingDTO deleteStatus = new DeleteBookingDTO();
+		deleteStatus.setDeletedBy("test");
+		deleteStatus.setPreRegistrationId("98765432101234");
+		deleteStatus.setDeletedDateTime(new Date());
+		deleteAppointmentResponse.setResponse(deleteStatus);
+		deleteAppointmentResponse.setId(appointmentDeletelId);
+		deleteAppointmentResponse.setVersion(version);
+		Mockito.when(appointmentUtils.deleteBooking(prid))
+				.thenThrow(new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
+						String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), "")));
+
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("98765432101234");
+		applicationEntity.setBookingDate(null);
+		applicationEntity.setRegistrationCenterId(null);
+		applicationEntity.setSlotFromTime(null);
+		applicationEntity.setSlotToTime(null);
+		applicationEntity.setBookingType("NEW_PREREGISTRATION");
+		applicationEntity.setBookingStatusCode("Pending_Appointment");
+
+		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+
+		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
+
+		assertEquals(appEntity2, applicationEntity);
+
+		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentServiceImpl
+				.deleteBookingAndUpdateApplicationStatus(prid);
 		deleteRes.setResponsetime(null);
 		assertEquals(deleteRes.getErrors().get(0).getErrorCode(),
 				AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode());

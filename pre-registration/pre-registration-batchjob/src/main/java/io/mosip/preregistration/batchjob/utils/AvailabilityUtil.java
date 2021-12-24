@@ -32,6 +32,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
@@ -153,11 +156,19 @@ public class AvailabilityUtil {
 	RestTemplate restTemplate;
 
 	private String langCode;
+	
+	/**
+	 * ObjectMapper global object creation
+	 */
+	private ObjectMapper mapper;
 
 	@PostConstruct
 	private void setup() {
 		langCode = mandatoryLangCodes.split(",").length > 0 ? mandatoryLangCodes.split(",")[0]
 				: optionalLangCodes.split(",")[0];
+		mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+		mapper.registerModule(new JavaTimeModule());
+	
 	}
 
 	private Logger log = LoggerConfiguration.logConfig(AvailabilityUtil.class);
@@ -539,7 +550,7 @@ public class AvailabilityUtil {
 			}
 
 			// Code to retrive date of days and add it to holidays.
-			if (responseEntity3.getBody().getResponse().getWeekdays() != null) {
+			/* if (responseEntity3.getBody().getResponse().getWeekdays() != null) {
 				List<String> workingDays = responseEntity3.getBody().getResponse().getWeekdays().stream()
 						.filter(regCenterWorkingDays -> regCenterWorkingDays.isWorking())
 						.flatMap(wd -> Stream.of(wd.getName())).collect(Collectors.toList());
@@ -558,7 +569,7 @@ public class AvailabilityUtil {
 						}
 					}
 				}
-			}
+			} */
 
 			/*
 			 * if (!responseEntity3.getBody().getResponse().getWorkingdays().isEmpty()) {
@@ -748,7 +759,6 @@ public class AvailabilityUtil {
 			throws JsonProcessingException {
 		String emailResourseUrl = notificationResourseurl;
 		MainRequestDTO<NotificationDTO> request = new MainRequestDTO<>();
-		ObjectMapper mapper = new ObjectMapper();
 		mapper.setTimeZone(TimeZone.getDefault());
 		try {
 			request.setRequest(notificationDTO);

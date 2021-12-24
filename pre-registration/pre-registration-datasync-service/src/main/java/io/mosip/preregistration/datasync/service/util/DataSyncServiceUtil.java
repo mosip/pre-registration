@@ -56,8 +56,6 @@ import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.JWTSignatureRequestDto;
 import io.mosip.kernel.signature.dto.JWTSignatureResponseDto;
-import io.mosip.kernel.signature.dto.SignRequestDto;
-import io.mosip.kernel.signature.dto.SignResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -580,7 +578,7 @@ public class DataSyncServiceUtil {
 					"In archivingFiles method of datasync service util, Json file content - "
 							+ new JSONObject(finalMap).toJSONString());
 			String encryptionPublickey = getEncryptionKey(machineId);
-			inputFile.put("ID.json", new ObjectMapper().writeValueAsBytes(finalMap));
+			inputFile.put("ID.json", mapper.writeValueAsBytes(finalMap));
 			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile), encryptionPublickey));
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
