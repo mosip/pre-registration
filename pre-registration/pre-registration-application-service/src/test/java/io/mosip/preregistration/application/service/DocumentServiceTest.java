@@ -30,6 +30,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -524,6 +525,8 @@ public class DocumentServiceTest {
 		MainResponseDTO<DocumentDeleteResponseDTO> deleteRes = new MainResponseDTO<>();
 		deleteRes.setId("1");
 		deleteRes.setVersion("12");
+		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
 		assertNotNull(documentUploadService.deleteAllByPreId(preRegistrationId));
 	}
 
@@ -539,21 +542,43 @@ public class DocumentServiceTest {
 	}
 
 	@Test
-	public void uploadDocumentTest()
+	public void uploadDocument1Test()
 			throws JsonParseException, JsonMappingException, IOException, JSONException, ParseException {
 		Map<String, String> requiredRequestMap = new HashMap<>();
-		String documentJsonString = "123";
-		String id = "12";
-		documentRequestDTOList.setId(id);
+		documentRequestDTOList.setId(documentId);
 		documentRequestDTOList.setVersion("2");
 		documentRequestDTOList.setRequest(documentRequestDTO);
-		responseUpload.setId(id);
+		responseUpload.setId(documentId);
 		responseUpload.setVersion("12");
 		responseUpload.setResponsetime(DateTime.now().toString());
 		responseUpload.setResponse(docResp);
 		requiredRequestMap.put("id", "123");
-		Mockito.doReturn(documentRequestDTOList).when(serviceUtil).createUploadDto(documentJsonString, id);
-		documentUploadService.uploadDocument(mockMultipartFile, documentId, preRegistrationId);
+		Mockito.doReturn(documentRequestDTOList).when(serviceUtil).createUploadDto(docJson, documentId);
+		assertNotNull(documentUploadService.uploadDocument(mockMultipartFile, documentId, preRegistrationId));
+	}
+
+	@Test
+	public void uploadDocument2Test()
+			throws JsonParseException, JsonMappingException, IOException, JSONException, ParseException {
+		Map<String, String> requiredRequestMap = new HashMap<>();
+		documentRequestDTOList.setId(documentId);
+		documentRequestDTOList.setVersion("2");
+		documentRequestDTOList.setRequest(documentRequestDTO);
+		responseUpload.setId(documentId);
+		responseUpload.setVersion("12");
+		responseUpload.setResponsetime(DateTime.now().toString());
+		responseUpload.setResponse(docResp);
+		requiredRequestMap.put("id", "123");
+		Mockito.when(serviceUtil.createUploadDto(Mockito.any(), Mockito.any())).thenReturn(documentRequestDTOList);
+		Mockito.when(validationutil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.when(serviceUtil.fileSizeCheck(multipartFile.getSize())).thenReturn(true);
+		Mockito.when(serviceUtil.fileExtensionCheck(Mockito.any())).thenReturn(true);
+		assertNotNull(documentUploadService.uploadDocument(mockMultipartFile, documentId, preRegistrationId));
+	}
+
+	@Test
+	public void setupTest() {
+		documentUploadService.setup();
 	}
 
 }

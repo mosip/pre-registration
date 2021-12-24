@@ -1,6 +1,7 @@
 package io.mosip.preregistration.batchjob.impl;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,13 +47,21 @@ public class PurgeExpiredRegCentersSlots {
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
 		 				"Started Purge Expired Registration Centers slots.");
 
-        List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails(null);
+		int totalNoOfPages = restHelper.getRegistrationCenterTotalPages();
+		List<String> pageNosList = new ArrayList<>();
+		for (int i = 0; i < totalNoOfPages; i++){
+			pageNosList.add(Integer.toString(i));
+		}
+
+        List<RegistrationCenterDto> regCentersList = restHelper.getRegistrationCenterDetails(pageNosList, null);
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
 		 				"Total Number of registration Found available in Master Data: <" + regCentersList.size() + ">");
 
         Map<String, Boolean> cancelledTracker = new HashMap<>();
         Map<String, Boolean> notifierTracker = new HashMap<>();
-        List<String> processingRegCentersList = regCentersList.stream().map(RegistrationCenterDto::getId).collect(Collectors.toList());
+        List<String> processingRegCentersList = regCentersList.stream().map(RegistrationCenterDto::getId)
+															  .distinct()
+															  .collect(Collectors.toList());
 		List<String> slotsAddedRegCenters = batchServiceDAO.findRegCenter(LocalDate.now());
 		slotsAddedRegCenters.stream().filter(regCenterId ->  !processingRegCentersList.contains(regCenterId))
 									 .forEach(regCenterId -> purgeExpiredRegCenterSlots(regCenterId, cancelledTracker, notifierTracker));
