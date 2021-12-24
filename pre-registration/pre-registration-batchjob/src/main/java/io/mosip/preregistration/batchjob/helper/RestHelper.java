@@ -150,7 +150,7 @@ public class RestHelper {
             }
             ObjectNode objectNode = objectMapper.convertValue(responseNode.get(PreRegBatchContants.RESPONSE), ObjectNode.class);
             LOGGER.info("Received the Registration Center details from Master Data Service.");
-            int totalPages = objectNode.get("totalItems").asInt();
+            int totalPages = objectNode.get("totalPages").asInt();
             LOGGER.info("Total Number of Pages received: " + totalPages);
             return totalPages;
         } catch (Exception exp) {
