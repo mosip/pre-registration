@@ -974,7 +974,7 @@ public class DemographicServiceTest {
 	}
 
 	@Test(expected = NullPointerException.class)
-	public void updatePreRegistrationTest() throws JsonMappingException, JsonProcessingException {
+	public void updatePreRegistrationTest() throws IOException {
 		String userId = "12345";
 		MainRequestDTO<DemographicRequestDTO> request = new MainRequestDTO<DemographicRequestDTO>();
 		DemographicRequestDTO demographicRequest = new DemographicRequestDTO();
