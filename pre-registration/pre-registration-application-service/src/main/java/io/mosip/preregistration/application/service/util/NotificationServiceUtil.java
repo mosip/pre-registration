@@ -401,6 +401,13 @@ public class NotificationServiceUtil {
 							firstRegCenterLangCode = regCenterLangCode;	
 						}
 						regCentersMap.put(regCenterLangCode, centerDto);
+					} else {
+						centerDto = getNotificationCenterAddressDTO(registrationCenterId,
+								"all");
+						if (firstRegCenterLangCode == null) {
+							firstRegCenterLangCode = regCenterLangCode;	
+						}
+						regCentersMap.put(regCenterLangCode, centerDto);
 					}
 				}
 				RegistrationCenterDto defaultCenterDto = null;
