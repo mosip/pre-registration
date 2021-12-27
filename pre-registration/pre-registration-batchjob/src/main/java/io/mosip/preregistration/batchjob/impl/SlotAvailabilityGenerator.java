@@ -361,9 +361,11 @@ public class SlotAvailabilityGenerator {
 			}
 			if (Objects.nonNull(lunchTime[1]))
 				lunchSlotEndTime = (LocalTime) lunchTime[1];
-			// save lunch slot, will be useful in next calculation.
-			batchDBHelper.saveAvailability(regCenterDetails.getId(), regCenterDetails.getContactPerson(),
+			if (Objects.nonNull(lunchTime[0]) && Objects.nonNull(lunchTime[1])){
+				// save lunch slot, will be useful in next calculation.
+				batchDBHelper.saveAvailability(regCenterDetails.getId(), regCenterDetails.getContactPerson(),
 					PreRegBatchContants.ZERO_KIOSK, slotGenCurrentDay, lunchSlotStartTime, lunchSlotEndTime);
+			}
 		}
 
 		if (centerStartTime.equals(firstSlotStartTime) && centerEndTime.equals(lastSlotEndTime) && 
@@ -462,7 +464,7 @@ public class SlotAvailabilityGenerator {
 		LocalTime lunchSlotStartTime = null;
 		LocalTime lunchSlotEndTime = null;
 		for (int i = 0; i < listSize; i++) {
-			if (i == listSize) {
+			if ((i + 1) == listSize) {
 				break;
 			}
 			long diffMins = MINUTES.between(slotsAvailableList.get(i + 1).getFromTime(), slotsAvailableList.get(i).getToTime());
