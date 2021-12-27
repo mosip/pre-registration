@@ -17,7 +17,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<kernel.core.version>1.2.0-rc2-SNAPSHOT</kernel.core.version>
 		<kernel.khazana.version>1.2.0-rc2-SNAPSHOT</kernel.khazana.version>
-		<kernel.virusscanner.clamav.version>1.2.0-SNAPSHOT</kernel.virusscanner.clamav.version>
+		<kernel.virusscanner.clamav.version>1.2.0-rc2-SNAPSHOT</kernel.virusscanner.clamav.version>
 		<kernel.idobjectvalidator.version>1.2.0-rc2-SNAPSHOT</kernel.idobjectvalidator.version>
 		<kernel.templatemanager.velocity.version>1.2.0-rc2-SNAPSHOT</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.2.0-rc2-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
@@ -85,6 +85,12 @@
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-virusscanner-clamav</artifactId>
 			<version>${kernel.virusscanner.clamav.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<artifactId>jackson-datatype-jsr310</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
@@ -109,6 +115,12 @@
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-idobjectvalidator</artifactId>
 			<version>${kernel.idobjectvalidator.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.fasterxml.jackson.datatype</groupId>
+					<artifactId>jackson-datatype-jdk8</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
