@@ -1,15 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.reg_available_slot
--- Purpose    	: Registration Available Slots: Slots available at a registration center for an individual to book for registrating themselves to get a UIN.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 -- object: prereg.reg_available_slot | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.reg_available_slot CASCADE;
 CREATE TABLE prereg.reg_available_slot(

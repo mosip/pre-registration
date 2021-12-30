@@ -1,16 +1,4 @@
 
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.intf_processed_prereg_list
--- Purpose    	: Interface Processd Pre Registration List: Interface table to temporarily store the list of pre-registrations that were processed by registration processor application. The data can be removed once the data is updated in actual tables.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
 -- object: prereg.intf_processed_prereg_list | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.intf_processed_prereg_list CASCADE;
 CREATE TABLE prereg.intf_processed_prereg_list(

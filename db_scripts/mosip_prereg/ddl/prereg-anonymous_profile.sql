@@ -1,13 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.anonymous_profile
--- Purpose    	: Anonymous profile: 
---           
--- Create By   	: Ajay 
--- Created Date	: Sept-2021
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 
 -- object: prereg.prereg.anonymous_profile | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.prereg.anonymous_profile CASCADE;

@@ -1,16 +1,4 @@
 
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.applicant_demographic
--- Purpose    	: Applicant Demographic: Stores demographic details of an applicant. The demographic information is stored in json format.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
 
 -- object: prereg.applicant_demographic | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.applicant_demographic CASCADE;
@@ -31,6 +19,10 @@ CREATE TABLE prereg.applicant_demographic(
 
 );
 -- ddl-end --
+--index creation starts--
+CREATE INDEX IF NOT EXISTS idx_app_demo_cr_by ON prereg.applicant_demographic USING btree (cr_by);
+CREATE INDEX IF NOT EXISTS idx_app_demo_prid ON prereg.applicant_demographic USING btree (prereg_id);
+-- index creation ends--
 COMMENT ON TABLE prereg.applicant_demographic IS 'Applicant Demographic: Stores demographic details of an applicant. The demographic information is stored in json format.';
 -- ddl-end --
 COMMENT ON COLUMN prereg.applicant_demographic.prereg_id IS 'Pre Registration ID: Unique Id generated for an individual during the pre-registration process which will be referenced during registration process at a registration center.';

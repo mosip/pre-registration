@@ -1,15 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.applications
--- Purpose    	: Applications: 
---           
--- Create By   	: Ram Bhatt
--- Created Date	: Aug-2021
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 -- object: prereg.applications | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.applications CASCADE;
 CREATE TABLE prereg.applications(

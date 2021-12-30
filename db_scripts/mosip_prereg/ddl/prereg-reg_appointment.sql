@@ -1,15 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.reg_appointment
--- Purpose    	: Registration Appointment: Stores all the appointment requests booked by an individual at a registration center.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 -- object: prereg.reg_appointment | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.reg_appointment CASCADE;
 CREATE TABLE prereg.reg_appointment(
