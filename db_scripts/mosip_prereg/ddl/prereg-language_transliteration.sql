@@ -1,16 +1,4 @@
 
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.language_transliteration
--- Purpose    	: Language Transliteration: Mapping table to store mapping between the language id, (defined by the utility) to support transliteration from one language to another.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
 -- object: prereg.language_transliteration | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.language_transliteration CASCADE;
 CREATE TABLE prereg.language_transliteration(

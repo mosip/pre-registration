@@ -1,15 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.pre_registration_transaction
--- Purpose    	: Pre-Registration Transaction: Stores various transactions that are processd within pre-registration module/application.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 -- object: prereg.pre_registration_transaction | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.pre_registration_transaction CASCADE;
 CREATE TABLE prereg.pre_registration_transaction(

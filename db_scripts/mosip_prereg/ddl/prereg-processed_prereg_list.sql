@@ -1,15 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.processed_prereg_list
--- Purpose    	: Table to store all the pre-registration list received from registration processor within pre-registration module
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 -- object: prereg.processed_prereg_list | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.processed_prereg_list CASCADE;
 CREATE TABLE prereg.processed_prereg_list(

@@ -1,16 +1,4 @@
 
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.applicant_demographic
--- Purpose    	: Applicant Demographic: Stores demographic details of an applicant. The demographic information is stored in json format.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
 
 -- object: prereg.applicant_demographic | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.applicant_demographic CASCADE;

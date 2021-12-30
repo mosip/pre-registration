@@ -1,15 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.transaction_type
--- Purpose    	: Transaction Type: Defines various transaction types that are processd within pre-registration module/application.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 -- object: prereg.transaction_type | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.transaction_type CASCADE;
 CREATE TABLE prereg.transaction_type(

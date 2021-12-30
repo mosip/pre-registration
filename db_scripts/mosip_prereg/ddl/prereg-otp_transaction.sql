@@ -1,15 +1,4 @@
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.otp_transaction
--- Purpose    	: OTP Transaction: All OTP related data and validation details are maintained here for Pre Registration module.
---           
--- Create By   	: Sadanandegowda DM
--- Created Date	: Dec-2020
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
+
 -- object: prereg.otp_transaction | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.otp_transaction CASCADE;
 CREATE TABLE prereg.otp_transaction(

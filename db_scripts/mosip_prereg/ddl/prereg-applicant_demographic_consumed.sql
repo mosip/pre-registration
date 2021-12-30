@@ -1,16 +1,4 @@
 
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.applicant_demographic_consumed
--- Purpose    	: Applicant Demographic Consumed: Stores demographic details of an applicant that was comsumed.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
 -- object: prereg.applicant_demographic_consumed | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.applicant_demographic_consumed CASCADE;
 CREATE TABLE prereg.applicant_demographic_consumed(

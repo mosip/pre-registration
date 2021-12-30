@@ -1,16 +1,4 @@
 
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.applicant_document_consumed
--- Purpose    	: Applicant Document Consumed: Documents that are uploaded as part of pre-registration process which was consumed is maintained here.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
 -- object: prereg.applicant_document_consumed | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.applicant_document_consumed CASCADE;
 CREATE TABLE prereg.applicant_document_consumed(

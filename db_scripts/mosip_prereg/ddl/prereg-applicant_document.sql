@@ -1,16 +1,4 @@
 
--- -------------------------------------------------------------------------------------------------
--- Database Name: mosip_prereg
--- Table Name 	: prereg.applicant_document
--- Purpose    	: Applicant Document: Documents that are uploaded as part of pre-registration process is maintained here. The documents are stored in document repository  and only the hash value and its location details are stored.
---           
--- Create By   	: Nasir Khan / Sadanandegowda
--- Created Date	: 15-Jul-2019
---
--- Modified Date        Modified By         Comments / Remarks
--- ------------------------------------------------------------------------------------------
--- 
--- ------------------------------------------------------------------------------------------
 -- object: prereg.applicant_document | type: TABLE --
 -- DROP TABLE IF EXISTS prereg.applicant_document CASCADE;
 CREATE TABLE prereg.applicant_document(
