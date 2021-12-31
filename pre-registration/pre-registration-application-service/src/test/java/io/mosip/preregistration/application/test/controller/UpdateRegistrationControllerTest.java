@@ -4,8 +4,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.joda.time.DateTime;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -26,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.mosip.preregistration.application.controller.LostUINController;
+import io.mosip.preregistration.application.controller.UpdateRegistrationController;
 import io.mosip.preregistration.application.dto.ApplicationRequestDTO;
 import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
 import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
@@ -37,10 +35,10 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = LostUINController.class)
-@Import(LostUINController.class)
+@WebMvcTest(controllers = UpdateRegistrationController.class)
+@Import(UpdateRegistrationController.class)
 @WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
-public class LostUINControllerTest {
+public class UpdateRegistrationControllerTest {
 
 	@Mock
 	ApplicationServiceIntf applicationService;
@@ -52,14 +50,14 @@ public class LostUINControllerTest {
 	private WebApplicationContext webApplicationContext;
 
 	@MockBean
-	private LostUINController lostuinController;
+	private UpdateRegistrationController updateController;
 
 	private MockMvc mockmvc;
 
-	@Value("${mosip.id.preregistration.lostuin.create}")
+	@Value("${mosip.id.preregistration.updateregistration.create}")
 	private String createId;
 
-	@Value("${mosip.id.preregistration.lostuin.delete}")
+	@Value("${mosip.id.preregistration.updateregistration.delete}")
 	private String deleteId;
 
 	@Before
@@ -82,26 +80,28 @@ public class LostUINControllerTest {
 		applicationDto.setApplicationId("123456789");
 		applicationDto.setApplicationStatusCode("SUBMITTED");
 		applicationDto.setBookingStatusCode("Pending_Appointment");
-		applicationDto.setBookingType("LOST_FORGOTTEN_UIN");
+		applicationDto.setBookingType("UPDATE_REGISTRATION");
 		mainResponseDto.setResponse(applicationDto);
 		mainResponseDto.setId(createId);
 		mainResponseDto.setResponsetime(DateTime.now().toString());
+
 		Mockito.when(applicationService.addLostOrUpdateApplication(mainRequestDto,
-				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())).thenReturn(mainResponseDto);
-		mockmvc.perform(post("/applications/lostuin").contentType(MediaType.APPLICATION_JSON_VALUE).content("{\"id\":\""
-				+ createId
-				+ "\",\"request\":{\"lang_code\":\"eng\"},\"version\":\"1.0\",\"requesttime\":\"2021-12-29T18:47:43.190Z\"}"))
+				BookingTypeCodes.UPDATE_REGISTRATION.toString())).thenReturn(mainResponseDto);
+		mockmvc.perform(post("/applications/updateregistration").contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content("{\"id\":\"" + createId
+						+ "\",\"request\":{\"lang_code\":\"eng\"},\"version\":\"1.0\",\"requesttime\":\"2021-12-29T18:47:43.190Z\"}"))
 				.andExpect(status().isOk());
 	}
 
 	@Test
 	public void deleteLostUinApplicationTest() throws Exception {
 		String applicationId = "123456789";
-		String bookingType = BookingTypeCodes.LOST_FORGOTTEN_UIN.toString();
+		String bookingType = BookingTypeCodes.UPDATE_REGISTRATION.toString();
 		MainResponseDTO<DeleteApplicationDTO> response = new MainResponseDTO<DeleteApplicationDTO>();
 		response.setId(deleteId);
 		Mockito.when(applicationService.deleteLostOrUpdateApplication(applicationId, bookingType)).thenReturn(response);
-		RequestBuilder request = MockMvcRequestBuilders.delete("/applications/lostuin/{applicationId}", applicationId)
+		RequestBuilder request = MockMvcRequestBuilders
+				.delete("/applications/updateregistration/{applicationId}", applicationId)
 				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_UTF8)
 				.contentType(MediaType.APPLICATION_JSON_UTF8);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
