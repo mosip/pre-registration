@@ -1,7 +1,5 @@
 package io.mosip.preregistration.application.test.controller;
 
-import static org.junit.Assert.assertEquals;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import java.util.Date;
 
 import org.joda.time.DateTime;
@@ -13,22 +11,16 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -40,7 +32,6 @@ import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
 import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.service.ApplicationServiceIntf;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
-import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
@@ -48,8 +39,6 @@ import io.mosip.preregistration.core.util.RequestValidator;
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(controllers = LostUINController.class)
 @Import(LostUINController.class)
-//@SpringBootTest(classes = LostUINController.class)
-//@WebAppConfiguration
 @WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
 public class LostUINControllerTest {
 

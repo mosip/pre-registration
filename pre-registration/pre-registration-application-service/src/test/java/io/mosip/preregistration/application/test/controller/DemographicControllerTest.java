@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,14 +35,12 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.preregistration.application.controller.DemographicController;
-import io.mosip.preregistration.application.controller.DocumentController;
-import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
@@ -52,7 +49,6 @@ import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicViewDTO;
 import io.mosip.preregistration.application.service.DemographicServiceIntf;
-import io.mosip.preregistration.application.service.DocumentServiceIntf;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -109,7 +105,7 @@ public class DemographicControllerTest {
 
 	private Object jsonObject = null;
 
-	@MockBean
+	@Mock
 	private DemographicController controller;
 
 	String userId = "";
@@ -132,11 +128,22 @@ public class DemographicControllerTest {
 	}
 
 	/**
+	 * Test init binder.
+	 */
+	@Test
+	public void testInitBinder() {
+		controller.initBinder(Mockito.mock(WebDataBinder.class));
+	}
+
+	
+	/**
 	 * @throws Exception on error
 	 */
 	@WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
 	@Test
 	public void successSave() throws Exception {
+		Mockito.when(requestValidator.supports(Mockito.any())).thenReturn(true);
+		
 		logger.info("----------Successful save of application-------");
 		MainResponseDTO<DemographicCreateResponseDTO> response = new MainResponseDTO<>();
 		List<DemographicCreateResponseDTO> saveList = new ArrayList<>();
@@ -174,6 +181,8 @@ public class DemographicControllerTest {
 	@Test
 	@WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
 	public void successUpdate() throws Exception {
+		Mockito.when(requestValidator.supports(Mockito.any())).thenReturn(true);
+		
 		logger.info("----------Successful save of application-------");
 
 		MainResponseDTO<DemographicUpdateResponseDTO> response = new MainResponseDTO<>();
@@ -339,6 +348,8 @@ public class DemographicControllerTest {
 	@WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
 	@Test
 	public void getUpdatedDateTimeTest() throws Exception {
+		Mockito.when(requestValidator.supports(Mockito.any())).thenReturn(true);
+		
 		MainRequestDTO<PreRegIdsByRegCenterIdDTO> mainRequestDTO = new MainRequestDTO<>();
 		List<String> list = new ArrayList<>();
 		list.add("98746563542672");

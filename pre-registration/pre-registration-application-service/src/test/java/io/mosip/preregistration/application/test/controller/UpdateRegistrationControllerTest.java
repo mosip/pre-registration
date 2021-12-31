@@ -1,8 +1,5 @@
 package io.mosip.preregistration.application.test.controller;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
