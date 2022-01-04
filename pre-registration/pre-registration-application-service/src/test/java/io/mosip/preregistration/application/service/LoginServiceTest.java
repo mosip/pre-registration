@@ -3,8 +3,10 @@ package io.mosip.preregistration.application.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,11 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
@@ -137,6 +144,12 @@ public class LoginServiceTest {
 	@Value("${pre.reg.config.file}")
 	private String preRegFileName;
 
+	@Value("${prereg.auth.jwt.audience}")
+	private String jwtAudience;
+
+	@Value("${prereg.auth.jwt.secret}")
+	private String jwtSecret;
+
 	MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request = new MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken>();
 
 	@Before
@@ -152,6 +165,10 @@ public class LoginServiceTest {
 		ReflectionTestUtils.setField(authService, "uiConfigParams", "abcd");
 		ReflectionTestUtils.setField(authService, "globalFileName", "abcd");
 		ReflectionTestUtils.setField(authService, "preRegFileName", "abcd");
+		ReflectionTestUtils.setField(authService, "configId", "mosip.preregistration.login.id.config");
+		ReflectionTestUtils.setField(authService, "jwtTokenExpiryTime", "1800");
+		ReflectionTestUtils.setField(authService, "jwtAudience", "adad");
+		ReflectionTestUtils.setField(authService, "jwtSecret", "Azcds");
 
 	}
 
@@ -388,6 +405,25 @@ public class LoginServiceTest {
 		Mockito.when(authCommonUtil.sendOtpJwtToken(userId)).thenReturn(userId);
 		assertEquals(spyAuthService.sendOTPSuccessJwtToken(userId), userId);
 		spyAuthService.sendOTPSuccessJwtToken(userId);
+	}
+
+	@Test
+	public void getLoginTokenTest() {
+		String userIdOtpId = "123";
+		String configId = "1";
+		assertNotNull(authService.getLoginToken(userIdOtpId, configId));
+	}
+
+	@Test
+	public void getLogoutTokenExceptionTest() {
+		String token = "Demo";
+		assertNotNull(authService.getLogoutToken(token));
+	}
+
+	@Test
+	public void invalidateTokenTest2() {
+		String token = "Demo";
+		assertNotNull(authService.invalidateToken(token));
 	}
 
 }
