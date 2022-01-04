@@ -6,6 +6,7 @@ import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -19,17 +20,17 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.WebApplicationContext;
 
-import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.controller.ApplicationController;
 import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.application.dto.ApplicationsListDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.application.service.ApplicationServiceIntf;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
-import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.RequestValidator;
 
 @RunWith(SpringRunner.class)
@@ -55,20 +56,30 @@ public class ApplicationControllerTest {
 	}
 
 	UIAuditRequest auditRequest = new UIAuditRequest();
-	private Logger log = LoggerConfiguration.logConfig(ApplicationController.class);
+	
+	@Mock
+	private ApplicationController controller;
 
-//	@Test
-//	public void logAugitTest() throws Exception {
-//		MainRequestDTO<UIAuditRequest> auditRequest = new MainRequestDTO<UIAuditRequest>();
-//		HttpHeaders header = new HttpHeaders();
-//		header.add("User-Agent", "test");
-//		MainResponseDTO<String> response = new MainResponseDTO<String>();
-//		Mockito.when(applicationService.saveUIEventAudit(auditRequest.getRequest())).thenReturn(response);
-//
-//		RequestBuilder request = MockMvcRequestBuilders.post("/logAudit").content()
-//				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8).headers(header);
-//		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
-//	}
+	/**
+	 * Test init binder.
+	 */
+	@Test
+	public void testInitBinder() {
+		controller.initBinder(Mockito.mock(WebDataBinder.class));
+	}
+	
+	@Test
+	public void logAugitTest() throws Exception {
+		Mockito.when(requestValidator.supports(Mockito.any())).thenReturn(true);
+		
+		MainRequestDTO<UIAuditRequest> auditRequest = new MainRequestDTO<UIAuditRequest>();
+		MainResponseDTO<String> response = new MainResponseDTO<String>();
+		Mockito.when(applicationService.saveUIEventAudit(auditRequest.getRequest())).thenReturn(response);
+		RequestBuilder request = MockMvcRequestBuilders.post("/logAudit")
+				.content("{\"request\":{\"eventName\":\"test\"}}")
+				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8);
+		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
+	}
 
 	@Test
 	public void getApplicationTest() throws Exception {
