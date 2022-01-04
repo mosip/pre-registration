@@ -1,6 +1,7 @@
 package io.mosip.preregistration.application.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.stream.Collectors;
 
 import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
@@ -118,6 +120,7 @@ import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.HashUtill;
@@ -349,11 +352,8 @@ public class DemographicServiceTest {
 		File fileTest = new File(classLoader.getResource("pre-registration-test.json").getFile());
 		jsonTestObject = (JSONObject) parser.parse(new FileReader(fileTest));
 
-		identityMappingJson = "{\r\n" + "	\"identity\": {\r\n" + "		\"name\": {\r\n"
-				+ "			\"value\": \"fullName\",\r\n" + "			\"isMandatory\" : true\r\n" + "		},\r\n"
-				+ "		\"proofOfAddress\": {\r\n" + "			\"value\" : \"proofOfAddress\"\r\n" + "		},\r\n"
-				+ "		\"postalCode\": {\r\n" + "			\"value\" : \"postalCode\"\r\n" + "		}\r\n" + "	}\r\n"
-				+ "}  ";
+		identityMappingJson = "{\r\n" + "	\"properties\": {\r\n" + "		\"identity\": {\r\n"
+				+ "			\"properties\": \"demo\"\r\n" + "		}\r\n" + "	}\r\n" + "}";
 
 		times = LocalDateTime.now();
 		preRegistrationEntity.setCreateDateTime(times);
@@ -699,6 +699,29 @@ public class DemographicServiceTest {
 
 	}
 
+	@Test(expected = PreIdInvalidForUserIdException.class)
+	public void deleteIndividualSuccessTest2() throws Exception {
+		String preRegId = "23242242";
+		String userId = "123";
+		preRegistrationEntity.setCreateDateTime(times);
+		preRegistrationEntity.setCreatedBy("9988905444");
+		preRegistrationEntity.setStatusCode("Booked");
+		preRegistrationEntity.setUpdateDateTime(times);
+		preRegistrationEntity.setApplicantDetailJson(jsonTestObject.toJSONString().getBytes());
+		preRegistrationEntity.setPreRegistrationId("98746563542672");
+		DocumentDeleteResponseDTO deleteDTO = new DocumentDeleteResponseDTO();
+		List<DocumentDeleteResponseDTO> deleteAllList = new ArrayList<>();
+		deleteAllList.add(deleteDTO);
+		MainResponseDTO<DeleteBookingDTO> delBookingResponseDTO = new MainResponseDTO<>();
+		DeleteBookingDTO deleteBookingDTO = new DeleteBookingDTO();
+		deleteBookingDTO.setPreRegistrationId("98746563542672");
+		List<DeleteBookingDTO> list = new ArrayList<>();
+		MainResponseDTO<DeleteBookingDTO> e = new MainResponseDTO<DeleteBookingDTO>();
+		Mockito.when(serviceUtil.deleteBooking(Mockito.any())).thenReturn(e);
+		Mockito.when(demographicRepository.findBypreRegistrationId(preRegId)).thenReturn(preRegistrationEntity);
+		assertNotNull(preRegistrationService.deleteIndividual(preRegId, userId));
+	}
+
 	@Test(expected = HashingException.class)
 	public void getPreRegistrationHashingExceptionTest() {
 		byte[] encryptedDemographicDetails = { 1, 0, 1, 0, 1, 0 };
@@ -978,6 +1001,8 @@ public class DemographicServiceTest {
 		String userId = "12345";
 		MainRequestDTO<DemographicRequestDTO> request = new MainRequestDTO<DemographicRequestDTO>();
 		DemographicRequestDTO demographicRequest = new DemographicRequestDTO();
+		List<String> identityKeys = null;
+		List<String> requiredFields = null;
 		demographicRequest.setLangCode(userId);
 		demographicRequest.setDemographicDetails(jsonObject);
 		request.setId(userId);
