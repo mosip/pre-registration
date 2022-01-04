@@ -41,6 +41,7 @@ import org.springframework.web.context.WebApplicationContext;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.idgenerator.spi.PridGenerator;
 import io.mosip.preregistration.application.controller.DemographicController;
+import io.mosip.preregistration.application.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
@@ -50,6 +51,7 @@ import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicViewDTO;
 import io.mosip.preregistration.application.service.DemographicServiceIntf;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
@@ -103,8 +105,6 @@ public class DemographicControllerTest {
 
 	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
-	private Object jsonObject = null;
-
 	@Mock
 	private DemographicController controller;
 
@@ -119,10 +119,6 @@ public class DemographicControllerTest {
 	@Before
 	public void setup() throws FileNotFoundException, IOException, ParseException {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
-		ClassLoader classLoader = getClass().getClassLoader();
-		JSONParser parser = new JSONParser();
-		File file = new File(classLoader.getResource("pre-registration.json").getFile());
-		jsonObject = parser.parse(new FileReader(file));
 		preRegistrationId = "98746563542672";
 		userId = "9988905333";
 	}
@@ -379,6 +375,25 @@ public class DemographicControllerTest {
 		Mockito.when(preRegistrationService.getDemographicData(preRegistrationId, false)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/applications/prereg/{preRegistrationId}", preRegistrationId)
+				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON_UTF8)
+				.contentType(MediaType.APPLICATION_JSON_UTF8);
+		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
+	}
+	
+	@Test
+	public void getPreRegDemographicAndDocumentData() throws Exception {
+		MainResponseDTO<ApplicationInfoMetadataDTO> response = new MainResponseDTO<ApplicationInfoMetadataDTO>();
+		ApplicationInfoMetadataDTO applicationInfoMetadataDTO = new ApplicationInfoMetadataDTO();
+		String preRegistrationId = "123456";
+		DemographicResponseDTO demographicResponseDTO = new DemographicResponseDTO();
+		demographicResponseDTO.setPreRegistrationId(preRegistrationId);
+		applicationInfoMetadataDTO.setDemographicResponse(demographicResponseDTO);
+		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
+		applicationInfoMetadataDTO.setDocumentsMetaData(documentsMetaData);
+		response.setResponse(applicationInfoMetadataDTO);
+		Mockito.when(preRegistrationService.getPregistrationInfo(preRegistrationId)).thenReturn(response);
+		RequestBuilder request = MockMvcRequestBuilders
+				.get("/applications/prereg/info/{preRegistrationId}", preRegistrationId)
 				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON_UTF8)
 				.contentType(MediaType.APPLICATION_JSON_UTF8);
 		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
