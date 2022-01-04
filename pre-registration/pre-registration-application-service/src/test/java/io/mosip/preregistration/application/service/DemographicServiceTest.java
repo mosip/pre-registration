@@ -1001,8 +1001,6 @@ public class DemographicServiceTest {
 		String userId = "12345";
 		MainRequestDTO<DemographicRequestDTO> request = new MainRequestDTO<DemographicRequestDTO>();
 		DemographicRequestDTO demographicRequest = new DemographicRequestDTO();
-		List<String> identityKeys = null;
-		List<String> requiredFields = null;
 		demographicRequest.setLangCode(userId);
 		demographicRequest.setDemographicDetails(jsonObject);
 		request.setId(userId);
