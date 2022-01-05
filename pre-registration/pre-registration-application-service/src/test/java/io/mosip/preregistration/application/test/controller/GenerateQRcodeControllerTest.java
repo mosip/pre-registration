@@ -17,7 +17,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -29,12 +29,11 @@ import io.mosip.preregistration.application.dto.QRCodeResponseDTO;
 import io.mosip.preregistration.application.service.GenerateQRcodeService;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.core.util.ValidationUtil;
 
-@RunWith(SpringRunner.class)
-@WebMvcTest(GenerateQRcodeController.class)
+@RunWith(SpringJUnit4ClassRunner.class)
+@WebMvcTest(controllers = GenerateQRcodeController.class)
 @Import(GenerateQRcodeController.class)
 public class GenerateQRcodeControllerTest {
 
