@@ -3,12 +3,15 @@ package io.mosip.preregistration.application.test.controller;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.Date;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
@@ -58,9 +61,13 @@ public class GenerateQRcodeControllerTest {
 	@MockBean
 	private RequestValidator requestValidator;
 
-	private NotificationDTO notificationDTO;
-
-	MainResponseDTO<NotificationDTO> responseDTO = new MainResponseDTO<>();
+	@Mock
+	private GenerateQRcodeController generateQRcodeController;
+	
+	@Value("${mosip.pre-registration.qrcode.generate.id}")
+	private String generateId;
+	
+	MainResponseDTO<QRCodeResponseDTO> responseDTO = new MainResponseDTO<QRCodeResponseDTO>();
 	MainRequestDTO<String> requestdata = new MainRequestDTO<>();
 
 	@Before
@@ -69,15 +76,14 @@ public class GenerateQRcodeControllerTest {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 		Mockito.when(requestValidator.supports(Mockito.any())).thenReturn(true);
 		
-		notificationDTO = new NotificationDTO();
-		notificationDTO.setName("sanober Noor");
-		notificationDTO.setPreRegistrationId("1234567890");
-		notificationDTO.setMobNum("1234567890");
-		notificationDTO.setEmailID("sanober,noor2@mindtree.com");
-		notificationDTO.setAppointmentDate("2019-01-22");
-		notificationDTO.setAppointmentTime("22:57");
-
-		responseDTO.setResponse(notificationDTO);
+		requestdata.setRequest("123456789");
+		requestdata.setId(generateId);
+		requestdata.setVersion("1.0");
+		requestdata.setRequesttime(new Date());
+		
+		QRCodeResponseDTO qrCodeResponseDTO = new QRCodeResponseDTO();
+		qrCodeResponseDTO.setQrcode("123456789".getBytes());
+		responseDTO.setResponse(qrCodeResponseDTO);
 		responseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
 
 	}
@@ -91,11 +97,13 @@ public class GenerateQRcodeControllerTest {
 	@Test
 	public void qrCodeGenerationTest() throws Exception {
 
-		MainResponseDTO<QRCodeResponseDTO> response = new MainResponseDTO<>();
 
-		String stringjson = mapper.writeValueAsString(notificationDTO);
 
-		Mockito.when(service.generateQRCode(requestdata)).thenReturn(response);
+		//MainResponseDTO<QRCodeResponseDTO> response = new MainResponseDTO<>();
+
+		String stringjson = mapper.writeValueAsString(requestdata);
+
+		Mockito.when(service.generateQRCode(requestdata)).thenReturn(responseDTO);
 
 		mockMvc.perform(post("/qrCode/generate").contentType(MediaType.APPLICATION_JSON).content(stringjson))
 				.andExpect(status().isOk());
