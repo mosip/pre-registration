@@ -1,15 +1,13 @@
 # Pre-Reg Database
 
 ## Introduction
-This folder containers various SQL scripts to create database and tables in postgres.  
+This folder containers various SQL scripts to create database and tables in postgres.  These scripts are automatically run when [Kubernetes based sandbox](https://github.com/mosip/mosip-infra/tree/1.2.0-rc2/deployment/v3) is installed.  
 
 Default data that's populated in the tables is present under [`dml`](mosip_prereg/dml) folder 
 
-These scripts are automatically run when Kuberntes based sandbox is installed.  However, developers may run these scripts as given below.
+## Database
+The modules uses `mosip_prereg` database with following tables:
 
-## Databases
-### mosip_prereg
-Tables:
 * [anonymous_profile](mosip_prereg/ddl/prereg-anonymous_profile.sql): Data for reports and statistics.  The data here is anonymised.
 * [applicant_demographic](mosip_prereg/ddl/prereg-applicant_demographic.sql): Demographic data entered by the user.
 * [applicant_demographic_consumed](mosip_prereg/ddl/prereg-applicant_demographic_consumed.sql)
@@ -33,5 +31,3 @@ Tables:
 * [reg_appointment_consumed](mosip_prereg/ddl/prereg-reg_appointment_consumed.sql)
 * [reg_available_slot](mosip_prereg/ddl/prereg-reg_available_slot.sql)
 * [transaction_type](mosip_prereg/ddl/prereg-transaction_type.sql)       
-
-
