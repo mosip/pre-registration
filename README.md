@@ -36,7 +36,7 @@ The project requires JDK 1.11.
 # Deploy
 
 ## PreReg in Sandbox
-To deploy Pre-Registration on Kubernetes cluster using Dockers refer to [mosip-infra](https://github.com/mosip/mosip-infra/tree/1.2.0_v3/deployment/v3)
+To deploy Pre-Registration on Kubernetes cluster using Dockers refer to [mosip-infra](https://github.com/mosip/mosip-infra/tree/1.2.0-rc2/deployment/v3)
 
 ## Developer
 
