@@ -3,10 +3,21 @@
 [![Join the chat at https://gitter.im/mosip-community/Pre-registration](https://badges.gitter.im/mosip-community/Pre-registration.svg)](https://gitter.im/mosip-community/Pre-registration?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # Pre-Registration 
-This repository contains the source code and design documents for MOSIP Pre-Registration module. 
+This repository contains the source code and design documents for MOSIP Pre-Registration server.  For an overview refer [here](https://nayakrounak.gitbook.io/mosip-docs/v/1.2.0/modules/registration/pre-registration) module.  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-Registration UI  github repo](https://github.com/mosip/pre-registration-ui/tree/1.2.0-rc2).
+
+Pre-Registration module consists of the following services:
+1. Application
+2. Booking
+3. Batchjob
+4. Captcha
+5. Datasync
+
+# Database
+
+See [DB guide](db_scripts/README.md)
 
 # Build
-The project requires JDK 1.8. 
+The project requires JDK 1.11. 
 1. To build jars:
     ```
     $ cd pre-registration
@@ -23,9 +34,13 @@ The project requires JDK 1.8.
     ```
 
 # Deploy
-1. To run all services as Dockers using MiniKube run [sandbox installer](https://githbu.com/mosip/mosip-infra/deployment/sandbox/) scripts.
 
-1. To run a Service jar individually:
+## PreReg in Sandbox
+To deploy Pre-Registration on Kubernetes cluster using Dockers refer to [mosip-infra](https://github.com/mosip/mosip-infra/tree/1.2.0_v3/deployment/v3)
+
+## Developer
+
+1. As a developer, to run a service jar individually:
     ```
     `java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
     ```
@@ -38,20 +53,28 @@ The project requires JDK 1.8.
 
 
 1. Note that you will have to run the dependent services like kernel-config-server to run any service successfully.
-1. To run a Docker image individually:
-    ``` 
-    $ docker run -it -p <host-port>:<container-port> -e active_profile_env={profile} -e spring_config_label_env= {branch} -e spring_config_url_env={config_server_url} <docker-registry-IP:docker-registry-port/<dcker-image>`
-    ```
+    
+# Dependencies
+Pre-Registration module depends on the following services:
+
+1. kernel-auditmanager-service
+1. kernel-syncdata-service
+1. kernel-otpmanager-service
+1. kernel-notification-service
+1. kernel-masterdata-service
+1. kernel-keymanager-service
+1. kernel-pridgenerator-service
+1. kernel-auth-service
+1. keycloak
+
+# Configuration
+Refer to the [configuration guide](docs/configuration.md).
 
 # Test
 Automated functaionl tests available in [Functional Tests repo](https://github.com/mosip/mosip-functional-tests)
 
 # APIs
 API documentation available on Wiki: [Pre-Registration APIs](https://github.com/mosip/documentation/wiki/Pre-Registration-APIs)
-
-# Documentation
-
-MOSIP documentation is available on [Wiki](https://github.com/mosip/documentation/wiki)
 
 # License
 This project is licensed under the terms of [Mozilla Public License 2.0](https://github.com/mosip/mosip-platform/blob/master/LICENSE)
