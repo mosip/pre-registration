@@ -248,7 +248,7 @@
 						</executions>
 						<configuration>
 							<apiDocsUrl>http://localhost:9090/preregistration/v1/application-service/v3/api-docs/Pre-Registration</apiDocsUrl>
-							<outputFileName>openapi.json</outputFileName>
+							<outputFileName>${name}-openapi.json</outputFileName>
 							<outputDir>${project.build.directory}</outputDir>
 							<skip>false</skip>
 						</configuration>
