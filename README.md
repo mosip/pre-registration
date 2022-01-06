@@ -49,9 +49,6 @@ To deploy Pre-Registration on Kubernetes cluster using Dockers refer to [mosip-i
         _config_label_: `master` (git branch of config repo*)  
         _config-url_: `http://localhost:51000` (Url of the config server*)  
 	
-	\* Refer to [kernel-config-server](https://github.com/mosip/commons/tree/master/kernel/kernel-config-server) for details
-
-
 1. Note that you will have to run the dependent services like kernel-config-server to run any service successfully.
     
 # Dependencies
