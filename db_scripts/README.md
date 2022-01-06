@@ -16,7 +16,7 @@ The modules uses `mosip_prereg` database with following tables:
 * [applications](mosip_prereg/ddl/prereg-applications.sql)
 * [batch_job_execution](mosip_prereg/ddl/prereg-batch_job_execution.sql)
 * [batch_job_execution_context](mosip_prereg/ddl/prereg-batch_job_execution_context.sql)
-* [batch_job_execution_params](mosip_prereg/ddl/prereg-batch_job_execution_params.sql)
+* [batch_job_execution_param](mosip_prereg/ddl/prereg-batch_job_execution_param.sql)
 * [batch_job_instance](mosip_prereg/ddl/prereg-batch_job_instance.sql)
 * [batch_step_execution](mosip_prereg/ddl/prereg-batch_step_execution.sql)
 * [batch_step_execution_context](mosip_prereg/ddl/prereg-batch_step_execution_context.sql)
