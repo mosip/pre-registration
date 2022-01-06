@@ -1,7 +1,7 @@
 # Pre-Reg Database
 
 ## Introduction
-This folder containers various SQL scripts to create database and tables in postgres.  These scripts are automatically run when [Kubernetes based sandbox](https://github.com/mosip/mosip-infra/tree/1.2.0-rc2/deployment/v3) is installed.  
+This folder containers various SQL scripts to create database and tables in postgres.  These scripts are automatically run with [DB init](https://github.com/mosip/mosip-infra/blob/1.2.0-rc2/deployment/v3/external/postgres/cluster/init_db.sh) of sandbox deployment.
 
 Default data that's populated in the tables is present under [`dml`](mosip_prereg/dml) folder 
 
