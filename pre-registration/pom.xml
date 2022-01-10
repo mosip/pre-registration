@@ -147,6 +147,7 @@
 			**/batchjob/**,
 			**/util/**,
 			**/stateUtil/**,
+			**/preregistration/application/service/*Intf.java,
 			**/preregistration/application/dto/*.java,
 			**/preregistration/application/dto/ApplicantTypeCodeDTO.java,
 			**/preregistration/application/dto/ApplicantTypeKeyValueDTO.java,
