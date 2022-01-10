@@ -1,10 +1,4 @@
-
-
--- object: prereg.prereg.anonymous_profile | type: TABLE --
--- DROP TABLE IF EXISTS prereg.prereg.anonymous_profile CASCADE;
-
-
-
+--- This table saves anonymous details about the user like year of birth, gender, documents uploaded etc. for each pre-registration application created by the end user. This information is to be used for analytics.
 CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
 (
     id character varying(36) COLLATE pg_catalog."default" NOT NULL,
@@ -18,4 +12,3 @@ CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
     CONSTRAINT anonymous_profile_pkey PRIMARY KEY (id)
 );
 
--- ddl-end --

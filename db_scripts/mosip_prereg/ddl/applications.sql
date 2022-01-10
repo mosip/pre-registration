@@ -1,6 +1,5 @@
+--  All 3 types of application details are saved here including the corresponding booking details (if any). The 3 types of applications are NEW_PREREGISTRATION, UPDATE_REGISTRATION, LOST_FORGOTTEN_UIN
 
--- object: prereg.applications | type: TABLE --
--- DROP TABLE IF EXISTS prereg.applications CASCADE;
 CREATE TABLE prereg.applications(
 	application_id character varying(36) NOT NULL,
 	booking_type character varying(256) NOT NULL,
@@ -17,6 +16,4 @@ CREATE TABLE prereg.applications(
 	upd_by character varying(256),
 	upd_dtimes timestamp without time zone,
 	CONSTRAINT appid_pk PRIMARY KEY (application_id)
-
 );
--- ddl-end --

@@ -1,6 +1,4 @@
--- Table: prereg.batch_job_execution_params
-
--- DROP TABLE prereg.batch_job_execution_params;
+-- This is required by Spring Batch framework
 
 CREATE TABLE prereg.batch_job_execution_params
 (
