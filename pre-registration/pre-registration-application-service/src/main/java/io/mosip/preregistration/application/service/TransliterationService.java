@@ -14,7 +14,6 @@ import io.mosip.preregistration.application.errorcodes.TransliterationErrorCodes
 import io.mosip.preregistration.application.errorcodes.TransliterationErrorMessage;
 import io.mosip.preregistration.application.exception.MandatoryFieldRequiredException;
 import io.mosip.preregistration.application.exception.UnSupportedLanguageException;
-import io.mosip.preregistration.application.exception.util.TransliterationExceptionCatcher;
 import io.mosip.preregistration.application.service.util.TransliterationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
