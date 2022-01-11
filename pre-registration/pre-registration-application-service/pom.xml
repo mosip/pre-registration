@@ -179,7 +179,7 @@
 			</plugin>
 		</plugins>
 	</build>
-	<profiles>
+  <profiles>
 		<profile>
 			<id>openapi-doc-generate-profile</id>
 			<dependencies>
@@ -252,8 +252,8 @@
 						</executions>
 						<configuration>
 							<apiDocsUrl>http://localhost:9090/preregistration/v1/application-service/v3/api-docs/Pre-Registration</apiDocsUrl>
-							<outputFileName>${name}-openapi.json</outputFileName>
-							<outputDir>${project.build.directory}</outputDir>
+              <outputFileName>${artifactId}-openapi.json</outputFileName>
+              <outputDir>${project.build.directory}</outputDir>
 							<skip>false</skip>
 						</configuration>
 					</plugin>
