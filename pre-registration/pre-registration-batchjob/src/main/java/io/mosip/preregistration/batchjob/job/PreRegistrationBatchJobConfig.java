@@ -4,22 +4,30 @@
  */
 package io.mosip.preregistration.batchjob.job;
 
-import javax.sql.DataSource;
+import java.util.List;
 
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.EnableBatchProcessing;
 import org.springframework.batch.core.configuration.annotation.JobBuilderFactory;
 import org.springframework.batch.core.configuration.annotation.StepBuilderFactory;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.launch.support.RunIdIncrementer;
+import org.springframework.batch.core.partition.support.Partitioner;
+import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.task.SimpleAsyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
+import io.mosip.preregistration.batchjob.impl.SlotAvailabilityPartitioner;
 import io.mosip.preregistration.batchjob.tasklets.ApplicationsBookingCheckTasklet;
 import io.mosip.preregistration.batchjob.tasklets.AvailabilitySyncTasklet;
 import io.mosip.preregistration.batchjob.tasklets.ConsumedStatusTasklet;
 import io.mosip.preregistration.batchjob.tasklets.ExpiredStatusTasklet;
+import io.mosip.preregistration.batchjob.tasklets.PurgeExpiredRegCentersSlotsTasklet;
 
 /**
  * @author Kishan Rathore
@@ -30,6 +38,9 @@ import io.mosip.preregistration.batchjob.tasklets.ExpiredStatusTasklet;
 @EnableBatchProcessing
 public class PreRegistrationBatchJobConfig {
 
+	@Value("${preregistration.slots.generate.thread.count:20}")
+	private int concurrencyLimit;
+
 	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
 
@@ -37,13 +48,10 @@ public class PreRegistrationBatchJobConfig {
 	private StepBuilderFactory stepBuilderFactory;
 
 	@Autowired
-	private DataSource dataSource;
-
-	@Autowired
 	private ConsumedStatusTasklet consumedStatusTasklet;
 
 	@Autowired
-	private AvailabilitySyncTasklet availabilitySyncTasklet;
+	private PurgeExpiredRegCentersSlotsTasklet purgeRegCenterSlotsTasklet;
 
 	@Autowired
 	private ExpiredStatusTasklet expiredStatusTasklet;
@@ -57,8 +65,8 @@ public class PreRegistrationBatchJobConfig {
 	}
 
 	@Bean
-	public Step availabilitySyncStep() {
-		return stepBuilderFactory.get("availabilitySyncStep").tasklet(availabilitySyncTasklet).build();
+	public Step purgeExpiredSlotsStep() {
+		return stepBuilderFactory.get("purgeExpiredSlotsStep").tasklet(purgeRegCenterSlotsTasklet).build();
 	}
 
 	@Bean
@@ -72,9 +80,9 @@ public class PreRegistrationBatchJobConfig {
 	}
 
 	@Bean
-	public Job availabilitySyncJob() {
-		return this.jobBuilderFactory.get("availabilitySyncJob").incrementer(new RunIdIncrementer())
-				.start(availabilitySyncStep()).build();
+	public Job purgeExpiredSlotsJob() {
+		return this.jobBuilderFactory.get("purgeExpiredSlotsJob").incrementer(new RunIdIncrementer())
+				.start(purgeExpiredSlotsStep()).build();
 	}
 
 	@Bean
@@ -93,5 +101,53 @@ public class PreRegistrationBatchJobConfig {
 	public Job updateApplicationForBookingCheckJob() {
 		return this.jobBuilderFactory.get("updateApplicationForBookingCheckJob").incrementer(new RunIdIncrementer())
 				.start(updateBookingInApplicationsStep()).build();
+	}
+
+	@Bean(name="regCenterPartitionerJob")
+	public Job regCenterPartitionerJob() {
+		return this.jobBuilderFactory.get("regCenterPartitionerJob")
+									 .preventRestart()
+								     .incrementer(new RunIdIncrementer())
+									 .start(slotGenerationStep())
+									 .build();
+	}
+
+	@Bean
+	public Step slotGenerationStep() {
+		return stepBuilderFactory.get("slotGenerationStep")
+								 .partitioner("regCenterPartitionerMasterStep", partitionerMasterStep())
+								 .step(slaveSlotGenerationStep())
+								 .gridSize(concurrencyLimit)
+								 .taskExecutor(taskExecutor())
+								 .build();
+	}
+
+	@Bean
+	public Partitioner partitionerMasterStep() {
+		return new SlotAvailabilityPartitioner();
+	}
+
+	@Bean
+	public Step slaveSlotGenerationStep() {
+		return stepBuilderFactory.get("slaveSlotGenerationStep")
+								 .tasklet(slotGenerateTasklet(null, null))
+								 .build();
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	@Bean
+	@StepScope
+	public Tasklet slotGenerateTasklet(@Value("#{stepExecutionContext['name']}") String name, 
+									   @Value("#{stepExecutionContext['regCenterIdsPartList']}") Object regCenterIdsPartListObj) {
+		List<String> regCenterPartList = (List<String>) regCenterIdsPartListObj;
+		AvailabilitySyncTasklet slotGeneratorTasklet = new AvailabilitySyncTasklet(name, regCenterPartList);
+		return slotGeneratorTasklet;
+	}
+
+	@Bean 
+	public TaskExecutor taskExecutor(){
+		SimpleAsyncTaskExecutor asyncTaskExecutor = new SimpleAsyncTaskExecutor("SlotGenerator");
+		asyncTaskExecutor.setConcurrencyLimit(concurrencyLimit);
+		return asyncTaskExecutor;
 	}
 }

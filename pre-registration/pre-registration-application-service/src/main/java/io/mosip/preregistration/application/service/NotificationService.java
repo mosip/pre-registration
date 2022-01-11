@@ -10,6 +10,12 @@ import java.util.Map;
 
 import javax.annotation.PostConstruct;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+
 import org.json.JSONException;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,11 +23,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClientException;
-import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ExceptionUtils;
@@ -87,11 +89,6 @@ public class NotificationService {
 	private Logger log = LoggerConfiguration.logConfig(NotificationService.class);
 
 	Map<String, String> requiredRequestMap = new HashMap<>();
-	/**
-	 * Autowired reference for {@link #restTemplateBuilder}
-	 */
-	@Autowired
-	RestTemplate restTemplate;
 
 	@Value("${mosip.pre-registration.notification.id}")
 	private String Id;
@@ -107,22 +104,22 @@ public class NotificationService {
 	/**
 	 * 
 	 */
-	@Value("${preregistartion.response}")
+	@Value("${preregistration.response}")
 	private String demographicResponse;
 
-	@Value("${preregistartion.demographicDetails}")
+	@Value("${preregistration.demographicDetails}")
 	private String demographicDetails;
 
-	@Value("${preregistartion.identity}")
+	@Value("${preregistration.identity}")
 	private String identity;
 
-	@Value("${preregistartion.identity.email}")
+	@Value("${preregistration.identity.email}")
 	private String email;
 
-	@Value("${preregistartion.identity.name}")
+	@Value("${preregistration.identity.name}")
 	private String fullName;
 
-	@Value("${preregistartion.identity.phone}")
+	@Value("${preregistration.identity.phone}")
 	private String phone;
 
 	@Value("${preregistration.notification.nameFormat}")
@@ -259,8 +256,11 @@ public class NotificationService {
 	private String getDemographicDetailsWithPreId(MainResponseDTO<DemographicResponseDTO> responseEntity,
 			NotificationDTO notificationDto, String langCode, MultipartFile file) throws IOException {
 		try {
-			ObjectMapper mapper = new ObjectMapper();
-			JsonNode responseNode = mapper
+			ObjectMapper objectMapper = new ObjectMapper();
+			objectMapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+			objectMapper.registerModule(new JavaTimeModule());
+		
+			JsonNode responseNode = objectMapper
 					.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
 			responseNode = responseNode.get(identity);
@@ -379,12 +379,14 @@ public class NotificationService {
 			throws IOException, ParseException {
 		MainResponseDTO<DemographicResponseDTO> responseEntity = demographicServiceIntf
 				.getDemographicData(notificationDto.getPreRegistrationId(), notificationDto.getIsBatch());
-		ObjectMapper mapper = new ObjectMapper();
-
+		ObjectMapper objectMapper = new ObjectMapper();
+		objectMapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+		objectMapper.registerModule(new JavaTimeModule());
+	
 		if (responseEntity.getErrors() != null) {
 			throw new DemographicDetailsNotFoundException(responseEntity.getErrors(), response);
 		}
-		JsonNode responseNode = mapper.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
+		JsonNode responseNode = objectMapper.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 		responseNode = responseNode.get(identity);
 		if (!notificationDto.isAdditionalRecipient()) {
 			if (notificationDto.getMobNum() != null || notificationDto.getEmailID() != null) {

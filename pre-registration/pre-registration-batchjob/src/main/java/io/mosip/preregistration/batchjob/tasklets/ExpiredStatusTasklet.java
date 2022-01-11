@@ -13,7 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.batchjob.utils.ExpiredStatusUtil;
+import io.mosip.preregistration.batchjob.impl.ApplicationExpiredStatusUpdater;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 /**
@@ -27,7 +27,7 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 public class ExpiredStatusTasklet implements Tasklet {
 
 	@Autowired
-	private ExpiredStatusUtil expiredUtil;
+	private ApplicationExpiredStatusUpdater expiredStatusUpdater;
 
 	private Logger log = LoggerConfiguration.logConfig(ExpiredStatusTasklet.class);
 
@@ -38,14 +38,11 @@ public class ExpiredStatusTasklet implements Tasklet {
 	public RepeatStatus execute(StepContribution contribution, ChunkContext chunkContext) throws Exception {
 
 		try {
-
-			expiredUtil.expireAppointments();
-
+			expiredStatusUpdater.updateExpiredStatus();
 		} catch (Exception e) {
 			log.error("Expired Status ", " Tasklet ", " encountered exception ", e.getMessage());
 			contribution.setExitStatus(new ExitStatus(e.getMessage()));
 		}
-
 		return RepeatStatus.FINISHED;
 	}
 

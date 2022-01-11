@@ -92,11 +92,11 @@ public class ConsumedStatusUtil {
 		boolean isSaveSuccess = false;
 		try {
 			preRegList = batchJpaRepositoryImpl.getAllConsumedPreIds(STATUS_COMMENTS);
-			log.info("sdfsdf", "arg1", "arg2", "arg3");
+			log.info("ConsumedStatusUtil, count of preRegIds to be moved to Consumed table are: {}", preRegList.size());
 
 			for (ProcessedPreRegEntity iterate : preRegList) {
 				String preRegId = iterate.getPreRegistrationId();
-
+				log.info("ConsumedStatusUtil, now processing preRegId: {}", preRegId);
 				DemographicEntityConsumed demographicEntityConsumed = new DemographicEntityConsumed();
 
 				RegistrationBookingEntityConsumed bookingEntityConsumed = new RegistrationBookingEntityConsumed();
@@ -143,7 +143,7 @@ public class ConsumedStatusUtil {
 						}
 					}
 					RegistrationBookingEntity bookingEntity = null;
-					if (!demographicEntity.getStatusCode().equals(StatusCodes.PREFETCHED.getCode())) {
+					if (demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
 						bookingEntity = batchJpaRepositoryImpl
 								.getRegistrationAppointmentDetails(demographicEntity.getPreRegistrationId());
 						//RegistrationBookingPKConsumed consumedPk = new RegistrationBookingPKConsumed();
@@ -166,7 +166,7 @@ public class ConsumedStatusUtil {
 					if (documentEntityList != null) {
 						batchJpaRepositoryImpl.deleteDocument(documentEntityList);
 					}
-					if (!demographicEntity.getStatusCode().equals(StatusCodes.PREFETCHED.getCode())) {
+					if (demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
 						batchJpaRepositoryImpl.deleteBooking(bookingEntity);
 					}
 					batchJpaRepositoryImpl.deleteDemographic(demographicEntity);

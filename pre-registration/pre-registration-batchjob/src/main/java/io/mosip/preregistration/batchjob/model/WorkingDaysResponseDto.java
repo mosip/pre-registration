@@ -17,5 +17,5 @@ public class WorkingDaysResponseDto implements Serializable{
 	 */
 	private static final long serialVersionUID = -5966823885108013755L;
 	
-	private List<WorkingDaysDto> weekdays;
+	private List<WorkingDaysDto> workingdays;
 }

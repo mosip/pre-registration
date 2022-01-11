@@ -23,6 +23,7 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -78,6 +79,7 @@ public class NotificationServiceUtil {
 	@Autowired
 	private Environment environment;
 
+	@Qualifier("selfTokenRestTemplate")
 	@Autowired
 	RestTemplate restTemplate;
 
@@ -90,8 +92,6 @@ public class NotificationServiceUtil {
 
 	private static final String IS_ACTIVE = "isActive";
 
-	private static final String REG_CENTER_ID = "id";
-
 	/** The Constant TEMPLATE_TYPE_CODE. */
 
 	private static final String TEMPLATE_TYPE_CODE = "templatetypecode";
@@ -101,10 +101,6 @@ public class NotificationServiceUtil {
 
 	@Value("${registrationcenter.centerdetail.rest.uri}")
 	private String centerDetailUri;
-
-	/**
-	 * Autowired reference for {@link #RestTemplateBuilder}
-	 */
 
 	/**
 	 * 
@@ -182,12 +178,12 @@ public class NotificationServiceUtil {
 	 *                                           exception
 	 */
 
-	public void invokeSmsNotification(Map values, String userId, String token, MainRequestDTO<OtpRequestDTO> requestDTO,
+	public void invokeSmsNotification(Map values, String userId, MainRequestDTO<OtpRequestDTO> requestDTO,
 			String langCode) throws PreRegLoginException, IOException {
 		log.info("sessionId", "idType", "id", "In invokeSmsNotification method of notification service util");
 		String otpSmsTemplate = environment.getProperty(PreRegLoginConstant.OTP_SMS_TEMPLATE);
-		String smsTemplate = applyTemplate(values, otpSmsTemplate, token, langCode);
-		sendSmsNotification(userId, smsTemplate, token, requestDTO);
+		String smsTemplate = applyTemplate(values, otpSmsTemplate, langCode);
+		sendSmsNotification(userId, smsTemplate, requestDTO);
 	}
 
 	/**
@@ -203,14 +199,14 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public void invokeEmailNotification(Map values, String userId, String token,
+	public void invokeEmailNotification(Map values, String userId, 
 			MainRequestDTO<OtpRequestDTO> requestDTO, String langCode) throws PreRegLoginException, IOException {
 		log.info("sessionId", "idType", "id", "In invokeEmailNotification method of notification service util");
 		String otpContentTemaplate = environment.getProperty(PreRegLoginConstant.OTP_CONTENT_TEMPLATE);
 		String otpSubjectTemplate = environment.getProperty(PreRegLoginConstant.OTP_SUBJECT_TEMPLATE);
-		String mailSubject = applyTemplate(values, otpSubjectTemplate, token, langCode);
-		String mailContent = applyTemplate(values, otpContentTemaplate, token, langCode);
-		sendEmailNotification(userId, mailSubject, mailContent, token, requestDTO);
+		String mailSubject = applyTemplate(values, otpSubjectTemplate, langCode);
+		String mailContent = applyTemplate(values, otpContentTemaplate, langCode);
+		sendEmailNotification(userId, mailSubject, mailContent, requestDTO);
 	}
 
 	/**
@@ -220,8 +216,8 @@ public class NotificationServiceUtil {
 	 * @param message              the message
 	 * @throws PreRegLoginException
 	 */
-	public void sendSmsNotification(String notificationMobileNo, String message, String token,
-			MainRequestDTO<OtpRequestDTO> requestDTO) throws PreRegLoginException {
+	public void sendSmsNotification(String notificationMobileNo, String message, MainRequestDTO<OtpRequestDTO> requestDTO) 
+		throws PreRegLoginException {
 		try {
 			PreRegSmsRequestDto preRegSmsRequestDto = new PreRegSmsRequestDto();
 			SMSRequestDTO smsRequestDto = new SMSRequestDTO();
@@ -235,7 +231,6 @@ public class NotificationServiceUtil {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-			headers.set("Cookie", token.substring(0, token.indexOf(";")));
 
 			HttpEntity<PreRegSmsRequestDto> entity1 = new HttpEntity<PreRegSmsRequestDto>(preRegSmsRequestDto, headers);
 
@@ -261,7 +256,7 @@ public class NotificationServiceUtil {
 	 * @param mailContent the mail content
 	 * @throws PreRegLoginException
 	 */
-	public void sendEmailNotification(String emailId, String mailSubject, String mailContent, String token,
+	public void sendEmailNotification(String emailId, String mailSubject, String mailContent, 
 			MainRequestDTO<OtpRequestDTO> requestDTO) throws PreRegLoginException {
 		try {
 			PreRegMailRequestDto mailRequestDto = new PreRegMailRequestDto();
@@ -279,7 +274,6 @@ public class NotificationServiceUtil {
 
 			headers1.setContentType(MediaType.MULTIPART_FORM_DATA);
 
-			headers1.set("Cookie", token.substring(0, token.indexOf(";")));
 			HttpEntity<LinkedMultiValueMap<String, Object>> entity1 = new HttpEntity<LinkedMultiValueMap<String, Object>>(
 					map, headers1);
 
@@ -311,7 +305,7 @@ public class NotificationServiceUtil {
 	 *                                           occurred.
 	 */
 
-	public String applyTemplate(Map mp, String templateName, String token, String langCode)
+	public String applyTemplate(Map mp, String templateName, String langCode)
 
 			throws PreRegLoginException, IOException {
 		log.info("In applyTemplate of NotificationServiceUtil for templateName {} and values {}", templateName, mp);
@@ -319,7 +313,7 @@ public class NotificationServiceUtil {
 		Objects.requireNonNull(mp);
 		StringWriter writer = new StringWriter();
 		InputStream templateValue;
-		String fetchedTemplate = fetchTemplate(templateName, token, langCode);
+		String fetchedTemplate = fetchTemplate(templateName, langCode);
 		templateValue = templateManager
 				.merge(new ByteArrayInputStream(fetchedTemplate.getBytes(StandardCharsets.UTF_8)), mp);
 		if (templateValue == null) {
@@ -338,7 +332,7 @@ public class NotificationServiceUtil {
 	 * @throws IdAuthenticationBusinessException the id authentication business
 	 *                                           exception
 	 */
-	public String fetchTemplate(String templateName, String token, String langCode) throws PreRegLoginException {
+	public String fetchTemplate(String templateName, String langCode) throws PreRegLoginException {
 		log.info("In fetchTemplate of NotificationServiceUtil for templateName {}", templateName);
 		Map<String, String> params = new HashMap<>();
 		params.put(LANG_CODE, langCode);
@@ -348,7 +342,6 @@ public class NotificationServiceUtil {
 
 		headers1.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 
-		headers1.set("Cookie", token.substring(0, token.indexOf(";")));
 		HttpEntity entity1 = new HttpEntity<>(headers1);
 
 		String url = UriComponentsBuilder
@@ -404,6 +397,13 @@ public class NotificationServiceUtil {
 					RegistrationCenterDto centerDto = getNotificationCenterAddressDTO(registrationCenterId,
 							regCenterLangCode);
 					if (centerDto != null) {
+						if (firstRegCenterLangCode == null) {
+							firstRegCenterLangCode = regCenterLangCode;	
+						}
+						regCentersMap.put(regCenterLangCode, centerDto);
+					} else {
+						centerDto = getNotificationCenterAddressDTO(registrationCenterId,
+								"all");
 						if (firstRegCenterLangCode == null) {
 							firstRegCenterLangCode = regCenterLangCode;	
 						}

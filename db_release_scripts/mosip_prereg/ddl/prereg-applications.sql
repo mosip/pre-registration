@@ -17,7 +17,7 @@ CREATE TABLE prereg.applications(
 	booking_type character varying(256) NOT NULL,
 	booking_status_code character varying(256),
 	application_status_code character varying(256),
-	registration_center_id character varying(10),
+	regcntr_id character varying(10),
 	appointment_date date,
 	booking_date date,
 	slot_from_time timestamp without time zone,

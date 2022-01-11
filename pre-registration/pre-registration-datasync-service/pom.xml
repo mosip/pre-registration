@@ -195,8 +195,8 @@
 						</executions>
 						<configuration>
 							<apiDocsUrl>http://localhost:9094/preregistration/v1/v3/api-docs/Pre-Registration-Datasync</apiDocsUrl>
-							<outputFileName>${artifactId}-openapi.json</outputFileName>
-							<outputDir>${project.build.directory}</outputDir>
+              <outputFileName>${artifactId}-openapi.json</outputFileName>
+              <outputDir>${project.build.directory}</outputDir>
 							<skip>false</skip>
 						</configuration>
 					</plugin>

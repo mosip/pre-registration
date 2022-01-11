@@ -26,7 +26,7 @@ public class UISpecUtilTest {
 	@MockBean
 	private UISpecServiceUtil util;
 
-	@MockBean
+	@MockBean(name = "restTemplateConfig")
 	private RestTemplate restTemplate;
 
 	@Test

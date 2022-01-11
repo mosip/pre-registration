@@ -1,4 +1,5 @@
 package io.mosip.preregistration.batchjob.model;
+import java.io.Serializable;
 import java.time.LocalTime;
 
 import lombok.Getter;
@@ -11,7 +12,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
-public class RegistrationCenterDto {
+public class RegistrationCenterDto implements Serializable {
 
 	private String id;
 

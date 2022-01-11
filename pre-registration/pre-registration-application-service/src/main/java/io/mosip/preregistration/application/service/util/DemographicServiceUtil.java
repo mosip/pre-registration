@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
@@ -27,6 +29,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
@@ -43,6 +46,9 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -117,20 +123,15 @@ public class DemographicServiceUtil {
 	@Autowired
 	private RestTemplate restTemplate;
 
+	@Qualifier("selfTokenRestTemplate")
+	@Autowired
+	RestTemplate selfTokenrestTemplate;
+
 	@Value("${mosip.io.prid.url}")
 	private String pridURl;
 
-	@Value("${preregistartion.config.identityjson}")
-	private String preregistrationIdJson;
-
-	@Value("${sendOtp.resource.url}")
-	private String sendOtpResourceUrl;
-
 	@Value("${mosip.preregistration.id-schema}")
 	private String idSchemaConfig;
-
-	@Value("${booking.resource.url}")
-	private String deleteAppointmentResourseUrl;
 
 	@Value("${masterdata.resource.url}")
 	private String masterdataResourseUrl;
@@ -151,6 +152,17 @@ public class DemographicServiceUtil {
 	@Autowired
 	CryptoUtil cryptoUtil;
 
+	/**
+	 * ObjectMapper global object creation
+	 */
+	private ObjectMapper mapper;
+
+	@PostConstruct
+    public void init() {
+		mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+		mapper.registerModule(new JavaTimeModule());
+	}
+	
 	/**
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
@@ -525,7 +537,7 @@ public class DemographicServiceUtil {
 			String uriBuilder = regbuilder.build().encode().toUriString();
 			log.info("sessionId", "idType", "id",
 					"In callRegCenterDateRestService method of Booking Service URL- " + uriBuilder);
-			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -559,7 +571,7 @@ public class DemographicServiceUtil {
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
 					});
 			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
@@ -719,8 +731,6 @@ public class DemographicServiceUtil {
 
 		Set<String> dataCaptureLang = null;
 
-		ObjectMapper mapper = new ObjectMapper();
-
 		List<Object> demographicKeys = Arrays
 				.asList(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
 
@@ -791,7 +801,7 @@ public class DemographicServiceUtil {
 			HttpEntity<RequestWrapper<ApplicantTypeRequestDTO>> entity = new HttpEntity<>(request, headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			ResponseEntity<ResponseWrapper<ApplicantTypeResponseDTO>> responseEntity = restTemplate.exchange(uriBuilder,
+			ResponseEntity<ResponseWrapper<ApplicantTypeResponseDTO>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
 					HttpMethod.POST, entity,
 					new ParameterizedTypeReference<ResponseWrapper<ApplicantTypeResponseDTO>>() {
 					});
@@ -826,7 +836,7 @@ public class DemographicServiceUtil {
 
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
+			responseEntity = selfTokenrestTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<ResponseWrapper<ApplicantValidDocumentDto>>() {
 					});
 
