@@ -36,7 +36,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
-@CrossOrigin("*")
 @Tag(name = "lost-uin-controller", description = "Lost UIN Controller")
 
 public class LostUINController {
