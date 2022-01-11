@@ -24,7 +24,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
-@CrossOrigin("*")
 @Tag(name = "UISpecification Controller", description = "UI Specification Controller")
 public class UISpecificationController {
 

@@ -9,6 +9,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -305,8 +306,11 @@ public class DocumentServiceUtil {
 	 */
 	public boolean fileExtensionCheck(MultipartFile file) {
 		log.info("sessionId", "idType", "id", "In fileExtensionCheck method of document service util");
-		List<String> fileExtensionList = Arrays.asList(fileExtension.split("\\s*,\\s*"));
-		if (fileExtensionList.contains(FilenameUtils.getExtension(file.getOriginalFilename()).toUpperCase())) {
+		//List<String> fileExtensionList = Arrays.asList(fileExtension.split("\\s*,\\s*"));
+		List<String> fileExtensionList = Arrays.asList(fileExtension.split(","));
+		List<String> fileExtensionTrimmedList = new ArrayList<String>(); 
+		fileExtensionList.forEach(str -> fileExtensionTrimmedList.add(str.trim()));
+		if (fileExtensionTrimmedList.contains(FilenameUtils.getExtension(file.getOriginalFilename()).toUpperCase())) {
 			return true;
 		} else {
 			throw new DocumentNotValidException(DocumentErrorCodes.PRG_PAM_DOC_004.toString(),

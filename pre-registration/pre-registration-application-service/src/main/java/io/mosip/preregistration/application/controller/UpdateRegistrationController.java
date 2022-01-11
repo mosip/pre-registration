@@ -36,7 +36,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
-@CrossOrigin("*")
 @Tag(name = "update-registration-controller", description = "Update Registration Controller")
 
 public class UpdateRegistrationController {
