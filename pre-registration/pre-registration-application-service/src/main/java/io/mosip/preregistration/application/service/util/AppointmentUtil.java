@@ -74,7 +74,7 @@ public class AppointmentUtil {
 			responseEntity = restTemplate.exchange(constructedAvailablityUrl, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<AvailabilityDto>>() {
 					});
-			if (responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
+			if (responseEntity != null && responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
 				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
@@ -111,7 +111,7 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<BookingStatusDTO>>() {
 					});
 
-			if (responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
+			if (responseEntity != null && responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
 
 				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
@@ -148,7 +148,7 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					});
 
-			if (responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
+			if (responseEntity != null && responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
 				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
@@ -183,7 +183,7 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
 					});
 
-			if (responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
+			if (responseEntity != null && responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
 				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
@@ -220,7 +220,7 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<CancelBookingResponseDTO>>() {
 					});
 
-			if (responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
+			if (responseEntity != null && responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
 
 				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
@@ -253,7 +253,7 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<BookingStatus>>() {
 					});
 
-			if (responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
+			if (responseEntity != null && responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
 
 				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
 						responseEntity.getBody().getErrors().get(0).getMessage());
