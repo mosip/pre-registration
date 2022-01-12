@@ -50,6 +50,7 @@ public class UISpecServiceUtil {
 		log.info("In  UISpec serviceutil getUIschema method");
 		List<UISpecResponseDTO> response = null;
 		ResponseEntity<ResponseWrapper<List<UISpecResponseDTO>>> responseEntity = null;
+		ResponseWrapper<List<UISpecResponseDTO>> body = null;
 		try {
 			log.info("Calling masterdata service to get ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder
@@ -71,14 +72,17 @@ public class UISpecServiceUtil {
 					new ParameterizedTypeReference<ResponseWrapper<List<UISpecResponseDTO>>>() {
 					});
 
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				log.info("error while fetching uispec {}", responseEntity.getBody().getErrors());
-				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					log.info("error while fetching uispec {}", body.getErrors());
+					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				response = body.getResponse();
 			}
-
-			response = responseEntity.getBody().getResponse();
-			log.info("uispec resposne {}", response);
+			
+			log.info("ui spec response {}", response);
 			if (Objects.isNull(response)) {
 				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 						ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
@@ -90,8 +94,13 @@ public class UISpecServiceUtil {
 					ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 		} catch (Exception ex) {
 			log.error("error while fetching uispec {}", ex);
-			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-					responseEntity.getBody().getErrors().get(0).getMessage());
+			if (body != null && body.getErrors() != null && !body.getErrors().isEmpty()) {
+				throw new UISpecException(body.getErrors().get(0).getErrorCode(),
+						body.getErrors().get(0).getMessage());
+			} else {
+				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
+						ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
+			}
 		}
 		return response;
 
@@ -101,6 +110,7 @@ public class UISpecServiceUtil {
 		log.info("In  UISpec serviceutil getAllUISchema method");
 		PageDTO<UISpecResponseDTO> response = null;
 		ResponseEntity<ResponseWrapper<PageDTO<UISpecResponseDTO>>> responseEntity = null;
+		ResponseWrapper<PageDTO<UISpecResponseDTO>> body = null;
 		try {
 			log.info("Calling masterdata service to get ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(materdataResourceUrl + "/uispec/all");
@@ -121,13 +131,16 @@ public class UISpecServiceUtil {
 					new ParameterizedTypeReference<ResponseWrapper<PageDTO<UISpecResponseDTO>>>() {
 					});
 
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				log.info("error while fetching uispec {}", responseEntity.getBody().getErrors());
-				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					log.info("error while fetching uispec {}", body.getErrors());
+					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				response = body.getResponse();
 			}
 
-			response = responseEntity.getBody().getResponse();
 			log.info("uispec resposne {}", response);
 			if (Objects.isNull(response)) {
 				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
@@ -140,8 +153,13 @@ public class UISpecServiceUtil {
 					ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 		} catch (Exception ex) {
 			log.error("error while fetching uispec {}", ex);
-			throw new UISpecException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-					responseEntity.getBody().getErrors().get(0).getMessage());
+			if (body != null && body.getErrors() != null && !body.getErrors().isEmpty()) {
+				throw new UISpecException(body.getErrors().get(0).getErrorCode(),
+						body.getErrors().get(0).getMessage());
+			} else {
+				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
+						ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
+			}
 		}
 		return response;
 

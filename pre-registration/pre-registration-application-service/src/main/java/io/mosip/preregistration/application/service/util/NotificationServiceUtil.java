@@ -138,8 +138,10 @@ public class NotificationServiceUtil {
 				langaueNamePair.setValue(notificationDto.getName());
 				langaueNamePairs.add(langaueNamePair);
 			}
-			notificationDto.setFullName(langaueNamePairs);
-			notificationDto.setLanguageCode(langauageCode);
+			if (notificationDto != null) {
+				notificationDto.setFullName(langaueNamePairs);
+				notificationDto.setLanguageCode(langauageCode);
+			}
 		}
 		if (!isLatest) {
 			notificationDto = (NotificationDTO) JsonUtils.jsonStringToJavaObject(NotificationDTO.class,
@@ -475,11 +477,15 @@ public class NotificationServiceUtil {
 					new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 					});
 			log.debug("sessionId", "idType", "id", responseEntity.toString());
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
-				response.setErrors(responseEntity.getBody().getErrors());
-			} else {
-				response.setResponse(responseEntity.getBody().getResponse());
+			ResponseWrapper<RegistrationCenterResponseDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
+					response.setErrors(body.getErrors());
+				} else {
+					response.setResponse(body.getResponse());
+				}
+				
 			}
 			log.info("sessionId", "idType", "id", "In call to registrationcenter rest service :" + url);
 		} catch (Exception ex) {
