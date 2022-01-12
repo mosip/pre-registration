@@ -480,7 +480,7 @@ public class NotificationServiceUtil {
 			ResponseWrapper<RegistrationCenterResponseDto> body = responseEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
-					log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
+					log.error("sessionId", "idType", "id", body.getErrors().toString());
 					response.setErrors(body.getErrors());
 				} else {
 					response.setResponse(body.getResponse());
