@@ -574,13 +574,15 @@ public class DemographicServiceUtil {
 			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
 					});
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			ResponseWrapper<IdSchemaDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				response = body.getResponse();
 			}
-
-			response = responseEntity.getBody().getResponse();
-
+			
 			if (response == null) {
 				throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 						DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
@@ -806,14 +808,18 @@ public class DemographicServiceUtil {
 					new ParameterizedTypeReference<ResponseWrapper<ApplicantTypeResponseDTO>>() {
 					});
 
-			if (responseEntity.getBody().getErrors() != null) {
-
-				throw new MasterDataException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			ResponseWrapper<ApplicantTypeResponseDTO> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new MasterDataException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				ApplicantTypeResponseDTO applicantTypeResponseDTO = body.getResponse();
+				if (applicantTypeResponseDTO != null && applicantTypeResponseDTO.getApplicantType() !=  null) {
+					applicantTypeCode = applicantTypeResponseDTO.getApplicantType().getApplicantTypeCode();	
+				}
 			}
-
-			applicantTypeCode = responseEntity.getBody().getResponse().getApplicantType().getApplicantTypeCode();
-
+			
 		} catch (RestClientException ex) {
 			log.error("restcall failed to get applicanttype", ex);
 			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
@@ -824,6 +830,7 @@ public class DemographicServiceUtil {
 
 	@SuppressWarnings({ "rawtypes" })
 	public ApplicantValidDocumentDto getDocCatAndTypeForApplicantCode(String applicantTypeCode, String langCode) {
+		ResponseWrapper<ApplicantValidDocumentDto> response = new ResponseWrapper<>();
 		log.info("In getDocCatAndTypeForApplicantCode method ");
 		ResponseEntity<ResponseWrapper<ApplicantValidDocumentDto>> responseEntity = null;
 		try {
@@ -840,10 +847,13 @@ public class DemographicServiceUtil {
 					new ParameterizedTypeReference<ResponseWrapper<ApplicantValidDocumentDto>>() {
 					});
 
-			if (responseEntity.getBody().getErrors() != null) {
-
-				throw new MasterDataException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			ResponseWrapper<ApplicantValidDocumentDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new MasterDataException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				response.setResponse(body.getResponse());
 			}
 
 		} catch (RestClientException ex) {
@@ -851,7 +861,7 @@ public class DemographicServiceUtil {
 			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 					DemographicErrorMessages.MASTERDATA_RESTCALL_FAIL.getMessage());
 		}
-		return responseEntity.getBody().getResponse();
+		return response.getResponse();
 	}
 
 	public Set<String> getMandatoryDocCatogery() {
