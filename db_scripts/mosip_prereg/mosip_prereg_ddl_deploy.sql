@@ -1,5 +1,6 @@
 \c mosip_prereg sysadmin
 
+\ir ddl/prereg-anonymous_profile.sql
 \ir ddl/prereg-applicant_demographic.sql
 \ir ddl/prereg-applicant_demographic_consumed.sql
 \ir ddl/prereg-applicant_document.sql
