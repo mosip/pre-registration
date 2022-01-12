@@ -55,7 +55,8 @@ public class AppointmentUtil {
 	private Logger log = LoggerConfiguration.logConfig(AppointmentUtil.class);
 
 	public AvailabilityDto getSlotAvailablityByRegCenterId(String regCenterId) {
-
+		MainResponseDTO<AvailabilityDto> response = new MainResponseDTO<AvailabilityDto>();
+		
 		Map<String, String> params = new LinkedHashMap<>();
 		params.put("registrationCenterId", regCenterId.trim());
 
@@ -74,10 +75,14 @@ public class AppointmentUtil {
 			responseEntity = restTemplate.exchange(constructedAvailablityUrl, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<AvailabilityDto>>() {
 					});
-			if (responseEntity != null && responseEntity.getBody() != null && responseEntity.getBody().getErrors() != null) {
-				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
-			}
+			if (responseEntity != null && responseEntity.getBody() != null) {
+				if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
+					throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+							responseEntity.getBody().getErrors().get(0).getMessage());
+				} else {
+					response.setResponse(responseEntity.getBody().getResponse());
+				}
+			}	
 
 		} catch (RestClientException ex) {
 			log.error("Error while fetching availablity for regCenterID:{}", regCenterId);
@@ -86,7 +91,7 @@ public class AppointmentUtil {
 					AppointmentErrorCodes.FAILED_TO_FETCH_AVAILABLITY.getMessage());
 		}
 
-		return responseEntity.getBody().getResponse();
+		return response.getResponse();
 	}
 
 	public BookingStatusDTO makeAppointment(MainRequestDTO<BookingRequestDTO> bookingDTO, String preRegistrationId) {
