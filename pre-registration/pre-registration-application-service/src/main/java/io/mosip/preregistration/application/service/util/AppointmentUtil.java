@@ -2,7 +2,6 @@ package io.mosip.preregistration.application.service.util;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -39,8 +38,8 @@ public class AppointmentUtil {
 
 	private static final String PRE_REGISTRATION_ID = "preRegistrationId";
 
-	private static final String ERROR_MSG = "Error trace {}";
-	
+	private static final String ERROR_TRACE = "Error trace {}";
+
 	@Autowired
 	private RestTemplate restTemplate;
 
@@ -56,8 +55,7 @@ public class AppointmentUtil {
 	private Logger log = LoggerConfiguration.logConfig(AppointmentUtil.class);
 
 	public AvailabilityDto getSlotAvailablityByRegCenterId(String regCenterId) {
-		MainResponseDTO<AvailabilityDto> response = new MainResponseDTO<AvailabilityDto>();
-		
+		MainResponseDTO<AvailabilityDto> response = new MainResponseDTO<>();
 		Map<String, String> params = new LinkedHashMap<>();
 		params.put("registrationCenterId", regCenterId.trim());
 
@@ -76,18 +74,17 @@ public class AppointmentUtil {
 			responseEntity = restTemplate.exchange(constructedAvailablityUrl, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<AvailabilityDto>>() {
 					});
-			if (Objects.nonNull(responseEntity) && Objects.nonNull(responseEntity.getBody())) {
-				if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-					throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-							responseEntity.getBody().getErrors().get(0).getMessage());
-				} else {
-					response.setResponse(responseEntity.getBody().getResponse());
+			MainResponseDTO<AvailabilityDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new AppointmentExecption(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
 				}
-			}	
-
+				response.setResponse(body.getResponse());
+			}
 		} catch (RestClientException ex) {
 			log.error("Error while fetching availablity for regCenterID:{}", regCenterId);
-			log.error(ERROR_MSG, ExceptionUtils.getStackTrace(ex));
+			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_FETCH_AVAILABLITY.getCode(),
 					AppointmentErrorCodes.FAILED_TO_FETCH_AVAILABLITY.getMessage());
 		}
@@ -96,7 +93,7 @@ public class AppointmentUtil {
 	}
 
 	public BookingStatusDTO makeAppointment(MainRequestDTO<BookingRequestDTO> bookingDTO, String preRegistrationId) {
-		MainResponseDTO<BookingStatusDTO> response = new MainResponseDTO<BookingStatusDTO>();
+
 		Map<String, String> params = new LinkedHashMap<>();
 		params.put(PRE_REGISTRATION_ID, preRegistrationId.trim());
 
@@ -117,27 +114,24 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<BookingStatusDTO>>() {
 					});
 
-			if (Objects.nonNull(responseEntity) && Objects.nonNull(responseEntity.getBody())) {
-				if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-					throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-							responseEntity.getBody().getErrors().get(0).getMessage());
-				} else {
-					response.setResponse(responseEntity.getBody().getResponse());
-				}
+			if (responseEntity.getBody().getErrors() != null) {
+
+				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
 
 		} catch (RestClientException ex) {
 			log.error("Error while booking an appointment for preRegistrationId:{}", preRegistrationId);
-			log.error(ERROR_MSG, ExceptionUtils.getStackTrace(ex));
+			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.BOOKING_FAILED.getCode(),
 					AppointmentErrorCodes.BOOKING_FAILED.getMessage());
 		}
 
-		return response.getResponse();
+		return responseEntity.getBody().getResponse();
 	}
 
 	public BookingRegistrationDTO fetchAppointmentDetails(String preRegistrationId) {
-		MainResponseDTO<BookingRegistrationDTO> response = new MainResponseDTO<BookingRegistrationDTO>();
+
 		Map<String, String> params = new LinkedHashMap<>();
 		params.put(PRE_REGISTRATION_ID, preRegistrationId.trim());
 
@@ -156,28 +150,25 @@ public class AppointmentUtil {
 			responseEntity = restTemplate.exchange(constructedAppointmentUrl, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					});
-			
-			if (Objects.nonNull(responseEntity) && Objects.nonNull(responseEntity.getBody())) {
-				if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-					throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-							responseEntity.getBody().getErrors().get(0).getMessage());
-				} else {
-					response.setResponse(responseEntity.getBody().getResponse());
-				}
-			}	
-			
+
+			if (responseEntity.getBody().getErrors() != null) {
+				System.out.println(responseEntity.getBody().getErrors());
+				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
+
 		} catch (RestClientException ex) {
 			log.error("Error while fetching appointment details for preRegistrationId:{}", preRegistrationId);
-			log.error(ERROR_MSG, ExceptionUtils.getStackTrace(ex));
+			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_FETCH_APPOINTMENT_DETAILS.getCode(),
 					AppointmentErrorCodes.FAILED_TO_FETCH_APPOINTMENT_DETAILS.getMessage());
 		}
 
-		return response.getResponse();
+		return responseEntity.getBody().getResponse();
 	}
 
 	public DeleteBookingDTO deleteBooking(String preRegId) {
-		MainResponseDTO<DeleteBookingDTO> response = new MainResponseDTO<DeleteBookingDTO>();
+
 		String constructedAppointmentUrl = UriComponentsBuilder.fromHttpUrl(multiBookingUrl)
 				.queryParam(PRE_REGISTRATION_ID, preRegId.trim()).toUriString();
 
@@ -196,14 +187,10 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
 					});
 
-			if (Objects.nonNull(responseEntity) && Objects.nonNull(responseEntity.getBody())) {
-				if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-					throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-							responseEntity.getBody().getErrors().get(0).getMessage());
-				} else {
-					response.setResponse(responseEntity.getBody().getResponse());
-				}
-			}	
+			if (responseEntity.getBody().getErrors() != null) {
+				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
 
 		} catch (RestClientException ex) {
 			log.error("Booking RestCall Exception " + ExceptionUtils.getStackTrace(ex));
@@ -211,12 +198,12 @@ public class AppointmentUtil {
 					AppointmentErrorCodes.FAILED_TO_DELETE_APPOINTMENT.getMessage());
 		}
 
-		return response.getResponse();
+		return responseEntity.getBody().getResponse();
 
 	}
 
 	public CancelBookingResponseDTO cancelAppointment(String preRegistrationId) {
-		MainResponseDTO<CancelBookingResponseDTO> response = new MainResponseDTO<CancelBookingResponseDTO>();
+
 		Map<String, String> params = new LinkedHashMap<>();
 		params.put(PRE_REGISTRATION_ID, preRegistrationId.trim());
 
@@ -237,26 +224,23 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<CancelBookingResponseDTO>>() {
 					});
 
-			if (Objects.nonNull(responseEntity) && Objects.nonNull(responseEntity.getBody())) {
-				if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-					throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-							responseEntity.getBody().getErrors().get(0).getMessage());
-				} else {
-					response.setResponse(responseEntity.getBody().getResponse());
-				}
-			}	
+			if (responseEntity.getBody().getErrors() != null) {
+
+				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
+			}
 
 		} catch (RestClientException ex) {
 			log.error("Error while Cancelling an appointment for preRegistrationId:{}", preRegistrationId);
-			log.error(ERROR_MSG, ExceptionUtils.getStackTrace(ex));
+			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.CANCEL_APPOINTMENT_FAILED.getCode(),
 					AppointmentErrorCodes.CANCEL_APPOINTMENT_FAILED.getMessage());
 		}
-		return response.getResponse();
+		return responseEntity.getBody().getResponse();
 	}
 
 	public BookingStatus multiAppointmentBooking(MainRequestDTO<MultiBookingRequest> bookingRequest) {
-		MainResponseDTO<BookingStatus> response = new MainResponseDTO<BookingStatus>();
+
 		String constructedAppointmentUrl = UriComponentsBuilder.fromHttpUrl(multiBookingUrl).toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
@@ -273,21 +257,18 @@ public class AppointmentUtil {
 					new ParameterizedTypeReference<MainResponseDTO<BookingStatus>>() {
 					});
 
-			if (Objects.nonNull(responseEntity) && Objects.nonNull(responseEntity.getBody())) {
-				if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-					throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-							responseEntity.getBody().getErrors().get(0).getMessage());
-				} else {
-					response.setResponse(responseEntity.getBody().getResponse());
-				}
+			if (responseEntity.getBody().getErrors() != null) {
+
+				throw new AppointmentExecption(responseEntity.getBody().getErrors().get(0).getErrorCode(),
+						responseEntity.getBody().getErrors().get(0).getMessage());
 			}
 
 		} catch (RestClientException ex) {
-			log.error(ERROR_MSG, ExceptionUtils.getStackTrace(ex));
+			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.MULTI_BOOKING_FAILED.getCode(),
 					AppointmentErrorCodes.MULTI_BOOKING_FAILED.getMessage());
 		}
-		return response.getResponse();
+		return responseEntity.getBody().getResponse();
 
 	}
 
