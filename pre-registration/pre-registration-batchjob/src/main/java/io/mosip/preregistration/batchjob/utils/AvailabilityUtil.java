@@ -421,12 +421,14 @@ public class AvailabilityUtil {
 					HttpMethod.PUT, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<CancelBookingResponseDTO>>() {
 					});
-
-			if (respEntity.getBody().getErrors() != null) {
-				for (ExceptionJSONInfoDTO dto : respEntity.getBody().getErrors()) {
-					throw new NoRecordFoundException(dto.getErrorCode(), dto.getMessage());
+			MainResponseDTO<CancelBookingResponseDTO> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					for (ExceptionJSONInfoDTO dto : body.getErrors()) {
+						throw new NoRecordFoundException(dto.getErrorCode(), dto.getMessage());
+					}
 				}
-			} 		
+			}	
 		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id",
 					"Exception in cancelBooking method of Availability Util - ", ex);
@@ -454,11 +456,16 @@ public class AvailabilityUtil {
 					uriBuilder, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 					});
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				throw new NoRecordFoundException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			ResponseWrapper<RegistrationCenterResponseDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new NoRecordFoundException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				if (body.getResponse() != null) {
+					regCenter = body.getResponse().getRegistrationCenters();	
+				}
 			}
-			regCenter = responseEntity.getBody().getResponse().getRegistrationCenters();
 			if (regCenter == null || regCenter.isEmpty()) {
 				throw new NoRecordFoundException(ErrorCodes.PRG_PAM_BAT_011.getCode(),
 						ErrorMessages.MASTER_DATA_NOT_FOUND.getMessage());
@@ -498,16 +505,21 @@ public class AvailabilityUtil {
 					uriBuilder, HttpMethod.GET, httpHolidayEntity,
 					new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterHolidayDto>>() {
 					});
-			if (responseEntity1.getBody().getErrors() != null && !responseEntity1.getBody().getErrors().isEmpty()) {
-				throw new NoRecordFoundException(responseEntity1.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity1.getBody().getErrors().get(0).getMessage());
-			}
+			ResponseWrapper<RegistrationCenterHolidayDto> body1 = responseEntity1.getBody();
 			holidaylist = new ArrayList<>();
-			if (!responseEntity1.getBody().getResponse().getHolidays().isEmpty()) {
-				for (HolidayDto holiday : responseEntity1.getBody().getResponse().getHolidays()) {
-					holidaylist.add(holiday.getHolidayDate());
+			if (body1 != null) {
+				if (body1.getErrors() != null && !body1.getErrors().isEmpty()) {
+					throw new NoRecordFoundException(body1.getErrors().get(0).getErrorCode(),
+							body1.getErrors().get(0).getMessage());
 				}
+				if (body1.getResponse() != null && body1.getResponse().getHolidays() != null
+						&& !body1.getResponse().getHolidays().isEmpty()) {
+					for (HolidayDto holiday : body1.getResponse().getHolidays()) {
+						holidaylist.add(holiday.getHolidayDate());
+					}
+				}	
 			}
+			
 
 			/** Rest call to master for exceptional holidays. */
 			String exceptionalHolidayUrl = exceptionalHolidayListUrl + regDto.getId() + "/"
@@ -520,18 +532,23 @@ public class AvailabilityUtil {
 					uriBuilder2, HttpMethod.GET, httpExceptionalHolidayEntity,
 					new ParameterizedTypeReference<ResponseWrapper<ExceptionalHolidayResponseDto>>() {
 					});
-			if (responseEntity2.getBody().getErrors() != null && !responseEntity2.getBody().getErrors().isEmpty()) {
-				log.error("sessionId", "idType", "id",
-						"In get exceptional holiday fetch call of Booking Service Util for HttpClientErrorException- "
-								+ responseEntity2.getBody().getErrors().get(0).getErrorCode()
-								+ responseEntity2.getBody().getErrors().get(0).getMessage());
-			} else if (responseEntity2.getBody().getResponse().getExceptionalHolidayList() != null
-					&& !responseEntity2.getBody().getResponse().getExceptionalHolidayList().isEmpty()) {
-				for (ExceptionalHolidayDto exceptionalHoliday : responseEntity2.getBody().getResponse()
-						.getExceptionalHolidayList()) {
-					holidaylist.add(exceptionalHoliday.getHolidayDate().toString());
+			ResponseWrapper<ExceptionalHolidayResponseDto> body2 = responseEntity2.getBody();
+			if (body2 != null) {
+				if (body2.getErrors() != null && !body2.getErrors().isEmpty()) {
+					log.error("sessionId", "idType", "id",
+							"In get exceptional holiday fetch call of Booking Service Util for HttpClientErrorException- "
+									+ body2.getErrors().get(0).getErrorCode()
+									+ body2.getErrors().get(0).getMessage());
 				}
+				if (body2.getResponse() != null && body2.getResponse().getExceptionalHolidayList() != null
+						&& !body2.getResponse().getExceptionalHolidayList().isEmpty()) {
+					for (ExceptionalHolidayDto exceptionalHoliday : body2.getResponse()
+							.getExceptionalHolidayList()) {
+						holidaylist.add(exceptionalHoliday.getHolidayDate().toString());
+					}
+				}	
 			}
+			
 
 			/** Rest call to master for working holidays. */
 			String workingDayUrl = workingDayListUrl  + regDto.getId() + "/" + regDto.getLangCode();
@@ -543,12 +560,15 @@ public class AvailabilityUtil {
 					HttpMethod.GET, httpWorkingDayEntity,
 					new ParameterizedTypeReference<ResponseWrapper<WorkingDaysResponseDto>>() {
 					});
-
-			if (responseEntity3.getBody().getErrors() != null && !responseEntity3.getBody().getErrors().isEmpty()) {
-				throw new NoRecordFoundException(responseEntity3.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity3.getBody().getErrors().get(0).getMessage());
+			ResponseWrapper<WorkingDaysResponseDto> body3 = responseEntity3.getBody();
+			if (body3 != null) {
+				if (body3.getErrors() != null && !body3.getErrors().isEmpty()) {
+					throw new NoRecordFoundException(body3.getErrors().get(0).getErrorCode(),
+							body3.getErrors().get(0).getMessage());
+				}
+				
 			}
-
+			
 			// Code to retrive date of days and add it to holidays.
 			/* if (responseEntity3.getBody().getResponse().getWeekdays() != null) {
 				List<String> workingDays = responseEntity3.getBody().getResponse().getWeekdays().stream()
@@ -778,13 +798,16 @@ public class AvailabilityUtil {
 					emailResourseUrl, HttpMethod.POST, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<NotificationResponseDTO>>() {
 					});
-
-			if (respEntity.getBody().getErrors() != null) {
-				List<ServiceError> validationErrorList = ExceptionUtils.getServiceErrorList(respEntity.getBody().toString());
-				if (validationErrorList != null && !validationErrorList.isEmpty()) {
-					throw new NotificationException(validationErrorList, null);
+			MainResponseDTO<NotificationResponseDTO> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					List<ServiceError> validationErrorList = ExceptionUtils.getServiceErrorList(body.toString());
+					if (validationErrorList != null && !validationErrorList.isEmpty()) {
+						throw new NotificationException(validationErrorList, null);
+					}
 				}
-			} 	
+			}	
+			 	
 			
 		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id",
