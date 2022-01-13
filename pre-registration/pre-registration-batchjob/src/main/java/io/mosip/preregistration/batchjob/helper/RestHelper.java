@@ -7,23 +7,15 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.format.TextStyle;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -41,12 +33,16 @@ import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
+
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
 import io.mosip.preregistration.batchjob.model.ExceptionalHolidayResponseDto;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterDto;
 import io.mosip.preregistration.batchjob.model.RegistrationCenterHolidayDto;
-import io.mosip.preregistration.batchjob.model.RegistrationCenterResponseDto;
 import io.mosip.preregistration.batchjob.model.WorkingDaysResponseDto;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
@@ -57,7 +53,6 @@ import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import lombok.experimental.Tolerate;
 
 /**
  * @author Mahammed Taheer
@@ -310,7 +305,7 @@ public class RestHelper {
                                                 .exchange().block();
             ObjectNode responseObjNode = response.bodyToMono(ObjectNode.class).block();
             if (response.statusCode() == HttpStatus.OK) {
-                if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
+                if (responseObjNode != null && responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
                     LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
                         "Error in response for URL: " + anyEndPoint + ", Errors:" 
                             + responseObjNode.get(PreRegBatchContants.ERRORS).toString());
@@ -318,10 +313,18 @@ public class RestHelper {
                 }
                 return responseObjNode; 
             } else {
-                LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
-                        "Response Code: " + response.statusCode() +
-                        ", Error in response for URL: " + anyEndPoint + ", Errors:" 
-                            + responseObjNode.get(PreRegBatchContants.ERRORS).toString());
+            	if (responseObjNode != null) {
+            		LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                            "Response Code: " + response.statusCode() +
+                            ", Error in response for URL: " + anyEndPoint + ", Errors:" 
+                                + responseObjNode.get(PreRegBatchContants.ERRORS).toString());	
+            	} else {
+            		LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                            "Response Code: " + response.statusCode() +
+                            ", Error in response for URL: " + anyEndPoint + ", Errors:" 
+                                + responseObjNode);
+            	}
+                
             }
         } catch (Throwable t) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
@@ -344,10 +347,10 @@ public class RestHelper {
                 "Cancelling Booked Application endpoint: " + uriBuilder);
 
             ResponseEntity<ObjectNode> response =  restTemplate.exchange(uriBuilder, HttpMethod.PUT, null, ObjectNode.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                ObjectNode responseObjNode = response.getBody();
-                if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
+            ObjectNode responseObjNode = response.getBody();
+            
+            if (responseObjNode != null && response.getStatusCode().is2xxSuccessful()) {
+            	if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
                     LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier,
                         "Error in response for URL: " + uriBuilder + ", Errors:" 
                             +  responseObjNode.get(PreRegBatchContants.ERRORS).toString());
@@ -359,7 +362,8 @@ public class RestHelper {
                             "Booked Application cancelled for pre reg Id: " + preRegId + 
                             ", Server Tranaction Id: " + cancelResponse.getTransactionId() +
                             ", Server Response Message: " + cancelResponse.getMessage());
-                return true; 
+                return true;	
+                 
             } else {
                 LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
                         "Response Code: " + response.getStatusCode() +
@@ -417,9 +421,9 @@ public class RestHelper {
 
             String notifyEailResourseUrl = UriComponentsBuilder.fromUriString(sendNotificationURL).toUriString();
             ResponseEntity<ObjectNode> response = restTemplate.exchange(notifyEailResourseUrl, HttpMethod.POST, httpEntity, ObjectNode.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                ObjectNode responseObjNode = response.getBody();
+            ObjectNode responseObjNode = response.getBody();
+            
+            if (responseObjNode != null && response.getStatusCode().is2xxSuccessful()) {
                 if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
                     LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier,
                         "Error in response for URL: " + sendNotificationURL + ", Errors:" 
@@ -433,13 +437,21 @@ public class RestHelper {
                             ", Notification Status: " + notifyResponse.getStatus() +
                             ", Notification Response Message: " + notifyResponse.getMessage());
                 return true; 
-            } else {
-                LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
-                        "Response Code: " + response.getStatusCode() +
-                        ", Error in response for URL: " + sendNotificationURL + ", Errors:" 
-                            + response.getBody().get(PreRegBatchContants.ERRORS).toString());
-                return false;
-            } 
+			} else {
+				if (responseObjNode != null) {
+					LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
+							PreRegBatchContants.EMPTY,
+							"Response Code: " + response.getStatusCode() + ", Error in response for URL: "
+									+ sendNotificationURL + ", Errors:"
+									+ responseObjNode.get(PreRegBatchContants.ERRORS).toString());
+				} else {
+					LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
+							PreRegBatchContants.EMPTY,
+							"Response Code: " + response.getStatusCode() + ", Error in response for URL: "
+									+ sendNotificationURL + ", Errors:" + responseObjNode);
+				}
+				return false;
+			}
 
             /* MultiValueMap<String, String> requestValueMap = buildNotificationRequest(preRegId, regDate, regTime, langCode, logIdentifier);
             ClientResponse response =  webClient.method(HttpMethod.POST)
@@ -523,9 +535,8 @@ public class RestHelper {
 
             String notifyEailResourseUrl = UriComponentsBuilder.fromUriString(auditEntryURL).toUriString();
             ResponseEntity<ObjectNode> response = restTemplate.exchange(notifyEailResourseUrl, HttpMethod.POST, requestEntity, ObjectNode.class);
-
-            if (response.getStatusCode().is2xxSuccessful()) {
-                ObjectNode responseObjNode = response.getBody();
+            ObjectNode responseObjNode = response.getBody();
+            if (responseObjNode != null && response.getStatusCode().is2xxSuccessful()) {
                 if (responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
                     LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
                         "Error in response for URL: " + sendNotificationURL + ", Errors:" 
@@ -539,10 +550,18 @@ public class RestHelper {
                             ", Notification Status: " + auditResponse.isStatus());
                 return true; 
             } else {
-                LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
-                        "Response Code: " + response.getStatusCode() +
-                        ", Error in response for URL: " + sendNotificationURL + ", Errors:" 
-                            + response.getBody().get(PreRegBatchContants.ERRORS).toString());
+				if (responseObjNode != null) {
+					LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
+							PreRegBatchContants.EMPTY,
+							"Response Code: " + response.getStatusCode() + ", Error in response for URL: "
+									+ sendNotificationURL + ", Errors:"
+									+ responseObjNode.get(PreRegBatchContants.ERRORS).toString());
+				} else {
+					LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
+							PreRegBatchContants.EMPTY,
+							"Response Code: " + response.getStatusCode() + ", Error in response for URL: "
+									+ sendNotificationURL + ", Errors:" + responseObjNode);
+				}
                 return false;
             } 
         } catch (Throwable t) {

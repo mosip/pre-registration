@@ -48,6 +48,7 @@ import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 import io.mosip.preregistration.application.exception.LanguagePropertiesException;
 import io.mosip.preregistration.application.exception.PreRegLoginException;
+import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
@@ -454,7 +455,7 @@ public class LoginCommonUtil {
 	}
 
 	public CaptchaResposneDTO validateCaptchaToken(String captchaToken) {
-
+		MainResponseDTO<CaptchaResposneDTO> response = new MainResponseDTO<>();
 		if (captchaToken == null || captchaToken.isBlank()) {
 			log.error("Validating Captcha token is null or blank");
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorCode(),
@@ -479,20 +480,24 @@ public class LoginCommonUtil {
 			responseEntity = restTemplate.exchange(captchaUrl, HttpMethod.POST, entity,
 					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
 					});
-
-			if (responseEntity.getBody().getErrors() != null) {
-				log.error("validateCaptchaToken has an error {}", responseEntity.getBody().getErrors());
-				throw new PreRegLoginException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			MainResponseDTO<CaptchaResposneDTO> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					log.error("validateCaptchaToken has an error {}", body.getErrors());
+					throw new PreRegLoginException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				} else {
+					response.setResponse(body.getResponse());
+				}
+				
 			}
-
 		} catch (RestClientException ex) {
 			log.error("Error while Calling captcha service to validate token {}", ex);
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
 		}
 
-		return responseEntity.getBody().getResponse();
+		return response.getResponse();
 
 	}
 

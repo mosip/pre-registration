@@ -34,6 +34,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.util.NestedServletException;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -41,6 +42,7 @@ import io.mosip.preregistration.application.controller.LoginController;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.User;
+import io.mosip.preregistration.application.exception.DeprecatedException;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
@@ -107,7 +109,7 @@ public class LoginControllerTest {
 		controller.initBinder(Mockito.mock(WebDataBinder.class));
 	}
 
-	@Test
+	@Test(expected = NestedServletException.class)
 	public void sendOtpTest() throws Exception {
 		Mockito.when(loginValidator.supports(Mockito.any())).thenReturn(true);
 
@@ -122,12 +124,12 @@ public class LoginControllerTest {
 		mainRequestDto.setRequest(optRequestDto);
 		mainRequestDto.setVersion("1.0");
 		mainRequestDto.setRequesttime(new Date());
-		try {
+		//try {
 			mockMvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
 					.content(asJsonString(mainRequestDto)).accept(MediaType.APPLICATION_JSON_VALUE));
-		} catch (Exception e) {
-			assertEquals(HttpStatus.OK, HttpStatus.OK);
-		}
+//		} catch (Exception e) {
+//			assertEquals(HttpStatus.OK, HttpStatus.OK);
+//		}
 
 	}
 
