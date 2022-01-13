@@ -322,7 +322,7 @@ public class RestHelper {
             		LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
                             "Response Code: " + response.statusCode() +
                             ", Error in response for URL: " + anyEndPoint + ", Errors:" 
-                                + responseObjNode);
+                                + response);
             	}
                 
             }
@@ -365,10 +365,18 @@ public class RestHelper {
                 return true;	
                  
             } else {
-                LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
-                        "Response Code: " + response.getStatusCode() +
-                        ", Error in response for URL: " + uriBuilder + ", Errors:" 
-                            + response.getBody().get(PreRegBatchContants.ERRORS).toString());
+            	if (responseObjNode != null) {
+            		LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                            "Response Code: " + response.getStatusCode() +
+                            ", Error in response for URL: " + uriBuilder + ", Errors:" 
+                                + responseObjNode.get(PreRegBatchContants.ERRORS).toString());	
+            	} else {
+            		LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                            "Response Code: " + response.getStatusCode() +
+                            ", Error in response for URL: " + uriBuilder + ", Errors:" 
+                                + response);
+            	}
+                
                 return false;
             } 
 
@@ -448,7 +456,7 @@ public class RestHelper {
 					LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
 							PreRegBatchContants.EMPTY,
 							"Response Code: " + response.getStatusCode() + ", Error in response for URL: "
-									+ sendNotificationURL + ", Errors:" + responseObjNode);
+									+ sendNotificationURL + ", Errors:" + response);
 				}
 				return false;
 			}
@@ -560,7 +568,7 @@ public class RestHelper {
 					LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
 							PreRegBatchContants.EMPTY,
 							"Response Code: " + response.getStatusCode() + ", Error in response for URL: "
-									+ sendNotificationURL + ", Errors:" + responseObjNode);
+									+ sendNotificationURL + ", Errors:" + response);
 				}
                 return false;
             } 
