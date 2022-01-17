@@ -303,8 +303,11 @@ public class RestHelper {
                                                 .uri(UriComponentsBuilder.fromUriString(anyEndPoint).toUriString())
                                                 .contentType(MediaType.APPLICATION_JSON)
                                                 .exchange().block();
-            ObjectNode responseObjNode = response.bodyToMono(ObjectNode.class).block();
-            if (response.statusCode() == HttpStatus.OK) {
+            ObjectNode responseObjNode = null;
+            if (response != null) {
+            	responseObjNode = response.bodyToMono(ObjectNode.class).block();	
+            }
+            if (response != null && response.statusCode() == HttpStatus.OK) {
                 if (responseObjNode != null && responseObjNode.has(PreRegBatchContants.ERRORS) && !responseObjNode.get(PreRegBatchContants.ERRORS).isNull()) {
                     LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
                         "Error in response for URL: " + anyEndPoint + ", Errors:" 
