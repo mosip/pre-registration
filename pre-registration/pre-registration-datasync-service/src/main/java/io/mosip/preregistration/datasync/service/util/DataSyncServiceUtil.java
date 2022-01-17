@@ -918,12 +918,17 @@ public class DataSyncServiceUtil {
 						HttpMethod.GET, httpEntity,
 						new ParameterizedTypeReference<MainResponseDTO<ClientPublickeyDTO>>() {
 						});
-				if (respEntity.getBody().getErrors() != null) {
-					log.info("sessionId", "idType", "id",
-							"In callGetMachinePublickey method of datasync service util - unable to get envryption publickey for the machineID");
-				} else {
-					encryptionPublickey = respEntity.getBody().getResponse().getEncryptionPublicKey();
-				}
+				MainResponseDTO<ClientPublickeyDTO> body = respEntity.getBody();
+				if (body != null) {
+					if (body.getErrors() != null) {
+						log.info("sessionId", "idType", "id",
+								"In callGetMachinePublickey method of datasync service util - unable to get envryption publickey for the machineID");
+					} else {
+						if (body.getResponse() != null) {
+							encryptionPublickey = body.getResponse().getEncryptionPublicKey();	
+						}
+					}
+				}	
 			}
 
 		} catch (RestClientException ex) {
@@ -966,12 +971,14 @@ public class DataSyncServiceUtil {
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<ApplicationInfoMetadataDTO>>() {
 					});
-			if (respEntity.getBody().getErrors() != null) {
-				log.info("unable to get preregistration data for the prid {}", prid);
-				throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
-						ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
-			} else {
-				applicationInfo = respEntity.getBody().getResponse();
+			MainResponseDTO<ApplicationInfoMetadataDTO> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					log.info("unable to get preregistration data for the prid {}", prid);
+					throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
+							ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
+				} 
+				applicationInfo = body.getResponse();
 			}
 		} catch (RestClientException ex) {
 			log.error("In getPreRegistrationInfo method of datasync service util ", ex);
@@ -986,6 +993,7 @@ public class DataSyncServiceUtil {
 	public String signData(String data) {
 		log.info("In SignData  method of datasync service util");
 		JWTSignatureResponseDto signatureResponse = null;
+		String jwtSignedData = null;
 		JWTSignatureRequestDto request = new JWTSignatureRequestDto();
 		request.setApplicationId(signAppId);
 		request.setReferenceId(signRefId);
@@ -1006,23 +1014,29 @@ public class DataSyncServiceUtil {
 					HttpMethod.POST, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<JWTSignatureResponseDto>>() {
 					});
-			if (respEntity.getBody().getErrors() != null) {
-				log.error("In signData method of datasync service util - unable to get sign data {}",
-						respEntity.getBody().getErrors());
-			} else {
-				signatureResponse = respEntity.getBody().getResponse();
-				log.debug(" Sign Response : --> {}", signatureResponse);
+			MainResponseDTO<JWTSignatureResponseDto> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					log.error("In signData method of datasync service util - unable to get sign data {}",
+							respEntity.getBody().getErrors());
+				}
+				if (body.getResponse() != null) {
+					signatureResponse = body.getResponse();
+					log.debug(" Sign Response : --> {}", signatureResponse);
+					jwtSignedData = signatureResponse.getJwtSignedData();
+				}
 			}
 		} catch (RestClientException ex) {
 			log.error("In signData method of datasync service util -", ex);
 			throw new PreRegistrationException(ErrorCodes.PRG_DATA_SYNC_020.getCode(),
 					ErrorMessages.UNABLE_TO_SIGN_DATA.getMessage());
 		}
-		return signatureResponse.getJwtSignedData();
+		return jwtSignedData;
 
 	}
 
 	public boolean updateApplicationStatusToPreFectched(String preId) {
+		boolean returnFlag = false;
 		log.info("In updateApplicationStatusToPreFectched  method of datasync service util");
 		ResponseEntity<MainResponseDTO<String>> respEntity = null;
 		try {
@@ -1037,10 +1051,16 @@ public class DataSyncServiceUtil {
 			respEntity = selfTokenRestTemplate.exchange(uriBuilder, HttpMethod.PUT, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<String>>() {
 					});
-			if (respEntity.getBody().getErrors() != null) {
-				log.info("unable to update preregistration status to prefetched for the prid {}", preId);
-				throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_021.getCode(),
-						ErrorMessages.PREFETCHED_UPDATE_FAILED.getMessage(), null);
+			MainResponseDTO<String> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					log.info("unable to update preregistration status to prefetched for the prid {}", preId);
+					throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_021.getCode(),
+							ErrorMessages.PREFETCHED_UPDATE_FAILED.getMessage(), null);
+				}
+				if (body.getResponse() != null) {
+					returnFlag = true;
+				}
 			}
 		} catch (RestClientException ex) {
 			log.error("In updateApplicationStatusToPreFectched method of datasync service util ", ex);
@@ -1048,7 +1068,7 @@ public class DataSyncServiceUtil {
 			throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_021.getCode(),
 					ErrorMessages.PREFETCHED_UPDATE_FAILED.getMessage(), null);
 		}
-		return respEntity.getBody().getResponse() != null ? true : false;
+		return returnFlag;
 
 	}
 
