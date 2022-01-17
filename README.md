@@ -49,20 +49,7 @@ To deploy Pre-Registration on Kubernetes cluster using Dockers refer to [mosip-i
         _config_label_: `master` (git branch of config repo*)  
         _config-url_: `http://localhost:51000` (Url of the config server*)  
 	
-1. Note that you will have to run the dependent services like kernel-config-server to run any service successfully.
-    
-# Dependencies
-Pre-Registration module depends on the following services:
-
-1. kernel-auditmanager-service
-1. kernel-syncdata-service
-1. kernel-otpmanager-service
-1. kernel-notification-service
-1. kernel-masterdata-service
-1. kernel-keymanager-service
-1. kernel-pridgenerator-service
-1. kernel-auth-service
-1. keycloak
+1. Note that you will have to run the dependent services like kernel-config-server to run any service successfully.    
 
 # Configuration
 Refer to the [configuration guide](docs/configuration.md).
