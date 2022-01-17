@@ -330,26 +330,25 @@ public class ValidationUtil {
 						uri + "&pageNumber=" + pageNo, HttpMethod.GET, entity,
 						new ParameterizedTypeReference<ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>>>() {
 						});
-
-				if (Objects.isNull(response.getBody().getErrors())) {
-
-					PageDTO<ValidDocumentsResponseDTO> resp = response.getBody().getResponse();
-
-					totalPage = resp.getTotalPages();
-
-					resp.getData().stream().filter(docs -> docs.getIsActive()).forEach(activeDocs -> validDocsMap
-							.put(activeDocs.getDocCategoryCode(), activeDocs.getDocTypeCode()));
-					log.info("validDocsMap {}", validDocsMap);
-				} else {
-					log.debug("sessionId", "idType", "id",
-							"inside getAllDocCategories inside else  preRegistrationId ");
-					log.debug("sessionId", "idType", "id", " cat code" + response.getBody().getErrors().toString());
-					throw new MasterDataNotAvailableException(response.getBody().getErrors().get(0).getErrorCode(),
-							response.getBody().getErrors().get(0).getMessage());
+				ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>> body = response.getBody();
+				if (body != null) {
+					if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+						log.debug("sessionId", "idType", "id",
+								"inside getAllDocCategories inside else  preRegistrationId ");
+						log.debug("sessionId", "idType", "id", " cat code" + body.getErrors().toString());
+						throw new MasterDataNotAvailableException(body.getErrors().get(0).getErrorCode(),
+								body.getErrors().get(0).getMessage());
+					}
+					PageDTO<ValidDocumentsResponseDTO> resp = body.getResponse();
+					if (resp  != null) {
+						totalPage = resp.getTotalPages();
+						resp.getData().stream().filter(docs -> docs.getIsActive()).forEach(activeDocs -> validDocsMap
+								.put(activeDocs.getDocCategoryCode(), activeDocs.getDocTypeCode()));	
+					}
 				}
 				pageNo++;
 			} while (pageNo != totalPage);
-
+			log.info("validDocsMap {}", validDocsMap);
 		} catch (RestClientException e) {
 			log.debug("sessionId", "idType", "id", "inside getAllDocCategories inside catch preRegistrationId ");
 			log.debug("sessionId", "idType", "id", "---- " + ExceptionUtils.getStackTrace(e));

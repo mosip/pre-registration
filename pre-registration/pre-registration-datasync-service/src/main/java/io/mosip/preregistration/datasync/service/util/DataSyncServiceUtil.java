@@ -1018,7 +1018,7 @@ public class DataSyncServiceUtil {
 			if (body != null) {
 				if (body.getErrors() != null) {
 					log.error("In signData method of datasync service util - unable to get sign data {}",
-							respEntity.getBody().getErrors());
+							body.getErrors());
 				}
 				if (body.getResponse() != null) {
 					signatureResponse = body.getResponse();
