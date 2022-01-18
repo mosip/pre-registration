@@ -205,11 +205,11 @@ public class DataSyncService {
 	 * @return
 	 */
 	private String getUTCTimeStamp(Map<LocalDate, SlotTimeDto> value) {
+		String timestamp = null;
 		for (Entry<LocalDate, SlotTimeDto> v : value.entrySet()) {
-			return v.getKey().atTime(v.getValue().getFromTime())
-					.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+			timestamp = v.getKey().atTime(v.getValue().getFromTime()).format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
 		}
-		return null;
+		return timestamp;
 	}
 
 	/**
