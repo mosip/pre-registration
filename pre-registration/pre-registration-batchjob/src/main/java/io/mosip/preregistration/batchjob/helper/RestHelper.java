@@ -323,8 +323,7 @@ public class RestHelper {
                                 + responseObjNode.get(PreRegBatchContants.ERRORS).toString());	
             	} else {
             		LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
-                            "Response Code: " + response.statusCode() +
-                            ", Error in response for URL: " + anyEndPoint + ", Errors:" 
+                            "Error in response for URL: " + anyEndPoint + ", Errors:" 
                                 + response);
             	}
                 
