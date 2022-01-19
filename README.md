@@ -2,10 +2,10 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=mosip_pre-registration&metric=alert_status)](https://sonarcloud.io/dashboard?id=mosip_pre-registration)
 [![Join the chat at https://gitter.im/mosip-community/Pre-registration](https://badges.gitter.im/mosip-community/Pre-registration.svg)](https://gitter.im/mosip-community/Pre-registration?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-# Pre-Registration 
-This repository contains the source code and design documents for MOSIP Pre-Registration server.  For an overview refer [here](https://nayakrounak.gitbook.io/mosip-docs/v/1.2.0/modules/registration/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-Registration UI  github repo](https://github.com/mosip/pre-registration-ui/tree/1.2.0-rc2).
+# Pre-registration 
+This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://nayakrounak.gitbook.io/mosip-docs/v/1.2.0/modules/registration/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/tree/1.2.0-rc2).
 
-Pre-Registration module consists of the following services:
+Pre-registration module consists of the following services:
 1. Application
 2. Booking
 3. Batchjob
@@ -36,7 +36,7 @@ The project requires JDK 1.11.
 # Deploy
 
 ## PreReg in Sandbox
-To deploy Pre-Registration on Kubernetes cluster using Dockers refer to [mosip-infra](https://github.com/mosip/mosip-infra/tree/1.2.0-rc2/deployment/v3)
+To deploy Pre-registration on Kubernetes cluster using Dockers refer to [mosip-infra](https://github.com/mosip/mosip-infra/tree/1.2.0-rc2/deployment/v3)
 
 ## Developer
 
@@ -58,7 +58,7 @@ Refer to the [configuration guide](docs/configuration.md).
 Automated functaionl tests available in [Functional Tests repo](https://github.com/mosip/mosip-functional-tests)
 
 # APIs
-API documentation available on Wiki: [Pre-Registration APIs](https://github.com/mosip/documentation/wiki/Pre-Registration-APIs)
+API documentation available on Wiki: [Pre-registration APIs]()
 
 # License
 This project is licensed under the terms of [Mozilla Public License 2.0](https://github.com/mosip/mosip-platform/blob/master/LICENSE)

@@ -1,8 +1,6 @@
-# Pre-Registration Configuration Guide
-
+# Pre-registration Configuration Guide
 
 ## Property files
-
 The configuration of the services is controlled by the following property files:
 * [`application-default.propertes`](https://github.com/mosip/mosip-config/blob/1.2.0_v3/application-default.properties)
 * [`pre-registration-default.propertes`](https://github.com/mosip/mosip-config/blob/1.2.0_v3/pre-registration-default.properties)
