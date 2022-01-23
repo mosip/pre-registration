@@ -1,6 +1,4 @@
--- Table: prereg.batch_step_execution
-
--- DROP TABLE prereg.batch_step_execution;
+-- This is required by Spring Batch framework
 
 CREATE TABLE prereg.batch_step_execution
 (

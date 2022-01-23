@@ -1,6 +1,4 @@
--- Table: prereg.batch_step_execution_context
-
--- DROP TABLE prereg.batch_step_execution_context;
+-- This is required by Spring Batch framework
 
 CREATE TABLE prereg.batch_step_execution_context
 (
