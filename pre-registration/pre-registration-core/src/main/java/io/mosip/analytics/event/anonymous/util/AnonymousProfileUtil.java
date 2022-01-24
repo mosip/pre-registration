@@ -49,6 +49,8 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Service
 public class AnonymousProfileUtil {
 
+	private static final String BLANK_STRING = "";
+
 	private static final String VALUE_ATTRIBUTE = "value";
 
 	private static final String PHONE = "phone";
@@ -98,7 +100,7 @@ public class AnonymousProfileUtil {
 	/**
 	 * Identity mapping JSON string
 	 */
-	private String identityMappingJsonString = "";
+	private String identityMappingJsonString = BLANK_STRING;
 
 	/**
 	 * Root attribute name under for which identity mapping fields are available
@@ -170,7 +172,7 @@ public class AnonymousProfileUtil {
 		try {
 			DemographicIdentityRequestDTO identityDto = populateIdentityMappingDto(); 
 			if (!isNull(identityDto) && !isNull(identityDto.getIdentity()) && !isNull(demographicData)) {
-				Identity identityMapping = populateIdentityMappingDto().getIdentity();
+				Identity identityMapping = identityDto.getIdentity();
 				JsonNode identityData = objectMapper.readTree(demographicData.getDemographicDetails().toJSONString());
 				identityData = identityData.get(identityKey);
 				RegistrationProfileDTO registrationProfile = new RegistrationProfileDTO();
@@ -186,7 +188,7 @@ public class AnonymousProfileUtil {
 				if (!isNull(bookingData)) {
 					registrationProfile.setEnrollmentCenterId(bookingData.getRegistrationCenterId());
 				} else {
-					registrationProfile.setEnrollmentCenterId("");
+					registrationProfile.setEnrollmentCenterId(BLANK_STRING);
 				}
 				registrationProfile.setLocation(getLocations(identityMapping, identityData));
 				registrationProfile.setChannel(getChannels(identityMapping, identityData));
@@ -243,7 +245,7 @@ public class AnonymousProfileUtil {
 	private String getValueFromDemographicData(String key, JsonNode identityData) {
 		JsonNode arrayNode = identityData.get(key);
 		int index = 0;
-		String value = "";
+		String value = BLANK_STRING;
 		if (arrayNode != null) {
 			if (arrayNode.isArray()) {
 				for (JsonNode jsonNode : arrayNode) {
@@ -322,7 +324,7 @@ public class AnonymousProfileUtil {
 	private boolean isNull(Object key) {
 		log.info("sessionId", "idType", "id", "In isNull method of datasync service util");
 		if (key instanceof String) {
-			if (key.equals(""))
+			if (key.equals(BLANK_STRING))
 				return true;
 		} else if (key instanceof List<?>) {
 			if (((List<?>) key).isEmpty())
@@ -341,13 +343,13 @@ public class AnonymousProfileUtil {
 	 * @return
 	 */
 	private String extractYear(String dateOfBirthStr) {
-		String yearStr = "";
-		if (dateOfBirthStr != "") {
+		String yearStr = BLANK_STRING;
+		if (!dateOfBirthStr.equals(BLANK_STRING)) {
 			try {
 				DateTimeFormatter formatter = DateTimeFormatter.ofPattern(DATE_FORMAT_DEMOGRAPHIC_DATA);
 				LocalDate date = LocalDate.parse(dateOfBirthStr, formatter);
 				int year = date.getYear();
-				yearStr = "" + year;
+				yearStr = BLANK_STRING + year;
 			} catch (DateTimeParseException pe) {
 				// ignore
 			}
