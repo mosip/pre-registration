@@ -1,6 +1,4 @@
--- Table: prereg.batch_job_instance
-
--- DROP TABLE prereg.batch_job_instance;
+-- This is required by Spring Batch framework
 
 CREATE TABLE prereg.batch_job_instance
 (
