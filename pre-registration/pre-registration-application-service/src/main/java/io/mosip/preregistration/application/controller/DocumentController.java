@@ -38,7 +38,6 @@ import javax.validation.Valid;
 @RestController
 @RequestMapping("/")
 @Tag(name = "document-controller", description = "Document Controller")
-@CrossOrigin("*")
 public class DocumentController {
 
 	/**
