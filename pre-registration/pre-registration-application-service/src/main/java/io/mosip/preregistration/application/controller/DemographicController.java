@@ -16,7 +16,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
@@ -67,7 +66,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/")
 @Tag(name = "demographic-controller", description = "Demographic Controller")
-@CrossOrigin("*")
 public class DemographicController {
 
 	/** Autowired reference for {@link #DemographicService}. */
