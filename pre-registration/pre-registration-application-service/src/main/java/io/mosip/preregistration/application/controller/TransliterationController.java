@@ -39,7 +39,6 @@ import springfox.documentation.annotations.ApiIgnore;
 @RestController
 @RequestMapping("/transliteration")
 @Tag(name = "Transliteration Controller", description = "Transliteration Controller")
-@CrossOrigin("*")
 public class TransliterationController {
 
 	/** Autowired reference for {@link #transliterationService}. */
