@@ -1,16 +1,13 @@
 ## Pre-Registration:
-Pre-Registration module enables Individuals to book for an appointment in a Registration Centre, by providing basic demographic details.
-Pre-Registration details are consumed by Registration module while registering an Individual.
+This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://docs.mosip.io/1.2.0/modules/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/tree/1.2.0-rc2).
 
-Pre-Registration has a UI component and a set of REST Services that back the UI. The UI component can be found at https://github.com/mosip/mosip-ref-impl/tree/master/pre-registration-ui.
-
-Pre-Registration API specs are at https://github.com/mosip/mosip-docs/wiki/Pre-Registration-Services
+Pre-Registration API specs are [here] (https://mosip.github.io/documentation/)
 
 **Configuration**
-Configurations used for ID Repo are available in [mosip-config](https://github.com/mosip/mosip-config)
+Configurations used for Pre-Registration are available in [configuration guide](docs/configuration.md)
 
 ### Build
-Below command should be run in the parent project **authentication**
+Below command should be run in the parent project **pre-registration**
 `mvn clean install`
 
 ### Deploy
