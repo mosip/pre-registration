@@ -3,7 +3,7 @@
 [![Join the chat at https://gitter.im/mosip-community/Pre-registration](https://badges.gitter.im/mosip-community/Pre-registration.svg)](https://gitter.im/mosip-community/Pre-registration?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 # Pre-registration 
-This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://nayakrounak.gitbook.io/mosip-docs/v/1.2.0/modules/registration/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/tree/1.2.0-rc2).
+This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://docs.mosip.io/1.2.0/modules/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/tree/1.2.0-rc2).
 
 Pre-registration module consists of the following services:
 1. Application
