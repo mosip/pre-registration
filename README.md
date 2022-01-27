@@ -16,6 +16,9 @@ Pre-registration module consists of the following services:
 
 See [DB guide](db_scripts/README.md)
 
+# Config-Server
+To run Pre-registration services, there must be a Config server running. [Steps](https://github.com/mosip/mosip-config/tree/develop3-v3)
+
 # Build
 The project requires JDK 1.11. 
 1. To build jars:

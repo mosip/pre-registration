@@ -6,6 +6,9 @@ Pre-Registration API specs are [here] (https://mosip.github.io/documentation/)
 **Configuration**
 Configurations used for Pre-Registration are available in [configuration guide](docs/configuration.md)
 
+### Config-Server
+To run Pre-registration services, there must be a Config server running. [Steps](https://github.com/mosip/mosip-config/tree/develop3-v3)
+
 ### Build
 Below command should be run in the parent project **pre-registration**
 `mvn clean install`
