@@ -79,7 +79,7 @@ jobs:
 
 
   publish_to_nexus:
-    if: "!contains(github.ref, master)"
+    if: "!contains(github.ref, 'master')"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
