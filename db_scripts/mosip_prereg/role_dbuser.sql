@@ -1,0 +1,4 @@
+CREATE ROLE prereguser WITH 
+	INHERIT
+	LOGIN
+	PASSWORD :dbuserpwd;

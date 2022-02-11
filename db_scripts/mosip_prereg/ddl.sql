@@ -1,0 +1,22 @@
+\c mosip_prereg 
+
+\ir ddl/applicant_demographic.sql
+\ir ddl/applicant_demographic_consumed.sql
+\ir ddl/applicant_document.sql
+\ir ddl/applicant_document_consumed.sql
+\ir ddl/batch_job_execution.sql
+\ir ddl/batch_job_execution_context.sql
+\ir ddl/batch_job_execution_param.sql
+\ir ddl/batch_job_instance.sql
+\ir ddl/batch_step_execution.sql
+\ir ddl/batch_step_execution_context.sql
+\ir ddl/intf_processed_prereg_list.sql
+\ir ddl/processed_prereg_list.sql
+\ir ddl/reg_appointment.sql
+\ir ddl/reg_appointment_consumed.sql
+\ir ddl/reg_available_slot.sql
+\ir ddl/otp_transaction.sql
+\ir ddl/applications.sql
+\ir ddl/fk.sql
+\ir ddl/batch-fk.sql
+\ir ddl/anonymous_profile.sql

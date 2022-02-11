@@ -6,6 +6,8 @@ on:
     types: [closed]
   push:
     branches:
+      - '!release-branch'
+      - release-1*
       - master
       - 1.*
       - develop
@@ -77,6 +79,7 @@ jobs:
 
 
   publish_to_nexus:
+    if: "!contains(github.ref, 'master')"
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -126,7 +129,7 @@ jobs:
         mvn -B package --file pom.xml -s $GITHUB_WORKSPACE/settings.xml
     - name: Publish the maven package
       run: |
-        cd pre-registration && mvn deploy -DskipTests -DaltDeploymentRepository=ossrh::default::${{ secrets.RELEASE_URL }} -s $GITHUB_WORKSPACE/settings.xml -f pom.xml
+        cd pre-registration && mvn deploy  -DaltDeploymentRepository=ossrh::default::${{ secrets.OSSRH_SNAPSHOT_URL }} -s $GITHUB_WORKSPACE/settings.xml -f pom.xml
       env:
         GITHUB_TOKEN: ${{ secrets.RELEASE_token }}
         GPG_TTY: $(tty)
@@ -190,7 +193,11 @@ jobs:
 #           # Change all uppercase to lowercase
 #           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 #           echo "push version ${{steps.getPomVersion.outputs.info}}"
-#           VERSION=$BRANCH_NAME
+#           if [[ $BRANCH_NAME == master ]]; then
+#            VERSION=latest
+#           else
+#            VERSION=$BRANCH_NAME
+#           fi
 #           echo IMAGE_ID=$IMAGE_ID
 #           echo VERSION=$VERSION
 #           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -246,7 +253,11 @@ jobs:
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo "push version ${{steps.getPomVersion.outputs.info}}"
-          VERSION=$BRANCH_NAME
+          if [[ $BRANCH_NAME == master ]]; then
+            VERSION=latest
+          else
+            VERSION=$BRANCH_NAME
+          fi
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -308,7 +319,11 @@ jobs:
 #           # Change all uppercase to lowercase
 #           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 #           echo "push version ${{steps.getPomVersion.outputs.info}}"
-#           VERSION=$BRANCH_NAME
+#           if [[ $BRANCH_NAME == master ]]; then
+#             VERSION=latest
+#           else
+#             VERSION=$BRANCH_NAME
+#           fi
 #           echo IMAGE_ID=$IMAGE_ID
 #           echo VERSION=$VERSION
 #           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -364,7 +379,11 @@ jobs:
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo "push version ${{steps.getPomVersion.outputs.info}}"
-          VERSION=$BRANCH_NAME
+          if [[ $BRANCH_NAME == master ]]; then
+            VERSION=latest
+          else
+            VERSION=$BRANCH_NAME
+          fi
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -427,7 +446,11 @@ jobs:
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo "push version ${{steps.getPomVersion.outputs.info}}"
-          VERSION=$BRANCH_NAME
+          if [[ $BRANCH_NAME == master ]]; then
+            VERSION=latest
+          else
+            VERSION=$BRANCH_NAME
+          fi
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -489,7 +512,11 @@ jobs:
 #           # Change all uppercase to lowercase
 #           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 #           echo "push version ${{steps.getPomVersion.outputs.info}}"
-#           VERSION=$BRANCH_NAME
+#           if [[ $BRANCH_NAME == master ]]; then
+#             VERSION=latest
+#           else
+#             VERSION=$BRANCH_NAME
+#           fi
 #           echo IMAGE_ID=$IMAGE_ID
 #           echo VERSION=$VERSION
 #           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -544,7 +571,11 @@ jobs:
 #           # Change all uppercase to lowercase
 #           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 #           echo "push version ${{steps.getPomVersion.outputs.info}}"
-#           VERSION=$BRANCH_NAME
+#           if [[ $BRANCH_NAME == master ]]; then
+#             VERSION=latest
+#          else
+#            VERSION=$BRANCH_NAME
+#          fi
 #           echo IMAGE_ID=$IMAGE_ID
 #           echo VERSION=$VERSION
 #           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -599,7 +630,11 @@ jobs:
 #           # Change all uppercase to lowercase
 #           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 #           echo "push version ${{steps.getPomVersion.outputs.info}}"
-#           VERSION=$BRANCH_NAME
+#           if [[ $BRANCH_NAME == master ]]; then
+#            VERSION=latest
+#          else
+#            VERSION=$BRANCH_NAME
+#          fi
 #           echo IMAGE_ID=$IMAGE_ID
 #           echo VERSION=$VERSION
 #           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -652,7 +687,11 @@ jobs:
 #           # Change all uppercase to lowercase
 #           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
 #           echo "push version ${{steps.getPomVersion.outputs.info}}"
-#           VERSION=$BRANCH_NAME
+#           if [[ $BRANCH_NAME == master ]]; then
+#            VERSION=latest
+#           else
+#            VERSION=$BRANCH_NAME
+#          fi
 #           echo IMAGE_ID=$IMAGE_ID
 #           echo VERSION=$VERSION
 #           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
@@ -709,7 +748,11 @@ jobs:
           # Change all uppercase to lowercase
           IMAGE_ID=$(echo $IMAGE_ID | tr '[A-Z]' '[a-z]')
           echo "push version ${{steps.getPomVersion.outputs.info}}"
-          VERSION=$BRANCH_NAME
+          if [[ $BRANCH_NAME == master ]]; then
+            VERSION=latest
+          else
+            VERSION=$BRANCH_NAME
+          fi
           echo IMAGE_ID=$IMAGE_ID
           echo VERSION=$VERSION
           docker tag $SERVICE_NAME $IMAGE_ID:$VERSION
