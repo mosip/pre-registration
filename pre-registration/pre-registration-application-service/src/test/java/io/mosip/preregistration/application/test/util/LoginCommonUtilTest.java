@@ -95,7 +95,7 @@ public class LoginCommonUtilTest {
 	@Test
 	public void emailValidatorSuccessTest() {
 		Mockito.when(validationutil.emailValidator(Mockito.anyString())).thenReturn(true);
-		commonUtil.validateUserId("mosiptestuser@gmail.com");
+		commonUtil.validateUserId("test@gmail.com");
 	}
 
 	@Test(expected = InvalidRequestException.class)
