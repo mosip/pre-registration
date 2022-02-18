@@ -21,7 +21,7 @@
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
 		<pre.registration.core.version>1.2.0.1-SNAPSHOT</pre.registration.core.version>
-		<kernel.keymanager.version>1.2.0.1-SNAPSHOT</kernel.keymanager.version>
+		<kernel.keymanager.version>1.2.0-SNAPSHOT</kernel.keymanager.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
