@@ -1,4 +1,3 @@
-
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
@@ -12,8 +11,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.annotation.PostConstruct;
 
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -49,7 +46,6 @@ import io.mosip.preregistration.application.code.DemographicRequestCodes;
 import io.mosip.preregistration.application.dto.ApplicantTypeRequestDTO;
 import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
 import io.mosip.preregistration.application.dto.ApplicationInfoMetadataDTO;
-import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicMetadataDTO;
@@ -69,7 +65,6 @@ import io.mosip.preregistration.application.exception.RecordFailedToUpdateExcept
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
-import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DemographicRepository;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -665,8 +660,11 @@ public class DemographicService implements DemographicServiceIntf {
 			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
+				List<String> list = listAuth(authUserDetails().getAuthorities());
 				if (demographicEntity != null) {
-					userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+					if (list.contains("ROLE_INDIVIDUAL")) {
+						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+					}
 					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
 
 					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
@@ -791,7 +789,12 @@ public class DemographicService implements DemographicServiceIntf {
 
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
 				if (demographicEntity != null) {
-					userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+					List<String> list = listAuth(authUserDetails().getAuthorities());
+					log.info("sessionId", "idType", "id",
+							"In getDemographicData method of pre-registration service with list  " + list);
+					if (list.contains("ROLE_INDIVIDUAL")) {
+						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+					}
 					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
 
 					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
@@ -874,7 +877,10 @@ public class DemographicService implements DemographicServiceIntf {
 		if (demographicEntity != null) {
 			if (serviceUtil.isStatusValid(status)) {
 				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
-				userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+				List<String> list = listAuth(authUserDetails().getAuthorities());
+				if (list.contains("ROLE_INDIVIDUAL")) {
+					userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+				}
 				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 					try {
 						if (isupdateStausToPendingAppointmentValid(demographicEntity)) {
@@ -1084,15 +1090,12 @@ public class DemographicService implements DemographicServiceIntf {
 	}
 
 	public void userValidation(String authUserId, String preregUserId) {
-		List<String> list = listAuth(authUserDetails().getAuthorities());
-		if (list.contains("ROLE_INDIVIDUAL")) {
-			log.info("sessionId", "idType", "id", "In getDemographicData method of userValidation with priid "
-					+ preregUserId + " and userID " + authUserId);
-			if (!authUserId.trim().equals(preregUserId.trim())) {
-				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-			}
-		}	
+		log.info("sessionId", "idType", "id", "In getDemographicData method of userValidation with priid "
+				+ preregUserId + " and userID " + authUserId);
+		if (!authUserId.trim().equals(preregUserId.trim())) {
+			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+		}
 	}
 
 	private JSONObject getDocumentMetadata(DemographicEntity demographicEntity, String poa)
