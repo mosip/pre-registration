@@ -378,7 +378,7 @@ public class NotificationService {
 	public MainResponseDTO<DemographicResponseDTO> getDemographicDetails(NotificationDTO notificationDto)
 			throws IOException, ParseException {
 		MainResponseDTO<DemographicResponseDTO> responseEntity = demographicServiceIntf
-				.getDemographicData(notificationDto.getPreRegistrationId(), notificationDto.getIsBatch());
+				.getDemographicData(notificationDto.getPreRegistrationId());
 		ObjectMapper objectMapper = new ObjectMapper();
 		objectMapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
 		objectMapper.registerModule(new JavaTimeModule());

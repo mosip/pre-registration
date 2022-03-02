@@ -127,7 +127,14 @@ public class AppointmentServiceTest {
 		response.setResponsetime(LocalDateTime.now().toString());
 		response.setId("");
 		response.setVersion("1.0");
-
+	
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+	
 		BookingRegistrationDTO bookingResponse = new BookingRegistrationDTO();
 		bookingResponse.setRegDate("23-08-2021");
 		bookingResponse.setRegistrationCenterId("10001");

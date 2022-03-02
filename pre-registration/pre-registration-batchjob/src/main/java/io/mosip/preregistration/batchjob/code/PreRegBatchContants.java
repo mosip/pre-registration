@@ -54,7 +54,7 @@ public class PreRegBatchContants {
 
 	public static final String PAGE_SIZE = "&pageSize=10";
 
-	public static final String SORT_BY = "&sortBy=createdDateTime";
+	public static final String SORT_BY = "&sortBy=id";
 
 	public static final String ORDER_BY = "&orderBy=desc";
 
