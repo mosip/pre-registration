@@ -238,7 +238,7 @@ public class NotificationServiceTest {
 //		String stringjson = mapper.writeValueAsString(mainReqDto);
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -310,7 +310,7 @@ public class NotificationServiceTest {
 
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 		String stringjson = null;
@@ -361,7 +361,7 @@ public class NotificationServiceTest {
 
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 		String stringjson = null;
@@ -409,7 +409,7 @@ public class NotificationServiceTest {
 
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 		String stringjson = null;
@@ -459,7 +459,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -502,7 +502,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -545,7 +545,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -588,7 +588,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
 				.thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 

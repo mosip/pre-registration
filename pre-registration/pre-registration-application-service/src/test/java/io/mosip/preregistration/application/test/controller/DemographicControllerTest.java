@@ -303,7 +303,7 @@ public class DemographicControllerTest {
 		response.setResponse(createDto);
 		Mockito.when(preRegistrationService.authUserDetails()).thenReturn(authUserDetails);
 		Mockito.when(authUserDetails.getUserId()).thenReturn(userId);
-		Mockito.when(preRegistrationService.getDemographicData("98746563542672", false)).thenReturn(response);
+		Mockito.when(preRegistrationService.getDemographicData("98746563542672")).thenReturn(response);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.get("/applications/prereg/{preRegistrationId}", createDto.getPreRegistrationId())
@@ -369,7 +369,7 @@ public class DemographicControllerTest {
 	public void getPreRegDemographicDataTest() throws Exception {
 		MainResponseDTO<DemographicResponseDTO> response = new MainResponseDTO<DemographicResponseDTO>();
 		String preRegistrationId = "123456";
-		Mockito.when(preRegistrationService.getDemographicData(preRegistrationId, false)).thenReturn(response);
+		Mockito.when(preRegistrationService.getDemographicData(preRegistrationId)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/applications/prereg/{preRegistrationId}", preRegistrationId)
 				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON_UTF8)

@@ -6,12 +6,14 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
@@ -63,7 +65,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	 */
 	@Autowired
 	AnonymousProfileUtil anonymousProfileUtil;
-
+	
 	@Value("${version}")
 	private String version;
 
@@ -122,16 +124,47 @@ public class AppointmentServiceImpl implements AppointmentService {
 				.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			log.info("In appointment service to get appointment details");
+			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			userValidation(preRegistrationId);
 			BookingRegistrationDTO bookingrespose = appointmentUtils.fetchAppointmentDetails(preRegistrationId);
 			appointmentDetailsResponse.setResponse(bookingrespose);
-
+	
 		} catch (AppointmentExecption ex) {
 			log.error("Exception has occurred while fetching appointment details:", ex);
 			appointmentDetailsResponse.setErrors(setErrors(ex));
 		}
 		return appointmentDetailsResponse;
 	}
-
+	
+	private void userValidation(String applicationId) {
+		String authUserId = authUserDetails().getUserId();
+		List<String> list = listAuth(authUserDetails().getAuthorities());
+		if (list.contains("ROLE_INDIVIDUAL")) {
+			log.info("sessionId", "idType", "id", "In userValidation method of AppointmentService with applicationId "
+					+ applicationId + " and userID " + authUserId);
+			ApplicationEntity applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
+			if (!authUserId.trim().equals(applicationEntity.getCrBy().trim())) {
+				throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
+						AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
+			}
+		}
+	}
+	
+	/**
+	 * This method is used to get the list of authorization role
+	 * 
+	 * @param collection
+	 * @return list of auth role
+	 */
+	private List<String> listAuth(Collection<? extends GrantedAuthority> collection) {
+		List<String> listWORole = new ArrayList<>();
+		for (GrantedAuthority authority : collection) {
+			String s = authority.getAuthority();
+			listWORole.add(s);
+		}
+		return listWORole;
+	}
+	
 	@Override
 	public MainResponseDTO<BookingStatusDTO> makeAppointment(MainRequestDTO<BookingRequestDTO> bookingDTO,
 			String preRegistrationId, String userAgent) {
@@ -142,6 +175,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 				.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			log.info("In appointment service to make an appointment for ID : {}", preRegistrationId);
+			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			userValidation(preRegistrationId);
 			BookingStatusDTO bookingResponse = appointmentUtils.makeAppointment(bookingDTO, preRegistrationId);
 			if (bookingResponse.getBookingMessage() != null || !bookingResponse.getBookingMessage().isBlank()) {
 				log.info(
@@ -171,6 +206,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 		deleteResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			log.info("Deleting appointment for ID:{}", preRegistrationId);
+			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			userValidation(preRegistrationId);
 			DeleteBookingDTO res = appointmentUtils.deleteBooking(preRegistrationId);
 			if (res != null && (res.getDeletedBy() != null && res.getDeletedDateTime() != null
 					&& res.getPreRegistrationId() != null)) {
@@ -196,6 +233,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 		deleteResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			log.info("Deleting appointment for ID:{}", preRegistrationId);
+			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			userValidation(preRegistrationId);
 			DeleteBookingDTO res = appointmentUtils.deleteBooking(preRegistrationId);
 			if (res != null && (res.getDeletedBy() != null && res.getDeletedDateTime() != null
 					&& res.getPreRegistrationId() != null)) {
@@ -225,8 +264,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 		cancelResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			log.info("Cancelling appointment for ID:{}", preRegistrationId);
+			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			userValidation(preRegistrationId);	
 			CancelBookingResponseDTO response = appointmentUtils.cancelAppointment(preRegistrationId);
-
 			if (response != null && (response.getMessage() != null && response.getTransactionId() != null)) {
 				log.info("In appointment cancelled successfully , updating the applications and demographic tables",
 						preRegistrationId);
@@ -255,6 +295,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 				.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		multiBookingResponse.setVersion(version);
 		try {
+			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			bookingRequest.getRequest().getBookingRequest().stream().forEach(action -> {
+				String preRegistrationId = action.getPreRegistrationId();
+				userValidation(preRegistrationId);
+			});
 			BookingStatus bookingStatus = appointmentUtils.multiAppointmentBooking(bookingRequest);
 			if (bookingStatus != null && bookingStatus.getBookingStatusResponse().size() > 0) {
 
@@ -288,7 +333,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			// profile
 			BrowserInfoDTO browserInfo = new BrowserInfoDTO();
 			browserInfo.setBrowserName(userAgent);
-			DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId, false)
+			DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId)
 					.getResponse();
 			DocumentsMetaData documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
 			BookingRegistrationDTO bookingData = new BookingRegistrationDTO();

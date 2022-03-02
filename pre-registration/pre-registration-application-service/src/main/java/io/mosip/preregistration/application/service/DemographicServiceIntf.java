@@ -78,11 +78,10 @@ public interface DemographicServiceIntf {
 	/**
 	 * This Method is used to retrieve the demographic
 	 * 
-	 * @param preRegId pass the preregId of individual
-	 * @param isBatch true if batch job 
+	 * @param preRegId pass the preregId
 	 * @return response DemographicData of preRegId
 	 */
-	MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId, Boolean isBatch);
+	MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId);
 
 	/**
 	 * This Method is used to update status of particular preId

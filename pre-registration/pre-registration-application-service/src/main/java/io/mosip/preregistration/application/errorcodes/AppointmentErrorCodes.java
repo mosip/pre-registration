@@ -14,7 +14,9 @@ public enum AppointmentErrorCodes {
 
 	MULTI_BOOKING_FAILED("PRG_APP_BCK_06", "Appointment Booking failed"),
 
-	FAILED_TO_UPDATE_APPLICATIONS("PRG_APP_BCK_07","Failed to update Appointment for the %s");
+	FAILED_TO_UPDATE_APPLICATIONS("PRG_APP_BCK_07","Failed to update Appointment for the %s"),
+	
+	INVALID_APP_ID_FOR_USER("PRG_APP_BCK_08", "Requested application id does not belong to the user");
 
 	private String code;
 	private String message;

@@ -781,7 +781,7 @@ public class DemographicService implements DemographicServiceIntf {
 	 * getDemographicData(java.lang.String)
 	 */
 	@Override
-	public MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId, Boolean isBatch) {
+	public MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId) {
 		log.info("sessionId", "idType", "id", "In getDemographicData method of pre-registration service ");
 		MainResponseDTO<DemographicResponseDTO> response = new MainResponseDTO<>();
 		Map<String, String> requestParamMap = new HashMap<>();
@@ -797,7 +797,7 @@ public class DemographicService implements DemographicServiceIntf {
 					List<String> list = listAuth(authUserDetails().getAuthorities());
 					log.info("sessionId", "idType", "id",
 							"In getDemographicData method of pre-registration service with list  " + list);
-					if (list.contains("ROLE_INDIVIDUAL") && !isBatch) {
+					if (list.contains("ROLE_INDIVIDUAL")) {
 						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
 					}
 					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
@@ -882,6 +882,10 @@ public class DemographicService implements DemographicServiceIntf {
 		if (demographicEntity != null) {
 			if (serviceUtil.isStatusValid(status)) {
 				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
+				List<String> list = listAuth(authUserDetails().getAuthorities());
+				if (list.contains("ROLE_INDIVIDUAL")) {
+					userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+				}
 				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 					try {
 						if (isupdateStausToPendingAppointmentValid(demographicEntity)) {
@@ -1209,7 +1213,7 @@ public class DemographicService implements DemographicServiceIntf {
 						ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage(), response);
 			}
 			log.info("In getPregistrationInfo method of DemographicService fetching demographic for prid {}", prid);
-			demographicResponse = getDemographicData(prid.trim(), false).getResponse();
+			demographicResponse = getDemographicData(prid.trim()).getResponse();
 			applicationInfo.setDemographicResponse(demographicResponse);
 			response.setResponse(applicationInfo);
 			try {
