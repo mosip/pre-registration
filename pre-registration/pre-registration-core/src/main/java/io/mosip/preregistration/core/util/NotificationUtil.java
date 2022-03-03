@@ -55,6 +55,9 @@ public class NotificationUtil {
 	@Value("${email.acknowledgement.subject.template}")
 	private String emailAcknowledgementSubject;
 
+	@Value("${cancel.appointment.email.subject}")
+	private String cancelAppointmentEmailSubject;
+
 	@Value("${sms.acknowledgement.template}")
 	private String smsAcknowledgement;
 
@@ -137,7 +140,11 @@ public class NotificationUtil {
 		MultiValueMap<Object, Object> emailMap = new LinkedMultiValueMap<>();
 		emailMap.add("attachments", doc);
 		emailMap.add("mailContent", mergeTemplate);
-		emailMap.add("mailSubject", getEmailSubject(acknowledgementDTO));
+		if (acknowledgementDTO.getIsBatch() && cancelAppointmentEmailSubject != null) {
+			emailMap.add("mailSubject", getCancelAppointmentEmailSubject(acknowledgementDTO));
+		} else {
+			emailMap.add("mailSubject", getEmailSubject(acknowledgementDTO));
+		}
 		emailMap.add("mailTo", acknowledgementDTO.getEmailID());
 		HttpEntity<MultiValueMap<Object, Object>> httpEntity = new HttpEntity<>(emailMap, headers);
 		log.info("sessionId", "idType", "id",
@@ -180,6 +187,29 @@ public class NotificationUtil {
 			}
 		}
 		return emailSubject;
+	}
+
+	/**
+	 * This method will give the email subject for Cancel Appointment
+	 * 
+	 * @param acknowledgementDTO
+	 * @return
+	 * @throws IOException
+	 */
+	public String getCancelAppointmentEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
+		log.info("sessionID", "idType", "id", "In getEmailCancelAppointmentSubject of NotificationUtilService");
+		String emailSubjectCancelAppointment = "";
+		int noOfLang = acknowledgementDTO.getFullName().size();
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			emailSubjectCancelAppointment = emailSubjectCancelAppointment + templateUtil.templateMerge(
+					templateUtil.getTemplate(keyValuePair.getKey(), cancelAppointmentEmailSubject), acknowledgementDTO,
+					(String) keyValuePair.getKey());
+			if (noOfLang > 1) {
+				noOfLang--;
+				emailSubjectCancelAppointment = emailSubjectCancelAppointment + " / ";
+			}
+		}
+		return emailSubjectCancelAppointment;
 	}
 
 	/**
