@@ -5,15 +5,15 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -198,10 +198,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_013.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
-			if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
-				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
-						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
-			}
+			userValidation(applicationEntity);
 			log.info("Application Info: {} for the Application Id: {}", applicationEntity, applicationId);
 			response.setResponse(applicationEntity);
 		} catch (Exception ex) {
@@ -393,10 +390,11 @@ public class ApplicationService implements ApplicationServiceIntf {
 				ApplicationEntity applicationEntity = serviceUtil.findApplicationById(applicationId);
 				if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
 						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
+					//userValidation(applicationEntity);
 					if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
 						throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 								ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
-					}
+					}	
 					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
 						MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
 						deleteBooking = serviceUtil.deleteBooking(applicationId);
@@ -490,6 +488,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_013.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
+			userValidation(applicationEntity);
 			applicationBookingStatus= applicationEntity.getBookingStatusCode();
 			log.info("Application STATUS : {} for the Application Id: {}", applicationBookingStatus, applicationId);
 			response.setResponse(applicationBookingStatus);
@@ -501,6 +500,35 @@ public class ApplicationService implements ApplicationServiceIntf {
 		return response;
 	}
 
+	private void userValidation(ApplicationEntity applicationEntity) {
+		String authUserId = authUserDetails().getUserId();
+		List<String> list = listAuth(authUserDetails().getAuthorities());
+		if (list.contains("ROLE_INDIVIDUAL")) {
+			log.info("sessionId", "idType", "id", "In userValidation method of ApplicationService with applicationId "
+					+ applicationEntity.getApplicationId() + " and userID " + authUserId);
+			if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
+				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
+						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
+			}	
+		}	
+		
+	}
+
+	/**
+	 * This method is used to get the list of authorization role
+	 * 
+	 * @param collection
+	 * @return list of auth role
+	 */
+	private List<String> listAuth(Collection<? extends GrantedAuthority> collection) {
+		List<String> listWORole = new ArrayList<>();
+		for (GrantedAuthority authority : collection) {
+			String s = authority.getAuthority();
+			listWORole.add(s);
+		}
+		return listWORole;
+	}
+	
 	/**
 	 * Gives all the application details for the logged in user for the given type.
 	 * 
