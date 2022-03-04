@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import javax.persistence.EntityNotFoundException;
+
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -144,13 +146,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 					+ applicationId + " and userID " + authUserId);
 			ApplicationEntity applicationEntity = null;
 			try {
-				applicationEntity = applicationRepostiory.getOne(applicationId);
+				applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
 			} catch (Exception ex) {
 				log.error("Invaid applicationId/Not Record Found for the ID", applicationId);
 				throw new AppointmentExecption(ApplicationErrorCodes.PRG_APP_013.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
-			if (!authUserId.trim().equals(applicationEntity.getCrBy().trim())) {
+			if (applicationEntity != null && !authUserId.trim().equals(applicationEntity.getCrBy().trim())) {
 				throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
 						AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
 			}
