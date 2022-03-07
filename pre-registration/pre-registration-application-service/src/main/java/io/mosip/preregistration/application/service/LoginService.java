@@ -16,12 +16,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
@@ -40,7 +40,6 @@ import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
-import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
 import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
 import io.mosip.preregistration.application.exception.LoginServiceException;
 import io.mosip.preregistration.application.exception.PreRegLoginException;
@@ -70,11 +69,6 @@ public class LoginService {
 	@Autowired
 	private LoginCommonUtil loginCommonUtil;
 
-	@Value("${global.config.file}")
-	private String globalFileName;
-
-	@Value("${pre.reg.config.file}")
-	private String preRegFileName;
 
 	@Value("${ui.config.params}")
 	private String uiConfigParams;
@@ -131,16 +125,8 @@ public class LoginService {
 	@Autowired
 	OTPManager otpmanager;
 
-	private String globalConfig;
-	private String preregConfig;
-
-	public void setupLoginService() {
-		log.info("In setupLoginService method of login service");
-		globalConfig = loginCommonUtil.getConfig(globalFileName);
-		preregConfig = loginCommonUtil.getConfig(preRegFileName);
-		log.info("Fetched the globalConfig and preRegconfig from config server");
-	}
-
+	@Autowired
+    private Environment env;
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
 	 * 
@@ -402,54 +388,18 @@ public class LoginService {
 		MainResponseDTO<Map<String, String>> res = new MainResponseDTO<>();
 		res.setId(configId);
 		res.setVersion(version);
-		List<String> reqParams = new ArrayList<>();
-		Map<String, String> configParams = new HashMap<>();
+		Map<String, String> responseParamsMap = new HashMap<>();
 		try {
+			loginCommonUtil.validateLanguageProperties(responseParamsMap);
 			String[] uiParams = uiConfigParams.split(",");
-			for (int i = 0; i < uiParams.length; i++) {
-				reqParams.add(uiParams[i]);
-			}
-			if (globalFileName != null && preRegFileName != null) {
-
-				Properties prop1 = loginCommonUtil.parsePropertiesString(globalConfig);
-				Properties prop2 = loginCommonUtil.parsePropertiesString(preregConfig);
-				loginCommonUtil.getConfigParams(prop1, configParams, reqParams);
-				loginCommonUtil.getConfigParams(prop2, configParams, reqParams);
-				loginCommonUtil.validateLanguageProperties(configParams);
-
-			} else {
-				throw new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.getCode(),
-						LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), res);
-			}
-
+			for (String uiParam: uiParams) {           
+			    responseParamsMap.put(uiParam, env.getProperty(uiParam));
+			}			
 		} catch (Exception ex) {
 			log.error("In login service of getConfig ", ex);
 			new LoginExceptionCatcher().handle(ex, "config", res);
 		}
-		res.setResponse(configParams);
-		res.setResponsetime(GenericUtil.getCurrentResponseTime());
-		return res;
-	}
-
-	/**
-	 * This will refresh UI related configurations
-	 * 
-	 * @return response
-	 */
-	public MainResponseDTO<String> refreshConfig() {
-		log.info("In login service of refreshConfig ");
-		MainResponseDTO<String> res = new MainResponseDTO<>();
-		res.setId(configId);
-		res.setVersion(version);
-
-		try {
-			globalConfig = loginCommonUtil.getConfig(globalFileName);
-			preregConfig = loginCommonUtil.getConfig(preRegFileName);
-		} catch (HttpServerErrorException | HttpClientErrorException ex) {
-			log.error("In login service of refreshConfig ", ex);
-			new LoginExceptionCatcher().handle(ex, "refreshConfig", res);
-		}
-		res.setResponse("success");
+		res.setResponse(responseParamsMap);
 		res.setResponsetime(GenericUtil.getCurrentResponseTime());
 		return res;
 	}

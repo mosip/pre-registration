@@ -28,7 +28,6 @@ public class ApplicationEventListerner {
 	@EventListener(ApplicationStartedEvent.class)
 	public void applicationStartedEvent() {
 		log.info("sessionId", "idType", "id", "In applicationStartedEvent method of ApplicationEventListerner");
-		loginService.setupLoginService();
 		log.info("sessionId", "idType", "id",
 				"In applicationStartedEvent method of ApplicationEventListerner login service setupLoginService method called");
 		demographicService.setup();

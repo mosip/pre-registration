@@ -1,15 +1,11 @@
 package io.mosip.preregistration.application.test.util;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +17,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.application.dto.User;
@@ -150,12 +149,6 @@ public class LoginCommonUtilTest {
 	@Test
 	public void requestBodyExchangeObjectTest() {
 		Mockito.when(commonUtil.requestBodyExchangeObject("String", JSONObject.class)).thenReturn(Object.class);
-	}
-
-	@Test
-	public void getConfigParamsTest() throws IOException {
-		reqParams.add("String");
-		commonUtil.getConfigParams(commonUtil.parsePropertiesString("String"), authHeader, reqParams);
 	}
 
 }
