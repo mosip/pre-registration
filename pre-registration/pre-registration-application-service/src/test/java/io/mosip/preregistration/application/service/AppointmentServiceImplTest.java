@@ -39,6 +39,7 @@ import io.mosip.preregistration.booking.dto.BookingStatusDTO;
 import io.mosip.preregistration.booking.dto.DateTimeDto;
 import io.mosip.preregistration.booking.dto.MultiBookingRequest;
 import io.mosip.preregistration.booking.dto.MultiBookingRequestDTO;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.CancelBookingResponseDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
@@ -101,7 +102,6 @@ public class AppointmentServiceImplTest {
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(appointmentServiceImpl, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
 	}
 
 	@Test
@@ -513,6 +513,8 @@ public class AppointmentServiceImplTest {
 		MainRequestDTO<MultiBookingRequest> bookingRequest = new MainRequestDTO<MultiBookingRequest>();
 		MainResponseDTO<BookingStatus> multiBookingResponse = new MainResponseDTO<BookingStatus>();
 		List<BookingStatusDTO> bookingStatusResponse = new ArrayList<BookingStatusDTO>();
+		BookingStatusDTO bookingStatusDto = new BookingStatusDTO();
+		bookingStatusResponse.add(bookingStatusDto);
 		MultiBookingRequest req = new MultiBookingRequest();
 		List<MultiBookingRequestDTO> list = new ArrayList<>();
 		MultiBookingRequestDTO item = new MultiBookingRequestDTO();
@@ -531,7 +533,16 @@ public class AppointmentServiceImplTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		multiBookingResponse.setId(appointmentBookId);
+
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("98765432");
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setBookingDate(LocalDate.now());
+		applicationEntity.setBookingType(BookingTypeCodes.UPDATE_REGISTRATION.toString());
+		applicationEntity.setBookingStatusCode("PENDING_APPOINTMENT");
+		Mockito.when(applicationRepostiory.getOne(Mockito.any())).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+
 		multiBookingResponse.setResponsetime(LocalDateTime.now().toString());
 		multiBookingResponse.setVersion(version);
 		bookingRequest.setId(id);
