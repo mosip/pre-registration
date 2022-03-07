@@ -392,8 +392,10 @@ public class LoginService {
 		try {
 			loginCommonUtil.validateLanguageProperties(responseParamsMap);
 			String[] uiParams = uiConfigParams.split(",");
-			for (String uiParam: uiParams) {           
-			    responseParamsMap.put(uiParam, env.getProperty(uiParam));
+			for (String uiParam: uiParams) {
+				if (env.getProperty(uiParam) != null) {
+					responseParamsMap.put(uiParam, env.getProperty(uiParam));
+				}
 			}			
 		} catch (Exception ex) {
 			log.error("In login service of getConfig ", ex);
