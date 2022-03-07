@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,7 +35,6 @@ import io.mosip.preregistration.application.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.application.dto.ApplicationRequestDTO;
 import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
 import io.mosip.preregistration.application.dto.ApplicationsListDTO;
-import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
@@ -47,6 +45,7 @@ import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
+import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -242,6 +241,20 @@ public class ApplicationServiceTest {
 	// applicationEntity.getApplicationId());
 	// }
 	//
+
+	@Test
+	public void getApplicationInfoTest() {
+		String applicationId = "9876543210";
+		String id = "23465";
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(applicationId);
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setRegistrationCenterId(id);
+		Mockito.when(applicationRepository.findByApplicationId(applicationId)).thenReturn(applicationEntity);
+		MainResponseDTO<ApplicationEntity> response = applicationService.getApplicationInfo(applicationId);
+		assertNotNull(response.getResponse());
+	}
+
 	@Test(expected = InvalidRequestParameterException.class)
 	public void testgetApplicationInfoInvalidRequestParameterException() {
 		applicationService.getApplicationInfo(null);
@@ -282,6 +295,29 @@ public class ApplicationServiceTest {
 		MainResponseDTO<ApplicationsListDTO> response = applicationService
 				.getAllApplicationsForUserForBookingType(BookingTypeCodes.NEW_PREREGISTRATION.toString());
 		Assert.assertEquals("1234567890", response.getResponse().getAllApplications().get(0).getApplicationId());
+	}
+
+	@Test
+	public void deleteLostOrUpdateApplicationSuccessTest() {
+		String applicationId = "12345";
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(applicationId);
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setCrBy("4665");
+		applicationEntity.setRegistrationCenterId("32544");
+
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		authentication.setAuthenticated(true);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+
+		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
+		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
+		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
+				StatusCodes.BOOKED.getCode().toString()));
 	}
 
 	@Test
