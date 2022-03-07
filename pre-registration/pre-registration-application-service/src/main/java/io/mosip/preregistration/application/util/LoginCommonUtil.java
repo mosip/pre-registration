@@ -19,10 +19,6 @@ import java.util.Objects;
 import java.util.Properties;
 import java.util.stream.Collectors;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -37,6 +33,10 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.jsonwebtoken.Jwts;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
@@ -48,7 +48,6 @@ import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 import io.mosip.preregistration.application.exception.LanguagePropertiesException;
 import io.mosip.preregistration.application.exception.PreRegLoginException;
-import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
@@ -109,7 +108,7 @@ public class LoginCommonUtil {
 
 	@Value("${mosip.preregistration.captcha.id.validate}")
 	private String captchaRequestId;
-
+	
 	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
 	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
 	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
@@ -266,55 +265,6 @@ public class LoginCommonUtil {
 	}
 
 	/**
-	 * This method is used for parsing string to properties
-	 * 
-	 * @param s
-	 * @return
-	 * @throws IOException
-	 */
-	public Properties parsePropertiesString(String s) throws IOException {
-		final Properties p = new Properties();
-		p.load(new StringReader(s));
-		return p;
-	}
-
-	/**
-	 * This method is used config rest call
-	 * 
-	 * @param filname
-	 * @return
-	 */
-	public String getConfig(String filname) {
-		String configServerUri = env.getProperty("spring.cloud.config.uri");
-		String configLabel = env.getProperty("spring.cloud.config.label");
-		String configProfile = env.getProperty("spring.profiles.active");
-		String configAppName = env.getProperty("spring.cloud.config.name");
-		StringBuilder uriBuilder = new StringBuilder();
-
-		uriBuilder.append(configServerUri + "/").append(configAppName + "/").append(configProfile + "/")
-				.append(configLabel + "/").append(filname);
-		log.info(" URL in login service util of configRestCall {} ", uriBuilder);
-		return restTemplate.getForObject(uriBuilder.toString(), String.class);
-
-	}
-
-	/**
-	 * This method is used for create key value pair from congif file
-	 * 
-	 * @param prop
-	 * @param configParamMap
-	 * @param reqParams
-	 */
-	public void getConfigParams(Properties prop, Map<String, String> configParamMap, List<String> reqParams) {
-		for (Entry<Object, Object> e : prop.entrySet()) {
-			if (reqParams.contains(String.valueOf(e.getKey()))) {
-				configParamMap.put(String.valueOf(e.getKey()), e.getValue().toString());
-			}
-
-		}
-	}
-
-	/**
 	 * This method is used for create request map
 	 * 
 	 * @param requestDto
@@ -350,7 +300,7 @@ public class LoginCommonUtil {
 		return userDetailsDto.getUserId();
 	}
 
-	public void validateLanguageProperties(Map<String, String> configParams) {
+	public void validateLanguageProperties(Map<String, String> responseParamsMap) {
 		try {
 			log.info("In validateLanguageProperties method of  logincommon util");
 
@@ -414,11 +364,11 @@ public class LoginCommonUtil {
 						minLanguageCount);
 				maxLanguageCount = minLanguageCount;
 			}
-			configParams.put(MOSIP_MAX_LANGUAGE_COUNT, String.valueOf(maxLanguageCount));
-			configParams.put(MOSIP_MIN_LANGUAGE_COUNT, String.valueOf(minLanguageCount));
-			configParams.put(MOSIP_MANDATORY_LANGUAGE,
+			responseParamsMap.put(MOSIP_MAX_LANGUAGE_COUNT, String.valueOf(maxLanguageCount));
+			responseParamsMap.put(MOSIP_MIN_LANGUAGE_COUNT, String.valueOf(minLanguageCount));
+			responseParamsMap.put(MOSIP_MANDATORY_LANGUAGE,
 					mandatoryLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
-			configParams.put(MOSIP_OPTIONAL_LANGUAGE,
+			responseParamsMap.put(MOSIP_OPTIONAL_LANGUAGE,
 					optionalLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
 		} catch (
 

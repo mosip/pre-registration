@@ -8,14 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 
-import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
@@ -43,10 +41,11 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -244,26 +243,7 @@ public class LoginController {
 
 	}
 
-	/**
-	 * This get api is use to refresh the configuration data
-	 * 
-	 * @return the response entity
-	 */
-	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetrefreshconfig())")
-	@GetMapping(path = "/refreshconfig", produces = MediaType.APPLICATION_JSON_VALUE)
-	//@PreAuthorize("hasAnyRole('PRE_REGISTRATION_ADMIN')")
-	@Operation(summary = "refreshConfigParams", description = "Refresh global and Pre-Registration config data", tags = "login-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "global and Pre-Registration config data successfully updated"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
-	public ResponseEntity<MainResponseDTO<String>> refreshConfigParams() {
-
-		return new ResponseEntity<>(loginService.refreshConfig(), HttpStatus.OK);
-
-	}
-
+	
 	@PostMapping(path = "/sendOtpWithCaptcha", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "sendOtpWithCaptcha", description = "sendOtpWithCaptcha", tags = "login-controller")
 	@ApiResponses(value = {
