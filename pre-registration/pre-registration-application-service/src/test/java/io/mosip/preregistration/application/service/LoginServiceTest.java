@@ -3,10 +3,8 @@ package io.mosip.preregistration.application.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,11 +27,6 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.HttpClientErrorException;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.impl.TextCodec;
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
@@ -107,10 +100,6 @@ public class LoginServiceTest {
 	@Value("${prereg.auth.jwt.token.expiration}")
 	private String jwtTokenExpiryTime;
 
-	private String globalConfig;
-
-	private String preregConfig;
-
 	@InjectMocks
 	private LoginService authService;
 
@@ -138,12 +127,6 @@ public class LoginServiceTest {
 	@Value("${ui.config.params}")
 	private String uiConfigParams;
 
-	@Value("${global.config.file}")
-	private String globalFileName;
-
-	@Value("${pre.reg.config.file}")
-	private String preRegFileName;
-
 	@Value("${prereg.auth.jwt.audience}")
 	private String jwtAudience;
 
@@ -162,9 +145,9 @@ public class LoginServiceTest {
 		requestMap.put("version", version);
 		// ReflectionTestUtils.setField(spyAuthService, "uiConfigParams", "abcd");
 		// ReflectionTestUtils.setField(this, "uiConfigParams", "abcd");
-		ReflectionTestUtils.setField(authService, "uiConfigParams", "abcd");
-		ReflectionTestUtils.setField(authService, "globalFileName", "abcd");
-		ReflectionTestUtils.setField(authService, "preRegFileName", "abcd");
+		ReflectionTestUtils.setField(authService, "uiConfigParams", uiConfigParams);
+		//ReflectionTestUtils.setField(authService, "globalFileName", "abcd");
+		//ReflectionTestUtils.setField(authService, "preRegFileName", "abcd");
 		ReflectionTestUtils.setField(authService, "configId", "mosip.preregistration.login.id.config");
 		ReflectionTestUtils.setField(authService, "jwtTokenExpiryTime", "1800");
 		ReflectionTestUtils.setField(authService, "jwtAudience", "adad");
@@ -216,38 +199,16 @@ public class LoginServiceTest {
 
 	@Test
 	public void getConfigSuccessTest() throws Exception {
-		Properties prop = new Properties();
-		ResponseEntity<String> res = new ResponseEntity<String>("mosip.secondary-language=fra", HttpStatus.OK);
+		//Properties prop = new Properties();
+		//ResponseEntity<String> res = new ResponseEntity<String>("mosip.secondary-language=fra", HttpStatus.OK);
 		Map<String, String> configParams = new HashMap<>();
-		configParams.put("mosip.secondary-language", "fra");
+		configParams.put("mosip.mandatory-languages", "eng");
 		MainResponseDTO<Map<String, String>> response = new MainResponseDTO<>();
 		// Mockito.when(restTemplate.getForEntity(Mockito.anyString(),
 		// Mockito.eq(String.class))).thenReturn(res);
-		Mockito.when(authCommonUtil.getConfig(Mockito.any())).thenReturn("fileReturn");
-		Mockito.doNothing().when(authCommonUtil).getConfigParams(Mockito.any(), Mockito.any(), Mockito.any());
-		Mockito.when(authCommonUtil.parsePropertiesString(Mockito.any())).thenReturn(prop);
 		response = authService.getConfig();
-
 		assertNotNull(response.getResponse());
-		// assertEquals(response.getResponse().get("mosip.secondary-language"), "fra");
-	}
-
-	@Test(expected = ConfigFileNotFoundException.class)
-	public void getConfigExceptionTest() throws Exception {
-		Properties prop = new Properties();
-		ResponseEntity<String> res = new ResponseEntity<String>("mosip.secondary-language=fra", HttpStatus.OK);
-		Map<String, String> configParams = new HashMap<>();
-		configParams.put("mosip.secondary-language", "fra");
-		MainResponseDTO<Map<String, String>> response = new MainResponseDTO<>();
-		// Mockito.when(restTemplate.getForEntity(Mockito.anyString(),
-		// Mockito.eq(String.class))).thenReturn(res);
-		Mockito.when(authCommonUtil.getConfig(Mockito.any())).thenThrow(new ConfigFileNotFoundException(
-				LoginErrorCodes.PRG_AUTH_012.name(), LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.name(), null));
-		Mockito.doThrow(new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.name(),
-				LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.name(), null)).when(authCommonUtil)
-				.getConfigParams(Mockito.any(), Mockito.any(), Mockito.any());
-		Mockito.when(authCommonUtil.parsePropertiesString(Mockito.any())).thenReturn(prop);
-		response = authService.getConfig();
+		//assertEquals(response.getResponse().get("mosip.mandatory-languages"), "eng");
 	}
 
 	@Test
@@ -298,18 +259,6 @@ public class LoginServiceTest {
 
 	}
 
-	@Test
-	public void refreshConfig() {
-		Mockito.when(authCommonUtil.getConfig(Mockito.any())).thenReturn("config");
-		assertEquals(spyAuthService.refreshConfig().getResponse(), "success");
-	}
-
-	@Test(expected = ConfigFileNotFoundException.class)
-	public void refreshConfigException() {
-		Mockito.when(authCommonUtil.getConfig(Mockito.any()))
-				.thenThrow(new HttpClientErrorException(HttpStatus.NOT_FOUND));
-		assertEquals(spyAuthService.refreshConfig().getResponse(), "success");
-	}
 
 	@Test
 	public void validateWithUserIdOtp() {
@@ -390,13 +339,6 @@ public class LoginServiceTest {
 		Mockito.when(user.getUserId()).thenReturn("a@a.com");
 		Mockito.doReturn(mainResponseDTO).when(authCommonUtil).getMainResponseDto(userRequest);
 		spyAuthService.validateCaptchaAndSendOtp(request);
-	}
-
-	@Test
-	public void testsetupLoginService() {
-		Mockito.when(authCommonUtil.getConfig(globalFileName)).thenReturn(globalConfig);
-		Mockito.when(authCommonUtil.getConfig(preRegFileName)).thenReturn(preregConfig);
-		spyAuthService.setupLoginService();
 	}
 
 	@Test

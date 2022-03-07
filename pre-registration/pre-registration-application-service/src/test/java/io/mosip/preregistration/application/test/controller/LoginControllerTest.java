@@ -1,6 +1,5 @@
 package io.mosip.preregistration.application.test.controller;
 
-import static org.junit.Assert.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.FileNotFoundException;
@@ -22,7 +21,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -42,7 +40,6 @@ import io.mosip.preregistration.application.controller.LoginController;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.User;
-import io.mosip.preregistration.application.exception.DeprecatedException;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
@@ -74,8 +71,6 @@ public class LoginControllerTest {
 
 	@Mock
 	private LoginController controller;
-
-	private AuthNResponse authNResposne;
 
 	@Mock
 	private HttpServletResponse res;
@@ -221,17 +216,6 @@ public class LoginControllerTest {
 		MainResponseDTO<Map<String, String>> mainResponseDTO = new MainResponseDTO<>();
 		Mockito.when(loginService.getConfig()).thenReturn(mainResponseDTO);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/login/config")
-				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
-				.accept(MediaType.APPLICATION_JSON_VALUE);
-		mockMvc.perform(requestBuilder).andExpect(status().isOk());
-	}
-
-	@Test
-	public void refreshConfigTest() throws Exception {
-
-		MainResponseDTO<String> mainResponseDTO = new MainResponseDTO<>();
-		Mockito.when(loginService.refreshConfig()).thenReturn(mainResponseDTO);
-		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/login/refreshconfig")
 				.contentType(MediaType.APPLICATION_JSON_VALUE).characterEncoding("UTF-8")
 				.accept(MediaType.APPLICATION_JSON_VALUE);
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
