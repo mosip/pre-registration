@@ -178,7 +178,8 @@ public class RestHelper {
                 ObjectNode objectNode = objectMapper.convertValue(responseNode.get(PreRegBatchContants.RESPONSE), ObjectNode.class);
                 List<RegistrationCenterDto> regCenterDetails = objectMapper.readValue(objectNode.get(PreRegBatchContants.DATA).toString(), 
                         new TypeReference<List<RegistrationCenterDto>>(){});
-                LOGGER.info("Received the Registration Center details from Master Data Service.");
+                LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY,
+                            "Received the Registration Center details from Master Data Service.");
                 
                 for (RegistrationCenterDto regCenterDetail : regCenterDetails) {
                     String regCenterId = regCenterDetail.getId();
