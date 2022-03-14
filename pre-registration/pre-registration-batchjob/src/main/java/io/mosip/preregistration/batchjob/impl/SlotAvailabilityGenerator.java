@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -337,13 +338,16 @@ public class SlotAvailabilityGenerator {
 		LocalTime lastSlotEndTime = slotsAvailableList.get(slotsAvailableList.size() - 1).getToTime();
 		
 		// To Handle already generated slots. Existing slots generation did not have the lunch slot. 
-		LocalTime lunchSlotStartTime = centerLunchStartTime;
-		LocalTime lunchSlotEndTime = centerLunchEndTime;
+		LocalTime lunchSlotStartTime = LocalTime.MIDNIGHT;
+		LocalTime lunchSlotEndTime = LocalTime.MIDNIGHT;
+		LocalTime midnightTime = LocalTime.MIDNIGHT;
 
+		boolean foundLunchSlots = false;
 		Optional<AvailibityEntity> lunchSlotTiming = slotsAvailableList.stream().filter(slot -> slot.getAvailableKiosks() == 0).findFirst();
 		if (lunchSlotTiming.isPresent()) {
 			lunchSlotStartTime = lunchSlotTiming.get().getFromTime();
 			lunchSlotEndTime = lunchSlotTiming.get().getToTime();
+			foundLunchSlots = true;
 		} else {
 			Object[] lunchTime = findLunchTimes(slotsAvailableList);
 			if (Objects.nonNull(lunchTime[0])) {
@@ -365,6 +369,7 @@ public class SlotAvailabilityGenerator {
 				// save lunch slot, will be useful in next calculation.
 				batchDBHelper.saveAvailability(regCenterDetails.getId(), regCenterDetails.getContactPerson(),
 					PreRegBatchContants.ZERO_KIOSK, slotGenCurrentDay, lunchSlotStartTime, lunchSlotEndTime);
+				foundLunchSlots = true;
 			}
 		}
 
@@ -401,30 +406,72 @@ public class SlotAvailabilityGenerator {
 							cancelledTracker, notifierTracker);
 		}
 
+		// Scenario - Previously no lunch hours configured, now configured lunch hours.
+		// Need to cancel all the appointment and send notification to residents. 
+		// Added lunch hour entry in the DB with Zero Kiosk.
+		if (!foundLunchSlots && lunchSlotStartTime.equals(midnightTime) && lunchSlotStartTime.equals(lunchSlotEndTime)) {
+			long diffMins = MINUTES.between(centerLunchStartTime, centerLunchEndTime);
+			if (diffMins > 0) {
+				List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO.findAllPreIdsBydateAndBetweenHours(regCenterDetails.getId(), 
+													slotGenCurrentDay, centerLunchStartTime, centerLunchEndTime);
+				LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+									"Total Number of bookings available between hours(lunch hours): " + regBookingEntityList.size());
+				final AtomicInteger counter = new AtomicInteger();
+				regBookingEntityList.stream().forEach(bookedSlot -> {
+					LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+									"Cancelling Application for PreReg Id(lunch hours): " + bookedSlot.getPreregistrationId());
+					counter.incrementAndGet();
+					cancelAndNotifyHelper.cancelAndNotifyApplicant(bookedSlot, logIdentifier, cancelledTracker, notifierTracker);
+				});
+				LocalTime newCenterLunchEndTime = centerLunchEndTime.minusMinutes(1);
+				int deleted = batchServiceDAO.deleteSlotsBetweenHours(regCenterDetails.getId(), slotGenCurrentDay, 
+										centerLunchStartTime, newCenterLunchEndTime);
+				LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+									"Total Number of bookings cancel & notified between hours(lunch hours): " + counter.get());
+				LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+									"Total Number of slots deleted(lunch hours): " + deleted);
+				batchDBHelper.saveAvailability(regCenterDetails.getId(), regCenterDetails.getContactPerson(),
+						PreRegBatchContants.ZERO_KIOSK, slotGenCurrentDay, centerLunchStartTime, centerLunchEndTime);
+				return;
+			}
+		}
+
 		// Lunch Start Time.
 		if (!centerLunchStartTime.equals(lunchSlotStartTime)) {
-			// certerConfiguredTime  = 13:30 (centerLunchStartTime)
-			// slotCalculatedTime  = 13:00 (lunchSlotStartTime)
-			// add new slots from 13:00 to 13:30 -> 30 mins.
+			// previously lunch hours configured, updated now as no lunch hours (removed lunch hours)
+			// add new slots for the lunch hour.
+			if (centerLunchStartTime.equals(midnightTime) && centerLunchStartTime.equals(centerLunchEndTime)) {
+				batchServiceDAO.deleteSlotForStartTimeEndTime(regCenterDetails.getId(), slotGenCurrentDay, lunchSlotStartTime, lunchSlotEndTime);
+				int totalSlotAdded = calculateAndSaveSlot(lunchSlotStartTime, lunchSlotEndTime, regCenterDetails.getPerKioskProcessTime(), 
+											regCenterDetails, slotGenCurrentDay, logIdentifier);
+				LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+											"Total Number of new bookings slots added between hours(removed lunch hours): " + totalSlotAdded);
+			} else {
+				// certerConfiguredTime  = 13:30 (centerLunchStartTime)
+				// slotCalculatedTime  = 13:00 (lunchSlotStartTime)
+				// add new slots from 13:00 to 13:30 -> 30 mins.
 
-			// certerConfiguredTime  = 13:00 (centerLunchStartTime)
-			// slotCalculatedTime  = 13:30 (lunchSlotStartTime)
-			// cancel/notify the slots from 13:00 to 13:30 -> 30 mins.
-			recalculateSlots(lunchSlotStartTime, centerLunchStartTime, regCenterDetails, slotGenCurrentDay, logIdentifier, 
-							cancelledTracker, notifierTracker);
+				// certerConfiguredTime  = 13:00 (centerLunchStartTime)
+				// slotCalculatedTime  = 13:30 (lunchSlotStartTime)
+				// cancel/notify the slots from 13:00 to 13:30 -> 30 mins.
+				recalculateSlots(lunchSlotStartTime, centerLunchStartTime, regCenterDetails, slotGenCurrentDay, logIdentifier, 
+								cancelledTracker, notifierTracker);
+			}
 		}
 
 		// Lunch End Time.
 		if (!centerLunchEndTime.equals(lunchSlotEndTime)) {
-			// certerConfiguredTime  = 14:30 (centerLunchStartTime)
-			// slotCalculatedTime  = 14:00 (lunchSlotStartTime)
-			// cancel/notify the slots from 14:00 to 14:30 -> 30 mins.
+			if (!(centerLunchStartTime.equals(midnightTime) && centerLunchStartTime.equals(centerLunchEndTime))) {
+				// certerConfiguredTime  = 14:30 (centerLunchStartTime)
+				// slotCalculatedTime  = 14:00 (lunchSlotStartTime)
+				// cancel/notify the slots from 14:00 to 14:30 -> 30 mins.
 
-			// certerConfiguredTime  = 13:30 (centerLunchStartTime)
-			// slotCalculatedTime  = 14:00 (lunchSlotStartTime)
-			// add new slots from 13:30 to 14:00 -> 30 mins.
-			recalculateSlots(centerLunchEndTime, lunchSlotEndTime, regCenterDetails, slotGenCurrentDay, logIdentifier, 
-							cancelledTracker, notifierTracker);
+				// certerConfiguredTime  = 13:30 (centerLunchStartTime)
+				// slotCalculatedTime  = 14:00 (lunchSlotStartTime)
+				// add new slots from 13:30 to 14:00 -> 30 mins.
+				recalculateSlots(centerLunchEndTime, lunchSlotEndTime, regCenterDetails, slotGenCurrentDay, logIdentifier, 
+								cancelledTracker, notifierTracker);
+			}
 		}
 	}
 
