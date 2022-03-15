@@ -96,6 +96,7 @@ import io.mosip.preregistration.datasync.exception.ZipFileCreationException;
 import io.mosip.preregistration.datasync.exception.system.SystemFileIOException;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
+import io.mosip.preregistration.datasync.repository.util.DataSyncJpaRepositoryImpl;
 
 /**
  * This class is used to define Error codes for data sync and reverse data sync
@@ -118,6 +119,9 @@ public class DataSyncServiceUtil {
 	 */
 	@Autowired
 	private ProcessedDataSyncRepo processedDataSyncRepo;
+	
+	@Autowired
+	private DataSyncJpaRepositoryImpl dataSyncJpaRepositoryImpl;
 
 	/**
 	 * Autowired reference for {@link #RestTemplate}
@@ -974,10 +978,15 @@ public class DataSyncServiceUtil {
 			MainResponseDTO<ApplicationInfoMetadataDTO> body = respEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null) {
+					if (dataSyncJpaRepositoryImpl.findConsumedPrid(prid)) {
+						log.info("PRID has been Consumed{}", prid);
+						throw new PreRegistrationException(ErrorCodes.PRG_DATA_SYNC_023.getCode(),
+								ErrorMessages.PRID_CONSUMED.getMessage());
+					}
 					log.info("unable to get preregistration data for the prid {}", prid);
 					throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
 							ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
-				} 
+				}
 				applicationInfo = body.getResponse();
 			}
 		} catch (RestClientException ex) {
