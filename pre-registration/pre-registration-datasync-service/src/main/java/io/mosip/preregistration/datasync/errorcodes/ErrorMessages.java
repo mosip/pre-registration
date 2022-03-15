@@ -64,11 +64,6 @@ public enum ErrorMessages {
 	/**
 	 * ErrorMessage for PRG_DATA_SYNC_022
 	 */
-	DEMOGRAPHIC_CONSUMED_TABLE_NOT_ACCESSIBLE("Demographic consumed table not accessible"),
-	
-	/**
-	 * ErrorMessage for PRG_DATA_SYNC_023
-	 */
 	PRID_CONSUMED("Preregistration-Id has been consumed");
 
 	private ErrorMessages(String message) {

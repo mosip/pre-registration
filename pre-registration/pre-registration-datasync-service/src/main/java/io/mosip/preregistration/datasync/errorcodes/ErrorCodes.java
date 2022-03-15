@@ -27,8 +27,7 @@ public enum ErrorCodes {
 	PRG_DATA_SYNC_019("PRG_DATA_SYNC_019"),//Failed to fetch machine encryptionpublickey
 	PRG_DATA_SYNC_020("PRG_DATA_SYNC_020"),//Failed to fetch machine encryptionpublickey
 	PRG_DATA_SYNC_021("PRG_DATA_SYNC_021"), // Update prefetched status failed
-	PRG_DATA_SYNC_022("PRG_DATA_SYNC_022"), // Demographic consumed table not accessible
-	PRG_DATA_SYNC_023("PRG_DATA_SYNC_023"); // PRID has been consumed
+	PRG_DATA_SYNC_022("PRG_DATA_SYNC_022"); // PRID has been consumed
 	
 
 	/**
