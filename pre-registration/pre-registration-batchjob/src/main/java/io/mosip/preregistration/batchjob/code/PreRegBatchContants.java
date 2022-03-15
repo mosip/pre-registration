@@ -56,7 +56,7 @@ public class PreRegBatchContants {
 
 	public static final String SORT_BY = "&sortBy=id";
 
-	public static final String ORDER_BY = "&orderBy=desc";
+	public static final String ORDER_BY = "&orderBy=asc";
 
 	public static final String DATA = "data";
 }
