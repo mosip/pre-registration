@@ -94,6 +94,7 @@ import io.mosip.preregistration.datasync.exception.DocumentGetDetailsException;
 import io.mosip.preregistration.datasync.exception.RecordNotFoundForDateRange;
 import io.mosip.preregistration.datasync.exception.ZipFileCreationException;
 import io.mosip.preregistration.datasync.exception.system.SystemFileIOException;
+import io.mosip.preregistration.datasync.repository.DemographicConsumedRepository;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 
@@ -118,6 +119,9 @@ public class DataSyncServiceUtil {
 	 */
 	@Autowired
 	private ProcessedDataSyncRepo processedDataSyncRepo;
+	
+	@Autowired
+	private DemographicConsumedRepository demographicConsumedRepository;
 
 	/**
 	 * Autowired reference for {@link #RestTemplate}
@@ -974,10 +978,16 @@ public class DataSyncServiceUtil {
 			MainResponseDTO<ApplicationInfoMetadataDTO> body = respEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null) {
+					if (demographicConsumedRepository.findByPrid(prid) != null)
+					{
+						log.info("PRID has been Consumed{}", prid);
+						throw new PreRegistrationException(ErrorCodes.PRG_DATA_SYNC_022.getCode(),
+								ErrorMessages.PRID_CONSUMED.getMessage());
+					}
 					log.info("unable to get preregistration data for the prid {}", prid);
 					throw new DataSyncRecordNotFoundException(ErrorCodes.PRG_DATA_SYNC_019.getCode(),
 							ErrorMessages.FAILED_TO_FETCH_INFO_FOR_PRID.getMessage(), null);
-				} 
+				}
 				applicationInfo = body.getResponse();
 			}
 		} catch (RestClientException ex) {
