@@ -430,6 +430,24 @@ public class BatchJpaRepositoryImpl {
 
 	/**
 	 * 
+	 * @param regId
+	 * @param regDate
+	 * @return number of deleted items
+	 */
+	public int deleteSlotForStartTimeEndTime(String regId, LocalDate regDate, LocalTime fromTime, LocalTime toTime) {
+		int deletedSlots = 0;
+		try {
+			deletedSlots = availabilityRepository.deleteByRegcntrIdAndRegDateAndFromTimeAndToTime(regId, regDate,
+					fromTime, toTime);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_013.getCode(),
+					ErrorMessages.AVAILABILITY_TABLE_NOT_ACCESSABLE.getMessage());
+		}
+		return deletedSlots;
+	}
+
+	/**
+	 * 
 	 * @param regDate
 	 * @param regID
 	 * @return list of AvailibityEntity
