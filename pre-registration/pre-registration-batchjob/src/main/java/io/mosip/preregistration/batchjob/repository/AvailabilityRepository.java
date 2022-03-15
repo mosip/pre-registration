@@ -118,4 +118,12 @@ public interface AvailabilityRepository extends BaseRepository<AvailibityEntity,
 	 */
 	public int deleteByRegcntrIdAndRegDateGreaterThanEqual(String regcntrId, LocalDate regDate);
 
+	/**
+	 * 
+	 * @param regDate
+	 * @param regcntrId
+	 * @return deleted number of slots
+	 */
+	public int deleteByRegcntrIdAndRegDateAndFromTimeAndToTime( String regcntrId ,LocalDate regDate, LocalTime startTime,LocalTime endTime);
+
 }
