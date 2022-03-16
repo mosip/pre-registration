@@ -2,6 +2,7 @@ package io.mosip.preregistration.application.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -35,6 +36,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -483,7 +485,8 @@ public class DemographicServiceTest {
 		assertEquals("98746563542672", res.getResponse().getPreRegistrationId());
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Ignore
+	@Test
 	public void createByDateFailureTest() throws Exception {
 		InvalidRequestParameterException exception = new InvalidRequestParameterException(
 				DemographicErrorCodes.PRG_PAM_APP_012.toString(),
@@ -996,13 +999,74 @@ public class DemographicServiceTest {
 		Assert.assertEquals(null, response.getResponse().getDemographicResponse());
 	}
 
-	@Test(expected = NullPointerException.class)
+	@Test
+	public void addPreRegistrationTest() throws Exception {
+		List<String> requiredFields = new ArrayList<String>();
+		requiredFields.add("field");
+		DemographicRequestDTO demographicRequest = new DemographicRequestDTO();
+		demographicRequest.setLangCode("eng");
+		demographicRequest.setDemographicDetails(jsonObject);
+		demographicRequest.setRequiredFields(requiredFields);
+		MainRequestDTO<DemographicRequestDTO> request = new MainRequestDTO<DemographicRequestDTO>();
+		request.setId(userId);
+		request.setVersion("1");
+		request.setRequesttime(Date.from(Instant.now()));
+		request.setRequest(demographicRequest);
+		MainResponseDTO<DemographicUpdateResponseDTO> mainResponseDTO = new MainResponseDTO<DemographicUpdateResponseDTO>();
+		Mockito.when((MainResponseDTO<DemographicUpdateResponseDTO>) serviceUtil.getMainResponseDto(request))
+				.thenReturn(mainResponseDTO);
+
+		IdSchemaDto idSchema = new IdSchemaDto();
+		Mockito.when(serviceUtil.getSchema()).thenReturn(idSchema);
+		idSchema.setId(userId);
+		idSchema.setSchemaJson(identityMappingJson);
+		idSchema.setIdVersion(1.0);
+		MainResponseDTO<io.mosip.preregistration.application.dto.DemographicCreateResponseDTO> actualRes = preRegistrationService
+				.addPreRegistration(request);
+		assertNotNull(actualRes);
+	}
+
+	@Test
+	public void addPreRegistrationExceptionTest() throws Exception {
+		List<String> requiredFields = new ArrayList<String>();
+		requiredFields.add("field");
+		DemographicRequestDTO demographicRequest = new DemographicRequestDTO();
+		demographicRequest.setLangCode("eng");
+		demographicRequest.setDemographicDetails(jsonObject);
+		demographicRequest.setRequiredFields(requiredFields);
+		MainRequestDTO<DemographicRequestDTO> request = new MainRequestDTO<DemographicRequestDTO>();
+		request.setId(userId);
+		request.setVersion("1");
+		request.setRequesttime(Date.from(Instant.now()));
+		request.setRequest(demographicRequest);
+
+		IdSchemaDto idSchema = new IdSchemaDto();
+		Mockito.when(serviceUtil.getSchema()).thenReturn(idSchema);
+		idSchema.setId(userId);
+		idSchema.setSchemaJson(identityMappingJson);
+		idSchema.setIdVersion(1.0);
+		MainResponseDTO<io.mosip.preregistration.application.dto.DemographicCreateResponseDTO> actualRes = preRegistrationService
+				.addPreRegistration(request);
+		assertNull(actualRes);
+	}
+
+	@Test
 	public void updatePreRegistrationTest() throws IOException {
 		String userId = "12345";
+		String preRegistrationId = "50856891401984";
+		List<String> requiredFields = new ArrayList<String>();
+		requiredFields.add("field");
+
 		MainRequestDTO<DemographicRequestDTO> request = new MainRequestDTO<DemographicRequestDTO>();
 		DemographicRequestDTO demographicRequest = new DemographicRequestDTO();
 		demographicRequest.setLangCode(userId);
 		demographicRequest.setDemographicDetails(jsonObject);
+		demographicRequest.setRequiredFields(requiredFields);
+
+		MainResponseDTO<DemographicUpdateResponseDTO> mainResponseDTO = new MainResponseDTO<DemographicUpdateResponseDTO>();
+		Mockito.when((MainResponseDTO<DemographicUpdateResponseDTO>) serviceUtil.getMainResponseDto(request))
+				.thenReturn(mainResponseDTO);
+		mainResponseDTO.setId("12345");
 		request.setId(userId);
 		request.setVersion("1");
 		request.setRequesttime(Date.from(Instant.now()));
@@ -1016,10 +1080,15 @@ public class DemographicServiceTest {
 		DateTime time = DateTime.now();
 		String t = time.toString();
 		Mockito.when(serviceUtil.getCurrentResponseTime()).thenReturn(t);
+		DemographicEntity demographicEntity = new DemographicEntity();
+		demographicEntity.setCreatedBy("12345");
+		Mockito.when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(demographicEntity);
 		String json = identityMappingJson;
 		JsonNode node = mapper.readTree(json);
 		Mockito.when(objectMapper.readValue(identityMappingJson, JsonNode.class)).thenReturn(node);
-		preRegistrationService.updatePreRegistration(request, preregistrationIdJson, userId);
+		MainResponseDTO<io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO> response = preRegistrationService
+				.updatePreRegistration(request, preRegistrationId, userId);
+		assertEquals(userId, response.getId());
 	}
 
 }
