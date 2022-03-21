@@ -52,13 +52,7 @@ public class QRcodeExceptionCatcher {
 					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_003.getCode(),
 					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(),
 					mainResponseDto);
-		} else if (ex instanceof ParseException) {
-			throw new InvalidRequestParameterException(
-					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_003.getCode(),
-					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_DATETIME.getMessage(),
-					mainResponseDto);
-
-		}
+		} 
 		else {
 			if (ex instanceof BaseUncheckedException) {
 				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
