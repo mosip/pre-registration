@@ -31,17 +31,30 @@ public class ProxyMasterdataController {
 	@Autowired
 	private io.mosip.preregistration.application.service.ProxyMasterDataService service;
 
-	@RequestMapping(path = "/**", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.GET,
-			RequestMethod.POST })
-	@Operation(summary  = "Master data proxy", description = "Master data proxy", tags = "proxy-masterdata-controller")
+	@RequestMapping(path = "/**", produces = MediaType.APPLICATION_JSON_VALUE, method = { RequestMethod.GET })
+	@Operation(summary  = "GET Master data proxy", description = "Master data proxy", tags = "proxy-masterdata-controller")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
-	public ResponseEntity<?> masterDataProxyController(@RequestBody(required = false) String body,
+	public ResponseEntity<?> masterDataGetProxyController(@RequestBody(required = false) String body,
 			HttpServletRequest request) {
 		log.info("sessionId", "idType", "id",
-				"In masterDataProxyController method with request url" + request.getRequestURI() + body);
+				"In masterDataGetProxyController method with request url: " + request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.OK).body(service.getMasterDataResponse(body, request));
+	}
+	
+	@RequestMapping(path = "/**", produces = MediaType.APPLICATION_JSON_VALUE, method = {
+			RequestMethod.POST })
+	@Operation(summary  = "POST Master data proxy", description = "Master data proxy", tags = "proxy-masterdata-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	public ResponseEntity<?> masterDataPostProxyController(@RequestBody(required = false) String body,
+			HttpServletRequest request) {
+		log.info("sessionId", "idType", "id",
+				"In masterDataPostProxyController method with request url" + request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(service.getMasterDataResponse(body, request));
 	}
 
