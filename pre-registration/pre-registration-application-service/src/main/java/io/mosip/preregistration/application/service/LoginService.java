@@ -135,7 +135,7 @@ public class LoginService {
 	 */
 	@SuppressWarnings("unchecked")
 	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest, String language) {
-		MainResponseDTO<AuthNResponse> response = null;
+		MainResponseDTO<AuthNResponse> response = new MainResponseDTO<>();
 		String userid = null;
 		boolean isSuccess = false;
 
@@ -321,12 +321,12 @@ public class LoginService {
 			response.setResponse("Loggedout successfully");
 			isSuccess = true;
 		} catch (JwtException e) {
-			log.error("Failed logout:", e);
+			log.error("JwtException, logout failed :", e);
 			MainResponseDTO<String> res = new MainResponseDTO<String>();
 			res.setResponse("Failed to invalidate the auth token");
-			new LoginExceptionCatcher().handle(e, null, res);
+			new LoginExceptionCatcher().handle(e, "invalidateToken", res);
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			//ex.printStackTrace();
 			log.error("In call invalidateToken method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "invalidateToken", response);
 		} finally {
@@ -450,7 +450,7 @@ public class LoginService {
 			log.error("Failed to generate logout token:", e);
 			MainResponseDTO<String> res = new MainResponseDTO<String>();
 			res.setResponse("Failed to generate logout token");
-			new LoginExceptionCatcher().handle(e, null, res);
+			new LoginExceptionCatcher().handle(e, "invalidateToken", res);
 		}
 		return this.generateJWTToken(userId, issuer, null);
 	}
