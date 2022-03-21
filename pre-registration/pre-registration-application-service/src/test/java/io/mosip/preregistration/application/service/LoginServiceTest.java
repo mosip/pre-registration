@@ -36,6 +36,7 @@ import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
 import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
 import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
 import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
+import io.mosip.preregistration.application.exception.InvalidateTokenException;
 import io.mosip.preregistration.application.exception.SendOtpFailedException;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
@@ -356,16 +357,16 @@ public class LoginServiceTest {
 		assertNotNull(authService.getLoginToken(userIdOtpId, configId));
 	}
 
-	@Test
+	@Test(expected = InvalidateTokenException.class)
 	public void getLogoutTokenExceptionTest() {
-		String token = "Demo";
-		assertNotNull(authService.getLogoutToken(token));
+		String token = "Authorization=test";
+		authService.getLogoutToken(token);
 	}
 
-	@Test
+	@Test(expected = InvalidateTokenException.class)
 	public void invalidateTokenTest2() {
 		String token = "Demo";
-		assertNotNull(authService.invalidateToken(token));
+		authService.invalidateToken(token);
 	}
 
 }
