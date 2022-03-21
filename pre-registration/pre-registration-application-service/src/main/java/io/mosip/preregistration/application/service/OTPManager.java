@@ -7,6 +7,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import javax.xml.bind.DatatypeConverter;
@@ -192,7 +193,7 @@ public class OTPManager {
 					.exchange(environment.getProperty("otp-generate.rest.uri"), HttpMethod.POST, entity1,
 							ResponseWrapper.class)
 					.getBody();
-			if (response != null && response.getResponse().get("status").equals(USER_BLOCKED)) {
+			if (Objects.nonNull(response) && response.getResponse().get("status").equals(USER_BLOCKED)) {
 				logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
 						PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(), USER_BLOCKED);
 				throw new PreRegLoginException(PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(),
