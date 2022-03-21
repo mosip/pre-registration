@@ -5,6 +5,7 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestClientException;
 
+import io.jsonwebtoken.JwtException;
 import io.mosip.kernel.core.exception.BaseCheckedException;
 import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -28,6 +29,7 @@ import io.mosip.preregistration.application.exception.UserIdOtpFaliedException;
  * 
  * @author Akshay
  * @since 1.0.0
+ * 
  */
 public class LoginExceptionCatcher {
 
@@ -43,6 +45,9 @@ public class LoginExceptionCatcher {
 			throw new UserIdOtpFaliedException(LoginErrorCodes.PRG_AUTH_002.name(),
 					(LoginErrorMessages.USERID_OTP_VALIDATION_FAILED.getMessage()), mainResponsedto);
 		} else if (ex instanceof RestClientException && (serviceType.equals("invalidateToken"))) {
+			throw new InvalidateTokenException(LoginErrorCodes.PRG_AUTH_003.getCode(),
+					(LoginErrorMessages.INVALIDATE_TOKEN_FAILED.getMessage()), mainResponsedto);
+		} else if (ex instanceof JwtException && (serviceType.equals("invalidateToken"))) {
 			throw new InvalidateTokenException(LoginErrorCodes.PRG_AUTH_003.getCode(),
 					(LoginErrorMessages.INVALIDATE_TOKEN_FAILED.getMessage()), mainResponsedto);
 		} else if (ex instanceof InvalidRequestParameterException && (serviceType.equals("sendOtp"))) {
