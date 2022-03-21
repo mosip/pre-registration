@@ -52,6 +52,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
+import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
@@ -318,6 +319,78 @@ public class ApplicationServiceTest {
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
 				StatusCodes.BOOKED.getCode().toString()));
+	}
+
+	@Test
+	public void deleteLostOrUpdateApplicationSuccessTest2() {
+		String applicationId = "4665";
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(applicationId);
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setCrBy("4665");
+		applicationEntity.setRegistrationCenterId("32544");
+
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		authentication.setAuthenticated(true);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
+
+		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
+		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
+		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
+				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
+	}
+
+	@Test
+	public void deleteLostOrUpdateApplicationSuccessTest3() {
+		String applicationId = "4665";
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(applicationId);
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setCrBy("4665");
+		applicationEntity.setRegistrationCenterId("32544");
+
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		authentication.setAuthenticated(true);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
+
+		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
+		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
+		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
+				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
+	}
+
+	@Test(expected = PreIdInvalidForUserIdException.class)
+	public void deleteLostOrUpdateApplicationExceptionTest2() {
+		String applicationId = "1234";
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(applicationId);
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setCrBy("4665");
+		applicationEntity.setRegistrationCenterId("32544");
+
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		authentication.setAuthenticated(true);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
+
+		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
+		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
+		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
+				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
 	}
 
 	@Test

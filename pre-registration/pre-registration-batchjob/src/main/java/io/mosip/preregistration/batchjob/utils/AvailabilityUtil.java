@@ -425,7 +425,7 @@ public class AvailabilityUtil {
 			if (body != null) {
 				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
 					for (ExceptionJSONInfoDTO dto : body.getErrors()) {
-						throw new NoRecordFoundException(dto.getErrorCode(), dto.getMessage());
+						new NoRecordFoundException(dto.getErrorCode(), dto.getMessage());
 					}
 				}
 			}	
