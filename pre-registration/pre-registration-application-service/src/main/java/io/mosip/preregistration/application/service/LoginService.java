@@ -326,7 +326,6 @@ public class LoginService {
 			res.setResponse("Failed to invalidate the auth token");
 			new LoginExceptionCatcher().handle(e, "invalidateToken", res);
 		} catch (Exception ex) {
-			//ex.printStackTrace();
 			log.error("In call invalidateToken method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "invalidateToken", response);
 		} finally {
