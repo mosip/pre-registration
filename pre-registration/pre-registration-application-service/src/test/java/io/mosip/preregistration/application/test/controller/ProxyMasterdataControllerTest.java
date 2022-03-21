@@ -51,19 +51,27 @@ public class ProxyMasterdataControllerTest {
 
 	@Mock
 	private ProxyMasterdataController proxyMasterdataController;
-	
+
 	@Before
 	public void setup() throws URISyntaxException, FileNotFoundException, ParseException {
 		mockMvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 
 	@Test
-	public void masterDataProxyControllerTest() throws Exception {
+	public void masterDataGetProxyControllerTest() throws Exception {
 		ResponseEntity<Object> response = new ResponseEntity<Object>(HttpStatus.OK);
 		Mockito.when(proxyMasterDataService.getMasterDataResponse(Mockito.any(), Mockito.any())).thenReturn(response);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/proxy/test")
-				.contentType(MediaType.APPLICATION_JSON_VALUE)
-				.accept(MediaType.APPLICATION_JSON_VALUE);
+				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE);
+		mockMvc.perform(requestBuilder).andExpect(status().isOk());
+	}
+
+	@Test
+	public void masterDataPostProxyControllerTest() throws Exception {
+		ResponseEntity<Object> response = new ResponseEntity<Object>(HttpStatus.OK);
+		Mockito.when(proxyMasterDataService.getMasterDataResponse(Mockito.any(), Mockito.any())).thenReturn(response);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.post("/proxy/test")
+				.contentType(MediaType.APPLICATION_JSON_VALUE).accept(MediaType.APPLICATION_JSON_VALUE);
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 	}
 
