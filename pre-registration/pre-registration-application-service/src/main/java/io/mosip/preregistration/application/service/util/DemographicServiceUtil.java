@@ -540,11 +540,16 @@ public class DemographicServiceUtil {
 			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
 					});
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				throw new RestCallException(responseEntity.getBody().getErrors().get(0).getErrorCode(),
-						responseEntity.getBody().getErrors().get(0).getMessage());
+			ResponseWrapper<PridFetchResponseDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				if (body.getResponse() != null) {
+					prid = body.getResponse().getPrid();
+				}
 			}
-			prid = responseEntity.getBody().getResponse().getPrid();
 			if (prid == null || prid.isEmpty()) {
 				throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 						DemographicErrorMessages.PRID_RESTCALL_FAIL.getMessage());
