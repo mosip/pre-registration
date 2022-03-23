@@ -79,12 +79,15 @@ public class CryptoUtil {
 					new ParameterizedTypeReference<ResponseWrapper<CryptoManagerResponseDTO>>() {
 					});
 			log.info("sessionId", "idType", "id", "encrypt response of " + response);
-
-			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
-				throw new EncryptionFailedException(response.getBody().getErrors(), null);
+			ResponseWrapper<CryptoManagerResponseDTO> body = response.getBody();
+			if (body != null) {
+				if (!(body.getErrors() == null || body.getErrors().isEmpty())) {
+					throw new EncryptionFailedException(body.getErrors(), null);
+				}
+				if (body.getResponse() != null) {
+					encryptedBytes = body.getResponse().getData().getBytes();
+				}
 			}
-			encryptedBytes = response.getBody().getResponse().getData().getBytes();
-
 		} catch (Exception ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
@@ -119,11 +122,15 @@ public class CryptoUtil {
 			response = restTemplate.exchange(cryptoResourceUrl + "/decrypt", HttpMethod.POST, request,
 					new ParameterizedTypeReference<ResponseWrapper<CryptoManagerResponseDTO>>() {
 					});
-			if (!(response.getBody().getErrors() == null || response.getBody().getErrors().isEmpty())) {
-				throw new EncryptionFailedException(response.getBody().getErrors(), null);
+			ResponseWrapper<CryptoManagerResponseDTO> body = response.getBody();
+			if (body != null) {
+				if (!(body.getErrors() == null || body.getErrors().isEmpty())) {
+					throw new EncryptionFailedException(body.getErrors(), null);
+				}
+				if (body.getResponse() != null) {
+					decodedBytes = Base64.decodeBase64(body.getResponse().getData().getBytes());
+				}
 			}
-			decodedBytes = Base64.decodeBase64(response.getBody().getResponse().getData().getBytes());
-
 		} catch (Exception ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",

@@ -309,16 +309,19 @@ public class DataSyncServiceUtil {
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 					}, params);
-			if (respEntity.getBody().getErrors() != null) {
-				for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : respEntity.getBody().getErrors()) {
-					if (exceptionJSONInfoDTO != null) {
-						throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
-								exceptionJSONInfoDTO.getMessage(), null);
+			MainResponseDTO<BookingDataByRegIdDto> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
+						if (exceptionJSONInfoDTO != null) {
+							throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
+									exceptionJSONInfoDTO.getMessage(), null);
+						}
 					}
+				} else {
+					preRegIdsByRegCenterIdResponseDTO = mapper.convertValue(body.getResponse(),
+							BookingDataByRegIdDto.class);
 				}
-			} else {
-				preRegIdsByRegCenterIdResponseDTO = mapper.convertValue(respEntity.getBody().getResponse(),
-						BookingDataByRegIdDto.class);
 			}
 		} catch (RestClientException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
@@ -355,12 +358,15 @@ public class DataSyncServiceUtil {
 			ResponseEntity<MainResponseDTO<DocumentsMetaData>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity, new ParameterizedTypeReference<MainResponseDTO<DocumentsMetaData>>() {
 					}, params);
-			if (respEntity.getBody().getErrors() != null) {
-				log.info("sessionId", "idType", "id",
-						"In callGetDocRestService method of datasync service util - Document not found for the pre_registration_id");
-			} else {
-				Object obj = respEntity.getBody().getResponse();
-				responsestatusDto = mapper.convertValue(obj, DocumentsMetaData.class);
+			MainResponseDTO<DocumentsMetaData> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					log.info("sessionId", "idType", "id",
+							"In callGetDocRestService method of datasync service util - Document not found for the pre_registration_id");
+				} else {
+					Object obj = body.getResponse();
+					responsestatusDto = mapper.convertValue(obj, DocumentsMetaData.class);
+				}
 			}
 		} catch (RestClientException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
@@ -400,12 +406,15 @@ public class DataSyncServiceUtil {
 			ResponseEntity<MainResponseDTO<DocumentDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder, HttpMethod.GET,
 					httpEntity, new ParameterizedTypeReference<MainResponseDTO<DocumentDTO>>() {
 					}, params);
-			if (respEntity.getBody().getErrors() != null) {
-				log.info("sessionId", "idType", "id",
-						"In callGetBytesDocRestService method of datasync service util - Document not found for the documentId");
-			} else {
-				Object obj = respEntity.getBody().getResponse();
-				responsestatusDto = mapper.convertValue(obj, DocumentDTO.class);
+			MainResponseDTO<DocumentDTO> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					log.info("sessionId", "idType", "id",
+							"In callGetBytesDocRestService method of datasync service util - Document not found for the documentId");
+				} else {
+					Object obj = body.getResponse();
+					responsestatusDto = mapper.convertValue(obj, DocumentDTO.class);
+				}
 			}
 		} catch (RestClientException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
@@ -443,17 +452,18 @@ public class DataSyncServiceUtil {
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
 					}, params);
-			if (respEntity.getBody().getErrors() != null) {
-				for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : respEntity.getBody().getErrors()) {
-					if (exceptionJSONInfoDTO != null) {
-						throw new DemographicGetDetailsException(exceptionJSONInfoDTO.getErrorCode(),
-								exceptionJSONInfoDTO.getMessage(), null);
+			MainResponseDTO<DemographicResponseDTO> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
+						if (exceptionJSONInfoDTO != null) {
+							throw new DemographicGetDetailsException(exceptionJSONInfoDTO.getErrorCode(),
+									exceptionJSONInfoDTO.getMessage(), null);
+						}
 					}
+				} else {
+					responsestatusDto = mapper.convertValue(body.getResponse(), DemographicResponseDTO.class);
 				}
-
-			} else {
-				responsestatusDto = mapper.convertValue(respEntity.getBody().getResponse(),
-						DemographicResponseDTO.class);
 			}
 		} catch (RestClientException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
@@ -492,19 +502,21 @@ public class DataSyncServiceUtil {
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					}, params);
-			if (respEntity.getBody().getErrors() != null) {
-				for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : respEntity.getBody().getErrors()) {
-					if (exceptionJSONInfoDTO != null) {
-						throw new DemographicGetDetailsException(exceptionJSONInfoDTO.getErrorCode(),
-								exceptionJSONInfoDTO.getMessage(), null);
+			MainResponseDTO<BookingRegistrationDTO> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
+						if (exceptionJSONInfoDTO != null) {
+							throw new DemographicGetDetailsException(exceptionJSONInfoDTO.getErrorCode(),
+									exceptionJSONInfoDTO.getMessage(), null);
+						}
 					}
-				}
-			} else {
-				bookingRegistrationDTO = mapper.convertValue(respEntity.getBody().getResponse(),
-						BookingRegistrationDTO.class);
-				if (bookingRegistrationDTO == null) {
-					throw new RecordNotFoundForDateRange(ErrorCodes.PRG_DATA_SYNC_001.getCode(),
-							ErrorMessages.RECORDS_NOT_FOUND_FOR_DATE_RANGE.getMessage(), null);
+				} else {
+					bookingRegistrationDTO = mapper.convertValue(body.getResponse(), BookingRegistrationDTO.class);
+					if (bookingRegistrationDTO == null) {
+						throw new RecordNotFoundForDateRange(ErrorCodes.PRG_DATA_SYNC_001.getCode(),
+								ErrorMessages.RECORDS_NOT_FOUND_FOR_DATE_RANGE.getMessage(), null);
+					}
 				}
 			}
 		} catch (RestClientException ex) {
@@ -774,11 +786,14 @@ public class DataSyncServiceUtil {
 					HttpMethod.POST, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<Map<String, String>>>() {
 					});
-			if (respEntity.getBody().getErrors() != null) {
-				throw new DemographicGetDetailsException(ErrorCodes.PRG_DATA_SYNC_011.getCode(),
-						ErrorMessages.INVALID_REQUESTED_PRE_REG_ID_LIST.getMessage(), null);
-			} else {
-				response = mapper.convertValue(respEntity.getBody().getResponse(), Map.class);
+			MainResponseDTO<Map<String, String>> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					throw new DemographicGetDetailsException(ErrorCodes.PRG_DATA_SYNC_011.getCode(),
+							ErrorMessages.INVALID_REQUESTED_PRE_REG_ID_LIST.getMessage(), null);
+				} else {
+					response = mapper.convertValue(body.getResponse(), Map.class);
+				}
 			}
 		} catch (RestClientException ex) {
 			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
