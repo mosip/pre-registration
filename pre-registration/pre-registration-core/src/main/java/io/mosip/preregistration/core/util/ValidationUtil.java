@@ -288,13 +288,15 @@ public class ValidationUtil {
 		@SuppressWarnings("unchecked")
 		ResponseWrapper<LinkedHashMap<String, ArrayList<LinkedHashMap<String, Object>>>> responseBody = restTemplate
 				.getForObject(uri, ResponseWrapper.class);
-		if (Objects.isNull(responseBody.getErrors()) || responseBody.getErrors().isEmpty()) {
-			ArrayList<LinkedHashMap<String, Object>> response = responseBody.getResponse().get(DOCUMENTS);
-			IntStream.range(0, response.size()).filter(index -> (Boolean) response.get(index).get(IS_ACTIVE))
-					.forEach(index -> {
-						documentTypeMap.put(String.valueOf(response.get(index).get(CODE)),
-								String.valueOf(response.get(index).get(NAME)));
-					});
+		if (responseBody != null) {
+			if (Objects.isNull(responseBody.getErrors()) || responseBody.getErrors().isEmpty()) {
+				ArrayList<LinkedHashMap<String, Object>> response = responseBody.getResponse().get(DOCUMENTS);
+				IntStream.range(0, response.size()).filter(index -> (Boolean) response.get(index).get(IS_ACTIVE))
+						.forEach(index -> {
+							documentTypeMap.put(String.valueOf(response.get(index).get(CODE)),
+									String.valueOf(response.get(index).get(NAME)));
+						});
+			}
 		}
 		return documentTypeMap;
 	}
