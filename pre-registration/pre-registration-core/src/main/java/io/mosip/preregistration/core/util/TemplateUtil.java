@@ -73,6 +73,7 @@ public class TemplateUtil {
 	 */
 
 	public String getTemplate(Object langCode, String templatetypecode) {
+		List<TemplateResponseDTO> response = null;
 		String url = resourceUrl + "/" + (String) langCode + "/" + templatetypecode;
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<RequestWrapper<TemplateResponseListDTO>> httpEntity = new HttpEntity<>(headers);
@@ -81,8 +82,10 @@ public class TemplateUtil {
 				httpEntity, new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
 				});
 
-		List<TemplateResponseDTO> response = respEntity.getBody().getResponse().getTemplates();
-
+		ResponseWrapper<TemplateResponseListDTO> body = respEntity.getBody();
+		if (body != null) {
+			response = body.getResponse().getTemplates();
+		}
 		return response.get(0).getFileText().replaceAll("^\"|\"$", "");
 
 	}
