@@ -238,7 +238,7 @@ public class NotificationServiceUtil {
 
 			PreRegSmsResponseDto response = restTemplate.exchange(environment.getProperty("sms-notification.rest.uri"),
 					HttpMethod.POST, entity1, PreRegSmsResponseDto.class).getBody();
-			if (response != null) {
+			if (response != null && response.getResponse() != null) {
 				if (!response.getResponse().getStatus().equalsIgnoreCase(PreRegLoginConstant.SUCCESS))
 					throw new PreRegLoginException(PreRegLoginErrorConstants.DATA_VALIDATION_FAILED.getErrorCode(),
 							PreRegLoginErrorConstants.DATA_VALIDATION_FAILED.getErrorMessage());
@@ -284,7 +284,7 @@ public class NotificationServiceUtil {
 			PreRegSmsResponseDto response = restTemplate.exchange(environment.getProperty("mail-notification.rest.uri"),
 					HttpMethod.POST, entity1, PreRegSmsResponseDto.class).getBody();
 			
-			if (response != null) {
+			if (response != null && response.getResponse() != null) {
 				if (!response.getResponse().getStatus().equalsIgnoreCase(PreRegLoginConstant.SUCCESS))
 					throw new PreRegLoginException(PreRegLoginErrorConstants.DATA_VALIDATION_FAILED.getErrorCode(),
 							PreRegLoginErrorConstants.DATA_VALIDATION_FAILED.getErrorMessage());
