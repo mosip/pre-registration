@@ -254,7 +254,10 @@ public class AuditLogUtil {
 					HttpMethod.POST, requestEntity,
 					new ParameterizedTypeReference<ResponseWrapper<AuditResponseDto>>() {
 					});
-			auditFlag = responseEntity2.getBody().getResponse().isStatus();
+			ResponseWrapper<AuditResponseDto> body = responseEntity2.getBody();
+			if (body != null) {
+				auditFlag = body.getResponse().isStatus();
+			}
 		} catch (HttpClientErrorException ex) {
 			log.error("sessionId", "idType", "id",
 					"In callAuditManager method of AugitLogUtil Util for HttpClientErrorException- "

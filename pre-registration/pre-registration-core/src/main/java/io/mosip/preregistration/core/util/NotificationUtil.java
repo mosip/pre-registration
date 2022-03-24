@@ -156,10 +156,13 @@ public class NotificationUtil {
 		} catch (RestClientException e) {
 			throw new RestCallException(e.getMessage(), e.getCause());
 		}
-
+		
+		ResponseWrapper<NotificationResponseDTO> body = resp.getBody();
 		NotificationResponseDTO notifierResponse = new NotificationResponseDTO();
-		notifierResponse.setMessage(resp.getBody().getResponse().getMessage());
-		notifierResponse.setStatus(resp.getBody().getResponse().getStatus());
+		if (body!=null) {
+		notifierResponse.setMessage(body.getResponse().getMessage());
+		notifierResponse.setStatus(body.getResponse().getStatus());
+		}
 		response.setResponse(notifierResponse);
 		response.setResponsetime(getCurrentResponseTime());
 
@@ -258,9 +261,12 @@ public class NotificationUtil {
 				new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				});
 
+		ResponseWrapper<NotificationResponseDTO> body = resp.getBody();
 		NotificationResponseDTO notifierResponse = new NotificationResponseDTO();
-		notifierResponse.setMessage(resp.getBody().getResponse().getMessage());
-		notifierResponse.setStatus(resp.getBody().getResponse().getStatus());
+		if (body != null) {
+			notifierResponse.setMessage(body.getResponse().getMessage());
+			notifierResponse.setStatus(body.getResponse().getStatus());
+		}
 		response.setResponse(notifierResponse);
 		response.setResponsetime(getCurrentResponseTime());
 		return response;
@@ -280,11 +286,14 @@ public class NotificationUtil {
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					});
 			log.debug("sessionId", "idType", "id", responseEntity.toString());
-			if (responseEntity.getBody().getErrors() != null && !responseEntity.getBody().getErrors().isEmpty()) {
-				log.error("sessionId", "idType", "id", responseEntity.getBody().getErrors().toString());
-				response.setErrors(responseEntity.getBody().getErrors());
-			} else {
-				response.setResponse(responseEntity.getBody().getResponse());
+			MainResponseDTO<BookingRegistrationDTO> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					log.error("sessionId", "idType", "id", body.getErrors().toString());
+					response.setErrors(body.getErrors());
+				} else {
+					response.setResponse(body.getResponse());
+				}
 			}
 			log.info("sessionId", "idType", "id", "In call to booking rest service :" + url);
 		} catch (Exception ex) {
