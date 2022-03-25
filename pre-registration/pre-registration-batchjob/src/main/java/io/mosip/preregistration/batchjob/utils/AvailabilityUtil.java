@@ -183,7 +183,7 @@ public class AvailabilityUtil {
 		List<String> notificationFailedList = new ArrayList<String>();
 
 		try {
-			LocalDate endDate = LocalDate.now().plusDays(syncDays - 1);
+			LocalDate endDate = LocalDate.now().plusDays(syncDays - 1L);
 			List<RegistrationCenterDto> regCenter = getRegCenterMasterData(headers);
 //			List<RegistrationCenterDto> regCenterDtos = regCenter.stream()
 //					.filter(regCenterDto -> regCenterDto.getLangCode().equals(langCode)).collect(Collectors.toList());

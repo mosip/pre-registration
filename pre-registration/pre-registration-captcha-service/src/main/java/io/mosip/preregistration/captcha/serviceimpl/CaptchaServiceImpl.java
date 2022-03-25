@@ -71,14 +71,18 @@ public class CaptchaServiceImpl implements CaptchaService {
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl);
 			
 			captchaResponse = this.restTemplate.postForObject(recaptchaVerifyUrl, param, GoogleCaptchaDTO.class);
-			log.debug("sessionId", "idType", "id", captchaResponse.toString());
+			if (captchaResponse != null) {
+				log.debug("sessionId", "idType", "id", captchaResponse.toString());
+			}
 		} catch (RestClientException ex) {
 			log.error("sessionId", "idType", "id",
 					"In pre-registration captcha service to validate the token request via a google verify site rest call has failed --->"
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl + "  "
 							+ ex);
+			if (captchaResponse != null) {
 			throw new CaptchaException(captchaResponse.getErrorCodes().get(0).getErrorCode(),
 					captchaResponse.getErrorCodes().get(0).getMessage());
+			}
 		}
 
 		if (captchaResponse.isSuccess()) {
