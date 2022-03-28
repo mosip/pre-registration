@@ -10,6 +10,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -73,7 +74,7 @@ public class TemplateUtil {
 	 */
 
 	public String getTemplate(Object langCode, String templatetypecode) {
-		List<TemplateResponseDTO> response = null;
+		List<TemplateResponseDTO> response = new ArrayList<TemplateResponseDTO>();
 		String url = resourceUrl + "/" + (String) langCode + "/" + templatetypecode;
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<RequestWrapper<TemplateResponseListDTO>> httpEntity = new HttpEntity<>(headers);
@@ -81,13 +82,13 @@ public class TemplateUtil {
 		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> respEntity = restTemplate.exchange(url, HttpMethod.GET,
 				httpEntity, new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
 				});
-
+		String template = null;
 		ResponseWrapper<TemplateResponseListDTO> body = respEntity.getBody();
 		if (body != null) {
 			response = body.getResponse().getTemplates();
 		}
-		return response.get(0).getFileText().replaceAll("^\"|\"$", "");
-
+		template = response.get(0).getFileText().replaceAll("^\"|\"$", "");
+		return template;
 	}
 
 	/**
