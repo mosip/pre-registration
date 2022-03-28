@@ -82,13 +82,13 @@ public class TemplateUtil {
 		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> respEntity = restTemplate.exchange(url, HttpMethod.GET,
 				httpEntity, new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
 				});
-
+		String template;
 		ResponseWrapper<TemplateResponseListDTO> body = respEntity.getBody();
 		if (body != null) {
 			response = body.getResponse().getTemplates();
 		}
-		return response.get(0).getFileText().replaceAll("^\"|\"$", "");
-
+		template = response.get(0).getFileText().replaceAll("^\"|\"$", "");
+		return template;
 	}
 
 	/**
