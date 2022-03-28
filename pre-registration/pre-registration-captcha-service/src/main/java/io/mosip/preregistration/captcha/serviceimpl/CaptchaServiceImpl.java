@@ -79,7 +79,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 					"In pre-registration captcha service to validate the token request via a google verify site rest call has failed --->"
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl + "  "
 							+ ex);
-			if (captchaResponse != null) {
+			if (captchaResponse != null && captchaResponse.getErrorCodes() !=null) {
 			throw new CaptchaException(captchaResponse.getErrorCodes().get(0).getErrorCode(),
 					captchaResponse.getErrorCodes().get(0).getMessage());
 			}
