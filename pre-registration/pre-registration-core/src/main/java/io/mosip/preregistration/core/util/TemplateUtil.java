@@ -82,7 +82,7 @@ public class TemplateUtil {
 		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> respEntity = restTemplate.exchange(url, HttpMethod.GET,
 				httpEntity, new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
 				});
-		String template;
+		String template = null;
 		ResponseWrapper<TemplateResponseListDTO> body = respEntity.getBody();
 		if (body != null) {
 			response = body.getResponse().getTemplates();
