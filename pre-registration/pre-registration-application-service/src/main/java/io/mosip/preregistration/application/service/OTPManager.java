@@ -81,7 +81,7 @@ public class OTPManager {
 	@Autowired
 	@Qualifier("selfTokenRestTemplate")
 	RestTemplate restTemplate;
-	
+
 	@Autowired
 	private OtpTxnRepository otpRepo;
 
@@ -193,6 +193,7 @@ public class OTPManager {
 					.exchange(environment.getProperty("otp-generate.rest.uri"), HttpMethod.POST, entity1,
 							ResponseWrapper.class)
 					.getBody();
+			String otp = null;
 			if (response != null) {
 				Map<String, String> res = response.getResponse();
 				if (res != null) {
@@ -201,10 +202,12 @@ public class OTPManager {
 								PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(), USER_BLOCKED);
 						throw new PreRegLoginException(PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(),
 								PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorMessage());
+					} else {
+						otp = res.get(OTP);
 					}
 				}
 			}
-			return response.getResponse().get(OTP);
+			return otp;
 		} catch (PreRegLoginException e) {
 			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(), "generateOTP",
 					e.getMessage());
