@@ -85,7 +85,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 			}
 		}
 
-		if (captchaResponse.isSuccess()) {
+		if (captchaResponse!=null && captchaResponse.isSuccess()) {
 			log.info("sessionId", "idType", "id",
 					"In pre-registration captcha service token request has been successfully verified --->"
 							+ captchaResponse.isSuccess());

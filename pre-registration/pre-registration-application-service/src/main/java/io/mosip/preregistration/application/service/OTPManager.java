@@ -81,7 +81,7 @@ public class OTPManager {
 	@Autowired
 	@Qualifier("selfTokenRestTemplate")
 	RestTemplate restTemplate;
- 
+
 	@Autowired
 	private OtpTxnRepository otpRepo;
 
@@ -193,15 +193,21 @@ public class OTPManager {
 					.exchange(environment.getProperty("otp-generate.rest.uri"), HttpMethod.POST, entity1,
 							ResponseWrapper.class)
 					.getBody();
-			if (response != null && response.getResponse() != null) {
-				if (response.getResponse().get("status").equals(USER_BLOCKED)) {
-					logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
-							PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(), USER_BLOCKED);
-					throw new PreRegLoginException(PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(),
-							PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorMessage());
+			String otp = null;
+			if (response != null) {
+				Map<String, String> res = response.getResponse();
+				if (res != null) {
+					if (res.get("status").equals(USER_BLOCKED)) {
+						logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
+								PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(), USER_BLOCKED);
+						throw new PreRegLoginException(PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(),
+								PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorMessage());
+					} else {
+						otp = res.get(OTP);
+					}
 				}
 			}
-			return response.getResponse().get(OTP);
+			return otp;
 		} catch (PreRegLoginException e) {
 			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(), "generateOTP",
 					e.getMessage());
