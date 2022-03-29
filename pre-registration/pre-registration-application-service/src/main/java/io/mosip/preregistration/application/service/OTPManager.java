@@ -193,15 +193,16 @@ public class OTPManager {
 					.exchange(environment.getProperty("otp-generate.rest.uri"), HttpMethod.POST, entity1,
 							ResponseWrapper.class)
 					.getBody();
-			if (response != null && response.getResponse() != null) {
-				if (response.getResponse().get("status").equals(USER_BLOCKED)) {
+			Map<String, String> res = response.getResponse();
+			if (response != null && res != null) {
+				if (res.get("status").equals(USER_BLOCKED)) {
 					logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
 							PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(), USER_BLOCKED);
 					throw new PreRegLoginException(PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorCode(),
 							PreRegLoginErrorConstants.BLOCKED_OTP_VALIDATE.getErrorMessage());
 				}
 			}
-			return response.getResponse().get(OTP);
+			return res.get(OTP);
 		} catch (PreRegLoginException e) {
 			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(), "generateOTP",
 					e.getMessage());
