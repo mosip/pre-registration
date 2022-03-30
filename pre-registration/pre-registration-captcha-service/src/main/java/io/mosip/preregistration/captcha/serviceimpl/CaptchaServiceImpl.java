@@ -97,8 +97,11 @@ public class CaptchaServiceImpl implements CaptchaService {
 			response.setSuccess(captchaResponse.isSuccess());
 			mainResponse.setResponse(response);
 		} else {
-			log.error("sessionId", "idType", "id",
-					"In pre-registration captcha service token request has failed --->" + captchaResponse.isSuccess());
+			if (captchaResponse != null) {
+				log.error("sessionId", "idType", "id",
+						"In pre-registration captcha service token request has failed --->"
+								+ captchaResponse.isSuccess());
+			}
 			mainResponse.setId(mosipcaptchaValidateId);
 			mainResponse.setResponsetime(getCurrentResponseTime());
 			mainResponse.setVersion(version);
