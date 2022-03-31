@@ -87,7 +87,7 @@ public class AvailabilityUtil {
 	 * Reference for ${preregistration.availability.sync} from property file
 	 */
 	@Value("${preregistration.availability.sync}")
-	int syncDays;
+	long syncDays;
 
 	@Value("${version}")
 	String versionUrl;
