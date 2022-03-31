@@ -81,12 +81,13 @@ public abstract class BaseValidator {
 	 *            the errors
 	 */
 	protected void validateVersion(String ver, Errors errors) {
+		String envVersion = env.getProperty("version");
 		if (Objects.isNull(ver)) {
 			mosipLogger.error("", "", "validateVersion", "version is null");
 			errors.rejectValue(VER, ErrorCodes.PRG_CORE_REQ_002.toString(),
 					String.format(ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), VER));
-		} else if (env.getProperty("version") != null) {
-			if (!env.getProperty("version").equalsIgnoreCase(ver)) {
+		} else if (envVersion !=null) {
+			if (!envVersion.equalsIgnoreCase(ver)) {
 				mosipLogger.error("", "", "validateVersion", "version is not correct");
 				errors.rejectValue(VER, ErrorCodes.PRG_CORE_REQ_002.toString(),
 						String.format(ErrorMessages.INVALID_REQUEST_VERSION.getMessage(), VER));
