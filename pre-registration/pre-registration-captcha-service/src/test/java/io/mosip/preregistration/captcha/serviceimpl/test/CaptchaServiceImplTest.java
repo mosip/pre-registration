@@ -3,7 +3,6 @@ package io.mosip.preregistration.captcha.serviceimpl.test;
 import static org.junit.Assert.*;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -56,10 +55,11 @@ public class CaptchaServiceImplTest {
 		ReflectionTestUtils.setField(captchaServiceImpl, "recaptchaVerifyUrl",
 				"https://www.google.com/recaptcha/api/siteverify");
 		ReflectionTestUtils.setField(captchaServiceImpl, "mosipcaptchaValidateId", "123");
+		ReflectionTestUtils.setField(captchaServiceImpl, "version", "2.0");
 	}
 
-	@Ignore
-	@Test(expected = NullPointerException.class)
+	
+	@Test
 	public void validateCaptchaTest() {
 		CaptchaRequestDTO captchaRequest = new CaptchaRequestDTO();
 		MainResponseDTO<CaptchaResposneDTO> mainResponse = new MainResponseDTO<>();
@@ -77,10 +77,12 @@ public class CaptchaServiceImplTest {
 		res.setMessage("captcha scuccessfully set");
 		res.setSuccess(true);
 		mainResponse.setResponse(res);
+		mainResponse.setId(mosipcaptchaValidateId);
+		mainResponse.setVersion(version);
 
 		Mockito.when(restTemplate.postForObject("https://www.google.com/recaptcha/api/siteverify",
 				"{secret=[demo], response=[aRsasahksasa]}", GoogleCaptchaDTO.class)).thenReturn(captchaResponse);
-		captchaServiceImpl.validateCaptcha(captchaRequest);
+		assertNotNull(captchaServiceImpl.validateCaptcha(captchaRequest));
 	}
 
 	@Test(expected = InvalidRequestCaptchaException.class)
