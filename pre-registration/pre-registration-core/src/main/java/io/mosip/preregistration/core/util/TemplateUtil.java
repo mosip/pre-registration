@@ -87,7 +87,7 @@ public class TemplateUtil {
 		if (body != null) {
 			response = body.getResponse().getTemplates();
 		}
-		template = response.get(0).getFileText().replaceAll("^\"|\"$", "");
+		template = response.get(0).getFileText().replaceAll("(^\")|(\"$)", "");
 		return template;
 	}
 
