@@ -14,7 +14,6 @@ import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
 import io.mosip.preregistration.batchjob.helper.RegCenterIdsHolder;
 import io.mosip.preregistration.batchjob.helper.RestHelper;
-import io.mosip.preregistration.batchjob.model.RegistrationCenterDto;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 /**

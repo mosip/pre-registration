@@ -326,6 +326,45 @@ public class SlotAvailabilityGenerator {
 	private void checkAndReCalculateFullDaySlotsThenSave(RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, 
 					String logIdentifier, List<AvailibityEntity> slotsAvailableList, Map<String, Boolean> cancelledTracker,
 					Map<String, Boolean> notifierTracker) {
+
+		// First, Check for change in Kiosk time, if there is any change 
+		// 1. Cancel the appointment & Notify the resident.
+		// 2. Delete all the existing slots & add fresh slots for the full day.
+		LocalTime regCenterKioskTime  = regCenterDetails.getPerKioskProcessTime();
+		LocalTime prevRegCenterKioskTime = LocalTime.of(0, (int)MINUTES.between(slotsAvailableList.get(0).getFromTime(), 
+														slotsAvailableList.get(0).getToTime()), 0);
+		if (!regCenterKioskTime.equals(prevRegCenterKioskTime)) {
+			LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+				"Found change in Kiosk Process Time, Previous Time: " + prevRegCenterKioskTime + ", Current Configured Time: " 
+				+ regCenterKioskTime + ", for date: " + slotGenCurrentDay);
+			cancelAndNotifySlots(regCenterDetails, slotGenCurrentDay, logIdentifier, cancelledTracker, notifierTracker);
+			batchServiceDAO.deleteSlots(regCenterDetails.getId(), slotGenCurrentDay);
+			calculateFullDaySlotsAndSave(regCenterDetails, slotGenCurrentDay, logIdentifier);
+			// No need to execute further code because full day slots has been recalculated with the latest start, lunch & end time.
+			return;
+		}
+
+		// Second, check for change in number of kiosks, if there is any change.
+		// 1. if number of kiosks has increased, simply add update the kiosk number to the increased one.
+		// 2. if number of kiosks has decreased, Cancel, Notify, and update the kiosk number.
+		int noOfKiosks = regCenterDetails.getNumberOfKiosks();
+		int previousNoOfKiosks = slotsAvailableList.get(0).getAvailableKiosks();
+		if (noOfKiosks != previousNoOfKiosks) {
+			LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+				"Found change in Number of Kiosks, Previous Number: " + previousNoOfKiosks + ", Current Number: " 
+				+ noOfKiosks + ", for date: " + slotGenCurrentDay);
+			if (noOfKiosks < previousNoOfKiosks) {
+				cancelAndNotifySlots(regCenterDetails, slotGenCurrentDay, logIdentifier, cancelledTracker, notifierTracker);
+			} 
+			slotsAvailableList.forEach(availibityEntity -> {
+				if (availibityEntity.getAvailableKiosks() != 0) {
+					availibityEntity.setAvailableKiosks(noOfKiosks);
+					batchServiceDAO.saveAvailability(availibityEntity);
+				}
+			});
+		}
+
+
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
 				"Checking existing slots for change in start, lunch & end time for date: " + slotGenCurrentDay);
 		
@@ -473,6 +512,18 @@ public class SlotAvailabilityGenerator {
 								cancelledTracker, notifierTracker);
 			}
 		}
+	}
+
+	private void cancelAndNotifySlots(RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, String logIdentifier, 
+									 Map<String, Boolean> cancelledTracker, Map<String, Boolean> notifierTracker) {
+
+		List<RegistrationBookingEntity> regBookingEntityList = batchServiceDAO.findAllPreIds(regCenterDetails.getId(), 
+																			slotGenCurrentDay);
+		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
+						"For Cancel & Notify, Total Number of bookings available on the day: " + regBookingEntityList.size());
+		regBookingEntityList.stream().forEach(bookedSlot -> {
+			cancelAndNotifyHelper.cancelAndNotifyApplicant(bookedSlot, logIdentifier, cancelledTracker, notifierTracker);
+		});
 	}
 
 	private void recalculateSlots(LocalTime centerConfiguredTime, LocalTime slotCalculatedTime, RegistrationCenterDto regCenterDetails, 
