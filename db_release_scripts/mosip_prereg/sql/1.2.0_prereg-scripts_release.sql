@@ -33,6 +33,6 @@ INSERT INTO prereg.applications(application_id, booking_type, booking_status_cod
    t2.booking_dtimes, t2.slot_from_time, t2.slot_to_time, t1.cr_appuser_id, t1.cr_by, t1.cr_dtimes, t1.upd_by, t1.upd_dtimes,
    Case When t1.status_code='Application_Incomplete' THEN 'DRAFT' Else 'SUBMITTED' End
    From prereg.applicant_demographic t1
-   LEFT Join prereg.reg_appointment t2 On t1.prereg_id=t2.prereg_id LIMIT 500;
+   LEFT Join prereg.reg_appointment t2 On t1.prereg_id=t2.prereg_id;
 
 -----------------------------------------------------------------------------------------------------
