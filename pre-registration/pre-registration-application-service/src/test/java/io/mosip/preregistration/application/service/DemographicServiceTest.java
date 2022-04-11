@@ -750,6 +750,26 @@ public class DemographicServiceTest {
 
 	}
 
+	@Test
+	public void updatePreRegistrationStatusTests() {
+		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
+		Mockito.when(serviceUtil.isStatusValid(Mockito.any())).thenReturn(true);
+
+		ExceptionJSONInfoDTO err = new ExceptionJSONInfoDTO("PRG_PAM_DOC_015", "");
+		List<ExceptionJSONInfoDTO> errlist = new ArrayList<>();
+		errlist.add(err);
+
+		MainResponseDTO<String> response = new MainResponseDTO<>();
+		response.setId(createId);
+		response.setResponse(createId);
+		response.setErrors(fullname);
+
+		MainResponseDTO<String> res = preRegistrationService.updatePreRegistrationStatus("98746563542672", "Booked",
+				userId);
+		assertEquals("STATUS_UPDATED_SUCESSFULLY", res.getResponse());
+
+	}
+
 	@Test(expected = RecordNotFoundException.class)
 	public void getPreRegistrationFailureTest() {
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(null);
@@ -771,6 +791,33 @@ public class DemographicServiceTest {
 				userId);
 		assertEquals("STATUS_NOT_UPDATED_SUCESSFULLY", response.getResponse());
 
+	}
+	
+	@Test
+	public void getUpdatedDateTimeForPreIdsTest() {
+		List<String> preIds = new ArrayList<>();
+		preIds.add("userEntityDetails");
+		PreRegIdsByRegCenterIdDTO preRegIdsByRegCenterIdDTO = new PreRegIdsByRegCenterIdDTO();
+		preRegIdsByRegCenterIdDTO.setPreRegistrationIds(preIds);
+		userEntityDetails = null;
+		List<String> statusCodes = new ArrayList<>();
+		statusCodes.add(StatusCodes.BOOKED.getCode());
+		statusCodes.add(StatusCodes.EXPIRED.getCode());
+		List<DemographicEntity> demographicEntities = new ArrayList<>();
+		entity.setCrAppuserId(userId);
+		entity.setLangCode("eng");
+		entity.setPreRegistrationId("12344");
+		entity.setUpdateDateTime(LocalDateTime.now());
+		entity.setUpdatedBy(updateId);		
+		demographicEntities.add(entity);
+
+		Mockito.when(demographicRepository.findByStatusCodeInAndPreRegistrationIdIn(Mockito.any(), Mockito.any()))
+				.thenReturn(demographicEntities);
+		Mockito.when(demographicRepository.findByStatusCodeInAndPreRegistrationIdIn(statusCodes, preIds))
+				.thenReturn(userEntityDetails);
+		MainResponseDTO<Map<String, String>> response = preRegistrationService
+				.getUpdatedDateTimeForPreIds(preRegIdsByRegCenterIdDTO);
+		assertNotNull(response);
 	}
 
 	@Test(expected = RecordNotFoundForPreIdsException.class)
@@ -894,49 +941,15 @@ public class DemographicServiceTest {
 		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
 		Collection<DocumentCategoryAndTypeResponseDto> documentCategories = new ArrayList<DocumentCategoryAndTypeResponseDto>();
 		DocumentCategoryAndTypeResponseDto documentCategoryAndTypeResponseDto = new DocumentCategoryAndTypeResponseDto();
-
+		documentCategoryAndTypeResponseDto.setCode("abc");
+		Set<String> mandatoryDocCat = new HashSet<>();
+		mandatoryDocCat.add("");
+		Mockito.when(serviceUtil.getMandatoryDocCatogery()).thenReturn(mandatoryDocCat);
 		documentCategories.add(documentCategoryAndTypeResponseDto);
 		applicantValidDocuments.setDocumentCategories(documentCategories);
 		Mockito.when(serviceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
 				.thenReturn(applicantValidDocuments);
-		DemographicService demographicService = Mockito.mock(DemographicService.class);
-		Mockito.doNothing().when(demographicService).statusCheck(Mockito.isA(DemographicEntity.class),
-				Mockito.isA(String.class), Mockito.isA(String.class));
 		demographicService.statusCheck(demographicEntity, status, userId);
-
-		Mockito.verify(demographicService, Mockito.times(1)).statusCheck(demographicEntity, status, userId);
-
-	}
-
-	@Test
-	public void statusCheckTest2() {
-		DemographicEntity demographicEntity = new DemographicEntity();
-		demographicEntity.setPreRegistrationId("987654321");
-		List<DocumentEntity> documentEntitys = new ArrayList<DocumentEntity>();
-		DocumentEntity documentEntity = new DocumentEntity();
-
-		documentEntity.setDocCatCode("");
-		documentEntitys.add(documentEntity);
-		demographicEntity.setDocumentEntity(documentEntitys);
-		demographicEntity.setLangCode("");
-		String status = StatusCodes.APPLICATION_INCOMPLETE.getCode().toLowerCase();
-		String userId = "987654321";
-		Mockito.when(serviceUtil.isStatusValid(status)).thenReturn(true);
-		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
-		Collection<DocumentCategoryAndTypeResponseDto> documentCategories = new ArrayList<DocumentCategoryAndTypeResponseDto>();
-		DocumentCategoryAndTypeResponseDto documentCategoryAndTypeResponseDto = new DocumentCategoryAndTypeResponseDto();
-
-		documentCategories.add(documentCategoryAndTypeResponseDto);
-		applicantValidDocuments.setDocumentCategories(documentCategories);
-		Mockito.when(serviceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
-				.thenReturn(applicantValidDocuments);
-		DemographicService demographicService = Mockito.mock(DemographicService.class);
-		Mockito.doNothing().when(demographicService).statusCheck(Mockito.isA(DemographicEntity.class),
-				Mockito.isA(String.class), Mockito.isA(String.class));
-		demographicService.statusCheck(demographicEntity, status, userId);
-
-		Mockito.verify(demographicService, Mockito.times(1)).statusCheck(demographicEntity, status, userId);
-
 	}
 
 	@Test(expected = RecordFailedToUpdateException.class)
