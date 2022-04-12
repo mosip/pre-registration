@@ -18,8 +18,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -133,6 +135,9 @@ public class LoginServiceTest {
 
 	@Value("${prereg.auth.jwt.secret}")
 	private String jwtSecret;
+	
+	@Mock
+    private Environment env;
 
 	MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request = new MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken>();
 
@@ -153,6 +158,7 @@ public class LoginServiceTest {
 		ReflectionTestUtils.setField(authService, "jwtTokenExpiryTime", "1800");
 		ReflectionTestUtils.setField(authService, "jwtAudience", "adad");
 		ReflectionTestUtils.setField(authService, "jwtSecret", "Azcds");
+		ReflectionTestUtils.setField(authService, "uiConfigParams", "test1,test2");
 
 	}
 
@@ -200,16 +206,11 @@ public class LoginServiceTest {
 
 	@Test
 	public void getConfigSuccessTest() throws Exception {
-		//Properties prop = new Properties();
-		//ResponseEntity<String> res = new ResponseEntity<String>("mosip.secondary-language=fra", HttpStatus.OK);
 		Map<String, String> configParams = new HashMap<>();
 		configParams.put("mosip.mandatory-languages", "eng");
 		MainResponseDTO<Map<String, String>> response = new MainResponseDTO<>();
-		// Mockito.when(restTemplate.getForEntity(Mockito.anyString(),
-		// Mockito.eq(String.class))).thenReturn(res);
 		response = authService.getConfig();
 		assertNotNull(response.getResponse());
-		//assertEquals(response.getResponse().get("mosip.mandatory-languages"), "eng");
 	}
 
 	@Test
