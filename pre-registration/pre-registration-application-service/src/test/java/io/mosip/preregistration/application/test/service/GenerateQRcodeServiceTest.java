@@ -137,4 +137,9 @@ assertTrue(Arrays.equals(qrCodeResponseDTO.getResponse().getQrcode(), response.g
 		service.generateQRCode(null);
 
 	}
+	
+	@Test
+	public void setupBookingServiceTest() {
+		service.setupBookingService();;
+	}
 }
