@@ -26,6 +26,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import io.mosip.commons.khazana.exception.ObjectStoreAdapterException;
 import io.mosip.commons.khazana.spi.ObjectStoreAdapter;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -405,13 +406,15 @@ public class DocumentService implements DocumentServiceIntf {
 		if (copyDocumentEntity != null) {
 			destinationBucketName = copyDocumentEntity.getDemographicEntity().getPreRegistrationId();
 			destinationKey = copyDocumentEntity.getDocCatCode() + "_" + copyDocumentEntity.getDocumentId();
-			InputStream sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, null, null,
-					sourceKey);
-			// for backward compatibility(by force sending 'object.store.s3.use.account.as.bucketname' as false)
-			if(sourcefile == null) {
+			InputStream sourcefile = null;
+			try {
 				sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, null, null,
-						sourceKey, false);
-			}
+					sourceKey);
+			}catch (Exception e) {
+				// for backward compatibility(by force sending 'object.store.s3.use.account.as.bucketname' as false)
+				sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, null, null, sourceKey,
+						false);
+			}			
 			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, destinationBucketName, null, null,
 					destinationKey, sourcefile);
 			if (!isStoreSuccess) {
@@ -504,12 +507,21 @@ public class DocumentService implements DocumentServiceIntf {
 							DocumentErrorMessages.INVALID_DOCUMENT_ID.getMessage());
 				}
 				String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
-				InputStream sourcefile = objectStore.getObject(objectStoreAccountName,
-						documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
-				if (sourcefile == null) {
-					// for backward compatibility(by force sending 'object.store.s3.use.account.as.bucketname' as false)
+				InputStream sourcefile = null;
+				try {
 					sourcefile = objectStore.getObject(objectStoreAccountName,
-							documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key, false);
+							documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+				} catch (Exception e) {
+					if (e instanceof ObjectStoreAdapterException) {
+						// for backward compatibility(by force sending
+						// 'object.store.s3.use.account.as.bucketname' as false)
+						sourcefile = objectStore.getObject(objectStoreAccountName,
+								documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key, false);
+					}else {
+						new DocumentExceptionCatcher().handle(e, responseDto);
+					}
+				}
+				if (sourcefile == null) {					
 					if (sourcefile == null) {
 						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_005.toString(),
 								DocumentErrorMessages.DOCUMENT_FAILED_TO_FETCH.getMessage());
