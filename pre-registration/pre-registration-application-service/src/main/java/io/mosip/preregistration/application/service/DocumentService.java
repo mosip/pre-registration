@@ -407,6 +407,11 @@ public class DocumentService implements DocumentServiceIntf {
 			destinationKey = copyDocumentEntity.getDocCatCode() + "_" + copyDocumentEntity.getDocumentId();
 			InputStream sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, null, null,
 					sourceKey);
+			// for backward compatibility(by force sending 'object.store.s3.use.account.as.bucketname' as false)
+			if(sourcefile == null) {
+				sourcefile = objectStore.getObject(objectStoreAccountName, sourceBucketName, null, null,
+						sourceKey, false);
+			}
 			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName, destinationBucketName, null, null,
 					destinationKey, sourcefile);
 			if (!isStoreSuccess) {
@@ -502,8 +507,13 @@ public class DocumentService implements DocumentServiceIntf {
 				InputStream sourcefile = objectStore.getObject(objectStoreAccountName,
 						documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
 				if (sourcefile == null) {
-					throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_005.toString(),
-							DocumentErrorMessages.DOCUMENT_FAILED_TO_FETCH.getMessage());
+					// for backward compatibility(by force sending 'object.store.s3.use.account.as.bucketname' as false)
+					sourcefile = objectStore.getObject(objectStoreAccountName,
+							documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key, false);
+					if (sourcefile == null) {
+						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_005.toString(),
+								DocumentErrorMessages.DOCUMENT_FAILED_TO_FETCH.getMessage());
+					}
 				}
 				byte[] cephBytes = IOUtils.toByteArray(sourcefile);
 				if (documentEntity.getDocHash().equals(HashUtill.hashUtill(cephBytes))) {
