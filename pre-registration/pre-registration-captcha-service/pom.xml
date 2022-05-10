@@ -6,11 +6,11 @@
 <parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.1.5.2</version>
+		<version>1.1.5.3</version>
 	</parent>
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
-	<version>1.1.5.2</version>
+	<version>1.1.5.3</version>
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
 
@@ -18,7 +18,7 @@
 		<java.version>11</java.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
-		<pre.registration.core.version>1.1.5.2</pre.registration.core.version>
+		<pre.registration.core.version>1.1.5.3</pre.registration.core.version>
 	</properties>
 
 	<dependencyManagement>
