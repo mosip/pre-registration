@@ -265,8 +265,16 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDemographicEntity(demographicEntity);
 		copyDocumentEntity.setDocId(sourceEntity.getDocId());
 		String key = sourceEntity.getDocCatCode() + "_" + sourceEntity.getDocumentId();
-		InputStream file = objectStore.getObject(objectStoreAccountName,
-				sourceEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+		InputStream file = null;
+		try {
+			file = objectStore.getObject(objectStoreAccountName,
+					sourceEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+		} catch (Exception e) {
+			// for backward compatibility(by force sending
+			// 'object.store.s3.use.account.as.bucketname' as false)
+			file = objectStore.getObject(objectStoreAccountName,
+					sourceEntity.getDemographicEntity().getPreRegistrationId(), null, null, key, false);
+		}
 		copyDocumentEntity.setDocHash(HashUtill.hashUtill(IOUtils.toByteArray(file)));
 		copyDocumentEntity.setDocName(sourceEntity.getDocName());
 		copyDocumentEntity.setDocTypeCode(sourceEntity.getDocTypeCode());
