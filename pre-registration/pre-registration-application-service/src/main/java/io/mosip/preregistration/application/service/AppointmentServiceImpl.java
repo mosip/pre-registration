@@ -382,8 +382,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 			applicationEntity.setSlotToTime(null);
 			applicationEntity.setRegistrationCenterId(null);
 			if ((applicationEntity.getBookingType().equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
-					|| applicationEntity.getBookingType()
-							.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString()))
+					|| applicationEntity.getBookingType().equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())
+							|| applicationEntity.getBookingType().contains(BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString()))
 					&& newStatus != null) {
 				applicationEntity.setBookingStatusCode(newStatus);
 			}
@@ -396,8 +396,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 					LocalTime.parse(bookingInfo.getSlotToTime(), DateTimeFormatter.ofPattern("H:mm:ss")));
 			applicationEntity.setRegistrationCenterId(bookingInfo.getRegistrationCenterId());
 			if ((applicationEntity.getBookingType().equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
-					|| applicationEntity.getBookingType()
-							.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString()))
+					|| applicationEntity.getBookingType().equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())
+							|| applicationEntity.getBookingType().contains(BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString()))
 					&& newStatus != null) {
 				applicationEntity.setBookingStatusCode(newStatus);
 			}

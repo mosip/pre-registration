@@ -98,6 +98,12 @@ public class ApplicationService implements ApplicationServiceIntf {
 	 */
 	@Value("${mosip.id.preregistration.updateregistration.delete}")
 	private String updateRegistrationDeleteId;
+	
+	/**
+	 * Reference for ${miscellaneousPurposeDeleteId} from property file
+	 */
+	@Value("${mosip.id.preregistration.miscellaneouspurpose.delete}")
+	private String miscellaneousPurposeDeleteId;
 
 	/**
 	 * Autowired reference for {@link #DemographicServiceUtil}
@@ -269,7 +275,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	/**
 	 * This method is used to create the a new application with booking type as
-	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN or MISCELLANEOUS_PURPOSE
 	 * 
 	 * @param request
 	 * @param bookingType
@@ -277,9 +283,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 	 */
 	@SuppressWarnings({ "unchecked" })
 	@Override
-	public MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateApplication(
+	public MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateOrMiscellaneousApplication(
 			MainRequestDTO<ApplicationRequestDTO> request, String bookingType) {
-		log.info("sessionId", "idType", "id", "In addLostOrUpdateApplication method of pre-registration service ");
+		log.info("sessionId", "idType", "id", "In addLostOrUpdateOrMiscellaneousApplication method of pre-registration service ");
 		log.info("sessionId", "idType", "id",
 				"Add Application start time : " + DateUtils.getUTCCurrentDateTimeString());
 		MainResponseDTO<ApplicationResponseDTO> mainResponseDTO = null;
@@ -312,13 +318,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 		} catch (HttpServerErrorException | HttpClientErrorException e) {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
 			log.error("sessionId", "idType", "id",
-					"In pre-registration service of addLostOrUpdateApplication - " + e.getResponseBodyAsString());
+					"In pre-registration service of addLostOrUpdateOrMiscellaneousApplication - " + e.getResponseBodyAsString());
 			List<ServiceError> errorList = ExceptionUtils.getServiceErrorList(e.getResponseBodyAsString());
 			new DemographicExceptionCatcher().handle(new DemographicServiceException(errorList, null), mainResponseDTO);
 		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
-					"In pre-registration service of addLostOrUpdateApplication- " + ex.getMessage());
+					"In pre-registration service of addLostOrUpdateOrMiscellaneousApplication- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, mainResponseDTO);
 		} finally {
 			if (isSuccess) {
@@ -363,16 +369,16 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	/**
 	 * This method is used to delete the application with booking type as
-	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN or MISCELLANEOUS_PURPOSE
 	 * 
 	 * @param applicationId
-	 * @param bookingType   UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
+	 * @param bookingType   UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN or MISCELLANEOUS_PURPOSE
 	 * @return MainResponseDTO<DeleteApplicationDTO>
 	 */
 	@Override
-	public MainResponseDTO<DeleteApplicationDTO> deleteLostOrUpdateApplication(String applicationId,
+	public MainResponseDTO<DeleteApplicationDTO> deleteLostOrUpdateOrMiscellaneousApplication(String applicationId,
 			String bookingType) {
-		log.info("sessionId", "idType", "id", "In deleteLostOrUpdateApplication method of pre-registration service ");
+		log.info("sessionId", "idType", "id", "In deleteLostOrUpdateOrMiscellaneousApplication method of pre-registration service ");
 		MainResponseDTO<DeleteApplicationDTO> response = new MainResponseDTO<>();
 		DeleteApplicationDTO deleteDto = new DeleteApplicationDTO();
 		Map<String, String> requestParamMap = new HashMap<>();
@@ -383,13 +389,17 @@ public class ApplicationService implements ApplicationServiceIntf {
 		if (bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
 			response.setId(updateRegistrationDeleteId);
 		}
+		if (bookingType.equals(BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString())) {
+			response.setId(miscellaneousPurposeDeleteId);
+		}
 		response.setVersion(version);
 		try {
 			requestParamMap.put(RequestCodes.APPLICATION_ID.getCode(), applicationId);
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				ApplicationEntity applicationEntity = serviceUtil.findApplicationById(applicationId);
 				if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
-						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
+						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())
+						|| bookingType.equals(BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString())) {
 					//userValidation(applicationEntity);
 					if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
 						throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
@@ -416,7 +426,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
-					"In pre-registration deleteLostOrUpdateApplication service- " + ex.getMessage());
+					"In pre-registration deleteLostOrUpdateOrMiscellaneousApplication service- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
 		} finally {
 			response.setResponsetime(serviceUtil.getCurrentResponseTime());
@@ -545,7 +555,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 		try {
 			if (!type.equalsIgnoreCase(BookingTypeCodes.NEW_PREREGISTRATION.toString())
 					&& !type.equalsIgnoreCase(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
-					&& !type.equalsIgnoreCase(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
+					&& !type.equalsIgnoreCase(BookingTypeCodes.UPDATE_REGISTRATION.toString())
+					&& !type.equalsIgnoreCase(BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString())) {
 				throw new InvalidPreRegistrationIdException(ApplicationErrorCodes.PRG_APP_016.getCode(),
 						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
 
