@@ -284,7 +284,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 	@SuppressWarnings({ "unchecked" })
 	@Override
 	public MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateOrMiscellaneousApplication(
-			MainRequestDTO<ApplicationRequestDTO> request, String bookingType) {
+			MainRequestDTO<? extends ApplicationRequestDTO> request, String bookingType) {
 		log.info("sessionId", "idType", "id", "In addLostOrUpdateOrMiscellaneousApplication method of pre-registration service ");
 		log.info("sessionId", "idType", "id",
 				"Add Application start time : " + DateUtils.getUTCCurrentDateTimeString());

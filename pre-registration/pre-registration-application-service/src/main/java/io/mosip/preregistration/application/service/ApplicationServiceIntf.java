@@ -67,7 +67,7 @@ public interface ApplicationServiceIntf {
 	 * @param bookingType
 	 * @return MainResponseDTO<ApplicationResponseDTO>
 	 */
-	MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateOrMiscellaneousApplication(MainRequestDTO<ApplicationRequestDTO> request,
+	MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateOrMiscellaneousApplication(MainRequestDTO<? extends ApplicationRequestDTO> request,
 			String bookingType);
 
 	/**

@@ -13,13 +13,12 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.application.dto.ApplicationRequestDTO;
 import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
 import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
+import io.mosip.preregistration.application.dto.MiscApplicationRequestDTO;
 import io.mosip.preregistration.application.service.ApplicationServiceIntf;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -70,7 +69,6 @@ public class MiscellaneousAppointmentController {
 	 * MISCELLANEOUS_PURPOSE
 	 * 
 	 * @param jsonObject
-	 * @param purpose
 	 * @param errors
 	 * @return List of response dto containing pre-id and group-id
 	 */
@@ -84,11 +82,13 @@ public class MiscellaneousAppointmentController {
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> addMiscellaneousPurposeApplication(
-			@Validated @RequestBody(required = true) MainRequestDTO<ApplicationRequestDTO> jsonObject,
-			@RequestParam("purpose") String purpose, @ApiIgnore Errors errors) {
+			@Validated @RequestBody(required = true) MainRequestDTO<MiscApplicationRequestDTO> jsonObject,
+			@ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration MiscellaneousAppointmentController for createNewApplication with json object"
 						+ jsonObject);
+		String purpose = jsonObject.getRequest().getPurpose();
+		requestValidator.validatePurpose(purpose, errors);
 		requestValidator.validateId(MISCELLANEOUS_PURPOSE_CREATE_ID, jsonObject.getId(), errors);
 		DataValidationUtil.validate(errors, MISCELLANEOUS_PURPOSE_CREATE_ID);
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateOrMiscellaneousApplication(
