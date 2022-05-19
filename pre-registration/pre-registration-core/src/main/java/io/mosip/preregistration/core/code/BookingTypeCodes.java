@@ -6,7 +6,9 @@ public enum BookingTypeCodes {
 
 	UPDATE_REGISTRATION("UPDATE_REGISTRATION"),
 
-	LOST_FORGOTTEN_UIN("LOST_FORGOTTEN_UIN");
+	LOST_FORGOTTEN_UIN("LOST_FORGOTTEN_UIN"),
+
+	MISCELLANEOUS_PURPOSE("MISCELLANEOUS_PURPOSE");
 
 	BookingTypeCodes(String bookingTypeCode) {
 		this.bookingTypeCode = bookingTypeCode;

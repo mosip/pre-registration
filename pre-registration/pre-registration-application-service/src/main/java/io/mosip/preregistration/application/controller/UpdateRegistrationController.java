@@ -84,7 +84,7 @@ public class UpdateRegistrationController {
 						+ jsonObject);
 		requestValidator.validateId(UPDATE_REGISTRATION_CREATE_ID, jsonObject.getId(), errors);
 		DataValidationUtil.validate(errors, UPDATE_REGISTRATION_CREATE_ID);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateApplication(jsonObject,
+		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateOrMiscellaneousApplication(jsonObject,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString()));
 	}
 
@@ -105,9 +105,9 @@ public class UpdateRegistrationController {
 	public ResponseEntity<MainResponseDTO<DeleteApplicationDTO>> deleteUpdateRegistration(
 			@PathVariable("applicationId") String applicationId) {
 		log.info("sessionId", "idType", "id",
-				"In pre-registration LostUINController for deleteApplication with preId " + applicationId);
+				"In pre-registration UpdateRegistrationController for deleteApplication with preId " + applicationId);
 
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.deleteLostOrUpdateApplication(applicationId,
+		return ResponseEntity.status(HttpStatus.OK).body(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString()));
 	}
 

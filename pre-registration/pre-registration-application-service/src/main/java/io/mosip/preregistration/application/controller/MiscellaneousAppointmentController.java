@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -34,14 +35,20 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import springfox.documentation.annotations.ApiIgnore;
 
+/**
+ * Pre-registration miscellaneous purpose controller class.
+ * 
+ * @author Ritik Jain
+ */
 @RestController
-@Tag(name = "lost-uin-controller", description = "Lost UIN Controller")
+@Tag(name = "miscellaneous-appointment-controller", description = "Miscellaneous Appointment Controller")
+public class MiscellaneousAppointmentController {
 
-public class LostUINController {
-	private Logger log = LoggerConfiguration.logConfig(LostUINController.class);
+	private Logger log = LoggerConfiguration.logConfig(MiscellaneousAppointmentController.class);
 
-	/** The Constant CREATE_LOST_FORGOTTEN_UIN application. */
-	private static final String LOST_UIN_CREATE_ID = "preregistration.lostuin.create";
+	/** The Constant CREATE_MISCELLANEOUS_PURPOSE application. */
+	private static final String MISCELLANEOUS_PURPOSE_CREATE_ID = "preregistration.miscellaneouspurpose.create";
+
 	@Autowired
 	private RequestValidator requestValidator;
 
@@ -60,51 +67,56 @@ public class LostUINController {
 
 	/**
 	 * This Post API is use to create a new application with booking type as
-	 * LOST_FORGOTTEN_UIN.
-	 *
-	 * @param jsonObject the json object
-	 * @param errors     Errors
+	 * MISCELLANEOUS_PURPOSE
+	 * 
+	 * @param jsonObject
+	 * @param purpose
+	 * @param errors
 	 * @return List of response dto containing pre-id and group-id
 	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostapplications())")
-	@PostMapping(path = "/applications/lostuin", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "addLostUinApplication", description = "Creates a new application with Booking Type as LOST_FORGOTTEN_UIN", tags = "lost-uin-controller")
+	@PostMapping(path = "/applications/miscpurpose", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "addMiscellaneousPurposeApplication", description = "Creates a new application with Booking Type as MISCELLANEOUS_PURPOSE", tags = "miscellaneous-appointment-controller")
 	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "New application with booking type as LOST_FORGOTTEN_UIN successfully Created"),
+			@ApiResponse(responseCode = "200", description = "New application with booking type as MISCELLANEOUS_PURPOSE successfully Created"),
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> addLostUinApplication(
+	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> addMiscellaneousPurposeApplication(
 			@Validated @RequestBody(required = true) MainRequestDTO<ApplicationRequestDTO> jsonObject,
-			@ApiIgnore Errors errors) {
+			@RequestParam("purpose") String purpose, @ApiIgnore Errors errors) {
 		log.info("sessionId", "idType", "id",
-				"In pre-registration LostUINController for createNewApplication with json object" + jsonObject);
-		requestValidator.validateId(LOST_UIN_CREATE_ID, jsonObject.getId(), errors);
-		DataValidationUtil.validate(errors, LOST_UIN_CREATE_ID);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateOrMiscellaneousApplication(jsonObject,
-				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
+				"In pre-registration MiscellaneousAppointmentController for createNewApplication with json object"
+						+ jsonObject);
+		requestValidator.validateId(MISCELLANEOUS_PURPOSE_CREATE_ID, jsonObject.getId(), errors);
+		DataValidationUtil.validate(errors, MISCELLANEOUS_PURPOSE_CREATE_ID);
+		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateOrMiscellaneousApplication(
+				jsonObject, BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString() + "-" + purpose));
 	}
 
 	/**
 	 * This method is used to delete the application with booking type as
-	 * LOST_FORGOTTEN_UIN
+	 * MISCELLANEOUS_PURPOSE
 	 * 
-	 * @param applicationId the applicationId
+	 * @param applicationId
 	 * @return the deletion status of application for a applicationId
 	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getDeleteapplications())")
-	@DeleteMapping(path = "/applications/lostuin/{applicationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "deleteLostUinApplication", description = "Delete application with booking type LOST_FORGOTTEN_UIN.", tags = "lost-uin-controller")
-	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Deletion of application is successfully"),
+	@DeleteMapping(path = "/applications/miscpurpose/{applicationId}", produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "deleteMiscellaneousPurposeApplication", description = "Delete application with booking type MISCELLANEOUS_PURPOSE.", tags = "miscellaneous-appointment-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Deletion of application is successful"),
 			@ApiResponse(responseCode = "204", description = "No Content"),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))), })
-	public ResponseEntity<MainResponseDTO<DeleteApplicationDTO>> deleteLostUinApplication(
+	public ResponseEntity<MainResponseDTO<DeleteApplicationDTO>> deleteMiscellaneousPurposeApplication(
 			@PathVariable("applicationId") String applicationId) {
 		log.info("sessionId", "idType", "id",
-				"In pre-registration LostUINController for deleteApplication with preId " + applicationId);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId,
-				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
+				"In pre-registration MiscellaneousAppointmentController for deleteApplication with preId "
+						+ applicationId);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId,
+						BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString()));
 	}
+
 }
