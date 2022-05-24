@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -21,10 +22,15 @@ public class RequestValidator extends BaseValidator implements Validator {
 
 	/** The Constant REQUEST. */
 	private static final String ID = "id";
-	
 
 	/** The Constant REQUEST. */
 	private static final String BOOKING_TYPE = "bookingType";
+
+	/** The Constant REQUEST. */
+	private static final String PURPOSE = "purpose";
+
+	@Value("${mosip.preregistration.miscellaneouspurpose.length}")
+	private int miscPurposeLength;
 
 	/**
 	 * Logger configuration for BaseValidator
@@ -69,7 +75,7 @@ public class RequestValidator extends BaseValidator implements Validator {
 					String.format(ErrorMessages.INVALID_REQUEST_ID.getMessage(), ID));
 		}
 	}
-	
+
 	public void validateBookingType(String bookingType, Errors errors) {
 		if (Objects.nonNull(bookingType)) {
 			List<BookingTypeCodes> bookingTypes = Arrays.asList(BookingTypeCodes.values());
@@ -91,5 +97,18 @@ public class RequestValidator extends BaseValidator implements Validator {
 		}
 	}
 
+	public void validatePurpose(String purpose, Errors errors) {
+		if (purpose == null) {
+			mosipLogger.error("", "", "validatePurpose", "\n" + "purpose is null");
+			errors.rejectValue(ID, ErrorCodes.PRG_CORE_REQ_024.getCode(),
+					String.format(ErrorMessages.INVALID_PURPOSE.getMessage(), PURPOSE));
+		} else {
+			if (purpose.length() > miscPurposeLength) {
+				mosipLogger.error("", "", "validatePurpose", "\n" + "purpose length is greater than 200 words");
+				errors.rejectValue(ID, ErrorCodes.PRG_CORE_REQ_025.getCode(),
+						String.format(ErrorMessages.INVALID_PURPOSE_LENGTH.getMessage(), PURPOSE));
+			}
+		}
+	}
 
 }

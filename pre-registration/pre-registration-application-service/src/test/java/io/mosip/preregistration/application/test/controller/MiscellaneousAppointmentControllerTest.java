@@ -26,10 +26,10 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import io.mosip.preregistration.application.controller.LostUINController;
-import io.mosip.preregistration.application.dto.ApplicationRequestDTO;
+import io.mosip.preregistration.application.controller.MiscellaneousAppointmentController;
 import io.mosip.preregistration.application.dto.ApplicationResponseDTO;
 import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
+import io.mosip.preregistration.application.dto.MiscApplicationRequestDTO;
 import io.mosip.preregistration.application.service.ApplicationServiceIntf;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -37,10 +37,10 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@WebMvcTest(controllers = LostUINController.class)
-@Import(LostUINController.class)
+@WebMvcTest(controllers = MiscellaneousAppointmentController.class)
+@Import(MiscellaneousAppointmentController.class)
 @WithMockUser(username = "individual", authorities = { "INDIVIDUAL", "REGISTRATION_OFFICER" })
-public class LostUINControllerTest {
+public class MiscellaneousAppointmentControllerTest {
 
 	@MockBean
 	ApplicationServiceIntf applicationService;
@@ -52,71 +52,68 @@ public class LostUINControllerTest {
 	private WebApplicationContext webApplicationContext;
 
 	@Mock
-	private LostUINController lostuinController;
+	private MiscellaneousAppointmentController miscellaneousAppointmentController;
 
 	@Autowired
 	private MockMvc mockmvc;
 
-	@Value("${mosip.id.preregistration.lostuin.create}")
+	@Value("${mosip.id.preregistration.miscellaneouspurpose.create}")
 	private String createId;
 
-	@Value("${mosip.id.preregistration.lostuin.delete}")
+	@Value("${mosip.id.preregistration.miscellaneouspurpose.delete}")
 	private String deleteId;
 
 	@Before
-	public void setup() {
+	public void setUp() throws Exception {
 		mockmvc = MockMvcBuilders.webAppContextSetup(webApplicationContext).build();
 	}
 
-	/**
-	 * Test init binder.
-	 */
 	@Test
 	public void testInitBinder() {
-		lostuinController.initBinder(Mockito.mock(WebDataBinder.class));
+		miscellaneousAppointmentController.initBinder(Mockito.mock(WebDataBinder.class));
 	}
 
-
 	@Test
-	public void addLostUinApplicationTest() throws Exception {
-		
+	public void testAddMiscellaneousPurposeApplication() throws Exception {
 		Mockito.when(requestValidator.supports(Mockito.any())).thenReturn(true);
-		
+
 		MainResponseDTO<ApplicationResponseDTO> mainResponseDto = new MainResponseDTO<ApplicationResponseDTO>();
 		ApplicationResponseDTO applicationDto = new ApplicationResponseDTO();
-		MainRequestDTO<ApplicationRequestDTO> mainRequestDto = new MainRequestDTO<ApplicationRequestDTO>();
-		ApplicationRequestDTO applicationRequestDto = new ApplicationRequestDTO();
+		MainRequestDTO<MiscApplicationRequestDTO> mainRequestDto = new MainRequestDTO<MiscApplicationRequestDTO>();
+		MiscApplicationRequestDTO miscApplicationRequestDto = new MiscApplicationRequestDTO();
 
-		applicationRequestDto.setLangCode("eng");
+		miscApplicationRequestDto.setPurpose("having some queries");
+		miscApplicationRequestDto.setLangCode("eng");
 		mainRequestDto.setVersion("1.0");
 		mainRequestDto.setId(createId);
-		mainRequestDto.setRequest(applicationRequestDto);
+		mainRequestDto.setRequest(miscApplicationRequestDto);
 		mainRequestDto.setRequesttime(new Date());
 
 		applicationDto.setApplicationId("123456789");
 		applicationDto.setApplicationStatusCode("SUBMITTED");
 		applicationDto.setBookingStatusCode("Pending_Appointment");
-		applicationDto.setBookingType("LOST_FORGOTTEN_UIN");
+		applicationDto.setBookingType("MISCELLANEOUS_PURPOSE-having some queries");
 		mainResponseDto.setResponse(applicationDto);
 		mainResponseDto.setId(createId);
 		mainResponseDto.setResponsetime(DateTime.now().toString());
 		Mockito.when(applicationService.addLostOrUpdateOrMiscellaneousApplication(Mockito.any(), Mockito.any()))
 				.thenReturn(mainResponseDto);
-		String uri = "/applications/lostuin";
-		 mockmvc
-				.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
-						.content(asJsonString(mainRequestDto)).accept(MediaType.APPLICATION_JSON_VALUE))
+		String uri = "/applications/miscpurpose";
+		mockmvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+				.content(asJsonString(mainRequestDto)).accept(MediaType.APPLICATION_JSON_VALUE))
 				.andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
 	@Test
-	public void deleteLostUinApplicationTest() throws Exception {
+	public void testDeleteMiscellaneousPurposeApplication() throws Exception {
 		String applicationId = "123456789";
-		String bookingType = BookingTypeCodes.LOST_FORGOTTEN_UIN.toString();
+		String bookingType = BookingTypeCodes.MISCELLANEOUS_PURPOSE.toString();
 		MainResponseDTO<DeleteApplicationDTO> response = new MainResponseDTO<DeleteApplicationDTO>();
 		response.setId(deleteId);
-		Mockito.when(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId, bookingType)).thenReturn(response);
-		RequestBuilder request = MockMvcRequestBuilders.delete("/applications/lostuin/{applicationId}", applicationId)
+		Mockito.when(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId, bookingType))
+				.thenReturn(response);
+		RequestBuilder request = MockMvcRequestBuilders
+				.delete("/applications/miscpurpose/{applicationId}", applicationId)
 				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
