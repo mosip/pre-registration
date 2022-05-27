@@ -301,6 +301,11 @@ public class NotificationService {
 							"In notification service of sendNotification failed to send Email and sms request ");
 				}
 			} else {
+				KeyValuePairDto langaueNamePair = null;
+				langaueNamePair = new KeyValuePairDto();
+				langaueNamePair.setKey(notificationDto.getLanguageCode());
+				langaueNamePair.setValue(notificationDto.getName());
+				langaueNamePairs.add(langaueNamePair);
 				notificationDto.setFullName(langaueNamePairs);
 				if (notificationDto.getEmailID() != null) {
 					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
