@@ -53,6 +53,7 @@ import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -64,6 +65,7 @@ import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.NotificationUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
@@ -96,6 +98,9 @@ public class NotificationServiceTest {
 
 	@Mock
 	private DemographicServiceIntf demographicServiceIntf;
+	
+	@Mock
+	private ApplicationServiceIntf applicationServiceIntf;
 
 	@Mock
 	private NotificationServiceUtil notificationServiceUtil;
@@ -157,7 +162,8 @@ public class NotificationServiceTest {
 	private AuditLogUtil auditLogUtil;
 	MainResponseDTO<BookingRegistrationDTO> bookingResultDto = new MainResponseDTO<>();
 	MainResponseDTO<DemographicResponseDTO> demographicdto = new MainResponseDTO<>();
-
+	MainResponseDTO<ApplicationEntity> appEntity = new MainResponseDTO<>();
+	
 	@Before
 	public void beforeSet()
 			throws ParseException, FileNotFoundException, java.io.IOException, org.json.simple.parser.ParseException {
@@ -236,6 +242,11 @@ public class NotificationServiceTest {
 		demo.setDemographicDetails(demoDetailsData);
 		demographicdto.setResponse(demo);
 
+		ApplicationEntity appEntityResp = new ApplicationEntity();
+		appEntityResp.setApplicationId("20180396713560");
+		appEntityResp.setBookingType(BookingTypeCodes.NEW_PREREGISTRATION.toString());
+		appEntity.setResponse(appEntityResp);
+		
 	}
 
 	/**
@@ -254,6 +265,7 @@ public class NotificationServiceTest {
 //		String stringjson = mapper.writeValueAsString(mainReqDto);
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -309,10 +321,11 @@ public class NotificationServiceTest {
 		notificationDTO.setAdditionalRecipient(false);
 		notificationDTO.setIsBatch(false);
 		notificationDTO.setLanguageCode("eng");
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(preId)).thenReturn(bookingResultDto);
 		MainResponseDTO<DemographicResponseDTO> response = notificationService
-				.notificationDtoValidation(notificationDTO);
+				.notificationDtoValidation(BookingTypeCodes.NEW_PREREGISTRATION.toString(), notificationDTO);
 		assertEquals(preId, response.getResponse().getPreRegistrationId());
 	}
 
@@ -327,9 +340,10 @@ public class NotificationServiceTest {
 		notificationDTO.setEmailID("test@gmail.com");
 		notificationDTO.setAppointmentTime("09:30 AM");
 		notificationDTO.setIsBatch(false);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(preId)).thenReturn(bookingResultDto);
-		notificationService.notificationDtoValidation(notificationDTO);
+		notificationService.notificationDtoValidation(BookingTypeCodes.NEW_PREREGISTRATION.toString(), notificationDTO);
 	}
 
 	@Test(expected = MandatoryFieldException.class)
@@ -345,9 +359,10 @@ public class NotificationServiceTest {
 		notificationDTO.setAppointmentTime("09:30 AM");
 		notificationDTO.setAdditionalRecipient(false);
 		notificationDTO.setIsBatch(false);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(preId)).thenReturn(bookingResultDto);
-		notificationService.notificationDtoValidation(notificationDTO);
+		notificationService.notificationDtoValidation(BookingTypeCodes.NEW_PREREGISTRATION.toString(), notificationDTO);
 	}
 
 	@Test(expected = MandatoryFieldException.class)
@@ -362,9 +377,10 @@ public class NotificationServiceTest {
 		notificationDTO.setAppointmentDate("2019-01-22");
 		notificationDTO.setAdditionalRecipient(false);
 		notificationDTO.setIsBatch(false);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(preId)).thenReturn(bookingResultDto);
-		notificationService.notificationDtoValidation(notificationDTO);
+		notificationService.notificationDtoValidation(BookingTypeCodes.NEW_PREREGISTRATION.toString(), notificationDTO);
 	}
 
 	@Test(expected = MandatoryFieldException.class)
@@ -380,9 +396,10 @@ public class NotificationServiceTest {
 		notificationDTO.setAppointmentTime("09:00 AM");
 		notificationDTO.setAdditionalRecipient(false);
 		notificationDTO.setIsBatch(false);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(preId)).thenReturn(bookingResultDto);
-		notificationService.notificationDtoValidation(notificationDTO);
+		notificationService.notificationDtoValidation(BookingTypeCodes.NEW_PREREGISTRATION.toString(), notificationDTO);
 	}
 
 	@Test
@@ -414,6 +431,7 @@ public class NotificationServiceTest {
 
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 		String stringjson = null;
@@ -463,6 +481,7 @@ public class NotificationServiceTest {
 
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 		String stringjson = null;
@@ -510,6 +529,7 @@ public class NotificationServiceTest {
 
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 		String stringjson = null;
@@ -559,6 +579,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -601,6 +622,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -643,6 +665,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
@@ -685,6 +708,7 @@ public class NotificationServiceTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
 		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
 
