@@ -39,6 +39,7 @@ import io.mosip.preregistration.application.exception.RestCallException;
 import io.mosip.preregistration.application.exception.util.NotificationExceptionCatcher;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.code.EventId;
 import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
@@ -49,6 +50,7 @@ import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.NotificationUtil;
@@ -79,7 +81,10 @@ public class NotificationService {
 
 	@Autowired
 	private DemographicServiceIntf demographicServiceIntf;
-
+	
+	@Autowired
+	private ApplicationServiceIntf applicationServiceIntf;
+	
 	/**
 	 * Reference for ${appointmentResourse.url} from property file
 	 */
@@ -177,7 +182,9 @@ public class NotificationService {
 			NotificationDTO notificationDto = notificationReqDTO.getRequest();
 			if (validationUtil.requestValidator(validationUtil.prepareRequestMap(notificationReqDTO),
 					requiredRequestMap)) {
-				MainResponseDTO<DemographicResponseDTO> demoDetail = notificationDtoValidation(notificationDto);
+				MainResponseDTO<ApplicationEntity> appEntity = applicationServiceIntf.getApplicationInfo(notificationDto.getPreRegistrationId());
+				String bookingType = appEntity.getResponse().getBookingType();
+				MainResponseDTO<DemographicResponseDTO> demoDetail = notificationDtoValidation(bookingType, notificationDto);
 				if (notificationDto.isAdditionalRecipient()) {
 					log.info("sessionId", "idType", "id",
 							"In notification service of sendNotification if additionalRecipient is"
@@ -212,7 +219,7 @@ public class NotificationService {
 					log.info("sessionId", "idType", "id",
 							"In notification service of sendNotification if additionalRecipient is"
 									+ notificationDto.isAdditionalRecipient());
-					resp = getDemographicDetailsWithPreId(demoDetail, notificationDto, langCode, file);
+					resp = getDemographicDetailsWithPreId(bookingType, demoDetail, notificationDto, langCode, file);
 					notificationResponse.setMessage(resp);
 				}
 			}
@@ -253,45 +260,58 @@ public class NotificationService {
 	 * @return
 	 * @throws IOException
 	 */
-	private String getDemographicDetailsWithPreId(MainResponseDTO<DemographicResponseDTO> responseEntity,
+	private String getDemographicDetailsWithPreId(String bookingType, MainResponseDTO<DemographicResponseDTO> responseEntity,
 			NotificationDTO notificationDto, String langCode, MultipartFile file) throws IOException {
 		try {
-			ObjectMapper objectMapper = new ObjectMapper();
-			objectMapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
-			objectMapper.registerModule(new JavaTimeModule());
-		
-			JsonNode responseNode = objectMapper
-					.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
-
-			responseNode = responseNode.get(identity);
-			
-			JsonNode arrayNode = responseNode.get(fullName);
 			List<KeyValuePairDto<String,String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String,String>>();
-			KeyValuePairDto langaueNamePair = null;
-			if (arrayNode.isArray()) {
-				for (JsonNode jsonNode : arrayNode) {
-					langaueNamePair = new KeyValuePairDto();
-					langaueNamePair.setKey(jsonNode.get("language").asText().trim());
-					langaueNamePair.setValue(jsonNode.get("value").asText().trim());
-					langaueNamePairs.add(langaueNamePair);
+			if (BookingTypeCodes.NEW_PREREGISTRATION.toString().equals(bookingType)) {
+				ObjectMapper objectMapper = new ObjectMapper();
+				objectMapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+				objectMapper.registerModule(new JavaTimeModule());
+
+				JsonNode responseNode = objectMapper
+						.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
+	
+				responseNode = responseNode.get(identity);
+				
+				JsonNode arrayNode = responseNode.get(fullName);
+				KeyValuePairDto langaueNamePair = null;
+				if (arrayNode.isArray()) {
+					for (JsonNode jsonNode : arrayNode) {
+						langaueNamePair = new KeyValuePairDto();
+						langaueNamePair.setKey(jsonNode.get("language").asText().trim());
+						langaueNamePair.setValue(jsonNode.get("value").asText().trim());
+						langaueNamePairs.add(langaueNamePair);
+					}
+				}			
+				notificationDto.setFullName(langaueNamePairs);
+				if (responseNode.get(email) != null) {
+					String emailId = responseNode.get(email).asText();
+					notificationDto.setEmailID(emailId);
+					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
 				}
-			}
-
-			notificationDto.setFullName(langaueNamePairs);
-			if (responseNode.get(email) != null) {
-				String emailId = responseNode.get(email).asText();
-				notificationDto.setEmailID(emailId);
-				notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
-			}
-			if (responseNode.get(phone) != null) {
-				String phoneNumber = responseNode.get(phone).asText();
-				notificationDto.setMobNum(phoneNumber);
-				notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
-
-			}
-			if (responseNode.get(email) == null && responseNode.get(phone) == null) {
-				log.info("sessionId", "idType", "id",
-						"In notification service of sendNotification failed to send Email and sms request ");
+				if (responseNode.get(phone) != null) {
+					String phoneNumber = responseNode.get(phone).asText();
+					notificationDto.setMobNum(phoneNumber);
+					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
+	
+				}
+				if (responseNode.get(email) == null && responseNode.get(phone) == null) {
+					log.info("sessionId", "idType", "id",
+							"In notification service of sendNotification failed to send Email and sms request ");
+				}
+			} else {
+				notificationDto.setFullName(langaueNamePairs);
+				if (notificationDto.getEmailID() != null) {
+					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
+				}
+				if (notificationDto.getMobNum() != null) {
+					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
+				}
+				if (notificationDto.getEmailID() == null && notificationDto.getMobNum() == null ) {
+					log.info("sessionId", "idType", "id",
+							"In notification service of sendNotification failed to send Email and sms request ");
+				}
 			}
 			return NotificationRequestCodes.MESSAGE.getCode();
 		} catch (RestClientException ex) {
@@ -327,9 +347,12 @@ public class NotificationService {
 		auditLogUtil.saveAuditDetails(auditRequestDto);
 	}
 
-	public MainResponseDTO<DemographicResponseDTO> notificationDtoValidation(NotificationDTO dto)
+	public MainResponseDTO<DemographicResponseDTO> notificationDtoValidation(String bookingType, NotificationDTO dto)
 			throws IOException, ParseException {
-		MainResponseDTO<DemographicResponseDTO> demoDetail = getDemographicDetails(dto);
+		MainResponseDTO<DemographicResponseDTO> demoDetail = null;
+		if (BookingTypeCodes.NEW_PREREGISTRATION.toString().equals(bookingType)) {
+			demoDetail = getDemographicDetails(dto);
+		} 
 		if (!dto.getIsBatch()) {
 			BookingRegistrationDTO bookingDTO = getAppointmentDetailsRestService(dto.getPreRegistrationId());
 			String registrationCenterId = bookingDTO.getRegistrationCenterId();
