@@ -219,7 +219,7 @@ public class NotificationService {
 					log.info("sessionId", "idType", "id",
 							"In notification service of sendNotification if additionalRecipient is"
 									+ notificationDto.isAdditionalRecipient());
-					resp = getDemographicDetailsWithPreId(bookingType, demoDetail, notificationDto, langCode, file);
+					resp = getDemographicDetailsWithPreId(bookingType, demoDetail, appEntity, notificationDto, langCode, file);
 					notificationResponse.setMessage(resp);
 				}
 			}
@@ -261,7 +261,7 @@ public class NotificationService {
 	 * @throws IOException
 	 */
 	private String getDemographicDetailsWithPreId(String bookingType, MainResponseDTO<DemographicResponseDTO> responseEntity,
-			NotificationDTO notificationDto, String langCode, MultipartFile file) throws IOException {
+			MainResponseDTO<ApplicationEntity> appEntity, NotificationDTO notificationDto, String langCode, MultipartFile file) throws IOException {
 		try {
 			List<KeyValuePairDto<String,String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String,String>>();
 			if (BookingTypeCodes.NEW_PREREGISTRATION.toString().equals(bookingType)) {
@@ -301,6 +301,12 @@ public class NotificationService {
 							"In notification service of sendNotification failed to send Email and sms request ");
 				}
 			} else {
+				//handle notifications for other booking types like LOST_FORGOTTEN_UIN, MISCELLANEOUS_PURPOSE etc
+				if (notificationDto.getName() == null) {
+					//in case name is null, set applicationId as name
+					String applicationId = appEntity.getResponse().getApplicationId();
+					notificationDto.setName(applicationId);
+				}
 				KeyValuePairDto langaueNamePair = null;
 				langaueNamePair = new KeyValuePairDto();
 				langaueNamePair.setKey(notificationDto.getLanguageCode());
@@ -314,8 +320,24 @@ public class NotificationService {
 					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
 				}
 				if (notificationDto.getEmailID() == null && notificationDto.getMobNum() == null ) {
-					log.info("sessionId", "idType", "id",
-							"In notification service of sendNotification failed to send Email and sms request ");
+					//in case both email id and mob num are null, send details to contact info 
+					String createdById = appEntity.getResponse().getContactInfo();
+					if (createdById != null) {
+						if (validationUtil.emailValidator(createdById)) {
+							notificationDto.setEmailID(createdById);
+							notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
+						}
+						else if (validationUtil.phoneValidator(createdById)) {
+							notificationDto.setMobNum(createdById);
+							notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
+						} else {
+							log.info("sessionId", "idType", "id",
+									"In notification service of sendNotification failed to send Email and sms request ");	
+						}
+					} else {
+						log.info("sessionId", "idType", "id",
+								"In notification service of sendNotification failed to send Email and sms request ");	
+					}
 				}
 			}
 			return NotificationRequestCodes.MESSAGE.getCode();
