@@ -36,7 +36,11 @@ public class DataSyncExceptionCatcher {
 	 *            pass the exception
 	 */
 	public void handle(Exception ex, MainResponseDTO<?> mainResponsedto) {
-		if (ex instanceof DataAccessLayerException || ex instanceof ReverseDataFailedToStoreException) {
+		if (ex instanceof DataAccessLayerException ) {
+			throw new ReverseDataFailedToStoreException(((DataAccessLayerException) ex).getErrorCode(),
+					mainResponsedto);
+		} 
+		else if (ex instanceof ReverseDataFailedToStoreException ) {
 			throw new ReverseDataFailedToStoreException(((DataAccessLayerException) ex).getErrorCode(),
 					mainResponsedto);
 		} else if (ex instanceof DocumentGetDetailsException) {
