@@ -1,8 +1,12 @@
 package io.mosip.preregistration.datasync.service;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -36,6 +40,9 @@ import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
+import io.mosip.preregistration.datasync.dto.ApplicationDetailResponseDTO;
+import io.mosip.preregistration.datasync.dto.ApplicationDTO;
+import io.mosip.preregistration.datasync.dto.ApplicationsDTO;
 import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
@@ -183,6 +190,79 @@ public class DataSyncService {
 		}
 		return responseDto;
 	}
+	
+	/**
+	 * This method is use to retrieve all appointments for a registration center id,
+	 * booked between a from date and to date
+	 * 
+	 * @param dataSyncRequest
+	 * @return list of preRgistrationDto
+	 */
+	public MainResponseDTO<ApplicationsDTO> retrieveAllAppointmentsSyncV2(
+			MainRequestDTO<DataSyncRequestDTO> dataSyncRequest) {
+
+		MainResponseDTO<ApplicationsDTO> responseDto = new MainResponseDTO<>();
+		log.info("sessionId", "idType", "id", "In retrieveAllAppointmentsSyncV2 method of datasync service ");
+		boolean isRetrieveAllSuccess = false;
+		responseDto.setId(fetchAllId);
+		responseDto.setVersion(version);
+		requiredRequestMap.put("id", fetchAllId);
+		try {
+			validationUtil.requestValidator(dataSyncRequest);
+			if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(dataSyncRequest), requiredRequestMap)) {
+				serviceUtil.validateDataSyncRequest(dataSyncRequest.getRequest(), responseDto);
+				DataSyncRequestDTO dataSyncRequestDTO = dataSyncRequest.getRequest();
+				if (serviceUtil.isNull(dataSyncRequestDTO.getToDate())) {
+					dataSyncRequestDTO.setToDate(dataSyncRequestDTO.getFromDate());
+				}
+				LocalDate fromDtObj = LocalDate.parse(dataSyncRequestDTO.getFromDate());
+				LocalDate toDtObj = LocalDate.parse(dataSyncRequestDTO.getToDate());
+				List<ApplicationDTO> applicationsList = new ArrayList<ApplicationDTO>();
+				
+				fromDtObj.datesUntil(toDtObj).forEach(date -> {
+					System.out.println(fromDtObj.toString());
+					System.out.println(toDtObj.toString());
+					System.out.println(date.toString());
+					List<ApplicationDetailResponseDTO> applicationDetailResponseList = serviceUtil
+							.getAllBookedApplicationIds(date.toString(),
+									dataSyncRequestDTO.getRegistrationCenterId());
+					for (ApplicationDetailResponseDTO applicationDetails : applicationDetailResponseList) {
+						ApplicationDTO application = new ApplicationDTO();
+						application.setApplicationId(applicationDetails.getApplicationId());
+						application.setAppointmentDtTime(getUTCTimeStamp(applicationDetails.getAppointmentDate(),
+								applicationDetails.getSlotFromTime()));
+						application.setBookingType(applicationDetails.getBookingType());
+						applicationsList.add(application);
+					}
+				});
+				ApplicationsDTO applications = new ApplicationsDTO();
+				applications.setApplications(applicationsList);
+				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
+				responseDto.setResponse(applications);
+			}
+			isRetrieveAllSuccess = true;
+		} catch (
+
+		Exception ex) {
+			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In retrieveAllAppointmentsSyncV2 method of datasync service - " + ex.getMessage());
+			new DataSyncExceptionCatcher().handle(ex, responseDto);
+		} finally {
+			if (isRetrieveAllSuccess) {
+				setAuditValues(EventId.PRE_406.toString(), EventName.SYNC.toString(), EventType.BUSINESS.toString(),
+						"Retrieval of all the Application Ids is successfull", AuditLogVariables.MULTIPLE_ID.toString(),
+						authUserDetails().getUserId(), authUserDetails().getUsername(),
+						dataSyncRequest.getRequest().getRegistrationCenterId());
+			} else {
+				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
+						"Retrieval of all the Application Ids is unsuccessfull", AuditLogVariables.NO_ID.toString(),
+						authUserDetails().getUserId(), authUserDetails().getUsername(),
+						dataSyncRequest.getRequest().getRegistrationCenterId());
+			}
+		}
+		return responseDto;
+	}
 
 	/**
 	 * 
@@ -208,6 +288,25 @@ public class DataSyncService {
 		String timestamp = null;
 		for (Entry<LocalDate, SlotTimeDto> v : value.entrySet()) {
 			timestamp = v.getKey().atTime(v.getValue().getFromTime()).format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+		}
+		return timestamp;
+	}
+	
+	/**
+	 * Assuming one pre-reg id will have one appointTime and single time slot
+	 * 
+	 * @param value
+	 * @return
+	 */
+	private String getUTCTimeStamp(String appointmentDt, String fromTime) {
+		String timestamp = null;
+		try {
+			LocalDate appDate = LocalDate.parse(appointmentDt);
+			LocalTime fromLocalTime = LocalTime.parse(fromTime);
+			timestamp = appDate.atTime(fromLocalTime).format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+		} catch (Exception e) {
+			//throw e;
+			return null;
 		}
 		return timestamp;
 	}
