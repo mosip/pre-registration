@@ -75,6 +75,7 @@ import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.datasync.code.RequestCodes;
+import io.mosip.preregistration.datasync.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.datasync.dto.ClientPublickeyDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
@@ -332,6 +333,59 @@ public class DataSyncServiceUtil {
 
 		}
 		return preRegIdsByRegCenterIdResponseDTO;
+	}
+	
+	/**
+	 * This method invokes booking API through rest template to fetch the list of
+	 * application ids for the date range and reg center Id
+	 * 
+	 * @param appointmentDate
+	 * @param regCenterId
+	 * @return List<ApplicationDetailResponseDTO>
+	 */
+	public List<ApplicationDetailResponseDTO> getAllBookedApplicationIds(String appointmentDate, String regCenterId) {
+		log.info("sessionId", "idType", "id", "In getAllBookedApplicationIds method of datasync service util");
+		List<ApplicationDetailResponseDTO> applicationDetailResponseList = new ArrayList<ApplicationDetailResponseDTO>();
+		try {
+			UriComponentsBuilder builder = UriComponentsBuilder
+					.fromHttpUrl(demographicResourceUrl + "/applications/bookings/{registrationCenterId}");
+			Map<String, String> params = new HashMap<>();
+			params.put("registrationCenterId", regCenterId);
+			URI uri = builder.buildAndExpand(params).toUri();
+			UriComponentsBuilder builderFull = UriComponentsBuilder.fromUri(uri).queryParam("appointmentDate",
+					appointmentDate);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			HttpEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> httpEntity = new HttpEntity<>(headers);
+			String uriBuilder = builderFull.build().encode(StandardCharsets.UTF_8).toUriString();
+			log.info("sessionId", "idType", "id", "In getAllBookedApplicationIds method URL- " + uriBuilder);
+			ResponseEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> respEntity = selfTokenRestTemplate
+					.exchange(uriBuilder, HttpMethod.GET, httpEntity,
+							new ParameterizedTypeReference<MainResponseDTO<List<ApplicationDetailResponseDTO>>>() {
+							}, params);
+			MainResponseDTO<List<ApplicationDetailResponseDTO>> body = respEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null) {
+					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
+						if (exceptionJSONInfoDTO != null) {
+							throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
+									exceptionJSONInfoDTO.getMessage(), null);
+						}
+					}
+				} else {
+					applicationDetailResponseList = body.getResponse();
+				}
+			}
+		} catch (RestClientException ex) {
+			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error("sessionId", "idType", "id",
+					"In getAllBookedApplicationIds method of datasync service util - " + ex.getMessage());
+			throw new RecordNotFoundForDateRange(ErrorCodes.PRG_DATA_SYNC_016.getCode(),
+					ErrorMessages.BOOKING_NOT_FOUND.getMessage(), null);
+
+		}
+		return applicationDetailResponseList;
 	}
 
 	/**
