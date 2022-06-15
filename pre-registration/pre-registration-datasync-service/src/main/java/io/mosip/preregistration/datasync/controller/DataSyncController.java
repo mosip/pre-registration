@@ -19,6 +19,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.ResponseFilter;
+import io.mosip.preregistration.datasync.dto.ApplicationsDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
@@ -71,6 +72,30 @@ public class DataSyncController {
 		log.info("sessionId", "idType", "id",
 				"In Datasync controller for retreiving all the pre-registrations for object  " + dataSyncDto);
 		return ResponseEntity.status(HttpStatus.OK).body(dataSyncService.retrieveAllPreRegIds(dataSyncDto));
+	}
+	
+	/**
+	 * This POST API used to retrieve all appointments for a registration
+	 * center id, booked between a from date and to date
+	 * 
+	 * @param MainRequestDTO<DataSyncRequestDTO>
+	 * @return ResponseEntity<MainResponseDTO<ApplicationIdsDTO>>
+	 */
+	//@PreAuthorize("hasAnyRole('REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostpreregsync())")
+	@ResponseFilter
+	@PostMapping(path = "/syncV2", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+	@Operation(summary = "Fetch all application ids for all booking types", description = "Fetch all Application Ids for all booking types", tags = "Data-Sync")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "All Application Ids for all booking types fetched successfully"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
+	public ResponseEntity<MainResponseDTO<ApplicationsDTO>> retrieveAllAppointmentsSyncV2(
+			@RequestBody(required = true) MainRequestDTO<DataSyncRequestDTO> dataSyncDto) {
+		log.info("sessionId", "idType", "id",
+				"In Datasync controller for retreiving all the appointments for  " + dataSyncDto);
+		return ResponseEntity.status(HttpStatus.OK).body(dataSyncService.retrieveAllAppointmentsSyncV2(dataSyncDto));
 	}
 
 	/**
