@@ -219,20 +219,28 @@ public class ApplicationService implements ApplicationServiceIntf {
 	 * Get all bookings for the given regCenterId in the given appointmentDate
 	 * 
 	 * @param regCenterId
-	 * @param appointmentDate
+	 * @param appointmentFromDate
+	 * @param appointmentToDate
 	 * @return
 	 */
 	public MainResponseDTO<List<ApplicationDetailResponseDTO>> getBookingsForRegCenter(String regCenterId,
-			String appointmentDate) {
+			String appointmentFromDate, String appointmentToDate) {
 		MainResponseDTO<List<ApplicationDetailResponseDTO>> mainResponse = new MainResponseDTO<>();
 		mainResponse.setId(applicationDetailsId);
 		mainResponse.setVersion(version);
 		mainResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		List<ApplicationDetailResponseDTO> responseList = new ArrayList<>();
 		try {
-			LocalDate appDate = LocalDate.parse(appointmentDate);
+			LocalDate appFromDate = LocalDate.parse(appointmentFromDate);
+			LocalDate appToDate = null; 
+			if (appointmentToDate != null && !"".equals(appointmentToDate.trim())) {
+				appToDate = LocalDate.parse(appointmentToDate);
+			}
+			if (appToDate == null) {
+				appToDate = appFromDate;
+			}
 			List<ApplicationEntity> entity = applicationRepository
-					.findByRegistrationCenterIdAndAppointmentDate(regCenterId, appDate);
+					.findByRegistrationCenterIdAndBetweenDate(regCenterId, appFromDate, appToDate);
 			if (entity != null) {
 				entity.forEach(obj -> {
 					ApplicationDetailResponseDTO response = new ApplicationDetailResponseDTO();
@@ -256,7 +264,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 			}
 		} catch (RecordNotFoundException ex) {
 			log.error("Record Not Found Exception for the request regCenterId and appointmentDate", regCenterId,
-					appointmentDate);
+					appointmentFromDate);
 			log.error("Exception trace", ex);
 			throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_012.getCode(),
 					ApplicationErrorMessages.NO_RECORD_FOUND.getMessage(), mainResponse);

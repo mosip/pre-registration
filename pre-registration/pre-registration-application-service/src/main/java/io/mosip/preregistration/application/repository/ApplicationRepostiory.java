@@ -16,6 +16,8 @@ import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 @Transactional
 public interface ApplicationRepostiory extends BaseRepository<ApplicationEntity, String> {
 
+	public static final String searchAppointmentsQuery = "select u from ApplicationEntity u where u.registrationCenterId=?1 and u.appointmentDate between ?2 and ?3";
+
 	@Query("SELECT u.bookingStatusCode FROM ApplicationEntity u where u.applicationId =?1")
 	public String findBookingStatusCodeById(String applicationId);
 
@@ -23,8 +25,9 @@ public interface ApplicationRepostiory extends BaseRepository<ApplicationEntity,
 	@Query("DELETE FROM ApplicationEntity e WHERE e.applicationId = ?1")
 	public void deleteById(String applicationId);
 
-	public List<ApplicationEntity> findByRegistrationCenterIdAndAppointmentDate(String registrationCenterId,
-			LocalDate appointmentDate);
+	@Query(searchAppointmentsQuery)
+	public List<ApplicationEntity> findByRegistrationCenterIdAndBetweenDate(String registrationCenterId,
+			LocalDate appointmentFromDate, LocalDate appointmentToDate);
 
 	@Query("SELECT e FROM ApplicationEntity e WHERE e.applicationId = ?1")
 	public ApplicationEntity findByApplicationId(String applicationId);

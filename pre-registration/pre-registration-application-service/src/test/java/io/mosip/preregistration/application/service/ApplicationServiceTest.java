@@ -418,7 +418,7 @@ public class ApplicationServiceTest {
 
 	@Test(expected = InvalidDateFormatException.class)
 	public void testgetBookingsForRegCenterInvalidDateFormatException() {
-		applicationService.getBookingsForRegCenter(null, "23-08-2021");
+		applicationService.getBookingsForRegCenter(null, "23-08-2021", null);
 	}
 
 	@Test
@@ -440,32 +440,32 @@ public class ApplicationServiceTest {
 		applicationEntity.setUpdBy("");
 		applicationEntity.setUpdDtime(LocalDateTime.now());
 		entity.add(applicationEntity);
-		Mockito.when(applicationRepository.findByRegistrationCenterIdAndAppointmentDate(Mockito.any(), Mockito.any()))
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(entity);
 
 		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(null,
-				LocalDate.now().toString());
+				LocalDate.now().toString(), null);
 		Assert.assertEquals(response.getResponse().get(0).getApplicationId(), applicationEntity.getApplicationId());
 
 	}
 
 	@Test(expected = RecordNotFoundException.class)
 	public void testgetBookingsForRegCenterRecordNotFoundException() {
-		Mockito.when(applicationRepository.findByRegistrationCenterIdAndAppointmentDate(Mockito.any(), Mockito.any()))
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(null);
 
 		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(null,
-				LocalDate.now().toString());
+				LocalDate.now().toString(), null);
 
 	}
 
 	@Test(expected = InvalidRequestParameterException.class)
 	public void testgetBookingsForRegCenterIllegalArgumentException() {
-		Mockito.when(applicationRepository.findByRegistrationCenterIdAndAppointmentDate(Mockito.any(), Mockito.any()))
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenThrow(new IllegalArgumentException());
 
 		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(null,
-				LocalDate.now().toString());
+				LocalDate.now().toString(),null);
 	}
 
 	@Test

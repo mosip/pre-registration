@@ -53,11 +53,12 @@ public interface ApplicationServiceIntf {
 	 * Get all bookings for the given regCenterId in the given appointmentDate
 	 * 
 	 * @param regCenterId
-	 * @param appointmentDate
+	 * @param appointmentFromDate
+	 * @param appointmentToDate
 	 * @return
 	 */
 	MainResponseDTO<List<ApplicationDetailResponseDTO>> getBookingsForRegCenter(String regCenterId,
-			String appointmentDate);
+			String appointmentFromDate, String appointmentToDate);
 
 	/**
 	 * This method is used to create the a new application with booking type as

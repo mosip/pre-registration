@@ -215,26 +215,19 @@ public class DataSyncService {
 				if (serviceUtil.isNull(dataSyncRequestDTO.getToDate())) {
 					dataSyncRequestDTO.setToDate(dataSyncRequestDTO.getFromDate());
 				}
-				LocalDate fromDtObj = LocalDate.parse(dataSyncRequestDTO.getFromDate());
-				LocalDate toDtObj = LocalDate.parse(dataSyncRequestDTO.getToDate());
-				List<ApplicationDTO> applicationsList = new ArrayList<ApplicationDTO>();
-				
-				fromDtObj.datesUntil(toDtObj).forEach(date -> {
-					System.out.println(fromDtObj.toString());
-					System.out.println(toDtObj.toString());
-					System.out.println(date.toString());
-					List<ApplicationDetailResponseDTO> applicationDetailResponseList = serviceUtil
-							.getAllBookedApplicationIds(date.toString(),
-									dataSyncRequestDTO.getRegistrationCenterId());
-					for (ApplicationDetailResponseDTO applicationDetails : applicationDetailResponseList) {
-						ApplicationDTO application = new ApplicationDTO();
-						application.setApplicationId(applicationDetails.getApplicationId());
-						application.setAppointmentDtTime(getUTCTimeStamp(applicationDetails.getAppointmentDate(),
-								applicationDetails.getSlotFromTime()));
-						application.setBookingType(applicationDetails.getBookingType());
-						applicationsList.add(application);
-					}
-				});
+				List<ApplicationDTO> applicationsList = new ArrayList<ApplicationDTO>();	
+				List<ApplicationDetailResponseDTO> applicationDetailResponseList = serviceUtil
+						.getAllBookedApplicationIds(dataSyncRequestDTO.getFromDate(),
+								dataSyncRequestDTO.getToDate(),
+								dataSyncRequestDTO.getRegistrationCenterId());
+				for (ApplicationDetailResponseDTO applicationDetails : applicationDetailResponseList) {
+					ApplicationDTO application = new ApplicationDTO();
+					application.setApplicationId(applicationDetails.getApplicationId());
+					application.setAppointmentDtTime(getUTCTimeStamp(applicationDetails.getAppointmentDate(),
+							applicationDetails.getSlotFromTime()));
+					application.setBookingType(applicationDetails.getBookingType());
+					applicationsList.add(application);
+				}
 				ApplicationsDTO applications = new ApplicationsDTO();
 				applications.setApplications(applicationsList);
 				responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
