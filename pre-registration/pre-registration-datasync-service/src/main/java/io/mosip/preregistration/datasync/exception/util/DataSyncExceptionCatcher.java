@@ -39,10 +39,6 @@ public class DataSyncExceptionCatcher {
 		if (ex instanceof DataAccessLayerException ) {
 			throw new ReverseDataFailedToStoreException(((DataAccessLayerException) ex).getErrorCode(),
 					mainResponsedto);
-		} 
-		else if (ex instanceof ReverseDataFailedToStoreException ) {
-			throw new ReverseDataFailedToStoreException(((DataAccessLayerException) ex).getErrorCode(),
-					mainResponsedto);
 		} else if (ex instanceof DocumentGetDetailsException) {
 			throw new DocumentGetDetailsException(((DocumentGetDetailsException) ex).getErrorCode(),
 					((DocumentGetDetailsException) ex).getErrorText(), mainResponsedto);
