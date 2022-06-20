@@ -343,7 +343,7 @@ public class DataSyncServiceUtil {
 	 * @param regCenterId
 	 * @return List<ApplicationDetailResponseDTO>
 	 */
-	public List<ApplicationDetailResponseDTO> getAllBookedApplicationIds(String appointmentDate, String regCenterId) {
+	public List<ApplicationDetailResponseDTO> getAllBookedApplicationIds(String fromDate,String toDate, String regCenterId) {
 		log.info("sessionId", "idType", "id", "In getAllBookedApplicationIds method of datasync service util");
 		List<ApplicationDetailResponseDTO> applicationDetailResponseList = new ArrayList<ApplicationDetailResponseDTO>();
 		try {
@@ -353,8 +353,11 @@ public class DataSyncServiceUtil {
 			params.put("registrationCenterId", regCenterId);
 			URI uri = builder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builderFull = UriComponentsBuilder.fromUri(uri).queryParam("appointmentDate",
-					appointmentDate);
-
+					fromDate);
+			if (toDate != null && !"".equals(toDate.trim())) {
+				builderFull = UriComponentsBuilder.fromUri(uri).queryParam("appointmentDate", fromDate)
+						.queryParam("appointmentToDate", toDate);
+			}
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
 			HttpEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> httpEntity = new HttpEntity<>(headers);

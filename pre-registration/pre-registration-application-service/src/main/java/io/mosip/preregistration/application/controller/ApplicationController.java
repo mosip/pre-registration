@@ -106,9 +106,10 @@ public class ApplicationController {
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> getBookingsForRegCenter(
-			@PathVariable("regCenterId") String regCenterId, @RequestParam("appointmentDate") String appointmentDate) {
+			@PathVariable("regCenterId") String regCenterId, @RequestParam("appointmentDate") String appointmentFromDate,
+			@RequestParam(required = false) String appointmentToDate) {
 		return ResponseEntity.status(HttpStatus.OK)
-				.body(applicationService.getBookingsForRegCenter(regCenterId, appointmentDate));
+				.body(applicationService.getBookingsForRegCenter(regCenterId, appointmentFromDate, appointmentToDate));
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsall())")
