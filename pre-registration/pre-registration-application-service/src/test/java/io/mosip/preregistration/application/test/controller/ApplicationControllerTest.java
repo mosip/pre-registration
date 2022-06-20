@@ -110,7 +110,7 @@ public class ApplicationControllerTest {
 		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = new MainResponseDTO<List<ApplicationDetailResponseDTO>>();
 		String regCenterId = "123456";
 		String appointmentDate = DateTime.now().toString();
-		Mockito.when(applicationService.getBookingsForRegCenter(regCenterId, appointmentDate)).thenReturn(response);
+		Mockito.when(applicationService.getBookingsForRegCenter(regCenterId, appointmentDate, null)).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders.get("/applications/bookings/{regCenterId}", regCenterId)
 				.param("regCenterId", regCenterId).param("appointmentDate", appointmentDate)
