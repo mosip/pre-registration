@@ -95,7 +95,7 @@ public class UpdateRegistrationControllerTest {
 		mainResponseDto.setId(createId);
 		mainResponseDto.setResponsetime(DateTime.now().toString());
 
-		Mockito.when(applicationService.addLostOrUpdateOrMiscellaneousApplication(mainRequestDto,
+		Mockito.when(applicationService.addLostOrUpdateApplication(mainRequestDto,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString())).thenReturn(mainResponseDto);
 		String uri = "/applications/updateregistration";
 		mockmvc.perform(MockMvcRequestBuilders.post(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
@@ -109,7 +109,7 @@ public class UpdateRegistrationControllerTest {
 		String bookingType = BookingTypeCodes.UPDATE_REGISTRATION.toString();
 		MainResponseDTO<DeleteApplicationDTO> response = new MainResponseDTO<DeleteApplicationDTO>();
 		response.setId(deleteId);
-		Mockito.when(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId, bookingType)).thenReturn(response);
+		Mockito.when(applicationService.deleteLostOrUpdateApplication(applicationId, bookingType)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders
 				.delete("/applications/updateregistration/{applicationId}", applicationId)
 				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_UTF8)

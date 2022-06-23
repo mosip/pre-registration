@@ -100,7 +100,7 @@ public class LostUINControllerTest {
 		mainResponseDto.setResponse(applicationDto);
 		mainResponseDto.setId(createId);
 		mainResponseDto.setResponsetime(DateTime.now().toString());
-		Mockito.when(applicationService.addLostOrUpdateOrMiscellaneousApplication(Mockito.any(), Mockito.any()))
+		Mockito.when(applicationService.addLostOrUpdateApplication(Mockito.any(), Mockito.any()))
 				.thenReturn(mainResponseDto);
 		String uri = "/applications/lostuin";
 		 mockmvc
@@ -115,7 +115,7 @@ public class LostUINControllerTest {
 		String bookingType = BookingTypeCodes.LOST_FORGOTTEN_UIN.toString();
 		MainResponseDTO<DeleteApplicationDTO> response = new MainResponseDTO<DeleteApplicationDTO>();
 		response.setId(deleteId);
-		Mockito.when(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId, bookingType)).thenReturn(response);
+		Mockito.when(applicationService.deleteLostOrUpdateApplication(applicationId, bookingType)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders.delete("/applications/lostuin/{applicationId}", applicationId)
 				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_VALUE)
 				.contentType(MediaType.APPLICATION_JSON_VALUE);

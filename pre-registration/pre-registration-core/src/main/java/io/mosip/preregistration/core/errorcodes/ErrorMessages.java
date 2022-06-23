@@ -32,9 +32,7 @@ public enum ErrorMessages {
 	FROM_DATE_GREATER_THAN_TO_DATE("From date is greater than To date"),//PRG_CORE_REQ_020
 	ERROR_WHILE_PARSING("Error while Parsing the kernel response"),//PRG_CORE_REQ_021
 	MASTERDATA_SERVICE_CALL_FAIL("Error while calling masterdata"),//PRG_CORE_REQ_022
-	INVALID_BOOKING_TYPE("Booking Type is invalid"), // PRG_CORE_REQ_023
-	INVALID_PURPOSE("purpose is null"), //PRG_CORE_REQ_024
-	INVALID_PURPOSE_LENGTH("purpose length is greater than 200 words"); //PRG_CORE_REQ_025
+	INVALID_BOOKING_TYPE("Booking Type is invalid"); // PRG_CORE_REQ_023
 	
 	private ErrorMessages(String message) {
 		this.message = message;
