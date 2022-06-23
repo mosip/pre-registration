@@ -62,22 +62,22 @@ public interface ApplicationServiceIntf {
 
 	/**
 	 * This method is used to create the a new application with booking type as
-	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN or MISCELLANEOUS_PURPOSE
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
 	 * 
 	 * @param request
 	 * @param bookingType
 	 * @return MainResponseDTO<ApplicationResponseDTO>
 	 */
-	MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateOrMiscellaneousApplication(MainRequestDTO<? extends ApplicationRequestDTO> request,
+	MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateApplication(MainRequestDTO<ApplicationRequestDTO> request,
 			String bookingType);
 
 	/**
 	 * This method is used to delete the application with booking type as
-	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN or MISCELLANEOUS_PURPOSE
+	 * UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
 	 * 
 	 * @param applicationId
-	 * @param bookingType   UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN or MISCELLANEOUS_PURPOSE
+	 * @param bookingType   UPDATE_REGISTRATION or LOST_FORGOTTEN_UIN
 	 * @return MainResponseDTO<DeleteApplicationDTO>
 	 */
-	MainResponseDTO<DeleteApplicationDTO> deleteLostOrUpdateOrMiscellaneousApplication(String applicationId, String bookingType);
+	MainResponseDTO<DeleteApplicationDTO> deleteLostOrUpdateApplication(String applicationId, String bookingType);
 }
