@@ -179,7 +179,7 @@ public class TemplateUtil {
 		String applicationDetails = null;
 		try {
 			if (applicationId == null) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_026.getCode(),
+				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_024.getCode(),
 						ErrorMessages.INVALID_REQUEST_PARAMETER.getMessage(), null);
 			}
 			bookingType = applicationRepository.findBookingTypeById(applicationId);

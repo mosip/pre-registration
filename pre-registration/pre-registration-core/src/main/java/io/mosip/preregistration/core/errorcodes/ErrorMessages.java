@@ -33,9 +33,7 @@ public enum ErrorMessages {
 	ERROR_WHILE_PARSING("Error while Parsing the kernel response"),//PRG_CORE_REQ_021
 	MASTERDATA_SERVICE_CALL_FAIL("Error while calling masterdata"),//PRG_CORE_REQ_022
 	INVALID_BOOKING_TYPE("Booking Type is invalid"), // PRG_CORE_REQ_023
-	INVALID_PURPOSE("purpose is null"), //PRG_CORE_REQ_024
-	INVALID_PURPOSE_LENGTH("purpose length is greater than 200 words"), //PRG_CORE_REQ_025
-	INVALID_REQUEST_PARAMETER("Invalid Request Parameter"); //PRG_CORE_REQ_026
+	INVALID_REQUEST_PARAMETER("Invalid Request Parameter"); //PRG_CORE_REQ_024
 	
 	private ErrorMessages(String message) {
 		this.message = message;
