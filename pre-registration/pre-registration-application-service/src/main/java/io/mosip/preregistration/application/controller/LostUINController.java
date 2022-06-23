@@ -82,7 +82,7 @@ public class LostUINController {
 				"In pre-registration LostUINController for createNewApplication with json object" + jsonObject);
 		requestValidator.validateId(LOST_UIN_CREATE_ID, jsonObject.getId(), errors);
 		DataValidationUtil.validate(errors, LOST_UIN_CREATE_ID);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateOrMiscellaneousApplication(jsonObject,
+		return ResponseEntity.status(HttpStatus.OK).body(applicationService.addLostOrUpdateApplication(jsonObject,
 				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
 	}
 
@@ -104,7 +104,7 @@ public class LostUINController {
 			@PathVariable("applicationId") String applicationId) {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration LostUINController for deleteApplication with preId " + applicationId);
-		return ResponseEntity.status(HttpStatus.OK).body(applicationService.deleteLostOrUpdateOrMiscellaneousApplication(applicationId,
+		return ResponseEntity.status(HttpStatus.OK).body(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
 	}
 }
