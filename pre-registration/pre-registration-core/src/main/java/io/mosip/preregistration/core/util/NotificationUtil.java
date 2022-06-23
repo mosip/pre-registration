@@ -118,7 +118,7 @@ public class NotificationUtil {
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		String mergeTemplate = null;
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
-			if (acknowledgementDTO.getIsBatch()) {
+			if (acknowledgementDTO.getIsBatch() && cancelAppoinment != null) {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
 //				fileText.concat(System.lineSeparator() + System.lineSeparator());
 			} else {
@@ -141,9 +141,9 @@ public class NotificationUtil {
 		emailMap.add("attachments", doc);
 		emailMap.add("mailContent", mergeTemplate);
 		if (acknowledgementDTO.getIsBatch() && cancelAppointmentEmailSubject != null) {
-			emailMap.add("mailSubject", getCancelAppointmentEmailSubject(acknowledgementDTO));
+			emailMap.add("mailSubject", getEmailSubject(acknowledgementDTO, cancelAppointmentEmailSubject));
 		} else {
-			emailMap.add("mailSubject", getEmailSubject(acknowledgementDTO));
+			emailMap.add("mailSubject", getEmailSubject(acknowledgementDTO, emailAcknowledgementSubject));
 		}
 		emailMap.add("mailTo", acknowledgementDTO.getEmailID());
 		HttpEntity<MultiValueMap<Object, Object>> httpEntity = new HttpEntity<>(emailMap, headers);
@@ -173,46 +173,24 @@ public class NotificationUtil {
 	 * This method will give the email subject
 	 * 
 	 * @param acknowledgementDTO
-	 * @return
+	 * @param templateTypeCode
+	 * @return emailSubject
 	 * @throws IOException
 	 */
-	public String getEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
+	public String getEmailSubject(NotificationDTO acknowledgementDTO, String templateTypeCode) throws IOException {
 		log.info("sessionId", "idType", "id", "In getEmailSubject method of NotificationUtil service");
 		String emailSubject = "";
 		int noOfLang = acknowledgementDTO.getFullName().size();
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
-			emailSubject = emailSubject + templateUtil.templateMerge(
-					templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgementSubject), acknowledgementDTO,
-					(String) keyValuePair.getKey());
+			emailSubject = emailSubject
+					+ templateUtil.templateMerge(templateUtil.getTemplate(keyValuePair.getKey(), templateTypeCode),
+							acknowledgementDTO, (String) keyValuePair.getKey());
 			if (noOfLang > 1) {
 				noOfLang--;
 				emailSubject = emailSubject + " / ";
 			}
 		}
 		return emailSubject;
-	}
-
-	/**
-	 * This method will give the email subject for Cancel Appointment
-	 * 
-	 * @param acknowledgementDTO
-	 * @return
-	 * @throws IOException
-	 */
-	public String getCancelAppointmentEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
-		log.info("sessionID", "idType", "id", "In getEmailCancelAppointmentSubject of NotificationUtilService");
-		String emailSubjectCancelAppointment = "";
-		int noOfLang = acknowledgementDTO.getFullName().size();
-		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
-			emailSubjectCancelAppointment = emailSubjectCancelAppointment + templateUtil.templateMerge(
-					templateUtil.getTemplate(keyValuePair.getKey(), cancelAppointmentEmailSubject), acknowledgementDTO,
-					(String) keyValuePair.getKey());
-			if (noOfLang > 1) {
-				noOfLang--;
-				emailSubjectCancelAppointment = emailSubjectCancelAppointment + " / ";
-			}
-		}
-		return emailSubjectCancelAppointment;
 	}
 
 	/**
