@@ -118,7 +118,7 @@ public class NotificationUtil {
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		String mergeTemplate = null;
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
-			if (acknowledgementDTO.getIsBatch() && cancelAppoinment != null) {
+			if (acknowledgementDTO.getIsBatch()) {
 				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
 //				fileText.concat(System.lineSeparator() + System.lineSeparator());
 			} else {
