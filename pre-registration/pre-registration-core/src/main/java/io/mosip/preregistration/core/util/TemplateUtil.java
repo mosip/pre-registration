@@ -21,7 +21,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.core.env.Environment;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -31,17 +30,12 @@ import org.springframework.web.client.RestTemplate;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.templatemanager.spi.TemplateManager;
-import io.mosip.preregistration.core.application.repository.ApplicationRepository;
-import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.core.errorcodes.ErrorCodes;
-import io.mosip.preregistration.core.errorcodes.ErrorMessages;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 
 /**
  * @author Sanober Noor
@@ -60,7 +54,7 @@ public class TemplateUtil {
 
 	@Value("${mosip.notification.timezone}")
 	private String timeZone;
-
+	
 	/**
 	 * Autowired reference for {@link #restTemplateBuilder}
 	 */
@@ -70,12 +64,6 @@ public class TemplateUtil {
 
 	@Autowired
 	private TemplateManager templateManager;
-
-	@Autowired
-	ApplicationRepository applicationRepository;
-
-	@Autowired
-	private Environment env;
 
 	/**
 	 * This method is used for getting template
@@ -144,13 +132,11 @@ public class TemplateUtil {
 
 		responseMap.put("name", acknowledgementDTO.getFullName().stream().filter(name -> name.getKey().equals(langCode))
 				.map(name -> name.getValue()).collect(Collectors.toList()).get(0));
-		responseMap.put("ApplicationId", acknowledgementDTO.getPreRegistrationId());
+		responseMap.put("PRID", acknowledgementDTO.getPreRegistrationId());
 		responseMap.put("Date", dateFormate.format(now));
 		responseMap.put("Time", timeFormate.format(nowCountryTime));
 		responseMap.put("Appointmentdate", acknowledgementDTO.getAppointmentDate());
 		responseMap.put("Appointmenttime", acknowledgementDTO.getAppointmentTime());
-		responseMap.put("ApplicationDetails",
-				getApplicationDetails(langCode, acknowledgementDTO.getPreRegistrationId()));
 		if (acknowledgementDTO.getRegistrationCenterName() != null) {
 			responseMap.put("RegistrationCenterName",
 					acknowledgementDTO.getRegistrationCenterName().stream()
@@ -164,46 +150,6 @@ public class TemplateUtil {
 							.collect(Collectors.toList()).get(0));
 		}
 		return responseMap;
-	}
-
-	/**
-	 * This method will give ApplicationDetails based on Booking Type, Language by
-	 * applicationId
-	 * 
-	 * @param langCode
-	 * @param applicationId
-	 * @return applicationDetails
-	 */
-	public String getApplicationDetails(String langCode, String applicationId) {
-		String bookingType = null;
-		String applicationDetails = null;
-		try {
-			if (applicationId == null) {
-				throw new InvalidRequestParameterException(ErrorCodes.PRG_CORE_REQ_024.getCode(),
-						ErrorMessages.INVALID_REQUEST_PARAMETER.getMessage(), null);
-			}
-			bookingType = applicationRepository.findBookingTypeById(applicationId);
-
-			if (bookingType.equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
-				String str = "mosip.prereg.applicationdetails";
-				str += "." + langCode;
-				applicationDetails = env.getProperty(str);
-			} else if (bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
-				String str = "mosip.updateregistration.applicationdetails";
-				str += "." + langCode;
-				applicationDetails = env.getProperty(str);
-			} else if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())) {
-				String str = "mosip.lostuin.applicationdetails";
-				str += "." + langCode;
-				applicationDetails = env.getProperty(str);
-			}
-			log.info("Application Details : {} Based on Booking Type: {} by Application Id:{}", applicationDetails,
-					bookingType, applicationId);
-		} catch (Exception ex) {
-			log.error("Error while Getting the ApplicationDetails for applicationId ", applicationId);
-			log.error("Exception trace", ex);
-		}
-		return applicationDetails;
 	}
 
 }
