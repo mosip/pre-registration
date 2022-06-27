@@ -1,7 +1,6 @@
 package io.mosip.preregistration.application.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,8 +14,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
-
-import javax.annotation.PostConstruct;
 
 import org.json.JSONException;
 import org.json.simple.JSONObject;
@@ -42,7 +39,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.client.RestClientException;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -57,8 +53,6 @@ import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
-import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
-import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
@@ -71,7 +65,6 @@ import io.mosip.preregistration.core.util.NotificationUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.application.dto.QRCodeResponseDTO;
 import io.mosip.preregistration.application.exception.MandatoryFieldException;
-import io.mosip.preregistration.application.errorcodes.NotificationErrorCodes;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -98,7 +91,7 @@ public class NotificationServiceTest {
 
 	@Mock
 	private DemographicServiceIntf demographicServiceIntf;
-	
+
 	@Mock
 	private ApplicationServiceIntf applicationServiceIntf;
 
@@ -163,7 +156,7 @@ public class NotificationServiceTest {
 	MainResponseDTO<BookingRegistrationDTO> bookingResultDto = new MainResponseDTO<>();
 	MainResponseDTO<DemographicResponseDTO> demographicdto = new MainResponseDTO<>();
 	MainResponseDTO<ApplicationEntity> appEntity = new MainResponseDTO<>();
-	
+
 	@Before
 	public void beforeSet()
 			throws ParseException, FileNotFoundException, java.io.IOException, org.json.simple.parser.ParseException {
@@ -246,7 +239,7 @@ public class NotificationServiceTest {
 		appEntityResp.setApplicationId("20180396713560");
 		appEntityResp.setBookingType(BookingTypeCodes.NEW_PREREGISTRATION.toString());
 		appEntity.setResponse(appEntityResp);
-		
+
 	}
 
 	/**
@@ -291,7 +284,8 @@ public class NotificationServiceTest {
 
 		TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
 		templateResponseListDTO.setTemplates(tepmlateList);
-		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file)).thenReturn(responselist);
+		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file, appEntity.getResponse().getBookingType()))
+				.thenReturn(responselist);
 		ResponseEntity<TemplateResponseListDTO> res = new ResponseEntity<TemplateResponseListDTO>(
 				templateResponseListDTO, HttpStatus.OK);
 //		Mockito.when(restTemplate.getForEntity(Mockito.anyString(), Mockito.eq(TemplateResponseListDTO.class)))
@@ -447,7 +441,8 @@ public class NotificationServiceTest {
 
 		TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
 		templateResponseListDTO.setTemplates(tepmlateList);
-		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file)).thenReturn(responselist);
+		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file, appEntity.getResponse().getBookingType()))
+				.thenReturn(responselist);
 		ResponseEntity<TemplateResponseListDTO> res = new ResponseEntity<TemplateResponseListDTO>(
 				templateResponseListDTO, HttpStatus.OK);
 		HttpHeaders headers = new HttpHeaders();
@@ -497,7 +492,8 @@ public class NotificationServiceTest {
 
 		TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
 		templateResponseListDTO.setTemplates(tepmlateList);
-		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file)).thenReturn(responselist);
+		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file, appEntity.getResponse().getBookingType()))
+				.thenReturn(responselist);
 		ResponseEntity<TemplateResponseListDTO> res = new ResponseEntity<TemplateResponseListDTO>(
 				templateResponseListDTO, HttpStatus.OK);
 		HttpHeaders headers = new HttpHeaders();
@@ -545,7 +541,8 @@ public class NotificationServiceTest {
 
 		TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
 		templateResponseListDTO.setTemplates(tepmlateList);
-		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file)).thenReturn(responselist);
+		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file, appEntity.getResponse().getBookingType()))
+				.thenReturn(responselist);
 		ResponseEntity<TemplateResponseListDTO> res = new ResponseEntity<TemplateResponseListDTO>(
 				templateResponseListDTO, HttpStatus.OK);
 		HttpHeaders headers = new HttpHeaders();

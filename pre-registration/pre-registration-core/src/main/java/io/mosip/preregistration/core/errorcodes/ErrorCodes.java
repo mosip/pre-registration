@@ -29,7 +29,9 @@ public enum ErrorCodes {
 	PRG_CORE_REQ_020("PRG_CORE_REQ_020"),
 	PRG_CORE_REQ_021("PRG_CORE_REQ_021"),
 	PRG_CORE_REQ_022("PRG_CORE_REQ_022"),
-	PRG_CORE_REQ_023("PRG_CORE_REQ_023");
+	PRG_CORE_REQ_023("PRG_CORE_REQ_023"),
+	PRG_CORE_REQ_024("PRG_CORE_REQ_024");
+	
 
 	private ErrorCodes(String code) {
 		this.code = code;

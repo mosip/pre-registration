@@ -27,6 +27,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
@@ -34,6 +35,7 @@ import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.util.NotificationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.core.util.TemplateUtil;
@@ -71,6 +73,7 @@ public class NotificationUtilTest {
 	List<TemplateResponseDTO> tepmlateList = new ArrayList<>();
 	TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
 	ResponseEntity<NotificationResponseDTO> resp = null;
+	MainResponseDTO<ApplicationEntity> appEntity = new MainResponseDTO<>();
 
 	@Before
 	public void setUp() throws Exception {
@@ -91,7 +94,7 @@ public class NotificationUtilTest {
 		registrationCenterAdd.setValue("xyz");
 		regCenterAddress.add(registrationCenterAdd);
 		regCenterName.add(registrationCenterName);
-		KeyValuePairDto<String, String> address= new KeyValuePairDto();
+		KeyValuePairDto<String, String> address = new KeyValuePairDto();
 		notificationDTO = new NotificationDTO();
 		notificationDTO.setName("sanober Noor");
 		notificationDTO.setPreRegistrationId("1234567890");
@@ -115,6 +118,11 @@ public class NotificationUtilTest {
 		notificationResponseDTO.setStatus("True");
 
 		templateResponseListDTO.setTemplates(tepmlateList);
+
+		ApplicationEntity appEntityResp = new ApplicationEntity();
+		appEntityResp.setApplicationId("423288662552");
+		appEntityResp.setBookingType(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString());
+		appEntity.setResponse(appEntityResp);
 	}
 
 	@Test
@@ -140,8 +148,9 @@ public class NotificationUtilTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				}))).thenReturn(resp);
-		
-		MainResponseDTO<NotificationResponseDTO> response = notificationUtil.notify("email", notificationDTO, file);
+
+		MainResponseDTO<NotificationResponseDTO> response = notificationUtil.notify("email", notificationDTO, file,
+				appEntity.getResponse().getBookingType());
 		assertEquals(notificationResponseDTO.getMessage(), response.getResponse().getMessage());
 	}
 
@@ -169,7 +178,8 @@ public class NotificationUtilTest {
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
 				}))).thenReturn(resp);
 
-		MainResponseDTO<NotificationResponseDTO> response = notificationUtil.notify("sms", notificationDTO, file);
+		MainResponseDTO<NotificationResponseDTO> response = notificationUtil.notify("sms", notificationDTO, file,
+				appEntity.getResponse().getBookingType());
 		assertEquals(notificationResponseDTO.getMessage(), response.getResponse().getMessage());
 	}
 
