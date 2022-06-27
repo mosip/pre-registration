@@ -191,7 +191,8 @@ public class NotificationService {
 									+ notificationDto.isAdditionalRecipient());
 					if (notificationDto.getMobNum() != null && !notificationDto.getMobNum().isEmpty()) {
 						if (validationUtil.phoneValidator(notificationDto.getMobNum())) {
-							notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
+							notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
+									appEntity.getResponse().getBookingType());
 						} else {
 							throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_007.getCode(),
 									NotificationErrorMessages.PHONE_VALIDATION_EXCEPTION.getMessage(), response);
@@ -199,7 +200,8 @@ public class NotificationService {
 					}
 					if (notificationDto.getEmailID() != null && !notificationDto.getEmailID().isEmpty()) {
 						if (validationUtil.emailValidator(notificationDto.getEmailID())) {
-							notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
+							notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file,
+									appEntity.getResponse().getBookingType());
 						} else {
 							throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_006.getCode(),
 									NotificationErrorMessages.EMAIL_VALIDATION_EXCEPTION.getMessage(), response);
@@ -288,12 +290,14 @@ public class NotificationService {
 				if (responseNode.get(email) != null) {
 					String emailId = responseNode.get(email).asText();
 					notificationDto.setEmailID(emailId);
-					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
+					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file, 
+							appEntity.getResponse().getBookingType());
 				}
 				if (responseNode.get(phone) != null) {
 					String phoneNumber = responseNode.get(phone).asText();
 					notificationDto.setMobNum(phoneNumber);
-					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
+					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
+							appEntity.getResponse().getBookingType());
 	
 				}
 				if (responseNode.get(email) == null && responseNode.get(phone) == null) {
@@ -314,10 +318,12 @@ public class NotificationService {
 				langaueNamePairs.add(langaueNamePair);
 				notificationDto.setFullName(langaueNamePairs);
 				if (notificationDto.getEmailID() != null) {
-					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
+					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file,
+							appEntity.getResponse().getBookingType());
 				}
 				if (notificationDto.getMobNum() != null) {
-					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
+					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
+							appEntity.getResponse().getBookingType());
 				}
 				if (notificationDto.getEmailID() == null && notificationDto.getMobNum() == null ) {
 					//in case both email id and mob num are null, send details to contact info 
@@ -325,11 +331,13 @@ public class NotificationService {
 					if (createdById != null) {
 						if (validationUtil.emailValidator(createdById)) {
 							notificationDto.setEmailID(createdById);
-							notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file);
+							notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file,
+									appEntity.getResponse().getBookingType());
 						}
 						else if (validationUtil.phoneValidator(createdById)) {
 							notificationDto.setMobNum(createdById);
-							notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file);
+							notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
+									appEntity.getResponse().getBookingType());
 						} else {
 							log.info("sessionId", "idType", "id",
 									"In notification service of sendNotification failed to send Email and sms request ");	
