@@ -1,6 +1,7 @@
 package io.mosip.preregistration.datasync.test.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -15,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -50,7 +52,9 @@ import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
+import io.mosip.preregistration.datasync.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
+import io.mosip.preregistration.datasync.dto.ApplicationsDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
@@ -361,6 +365,19 @@ public class DataSyncServiceTest {
 				.thenReturn(archiveDTO);
 		MainResponseDTO<PreRegArchiveDTO> response = dataSyncService.fetchPreRegistrationData(preregId, machineId);
 		assertEquals(mainResponseDTO.getId().length(), response.getId().length());
+	}
+
+	@Test
+	public void retrieveAllAppointmentsSyncV2Test() {
+		List<ApplicationDetailResponseDTO> applicationDetailResponseList = new ArrayList<ApplicationDetailResponseDTO>();
+		ApplicationDetailResponseDTO dto = new ApplicationDetailResponseDTO();
+		dto.setApplicationId("1234");
+		applicationDetailResponseList.add(dto);
+
+		Mockito.when(serviceUtil.getAllBookedApplicationIds(Mockito.any(), Mockito.any(), Mockito.any()))
+				.thenReturn(applicationDetailResponseList);
+		MainResponseDTO<ApplicationsDTO> response = dataSyncService.retrieveAllAppointmentsSyncV2(datasyncReqDto);
+		assertNotNull(response.getId());
 	}
 
 }
