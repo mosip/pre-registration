@@ -303,6 +303,56 @@ public class NotificationServiceTest {
 	}
 
 	@Test
+	public void sendNotificationSuccessTest2()
+			throws JsonParseException, JsonMappingException, IOException, java.io.IOException {
+		NotificationDTO notificationDTO = new NotificationDTO();
+		MainResponseDTO<ApplicationEntity> appEntity = new MainResponseDTO<>();
+		ApplicationEntity appEntityResp = new ApplicationEntity();
+		appEntityResp.setApplicationId("24346587843");
+		appEntityResp.setBookingType(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString());
+		appEntity.setResponse(appEntityResp);
+
+		String langCode = "fra";
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any())).thenReturn(appEntity);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
+		Mockito.when(notificationUtil.getAppointmentDetails(Mockito.anyString())).thenReturn(bookingResultDto);
+
+		String stringjson = null;
+		try {
+			stringjson = mapper.writeValueAsString(mainReqDto);
+		} catch (JsonProcessingException e) {
+			e.printStackTrace();
+		}
+
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(null, "fra", false)).thenReturn(mainReqDto);
+		} catch (RuntimeException | io.mosip.kernel.core.util.exception.JsonMappingException
+				| io.mosip.kernel.core.exception.IOException | JSONException | java.text.ParseException
+				| io.mosip.kernel.core.util.exception.JsonParseException ex) {
+		} catch (com.fasterxml.jackson.core.JsonParseException
+				| com.fasterxml.jackson.databind.JsonMappingException ex) {
+		}
+
+		TemplateResponseListDTO templateResponseListDTO = new TemplateResponseListDTO();
+		templateResponseListDTO.setTemplates(tepmlateList);
+		Mockito.when(NotificationUtil.notify("sms", notificationDTO, file, appEntity.getResponse().getBookingType()))
+				.thenReturn(responselist);
+		ResponseEntity<TemplateResponseListDTO> res = new ResponseEntity<TemplateResponseListDTO>(
+				templateResponseListDTO, HttpStatus.OK);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		ResponseEntity<NotificationResponseDTO> resp = new ResponseEntity<NotificationResponseDTO>(
+				notificationResponseDTO, HttpStatus.OK);
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> response = notificationService
+				.sendNotification(stringjson, langCode, file, false);
+		assertEquals(responseDTO.getResponse().getMessage(), response.getResponse().getMessage());
+	}
+
+	@Test
 	public void notificationDtoValidationTest() throws java.io.IOException, org.json.simple.parser.ParseException {
 		String preId = "20180396713560";
 		NotificationDTO notificationDTO = new NotificationDTO();

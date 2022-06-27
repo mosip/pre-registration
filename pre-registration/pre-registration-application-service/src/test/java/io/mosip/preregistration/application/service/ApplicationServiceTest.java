@@ -448,6 +448,29 @@ public class ApplicationServiceTest {
 		Assert.assertEquals(response.getResponse().get(0).getApplicationId(), applicationEntity.getApplicationId());
 
 	}
+	
+	@Test
+	public void getBookingsForRegCenterTest2() {
+		String appointmentToDate = LocalDate.now().toString();
+		List<ApplicationEntity> entity = new ArrayList<ApplicationEntity>();
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("42342342");
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setBookingDate(LocalDate.now());
+		applicationEntity.setCrDtime(LocalDateTime.now());
+		applicationEntity.setRegistrationCenterId("");
+		applicationEntity.setSlotFromTime(LocalTime.now());
+		applicationEntity.setSlotToTime(LocalTime.now());
+		applicationEntity.setUpdDtime(LocalDateTime.now());
+		entity.add(applicationEntity);
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
+				.thenReturn(entity);
+
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(null,
+				LocalDate.now().toString(), appointmentToDate);
+		Assert.assertEquals(response.getResponse().get(0).getApplicationId(), applicationEntity.getApplicationId());
+
+	}
 
 	@Test(expected = RecordNotFoundException.class)
 	public void testgetBookingsForRegCenterRecordNotFoundException() {
