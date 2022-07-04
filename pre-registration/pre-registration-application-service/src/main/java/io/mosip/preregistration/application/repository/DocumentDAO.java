@@ -44,7 +44,8 @@ public class DocumentDAO {
 		try {
 			entityList = documentRepository.findByDemographicEntityPreRegistrationId(preId);
 			if (serviceUtil.isNull(entityList)) {
-				log.info("No Document has been Uploaded for the PRID: {}",preId);
+				throw new DocumentNotFoundException(DocumentErrorCodes.PRG_PAM_DOC_005.toString(),
+						DocumentStatusMessages.DOCUMENT_IS_MISSING.getMessage());
 			}
 		} catch (DataAccessLayerException ex) {
 			log.error("sessionId", "idType", "id", "In findBydocumentId method of DocumnetDAO - " + ex);

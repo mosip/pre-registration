@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -603,31 +604,36 @@ public class DocumentService implements DocumentServiceIntf {
 				}
 				if (documnetDAO.deleteAllBydocumentId(documentId) > 0) {
 					String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
-					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,
-							documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
-					if (demographicResponse.getStatusCode().toLowerCase()
-							.equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
-						log.info("check if mandatory document deleted");
+//					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,
+//					documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+					
+					int countOfMandatoryDocs = serviceUtil.validMandatoryDocuments(documentEntity.getDemographicEntity()).size();
+					String currentStatus = demographicResponse.getStatusCode();
+					if (countOfMandatoryDocs > 0 && StatusCodes.PENDING_APPOINTMENT.getCode().equalsIgnoreCase(currentStatus)) {
 						DemographicEntity demographicEntity = null;
 						try {
 							demographicEntity = documnetDAO.getDemographicEntityForPrid(preRegistrationId);
 						} catch (DocumentNotFoundException ex) {
-							if (demographicResponse.getStatusCode().toLowerCase()
-									.equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())
-									&& serviceUtil.validMandatoryDocuments(documentEntity.getDemographicEntity())
-											.size() > 0) {
-								serviceUtil.updateApplicationStatusToIncomplete(documentEntity.getDemographicEntity());
-							}
+							//if the last document is deleted & there are no mandatory documents
+							//then set the status from Pending Appointment to Application Incomplete
+							serviceUtil.updateApplicationStatusToIncomplete(documentEntity.getDemographicEntity());
 						}
-						if (isMandatoryDocumentDeleted(demographicEntity)) {
+						if (demographicEntity == null) {
+							//if the last document is deleted & there are no mandatory documents
+							//then set the status from Pending Appointment to Application Incomplete
+							serviceUtil.updateApplicationStatusToIncomplete(documentEntity.getDemographicEntity());
+						}
+						else if (isMandatoryDocumentDeleted(demographicEntity, documentEntity.getDocCatCode())) {
+							//if one of the mandatory doc is deleted 
+							// then set the status from Pending Appointment to Application Incomplete
 							log.info("mandatory document deleted");
 							serviceUtil.updateApplicationStatusToIncomplete(demographicEntity);
 						}
 					}
-					if (!isDeleted) {
-						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
-								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
-					}
+//					if (!isDeleted) {
+//						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
+//								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
+//					}
 					DocumentDeleteResponseDTO deleteDTO = new DocumentDeleteResponseDTO();
 					deleteDTO.setMessage(DocumentStatusMessages.DOCUMENT_DELETE_SUCCESSFUL.getMessage());
 					delResponseDto.setResponse(deleteDTO);
@@ -664,11 +670,17 @@ public class DocumentService implements DocumentServiceIntf {
 		return delResponseDto;
 	}
 
-	private boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity) throws ParseException {
-		boolean isDeleted = serviceUtil.isMandatoryDocumentDeleted(demographicEntity);
-		log.info("Mandatory document Deleted {}", isDeleted);
-		return isDeleted;
-
+	private boolean isMandatoryDocumentDeleted(DemographicEntity demographicEntity, String docCateCodeOfDoc) throws ParseException {
+		
+		List<String> mandatoryDocs = serviceUtil.validMandatoryDocuments(demographicEntity);
+		log.info("mandatory documents for user {} ----> {}", demographicEntity.getPreRegistrationId(), mandatoryDocs);
+		List<String> filteredMandatoryDocs = mandatoryDocs.stream().filter(doc -> doc.equalsIgnoreCase(docCateCodeOfDoc))
+				.collect(Collectors.toList());
+		if (filteredMandatoryDocs.size() > 0) {
+			log.info("Mandatory document Deleted {}", docCateCodeOfDoc);
+			return true;
+		}
+		return false;
 	}
 
 	/*
