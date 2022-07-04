@@ -604,8 +604,8 @@ public class DocumentService implements DocumentServiceIntf {
 				}
 				if (documnetDAO.deleteAllBydocumentId(documentId) > 0) {
 					String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
-//					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,
-//					documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
+					boolean isDeleted = objectStore.deleteObject(objectStoreAccountName,
+					documentEntity.getDemographicEntity().getPreRegistrationId(), null, null, key);
 					
 					int countOfMandatoryDocs = serviceUtil.validMandatoryDocuments(documentEntity.getDemographicEntity()).size();
 					String currentStatus = demographicResponse.getStatusCode();
@@ -630,10 +630,10 @@ public class DocumentService implements DocumentServiceIntf {
 							serviceUtil.updateApplicationStatusToIncomplete(demographicEntity);
 						}
 					}
-//					if (!isDeleted) {
-//						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
-//								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
-//					}
+					if (!isDeleted) {
+						throw new FSServerException(DocumentErrorCodes.PRG_PAM_DOC_006.toString(),
+								DocumentErrorMessages.DOCUMENT_FAILED_TO_DELETE.getMessage());
+					}
 					DocumentDeleteResponseDTO deleteDTO = new DocumentDeleteResponseDTO();
 					deleteDTO.setMessage(DocumentStatusMessages.DOCUMENT_DELETE_SUCCESSFUL.getMessage());
 					delResponseDto.setResponse(deleteDTO);
