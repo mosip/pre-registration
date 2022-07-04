@@ -23,7 +23,6 @@ import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
@@ -409,7 +408,6 @@ public class DocumentServiceTest {
 		assertEquals(responseDto.getResponse().getMessage(), responsedelete.getResponse().getMessage());
 	}
 
-	@Ignore
 	@Test(expected = FSServerException.class)
 	public void deleteDocumentFSServerExceptionTest() {
 		demographicResponseDTO.setStatusCode("Pending_Appointment");
