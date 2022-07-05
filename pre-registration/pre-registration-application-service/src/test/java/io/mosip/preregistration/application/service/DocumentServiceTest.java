@@ -423,14 +423,17 @@ public class DocumentServiceTest {
 	}
 
 	@Test
-	public void deleteDocumentSuccessTest() {
+	public void deleteDocumentSuccessTest() throws org.json.simple.parser.ParseException {
 		demographicResponseDTO.setStatusCode("Pending_Appointment");
+		List<String> doc = new ArrayList<String>();
+		doc.add("1");
 		DocumentDeleteResponseDTO response = new DocumentDeleteResponseDTO();
 		response.setMessage("Document successfully deleted");
 		responsedelete.setResponse(response);
 		Mockito.when(
 				objectStore.deleteObject(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(true);
+		Mockito.when(serviceUtil.validMandatoryDocuments(Mockito.any())).thenReturn(doc);
 		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
 		Mockito.when(validationutil.requstParamValidator(Mockito.any())).thenReturn(true);
 		Mockito.when(documnetDAO.findBydocumentId(Mockito.any())).thenReturn(documentEntity);
