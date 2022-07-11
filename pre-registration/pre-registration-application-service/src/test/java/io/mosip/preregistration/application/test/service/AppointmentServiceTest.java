@@ -32,6 +32,7 @@ import io.mosip.analytics.event.anonymous.exception.AnonymousProfileException;
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.AppointmentServiceImpl;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DocumentService;
@@ -85,6 +86,9 @@ public class AppointmentServiceTest {
 	
 	@Value("${mosip.preregistration.booking.delete.id}")
 	private String appointmentDeletelId;
+	
+	@MockBean
+	private DocumentDAO documentDAO;
 	
 	@Before
 	public void setup() {

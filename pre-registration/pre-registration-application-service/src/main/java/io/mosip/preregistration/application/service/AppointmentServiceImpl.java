@@ -27,6 +27,7 @@ import io.mosip.preregistration.application.errorcodes.AppointmentErrorCodes;
 import io.mosip.preregistration.application.exception.AppointmentExecption;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.BookingRequestDTO;
@@ -89,6 +90,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
+	
+	@Autowired
+	private DocumentDAO documentDAO;
 
 	public AuthUserDetails authUserDetails() {
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
@@ -342,7 +346,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 			browserInfo.setBrowserName(userAgent);
 			DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId)
 					.getResponse();
-			DocumentsMetaData documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
+			DocumentsMetaData documentsData = null;
+			Boolean documentExists = documentDAO.existsByPreregId(preRegistrationId);
+			if (documentExists) {
+				documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
+			}
 			BookingRegistrationDTO bookingData = new BookingRegistrationDTO();
 			bookingData.setRegistrationCenterId(bookRequest.getRegistrationCenterId());
 			bookingData.setRegDate(bookRequest.getRegDate());
