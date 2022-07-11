@@ -31,6 +31,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.BookingRequestDTO;
@@ -97,6 +98,9 @@ public class AppointmentServiceImplTest {
 
 	@Mock
 	private ApplicationRepostiory applicationRepostiory;
+	
+	@Mock
+	private DocumentDAO documentDAO;
 
 	@Before
 	public void init() {
@@ -479,7 +483,8 @@ public class AppointmentServiceImplTest {
 		bookingDTO.setRequest(bookreq);
 		BookingStatusDTO booked = new BookingStatusDTO();
 		Mockito.when(appointmentUtils.makeAppointment(bookingDTO, preRegistrationId)).thenReturn(booked);
-
+		Boolean documentExists = true;
+		Mockito.when(documentDAO.existsByPreregId(preRegistrationId)).thenReturn(documentExists);
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId("98765432");
 		applicationEntity.setAppointmentDate(LocalDate.now());
