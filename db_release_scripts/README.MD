@@ -85,11 +85,11 @@ Once completed with sourcing the database release files, Follow the DB release d
 		
 **Step 1** -> Make modification to all the respective database properties files **(<<schema>>_release_deploy.properties)** in the respective database directories. Path of properties file and variables list explained above. Once the properties files are ready then access the directory where the deployment script is kept.
 
-**Step 2** -> DB Release deployment for all databases, run the **"prereg_release_db_deploy.sh"** script with release version as parameter.  To access and exeute **"prereg_release_db_deploy.sh"** script, follow the below given sample commands:
+**Step 2** -> DB Release deployment for all databases, run the **"deploy.sh"** script with release version as parameter.  To access and exeute **"deploy.sh"** script, follow the below given sample commands:
 
 <em> **Enter:-bash-4.2$** cd /home/madmin/database_release/mosip_prereg </em>
 
-<em> **Enter:-bash-4.2$** bash prereg_release_db_deploy.sh prereg_release_deploy.properties <release_version_number> </em>
+<em> **Enter:-bash-4.2$** bash deploy.sh deploy.properties <release_version_number> </em>
 
 **Step 3** -> Please observe <em> Post Release Deployment Validation </em>  steps below
 
@@ -98,11 +98,11 @@ Once completed with sourcing the database release files, Follow the DB release d
 
 ## DB deployment revoke: (Optional: Execute only if db version release deployment revoking required)
 
-**Step 1** -> DB Revoke deployment for all databases, run the **"prereg_revoke_db_deploy.sh"** script with release version as parameter.  To access and exeute **"prereg_revoke_db_deploy.sh "** script, follow the below given commands:
+**Step 1** -> DB Revoke deployment for all databases, run the **"revoke.sh"** script with release version as parameter.  To access and exeute **"revoke.sh "** script, follow the below given commands:
 
 <em> **Enter:-bash-4.2$** cd /home/madmin/database_release/mosip_prereg </em>
 
-<em> **Enter:-bash-4.2$** bash prereg_revoke_db_deploy.sh prereg_release_deploy.propertie <release_version_number> </em>
+<em> **Enter:-bash-4.2$** bash revoke.sh deploy.properties <release_version_number> </em>
 
 **Step 2** -> Please observe <em> Post Release Deployment Validation </em>  steps below
 
