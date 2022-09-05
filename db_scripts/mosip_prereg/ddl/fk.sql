@@ -34,7 +34,7 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 
 -- object: pprlst_pregtrn_fk | type: CONSTRAINT --
 -- ALTER TABLE prereg.processed_prereg_list DROP CONSTRAINT IF EXISTS pprlst_pregtrn_fk CASCADE;
-ALTER TABLE prereg.processed_prereg_list ADD CONSTRAINT pprlst_pregtrn_fk FOREIGN KEY (prereg_trn_id)
-REFERENCES prereg.pre_registration_transaction (id) MATCH FULL
-ON DELETE SET NULL ON UPDATE CASCADE;
+-- ALTER TABLE prereg.processed_prereg_list ADD CONSTRAINT pprlst_pregtrn_fk FOREIGN KEY (prereg_trn_id)
+-- REFERENCES prereg.pre_registration_transaction (id) MATCH FULL
+-- ON DELETE SET NULL ON UPDATE CASCADE;
 -- ddl-end --
