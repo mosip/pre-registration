@@ -158,6 +158,9 @@
 							<goal>jar</goal>
 						</goals>
 						<configuration>
+							<excludes>
+								<exclude>**/*.properties</exclude>
+							</excludes>
 							<classifier>lib</classifier>
 						</configuration>
 					</execution>
