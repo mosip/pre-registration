@@ -57,6 +57,9 @@ public class OTPManager {
 
 	/** The Constant USER_BLOCKED. */
 	private static final String USER_BLOCKED = "USER_BLOCKED";
+	
+	/** The Constant OTP_ATTEMPT_EXCEEDED. */
+	private static final String OTP_ATTEMPT_EXCEEDED = "OTP_ATTEMPT_EXCEEDED";
 
 	@Value("${secretKey}")
 	private String secretKey;
@@ -69,6 +72,9 @@ public class OTPManager {
 
 	@Value("${sendOtp.resource.url}")
 	private String sendOtpResourceUrl;
+	
+	@Value("${mosip.kernel.otp.validation-attempt-threshold}")
+	private int otpValidationThreshold;
 
 	@Value("${appId}")
 	private String appId;
@@ -233,11 +239,27 @@ public class OTPManager {
 	public boolean validateOtp(String otp, String userId) throws PreRegLoginException {
 		logger.info("sessionId", "idType", "id", "In validateOtp method of otpmanager service ");
 		String otpHash;
+		String refId = hash(userId);
 		otpHash = digestAsPlainText(
 				(userId + environment.getProperty(PreRegLoginConstant.KEY_SPLITTER) + otp).getBytes());
-
-		if (!otpRepo.existsByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS))
+		if (!otpRepo.existsByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS)) {
+			int otpCount = 0;
+			OtpTransaction otpTn = otpRepo.findByRefIdAndStatusCode(refId, PreRegLoginConstant.ACTIVE_STATUS);
+			if (otpTn.getValidationRetryCount() == null) {
+				otpTn.setValidationRetryCount(1);
+			} else {
+				otpCount = otpTn.getValidationRetryCount() + 1;
+				otpTn.setValidationRetryCount(otpCount);
+			}
+			otpRepo.save(otpTn);
+			if (otpTn.getValidationRetryCount() > otpValidationThreshold) {
+				logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
+						PreRegLoginErrorConstants.OTP_ATTEMPT_EXCEEDED.getErrorCode(), OTP_ATTEMPT_EXCEEDED);
+				throw new PreRegLoginException(PreRegLoginErrorConstants.OTP_ATTEMPT_EXCEEDED.getErrorCode(),
+						PreRegLoginErrorConstants.OTP_ATTEMPT_EXCEEDED.getErrorMessage());
+			}
 			return false;
+		}
 		OtpTransaction otpTxn = otpRepo.findByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
 		otpTxn.setStatusCode(PreRegLoginConstant.USED_STATUS);
 		otpRepo.save(otpTxn);
