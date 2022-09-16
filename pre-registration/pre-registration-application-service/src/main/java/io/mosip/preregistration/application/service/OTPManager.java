@@ -73,7 +73,7 @@ public class OTPManager {
 	@Value("${sendOtp.resource.url}")
 	private String sendOtpResourceUrl;
 	
-	@Value("${mosip.kernel.otp.validation-attempt-threshold}")
+	@Value("${pre.reg.login.otp.validation-attempt-threshold}")
 	private int otpValidationThreshold;
 
 	@Value("${appId}")
@@ -243,21 +243,23 @@ public class OTPManager {
 		otpHash = digestAsPlainText(
 				(userId + environment.getProperty(PreRegLoginConstant.KEY_SPLITTER) + otp).getBytes());
 		if (!otpRepo.existsByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS)) {
-			int otpCount = 0;
 			OtpTransaction otpTn = otpRepo.findByRefIdAndStatusCode(refId, PreRegLoginConstant.ACTIVE_STATUS);
 			if (otpTn.getValidationRetryCount() == null) {
 				otpTn.setValidationRetryCount(1);
 			} else {
+				int otpCount = 0;
 				otpCount = otpTn.getValidationRetryCount() + 1;
 				otpTn.setValidationRetryCount(otpCount);
 			}
-			otpRepo.save(otpTn);
 			if (otpTn.getValidationRetryCount() > otpValidationThreshold) {
+				otpTn.setStatusCode(PreRegLoginConstant.USED_STATUS);
+				otpRepo.save(otpTn);
 				logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
 						PreRegLoginErrorConstants.OTP_ATTEMPT_EXCEEDED.getErrorCode(), OTP_ATTEMPT_EXCEEDED);
 				throw new PreRegLoginException(PreRegLoginErrorConstants.OTP_ATTEMPT_EXCEEDED.getErrorCode(),
 						PreRegLoginErrorConstants.OTP_ATTEMPT_EXCEEDED.getErrorMessage());
 			}
+			otpRepo.save(otpTn);
 			return false;
 		}
 		OtpTransaction otpTxn = otpRepo.findByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
