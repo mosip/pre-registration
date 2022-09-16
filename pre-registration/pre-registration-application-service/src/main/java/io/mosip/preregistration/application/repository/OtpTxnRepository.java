@@ -14,6 +14,8 @@ public interface OtpTxnRepository extends BaseRepository<OtpTransaction, String>
 	Boolean existsByOtpHashAndStatusCode(String otpHash, String statusCode);
 
 	OtpTransaction findByOtpHashAndStatusCode(String otpHash, String statusCode);
+	
+	OtpTransaction findByRefIdAndStatusCode(String refId, String statusCode);
 
 	/**
 	 * Obtain the number of count of request_dTtimes for particular userId with

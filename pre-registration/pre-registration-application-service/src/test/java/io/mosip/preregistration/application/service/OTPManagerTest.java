@@ -320,11 +320,6 @@ public class OTPManagerTest {
 		assertTrue(otpManager.sendOtp(requestDTO,channelType,language));
 		}
 	
-	@Test
-	public void testvalidateOtpSuccess(){
-		assertFalse(otpManager.validateOtp(null,null));
-	}
-	
 	@Test(expected=PreRegLoginException.class)
 	public void testvalidateOtpPreRegLoginException(){
 		Mockito.when(otpRepo.existsByOtpHashAndStatusCode(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -332,7 +327,7 @@ public class OTPManagerTest {
 		otpTxn.setExpiryDtimes(DateUtils.getUTCCurrentDateTime());
 		Mockito.when(otpRepo.findByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
         .thenReturn(otpTxn);
-		otpManager.validateOtp(null,null);
+		otpManager.validateOtp("111111","42456");
 	}
 	
 	@Test
@@ -344,6 +339,17 @@ public class OTPManagerTest {
 		otpTxn.setExpiryDtimes(a);
 		Mockito.when(otpRepo.findByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
         .thenReturn(otpTxn);
-		assertTrue(otpManager.validateOtp(null,null));
+		assertTrue(otpManager.validateOtp("111111","42456"));
+	}
+	
+	@Test (expected = PreRegLoginException.class)
+	public void testvalidateOtpExceededException(){
+		Mockito.when(otpRepo.existsByOtpHashAndStatusCode(Mockito.any(), Mockito.any())).thenReturn(false);
+		OtpTransaction otpTxn = new OtpTransaction();
+		LocalDateTime a = LocalDateTime.of(2028, 2, 13, 15, 56);    
+		otpTxn.setExpiryDtimes(a);
+		Mockito.when(otpRepo.findByRefIdAndStatusCode(Mockito.any(), Mockito.any()))
+        .thenReturn(otpTxn);
+		otpManager.validateOtp("111111","42456");
 	}
 }
