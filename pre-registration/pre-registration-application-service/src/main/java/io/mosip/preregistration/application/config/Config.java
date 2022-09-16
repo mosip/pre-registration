@@ -3,16 +3,12 @@ package io.mosip.preregistration.application.config;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
-import java.security.cert.X509Certificate;
 import java.util.Collections;
 import java.util.Map;
 
-import javax.net.ssl.SSLContext;
-
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
-import org.apache.http.conn.ssl.TrustStrategy;
-import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.client.HttpClients;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,6 +25,12 @@ import org.springframework.web.client.RestTemplate;
 @ConfigurationProperties("mosip")
 public class Config {
 
+	@Value("${preregistration.appservice.httpclient.connections.max.per.host:20}")
+	private int maxConnectionPerRoute;
+
+	@Value("${preregistration.appservice.httpclient.connections.max:100}")
+	private int totalMaxConnection;
+	
 	/** The id. */
 	private Map<String, String> id;
 	
@@ -55,19 +57,12 @@ public class Config {
 	@Bean
 	public RestTemplate restTemplateConfig()
 			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-		
-			TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
-
-			SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom()
-					.loadTrustMaterial(null, acceptingTrustStrategy).build();
-
-			SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
-
-			CloseableHttpClient httpClient = HttpClients.custom().setSSLSocketFactory(csf).build();
-			HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
-
-			requestFactory.setHttpClient(httpClient);
-			return new RestTemplate(requestFactory);
+			HttpClientBuilder httpClientBuilder = HttpClients.custom()
+				.setMaxConnPerRoute(maxConnectionPerRoute)
+				.setMaxConnTotal(totalMaxConnection).disableCookieManagement();
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+		requestFactory.setHttpClient(httpClientBuilder.build());
+		return new RestTemplate(requestFactory);
 	}
 
 }
