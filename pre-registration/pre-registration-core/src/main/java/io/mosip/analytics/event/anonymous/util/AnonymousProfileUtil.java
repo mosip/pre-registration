@@ -193,12 +193,6 @@ public class AnonymousProfileUtil {
 				registrationProfile.setChannel(getChannels(identityMapping, identityData));
 				registrationProfile.setDocuments(getDocumentTypesList(documentsData));
 				registrationProfile.setStatus(demographicData.getStatusCode());
-				RegistrationProfileDeviceDTO device = new RegistrationProfileDeviceDTO();
-				if (!isNull(browserData)) {
-					device.setBrowser(browserData.getBrowserName());
-					device.setBrowserVersion(browserData.getBrowserVersion());
-				}
-				registrationProfile.setDevice(device);
 				AnonymousProfileRequestDTO requestDto = new AnonymousProfileRequestDTO();
 				String profileJsonString = objectMapper.writeValueAsString(registrationProfile);
 				requestDto.setProfileDetails(profileJsonString);
