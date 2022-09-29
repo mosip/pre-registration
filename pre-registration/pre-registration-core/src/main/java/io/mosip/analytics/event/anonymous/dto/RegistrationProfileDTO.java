@@ -72,6 +72,11 @@ public class RegistrationProfileDTO {
 	 */
 	private String enrollmentCenterId;
 
+	// /**
+	//  * The device details used while creating the Anonymous Registration Profile.
+	//  */
+	// private RegistrationProfileDeviceDTO device;
+
 	/**
 	 * The types of documents uploaded by the Anonymous Registration Profile.
 	 */
