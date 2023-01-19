@@ -19,7 +19,6 @@ To run Pre-registration services, run [Config Server](https://docs.mosip.io/1.2.
 
 ## Build & run (for developers)
 Prerequisites:
-
 1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
 1. JDK 1.11  
 1. Build and install:
