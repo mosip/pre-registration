@@ -748,7 +748,7 @@ public class DemographicServiceUtil {
 
 			if (demograhicObject instanceof List) {
 				JSONArray arr = ((JSONArray) demograhicObject);
- 
+
 				dataCaptureLang = (Set<String>) arr.stream().map(data -> {
 					String language = null;
 					try {
