@@ -1,5 +1,14 @@
-\c mosip_prereg sysadmin
+\c mosip_prereg
 
+REASSIGN OWNED BY sysadmin TO postgres;
+
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg FROM prereguser;
+
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg FROM sysadmin;
+
+GRANT SELECT, INSERT, TRUNCATE, REFERENCES, UPDATE, DELETE ON ALL TABLES IN SCHEMA prereg TO prereguser;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg TO postgres;
 
 \ir ../ddl/prereg-applications.sql
 

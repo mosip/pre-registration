@@ -1,4 +1,4 @@
-\c mosip_prereg sysadmin
+\c mosip_prereg
 
 DROP TABLE IF EXISTS prereg-applications;
 DROP TABLE IF EXISTS prereg-anonymous_profile;
