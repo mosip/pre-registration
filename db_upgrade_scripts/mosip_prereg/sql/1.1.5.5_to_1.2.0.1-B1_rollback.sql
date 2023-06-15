@@ -1,5 +1,9 @@
 \c mosip_prereg
 
+REASSIGN OWNED BY postgres TO sysadmin;
+
+GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg TO sysadmin;
+
 DROP TABLE IF EXISTS prereg-applications;
 DROP TABLE IF EXISTS prereg-anonymous_profile;
 
