@@ -16,7 +16,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg TO postgres;
 
 ALTER TABLE prereg.reg_appointment DROP CONSTRAINT IF EXISTS fk_rappmnt_id CASCADE;
 
-CREATE INDEX IF NOT EXISTS idx_app_demo_cr_by ON prereg.applicant_demographic USING btree cr_by COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
+CREATE INDEX IF NOT EXISTS idx_app_demo_cr_by ON prereg.applicant_demographic USING btree (cr_by COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX IF NOT EXISTS idx_app_demo_prid ON prereg.applicant_demographic USING btree (prereg_id COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
 
 ALTER TABLE prereg.prid_seq RENAME TO prereg.prid_seq_to_be_deleted;
