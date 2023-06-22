@@ -19,11 +19,11 @@ ALTER TABLE prereg.reg_appointment DROP CONSTRAINT IF EXISTS fk_rappmnt_id CASCA
 CREATE INDEX IF NOT EXISTS idx_app_demo_cr_by ON prereg.applicant_demographic USING btree (cr_by COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
 CREATE INDEX IF NOT EXISTS idx_app_demo_prid ON prereg.applicant_demographic USING btree (prereg_id COLLATE pg_catalog."default" ASC NULLS LAST) TABLESPACE pg_default;
 
-ALTER TABLE prereg.prid_seq RENAME TO prereg.prid_seq_to_be_deleted;
-ALTER TABLE prereg.transaction_type RENAME TO prereg.transaction_type_to_be_deleted;
-ALTER TABLE prereg.language_transliteration RENAME TO prereg.language_transliteration_to_be_deleted;
-ALTER TABLE prereg.prid_seed RENAME TO prereg.prid_seed_to_be_deleted;
-ALTER TABLE prereg.pre_registration_transaction RENAME TO prereg.pre_registration_transaction_to_be_deleted;
+ALTER TABLE prereg.prid_seq RENAME TO prid_seq_to_be_deleted;
+ALTER TABLE prereg.transaction_type RENAME TO transaction_type_to_be_deleted;
+ALTER TABLE prereg.language_transliteration RENAME TO language_transliteration_to_be_deleted;
+ALTER TABLE prereg.prid_seed RENAME TO prid_seed_to_be_deleted;
+ALTER TABLE prereg.pre_registration_transaction RENAME TO pre_registration_transaction_to_be_deleted;
 
 INSERT INTO prereg.applications(application_id, booking_type, booking_status_code, regcntr_id, appointment_date, booking_date,
    slot_from_time, slot_to_time, contact_info, cr_by, cr_dtimes, upd_by, upd_dtimes, application_status_code)
