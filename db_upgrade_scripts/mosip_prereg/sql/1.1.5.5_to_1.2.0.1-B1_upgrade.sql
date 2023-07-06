@@ -10,9 +10,36 @@ GRANT SELECT, INSERT, TRUNCATE, REFERENCES, UPDATE, DELETE ON ALL TABLES IN SCHE
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg TO postgres;
 
-\ir ../ddl/prereg-applications.sql
+CREATE TABLE IF NOT EXISTS prereg.applications(
+	application_id character varying(36) NOT NULL,
+	booking_type character varying(256) NOT NULL,
+	booking_status_code character varying(256),
+	application_status_code character varying(256),
+	regcntr_id character varying(10),
+	appointment_date date,
+	booking_date date,
+	slot_from_time time without time zone,
+	slot_to_time time without time zone,
+	contact_info character varying(256),
+	cr_by character varying(256) NOT NULL,
+	cr_dtimes timestamp without time zone NOT NULL,
+	upd_by character varying(256),
+	upd_dtimes timestamp without time zone,
+	CONSTRAINT appid_pk PRIMARY KEY (application_id)
+);
 
-\ir  ../ddl/prereg-anonymous_profile.sql
+CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
+(
+    id character varying(36) NOT NULL,
+    profile character varying NOT NULL,
+    cr_by character varying(256) NOT NULL,
+    cr_dtimes timestamp without time zone NOT NULL,
+    upd_by character varying(256),
+    upd_dtimes timestamp without time zone,
+    is_deleted boolean,
+    del_dtimes timestamp without time zone,
+    CONSTRAINT anonymous_profile_pkey PRIMARY KEY (id)
+);
 
 ALTER TABLE prereg.reg_appointment DROP CONSTRAINT IF EXISTS fk_rappmnt_id CASCADE;
 
