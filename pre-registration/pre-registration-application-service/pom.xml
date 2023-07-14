@@ -166,6 +166,23 @@
 					</execution>
 				</executions>
 			</plugin>
+			<plugin>
+				<artifactId>maven-jar-plugin</artifactId>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>jar</goal>
+						</goals>
+						<configuration>
+							<excludes>
+								<exclude>**/*.properties</exclude>
+							</excludes>
+							<classifier>lib</classifier>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 	</build>
 	<profiles>
@@ -180,12 +197,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0-rc1</version>
+					<version>1.2.0.1-SNAPSHOT</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.0-rc1</version>
+					<version>1.2.0.1-SNAPSHOT</version>
 				</dependency>
 			</dependencies>
 			<build>
