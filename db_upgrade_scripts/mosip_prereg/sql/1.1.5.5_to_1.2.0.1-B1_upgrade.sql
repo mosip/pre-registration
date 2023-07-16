@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS prereg.applications(
 	CONSTRAINT appid_pk PRIMARY KEY (application_id)
 );
 
-GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.applications IN SCHEMA prereg TO prereguser;
+GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.applications TO prereguser;
 
 CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
 (
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
     CONSTRAINT anonymous_profile_pkey PRIMARY KEY (id)
 );
 
-GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.anonymous_profile IN SCHEMA prereg TO prereguser;
+GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.anonymous_profile TO prereguser;
 
 ALTER TABLE prereg.reg_appointment DROP CONSTRAINT IF EXISTS fk_rappmnt_id CASCADE;
 
