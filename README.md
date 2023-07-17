@@ -37,7 +37,7 @@ To deploy Commons services on Kubernetes cluster using Dockers refer to [Sandbox
 ## Configuration
 Refer to the [configuration guide](docs/configuration.md).
 
-## Test
+## Test 
 Automated functional tests available in [Functional Tests repo](https://github.com/mosip/mosip-functional-tests).
 
 ## APIs
