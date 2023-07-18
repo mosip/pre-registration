@@ -284,7 +284,7 @@ public class OTPManager {
         try {
             idHash = HMACUtils2.digestAsPlainText(id.getBytes());
         } catch (NoSuchAlgorithmException e) {
-            throw new PreRegLoginException(null, e.getMessage());
+            throw new PreRegLoginException(PreRegLoginErrorConstants.UNABLE_TO_PROCESS.getErrorCode(), e.getMessage());
         }
         return idHash;
     }
