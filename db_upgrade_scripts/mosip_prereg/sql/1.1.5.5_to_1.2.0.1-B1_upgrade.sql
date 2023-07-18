@@ -55,6 +55,7 @@ ALTER TABLE prereg.transaction_type RENAME TO transaction_type_to_be_deleted;
 ALTER TABLE prereg.language_transliteration RENAME TO language_transliteration_to_be_deleted;
 ALTER TABLE prereg.prid_seed RENAME TO prid_seed_to_be_deleted;
 ALTER TABLE prereg.pre_registration_transaction RENAME TO pre_registration_transaction_to_be_deleted;
+ALTER TABLE prereg.processed_prereg_list DROP CONSTRAINT IF EXISTS pprlst_pregtrn_fk CASCADE;
 
 INSERT INTO prereg.applications(application_id, booking_type, booking_status_code, regcntr_id, appointment_date, booking_date,
    slot_from_time, slot_to_time, contact_info, cr_by, cr_dtimes, upd_by, upd_dtimes, application_status_code)
