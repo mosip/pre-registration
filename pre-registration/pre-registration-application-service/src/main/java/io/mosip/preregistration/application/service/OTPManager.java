@@ -1,6 +1,7 @@
 package io.mosip.preregistration.application.service;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -28,7 +29,7 @@ import org.springframework.web.client.RestTemplate;
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.kernel.core.util.HMACUtils;
+import io.mosip.kernel.core.util.HMACUtils2;
 import io.mosip.preregistration.application.constant.PreRegLoginConstant;
 import io.mosip.preregistration.application.constant.PreRegLoginErrorConstants;
 import io.mosip.preregistration.application.dto.OTPGenerateRequestDTO;
@@ -39,7 +40,7 @@ import io.mosip.preregistration.application.exception.PreRegLoginException;
 import io.mosip.preregistration.application.repository.OtpTxnRepository;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.config.LoggerConfiguration;;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 /**
  * OTPManager handling with OTP-Generation and OTP-Validation.
@@ -278,10 +279,14 @@ public class OTPManager {
 		return DatatypeConverter.printHexBinary(data).toUpperCase();
 	}
 
-	private String hash(String id) throws PreRegLoginException {
-
-		return HMACUtils.digestAsPlainText(id.getBytes());
-
-	}
+    private String hash(String id) throws PreRegLoginException {
+        String idHash = null;
+        try {
+            idHash = HMACUtils2.digestAsPlainText(id.getBytes());
+        } catch (NoSuchAlgorithmException e) {
+            throw new PreRegLoginException(null, e.getMessage());
+        }
+        return idHash;
+    }
 
 }
