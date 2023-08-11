@@ -13,7 +13,7 @@ public interface OtpTxnRepository extends BaseRepository<OtpTransaction, String>
 
 	Boolean existsByOtpHashAndStatusCode(String otpHash, String statusCode);
 
-	OtpTransaction findByOtpHashAndStatusCode(String otpHash, String statusCode);
+	OtpTransaction findTopByOtpHashAndStatusCode(String otpHash, String statusCode);
 	
 	OtpTransaction findByRefIdAndStatusCode(String refId, String statusCode);
 
