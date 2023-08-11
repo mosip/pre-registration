@@ -129,7 +129,7 @@ public class OTPManager {
 				(userId + environment.getProperty(PreRegLoginConstant.KEY_SPLITTER) + otp).getBytes());
 
 		if (otpRepo.existsByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS)) {
-			OtpTransaction otpTxn = otpRepo.findByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
+			OtpTransaction otpTxn = otpRepo.findTopByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS); 
 			otpTxn.setOtpHash(otpHash);
 			otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 			otpTxn.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
@@ -263,7 +263,7 @@ public class OTPManager {
 			otpRepo.save(otpTn);
 			return false;
 		}
-		OtpTransaction otpTxn = otpRepo.findByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
+		OtpTransaction otpTxn = otpRepo.findTopByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
 		otpTxn.setStatusCode(PreRegLoginConstant.USED_STATUS);
 		otpRepo.save(otpTxn);
 		if (!(otpTxn.getExpiryDtimes().isAfter(DateUtils.getUTCCurrentDateTime()))) {
