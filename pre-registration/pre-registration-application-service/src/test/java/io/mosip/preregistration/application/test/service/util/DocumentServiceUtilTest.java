@@ -103,7 +103,7 @@ public class DocumentServiceUtilTest {
 
 	@Test(expected = VirusScannerException.class)
 	public void virusscannerFailureTest() throws Exception {
-		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenThrow(java.io.IOException.class);
+		Mockito.when(virusScan.scanDocument(mockMultipartFile.getBytes())).thenThrow(VirusScannerException.class);
 		serviceUtil.isVirusScanSuccess(mockMultipartFile);
 	}
 
