@@ -341,7 +341,7 @@ public class DocumentServiceUtil {
 	 * @throws java.io.IOException 
 	 * @throws DocumentNotValidException if uploaded document is not valid
 	 */
-    public void isVirusScanSuccess(MultipartFile file) throws java.io.IOException {
+    public void virusScanCheck(MultipartFile file) throws java.io.IOException {
         try {
             log.info("sessionId", "idType", "id", "In isVirusScanSuccess method of document service util");
             Boolean scanSuccess = virusScan.scanDocument(file.getBytes());
