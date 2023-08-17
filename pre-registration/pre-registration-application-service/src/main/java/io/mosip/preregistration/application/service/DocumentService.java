@@ -219,7 +219,7 @@ public class DocumentService implements DocumentServiceIntf {
 			requiredRequestMap.put("id", uploadId);
 			if (validationUtil.requestValidator(prepareRequestParamMap(docReqDto), requiredRequestMap)) {
 				if (scanDocument) {
-					serviceUtil.isVirusScanSuccess(file);
+					serviceUtil.virusScanCheck(file);
 				}
 				if (serviceUtil.fileSizeCheck(file.getSize()) && serviceUtil.fileExtensionCheck(file)) {
 					serviceUtil.isValidRequest(docReqDto.getRequest(), preRegistrationId);

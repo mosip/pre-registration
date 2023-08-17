@@ -338,19 +338,24 @@ public class DocumentServiceUtil {
 	 * This method checks the file extension
 	 * 
 	 * @param file pass uploaded file
+	 * @throws java.io.IOException 
 	 * @throws DocumentNotValidException if uploaded document is not valid
 	 */
-	public boolean isVirusScanSuccess(MultipartFile file) {
-		try {
-			log.info("sessionId", "idType", "id", "In isVirusScanSuccess method of document service util");
-			return virusScan.scanDocument(file.getBytes());
-		} catch (Exception e) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
-			log.error("sessionId", "idType", "id", e.getMessage());
-			throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
-					DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
-		}
-	}
+    public void virusScanCheck(MultipartFile file) throws java.io.IOException {
+        try {
+            log.info("sessionId", "idType", "id", "In isVirusScanSuccess method of document service util");
+            Boolean scanSuccess = virusScan.scanDocument(file.getBytes());
+            if (!scanSuccess) {
+                throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
+                        DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
+            }
+        } catch (VirusScannerException e) {
+            log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
+            log.error("sessionId", "idType", "id", e.getMessage());
+            throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
+                    DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
+        }
+    }
 
 	public DemographicResponseDTO getPreRegInfoRestService(String preId) {
 		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of document service util");
