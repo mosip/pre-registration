@@ -104,6 +104,7 @@ import io.mosip.preregistration.demographic.exception.system.JsonValidationExcep
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
 import io.mosip.preregistration.demographic.exception.system.SystemIllegalArgumentException;
 import io.mosip.preregistration.demographic.exception.system.SystemUnsupportedEncodingException;
+import net.logstash.logback.encoder.org.apache.commons.lang3.StringUtils;
 
 @RestControllerAdvice
 public class PreRegistrationExceptionHandler {
@@ -498,13 +499,14 @@ public class PreRegistrationExceptionHandler {
 		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
 	}
 
-	@ExceptionHandler(HttpMessageNotReadableException.class)
-	public ResponseEntity<ResponseWrapper<ServiceError>> onHttpMessageNotReadable(
-			final HttpServletRequest httpServletRequest, final HttpMessageNotReadableException e) throws IOException {
-		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
-		ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_015.getCode(), e.getMessage());
-		errorResponse.getErrors().add(error);
-		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+    @ExceptionHandler(HttpMessageNotReadableException.class)
+    public ResponseEntity<ResponseWrapper<ServiceError>> onHttpMessageNotReadable(
+            final HttpServletRequest httpServletRequest, final HttpMessageNotReadableException e) throws IOException {
+        ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
+        String errorMessage = StringUtils.substringBefore(e.getMessage(), ":");
+        ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_015.getCode(), errorMessage);
+        errorResponse.getErrors().add(error);
+        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
 	}
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })
