@@ -4,7 +4,14 @@ on:
   release:
     types: [published]
   pull_request:
-    types: [closed]
+    types: [opened]
+    branches:
+      - '!release-branch'
+      - release-1*
+      - 1.*
+      - develop
+      - MOSIP*
+      - DSD*
   workflow_dispatch:
     inputs:
       message:
@@ -35,7 +42,7 @@ jobs:
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   publish_to_nexus:
-    if: "!contains(github.ref, 'master')"
+    if: "${{ !contains(github.ref, 'master') && github.event_name == 'push' }}"
     needs: build-maven-pre-registration
     uses: mosip/kattu/.github/workflows/maven-publish-to-nexus.yml@master
     with:
@@ -43,13 +50,14 @@ jobs:
     secrets:
       OSSRH_USER: ${{ secrets.OSSRH_USER }}
       OSSRH_SECRET: ${{ secrets.OSSRH_SECRET }}
-      OSSRH_URL: https://oss.sonatype.org/service/local/staging/deploy/maven2
+      OSSRH_URL: ${{ secrets.OSSRH_SNAPSHOT_URL }}
       OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
       GPG_SECRET: ${{ secrets.GPG_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   build-dockers:
     needs: build-maven-pre-registration
+    if: "${{  github.event_name == 'push' }}"
     strategy:
       matrix:
         include:
@@ -65,6 +73,7 @@ jobs:
           - SERVICE_LOCATION: 'pre-registration/pre-registration-captcha-service'
             SERVICE_NAME: 'pre-registration-captcha-service'
             BUILD_ARTIFACT: 'pre-registration'
+      fail-fast: false
     uses: mosip/kattu/.github/workflows/docker-build.yml@master
     with:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
@@ -78,6 +87,7 @@ jobs:
 
   sonar_analysis:
     needs: build-maven-pre-registration
+    if: "${{  github.event_name == 'push' }}"
     uses: mosip/kattu/.github/workflows/maven-sonar-analysis.yml@master
     with:
       SERVICE_LOCATION: ./pre-registration
