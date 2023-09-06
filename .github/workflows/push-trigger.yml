@@ -72,6 +72,7 @@ jobs:
             SERVICE_NAME: 'pre-registration-captcha-service'
             BUILD_ARTIFACT: 'pre-registration'
       fail-fast: false
+    name: ${{ matrix.SERVICE_NAME }}
     uses: mosip/kattu/.github/workflows/docker-build.yml@master
     with:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
