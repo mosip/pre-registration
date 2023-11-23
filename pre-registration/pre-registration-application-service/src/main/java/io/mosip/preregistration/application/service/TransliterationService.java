@@ -29,6 +29,8 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 @Service
 public class TransliterationService {
 
+	private Logger log = LoggerConfiguration.logConfig(TransliterationService.class);
+
 	/**
 	 * Autowired reference
 	 */
@@ -65,6 +67,7 @@ public class TransliterationService {
 						TransliterationErrorMessage.INCORRECT_MANDATORY_FIELDS.getMessage(), responseDTO);
 			}
 		} catch (Exception e) {
+			log.error("Failed to transliterate >>", e);
 			throw new UnSupportedLanguageException(TransliterationErrorCodes.PRG_TRL_APP_002.getCode(),
 					TransliterationErrorMessage.UNSUPPORTED_LANGUAGE.getMessage(), responseDTO);
 		}
