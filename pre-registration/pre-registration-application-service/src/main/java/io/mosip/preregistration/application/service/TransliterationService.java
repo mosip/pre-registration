@@ -7,6 +7,8 @@ package io.mosip.preregistration.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.kernel.core.transliteration.spi.Transliteration;
 import io.mosip.preregistration.application.dto.TransliterationRequestDTO;
 import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
