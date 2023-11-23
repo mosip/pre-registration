@@ -7,6 +7,9 @@ package io.mosip.preregistration.application.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+
+import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.kernel.core.transliteration.spi.Transliteration;
 import io.mosip.preregistration.application.dto.TransliterationRequestDTO;
 import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
@@ -28,6 +31,8 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
  */
 @Service
 public class TransliterationService {
+
+	private Logger log = LoggerConfiguration.logConfig(TransliterationService.class);
 
 	/**
 	 * Autowired reference
@@ -65,6 +70,7 @@ public class TransliterationService {
 						TransliterationErrorMessage.INCORRECT_MANDATORY_FIELDS.getMessage(), responseDTO);
 			}
 		} catch (Exception e) {
+			log.error("Failed to transliterate >>", e);
 			throw new UnSupportedLanguageException(TransliterationErrorCodes.PRG_TRL_APP_002.getCode(),
 					TransliterationErrorMessage.UNSUPPORTED_LANGUAGE.getMessage(), responseDTO);
 		}
