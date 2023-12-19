@@ -42,8 +42,8 @@ public class AnonymousProfileServiceTest {
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
 	
-    @Value("${mosip.preregistration.user.admin}")
-    private String userName;
+    @Value("${mosip.preregistration.anonymous-profile-username}")
+    private String anonymousProfileUsername;
 
 	AnonymousProfileResponseDTO responseDto = new AnonymousProfileResponseDTO();
 
@@ -73,9 +73,9 @@ public class AnonymousProfileServiceTest {
 
 		requestEntity.setId(id);
 		requestEntity.setProfile(requestDto.getProfileDetails());
-		requestEntity.setCreatedBy(userName);
+		requestEntity.setCreatedBy(anonymousProfileUsername);
 		requestEntity.setCreateDateTime(currentDateTime);
-		requestEntity.setUpdatedBy(userName);
+		requestEntity.setUpdatedBy(anonymousProfileUsername);
 		requestEntity.setUpdateDateTime(currentDateTime);
 		requestEntity.setIsDeleted(false);
 		requestDto.setProfileDetails(profile);
@@ -98,9 +98,9 @@ public class AnonymousProfileServiceTest {
 
 		requestEntity.setId(id);
 		requestEntity.setProfile(requestDto.getProfileDetails());
-		requestEntity.setCreatedBy(userName);
+		requestEntity.setCreatedBy(anonymousProfileUsername);
 		requestEntity.setCreateDateTime(currentDateTime);
-		requestEntity.setUpdatedBy(userName);
+		requestEntity.setUpdatedBy(anonymousProfileUsername);
 		requestEntity.setUpdateDateTime(currentDateTime);
 		requestEntity.setIsDeleted(false);
 		requestDto.setProfileDetails(profile);
