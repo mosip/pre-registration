@@ -31,8 +31,8 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
 
-	@Value("${mosip.preregistration.user.admin}")
-    private String userName;
+	@Value("${mosip.preregistration.anonymous-profile-username}")
+    private String anonymousProfileUsername;
 
 	/**
 	 * Autowired reference for {@link #AnonymousProfileRepostiory}
@@ -70,9 +70,9 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 			AnonymousProfileEntity requestEntity = new AnonymousProfileEntity();
 			requestEntity.setId(UUIDGeneratorUtil.generateId());
 			requestEntity.setProfile(requestDto.getProfileDetails());
-			requestEntity.setCreatedBy(userName);
+			requestEntity.setCreatedBy(anonymousProfileUsername);
 			requestEntity.setCreateDateTime(currentDateTime);
-			requestEntity.setUpdatedBy(userName);
+			requestEntity.setUpdatedBy(anonymousProfileUsername);
 			requestEntity.setUpdateDateTime(currentDateTime);
 			requestEntity.setIsDeleted(false);
 			
