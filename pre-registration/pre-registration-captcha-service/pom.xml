@@ -6,20 +6,20 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.0.1-SNAPSHOT</version>
+		<version>1.2.0.1-B2</version>
 	</parent>
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
 
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
-	<version>1.2.0.1-SNAPSHOT</version>
+	<version>1.2.0.1-B2</version>
 
 	<properties>
 		<java.version>11</java.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
-		<pre.registration.core.version>1.2.0.1-SNAPSHOT</pre.registration.core.version>
+		<pre.registration.core.version>1.2.0.1-B2</pre.registration.core.version>
 	</properties>
 
 	<dependencyManagement>
@@ -116,12 +116,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0.1-SNAPSHOT</version>
+					<version>1.2.0.1-B2</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.0.1-SNAPSHOT</version>
+					<version>1.2.0.1-B2</version>
 				</dependency>
 			</dependencies>
 			<build>
