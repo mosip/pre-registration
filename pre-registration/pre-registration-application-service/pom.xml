@@ -6,21 +6,21 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.0.1-SNAPSHOT</version>
+		<version>1.2.0.1-B2</version>
 	</parent>
 
 	<artifactId>pre-registration-application-service</artifactId>
 	<name>Pre-Registration Application Service Project</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
-	<version>1.2.0.1-SNAPSHOT</version>
+	<version>1.2.0.1-B2</version>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.core.version>1.2.0.1-SNAPSHOT</kernel.core.version>
-		<kernel.khazana.version>1.2.0.1-SNAPSHOT</kernel.khazana.version>
-		<kernel.idobjectvalidator.version>1.2.0.1-SNAPSHOT</kernel.idobjectvalidator.version>
-		<kernel.templatemanager.velocity.version>1.2.0.1-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.qrcodegenerator.zxing.version>1.2.0.1-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
-		<pre.registration.core.version>1.2.0.1-SNAPSHOT</pre.registration.core.version>
+		<kernel.core.version>1.2.0.1-B2</kernel.core.version>
+		<kernel.khazana.version>1.2.0.1-B2</kernel.khazana.version>
+		<kernel.idobjectvalidator.version>1.2.0.1-B2</kernel.idobjectvalidator.version>
+		<kernel.templatemanager.velocity.version>1.2.0.1-B2</kernel.templatemanager.velocity.version>
+		<kernel.qrcodegenerator.zxing.version>1.2.0.1-B2</kernel.qrcodegenerator.zxing.version>
+		<pre.registration.core.version>1.2.0.1-B2</pre.registration.core.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
@@ -197,12 +197,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0.1-SNAPSHOT</version>
+					<version>1.2.0.1-B2</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.0.1-SNAPSHOT</version>
+					<version>1.2.0.1-B2</version>
 				</dependency>
 			</dependencies>
 			<build>
