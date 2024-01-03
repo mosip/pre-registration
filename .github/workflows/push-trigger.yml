@@ -41,7 +41,7 @@ jobs:
     with:
       SERVICE_LOCATION: ./pre-registration
     secrets:
-      OSSRH_USER: ${{ secrets.OSSRH_USER }}
+      OSSRH_USER: ${{ secrets.OSSRH_SNAPSHOT_URL }}
       OSSRH_SECRET: ${{ secrets.OSSRH_SECRET }}
       OSSRH_URL: ${{ secrets.RELEASE_URL }}
       OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
