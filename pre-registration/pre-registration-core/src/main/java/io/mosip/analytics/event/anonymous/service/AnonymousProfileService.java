@@ -34,6 +34,9 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
     @Value("${mosip.preregistration.anonymous-profile-username}")
     private String anonymousProfileUsername;
 
+	@Value("${mosip.preregistration.anonymous-profile-username}")
+    private String anonymousProfileUsername;
+
 	/**
 	 * Autowired reference for {@link #AnonymousProfileRepostiory}
 	 */

@@ -45,6 +45,9 @@ public class AnonymousProfileServiceTest {
     @Value("${mosip.preregistration.anonymous-profile-username}")
     private String anonymousProfileUsername;
 
+	@Value("${mosip.preregistration.anonymous-profile-username}")
+    private String anonymousProfileUsername;
+
 	AnonymousProfileResponseDTO responseDto = new AnonymousProfileResponseDTO();
 
 	LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("UTC"));
