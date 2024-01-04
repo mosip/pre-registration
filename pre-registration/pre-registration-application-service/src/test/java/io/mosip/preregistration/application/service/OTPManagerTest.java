@@ -220,7 +220,7 @@ public class OTPManagerTest {
 		Mockito.when(otpRepo.existsByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
         .thenReturn(true);
 		OtpTransaction otpTxn = new OtpTransaction();
-		Mockito.when(otpRepo.findByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
+		Mockito.when(otpRepo.findTopByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
         .thenReturn(otpTxn);
 		
 		Mockito.when(restTemplate.exchange( Mockito.eq("home/authenticate/clientidsecretkey"),
@@ -330,7 +330,7 @@ public class OTPManagerTest {
 		Mockito.when(otpRepo.existsByOtpHashAndStatusCode(Mockito.any(), Mockito.any())).thenReturn(true);
 		OtpTransaction otpTxn = new OtpTransaction();
 		otpTxn.setExpiryDtimes(DateUtils.getUTCCurrentDateTime());
-		Mockito.when(otpRepo.findByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
+		Mockito.when(otpRepo.findTopByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
         .thenReturn(otpTxn);
 		otpManager.validateOtp(null,null);
 	}
@@ -342,7 +342,7 @@ public class OTPManagerTest {
 		LocalDateTime a = LocalDateTime.of(2028, 2, 13, 15, 56);    
 	    
 		otpTxn.setExpiryDtimes(a);
-		Mockito.when(otpRepo.findByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
+		Mockito.when(otpRepo.findTopByOtpHashAndStatusCode(Mockito.any(), Mockito.any()))
         .thenReturn(otpTxn);
 		assertTrue(otpManager.validateOtp(null,null));
 	}
