@@ -6,7 +6,7 @@
 
 	<groupId>io.mosip.preregistration</groupId>
 	<artifactId>pre-registration-parent</artifactId>
-	<version>1.2.0.1-SNAPSHOT</version>
+	<version>1.2.0.1-B2</version>
 	<packaging>pom</packaging>
 
 	<name>pre-registration</name>
@@ -69,8 +69,8 @@
 	</distributionManagement>
 
 	<properties>
-		<pre.registration.core.version>1.2.0.1-SNAPSHOT</pre.registration.core.version>
-		<kernel.core.version>1.2.0.1-SNAPSHOT</kernel.core.version>
+		<pre.registration.core.version>1.2.0.1-B2</pre.registration.core.version>
+		<kernel.core.version>1.2.0.1-B2</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>11</maven.compiler.source>
 		<maven.compiler.target>11</maven.compiler.target>
