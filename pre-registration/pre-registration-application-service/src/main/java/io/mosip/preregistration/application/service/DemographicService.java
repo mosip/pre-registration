@@ -580,6 +580,9 @@ public class DemographicService implements DemographicServiceIntf {
 		JSONParser jsonParser = new JSONParser();
 		for (DemographicEntity demographicEntity : demographicEntities) {
 			log.info("sessionId", "idType", "id", "decryption start time : " + DateUtils.getUTCCurrentDateTimeString());
+			log.info("sessionId", "idType", "id", "applicationjson : " + new String(demographicEntity.getApplicantDetailJson()));
+			log.info("sessionId", "idType", "id", "preregId : " + demographicEntity.getPreRegistrationId());
+		
 			byte[] decryptedString = cryptoUtil.decrypt(demographicEntity.getApplicantDetailJson(),
 					DateUtils.getUTCCurrentDateTime());
 			log.info("sessionId", "idType", "id", "decryption end time : " + DateUtils.getUTCCurrentDateTimeString());
