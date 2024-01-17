@@ -105,9 +105,6 @@ public class CryptoUtil {
 		try {
 
 			CryptoManagerRequestDTO dto = new CryptoManagerRequestDTO();
-			log.info("sessionId", "idType", "cryptoApplicationId:", cryptoApplcationId);
-			log.info("sessionId", "idType", "cryptoReferenceId:", cryptoReferenceId);
-			log.info("sessionId", "idType", "originalInput:", new String(originalInput, StandardCharsets.UTF_8));
 			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(new String(originalInput, StandardCharsets.UTF_8));
 			dto.setReferenceId(cryptoReferenceId);
