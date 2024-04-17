@@ -1,0 +1,32 @@
+BookMultipleAppointment:
+   Prereg_BookMultipleAppointment_All_Valid_Smoke:
+      endPoint: /preregistration/v1/appointment
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/BookMultipleAppointment/bookMultipleAppointment
+      outputTemplate: preReg/BookMultipleAppointment/bookMultipleAppointmentResult
+      input: '{
+"bookingRequest": [{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+    }
+"bookingR{
+      "preRegistrationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$"
+    }]
+}'
+      output: '{
+}'

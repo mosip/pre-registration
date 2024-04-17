@@ -1,0 +1,38 @@
+AddLostUinApplication:
+   Prereg_AddLostUinApplication_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/AddLostUinApplication/addLostUinApplicationResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "eng",
+  "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+  "bookingType": "LOST_FORGOTTEN_UIN",
+  "applicationStatusCode": "SUBMITTED"
+}'
+
+   Prereg_AddLostUinApplication_inValid_langcode:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "xyz",
+  "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'

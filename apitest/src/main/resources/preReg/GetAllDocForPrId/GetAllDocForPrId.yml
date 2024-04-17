@@ -1,0 +1,31 @@
+GetAllDocForPrId:
+   Prereg_GetAllDocForPrId_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllDocForPrId/getAllDocForPrId
+      outputTemplate: preReg/GetAllDocForPrId/getAllDocForPrIdResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+      "docCatCode": "$IGNORE$",
+       "docTypCode": "$IGNORE$"
+}'
+   Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetAllDocForPrId/getAllDocForPrId
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "jhgf4324"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'

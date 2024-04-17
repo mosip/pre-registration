@@ -1,0 +1,343 @@
+UpdatePreregistration:
+   Prereg_UpdatePrereg_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+  "langCode": "$1STLANG$"
+}'
+   Prereg_UpdatePrereg_All_Valid_Smoke_BookByPRID_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+  "langCode": "$1STLANG$"
+}'
+   Prereg_UpdatePrereg_inValid_dateOfBirth_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "272838SHSH",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_missing_Version_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@thogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "$REMOVE$",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_invalid_Version_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "2728SHBSHSH",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_invalid_email_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "soh#w@Scdfvg",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_missing_langCode_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "soh#w@Scdfvg",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$REMOVE$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_INVALID_langCode_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "soh#w@Scdfvg",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$2736EBDEB$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_INVALID_requesttime_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "soh#w@Scdfvg",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$47738$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_015"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_Missing_requesttime_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "soh#w@Scdfvg",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$REMOVE$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_003"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_previous_date_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "2018-02-10T07:28:57.314Z",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_013"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_invalid_id_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre43DD4@GGGgistration.demographic.update"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_missing_id_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "$REMOVE$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_UpdatePrereg_blank_id_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": ""
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'

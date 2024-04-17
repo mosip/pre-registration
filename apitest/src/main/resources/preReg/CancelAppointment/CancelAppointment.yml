@@ -1,0 +1,29 @@
+CancelAppointment:
+   Prereg_CancelAppointment_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/CancelAppointment/cancelAppointmentResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_CancellAppointment_sid_preRegistrationId$"
+}'
+      output: '{
+}'
+   Prereg_CancelAppointment_inValid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "36272yhshsgblAppointment_sid_preRegistrati"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
