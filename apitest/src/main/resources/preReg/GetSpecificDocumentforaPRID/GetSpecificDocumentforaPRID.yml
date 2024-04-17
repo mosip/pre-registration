@@ -1,0 +1,49 @@
+GetSpecificDocumentforaPRID:
+   Prereg_GetSpecificDocumentforaPRID_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetSpecificDocumentforaPRID/getSpecificDocumentforaPRID
+      outputTemplate: preReg/GetSpecificDocumentforaPRID/getSpecificDocumentforaPRIDResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
+}'
+      output: '{
+      "document": "$IGNORE$"
+}'
+   Prereg_GetSpecificDocumentforaPRID_inValid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetSpecificDocumentforaPRID/getSpecificDocumentforaPRID
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "shssb2423fsfvs",
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
+   Prereg_GetSpecificDocumentforaPRID_inValid_documentId_sid:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetSpecificDocumentforaPRID/getSpecificDocumentforaPRID
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "documentId": "shshsbz5325"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005"
+    }
+  ]
+}'
