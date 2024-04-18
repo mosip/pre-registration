@@ -1,0 +1,39 @@
+AddUpdateRegistration:
+   Prereg_AddUpdateRegistration_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/updateregistration
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+      outputTemplate: preReg/AddUpdateRegistration/addUpdateRegistrationResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "eng",
+  "id": "mosip.pre-registration.updateregistration.create"
+}'
+      output: '{
+  "bookingType": "UPDATE_REGISTRATION",
+  "applicationStatusCode": "SUBMITTED"
+}'
+
+   Prereg_AddUpdateRegistration_inValid_langcode:
+      endPoint: /preregistration/v1/applications/updateregistration
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "xyz",
+  "id": "mosip.pre-registration.updateregistration.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014",
+      "message": "Lang code is invalid"
+    }
+  ]
+}'

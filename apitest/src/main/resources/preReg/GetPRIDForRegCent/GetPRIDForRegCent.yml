@@ -1,0 +1,29 @@
+GetPRIDForRegCent:
+   Prereg_GetPRIDForRegCent_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/appointment/preRegistrationId/{registrationCenterId}?from_date=2020-10-01&to_date=2024-10-13
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetPRIDForRegCent/getPRIDForRegCent
+      outputTemplate: preReg/GetPRIDForRegCent/getPRIDForRegCentResult
+      input: '{
+  "registrationCenterId": "10003"
+}'
+      output: '{
+  "registration_center_id": "10003"
+}'
+   Prereg_GetPRIDForRegCent_inValid_registrationCenterId_sid:
+      endPoint: /preregistration/v1/appointment/preRegistrationId/{registrationCenterId}?from_date=2020-10-01&to_date=2021-10-13
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetPRIDForRegCent/getPRIDForRegCent
+      outputTemplate: preReg/error
+      input: '{
+  "registrationCenterId": "1000dnsjsja2@@3"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_032"
+    }
+  ]
+}'
