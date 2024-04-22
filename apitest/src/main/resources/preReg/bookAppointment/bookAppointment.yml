@@ -1,0 +1,623 @@
+BookAppointment:
+   Prereg_BookAppointment_All_Valid_Smoke:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/bookAppointment/bookAppointmentResult
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+}'
+   Prereg_BookAppointment_CA_Smoke:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/bookAppointment/bookAppointmentResult
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_Smoke_CancellAppointment_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+}'
+   Prereg_BookAppointment_CancelApplicationsAppointment_Smoke:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/bookAppointment/bookAppointmentResult
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_Smoke_CancelApplicationsAppointment_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+}'
+   Prereg_BookAppointment_inValid_preRegistrationId:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"1234fgfgdb",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
+   Prereg_BookAppointment_blank_preRegistrationId:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_015"
+      
+    }
+  ]
+}'
+   Prereg_BookAppointment_Invalid_Id:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "moe-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Blank_Id:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001",
+      "message": "Request id is invalid"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Blank_version:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Missing_version:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "$REMOVE$",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Invalid_version:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "snsjd73t33ybyh2334@FDh",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Invalid_registration_center_id:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "363wgbsion_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "KER-MSD-215",
+      "message": "Registration Center not found"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Missing_registration_center_id:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$REMOVE$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_007",
+      "message": "Registration center id not entered"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Blank_registration_center_id:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_007",
+      "message": "Registration center id not entered"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Blank_appointment_date:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_008",
+      "message": "Booking date time not selected"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Missing_appointment_date:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$REMOVE$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_008"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Invalid_appointment_date:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "njdus6w22ybsh",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_031"
+      
+    }
+  ]
+}'
+   Prereg_BookAppointment_Invalid_time_slot_to:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "dndj36gsbsb",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Missing_time_slot_to:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$REMOVE$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Invalid_time_slot_from:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "sbshbs653tgv",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Blank_time_slot_to:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Blank_time_slot_from:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_missing_time_slot_from:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$REMOVE$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_missing_requesttime:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$REMOVE$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_Invalid_requesttime:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "snnsjnsjn65"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_015"
+      
+    }
+  ]
+}'
+   Prereg_BookAppointment_Blank_requesttime:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": ""
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_003"
+    }
+  ]
+}'
+   Prereg_BookAppointment_previous_date:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "2017-02-15T04:31:23.613Z"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_013"
+    }
+  ]
+}'
+
+   Prereg_BookAppointment_On_holiday:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_013"
+      
+    }
+  ]
+}'
+
+
+

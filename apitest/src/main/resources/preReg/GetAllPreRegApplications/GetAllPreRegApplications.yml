@@ -1,0 +1,12 @@
+GetAllPreRegApplications:
+   Prereg_GetAllPreRegApplications_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllPreRegApplications/getAllPreRegApplications
+      outputTemplate: preReg/GetAllPreRegApplications/GetAllPreRegApplicationsResult
+      input: '{}'
+      output: '{
+  "bookingType": "NEW_PREREGISTRATION"
+}'
