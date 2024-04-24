@@ -3,12 +3,12 @@
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>io.mosip.testrig.apirig.automationtests.prereg</groupId>
-	<artifactId>automationtests-prereg</artifactId>
+	<artifactId>apitest-prereg</artifactId>
 	<packaging>jar</packaging>
-	<name>automationtests-prereg</name>
-	<description>Parent project of MOSIP functional tests</description>
-	<url>https://github.com/mosip/mosip-functional-tests</url>
-	<version>1.2.0.1-SNAPSHOT</version>
+	<name>apitest-prereg</name>
+	<description>Parent project of MOSIP Pre-Registration apitests</description>
+	<url>https://github.com/mosip/pre-registration</url>
+	<version>1.2.1-java21-SNAPSHOT</version>
 
 	<licenses>
 		<license>
@@ -18,12 +18,12 @@
 	</licenses>
 
 	<scm>
-		<connection>scm:git:git://github.com/mosip/mosip-functional-tests.git</connection>
-		<developerConnection>scm:git:ssh://github.com:mosip/mosip-functional-tests.git</developerConnection>
-		<url>https://github.com/mosip/mosip-functional-tests</url>
+		<connection>scm:git:git://github.com/mosip/pre-registration.git</connection>
+		<developerConnection>scm:git:ssh://github.com:mosip/pre-registration.git</developerConnection>
+		<url>https://github.com/mosip/pre-registration</url>
 		<tag>HEAD</tag>
 	</scm>
-
+	
 
 
 
@@ -177,7 +177,7 @@
 		<dependency>
 			<groupId>io.mosip.testrig.apirig.automationtests.commons</groupId>
 			<artifactId>automationtests-commons</artifactId>
-			<version>1.2.0.1-SNAPSHOT</version>
+			<version>1.2.1-java21-SNAPSHOT</version>
 		</dependency>
 		
 	</dependencies>
