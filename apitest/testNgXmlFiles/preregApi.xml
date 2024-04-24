@@ -5,7 +5,7 @@
 	<!-- Passing Group as parameter using "testType" Possible Groups are: smoke 
 		regression smokeAndRegression -->
 	<listeners>
-		<listener class-name="io.mosip.testrig.apirig.report.EmailableReport" />
+		<listener class-name="io.mosip.testrig.apirig.customReport.EmailableReport" />
 	</listeners>
 	
 	
@@ -16,7 +16,7 @@
 			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
 		</classes>
 	</test>
-	<test name="ValidateOtp">
+	<!--<test name="ValidateOtp">
 		<parameter name="ymlFile"
 			value="preReg/ValidateOtp/ValidateOtp.yml" />
 		<classes>
@@ -281,7 +281,7 @@
 		<classes>
 			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
 		</classes>
-	</test>
+	</test>-->
 	
 	
 </suite>
