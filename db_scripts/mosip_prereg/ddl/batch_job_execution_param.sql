@@ -2,14 +2,13 @@
 
 CREATE TABLE prereg.batch_job_execution_params
 (
-    job_execution_id bigint NOT NULL,
-    type_cd character varying(6) COLLATE pg_catalog."default" NOT NULL,
-    key_name character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    string_val character varying(250) COLLATE pg_catalog."default",
-    date_val timestamp without time zone,
-    long_val bigint,
-    double_val double precision,
-    identifying character(1) COLLATE pg_catalog."default" NOT NULL    
+	JOB_EXECUTION_ID BIGINT NOT NULL ,
+	PARAMETER_NAME VARCHAR(100) NOT NULL ,
+	PARAMETER_TYPE VARCHAR(100) NOT NULL ,
+	PARAMETER_VALUE VARCHAR(2500) ,
+	IDENTIFYING CHAR(1) NOT NULL ,
+	constraint JOB_EXEC_PARAMS_FK foreign key (JOB_EXECUTION_ID)
+	references BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 )
 WITH (
     OIDS = FALSE

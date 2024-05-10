@@ -6,8 +6,9 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.servers.Server;
 
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springdoc.core.GroupedOpenApi;
@@ -31,8 +32,7 @@ import java.security.NoSuchAlgorithmException;
 @Configuration
 @ConfigurationProperties("mosip.preregistration.captcha")
 public class SwaggerConfig {
-	
-	
+
 	@Value("${preregistration.captchaservice.httpclient.connections.max.per.host:20}")
 	private int maxConnectionPerRoute;
 
@@ -72,9 +72,13 @@ public class SwaggerConfig {
 
 	@Bean
 	public RestTemplate restTemplateBean() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
-			HttpClientBuilder httpClientBuilder = HttpClients.custom()
+		var connnectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create()
 				.setMaxConnPerRoute(maxConnectionPerRoute)
-				.setMaxConnTotal(totalMaxConnection).disableCookieManagement();
+				.setMaxConnTotal(totalMaxConnection);
+		var connectionManager = connnectionManagerBuilder.build();
+		HttpClientBuilder httpClientBuilder = HttpClients.custom()
+				.setConnectionManager(connectionManager)
+				.disableCookieManagement();
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 		requestFactory.setHttpClient(httpClientBuilder.build());
 		return new RestTemplate(requestFactory);

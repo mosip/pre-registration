@@ -2,25 +2,27 @@
 
 CREATE TABLE prereg.batch_step_execution
 (
-    step_execution_id bigint NOT NULL,
-    version bigint NOT NULL,
-    step_name character varying(100) COLLATE pg_catalog."default" NOT NULL,
-    job_execution_id bigint NOT NULL,
-    start_time timestamp without time zone NOT NULL,
-    end_time timestamp without time zone,
-    status character varying(10) COLLATE pg_catalog."default",
-    commit_count bigint,
-    read_count bigint,
-    filter_count bigint,
-    write_count bigint,
-    read_skip_count bigint,
-    write_skip_count bigint,
-    process_skip_count bigint,
-    rollback_count bigint,
-    exit_code character varying(2500) COLLATE pg_catalog."default",
-    exit_message character varying(2500) COLLATE pg_catalog."default",
-    last_updated timestamp without time zone,
-    CONSTRAINT batch_step_execution_pkey PRIMARY KEY (step_execution_id)
+	STEP_EXECUTION_ID BIGINT  NOT NULL PRIMARY KEY ,
+	VERSION BIGINT NOT NULL,
+	STEP_NAME VARCHAR(100) NOT NULL,
+	JOB_EXECUTION_ID BIGINT NOT NULL,
+	CREATE_TIME TIMESTAMP NOT NULL,
+	START_TIME TIMESTAMP DEFAULT NULL ,
+	END_TIME TIMESTAMP DEFAULT NULL ,
+	STATUS VARCHAR(10) ,
+	COMMIT_COUNT BIGINT ,
+	READ_COUNT BIGINT ,
+	FILTER_COUNT BIGINT ,
+	WRITE_COUNT BIGINT ,
+	READ_SKIP_COUNT BIGINT ,
+	WRITE_SKIP_COUNT BIGINT ,
+	PROCESS_SKIP_COUNT BIGINT ,
+	ROLLBACK_COUNT BIGINT ,
+	EXIT_CODE VARCHAR(2500) ,
+	EXIT_MESSAGE VARCHAR(2500) ,
+	LAST_UPDATED TIMESTAMP,
+	constraint JOB_EXEC_STEP_FK foreign key (JOB_EXECUTION_ID)
+	references BATCH_JOB_EXECUTION(JOB_EXECUTION_ID)
 )
 WITH (
     OIDS = FALSE

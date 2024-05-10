@@ -25,9 +25,9 @@ ALTER TABLE prereg.batch_step_execution_context ADD CONSTRAINT step_exec_ctx_fk 
         ON UPDATE NO ACTION
         ON DELETE NO ACTION;
 		
-CREATE SEQUENCE prereg.batch_step_execution_seq;
-CREATE SEQUENCE prereg.batch_job_execution_seq;
-CREATE SEQUENCE prereg.batch_job_seq;
+CREATE SEQUENCE prereg.batch_step_execution_seq MAXVALUE 9223372036854775807 NO CYCLE;
+CREATE SEQUENCE prereg.batch_job_execution_seq MAXVALUE 9223372036854775807 NO CYCLE;
+CREATE SEQUENCE prereg.batch_job_seq MAXVALUE 9223372036854775807 NO CYCLE;
 
 -- grants to access all sequences
 GRANT usage, SELECT ON ALL SEQUENCES 

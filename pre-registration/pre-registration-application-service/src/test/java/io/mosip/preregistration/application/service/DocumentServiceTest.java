@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -553,7 +552,7 @@ public class DocumentServiceTest {
 		documentRequestDTOList.setRequest(documentRequestDTO);
 		responseUpload.setId(documentId);
 		responseUpload.setVersion("12");
-		responseUpload.setResponsetime(DateTime.now().toString());
+		responseUpload.setResponsetime(LocalDateTime.now().toString());
 		responseUpload.setResponse(docResp);
 		requiredRequestMap.put("id", "123");
 		Mockito.doReturn(documentRequestDTOList).when(serviceUtil).createUploadDto(docJson, documentId);
@@ -569,7 +568,7 @@ public class DocumentServiceTest {
 		documentRequestDTOList.setRequest(documentRequestDTO);
 		responseUpload.setId(documentId);
 		responseUpload.setVersion("12");
-		responseUpload.setResponsetime(DateTime.now().toString());
+		responseUpload.setResponsetime(LocalDateTime.now().toString());
 		responseUpload.setResponse(docResp);
 		requiredRequestMap.put("id", "123");
 		Mockito.when(serviceUtil.createUploadDto(Mockito.any(), Mockito.any())).thenReturn(documentRequestDTOList);

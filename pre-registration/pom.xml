@@ -6,7 +6,7 @@
 
 	<groupId>io.mosip.preregistration</groupId>
 	<artifactId>pre-registration-parent</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.2.1-java21-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>pre-registration</name>
@@ -68,11 +68,11 @@
 	</distributionManagement>
 
 	<properties>
-		<pre.registration.core.version>1.2.1-SNAPSHOT</pre.registration.core.version>
-		<kernel.core.version>1.2.1-SNAPSHOT</kernel.core.version>
+		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
+		<kernel.core.version>1.2.1-java21-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>11</maven.compiler.source>
-		<maven.compiler.target>11</maven.compiler.target>
+		<maven.compiler.source>21</maven.compiler.source>
+		<maven.compiler.target>21</maven.compiler.target>
 		<maven.compiler.version>3.8.0</maven.compiler.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
@@ -83,7 +83,7 @@
 
 		<!-- Core -->
 		<spring.version>5.0.4.RELEASE</spring.version>
-		<spring.boot.version>2.0.2.RELEASE</spring.boot.version>
+		<spring.boot.version>3.2.3</spring.boot.version>
 		<spring.data.version>2.0.9.RELEASE</spring.data.version>
 		<spring-cloud-config.version>2.0.0.RELEASE</spring-cloud-config.version>
 
@@ -116,10 +116,10 @@
 		<junit.version>4.12</junit.version>
 		<logback.version>1.1.6</logback.version>
 		<slf4j.version>1.7.19</slf4j.version>
-		<mockito.version>1.10.19</mockito.version>
+		<mockito-version>3.4.3</mockito-version>
 
 		<!-- Lombok -->
-		<lombok.version>1.18.8</lombok.version>
+		<lombok.version>1.18.32</lombok.version>
 
 		<!-- Json Simple -->
 		<jsonsimple.version>1.1</jsonsimple.version>
@@ -165,6 +165,17 @@
 		<module>pre-registration-batchjob</module>
 		<module>pre-registration-captcha-service</module>
 	</modules>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.mosip.kernel</groupId>
+				<artifactId>kernel-bom</artifactId>
+				<version>1.2.1-java21-SNAPSHOT</version>
+				<type>pom</type>
+			    <scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
@@ -184,7 +195,7 @@
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>2.22.0</version>
+			<version>3.4.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -211,6 +222,16 @@
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
 			<version>2.12.0</version>
+		</dependency>
+		<dependency>
+   			<groupId>org.junit.vintage</groupId>
+   			<artifactId>junit-vintage-engine</artifactId> 
+  		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>${junit.version}</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 	<build>
@@ -270,7 +291,12 @@
 					<skipTests>${skipTests}</skipTests>
 					<skip>false</skip>
 					<argLine>
-						${argLine} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED --illegal-access=permit
+						${argLine}
+						--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED
+						--add-opens java.base/java.lang=ALL-UNNAMED
+						--add-opens java.base/java.io=ALL-UNNAMED
+						--illegal-access=debug
+						--enable-preview
 					</argLine>
 				</configuration>
 			</plugin>

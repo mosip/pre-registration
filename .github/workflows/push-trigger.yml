@@ -18,12 +18,12 @@ on:
       - release*
       - master
       - 1.*
-      - develop
+      - develop*
       - MOSIP*
 
 jobs:
   build-maven-pre-registration:
-    uses: mosip/kattu/.github/workflows/maven-build.yml@master
+    uses: mosip/kattu/.github/workflows/maven-build.yml@master-java21
     with:
       SERVICE_LOCATION: ./pre-registration
       BUILD_ARTIFACT: pre-registration

@@ -30,7 +30,6 @@ import java.util.Set;
 import java.util.TimeZone;
 import java.util.stream.Collectors;
 
-import org.joda.time.DateTime;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -1090,7 +1089,7 @@ public class DemographicServiceTest {
 		idSchema.setId(userId);
 		idSchema.setSchemaJson(identityMappingJson);
 		idSchema.setIdVersion(1.0);
-		DateTime time = DateTime.now();
+		LocalDateTime time = LocalDateTime.now();
 		String t = time.toString();
 		Mockito.when(serviceUtil.getCurrentResponseTime()).thenReturn(t);
 		DemographicEntity demographicEntity = new DemographicEntity();
