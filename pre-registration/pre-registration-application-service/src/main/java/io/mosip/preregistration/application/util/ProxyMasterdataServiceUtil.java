@@ -3,7 +3,7 @@ package io.mosip.preregistration.application.util;
 import java.net.URI;
 import java.net.URLDecoder;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;

@@ -7,8 +7,8 @@ package io.mosip.preregistration.batchjob.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Embeddable;
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;

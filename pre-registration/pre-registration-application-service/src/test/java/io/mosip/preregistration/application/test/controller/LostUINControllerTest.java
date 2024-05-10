@@ -2,7 +2,7 @@ package io.mosip.preregistration.application.test.controller;
 
 import java.util.Date;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -99,7 +99,7 @@ public class LostUINControllerTest {
 		applicationDto.setBookingType("LOST_FORGOTTEN_UIN");
 		mainResponseDto.setResponse(applicationDto);
 		mainResponseDto.setId(createId);
-		mainResponseDto.setResponsetime(DateTime.now().toString());
+		mainResponseDto.setResponsetime(LocalDateTime.now().toString());
 		Mockito.when(applicationService.addLostOrUpdateApplication(Mockito.any(), Mockito.any()))
 				.thenReturn(mainResponseDto);
 		String uri = "/applications/lostuin";

@@ -1,8 +1,8 @@
 package io.mosip.preregistration.application.test.controller;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
-import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -109,7 +109,7 @@ public class ApplicationControllerTest {
 	public void getBookingsForRegCenterTest() throws Exception {
 		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = new MainResponseDTO<List<ApplicationDetailResponseDTO>>();
 		String regCenterId = "123456";
-		String appointmentDate = DateTime.now().toString();
+		String appointmentDate = LocalDateTime.now().toString();
 		Mockito.when(applicationService.getBookingsForRegCenter(regCenterId, appointmentDate, null)).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders.get("/applications/bookings/{regCenterId}", regCenterId)

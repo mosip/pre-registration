@@ -15,7 +15,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.IntStream;
 
-import javax.persistence.LockModeType;
+import jakarta.persistence.LockModeType;
 
 import org.apache.commons.collections.map.MultiValueMap;
 import org.apache.commons.lang3.exception.ExceptionUtils;
