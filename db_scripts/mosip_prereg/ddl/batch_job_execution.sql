@@ -13,7 +13,7 @@ CREATE TABLE prereg.batch_job_execution
 	EXIT_MESSAGE VARCHAR(2500) ,
 	LAST_UPDATED TIMESTAMP,
 	constraint JOB_INST_EXEC_FK foreign key (JOB_INSTANCE_ID)
-	references BATCH_JOB_INSTANCE(JOB_INSTANCE_ID)
+	references prereg.batch_job_instance(JOB_INSTANCE_ID)
 )
 WITH (
     OIDS = FALSE
