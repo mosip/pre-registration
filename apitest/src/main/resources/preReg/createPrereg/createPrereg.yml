@@ -520,4 +520,74 @@ CreatePrereg:
       "errorCode": "KER-IOV-004"
     }
   ]
+}'   
+   Prereg_CreatePrereg_All_Valid_Smoke_date_verification_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_with_special_characters_date:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "19@@@@9$$6/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_with_future_date:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "2045/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
 }'

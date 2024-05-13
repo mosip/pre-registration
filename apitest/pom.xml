@@ -2,7 +2,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>io.mosip.testrig.apirig.automationtests.prereg</groupId>
+	<groupId>io.mosip.prereg</groupId>
 	<artifactId>apitest-prereg</artifactId>
 	<packaging>jar</packaging>
 	<name>apitest-prereg</name>
@@ -23,7 +23,7 @@
 		<url>https://github.com/mosip/pre-registration</url>
 		<tag>HEAD</tag>
 	</scm>
-	
+
 
 	<dependencies>
 
@@ -32,7 +32,16 @@
 			<artifactId>apitest-commons</artifactId>
 			<version>1.2.1-java21-SNAPSHOT</version>
 		</dependency>
-		
+
 	</dependencies>
-	
+
+	<developers>
+		<developer>
+			<name>Mosip</name>
+			<email>mosip.emailnotifier@gmail.com</email>
+			<organization>io.mosip</organization>
+			<organizationUrl>https://github.com/mosip/pre-registration</organizationUrl>
+		</developer>
+	</developers>
+
 </project>
