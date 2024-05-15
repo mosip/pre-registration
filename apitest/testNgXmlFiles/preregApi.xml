@@ -229,6 +229,14 @@
 			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
 		</classes>
 	</test> 
+	
+	<test name="GetAllApplicationsWithapplicationId">
+		<parameter name="ymlFile"
+			value="preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+	</test> 
 	<test name="GetUpdatedDateTimeByPrid">
 		<parameter name="ymlFile"
 			value="preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml" />

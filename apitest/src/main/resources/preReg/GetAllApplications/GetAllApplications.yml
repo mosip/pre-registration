@@ -11,6 +11,23 @@ GetAllApplications:
 }'
       output: '{
 }'
+   Prereg_GetAllApplications_InValid:
+      endPoint: /preregistration/v1/applications
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllApplications/getAllApplications
+      outputTemplate: preReg/error
+      input: '{
+   "type": "263gedbdbegegedb"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_016"
+    }
+  ]
+}'
    Prereg_GetAllApplications_InValid_Type:
       endPoint: /preregistration/v1/applications?type={type}
       role: batch
