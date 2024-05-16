@@ -1,0 +1,12 @@
+InvalidateToken:
+   Prereg_InvalidateToken_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/login/invalidateToken
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/InvalidateToken/invalidatetoken
+      outputTemplate: preReg/InvalidateToken/invalidatetokenresult
+      input: '{
+}'
+      output: '{
+  "response": "Loggedout successfully"
+}'

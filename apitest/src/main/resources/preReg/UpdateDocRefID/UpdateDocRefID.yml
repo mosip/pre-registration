@@ -1,0 +1,115 @@
+UpdateDocRefID:
+   Prereg_UpdateDocRefID_All_Valid_Smoke_POA_sid:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/UpdateDocRefID/updateDocRefID
+      outputTemplate: preReg/UpdateDocRefID/updateDocRefIDResult
+      input: '{
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_UpdateDocRefID_sid_docId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$",
+  "refNumber":"text"
+}'
+      output: '{
+}'
+   Prereg_UpdateDocRefID_All_Valid_Smoke_POI_sid:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/UpdateDocRefID/updateDocRefID
+      outputTemplate: preReg/UpdateDocRefID/updateDocRefIDResult
+      input: '{
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_POI_UpdateDocRefID_sid_docId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$",
+  "refNumber":"text"
+}'
+      output: '{
+}'
+   Prereg_UpdateDocRefID_All_Valid_Smoke_POB_sid:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/UpdateDocRefID/updateDocRefID
+      outputTemplate: preReg/UpdateDocRefID/updateDocRefIDResult
+      input: '{
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_POB_UpdateDocRefID_sid_docId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$",
+  "refNumber":"text"
+}'
+      output: '{
+}'
+   Prereg_UpdateDocRefID_All_Valid_Smoke_POR_sid:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/UpdateDocRefID/updateDocRefID
+      outputTemplate: preReg/UpdateDocRefID/updateDocRefIDResult
+      input: '{
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_POR_UpdateDocRefID_sid_docId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$",
+  "refNumber":"text"
+}'
+      output: '{
+}'
+   Prereg_UpdateDocRefID_inValid_documentId:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdateDocRefID/updateDocRefID
+      outputTemplate: preReg/error
+      input: '{
+  "documentId": "eafvsbegrw134",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$",
+  "refNumber":"text"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005"
+    }
+  ]
+}'
+
+   Prereg_UpdateDocRefID_All_SpatialCharacter_RefNum_Neg:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/UpdateDocRefID/updateDocRefID
+      outputTemplate: preReg/error
+      input: '{
+  "documentId": "89jsn$!",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$",
+  "refNumber":"text"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005"
+    }
+  ]
+}'
+
+   Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/UpdateDocRefID/updateDocRefID
+      outputTemplate: preReg/error
+      input: '{
+  "documentId": "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$",
+  "refNumber":"text"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005"
+    }
+  ]
+}'

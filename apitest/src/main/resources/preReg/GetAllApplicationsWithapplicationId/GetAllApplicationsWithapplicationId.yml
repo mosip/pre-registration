@@ -1,0 +1,13 @@
+GetAllApplicationsWithapplicationId:
+   Prereg_GetAllApplicationsWithapplicationId_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId
+      outputTemplate: preReg/GetAllApplicationsWithapplicationId/getAllApplicationsResult
+      input: '{
+   "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+}'

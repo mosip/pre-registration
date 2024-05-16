@@ -1,0 +1,14 @@
+{
+  "id": "{{id}}",
+  "version": "{{version}}",
+  "requesttime": "{{requesttime}}",
+  "request": {
+    "registartion_center_id": "{{registartion_center_id}}",
+    "pre_registration_ids": [ 
+    	{{#each pre_registration_ids}}
+    		"{{pre_registration_id}}"
+        {{#unless @last}},{{/unless}}
+		{{/each}}
+    ]
+  }
+}

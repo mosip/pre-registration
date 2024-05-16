@@ -1,0 +1,66 @@
+CopyDocument:
+   Prereg_CopyDocument_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CopyDocument/copyDocument
+      outputTemplate: preReg/CopyDocument/copyDocumentResult
+      input: '{
+    "doc_cat_code" : "POA",
+    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+"docCatCode":"POA",
+"docTypCode": "RNC"
+}'
+   Prereg_CopyDocument_in_Valid_doc_cat_code_sid:
+      endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CopyDocument/copyDocument
+      outputTemplate: preReg/error
+      input: '{
+    "doc_cat_code" : "saxs@34dbjhj",
+    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_017"
+    }
+  ]
+}'
+   Prereg_CopyDocument_blank_doc_cat_code_sid:
+      endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CopyDocument/copyDocument
+      outputTemplate: preReg/error
+      input: '{
+    "doc_cat_code" : "",
+    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_017"
+    }
+  ]
+}'
+   Prereg_CopyDocument_Invalid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CopyDocument/copyDocument
+      outputTemplate: preReg/error
+      input: '{
+    "doc_cat_code" : "POA",
+    "preRegistrationId": "zsvahhv@345rc"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'

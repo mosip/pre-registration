@@ -1,0 +1,613 @@
+CreatePrereg:
+   Prereg_CreatePrereg_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_book_appoinment_without_update_prereg_status_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "9876543210",
+  "mobileno": "9876543210",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_All_Valid_Smoke_BookByPRID_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+  "langCode": "$1STLANG$"
+}'
+   Prereg_CreatePrereg_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_Smoke_alldel_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_Smoke_CancellAppointment_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_Smoke_CancelApplicationsAppointment_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_All_Valid_Smoke_for_expiry_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_in_Valid_id_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.prtion.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_missing_id_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "$REMOVE$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_blank_id_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": ""
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_missing_langCode_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$REMOVE$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_invalid_langCode_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$363738$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_invalid_email_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "so.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_invalid_requesttime_format_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$2233STAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_015"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_missing_requesttime_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$REMOVE$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_003"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_previous_date_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "2019-08-23T05:28:27.570Z",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_013"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_invalid_version_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "13YU2U2",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_missing_version_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "$REMOVE$",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002"
+    }
+  ]
+}'
+
+   Prereg_CreatePrereg_Invalid_PostalCode_Neg:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'
+
+   Prereg_CreatePrereg_SpacialCharacter_PostalCode_Neg:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "$34!",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_Invalid_OTP_Neg:
+      endPoint: /preregistration/v1/applications/prereg
+      role: invalidBatch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "mobileno": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'   
+   Prereg_CreatePrereg_All_Valid_Smoke_date_verification_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_with_special_characters_date:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "19@@@@9$$6/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'
+   Prereg_CreatePrereg_with_future_date:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/error
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "2045/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+      "errors": [
+    {
+      "errorCode": "KER-IOV-004"
+    }
+  ]
+}'

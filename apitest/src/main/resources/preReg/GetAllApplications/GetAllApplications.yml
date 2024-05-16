@@ -1,0 +1,58 @@
+GetAllApplications:
+   Prereg_GetAllApplications_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllApplications/getAllApplications
+      outputTemplate: preReg/GetAllApplications/getAllApplicationsResult
+      input: '{
+   "type": null
+}'
+      output: '{
+}'
+   Prereg_GetAllApplications_InValid:
+      endPoint: /preregistration/v1/applications
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllApplications/getAllApplications
+      outputTemplate: preReg/error
+      input: '{
+   "type": "263gedbdbegegedb"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_016"
+    }
+  ]
+}'
+   Prereg_GetAllApplications_InValid_Type:
+      endPoint: /preregistration/v1/applications?type={type}
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetAllApplications/getAllApplications
+      outputTemplate: preReg/error
+      input: '{   
+   "type": "erwsdhgqw5dcfbz"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_016"
+    }
+  ]
+}'
+   Prereg_GetAllApplications_Valid_Type_Smoke_sid:
+      endPoint: /preregistration/v1/applications?type={type}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllApplications/getAllApplications
+      outputTemplate: preReg/GetAllApplications/getAllApplicationsResult
+      input: '{
+   "type": "NEW_PREREGISTRATION"
+}'
+      output: '{
+}'
