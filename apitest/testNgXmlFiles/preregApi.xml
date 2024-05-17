@@ -156,6 +156,15 @@
 			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
 		</classes>
 	</test>
+	
+	<test name="GetBookingsForRegCenter">
+		<parameter name="ymlFile"
+			value="preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+	</test>
+	
 	<test name="GetPRIDForRegCent">
 		<parameter name="ymlFile"
 			value="preReg/GetPRIDForRegCent/GetPRIDForRegCent.yml" />
