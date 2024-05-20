@@ -592,22 +592,17 @@ CreatePrereg:
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
-      outputTemplate: preReg/error
+      outputTemplate: preReg/createPrereg/createPreregResult
       input: '{
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$, 
-  "dateOfBirth": "2045/01/01",
+  "dateOfBirth": "1996/01/01",
   "version": "1.0",
   "langCode": "$1STLANG$",
   "requesttime": "$TIMESTAMP$",
   "id": "mosip.pre-registration.demographic.create"
 }'
       output: '{
-      "errors": [
-    {
-      "errorCode": "KER-IOV-004"
-    }
-  ]
 }'
