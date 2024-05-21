@@ -644,4 +644,28 @@ BookAppointment:
     }
   ]
 }'
-
+   Prereg_BookAppointment_with_All_InValid_data:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$nId$",   
+  "registration_center_id": "$333on_center_id$",
+  "id": "mosip.pre-regooking.book",
+  "version": "1.0.3fhffu",
+  "appointment_date": "$233ntment_date$",
+  "time_slot_from": "$time_2y6373gdg_from$",
+  "time_slot_to": "$time_slo373$",
+  "requesttime": "$TIMEST33dd"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_013"
+      
+    }
+  ]
+}'
