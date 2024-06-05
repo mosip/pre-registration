@@ -341,3 +341,24 @@ UpdatePreregistration:
     }
   ]
 }'
+   Prereg_UpdatePrereg_update_date_without_Status_change_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+      outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_date_verification_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": 0.7,
+  "dateOfBirth": "1998/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update"
+}'
+      output: '{
+  "langCode": "$1STLANG$"
+}'

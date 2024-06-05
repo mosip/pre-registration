@@ -1,0 +1,61 @@
+GetBookingsForRegCenter:
+   Prereg_GetBookingsForRegCenter_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=2020-10-01&to_date=2034-10-13
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+      outputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreIdResult
+      input: '{
+  "regCenterId": "10003"
+}'
+      output: '{
+  "regCenterId": "10003"
+}'
+   Prereg_GetBookingsForRegCenter_with_InValid_date_format:
+      endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=2020-45461&to_date=2034-10-13
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+      outputTemplate: preReg/error
+      input: '{
+  "regCenterId": "10003"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_032"
+    }
+  ]
+}'
+   Prereg_GetBookingsForRegCenter_with_InValid_regcenter:
+      endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=2020-10-01&to_date=2034-10-13
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+      outputTemplate: preReg/error
+      input: '{
+  "regCenterId": "10@@#$$003"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_032"
+    }
+  ]
+}'
+   Prereg_GetBookingsForRegCenter_with_InValid_regcenter_invalidDate:
+      endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=20204555&to_date=2034-10-13
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+      outputTemplate: preReg/error
+      input: '{
+  "regCenterId": "10@@#$$003"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_032"
+    }
+  ]
+}'
