@@ -16,6 +16,120 @@ AddLostUinApplication:
   "bookingType": "LOST_FORGOTTEN_UIN",
   "applicationStatusCode": "SUBMITTED"
 }'
+   Prereg_AddLostUinApplication_Invalid_id:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "eng",
+  "id": "n.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_AddLostUinApplication_invalid_lang_code:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "e@@dd",
+  "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+  "bookingType": "LOST_FORGOTTEN_UIN",
+  "applicationStatusCode": "SUBMITTED"
+}'
+   Prereg_AddLostUinApplication_without_version:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/error
+      input: '{
+  "version": "",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "eng",
+  "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_AddLostUinApplication_without_version_attribute:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/error
+      input: '{
+  "version": "$IGNORE$",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "eng",
+  "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_AddLostUinApplication_with_INVALID_version:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/error
+      input: '{
+  "version": "$353F@GGWYS",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "eng",
+  "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_AddLostUinApplication_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      templateFields: ["langCode"]
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/AddLostUinApplication/addLostUinApplicationResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "eng",
+  "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+  "bookingType": "LOST_FORGOTTEN_UIN",
+  "applicationStatusCode": "SUBMITTED"
+}'
 
    Prereg_AddLostUinApplication_inValid_langcode:
       endPoint: /preregistration/v1/applications/lostuin
@@ -28,6 +142,25 @@ AddLostUinApplication:
   "requesttime": "$TIMESTAMP$",
   "langCode": "xyz",
   "id": "mosip.pre-registration.lostuin.create"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
+}'
+   Prereg_AddLostUinApplication_without_any_data:
+      endPoint: /preregistration/v1/applications/lostuin
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      outputTemplate: preReg/error
+      input: '{
+  "version": "",
+  "requesttime": "",
+  "langCode": "",
+  "id": ""
 }'
       output: '{
    "errors": [
