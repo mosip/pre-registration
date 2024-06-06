@@ -86,7 +86,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>${pre.registration.core.version}</version>
+			<version>1.2.1-java21-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>

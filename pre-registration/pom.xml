@@ -76,8 +76,8 @@
 		<maven.compiler.version>3.8.0</maven.compiler.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
-		<maven.surefire.plugin.version>2.20</maven.surefire.plugin.version>
-		<maven.jacoco.version>0.8.5</maven.jacoco.version>
+		<maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
+		<maven.jacoco.version>0.8.11</maven.jacoco.version>
 		<maven.sonar.plugin.version>3.7.0.1746</maven.sonar.plugin.version>
 		<maven.javadoc.version>3.2.0</maven.javadoc.version>
 
@@ -122,7 +122,7 @@
 		<lombok.version>1.18.32</lombok.version>
 
 		<!-- Json Simple -->
-		<jsonsimple.version>1.1</jsonsimple.version>
+		<jsonsimple.version>1.1.1</jsonsimple.version>
 
 		<uuid.fasterxml.version>3.1.4</uuid.fasterxml.version>
 		<org.json.version>20080701</org.json.version>
@@ -180,48 +180,39 @@
 		<dependency>
 			<groupId>javax.xml.bind</groupId>
 			<artifactId>jaxb-api</artifactId>
-			<version>2.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>javax.activation</groupId>
 			<artifactId>activation</artifactId>
-			<version>1.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jaxb</groupId>
 			<artifactId>jaxb-runtime</artifactId>
-			<version>2.3.1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.mockito</groupId>
 			<artifactId>mockito-core</artifactId>
-			<version>3.4.3</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.javassist</groupId>
 			<artifactId>javassist</artifactId>
-			<version>3.27.0-GA</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-databind</artifactId>
-			<version>2.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-annotations</artifactId>
-			<version>2.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
 			<artifactId>jackson-core</artifactId>
-			<version>2.12.0</version>
 		</dependency>
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-jsr310</artifactId>
-			<version>2.12.0</version>
 		</dependency>
 		<dependency>
    			<groupId>org.junit.vintage</groupId>

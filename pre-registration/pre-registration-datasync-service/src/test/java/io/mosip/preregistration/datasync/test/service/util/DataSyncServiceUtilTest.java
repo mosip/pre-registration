@@ -35,8 +35,12 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
@@ -66,12 +70,16 @@ import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.exception.DemographicGetDetailsException;
 import io.mosip.preregistration.datasync.exception.RecordNotFoundForDateRange;
+import io.mosip.preregistration.datasync.repository.DemographicConsumedRepository;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
+import io.mosip.preregistration.datasync.test.config.TestConfig;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
+@TestPropertySource("classpath:application.properties")
+@ContextConfiguration(classes = { TestConfig.class, TestContext.class, WebApplicationContext.class, DataSyncServiceUtil.class})
 public class DataSyncServiceUtilTest {
 
 	/**
@@ -168,6 +176,7 @@ public class DataSyncServiceUtilTest {
 	 */
 	@Value("${por.url}")
 	private String porUrl;
+
 
 	String resTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
 

@@ -16,7 +16,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,7 +31,10 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
@@ -67,9 +69,11 @@ import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 import io.mosip.preregistration.datasync.service.DataSyncService;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
+import io.mosip.preregistration.datasync.test.config.TestConfig;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
+@ContextConfiguration(classes = {TestConfig.class, TestContext.class, WebApplicationContext.class})
 public class DataSyncServiceTest {
 
 	@Mock

@@ -111,6 +111,13 @@
 		    <groupId>org.springframework.cloud</groupId>
 		    <artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>io.mosip.preregistration</groupId>
+			<artifactId>
+				pre-registration-application-service
+			</artifactId>
+			<version>1.2.1-java21-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>
