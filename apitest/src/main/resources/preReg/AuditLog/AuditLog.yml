@@ -1,14 +1,13 @@
 addContact:
    Prereg_AddContact_All_Valid_Smoke:
-      endPoint: SELECT module_name,cr_by FROM audit.app_audit_log where module_name LIKE '%partner%' order by action_dtimes desc LIMIT 5
+      endPoint: SELECT module_name,cr_by FROM audit.app_audit_log where module_name LIKE '%prereg%' order by action_dtimes desc LIMIT 5
       role: audit
       templateFields: ["preregQuery","prereg service"]
       restMethod: post
-      inputTemplate: partner/authPartner/AddContacts/addContact
-      outputTemplate: partner/authPartner/AddContacts/addContactResult
+      inputTemplate: prereg/AuditLog/auditlog
+      outputTemplate: prereg/AuditLog/AuditLogResult
       input: '{
   }'
       output: '{
    "module_name": "prereg service"
-   "cr_by": "111997"
     }'
