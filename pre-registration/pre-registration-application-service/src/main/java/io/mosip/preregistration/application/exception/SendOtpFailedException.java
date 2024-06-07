@@ -6,7 +6,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 /**
- * This class provides custom Exception for send otp failed scenario
+ * Exception class representing a failure in sending OTP (One-Time Password).
+ * This class extends {@link BaseUncheckedException} and includes an error code,
+ * error message, and a {@link MainResponseDTO} object.
  * 
  * @author Akshay Jain
  * @since 1.0.0
@@ -16,14 +18,23 @@ import lombok.Setter;
 @Getter
 @Setter
 public class SendOtpFailedException extends BaseUncheckedException {
-
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	
+
+	/** The main response DTO. */
 	private MainResponseDTO<?> mainResposneDto;
-	
-	public SendOtpFailedException(String errorCode, String errorMessage,MainResponseDTO<?> response) {
-		super(errorCode,errorMessage);
-		this.mainResposneDto=response;
+
+	/**
+	 * Constructs a new {@code SendOtpFailedException} with the specified error
+	 * code, error message, and response.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param response     the {@link MainResponseDTO} object containing additional
+	 *                     information about the error.
+	 */
+	public SendOtpFailedException(String errorCode, String errorMessage, MainResponseDTO<?> response) {
+		super(errorCode, errorMessage);
+		this.mainResposneDto = response;
 	}
-	 
 }

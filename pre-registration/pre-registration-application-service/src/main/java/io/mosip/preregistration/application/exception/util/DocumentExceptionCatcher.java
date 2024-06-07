@@ -49,84 +49,66 @@ import io.mosip.preregistration.application.exception.RecordNotFoundException;
  *
  */
 public class DocumentExceptionCatcher {
+	/**
+	 * Handles exceptions and throws specific exceptions based on the type of the original exception.
+	 * 
+	 * @param ex              The original exception to handle.
+	 * @param mainResponseDTO The main response DTO associated with the exception.
+	 */
 	public void handle(Exception ex, MainResponseDTO<?> response) {
-		if (ex instanceof DocumentFailedToUploadException) {
-			throw new DocumentFailedToUploadException(((DocumentFailedToUploadException) ex).getErrorCode(),
-					((DocumentFailedToUploadException) ex).getErrorText(), response);
-		} else if (ex instanceof IOException) {
+		if (ex instanceof DocumentFailedToUploadException ex1) {
+			throw new DocumentFailedToUploadException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof IOException ex1) {
 			// kernel exception
-			throw new DTOMappigException(((IOException) ex).getErrorCode(), ((IOException) ex).getErrorText(),
-					response);
-
-		} else if (ex instanceof JsonMappingException) {
-			throw new DTOMappigException(((JsonMappingException) ex).getErrorCode(),
-					((JsonMappingException) ex).getErrorText(), response);
+			throw new DTOMappigException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof JsonMappingException ex1) {
+			throw new DTOMappigException(ex1.getErrorCode(), ex1.getErrorText(), response);
 			// kernel exception
-		} else if (ex instanceof JsonParseException) {
+		} else if (ex instanceof JsonParseException ex1) {
 			// kernel exception
-			throw new DTOMappigException(((JsonParseException) ex).getErrorCode(),
-					((JsonParseException) ex).getErrorText(), response);
+			throw new DTOMappigException(ex1.getErrorCode(), ex1.getErrorText(), response);
 		} else if (ex instanceof JSONException || ex instanceof ParseException) {
 			throw new ParsingException(DocumentErrorCodes.PRG_PAM_DOC_015.toString(),
 					DocumentErrorMessages.JSON_EXCEPTION.getMessage(), response);
-
-		} else if (ex instanceof InvalidRequestParameterException) {
-			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
-					((InvalidRequestParameterException) ex).getErrorText(), response);
-		} else if (ex instanceof MandatoryFieldNotFoundException) {
-			throw new MandatoryFieldNotFoundException(((MandatoryFieldNotFoundException) ex).getErrorCode(),
-					((MandatoryFieldNotFoundException) ex).getErrorText(), response);
-		} else if (ex instanceof DocumentNotValidException) {
-			throw new DocumentNotValidException(((DocumentNotValidException) ex).getErrorCode(),
-					((DocumentNotValidException) ex).getErrorText(), response);
-		} else if (ex instanceof DocumentSizeExceedException) {
-			throw new DocumentSizeExceedException(((DocumentSizeExceedException) ex).getErrorCode(),
-					((DocumentSizeExceedException) ex).getErrorText(), response);
-		} else if (ex instanceof VirusScannerException) {
-			throw new DocumentVirusScanException(((VirusScannerException) ex).getErrorCode(),
-					((VirusScannerException) ex).getErrorText(), response);
-		} else if (ex instanceof DocumentVirusScanException) {
-			throw new DocumentVirusScanException(((DocumentVirusScanException) ex).getErrorCode(),
-					((DocumentVirusScanException) ex).getErrorText(), response);
-		} else if (ex instanceof DocumentNotFoundException) {
-			throw new DocumentNotFoundException(((DocumentNotFoundException) ex).getErrorCode(),
-					((DocumentNotFoundException) ex).getErrorText(), response);
-		} else if (ex instanceof DocumentFailedToCopyException) {
-			throw new DocumentFailedToCopyException(((DocumentFailedToCopyException) ex).getErrorCode(),
-					((DocumentFailedToCopyException) ex).getErrorText(), response);
-		} else if (ex instanceof InvalidDocumentIdExcepion) {
-			throw new InvalidDocumentIdExcepion(((InvalidDocumentIdExcepion) ex).getErrorCode(),
-					((InvalidDocumentIdExcepion) ex).getErrorText(), response);
-		} else if (ex instanceof DemographicGetDetailsException) {
-			throw new DemographicGetDetailsException(((DemographicGetDetailsException) ex).getErrorCode(),
-					((DemographicGetDetailsException) ex).getErrorText(), response);
-		} else if (ex instanceof FSServerException) {
-			throw new FSServerException(((FSServerException) ex).getErrorCode(),
-					((FSServerException) ex).getErrorText(), response);
-		} else if (ex instanceof TableNotAccessibleException) {
-			throw new TableNotAccessibleException(((TableNotAccessibleException) ex).getErrorCode(),
-					((TableNotAccessibleException) ex).getErrorText(), response);
+		} else if (ex instanceof InvalidRequestParameterException ex1) {
+			throw new InvalidRequestParameterException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof MandatoryFieldNotFoundException ex1) {
+			throw new MandatoryFieldNotFoundException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof DocumentNotValidException ex1) {
+			throw new DocumentNotValidException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof DocumentSizeExceedException ex1) {
+			throw new DocumentSizeExceedException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof VirusScannerException ex1) {
+			throw new DocumentVirusScanException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof DocumentVirusScanException ex1) {
+			throw new DocumentVirusScanException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof DocumentNotFoundException ex1) {
+			throw new DocumentNotFoundException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof DocumentFailedToCopyException ex1) {
+			throw new DocumentFailedToCopyException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof InvalidDocumentIdExcepion ex1) {
+			throw new InvalidDocumentIdExcepion(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof DemographicGetDetailsException ex1) {
+			throw new DemographicGetDetailsException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof FSServerException ex1) {
+			throw new FSServerException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof TableNotAccessibleException ex1) {
+			throw new TableNotAccessibleException(ex1.getErrorCode(), ex1.getErrorText(), response);
 		} else if (ex instanceof PSQLException) {
 			throw new PrimaryKeyValidationException(DocumentErrorCodes.PRG_PAM_DOC_021.toString(),
 					DocumentErrorMessages.DOCUMENT_ALREADY_PRESENT.getMessage(), response);
-		} else if (ex instanceof FSAdapterException) {
-			throw new FSServerException(((FSAdapterException) ex).getErrorCode(),
-					((FSAdapterException) ex).getErrorText(), response);
-		} else if (ex instanceof DecryptionFailedException) {
-			throw new EncryptionFailedException(((DecryptionFailedException) ex).getErrorCode(),
-					((DecryptionFailedException) ex).getErrorText(), response);
-		} else if (ex instanceof EncryptionFailedException) {
-			throw new EncryptionFailedException(((EncryptionFailedException) ex).getValidationErrorList(), response);
-		} else if (ex instanceof MasterDataNotAvailableException) {
-			throw new EncryptionFailedException(((MasterDataNotAvailableException) ex).getErrorCode().toString(),
-					((MasterDataNotAvailableException) ex).getErrorText(), response);
-		} else if (ex instanceof InvalidRequestException) {
-			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
-					((InvalidRequestException) ex).getErrorText(), response);
-		} else if (ex instanceof RecordNotFoundException) {
-			throw new RecordNotFoundException(((RecordNotFoundException) ex).getErrorCode(),
-					((RecordNotFoundException) ex).getErrorText(), response);
-
+		} else if (ex instanceof FSAdapterException ex1) {
+			throw new FSServerException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof DecryptionFailedException ex1) {
+			throw new EncryptionFailedException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof EncryptionFailedException ex1) {
+			throw new EncryptionFailedException(ex1.getValidationErrorList(), response);
+		} else if (ex instanceof MasterDataNotAvailableException ex1) {
+			throw new EncryptionFailedException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof InvalidRequestException ex1) {
+			throw new InvalidRequestException(ex1.getErrorCode(), ex1.getErrorText(), response);
+		} else if (ex instanceof RecordNotFoundException ex1) {
+			throw new RecordNotFoundException(ex1.getErrorCode(), ex1.getErrorText(), response);
 		} else if (ex instanceof java.text.ParseException) {
 			throw new InvalidRequestParameterException(
 					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_003.getCode(),
@@ -134,15 +116,11 @@ public class DocumentExceptionCatcher {
 					response);
 
 		} else {
-			if (ex instanceof BaseUncheckedException) {
-				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
-						((BaseUncheckedException) ex).getErrorText(), response);
-			} else if (ex instanceof BaseCheckedException) {
-				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
-						((BaseCheckedException) ex).getErrorText(), response);
+			if (ex instanceof BaseUncheckedException ex1) {
+				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), response);
+			} else if (ex instanceof BaseCheckedException ex1) {
+				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), response);
 			}
 		}
-
 	}
-
 }

@@ -31,17 +31,22 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.signatureutil.model.SignatureResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.config.TemplateConfiguration;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
@@ -51,9 +56,15 @@ import io.mosip.preregistration.datasync.dto.ReverseDataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.service.DataSyncService;
+import io.mosip.preregistration.datasync.test.config.TestConfig;
 
+@ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
+		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
+		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
+		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*" })
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {TestConfig.class, TestContext.class, TemplateConfiguration.class, WebApplicationContext.class})
 @AutoConfigureMockMvc
 public class DataSyncControllerTest {
 

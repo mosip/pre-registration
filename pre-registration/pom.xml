@@ -25,7 +25,7 @@
 		<url>https://github.com/mosip/pre-registration</url>
 		<tag>HEAD</tag>
 	</scm>
-	
+
 	<developers>
 		<developer>
 			<name>Mosip</name>
@@ -35,26 +35,26 @@
 		</developer>
 	</developers>
 
-    <repositories>
-        <repository>
-            <id>ossrh</id>
-            <name>CentralRepository</name>
-            <url>https://oss.sonatype.org/content/repositories/snapshots</url>
-            <layout>default</layout>
-            <snapshots>
-            <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>central</id>
-            <name>MavenCentral</name>
-            <layout>default</layout>
-            <url>https://repo1.maven.org/maven2</url>
-            <snapshots>
-            <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+	<repositories>
+		<repository>
+			<id>ossrh</id>
+			<name>CentralRepository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>MavenCentral</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
 	<distributionManagement>
 		<snapshotRepository>
@@ -119,7 +119,7 @@
 		<mockito-version>3.4.3</mockito-version>
 
 		<!-- Lombok -->
-		<lombok.version>1.18.32</lombok.version>
+		<lombok.version>1.18.30</lombok.version>
 
 		<!-- Json Simple -->
 		<jsonsimple.version>1.1.1</jsonsimple.version>
@@ -172,7 +172,13 @@
 				<artifactId>kernel-bom</artifactId>
 				<version>1.2.1-java21-SNAPSHOT</version>
 				<type>pom</type>
-			    <scope>import</scope>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>1.18.30</version>
+				<scope>provided</scope>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
@@ -215,14 +221,17 @@
 			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 		<dependency>
-   			<groupId>org.junit.vintage</groupId>
-   			<artifactId>junit-vintage-engine</artifactId> 
-  		</dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>${junit.version}</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -422,7 +431,8 @@
 				</executions>
 				<configuration>
 					<generateGitPropertiesFile>true</generateGitPropertiesFile>
-					<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+					<generateGitPropertiesFilename>
+						${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
 					<includeOnlyProperties>
 						<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
 						<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>

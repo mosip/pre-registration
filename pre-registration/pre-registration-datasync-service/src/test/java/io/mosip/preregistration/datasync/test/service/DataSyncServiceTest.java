@@ -28,6 +28,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,6 +52,7 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.SlotTimeDto;
+import io.mosip.preregistration.core.config.TemplateConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
@@ -71,9 +73,13 @@ import io.mosip.preregistration.datasync.service.DataSyncService;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 import io.mosip.preregistration.datasync.test.config.TestConfig;
 
+@ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
+		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
+		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
+		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*,io.mosip.kernel.templatemanager.*" })
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
-@ContextConfiguration(classes = {TestConfig.class, TestContext.class, WebApplicationContext.class})
+@ContextConfiguration(classes = {TestConfig.class, TestContext.class, TemplateConfiguration.class, WebApplicationContext.class})
 public class DataSyncServiceTest {
 
 	@Mock

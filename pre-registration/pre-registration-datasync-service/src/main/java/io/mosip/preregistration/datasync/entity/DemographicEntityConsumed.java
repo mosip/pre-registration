@@ -8,6 +8,9 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -15,11 +18,6 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-
-import org.springframework.stereotype.Component;
-
-import io.mosip.preregistration.core.common.entity.DocumentEntity;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -49,10 +47,10 @@ public class DemographicEntityConsumed implements Serializable {
 	private String preRegistrationId;
 
 	/** The JSON */
-	@Column(name = "demog_detail")
-	@Setter(AccessLevel.NONE)
+	@Column(name = "demog_detail", nullable = false, columnDefinition = "bytea")
 	private byte[] applicantDetailJson;
 
+	 // Getter and Setter methods for requesttime are overridden manually
 	public void setApplicantDetailJson(byte[] applicantDetailJson) {
 		this.applicantDetailJson = applicantDetailJson != null ? applicantDetailJson.clone() : null;
 	}

@@ -4,55 +4,67 @@ import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
+/**
+ * The PreRegistrationException class represents an exception that occurs when
+ * Pre Registration process occurs. This class extends
+ * {@link BaseUncheckedException} and includes various constructors for
+ * different use cases, as well as a {@link MainResponseDTO} object for
+ * additional error information.
+ *
+ */
+
 @Getter
 public class PreRegistrationException extends BaseUncheckedException {
+	/** The Constant serialVersionUID. */
+	private static final long serialVersionUID = 1L;
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = -2195117679715213502L;
-
+	/** The main response DTO associated with the exception. */
 	private MainResponseDTO<?> mainresponseDTO;
 
 	/**
-	 * @param msg
-	 *            pass the error message
+	 * Constructs a new {@code PreRegistrationException} with the specified error
+	 * errorMessage
+	 * 
+	 * @param errorMessage the detailed error errorMessage.
 	 */
-	public PreRegistrationException(String msg) {
-		super("", msg);
+	public PreRegistrationException(String errorMessage) {
+		super("", errorMessage);
 	}
 
 	/**
-	 * @param errCode
-	 *            pass the error code
-	 * @param msg
-	 *            pass the error message
+	 * Constructs a new {@code PreRegistrationException} with the specified error
+	 * code and error message.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
 	 */
-	public PreRegistrationException(String errCode, String msg) {
-		super(errCode, msg);
+	public PreRegistrationException(String errorCode, String errorMessage) {
+		super(errorCode, errorMessage);
 	}
 
 	/**
-	 * @param errCode
-	 *            pass the error code
-	 * @param msg
-	 *            pass the error message
+	 * Constructs a new {@code TableNotAccessibleException} with the specified error
+	 * code, error message, and response.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param response     the {@link MainResponseDTO} object containing additional
+	 *                     information about the error.
 	 */
-	public PreRegistrationException(String errCode, String msg, MainResponseDTO<?> response) {
-		super(errCode, msg);
+	public PreRegistrationException(String errorCode, String errorMessage, MainResponseDTO<?> response) {
+		super(errorCode, errorMessage);
 		this.mainresponseDTO = response;
 	}
 
 	/**
-	 * @param errCode
-	 *            pass the error code
-	 * @param msg
-	 *            pass the error message
-	 * @param cause
-	 *            pass the cause
+	 * Constructs a new {@code TableNotAccessibleException} with the specified error
+	 * code, error message, and rootCause.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param rootCause    the cause of the error.
 	 */
-	public PreRegistrationException(String errCode, String msg, Throwable cause) {
-		super(errCode, msg, cause);
+	public PreRegistrationException(String errorCode, String errorMessage, Throwable rootCause) {
+		super(errorCode, errorMessage, rootCause);
 	}
-
 }
