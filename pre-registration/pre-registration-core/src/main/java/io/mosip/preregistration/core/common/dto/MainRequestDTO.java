@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import io.swagger.annotations.ApiModelProperty;
 import lombok.AccessLevel;
+import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -24,8 +25,7 @@ import lombok.ToString;
  * @since 1.0.0
  *
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 public class MainRequestDTO<T> implements Serializable {
@@ -46,23 +46,22 @@ public class MainRequestDTO<T> implements Serializable {
 	/**
 	 * Request Date Time
 	 */
-	
+
 	@ApiModelProperty(value = "request time", position = 3)
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
-	@Setter(AccessLevel.NONE)
-	@Getter(AccessLevel.NONE)
 	private Date requesttime;
 	/**
 	 * Request Object
 	 */
 	@ApiModelProperty(value = "request", position = 4)
 	private T request;
-	
+
+	// Getter and Setter methods for requesttime are overridden manually
 	public Date getRequesttime() {
-		return requesttime!=null ? new Date(requesttime.getTime()):null;
-	}
-	public void setRequesttime(Date requesttime) {
-		this.requesttime =requesttime!=null ? new Date(requesttime.getTime()):null;
+		return requesttime != null ? new Date(requesttime.getTime()) : null;
 	}
 
+	public void setRequesttime(Date requesttime) {
+		this.requesttime = requesttime != null ? new Date(requesttime.getTime()) : null;
+	}
 }

@@ -121,7 +121,7 @@ public class DataSyncServiceUtil {
 	@Autowired
 	private ProcessedDataSyncRepo processedDataSyncRepo;
 	
-	@Autowired(required = true)
+	@Autowired
 	private DemographicConsumedRepository demographicConsumedRepository;
 
 	/**

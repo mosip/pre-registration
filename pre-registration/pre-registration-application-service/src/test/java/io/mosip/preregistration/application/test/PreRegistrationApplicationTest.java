@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.application.test;
 
 import org.springframework.boot.SpringApplication;
@@ -18,7 +14,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 		"io.mosip.preregistration.application.entity.*", "io.mosip.preregistration.application.repository.*",
 		"io.mosip.kernel.core.*", "io.mosip.kernel.idobjectvalidator.*", "io.mosip.commons.*",
 		"io.mosip.preregistration.application.security.*" })
-
 public class PreRegistrationApplicationTest {
 	/**
 	 * 

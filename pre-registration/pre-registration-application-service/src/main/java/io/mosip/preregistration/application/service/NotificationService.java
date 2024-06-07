@@ -398,7 +398,7 @@ public class NotificationService {
 				if (bookingDTO.getRegDate().equals(dto.getAppointmentDate())) {
 					if (dto.getAppointmentTime() != null && !dto.getAppointmentTime().trim().equals("")) {
 
-						if (!time.equals(dto.getAppointmentTime())) {
+						if (!time.equalsIgnoreCase(dto.getAppointmentTime())) {
 							throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_010.getCode(),
 									NotificationErrorMessages.APPOINTMENT_TIME_NOT_CORRECT.getMessage(), response);
 						}

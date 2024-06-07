@@ -3,6 +3,7 @@ package io.mosip.analytics.event.anonymous.service;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -97,6 +98,8 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 	}
 
 	public String getLocalDateString(LocalDateTime date) {
+		if (Objects.isNull(date))
+			date = LocalDateTime.now();
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(utcDateTimePattern);
 		return date.format(dateTimeFormatter);
 	}

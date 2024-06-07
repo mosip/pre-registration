@@ -8,21 +8,16 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.springframework.stereotype.Component;
+
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
-
-import org.springframework.stereotype.Component;
-
-import io.mosip.preregistration.core.common.entity.ApplicationEntity;
-import io.mosip.preregistration.core.common.entity.DocumentEntity;
-import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
-import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -43,7 +38,7 @@ public class DemographicEntityConsumed implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6705845720255847210L;
 
-	@OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
+	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
 	private List<DocumentEntity> documentEntity;
 
 //	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "applicationId")
@@ -51,7 +46,7 @@ public class DemographicEntityConsumed implements Serializable {
 
 //	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
 //	private RegistrationBookingEntity registrationBookingEntity;
-	
+
 	/** The pre registration id. */
 	@Column(name = "prereg_id", nullable = false)
 	@Id
@@ -59,11 +54,11 @@ public class DemographicEntityConsumed implements Serializable {
 
 	/** The JSON */
 	@Column(name = "demog_detail")
-	@Setter(AccessLevel.NONE)
 	private byte[] applicantDetailJson;
-	
+
+	// Setter methods for requesttime are overridden manually
 	public void setApplicantDetailJson(byte[] applicantDetailJson) {
-		this.applicantDetailJson =applicantDetailJson !=null ? applicantDetailJson.clone():null;
+		this.applicantDetailJson = applicantDetailJson != null ? applicantDetailJson.clone() : null;
 	}
 
 	/** The status_code */

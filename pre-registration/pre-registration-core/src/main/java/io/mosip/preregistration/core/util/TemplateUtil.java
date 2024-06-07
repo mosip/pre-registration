@@ -38,9 +38,6 @@ import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
-import io.mosip.preregistration.core.errorcodes.ErrorCodes;
-import io.mosip.preregistration.core.errorcodes.ErrorMessages;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 
 /**
  * @author Sanober Noor
@@ -76,7 +73,7 @@ public class TemplateUtil {
 	/**
 	 * This method is used for getting template
 	 * 
-	 * @param object
+	 * @param langCode
 	 * @param templatetypecode
 	 * @return
 	 */

@@ -9,7 +9,10 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
 /**
- * This class defines the RecordNotFoundException
+ * The RecordNotFoundException class represents an exception that occurs when a
+ * record is not found. This class extends {@link BaseUncheckedException} and
+ * includes various constructors for different use cases, as well as a
+ * {@link MainResponseDTO} object for additional error information.
  * 
  * @author Tapaswini Behera
  * @since 1.0.0
@@ -19,38 +22,53 @@ import lombok.Getter;
 public class RecordNotFoundException extends BaseUncheckedException {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+	/** The main response DTO containing additional error information. */
 	private MainResponseDTO<?> mainresponseDTO;
 
-
 	/**
-	 * @param msg pass the error message
+	 * Constructs a new {@code RecordNotFoundException} with the specified error
+	 * message.
+	 * 
+	 * @param errorMessage the detailed error message.
 	 */
-	public RecordNotFoundException(String msg) {
-		super("", msg);
+	public RecordNotFoundException(String errorMessage) {
+		super("", errorMessage);
 	}
 
 	/**
-	 * @param errCode pass the error code
-	 * @param msg pass the error message
+	 * Constructs a new {@code RecordNotFoundException} with the specified error
+	 * code and error message.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
 	 */
-	public RecordNotFoundException(String errCode, String msg) {
-		super(errCode, msg);
-	}
-	/**
-	 * @param errCode pass the error code
-	 * @param msg pass the error message
-	 */
-	public RecordNotFoundException(String errCode, String msg,MainResponseDTO<?> response) {
-		super(errCode, msg);
-		this.mainresponseDTO=response;
+	public RecordNotFoundException(String errorCode, String errorMessage) {
+		super(errorCode, errorMessage);
 	}
 
 	/**
-	 * @param errCode pass the error code
-	 * @param msg pass the error message
-	 * @param cause pass the cause
+	 * Constructs a new {@code RecordNotFoundException} with the specified error
+	 * code, error message, and response.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param response     the {@link MainResponseDTO} object containing additional
+	 *                     information about the error.
 	 */
-	public RecordNotFoundException(String errCode, String msg, Throwable cause) {
-		super(errCode, msg, cause);
+	public RecordNotFoundException(String errorCode, String errorMessage, MainResponseDTO<?> response) {
+		super(errorCode, errorMessage);
+		this.mainresponseDTO = response;
+	}
+
+	/**
+	 * Constructs a new {@code RecordNotFoundException} with the specified error
+	 * message and root cause.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param rootCause    the cause of the error.
+	 */
+	public RecordNotFoundException(String errorCode, String errorMessage, Throwable rootCause) {
+		super(errorCode, errorMessage, rootCause);
 	}
 }
