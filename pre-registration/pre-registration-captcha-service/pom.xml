@@ -13,26 +13,16 @@
 
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
-	<version>1.2.1-java21-SNAPSHOT</version>
 
 	<properties>
-		<java.version>21</java.version>
-		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+		<!-- Mosip kernel -->
 		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
+		<kernel.keymanager.version>1.2.1-java21-SNAPSHOT</kernel.keymanager.version>
+		<kernel.transliteration.icu4j.version>1.2.1-java21-SNAPSHOT</kernel.transliteration.icu4j.version>
+		<kernel.idobjectvalidator.version>1.2.1-java21-SNAPSHOT</kernel.idobjectvalidator.version>
+
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.mosip.kernel</groupId>
-				<artifactId>kernel-bom</artifactId>
-				<version>1.2.1-java21-SNAPSHOT</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.projectlombok</groupId>
@@ -97,7 +87,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.version}</version>
+				<version>${spring.boot.maven.plugin.version}</version>
 				<configuration>
 					<executable>true</executable>
 				</configuration>
@@ -123,12 +113,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.1-java21-SNAPSHOT</version>
+					<version>${kernel.idobjectvalidator.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.1-java21-SNAPSHOT</version>
+					<version>${kernel.transliteration.icu4j.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.junit.vintage</groupId>
@@ -137,7 +127,6 @@
 				<dependency>
 					<groupId>junit</groupId>
 					<artifactId>junit</artifactId>
-					<version>${junit.version}</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
@@ -146,7 +135,7 @@
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
-						<version>${spring.boot.version}</version>
+						<version>${spring.boot.maven.plugin.version}</version>
 						<configuration>
 							<executable>true</executable>
 							<layout>ZIP</layout>
@@ -183,7 +172,7 @@
 					<plugin>
 						<groupId>org.springdoc</groupId>
 						<artifactId>springdoc-openapi-maven-plugin</artifactId>
-						<version>0.2</version>
+						<version>${springdoc.openapi.maven.plugin}</version>
 						<executions>
 							<execution>
 								<id>integration-test</id>

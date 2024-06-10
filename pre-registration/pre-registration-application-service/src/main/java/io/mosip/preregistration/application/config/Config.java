@@ -69,5 +69,4 @@ public class Config {
 		requestFactory.setHttpClient(httpClientBuilder.build());
 		return new RestTemplate(requestFactory);
 	}
-
 }

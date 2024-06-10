@@ -81,5 +81,4 @@ public class TestSecurityConfig {
 		users.add(new User("test", "mosip", Arrays.asList(new SimpleGrantedAuthority("ROLE_TEST"))));
 		return new InMemoryUserDetailsManager(users);
 	}
-
 }

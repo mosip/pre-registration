@@ -26,13 +26,13 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Tag(name = "update-registration-controller", description = "Update Registration Controller")
@@ -78,7 +78,7 @@ public class UpdateRegistrationController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> addUpdateRegistration(
 			@Validated @RequestBody(required = true) MainRequestDTO<ApplicationRequestDTO> jsonObject,
-			@ApiIgnore Errors errors) {
+			@ApiParam(hidden = true) Errors errors) {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration UpdateRegistrationController for createNewApplication with json object"
 						+ jsonObject);
@@ -110,5 +110,4 @@ public class UpdateRegistrationController {
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString()));
 	}
-
 }
