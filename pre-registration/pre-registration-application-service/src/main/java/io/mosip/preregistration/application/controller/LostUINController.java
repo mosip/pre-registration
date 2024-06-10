@@ -26,13 +26,13 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Tag(name = "lost-uin-controller", description = "Lost UIN Controller")
@@ -77,7 +77,7 @@ public class LostUINController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> addLostUinApplication(
 			@Validated @RequestBody(required = true) MainRequestDTO<ApplicationRequestDTO> jsonObject,
-			@ApiIgnore Errors errors) {
+			@ApiParam(hidden = true) Errors errors) {
 		log.info("sessionId", "idType", "id",
 				"In pre-registration LostUINController for createNewApplication with json object" + jsonObject);
 		requestValidator.validateId(LOST_UIN_CREATE_ID, jsonObject.getId(), errors);

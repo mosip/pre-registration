@@ -14,7 +14,7 @@ import org.springframework.context.annotation.ComponentScan;
  *
  */
 @ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
-		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
+		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*,io.mosip.kernel.templatemanager.velocity.*"
 		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
 		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*" })
 @EnableAutoConfiguration(exclude = { DataSourceAutoConfiguration.class, HibernateJpaAutoConfiguration.class })

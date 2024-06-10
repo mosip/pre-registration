@@ -10,31 +10,17 @@
 		<version>1.2.1-java21-SNAPSHOT</version>
 	</parent>
 
-
 	<artifactId>pre-registration-datasync-service</artifactId>
 	<name>pre-registration-datasync-service</name>
-	<version>1.2.1-java21-SNAPSHOT</version>
 
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>21</java.version>
+		<!-- Mosip kernel -->
 		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
 		<kernel.keymanager.version>1.2.1-java21-SNAPSHOT</kernel.keymanager.version>
-		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+		<kernel.ref.idobjectvalidator.version>1.2.1-java21-SNAPSHOT</kernel.ref.idobjectvalidator.version>
+		<kernel.transliteration.icu4j.version>1.2.1-java21-SNAPSHOT</kernel.transliteration.icu4j.version>
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.mosip.kernel</groupId>
-				<artifactId>kernel-bom</artifactId>
-				<version>1.2.1-java21-SNAPSHOT</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -47,7 +33,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
-			<version>${spring-cloud-config.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
@@ -115,7 +100,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.version}</version>
 				<configuration>
 					<executable>true</executable>
 					<layout>ZIP</layout>
@@ -143,12 +127,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.1-java21-SNAPSHOT</version>
+					<version>${kernel.ref.idobjectvalidator.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.1-java21-SNAPSHOT</version>
+					<version>${kernel.transliteration.icu4j.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.junit.vintage</groupId>
@@ -157,7 +141,6 @@
 				<dependency>
 					<groupId>junit</groupId>
 					<artifactId>junit</artifactId>
-					<version>${junit.version}</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
@@ -203,7 +186,7 @@
 					<plugin>
 						<groupId>org.springdoc</groupId>
 						<artifactId>springdoc-openapi-maven-plugin</artifactId>
-						<version>0.2</version>
+						<version>${springdoc.openapi.maven.plugin}</version>
 						<executions>
 							<execution>
 								<id>integration-test</id>

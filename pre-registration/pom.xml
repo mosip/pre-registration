@@ -13,73 +13,36 @@
 	<description>Parent project of MOSIP Pre-Registration</description>
 	<url>https://github.com/mosip/pre-registration</url>
 
-	<licenses>
-		<license>
-			<name>MPL 2.0</name>
-			<url>https://www.mozilla.org/en-US/MPL/2.0/</url>
-		</license>
-	</licenses>
-	<scm>
-		<connection>scm:git:git://github.com/mosip/pre-registration.git</connection>
-		<developerConnection>scm:git:ssh://github.com:mosip/pre-registration.git</developerConnection>
-		<url>https://github.com/mosip/pre-registration</url>
-		<tag>HEAD</tag>
-	</scm>
-
-	<developers>
-		<developer>
-			<name>Mosip</name>
-			<email>mosip.emailnotifier@gmail.com</email>
-			<organization>io.mosip</organization>
-			<organizationUrl>https://github.com/mosip/pre-registration</organizationUrl>
-		</developer>
-	</developers>
-
-	<repositories>
-		<repository>
-			<id>ossrh</id>
-			<name>CentralRepository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-			<layout>default</layout>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>central</id>
-			<name>MavenCentral</name>
-			<layout>default</layout>
-			<url>https://repo1.maven.org/maven2</url>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
-
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
-		</repository>
-	</distributionManagement>
-
 	<properties>
-		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
-		<kernel.core.version>1.2.1-java21-SNAPSHOT</kernel.core.version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<maven.compiler.source>21</maven.compiler.source>
-		<maven.compiler.target>21</maven.compiler.target>
-		<maven.compiler.version>3.8.0</maven.compiler.version>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<java.version>21</java.version>
+
+		<!-- maven -->
+		<maven.compiler.source>${java.version}</maven.compiler.source>
+		<maven.compiler.target>${java.version}</maven.compiler.target>
+		<maven.compiler.version>3.11.0</maven.compiler.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
-		<maven.surefire.plugin.version>2.22.0</maven.surefire.plugin.version>
-		<maven.jacoco.version>0.8.11</maven.jacoco.version>
+		<maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
+		<maven.shade.plugin.version>2.3</maven.shade.plugin.version>
+		<jacoco.maven.plugin.version>0.8.11</jacoco.maven.plugin.version>
+		<maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
+		<maven.source.plugin.version>3.3.1</maven.source.plugin.version>
+		<maven.gpg.plugin.version>3.2.3</maven.gpg.plugin.version>
+		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
+		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
+		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
+		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
+		<spring.boot.maven.plugin.version>3.2.5</spring.boot.maven.plugin.version>
+		<nexus.staging.maven.plugin.version>1.6.7</nexus.staging.maven.plugin.version>
 		<maven.sonar.plugin.version>3.7.0.1746</maven.sonar.plugin.version>
-		<maven.javadoc.version>3.2.0</maven.javadoc.version>
+		<!-- git -->
+		<git.commit.id.plugin.version>3.0.1</git.commit.id.plugin.version>
+		<springdoc.openapi.maven.plugin>0.2</springdoc.openapi.maven.plugin>
+
+		<!-- Swagger -->
+		<springdoc.openapi.starter.webmvc.ui.version>2.5.0</springdoc.openapi.starter.webmvc.ui.version>
 
 		<!-- Core -->
 		<spring.version>5.0.4.RELEASE</spring.version>
@@ -90,9 +53,6 @@
 		<!-- Miscellaneous -->
 		<javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
 		<jackson.version>2.9.5</jackson.version>
-
-		<!-- Swagger -->
-		<swagger.version>2.9.2</swagger.version>
 
 		<!-- Data Access -->
 		<eclipselink.version>2.5.0</eclipselink.version>
@@ -111,7 +71,6 @@
 		<commons.configuration2.version>2.2</commons.configuration2.version>
 		<commons-collections4.version>4.3</commons-collections4.version>
 
-
 		<!-- Test & Logging -->
 		<junit.version>4.12</junit.version>
 		<logback.version>1.1.6</logback.version>
@@ -124,11 +83,13 @@
 		<!-- Json Simple -->
 		<jsonsimple.version>1.1.1</jsonsimple.version>
 
+		<!-- Others -->
 		<uuid.fasterxml.version>3.1.4</uuid.fasterxml.version>
 		<org.json.version>20080701</org.json.version>
 		<modelmapper.version>0.7.4</modelmapper.version>
 		<java.interceptor.version>1.2</java.interceptor.version>
 		<icu.version>63.1</icu.version>
+		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 
 		<sonar.coverage.exclusions>
 			**/code/**,
@@ -154,10 +115,12 @@
 		</sonar.coverage.exclusions>
 		<sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
 
-		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
-
+		<!-- Mosip kernel -->
+		<kernel.bom.version>1.2.1-java21-SNAPSHOT</kernel.bom.version>
+		<kernel.core.version>1.2.1-java21-SNAPSHOT</kernel.core.version>
+		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
 	</properties>
+	
 	<modules>
 		<module>pre-registration-core</module>
 		<module>pre-registration-application-service</module>
@@ -165,19 +128,20 @@
 		<module>pre-registration-batchjob</module>
 		<module>pre-registration-captcha-service</module>
 	</modules>
+	
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
 				<groupId>io.mosip.kernel</groupId>
 				<artifactId>kernel-bom</artifactId>
-				<version>1.2.1-java21-SNAPSHOT</version>
+				<version>${kernel.bom.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
-				<version>1.18.30</version>
+				<version>${lombok.version}</version>
 				<scope>provided</scope>
 			</dependency>
 		</dependencies>
@@ -303,7 +267,7 @@
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
-				<version>${maven.jacoco.version}</version>
+				<version>${jacoco.maven.plugin.version}</version>
 				<executions>
 					<execution>
 						<goals>
@@ -322,7 +286,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${maven.javadoc.version}</version>
+				<version>${maven.javadoc.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-javadocs</id>
@@ -338,7 +302,7 @@
 			<plugin>
 				<groupId>org.sonatype.plugins</groupId>
 				<artifactId>nexus-staging-maven-plugin</artifactId>
-				<version>1.6.7</version>
+				<version>${nexus.staging.maven.plugin.version}</version>
 				<extensions>true</extensions>
 				<configuration>
 					<serverId>ossrh</serverId>
@@ -350,7 +314,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>${maven.source.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -364,7 +328,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
-				<version>1.5</version>
+				<version>${maven.gpg.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>sign-artifacts</id>
@@ -419,7 +383,7 @@
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
-				<version>3.0.1</version>
+				<version>${git.commit.id.plugin.version}</version>
 				<executions>
 					<execution>
 						<id>get-the-git-infos</id>
@@ -439,7 +403,6 @@
 					</includeOnlyProperties>
 					<commitIdGenerationMode>full</commitIdGenerationMode>
 					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-					<!-- <format>json</format> -->
 				</configuration>
 			</plugin>
 		</plugins>
@@ -475,4 +438,58 @@
 			</build>
 		</profile>
 	</profiles>
+
+	<repositories>
+		<repository>
+			<id>ossrh</id>
+			<name>CentralRepository</name>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<layout>default</layout>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>central</id>
+			<name>MavenCentral</name>
+			<layout>default</layout>
+			<url>https://repo1.maven.org/maven2</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
+
+	<distributionManagement>
+		<snapshotRepository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+		</snapshotRepository>
+		<repository>
+			<id>ossrh</id>
+			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+		</repository>
+	</distributionManagement>
+
+	<licenses>
+		<license>
+			<name>MPL 2.0</name>
+			<url>https://www.mozilla.org/en-US/MPL/2.0/</url>
+		</license>
+	</licenses>
+	<scm>
+		<connection>scm:git:git://github.com/mosip/pre-registration.git</connection>
+		<developerConnection>scm:git:ssh://github.com:mosip/pre-registration.git</developerConnection>
+		<url>https://github.com/mosip/pre-registration</url>
+		<tag>HEAD</tag>
+	</scm>
+
+	<developers>
+		<developer>
+			<name>Mosip</name>
+			<email>mosip.emailnotifier@gmail.com</email>
+			<organization>io.mosip</organization>
+			<organizationUrl>https://github.com/mosip/pre-registration</organizationUrl>
+		</developer>
+	</developers>
 </project>

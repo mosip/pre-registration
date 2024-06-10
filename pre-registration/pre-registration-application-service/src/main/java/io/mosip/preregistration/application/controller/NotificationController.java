@@ -51,15 +51,14 @@ public class NotificationController {
 	 * @return the response entity.
 	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotificationnotify())")
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(path = "/notification/notify", consumes = { "multipart/form-data" })
-	@Operation(summary  = "sendNotification", description = "Trigger notification", tags = "notification-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "OK"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@Operation(summary = "sendNotification", description = "Trigger notification", tags = "notification-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotification(
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = true) String langCode,
@@ -80,15 +79,14 @@ public class NotificationController {
 	 * @return the response entity.
 	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotification())")
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(path = "/notification", consumes = { "multipart/form-data" })
-	@Operation(summary  = "sendNotifications", description = "Trigger notification", tags = "notification-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "OK"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@Operation(summary = "sendNotifications", description = "Trigger notification", tags = "notification-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotifications(
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = false) String langCode,
@@ -99,7 +97,7 @@ public class NotificationController {
 		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, true),
 				HttpStatus.OK);
 	}
-	
+
 	/**
 	 * Api to Trigger notification service.
 	 * 
@@ -109,21 +107,21 @@ public class NotificationController {
 	 * @return the response entity.
 	 */
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotification())")
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(path = "/internal/notification", consumes = { "multipart/form-data" })
-	@Operation(summary = "sendNotificationsInternal", description  = "Trigger notification by internal batch job", tags = "notification-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "OK"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@Operation(summary = "sendNotificationsInternal", description = "Trigger notification by internal batch job", tags = "notification-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotificationsInternal(
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = false) String langCode,
 			@RequestPart(value = "attachment", required = false) MultipartFile file, HttpServletRequest res) {
 		log.info("sessionId", "idType", "id",
-				"In notification controller for sendNotificationsInternal() with request notification dto  " + jsonbObject);
+				"In notification controller for sendNotificationsInternal() with request notification dto  "
+						+ jsonbObject);
 		log.debug("sessionId", "idType", "id", res.getHeader("Cookie"));
 		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, false),
 				HttpStatus.OK);
