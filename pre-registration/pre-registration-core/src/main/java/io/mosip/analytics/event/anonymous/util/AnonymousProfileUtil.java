@@ -9,11 +9,6 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import jakarta.annotation.PostConstruct;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -22,9 +17,11 @@ import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.analytics.event.anonymous.dto.AnonymousProfileRequestDTO;
 import io.mosip.analytics.event.anonymous.dto.RegistrationProfileDTO;
-import io.mosip.analytics.event.anonymous.dto.RegistrationProfileDeviceDTO;
 import io.mosip.analytics.event.anonymous.errorcodes.AnonymousProfileErrorCodes;
 import io.mosip.analytics.event.anonymous.errorcodes.AnonymousProfileErrorMessages;
 import io.mosip.analytics.event.anonymous.exception.AnonymousProfileException;
@@ -38,6 +35,7 @@ import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.identity.DemographicIdentityRequestDTO;
 import io.mosip.preregistration.core.common.dto.identity.Identity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import jakarta.annotation.PostConstruct;
 
 /**
  * This class provides generic methods required to create the anonymous profile

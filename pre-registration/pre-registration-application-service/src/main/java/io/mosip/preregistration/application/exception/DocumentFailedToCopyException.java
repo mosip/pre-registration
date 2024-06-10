@@ -9,8 +9,11 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
 /**
- * This class defines the DocumentFailedToCopyException that occurs when the
- * document fails to copy
+ * The DocumentFailedToCopyException class represents an exception that occurs
+ * when the document fails to copy. This class extends
+ * {@link BaseUncheckedException} and includes various constructors for
+ * different use cases, as well as a {@link MainResponseDTO} object for
+ * additional error information.
  * 
  * @author Kishan Rathore
  * @since 1.0.0
@@ -19,10 +22,10 @@ import lombok.Getter;
 
 @Getter
 public class DocumentFailedToCopyException extends BaseUncheckedException {
-
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 7303748392658525834L;
-	
+	private static final long serialVersionUID = 1L;
+
+	/** The main response DTO associated with the exception. */
 	private MainResponseDTO<?> response;
 
 	/**
@@ -32,41 +35,40 @@ public class DocumentFailedToCopyException extends BaseUncheckedException {
 		super();
 	}
 
-
 	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 * @param cause
-	 *            pass Error cause
-	 */
-	public DocumentFailedToCopyException(String errorCode, String message, Throwable cause) {
-		super(errorCode, message, cause);
-	}
-
-	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 */
-	public DocumentFailedToCopyException(String errorCode, String message) {
-		super(errorCode, message);
-	}
-	
-	/**
+	 * Constructs a new {@code DocumentFailedToCopyException} with the specified
+	 * error code, error message, and rootCause.
 	 * 
-	 * @param errorCode
-	 *    	     pass Error code
-	 * @param message
-	 *           pass Error Message
-	 * @param response
-	 * 			 pass response
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param rootCause    the cause of the error.
 	 */
-	public DocumentFailedToCopyException(String errorCode, String message,MainResponseDTO<?> response) {
-		super(errorCode, message);
-		this.response=response;
+	public DocumentFailedToCopyException(String errorCode, String errorMessage, Throwable rootCause) {
+		super(errorCode, errorMessage, rootCause);
 	}
 
+	/**
+	 * Constructs a new {@code DocumentFailedToCopyException} with the specified
+	 * error code and error message.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 */
+	public DocumentFailedToCopyException(String errorCode, String errorMessage) {
+		super(errorCode, errorMessage);
+	}
+
+	/**
+	 * Constructs a new {@code DocumentFailedToCopyException} with the specified
+	 * error code, error errorMessage, and response.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error errorMessage.
+	 * @param response     the {@link MainResponseDTO} object containing additional
+	 *                     information about the error.
+	 */
+	public DocumentFailedToCopyException(String errorCode, String errorMessage, MainResponseDTO<?> response) {
+		super(errorCode, errorMessage);
+		this.response = response;
+	}
 }

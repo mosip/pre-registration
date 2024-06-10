@@ -20,8 +20,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import jakarta.annotation.PostConstruct;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
@@ -99,6 +97,7 @@ import io.mosip.preregistration.demographic.exception.system.DateParseException;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
 import io.mosip.preregistration.demographic.exception.system.SystemIllegalArgumentException;
+import jakarta.annotation.PostConstruct;
 
 /**
  * This class provides the utility methods for DemographicService

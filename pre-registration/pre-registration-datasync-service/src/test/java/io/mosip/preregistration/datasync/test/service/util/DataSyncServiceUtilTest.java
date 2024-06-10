@@ -31,6 +31,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -56,8 +57,10 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdResponseDTO;
 import io.mosip.preregistration.core.common.dto.SlotTimeDto;
+import io.mosip.preregistration.core.config.TemplateConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
+import io.mosip.preregistration.core.util.TemplateUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
@@ -70,7 +73,6 @@ import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.exception.DemographicGetDetailsException;
 import io.mosip.preregistration.datasync.exception.RecordNotFoundForDateRange;
-import io.mosip.preregistration.datasync.repository.DemographicConsumedRepository;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
@@ -79,7 +81,12 @@ import io.mosip.preregistration.datasync.test.config.TestConfig;
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 @TestPropertySource("classpath:application.properties")
-@ContextConfiguration(classes = { TestConfig.class, TestContext.class, WebApplicationContext.class, DataSyncServiceUtil.class})
+@ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
+		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
+		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
+		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*" })
+@ContextConfiguration(classes = { TestConfig.class, TestContext.class, WebApplicationContext.class,
+		TemplateUtil.class, TemplateConfiguration.class })
 public class DataSyncServiceUtilTest {
 
 	/**
@@ -105,14 +112,14 @@ public class DataSyncServiceUtilTest {
 
 	@MockBean
 	ValidationUtil validationUtil;
-	
+
 	@MockBean
 	private ClientCryptoManagerService clientCryptoManagerService;
 
 	@MockBean
 	@Qualifier(value = "selfTokenRestTemplate")
 	RestTemplate restTemplate;
-	
+
 	@MockBean
 	AnonymousProfileUtil profileUtil;
 
@@ -177,7 +184,6 @@ public class DataSyncServiceUtilTest {
 	@Value("${por.url}")
 	private String porUrl;
 
-
 	String resTime = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date());
 
 	ExceptionJSONInfoDTO errlist = new ExceptionJSONInfoDTO();
@@ -204,7 +210,7 @@ public class DataSyncServiceUtilTest {
 
 	@Before
 	public void setUp() throws Exception {
-		
+
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = new URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020", "%20"));
 		file = new File(uri.getPath());
@@ -270,7 +276,7 @@ public class DataSyncServiceUtilTest {
 		timeDto.setToTime(LocalTime.now().plusMinutes(120));
 		appointDateWithFromTime.put(LocalDate.now(), timeDto);
 		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
-		
+
 		String fromDate = "2018-01-17";
 		String toDate = "2019-01-17";
 		preRegIds.add("23587986034785");
@@ -281,17 +287,18 @@ public class DataSyncServiceUtilTest {
 		mainResponseDTO.setResponsetime(resTime);
 		mainResponseDTO.setErrors(null);
 		mainResponseDTO.setResponse(byRegCenterIdResponseDTO);
-		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(
-				mainResponseDTO, HttpStatus.OK);	
+		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(mainResponseDTO,
+				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 				}), Mockito.anyMap())).thenReturn(respEntity);
 		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = serviceUtil
 				.getBookedPreIdsByDateAndRegCenterIdRestService(fromDate, toDate, "10001");
 		String preReg = null;
-		for (Entry<String, Map<LocalDate, SlotTimeDto>> value : preRegIdsByRegCenterIdResponseDTO.getIdsWithAppointmentDate().entrySet()) {
+		for (Entry<String, Map<LocalDate, SlotTimeDto>> value : preRegIdsByRegCenterIdResponseDTO
+				.getIdsWithAppointmentDate().entrySet()) {
 			preReg = value.getKey();
-		}		
+		}
 		assertEquals(preReg, preRegIds.get(0));
 	}
 
@@ -307,7 +314,7 @@ public class DataSyncServiceUtilTest {
 		timeDto.setToTime(LocalTime.now().plusMinutes(120));
 		appointDateWithFromTime.put(LocalDate.now(), timeDto);
 		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
-		
+
 		MainResponseDTO<BookingDataByRegIdDto> mainResponseDTO = new MainResponseDTO<>();
 		BookingDataByRegIdDto byRegCenterIdResponseDTO = new BookingDataByRegIdDto();
 		byRegCenterIdResponseDTO.setIdsWithAppointmentDate(idsWithAppointmentDate);
@@ -321,8 +328,8 @@ public class DataSyncServiceUtilTest {
 		mainResponseDTO.setResponse(byRegCenterIdResponseDTO);
 		Map<String, String> params = new HashMap<>();
 		params.put("registrationCenterId", "10001");
-		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(
-				mainResponseDTO, HttpStatus.OK);
+		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(mainResponseDTO,
+				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 				}), Mockito.anyMap())).thenReturn(respEntity);
@@ -348,18 +355,19 @@ public class DataSyncServiceUtilTest {
 		mainResponseDTO.setResponsetime(resTime);
 		mainResponseDTO.setErrors(null);
 		mainResponseDTO.setResponse(byRegCenterIdResponseDTO);
-		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(
-				mainResponseDTO, HttpStatus.OK);
+		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(mainResponseDTO,
+				HttpStatus.OK);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 				}), Mockito.anyMap())).thenReturn(respEntity);
 		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = serviceUtil
 				.getBookedPreIdsByDateAndRegCenterIdRestService(fromDate, toDate, "10001");
 		String preReg = null;
-		for (Entry<String, Map<LocalDate, SlotTimeDto>> value : preRegIdsByRegCenterIdResponseDTO.getIdsWithAppointmentDate().entrySet()) {
+		for (Entry<String, Map<LocalDate, SlotTimeDto>> value : preRegIdsByRegCenterIdResponseDTO
+				.getIdsWithAppointmentDate().entrySet()) {
 			preReg = value.getKey();
-		}		
-		assertEquals(preReg, preRegIds.get(0));		
+		}
+		assertEquals(preReg, preRegIds.get(0));
 	}
 
 	@Test
@@ -583,7 +591,7 @@ public class DataSyncServiceUtilTest {
 		Map<String, String> documentTypeMap = new HashMap<>();
 		Mockito.when(validationUtil.getDocumentTypeNameByTypeCode(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(documentTypeMap);
-		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData,null);
+		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData, null);
 	}
 
 	@Test
@@ -626,7 +634,7 @@ public class DataSyncServiceUtilTest {
 		Map<String, String> documentTypeMap = new HashMap<>();
 		Mockito.when(validationUtil.getDocumentTypeNameByTypeCode(Mockito.anyString(), Mockito.anyString()))
 				.thenReturn(documentTypeMap);
-		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData,null);
+		serviceUtil.archivingFiles(demographicResponseDTO, bookingRegistrationDTO, documentsMetaData, null);
 	}
 
 	@Test

@@ -33,14 +33,20 @@ import io.mosip.preregistration.application.exception.UserIdOtpFaliedException;
  */
 public class LoginExceptionCatcher {
 
+	/**
+	 * Handles exceptions and throws specific exceptions based on the type of the original exception.
+	 * 
+	 * @param ex              The original exception to handle.
+	 * @param serviceType     The serviceType.
+	 * @param mainResponseDTO The main response DTO associated with the exception.
+	 */
 	public void handle(Exception ex, @NonNull String serviceType, MainResponseDTO<?> mainResponsedto) {
 		if ((ex instanceof RestClientException || ex instanceof HttpClientErrorException
 				|| ex instanceof HttpServerErrorException) && (serviceType.equals("sendOtp"))) {
 			throw new SendOtpFailedException(LoginErrorCodes.PRG_AUTH_001.name(),
 					(LoginErrorMessages.SEND_OTP_FAILED.getMessage()), mainResponsedto);
-		} else if (ex instanceof PreRegLoginException && (serviceType.equals("sendOtp"))) {
-			throw new SendOtpFailedException(((PreRegLoginException) ex).getErrorCode(),
-					((PreRegLoginException) ex).getErrorText(), mainResponsedto);
+		} else if (ex instanceof PreRegLoginException ex1 && (serviceType.equals("sendOtp"))) {
+			throw new SendOtpFailedException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 		} else if (ex instanceof RestClientException && (serviceType.equals("userIdOtp"))) {
 			throw new UserIdOtpFaliedException(LoginErrorCodes.PRG_AUTH_002.name(),
 					(LoginErrorMessages.USERID_OTP_VALIDATION_FAILED.getMessage()), mainResponsedto);
@@ -50,29 +56,23 @@ public class LoginExceptionCatcher {
 		} else if (ex instanceof JwtException && (serviceType.equals("invalidateToken"))) {
 			throw new InvalidateTokenException(LoginErrorCodes.PRG_AUTH_003.getCode(),
 					(LoginErrorMessages.INVALIDATE_TOKEN_FAILED.getMessage()), mainResponsedto);
-		} else if (ex instanceof InvalidRequestParameterException && (serviceType.equals("sendOtp"))) {
-			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
-					((InvalidRequestParameterException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidRequestParameterException && (serviceType.equals("userIdOtp"))) {
-			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
-					((InvalidRequestParameterException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof LoginServiceException) {
-			throw new LoginServiceException(((LoginServiceException) ex).getValidationErrorList(), mainResponsedto);
-		} else if (ex instanceof ParseResponseException) {
-			throw new ParseResponseException(((ParseResponseException) ex).getErrorCode(),
-					((ParseResponseException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof ConfigFileNotFoundException) {
-			throw new ConfigFileNotFoundException(((ConfigFileNotFoundException) ex).getErrorCode(),
-					((ConfigFileNotFoundException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidOtpOrUseridException) {
-			throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),
-					((InvalidOtpOrUseridException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof NoAuthTokenException) {
-			throw new NoAuthTokenException(((NoAuthTokenException) ex).getErrorCode(),
-					((NoAuthTokenException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidRequestException) {
-			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
-					((InvalidRequestException) ex).getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidRequestParameterException ex1 && (serviceType.equals("sendOtp"))) {
+			throw new InvalidRequestParameterException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidRequestParameterException ex1 && (serviceType.equals("userIdOtp"))) {
+			throw new InvalidRequestParameterException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof LoginServiceException ex1) {
+			throw new LoginServiceException(ex1.getValidationErrorList(), mainResponsedto);
+		} else if (ex instanceof ParseResponseException ex1) {
+			throw new ParseResponseException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof ConfigFileNotFoundException ex1) {
+			throw new ConfigFileNotFoundException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidOtpOrUseridException ex1) {
+			throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(), ex1.getErrorText(),
+					mainResponsedto);
+		} else if (ex instanceof NoAuthTokenException ex1) {
+			throw new NoAuthTokenException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidRequestException ex1) {
+			throw new InvalidRequestException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 		} else if ((ex instanceof HttpClientErrorException || ex instanceof HttpServerErrorException)
 				&& serviceType.equals("refreshConfig")) {
 			throw new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.getCode(),
@@ -82,14 +82,11 @@ public class LoginExceptionCatcher {
 			throw new ConfigFileNotFoundException(LoginErrorCodes.PRG_AUTH_012.getCode(),
 					LoginErrorMessages.CONFIG_FILE_NOT_FOUND_EXCEPTION.getMessage(), mainResponsedto);
 		} else {
-			if (ex instanceof BaseUncheckedException) {
-				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
-						((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
-			} else if (ex instanceof BaseCheckedException) {
-				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
-						((BaseCheckedException) ex).getErrorText(), mainResponsedto);
+			if (ex instanceof BaseUncheckedException ex1) {
+				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+			} else if (ex instanceof BaseCheckedException ex1) {
+				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 			}
 		}
-
 	}
 }

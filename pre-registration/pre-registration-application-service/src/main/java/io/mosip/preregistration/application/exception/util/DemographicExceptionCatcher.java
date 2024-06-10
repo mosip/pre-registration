@@ -67,140 +67,102 @@ import io.mosip.preregistration.demographic.exception.system.SystemUnsupportedEn
  */
 public class DemographicExceptionCatcher {
 	/**
-	 * Method to handle the respective exceptions
+	 * Handles exceptions and throws specific exceptions based on the type of the original exception.
 	 * 
-	 * @param ex
-	 *            pass the exception
+	 * @param ex              The original exception to handle.
+	 * @param mainResponseDTO The main response DTO associated with the exception.
 	 */
 	public void handle(Exception ex, MainResponseDTO<?> mainResponsedto) {
-		if (ex instanceof DataAccessLayerException) {
-			throw new TableNotAccessibleException(((DataAccessLayerException) ex).getErrorCode(),
-					((DataAccessLayerException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof ParseException) {
-			throw new JsonParseException(((ParseException) ex).getErrorCode(), ((ParseException) ex).getErrorText(),
-					mainResponsedto);
-		} else if (ex instanceof RecordNotFoundException) {
-			throw new RecordNotFoundException(((RecordNotFoundException) ex).getErrorCode(),
-					((RecordNotFoundException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof RecordNotFoundForPreIdsException) {
-			throw new RecordNotFoundForPreIdsException(((RecordNotFoundForPreIdsException) ex).getErrorCode(),
-					((RecordNotFoundForPreIdsException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidRequestParameterException) {
-			throw new InvalidRequestParameterException(((InvalidRequestParameterException) ex).getErrorCode(),
-					((InvalidRequestParameterException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof MissingRequestParameterException) {
-			throw new MissingRequestParameterException(((MissingRequestParameterException) ex).getErrorCode(),
-					((MissingRequestParameterException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof DocumentFailedToDeleteException) {
-			throw new DocumentFailedToDeleteException(((DocumentFailedToDeleteException) ex).getErrorCode(),
-					((DocumentFailedToDeleteException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof SystemIllegalArgumentException) {
-			throw new SystemIllegalArgumentException(((SystemIllegalArgumentException) ex).getErrorCode(),
-					((SystemIllegalArgumentException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof SystemUnsupportedEncodingException) {
-			throw new SystemUnsupportedEncodingException(((SystemUnsupportedEncodingException) ex).getErrorCode(),
-					((SystemUnsupportedEncodingException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof DateParseException) {
-			throw new DateParseException(((DateParseException) ex).getErrorCode(),
-					((DateParseException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof RecordFailedToUpdateException) {
-			throw new RecordFailedToUpdateException(((RecordFailedToUpdateException) ex).getErrorCode(),
-					((RecordFailedToUpdateException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof RecordFailedToDeleteException) {
-			throw new RecordFailedToDeleteException(((RecordFailedToDeleteException) ex).getErrorCode(),
-					((RecordFailedToDeleteException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidDateFormatException) {
-			throw new InvalidDateFormatException(((InvalidDateFormatException) ex).getErrorCode(),
-					((InvalidDateFormatException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof BookingDeletionFailedException) {
-			throw new BookingDeletionFailedException(((BookingDeletionFailedException) ex).getErrorCode(),
-					((BookingDeletionFailedException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof HashingException) {
-			throw new HashingException(((HashingException) ex).getErrorCode(), ((HashingException) ex).getErrorText(),
-					mainResponsedto);
-		} else if (ex instanceof OperationNotAllowedException) {
-			throw new OperationNotAllowedException(((OperationNotAllowedException) ex).getErrorCode(),
-					((OperationNotAllowedException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof DecryptionFailedException) {
-			throw new DecryptionFailedException(((DecryptionFailedException) ex).getErrorCode(),
-					((DecryptionFailedException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof JsonMappingException) {
-			throw new JsonValidationException(((JsonMappingException) ex).getErrorCode(),
-					((JsonMappingException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof IOException) {
-			throw new JsonValidationException(((IOException) ex).getErrorCode(), ((IOException) ex).getErrorText(),
-					mainResponsedto);
-		} else if (ex instanceof RestCallException) {
-			throw new RestCallException(((RestCallException) ex).getErrorCode(),
-					((RestCallException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof SchemaValidationException) {
-			throw new SchemaValidationException(((SchemaValidationException) ex).getErrorCode(),
-					((SchemaValidationException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof IdObjectIOException) {
-			throw new SchemaValidationException(((IdObjectIOException) ex).getErrorCode(),
-					((IdObjectIOException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof IdObjectValidationFailedException) {
-			throw new IdValidationException(((IdObjectValidationFailedException) ex).getErrorCode(),
-					((IdObjectValidationFailedException) ex).getErrorTexts(), mainResponsedto);
-		} else if (ex instanceof PreIdInvalidForUserIdException) {
-			throw new PreIdInvalidForUserIdException(((PreIdInvalidForUserIdException) ex).getErrorCode(),
-					((PreIdInvalidForUserIdException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof EncryptionFailedException) {
-			throw new EncryptionFailedException(((EncryptionFailedException) ex).getValidationErrorList(),
-					mainResponsedto);
+		if (ex instanceof DataAccessLayerException ex1) {
+			throw new TableNotAccessibleException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof ParseException ex1) {
+			throw new JsonParseException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof RecordNotFoundException ex1) {
+			throw new RecordNotFoundException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof RecordNotFoundForPreIdsException ex1) {
+			throw new RecordNotFoundForPreIdsException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidRequestParameterException ex1) {
+			throw new InvalidRequestParameterException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof MissingRequestParameterException ex1) {
+			throw new MissingRequestParameterException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof DocumentFailedToDeleteException ex1) {
+			throw new DocumentFailedToDeleteException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof SystemIllegalArgumentException ex1) {
+			throw new SystemIllegalArgumentException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof SystemUnsupportedEncodingException ex1) {
+			throw new SystemUnsupportedEncodingException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof DateParseException ex1) {
+			throw new DateParseException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof RecordFailedToUpdateException ex1) {
+			throw new RecordFailedToUpdateException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof RecordFailedToDeleteException ex1) {
+			throw new RecordFailedToDeleteException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidDateFormatException ex1) {
+			throw new InvalidDateFormatException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof BookingDeletionFailedException ex1) {
+			throw new BookingDeletionFailedException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof HashingException ex1) {
+			throw new HashingException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof OperationNotAllowedException ex1) {
+			throw new OperationNotAllowedException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof DecryptionFailedException ex1) {
+			throw new DecryptionFailedException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof JsonMappingException ex1) {
+			throw new JsonValidationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof IOException ex1) {
+			throw new JsonValidationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof RestCallException ex1) {
+			throw new RestCallException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof SchemaValidationException ex1) {
+			throw new SchemaValidationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof IdObjectIOException ex1) {
+			throw new SchemaValidationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof IdObjectValidationFailedException ex1) {
+			throw new IdValidationException(ex1.getErrorCode(), ex1.getErrorTexts(), mainResponsedto);
+		} else if (ex instanceof PreIdInvalidForUserIdException ex1) {
+			throw new PreIdInvalidForUserIdException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof EncryptionFailedException ex1) {
+			throw new EncryptionFailedException(ex1.getValidationErrorList(), mainResponsedto);
 		} else if (ex instanceof BeanCreationException) {
 			throw new SchemaValidationException(
 					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(),
 					ex.getLocalizedMessage(), mainResponsedto);
-		} else if (ex instanceof SystemFileIOException) {
-			throw new SystemFileIOException(((SystemFileIOException) ex).getErrorCode(),
-					((SystemFileIOException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof DemographicServiceException) {
-			throw new DemographicServiceException(((DemographicServiceException) ex).getValidationErrorList(),
-					mainResponsedto);
-		} else if (ex instanceof InvalidDataException) {
-			throw new CryptocoreException(((InvalidDataException) ex).getErrorCode(),
-					((InvalidDataException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof SignatureException) {
-			throw new CryptocoreException(((SignatureException) ex).getErrorCode(),
-					((SignatureException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidKeyException) {
-			throw new CryptocoreException(((InvalidKeyException) ex).getErrorCode(),
-					((InvalidKeyException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidParamSpecException) {
-			throw new CryptocoreException(((InvalidParamSpecException) ex).getErrorCode(),
-					((InvalidParamSpecException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof NullDataException) {
-			throw new CryptocoreException(((NullDataException) ex).getErrorCode(),
-					((NullDataException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof NullKeyException) {
-			throw new CryptocoreException(((NullKeyException) ex).getErrorCode(),
-					((NullKeyException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof NullMethodException) {
-			throw new CryptocoreException(((NullMethodException) ex).getErrorCode(),
-					((NullMethodException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof NoSuchAlgorithmException) {
-			throw new InvalidRequestParameterException(((NoSuchAlgorithmException) ex).getErrorCode(),
-					((NoSuchAlgorithmException) ex).getErrorText(), mainResponsedto);
-		} else if (ex instanceof InvalidRequestException) {
-			throw new InvalidRequestException(((InvalidRequestException) ex).getErrorCode(),
-					((InvalidRequestException) ex).getErrorText(), mainResponsedto);
+		} else if (ex instanceof SystemFileIOException ex1) {
+			throw new SystemFileIOException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof DemographicServiceException ex1) {
+			throw new DemographicServiceException(ex1.getValidationErrorList(), mainResponsedto);
+		} else if (ex instanceof InvalidDataException ex1) {
+			throw new CryptocoreException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof SignatureException ex1) {
+			throw new CryptocoreException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidKeyException ex1) {
+			throw new CryptocoreException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidParamSpecException ex1) {
+			throw new CryptocoreException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof NullDataException ex1) {
+			throw new CryptocoreException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof NullKeyException ex1) {
+			throw new CryptocoreException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof NullMethodException ex1) {
+			throw new CryptocoreException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof NoSuchAlgorithmException ex1) {
+			throw new InvalidRequestParameterException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof InvalidRequestException ex1) {
+			throw new InvalidRequestException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 		} else if (ex instanceof DataIntegrityViolationException) {
-			throw new io.mosip.preregistration.application.exception.DuplicatePridKeyException(DemographicErrorCodes.PRG_PAM_APP_021.getCode(),
+			throw new io.mosip.preregistration.application.exception.DuplicatePridKeyException(
+					DemographicErrorCodes.PRG_PAM_APP_021.getCode(),
 					DemographicErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
 		} else if (ex instanceof ConstraintViolationException) {
-			throw new io.mosip.preregistration.application.exception.DuplicatePridKeyException(DemographicErrorCodes.PRG_PAM_APP_021.getCode(),
+			throw new io.mosip.preregistration.application.exception.DuplicatePridKeyException(
+					DemographicErrorCodes.PRG_PAM_APP_021.getCode(),
 					DemographicErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
 		} else {
-			if (ex instanceof BaseUncheckedException) {
-				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
-						((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
-			} else if (ex instanceof BaseCheckedException) {
-				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
-						((BaseCheckedException) ex).getErrorText(), mainResponsedto);
+			if (ex instanceof BaseUncheckedException ex1) {
+				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+			} else if (ex instanceof BaseCheckedException ex1) {
+				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 			}
 		}
-
 	}
-
 }
