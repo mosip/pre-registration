@@ -129,7 +129,7 @@
 			value="preReg/bookAppointment/bookAppointment.yml" />
 		<parameter name="pathParams" value="preRegistrationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PostWithPathParamsAndBody" />
+			<class name="io.mosip.testrig.apirig.testscripts.BookAppoinment" />
 		</classes>
 	</test>
 	
