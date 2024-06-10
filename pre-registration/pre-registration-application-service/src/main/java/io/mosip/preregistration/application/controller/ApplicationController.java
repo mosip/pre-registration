@@ -83,20 +83,19 @@ public class ApplicationController {
 			@PathVariable("applicationId") String applicationId) {
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.getApplicationInfo(applicationId));
 	}
-	
+
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetapplicationsstatus())")
 	@GetMapping(path = "/applications/status/{applicationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "getApplicationStatus", description = "Fetch the status of a application", tags = "application-controller")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "All applications status fetched successfully"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<String>> getApplicationStatus(
 			@PathVariable("applicationId") String applicationId) {
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.getApplicationStatus(applicationId));
 	}
-
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetappointmentregistrationcenterid())")
 	@GetMapping(path = "/applications/bookings/{regCenterId}")
@@ -106,7 +105,8 @@ public class ApplicationController {
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> getBookingsForRegCenter(
-			@PathVariable("regCenterId") String regCenterId, @RequestParam("appointmentDate") String appointmentFromDate,
+			@PathVariable("regCenterId") String regCenterId,
+			@RequestParam("appointmentDate") String appointmentFromDate,
 			@RequestParam(required = false) String appointmentToDate) {
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(applicationService.getBookingsForRegCenter(regCenterId, appointmentFromDate, appointmentToDate));
@@ -119,12 +119,12 @@ public class ApplicationController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<ApplicationsListDTO>> getAllApplications(@RequestParam(required = false) String type) {
+	public ResponseEntity<MainResponseDTO<ApplicationsListDTO>> getAllApplications(
+			@RequestParam(required = false) String type) {
 		if (type != null) {
 			return ResponseEntity.status(HttpStatus.OK)
 					.body(applicationService.getAllApplicationsForUserForBookingType(type));
 		}
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.getAllApplicationsForUser());
 	}
-
 }

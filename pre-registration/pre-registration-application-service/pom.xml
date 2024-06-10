@@ -12,39 +12,29 @@
 	<artifactId>pre-registration-application-service</artifactId>
 	<name>Pre-Registration Application Service Project</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
-	<version>1.2.1-java21-SNAPSHOT</version>
+
 	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.core.version>1.2.1-java21-SNAPSHOT</kernel.core.version>
+		<!-- Others -->
+		<org.hamcrest.version>2.1</org.hamcrest.version>
+		<org.ehcache.version>3.10.8</org.ehcache.version>
+
+		<!-- Mosip kernel -->
 		<kernel.khazana.version>1.2.1-java21-SNAPSHOT</kernel.khazana.version>
 		<kernel.idobjectvalidator.version>1.2.1-java21-SNAPSHOT</kernel.idobjectvalidator.version>
 		<kernel.templatemanager.velocity.version>1.2.1-java21-SNAPSHOT</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.2.1-java21-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
+		<kernel.transliteration.icu4j.version>1.2.1-java21-SNAPSHOT</kernel.transliteration.icu4j.version>
 		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
-		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 	</properties>
 
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.mosip.kernel</groupId>
-				<artifactId>kernel-bom</artifactId>
-				<version>1.2.1-java21-SNAPSHOT</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt</artifactId>
-			<version>0.6.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.hamcrest</groupId>
 			<artifactId>hamcrest</artifactId>
-			<version>2.1</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -54,7 +44,6 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
-			<version>${spring-cloud-config.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -63,7 +52,6 @@
 		<dependency>
 			<groupId>org.ehcache</groupId>
 			<artifactId>ehcache</artifactId>
-			<version>3.10.8</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -73,7 +61,7 @@
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>1.2.1-java21-SNAPSHOT</version>
+			<version>${pre.registration.core.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
@@ -118,22 +106,18 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>${apache.httpclient.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.json</groupId>
 			<artifactId>json</artifactId>
-			<version>${org.json.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-core</artifactId>
-			<version>${io.micrometer.prometheus.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
-			<version>${io.micrometer.prometheus.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -155,7 +139,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.1</version>
+				<version>${maven.compiler.version}</version>
 				<configuration>
 					<compilerArgs>
 						<arg>-parameters</arg>
@@ -183,7 +167,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.version}</version>
+				<version>${spring.boot.maven.plugin.version}</version>
 				<configuration>
 					<layout>ZIP</layout>
 					<executable>true</executable>
@@ -228,12 +212,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.1-java21-SNAPSHOT</version>
+					<version>${kernel.idobjectvalidator.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.1-java21-SNAPSHOT</version>
+					<version>${kernel.transliteration.icu4j.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>org.junit.vintage</groupId>
@@ -242,7 +226,6 @@
 				<dependency>
 					<groupId>junit</groupId>
 					<artifactId>junit</artifactId>
-					<version>${junit.version}</version>
 					<scope>test</scope>
 				</dependency>
 			</dependencies>
@@ -251,7 +234,7 @@
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
-						<version>${spring.boot.version}</version>
+						<version>${spring.boot.maven.plugin.version}</version>
 						<configuration>
 							<executable>true</executable>
 							<layout>ZIP</layout>
@@ -288,7 +271,7 @@
 					<plugin>
 						<groupId>org.springdoc</groupId>
 						<artifactId>springdoc-openapi-maven-plugin</artifactId>
-						<version>0.2</version>
+						<version>${springdoc.openapi.maven.plugin}</version>
 						<executions>
 							<execution>
 								<id>integration-test</id>

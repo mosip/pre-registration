@@ -12,8 +12,6 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
-
 /**
  * This class is used for Swagger configuration, also to configure Host and
  * Port.
@@ -25,13 +23,12 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  *
  */
 @Configuration
-@EnableSwagger2
 @ConfigurationProperties("mosip.preregistration.batchjob")
 public class BatchjobConfig {
-	
+
 	/** The id. */
 	private Map<String, String> id;
-	
+
 	/**
 	 * Sets the id.
 	 *
@@ -40,7 +37,6 @@ public class BatchjobConfig {
 	public void setId(Map<String, String> id) {
 		this.id = id;
 	}
-	
 
 	/**
 	 * Id.
@@ -51,5 +47,4 @@ public class BatchjobConfig {
 	public Map<String, String> ic() {
 		return Collections.unmodifiableMap(id);
 	}
-
 }

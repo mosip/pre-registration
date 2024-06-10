@@ -82,7 +82,7 @@ import io.mosip.preregistration.datasync.test.config.TestConfig;
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 @TestPropertySource("classpath:application.properties")
 @ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
-		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
+		+ ",io.mosip.preregistration.datasync.repository.*,io.mosip.preregistration.datasync.entity.*,io.mosip.kernel.core.*"
 		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
 		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*" })
 @ContextConfiguration(classes = { TestConfig.class, TestContext.class, WebApplicationContext.class,
