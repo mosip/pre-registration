@@ -13,10 +13,8 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
  */
 @Configuration
 public class SSLConfig {
-
 	@Bean
 	public SimpleClientHttpRequestFactory simpleClientHttpRequestFactory() {
 		return new SimpleClientHttpRequestFactory();
 	}
-
 }

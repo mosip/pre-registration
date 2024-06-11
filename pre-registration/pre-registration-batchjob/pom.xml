@@ -11,8 +11,8 @@
 	</parent>
 
 	<artifactId>pre-registration-batchjob</artifactId>
-
 	<name>pre-registration-batchjob</name>
+	<version>1.2.1-java21-SNAPSHOT</version>
 	<url>http://maven.apache.org</url>
 
 	<properties>

@@ -18,9 +18,9 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class DeleteBookingDTO implements Serializable {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+
 	/** The pre-registration-Id. */
 	private String preRegistrationId;
 

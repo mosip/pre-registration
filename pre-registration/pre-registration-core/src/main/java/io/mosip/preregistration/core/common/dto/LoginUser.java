@@ -14,9 +14,9 @@ import lombok.Data;
  */
 @Data
 public class LoginUser {
-
 	private String clientId;
-	private String secretKey;
-	private String appId;
 
+	private String secretKey;
+
+	private String appId;
 }

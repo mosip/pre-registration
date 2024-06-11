@@ -8,11 +8,12 @@
 		<artifactId>pre-registration-parent</artifactId>
 		<version>1.2.1-java21-SNAPSHOT</version>
 	</parent>
-
+	
 	<artifactId>pre-registration-application-service</artifactId>
+	<version>1.2.1-java21-SNAPSHOT</version>
 	<name>Pre-Registration Application Service Project</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
-
+	
 	<properties>
 		<!-- Others -->
 		<org.hamcrest.version>2.1</org.hamcrest.version>

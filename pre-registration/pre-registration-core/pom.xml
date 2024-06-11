@@ -11,6 +11,7 @@
 	</parent>
 
 	<artifactId>pre-registration-core</artifactId>
+	<version>1.2.1-java21-SNAPSHOT</version>
 	<name>pre-registration-core</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 

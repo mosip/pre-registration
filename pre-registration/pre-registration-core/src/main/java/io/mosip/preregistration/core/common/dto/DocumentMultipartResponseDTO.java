@@ -12,7 +12,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 /**
- * This DTO class is used to define the response values when document details are fetched.
+ * This DTO class is used to define the response values when document details
+ * are fetched.
  * 
  * @author Kishan Rathore
  * @since 1.0.0
@@ -25,18 +26,17 @@ public class DocumentMultipartResponseDTO implements Serializable {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7070542323407937205L;
-	
 
 	/**
 	 * Document Name
 	 */
 	private String docName;
-	
+
 	/**
 	 * Document Id
 	 */
 	private String documentId;
-	
+
 	/**
 	 * Document category
 	 */
@@ -46,15 +46,14 @@ public class DocumentMultipartResponseDTO implements Serializable {
 	 * Document Type
 	 */
 	private String docTypCode;
-	
+
 	/**
 	 * Language Code
 	 */
 	private String langCode;
-	
+
 	/**
 	 * Document Reference
 	 */
 	private String refNumber;
-	
 }

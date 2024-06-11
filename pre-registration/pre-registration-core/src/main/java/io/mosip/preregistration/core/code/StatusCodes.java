@@ -29,11 +29,11 @@ public enum StatusCodes {
 	EXPIRED("Expired"),
 
 	/* Consumed */
-	CONSUMED("Consumed"), 
-	
+	CONSUMED("Consumed"),
+
 	/* Prefetched */
-	PREFETCHED("Prefetched"), 
-	
+	PREFETCHED("Prefetched"),
+
 	/**
 	 * Canceled
 	 */

@@ -20,7 +20,7 @@ public final class RequestCodes {
 	public static final String TO_DATE = "toDate";
 	public static final String SMS = "sms";
 	public static final String EMAIL = "email";
+
 	private RequestCodes() {
 	}
 }
-

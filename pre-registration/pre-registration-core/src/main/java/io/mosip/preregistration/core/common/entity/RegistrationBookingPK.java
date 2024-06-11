@@ -9,11 +9,9 @@ import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * This entity class defines the database table details for Booking application.
@@ -25,12 +23,10 @@ import lombok.Setter;
  *
  */
 @Embeddable
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegistrationBookingPK implements Serializable{
-	
+public class RegistrationBookingPK implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4604149554069906933L;
 
@@ -39,11 +35,11 @@ public class RegistrationBookingPK implements Serializable{
 //	 */
 //	@Column(name="prereg_id")
 //	private String preregistrationId;
-	
+
 	/**
 	 * Booking date and time
 	 */
-	@Column(name="booking_dtimes")
+	@Column(name = "booking_dtimes")
 	private LocalDateTime bookingDateTime;
-	
+
 }
