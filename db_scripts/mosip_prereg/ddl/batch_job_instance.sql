@@ -10,7 +10,4 @@ CREATE TABLE prereg.batch_job_instance
 )
 WITH (
     OIDS = FALSE
-)
-;
-
-
+);
