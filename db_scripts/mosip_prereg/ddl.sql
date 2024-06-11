@@ -4,10 +4,10 @@
 \ir ddl/applicant_demographic_consumed.sql
 \ir ddl/applicant_document.sql
 \ir ddl/applicant_document_consumed.sql
+\ir ddl/batch_job_instance.sql
 \ir ddl/batch_job_execution.sql
 \ir ddl/batch_job_execution_context.sql
 \ir ddl/batch_job_execution_param.sql
-\ir ddl/batch_job_instance.sql
 \ir ddl/batch_step_execution.sql
 \ir ddl/batch_step_execution_context.sql
 \ir ddl/intf_processed_prereg_list.sql
