@@ -13,5 +13,4 @@ public class ValidDocumentsResponseDTO {
 	private String docCategoryCode;
 
 	private Boolean isActive;
-
 }

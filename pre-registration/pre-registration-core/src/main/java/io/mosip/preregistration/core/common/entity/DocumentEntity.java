@@ -36,7 +36,6 @@ import lombok.NoArgsConstructor;
 @Table(name = "applicant_document", schema = "prereg")
 @NamedQuery(name = "DocumentEntity.findSingleDocument", query = "SELECT d FROM DocumentEntity d WHERE d.demographicEntity.preRegistrationId= :preId AND d.docCatCode= :catCode")
 public class DocumentEntity implements Serializable {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1692781286748263575L;
 

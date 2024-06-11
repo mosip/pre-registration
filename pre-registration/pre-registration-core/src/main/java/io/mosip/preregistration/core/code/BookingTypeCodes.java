@@ -17,5 +17,4 @@ public enum BookingTypeCodes {
 	public String getBookingTypeCode() {
 		return bookingTypeCode;
 	}
-
 }

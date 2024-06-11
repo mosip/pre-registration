@@ -3,17 +3,15 @@ package io.mosip.preregistration.core.common.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
  * @author Sanober Noor
  *
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 public class NotificationDTO implements Serializable {
@@ -49,18 +47,17 @@ public class NotificationDTO implements Serializable {
 	 * additionalRecipient for notififcation
 	 */
 	private boolean additionalRecipient;
-	
+
 	/**
 	 * batch config field
 	 */
 	private Boolean isBatch;
-	
+
 	private String languageCode;
-	
-	private List<KeyValuePairDto<String,String>> fullName;
-	
-	private List<KeyValuePairDto<String,String>> registrationCenterName;
-	
-	private List<KeyValuePairDto<String,String>> address;
-	
+
+	private List<KeyValuePairDto<String, String>> fullName;
+
+	private List<KeyValuePairDto<String, String>> registrationCenterName;
+
+	private List<KeyValuePairDto<String, String>> address;
 }

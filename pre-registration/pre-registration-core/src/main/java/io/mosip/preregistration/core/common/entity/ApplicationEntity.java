@@ -17,7 +17,6 @@ import lombok.Setter;
 @Setter
 @Table(name = "applications", schema = "prereg")
 public class ApplicationEntity {
-
 	@Id
 	@Column(name = "application_id")
 	private String applicationId;
@@ -80,5 +79,4 @@ public class ApplicationEntity {
 	 */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDtime;
-
 }
