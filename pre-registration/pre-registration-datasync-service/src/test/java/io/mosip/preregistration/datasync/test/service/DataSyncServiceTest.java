@@ -2,8 +2,6 @@ package io.mosip.preregistration.datasync.test.service;
 
 import static org.junit.Assert.assertEquals;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
