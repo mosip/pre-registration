@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.swagger.annotations.ApiModelProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,8 +15,8 @@ import lombok.Setter;
  */
 @Getter
 @Setter
-public class MultiBookingRequestDTO implements Serializable{
-	
+public class MultiBookingRequestDTO implements Serializable {
+
 	/**
 	 * 
 	 */
@@ -51,5 +50,4 @@ public class MultiBookingRequestDTO implements Serializable{
 	@JsonProperty("time_slot_to")
 	@ApiModelProperty(value = "To Time Slot", position = 4)
 	private String slotToTime;
-
 }

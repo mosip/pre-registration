@@ -93,7 +93,7 @@ public class DocumentServiceUtil {
 	ValidationUtil validationUtil;
 
 	@Autowired
-	private DemographicService demographgicService;
+	private CommonServiceUtil commonServiceUtil;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -360,7 +360,7 @@ public class DocumentServiceUtil {
 	public DemographicResponseDTO getPreRegInfoRestService(String preId) {
 		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of document service util");
 
-		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicService.getDemographicData(preId);
+		MainResponseDTO<DemographicResponseDTO> getDemographicData = commonServiceUtil.getDemographicData(preId);
 		if (getDemographicData.getErrors() != null) {
 			throw new DemographicGetDetailsException(getDemographicData.getErrors().get(0).getErrorCode(),
 					getDemographicData.getErrors().get(0).getMessage());
@@ -382,16 +382,16 @@ public class DocumentServiceUtil {
 
 	public List<String> validMandatoryDocuments(DemographicEntity demographicEntity)
 			throws org.json.simple.parser.ParseException {
-		return demographgicService.validMandatoryDocumentsForApplicant(demographicEntity);
+		return commonServiceUtil.validMandatoryDocumentsForApplicant(demographicEntity);
 	}
 
 	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> availableDocs,
 			List<String> validMandatoryDocForApplicant) {
-		if (validMandatoryDocForApplicant.size() == 0) {
+		if (validMandatoryDocForApplicant.isEmpty()) {
 			return false;
 		} else {
 			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (validMandatoryDocForApplicant.size() > 0) {
+			if (!validMandatoryDocForApplicant.isEmpty()) {
 				return true;
 			} else {
 				return false;
@@ -402,8 +402,7 @@ public class DocumentServiceUtil {
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
-		demographgicService.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
+		commonServiceUtil.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
 				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getCreatedBy());
 	}
-
 }

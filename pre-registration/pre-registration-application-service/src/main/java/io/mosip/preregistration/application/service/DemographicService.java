@@ -66,6 +66,7 @@ import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
 import io.mosip.preregistration.application.repository.DemographicRepository;
+import io.mosip.preregistration.application.service.util.CommonServiceUtil;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
@@ -142,6 +143,9 @@ public class DemographicService implements DemographicServiceIntf {
 	@Autowired
 	private DocumentServiceIntf documentServiceImpl;
 
+	@Autowired
+	private CommonServiceUtil commonServiceUtil;
+	
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
 	 */
@@ -650,48 +654,7 @@ public class DemographicService implements DemographicServiceIntf {
 	@Override
 	public MainResponseDTO<PreRegistartionStatusDTO> getApplicationStatus(String preRegId, String userId) {
 		log.info("sessionId", "idType", "id", "In getApplicationStatus method of pre-registration service ");
-		PreRegistartionStatusDTO statusdto = new PreRegistartionStatusDTO();
-		MainResponseDTO<PreRegistartionStatusDTO> response = new MainResponseDTO<>();
-		Map<String, String> requestParamMap = new HashMap<>();
-		response.setId(retrieveStatusId);
-		response.setVersion(version);
-		response.setResponsetime(serviceUtil.getCurrentResponseTime());
-		try {
-			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
-			if (validationUtil.requstParamValidator(requestParamMap)) {
-				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
-				List<String> list = listAuth(authUserDetails().getAuthorities());
-				if (demographicEntity != null) {
-					if (list.contains("ROLE_INDIVIDUAL")) {
-						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
-					}
-					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
-
-					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
-							hashString.getBytes())) {
-						statusdto.setPreRegistartionId(demographicEntity.getPreRegistrationId());
-						statusdto.setStatusCode(demographicEntity.getStatusCode());
-						response.setResponse(statusdto);
-
-					} else {
-						throw new HashingException(
-								io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
-								io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
-
-					}
-				} else {
-					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
-							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
-
-				}
-			}
-		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In getApplicationStatus method of pre-registration service - " + ex.getMessage());
-			new DemographicExceptionCatcher().handle(ex, response);
-		}
-		return response;
+		return commonServiceUtil.getApplicationStatus(preRegId, userId);
 	}
 
 	/*
@@ -778,50 +741,7 @@ public class DemographicService implements DemographicServiceIntf {
 	@Override
 	public MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId) {
 		log.info("sessionId", "idType", "id", "In getDemographicData method of pre-registration service ");
-		MainResponseDTO<DemographicResponseDTO> response = new MainResponseDTO<>();
-		Map<String, String> requestParamMap = new HashMap<>();
-		response.setResponsetime(serviceUtil.getCurrentResponseTime());
-		response.setId(retrieveDetailsId);
-		response.setVersion(version);
-		try {
-			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
-			if (validationUtil.requstParamValidator(requestParamMap)) {
-
-				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
-				if (demographicEntity != null) {
-					List<String> list = listAuth(authUserDetails().getAuthorities());
-					log.info("sessionId", "idType", "id",
-							"In getDemographicData method of pre-registration service with list  " + list);
-					if (list.contains("ROLE_INDIVIDUAL")) {
-						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
-					}
-					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
-
-					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
-							hashString.getBytes())) {
-
-						DemographicResponseDTO createDto = serviceUtil.setterForCreateDTO(demographicEntity);
-						response.setResponse(createDto);
-					} else {
-						throw new HashingException(
-								io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
-								io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
-
-					}
-				} else {
-					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
-							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
-				}
-			}
-		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"In getDemographicData of pre-registration service- " + ex.getMessage());
-			new DemographicExceptionCatcher().handle(ex, response);
-		}
-
-		response.setErrors(null);
-		return response;
+		return commonServiceUtil.getDemographicData(preRegId);
 	}
 
 	/*
@@ -834,36 +754,7 @@ public class DemographicService implements DemographicServiceIntf {
 	@Override
 	public MainResponseDTO<String> updatePreRegistrationStatus(String preRegId, String status, String userId) {
 		log.info("sessionId", "idType", "id", "In updatePreRegistrationStatus method of pre-registration service ");
-		MainResponseDTO<String> response = new MainResponseDTO<>();
-		Map<String, String> requestParamMap = new HashMap<>();
-		response.setResponsetime(serviceUtil.getCurrentResponseTime());
-		response.setId(updateStatusId);
-		response.setVersion(version);
-		try {
-			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
-			requestParamMap.put(DemographicRequestCodes.STATUS_CODE.getCode(), status);
-			if (validationUtil.requstParamValidator(requestParamMap)) {
-				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
-				statusCheck(demographicEntity, status, userId);
-				response.setResponse("STATUS_UPDATED_SUCESSFULLY");
-			} 
-		} catch (RecordFailedToUpdateException | RecordNotFoundException ex) {
-			response.setResponse("STATUS_NOT_UPDATED_SUCESSFULLY");
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"Error in updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
-			// new DemographicExceptionCatcher().handle(ex, response);
-			ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(ex.getErrorCode(), ex.getErrorText());
-			List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
-			errorList.add(errorDetails);
-			response.setErrors(errorList);
-		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
-					"Error in updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
-			new DemographicExceptionCatcher().handle(ex, response);
-		}
-		return response;
+		return commonServiceUtil.updatePreRegistrationStatus(preRegId, status, userId);
 	}
 
 	/**
@@ -874,105 +765,11 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 
 	public void statusCheck(DemographicEntity demographicEntity, String status, String userId) {
-		if (demographicEntity != null) {
-			if (serviceUtil.isStatusValid(status)) {
-				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
-				List<String> list = listAuth(authUserDetails().getAuthorities());
-				if (list.contains("ROLE_INDIVIDUAL")) {
-					userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
-				}
-				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
-					try {
-						if (isupdateStausToPendingAppointmentValid(demographicEntity)) {
-							String prid = demographicEntity.getPreRegistrationId();
-							serviceUtil.updateApplicationStatus(prid, status, userId);
-							log.info("Application booking status updated succesfully --> {}", status);
-							demographicRepository.update(demographicEntity);
-							log.info("demographic booking status updated succesfully --> {}", status);
-
-						} else {
-							throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
-									DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
-						}	
-					} catch(Exception e) {
-						throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
-								DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
-					}
-				} else {
-					String prid = demographicEntity.getPreRegistrationId();
-					serviceUtil.updateApplicationStatus(prid, status, userId);
-					log.info("Application booking status updated succesfully --> {}", status);
-					demographicRepository.update(demographicEntity);
-					log.info("demographic booking status updated succesfully --> {}", status);
-
-				}
-			} else {
-				throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
-						DemographicErrorMessages.INVALID_STATUS_CODE.getMessage());
-			}
-		} else {
-			throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
-					DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
-		}
+		commonServiceUtil.statusCheck(demographicEntity, status, userId);
 	}
 
 	public boolean isupdateStausToPendingAppointmentValid(DemographicEntity demographicEntity) {
-		boolean isValid = false;
-		try {
-			List<String> validMandatoryDocForApplicant = validMandatoryDocumentsForApplicant(demographicEntity);
-
-			log.info("valid mandatory Docs category for applicant-->{}", validMandatoryDocForApplicant);
-			List<String> uploadedDocs = demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
-					.collect(Collectors.toList());
-			log.info("uploaded Docs category --> {}", uploadedDocs);
-
-			isValid = compareUploadedDocListAndValidMandatoryDocList(uploadedDocs, validMandatoryDocForApplicant);
-
-		} catch (Exception ex) {
-
-			log.error("Exception Docs category -->", ex);
-			throw new DemographicServiceException(((DemographicServiceException) ex).getErrorCode(),
-					((DemographicServiceException) ex).getErrorText());
-
-		}
-		return isValid;
-
-	}
-
-	public List<String> validMandatoryDocumentsForApplicant(DemographicEntity demographicEntity) throws ParseException {
-
-		String applicantTypeCode = null;
-		ApplicantValidDocumentDto applicantValidDocuments = null;
-
-		ApplicantTypeRequestDTO applicantTypeRequest = serviceUtil.createApplicantTypeRequest(demographicEntity);
-
-		applicantTypeCode = serviceUtil.getApplicantypeCode(applicantTypeRequest);
-
-		applicantValidDocuments = serviceUtil.getDocCatAndTypeForApplicantCode(applicantTypeCode,
-				demographicEntity.getLangCode());
-		Set<String> mandatoryDocCat = serviceUtil.getMandatoryDocCatogery();
-
-		log.info("mandatory Docs category --> {}", mandatoryDocCat);
-		List<String> validMandatoryDocumentForApplicant = applicantValidDocuments.getDocumentCategories().stream()
-				.filter(docCat -> mandatoryDocCat.contains(docCat.getCode())).map(docCat -> docCat.getCode())
-				.collect(Collectors.toList());
-
-		return validMandatoryDocumentForApplicant;
-	}
-
-	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> uploadedDocs,
-			List<String> validMandatoryDocForApplicant) {
-		if (validMandatoryDocForApplicant.size() == 0) {
-			return true;
-		} else {
-			uploadedDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (validMandatoryDocForApplicant.size() > 0) {
-				return false;
-			} else {
-				return true;
-			}
-		}
-
+		return commonServiceUtil.isupdateStausToPendingAppointmentValid(demographicEntity);
 	}
 
 	/**
@@ -1030,7 +827,6 @@ public class DemographicService implements DemographicServiceIntf {
 			throw new BookingDeletionFailedException(deleteBooking.getErrors().get(0).getErrorCode(),
 					deleteBooking.getErrors().get(0).getMessage());
 		}
-
 	}
 
 	/*
@@ -1119,21 +915,6 @@ public class DemographicService implements DemographicServiceIntf {
 		return null;
 	}
 
-	/**
-	 * This method is used to get the list of authorization role
-	 * 
-	 * @param collection
-	 * @return list of auth role
-	 */
-	public List<String> listAuth(Collection<? extends GrantedAuthority> collection) {
-		List<String> listWORole = new ArrayList<>();
-		for (GrantedAuthority authority : collection) {
-			String s = authority.getAuthority();
-			listWORole.add(s);
-		}
-		return listWORole;
-	}
-
 	public DemographicIdentityRequestDTO getPreregistrationIdentityJson() {
 
 		try {
@@ -1144,32 +925,6 @@ public class DemographicService implements DemographicServiceIntf {
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
 		}
 		return null;
-	}
-	
-	private MainResponseDTO<SchemaResponseDto> getConfigDetailsResponse(String fileName) {
-
-		String response = serviceUtil.getJson(fileName);
-		JSONObject jsonObject = null;
-		SchemaResponseDto schemaResponseDto = null;
-		try {
-			jsonObject = objectMapper.readValue(response, JSONObject.class);
-		} catch (JsonParseException e) {
-			throw new io.mosip.preregistration.demographic.exception.system.JsonParseException(
-					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage());
-		} catch (JsonMappingException e) {
-			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
-					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
-		} catch (IOException e) {
-			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
-					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
-		}
-
-		MainResponseDTO<SchemaResponseDto> responseDto = new MainResponseDTO<>();
-		schemaResponseDto = new SchemaResponseDto();
-		schemaResponseDto.setIdSchema(jsonObject);
-		responseDto.setResponse(schemaResponseDto);
-		return responseDto;
-
 	}
 
 	private List<String> convertSchemaJsonToArray(String schemaJson) {
@@ -1196,7 +951,7 @@ public class DemographicService implements DemographicServiceIntf {
 	
 	public MainResponseDTO<ApplicationInfoMetadataDTO> getPregistrationInfo(String prid) {
 		log.info("In getPregistrationInfo method of DemographicService for prid {}", prid);
-		MainResponseDTO<ApplicationInfoMetadataDTO> response = new MainResponseDTO<ApplicationInfoMetadataDTO>();
+		MainResponseDTO<ApplicationInfoMetadataDTO> response = new MainResponseDTO<>();
 		response.setVersion(version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		ApplicationInfoMetadataDTO applicationInfo = new ApplicationInfoMetadataDTO();
@@ -1227,6 +982,4 @@ public class DemographicService implements DemographicServiceIntf {
 		}
 		return response;
 	}
-
-
 }
