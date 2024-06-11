@@ -51,16 +51,6 @@ import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.service.DataSyncService;
 
-/*
-@ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
-		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
-		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
-		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*" })
-
-@SpringBootTest(classes = { DataSyncApplicationTest.class })
-@RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TestConfig.class, TestContext.class, TemplateConfiguration.class, WebApplicationContext.class})
-@AutoConfigureMockMvc*/
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
