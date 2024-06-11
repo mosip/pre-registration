@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -32,22 +33,13 @@ public class TestSecurityConfig {
 
 	@Bean
 	protected SecurityFilterChain configureSecurityFilterChain(final HttpSecurity httpSecurity) throws Exception {
+		httpSecurity.httpBasic(AbstractHttpConfigurer::disable);
+        /*
+         *  Disabling CSRF protection because this is a stateless API that uses token-based authentication
+         */
+		httpSecurity.csrf(AbstractHttpConfigurer::disable); // NOSONAR
 		httpSecurity.authorizeHttpRequests(http -> http.anyRequest().permitAll());
 		return httpSecurity.build();
-	}
-
-	/*
-	@Bean
-	public WebSecurity configure(WebSecurity webSecurity) throws Exception {
-		webSecurity.ignoring().requestMatchers(allowedEndPoints());
-		webSecurity.httpFirewall(defaultHttpFirewall());
-		return webSecurity;
-	}*/
-
-	private String[] allowedEndPoints() {
-		return new String[] { "/assets/**", "/icons/**", "/screenshots/**", "/favicon**", "/**/favicon**", "/css/**",
-				"/js/**", "/*/error**", "/*/webjars/**", "/*/v2/api-docs", "/*/configuration/ui",
-				"/*/configuration/security", "/*/swagger-resources/**", "/*/swagger-ui.html" };
 	}
 
 	@Bean
