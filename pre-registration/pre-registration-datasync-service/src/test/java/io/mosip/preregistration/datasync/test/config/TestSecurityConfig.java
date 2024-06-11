@@ -58,7 +58,7 @@ public class TestSecurityConfig {
 	@Bean
 	public UserDetailsService userDetailsService() {
 		List<UserDetails> users = new ArrayList<>();
-		users.add(new User("reg-officer", "mosip",
+		users.add(new User("reg-officer", "admin",
 				Arrays.asList(new SimpleGrantedAuthority("ROLE_REGISTRATION_OFFICER"))));
 		users.add(new User("reg-supervisor", "mosip",
 				Arrays.asList(new SimpleGrantedAuthority("ROLE_REGISTRATION_SUPERVISOR"))));
