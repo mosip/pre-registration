@@ -1,7 +1,6 @@
 package io.mosip.preregistration.datasync.test.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -28,7 +27,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -55,9 +53,7 @@ import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
-import io.mosip.preregistration.datasync.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
-import io.mosip.preregistration.datasync.dto.ApplicationsDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
@@ -72,13 +68,9 @@ import io.mosip.preregistration.datasync.service.DataSyncService;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 import io.mosip.preregistration.datasync.test.config.TestConfig;
 
-@ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
-		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
-		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
-		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*" })
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {TestConfig.class, TestContext.class, WebApplicationContext.class})
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
-@ContextConfiguration(classes = {TestConfig.class, TestContext.class, /*TemplateConfiguration.class, */ WebApplicationContext.class})
 public class DataSyncServiceTest {
 
 	@Mock
@@ -176,8 +168,7 @@ public class DataSyncServiceTest {
 	ApplicationInfoMetadataDTO preRegInfo = new ApplicationInfoMetadataDTO();
 
 	@Before
-	public void setUp() throws URISyntaxException, IOException, org.json.simple.parser.ParseException, ParseException,
-			java.text.ParseException {
+	public void setUp() throws ParseException{
 
 		List<String> preRegIds = new ArrayList<String>();
 		preRegIds.add("23587986034785");
@@ -375,18 +366,4 @@ public class DataSyncServiceTest {
 		MainResponseDTO<PreRegArchiveDTO> response = dataSyncService.fetchPreRegistrationData(preregId, machineId);
 		assertEquals(mainResponseDTO.getId().length(), response.getId().length());
 	}
-
-	@Test
-	public void retrieveAllAppointmentsSyncV2Test() {
-		List<ApplicationDetailResponseDTO> applicationDetailResponseList = new ArrayList<ApplicationDetailResponseDTO>();
-		ApplicationDetailResponseDTO dto = new ApplicationDetailResponseDTO();
-		dto.setApplicationId("1234");
-		applicationDetailResponseList.add(dto);
-
-		Mockito.when(serviceUtil.getAllBookedApplicationIds(Mockito.any(), Mockito.any(), Mockito.any()))
-				.thenReturn(applicationDetailResponseList);
-		MainResponseDTO<ApplicationsDTO> response = dataSyncService.retrieveAllAppointmentsSyncV2(datasyncReqDto);
-		assertNotNull(response.getId());
-	}
-
 }

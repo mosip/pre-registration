@@ -297,8 +297,8 @@ public class DataSyncService {
 			LocalDate appDate = LocalDate.parse(appointmentDt);
 			LocalTime fromLocalTime = LocalTime.parse(fromTime);
 			timestamp = appDate.atTime(fromLocalTime).format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
-		} catch (Exception e) {
-			//throw e;
+		} catch (Exception ex) {
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			return null;
 		}
 		return timestamp;

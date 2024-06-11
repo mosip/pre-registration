@@ -421,7 +421,7 @@ public class LoginCommonUtil {
 		captchaRequest.setVersion(version);
 		captchaRequest.setId(captchaRequestId);
 		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		header.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {

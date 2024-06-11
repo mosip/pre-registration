@@ -912,7 +912,7 @@
 //		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> respEntity = new ResponseEntity<>(dto, HttpStatus.OK);
 //
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
@@ -1128,7 +1128,7 @@
 //		Mockito.when(demographicRepository.findBypreRegistrationId(preRegId)).thenReturn(null);
 //
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(MainResponseDTO.class))).thenThrow(exception);
 //		preRegistrationService.deleteIndividual(preRegId, userId);
@@ -1166,7 +1166,7 @@
 //		MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId1 = new MainResponseDTO<>();
 //		deleteAllByPreId1.setErrors(fullname);
 //		Mockito.when(documentServiceIntf.deleteAllByPreId(Mockito.anyString())).thenReturn(deleteAllByPreId1);
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
 //				}), Mockito.anyMap())).thenReturn(res);
@@ -1213,7 +1213,7 @@
 //		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 //				HttpStatus.OK);
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId1 = new MainResponseDTO<>();
 //		deleteAllByPreId1.setErrors(null);
 //		Mockito.when(documentServiceIntf.deleteAllByPreId(Mockito.anyString())).thenReturn(deleteAllByPreId1);
@@ -1267,7 +1267,7 @@
 //		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 //				HttpStatus.OK);
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
 //				}))).thenReturn(res);
@@ -1315,7 +1315,7 @@
 //		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 //				HttpStatus.OK);
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
 //				}), Mockito.anyMap())).thenReturn(res);
@@ -1375,7 +1375,7 @@
 //	// HttpStatus.OK);
 //	//
 //	// HttpHeaders headers = new HttpHeaders();
-//	// headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//	// headers.setContentType(MediaType.APPLICATION_JSON);
 //	//
 //	// MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId = new
 //	// MainResponseDTO<>();

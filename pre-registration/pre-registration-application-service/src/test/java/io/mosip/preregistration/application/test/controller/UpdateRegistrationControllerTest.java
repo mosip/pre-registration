@@ -112,8 +112,8 @@ public class UpdateRegistrationControllerTest {
 		Mockito.when(applicationService.deleteLostOrUpdateApplication(applicationId, bookingType)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders
 				.delete("/applications/updateregistration/{applicationId}", applicationId)
-				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 

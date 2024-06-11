@@ -204,14 +204,18 @@ public class DataSyncServiceUtil {
 	/**
 	 * Autowired reference for {@link #ValidationUtil}
 	 */
-	@Autowired
-	ValidationUtil validationUtil;
+	private ValidationUtil validationUtil;
 
 	/**
 	 * ObjectMapper global object creation
 	 */
 	private ObjectMapper mapper;
 
+	@Autowired
+	public DataSyncServiceUtil(ValidationUtil validationUtil) {
+		this.validationUtil = validationUtil;
+	}
+	 
 	@PostConstruct
     public void init() {
 		mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
@@ -302,7 +306,7 @@ public class DataSyncServiceUtil {
 					.queryParam("to_date", toDate);
 
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
 			log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method URL- " + uriBuilder);
@@ -359,7 +363,7 @@ public class DataSyncServiceUtil {
 						.queryParam("appointmentToDate", toDate);
 			}
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builderFull.build().encode(StandardCharsets.UTF_8).toUriString();
 			log.info("sessionId", "idType", "id", "In getAllBookedApplicationIds method URL- " + uriBuilder);
@@ -407,7 +411,7 @@ public class DataSyncServiceUtil {
 			UriComponentsBuilder builder = UriComponentsBuilder
 					.fromHttpUrl(documentResourceUrl + "/documents/preregistration/");
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<DocumentsMetaData>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
@@ -456,7 +460,7 @@ public class DataSyncServiceUtil {
 			URI uri = uriComponentsBuilder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri).queryParam("preRegistrationId", preId);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<DocumentDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			log.info("sessionId", "idType", "id", "In callGetBytesDocRestService method URL- " + uriBuilder);
@@ -500,7 +504,7 @@ public class DataSyncServiceUtil {
 
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(demographicResourceUrl + "/applications/prereg/");
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<DemographicResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
@@ -550,7 +554,7 @@ public class DataSyncServiceUtil {
 			params.put("preRegistrationId", preId);
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(bookingResourceUrl + "/appointment/");
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<BookingRegistrationDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
@@ -836,7 +840,7 @@ public class DataSyncServiceUtil {
 			UriComponentsBuilder builder = UriComponentsBuilder
 					.fromHttpUrl(demographicResourceUrl + "/applications/prereg/updatedTime");
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<Map<String, String>>> httpEntity = new HttpEntity(mainRequestDTO, headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			ResponseEntity<MainResponseDTO<Map<String, String>>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
@@ -986,7 +990,7 @@ public class DataSyncServiceUtil {
 				UriComponentsBuilder builder = UriComponentsBuilder
 						.fromHttpUrl(syncdataResourceUrl + "/tpm/publickey/" + machineId);
 				HttpHeaders headers = new HttpHeaders();
-				headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+				headers.setContentType(MediaType.APPLICATION_JSON);
 				HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
 				String uriBuilder = builder.build().encode().toUriString();
 				log.info("sessionId", "idType", "id", "In callGetMachinePublickey method URL-{} " + uriBuilder);
@@ -1039,7 +1043,7 @@ public class DataSyncServiceUtil {
 			UriComponentsBuilder builder = UriComponentsBuilder
 					.fromHttpUrl(demographicResourceUrl + "/applications/prereg/info/" + prid);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			log.info("In getPreRegistrationInfo method URL- {}", uriBuilder);
@@ -1088,7 +1092,7 @@ public class DataSyncServiceUtil {
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(keymanagerResourceUrl + "/jwtSign");
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<?> httpEntity = new HttpEntity<MainRequestDTO<JWTSignatureRequestDto>>(mainRequestDTO, headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			log.info("In signData method URL- {}", uriBuilder);
@@ -1126,7 +1130,7 @@ public class DataSyncServiceUtil {
 					.fromHttpUrl(demographicResourceUrl + "/applications/prereg/status/" + preId)
 					.queryParam("statusCode", StatusCodes.PREFETCHED.getCode());
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 		    log.info("In updateApplicationStatusToPreFectched method URL- {}", uriBuilder);

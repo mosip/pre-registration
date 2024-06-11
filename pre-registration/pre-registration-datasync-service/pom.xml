@@ -16,6 +16,7 @@
 	<properties>
 		<!-- Mosip kernel -->
 		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
+		<pre.application.service.version>1.2.1-java21-SNAPSHOT</pre.application.service.version>
 		<kernel.keymanager.version>1.2.1-java21-SNAPSHOT</kernel.keymanager.version>
 		<kernel.ref.idobjectvalidator.version>1.2.1-java21-SNAPSHOT</kernel.ref.idobjectvalidator.version>
 		<kernel.transliteration.icu4j.version>1.2.1-java21-SNAPSHOT</kernel.transliteration.icu4j.version>
@@ -88,10 +89,8 @@
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
-			<artifactId>
-				pre-registration-application-service
-			</artifactId>
-			<version>1.2.1-java21-SNAPSHOT</version>
+			<artifactId>pre-registration-application-service</artifactId>
+			<version>${pre.application.service.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -149,7 +148,7 @@
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
-						<version>${spring.boot.version}</version>
+						<version>${spring.boot.maven.plugin.version}</version>
 						<configuration>
 							<executable>true</executable>
 							<layout>ZIP</layout>
