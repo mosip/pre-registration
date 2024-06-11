@@ -8,12 +8,14 @@
 		<artifactId>pre-registration-parent</artifactId>
 		<version>1.2.1-java21-SNAPSHOT</version>
 	</parent>
+	
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
+	<version>1.2.1-java21-SNAPSHOT</version>
 
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
-
+	
 	<properties>
 		<!-- Mosip kernel -->
 		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>

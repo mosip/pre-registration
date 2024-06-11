@@ -27,9 +27,7 @@ import lombok.ToString;
 @Data
 @ToString
 public class PreRegIdsByRegCenterIdDTO implements Serializable {
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -8012017032440020062L;
 	/**
 	 * registration Center Id

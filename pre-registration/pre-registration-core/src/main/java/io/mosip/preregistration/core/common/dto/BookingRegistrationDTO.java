@@ -1,19 +1,15 @@
 package io.mosip.preregistration.core.common.dto;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.time.LocalTime;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import lombok.ToString;
 
+@Data
 @ToString
-@Getter
-@Setter
 public class BookingRegistrationDTO implements Serializable {
 	/**
 	 * 
@@ -43,5 +39,4 @@ public class BookingRegistrationDTO implements Serializable {
 	@JsonProperty("time_slot_to")
 	@ApiModelProperty(value = "To Time Slot", position = 4)
 	private String slotToTime;
-
 }

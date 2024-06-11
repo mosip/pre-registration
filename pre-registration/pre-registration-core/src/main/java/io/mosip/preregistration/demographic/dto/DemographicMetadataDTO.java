@@ -7,9 +7,8 @@ package io.mosip.preregistration.demographic.dto;
 import java.io.Serializable;
 import java.util.List;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -19,8 +18,7 @@ import lombok.ToString;
  * @since 1.0.0
  */
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 public class DemographicMetadataDTO implements Serializable {

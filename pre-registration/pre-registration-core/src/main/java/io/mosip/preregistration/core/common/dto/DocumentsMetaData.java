@@ -19,9 +19,8 @@ import lombok.ToString;
 @NoArgsConstructor
 @ToString
 public class DocumentsMetaData implements Serializable {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7070542323407937205L;
-	
+
 	List<DocumentMultipartResponseDTO> documentsMetaData;
 }

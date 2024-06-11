@@ -4,9 +4,8 @@ import java.io.Serializable;
 import java.util.List;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -16,12 +15,11 @@ import lombok.ToString;
  *
  * @param <T>
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
-public class MainResponseDTO<T> implements Serializable{
-	
+public class MainResponseDTO<T> implements Serializable {
+
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3384945682672832638L;
 	/**
@@ -40,7 +38,7 @@ public class MainResponseDTO<T> implements Serializable{
 
 	@ApiModelProperty(value = "Response", position = 4)
 	private T response;
-	
+
 	/** The error details. */
 	@ApiModelProperty(value = "Error Details", position = 5)
 	private List<ExceptionJSONInfoDTO> errors;
