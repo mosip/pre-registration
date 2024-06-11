@@ -192,7 +192,7 @@ public class OTPManager {
 
 			HttpHeaders headers1 = new HttpHeaders();
 			headers1.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-			headers1.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers1.setContentType(MediaType.APPLICATION_JSON);
 			headers1.add("user-agent",
 					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/54.0.2840.99 Safari/537.36");
 			HttpEntity<OTPGenerateRequestDTO> entity1 = new HttpEntity<OTPGenerateRequestDTO>(otpRequestDTO, headers1);

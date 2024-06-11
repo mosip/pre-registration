@@ -561,7 +561,7 @@ public class DemographicServiceTest {
 		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> respEntity = new ResponseEntity<>(dto, HttpStatus.OK);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
@@ -685,7 +685,7 @@ public class DemographicServiceTest {
 		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 				HttpStatus.OK);
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
 				}))).thenReturn(res);
@@ -901,7 +901,7 @@ public class DemographicServiceTest {
 		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 				HttpStatus.OK);
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 		MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId1 = new MainResponseDTO<>();
 		deleteAllByPreId1.setErrors(null);
 		Mockito.when(documentServiceIntf.deleteAllByPreId(Mockito.anyString())).thenReturn(deleteAllByPreId1);

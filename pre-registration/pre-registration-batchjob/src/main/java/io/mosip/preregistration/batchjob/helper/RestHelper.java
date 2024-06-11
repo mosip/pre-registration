@@ -385,7 +385,7 @@ public class RestHelper {
 
            /*  ClientResponse response =  webClient.method(HttpMethod.PUT)
                                                 .uri(uriBuilder)
-                                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                                .contentType(MediaType.APPLICATION_JSON)
                                                 .exchange()
                                                 .block();
                                                 
@@ -541,7 +541,7 @@ public class RestHelper {
             RequestWrapper<AuditRequestDto> requestAudit = new RequestWrapper<>();
 			requestAudit.setRequest(requestDto);
             HttpHeaders headers = new HttpHeaders();
-            headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+            headers.setContentType(MediaType.APPLICATION_JSON);
             HttpEntity<RequestWrapper<AuditRequestDto>> requestEntity = new HttpEntity<>(requestAudit, headers);
 
             String notifyEailResourseUrl = UriComponentsBuilder.fromUriString(auditEntryURL).toUriString();
