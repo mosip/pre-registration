@@ -15,11 +15,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.NamedQuery;
 import jakarta.persistence.Table;
-
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * This entity class defines the database table details for Document.
@@ -32,8 +30,7 @@ import lombok.Setter;
  *
  */
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "applicant_document", schema = "prereg")
@@ -144,6 +141,4 @@ public class DocumentEntity implements Serializable {
 	 */
 	@Column(name = "doc_ref_id")
 	private String refNumber;
-
-
 }
