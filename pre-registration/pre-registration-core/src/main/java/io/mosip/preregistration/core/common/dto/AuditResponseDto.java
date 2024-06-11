@@ -18,10 +18,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuditResponseDto {
-
 	/**
 	 * The boolean audit status
 	 */
 	private boolean status;
-
 }

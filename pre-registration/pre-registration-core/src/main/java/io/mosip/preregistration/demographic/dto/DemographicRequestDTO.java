@@ -8,9 +8,8 @@ import java.io.Serializable;
 
 import org.json.simple.JSONObject;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -21,8 +20,7 @@ import lombok.ToString;
  * @since 1.0.0
  *
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 public class DemographicRequestDTO implements Serializable {
@@ -39,5 +37,4 @@ public class DemographicRequestDTO implements Serializable {
 	 * Demographic Json details
 	 */
 	private JSONObject demographicDetails;
-
 }

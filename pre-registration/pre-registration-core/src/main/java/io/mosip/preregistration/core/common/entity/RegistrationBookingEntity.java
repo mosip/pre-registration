@@ -10,13 +10,10 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
 /**
  * This entity class defines the database table details for Booking application.
@@ -27,12 +24,10 @@ import lombok.Setter;
  * @since 1.0.0
  *
  */
-@Getter
-@Setter
+@Data
 @Entity
 @Table(name = "reg_appointment", schema = "prereg")
 public class RegistrationBookingEntity implements Serializable {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7886669943207769620L;
 
@@ -92,5 +87,4 @@ public class RegistrationBookingEntity implements Serializable {
 	/** Updated date time. */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDate;
-
 }

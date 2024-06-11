@@ -11,5 +11,6 @@ import lombok.ToString;
 @ToString
 public class SlotTimeDto {
 	private LocalTime fromTime;
+
 	private LocalTime toTime;
 }

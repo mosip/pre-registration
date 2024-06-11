@@ -6,9 +6,8 @@ package io.mosip.preregistration.document.dto;
 
 import java.io.Serializable;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * This DTO class is used to accept the response values for document upload.
@@ -16,8 +15,7 @@ import lombok.Setter;
  * @author Kishan Rathore
  * @since 1.0.0
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 public class DocumentResponseDTO implements Serializable {
 
@@ -48,5 +46,4 @@ public class DocumentResponseDTO implements Serializable {
 	 * Response Message
 	 */
 	private String docFileFormat;
-
 }
