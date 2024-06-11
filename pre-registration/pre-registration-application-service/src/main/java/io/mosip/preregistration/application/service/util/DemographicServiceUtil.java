@@ -531,7 +531,7 @@ public class DemographicServiceUtil {
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(pridURl);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 			log.info("sessionId", "idType", "id",
@@ -571,7 +571,7 @@ public class DemographicServiceUtil {
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(idSchemaConfig);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
@@ -801,7 +801,7 @@ public class DemographicServiceUtil {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder
 					.fromHttpUrl(masterdataResourseUrl + "/getApplicantType");
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			RequestWrapper<ApplicantTypeRequestDTO> request = new RequestWrapper<>();
 			request.setRequest(applicantTypeRequest);
 			HttpEntity<RequestWrapper<ApplicantTypeRequestDTO>> entity = new HttpEntity<>(request, headers);
@@ -842,7 +842,7 @@ public class DemographicServiceUtil {
 					masterdataResourseUrl + "/applicanttype/" + applicantTypeCode + "/languages?languages=" + langCode);
 
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity entity = new HttpEntity<>(headers);
 
 			String uriBuilder = regbuilder.build().encode().toUriString();

@@ -38,8 +38,8 @@ public class DemographicEntityConsumed implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6705845720255847210L;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
-	private List<DocumentEntity> documentEntity;
+	//@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
+	//private List<DocumentEntity> documentEntity;
 
 	/** The pre registration id. */
 	@Column(name = "prereg_id", nullable = false)

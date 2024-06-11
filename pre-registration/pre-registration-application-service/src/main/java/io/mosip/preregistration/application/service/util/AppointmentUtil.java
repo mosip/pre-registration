@@ -63,7 +63,7 @@ public class AppointmentUtil {
 				.toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(headers);
 
@@ -101,7 +101,7 @@ public class AppointmentUtil {
 				.toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(bookingDTO, headers);
 
@@ -208,7 +208,6 @@ public class AppointmentUtil {
 		}
 
 		return response.getResponse();
-
 	}
 
 	public CancelBookingResponseDTO cancelAppointment(String preRegistrationId) {
@@ -220,7 +219,7 @@ public class AppointmentUtil {
 				.toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(headers);
 
@@ -251,11 +250,11 @@ public class AppointmentUtil {
 	}
 
 	public BookingStatus multiAppointmentBooking(MainRequestDTO<MultiBookingRequest> bookingRequest) {
-		MainResponseDTO<BookingStatus> response =  new MainResponseDTO<>();
+		MainResponseDTO<BookingStatus> response = new MainResponseDTO<>();
 		String constructedAppointmentUrl = UriComponentsBuilder.fromHttpUrl(multiBookingUrl).toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(bookingRequest, headers);
 
@@ -276,14 +275,11 @@ public class AppointmentUtil {
 				}
 				response.setResponse(body.getResponse());
 			}
-
 		} catch (RestClientException ex) {
 			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.MULTI_BOOKING_FAILED.getCode(),
 					AppointmentErrorCodes.MULTI_BOOKING_FAILED.getMessage());
 		}
 		return response.getResponse();
-
 	}
-
 }

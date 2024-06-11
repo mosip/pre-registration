@@ -77,8 +77,8 @@ public class ApplicationControllerTest {
 		MainResponseDTO<String> response = new MainResponseDTO<>();
 		Mockito.when(applicationService.saveUIEventAudit(auditRequest.getRequest())).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders.post("/logAudit")
-				.content("{\"request\":{\"eventName\":\"test\"}}").accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+				.content("{\"request\":{\"eventName\":\"test\"}}").accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
@@ -90,8 +90,8 @@ public class ApplicationControllerTest {
 		Mockito.when(applicationService.getApplicationInfo(applicationId)).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders.get("/applications/{applicationId}", applicationId)
-				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
@@ -102,8 +102,8 @@ public class ApplicationControllerTest {
 		Mockito.when(applicationService.getApplicationStatus(applicationId)).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders.get("/applications/status/{applicationId}", applicationId)
-				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
@@ -117,7 +117,7 @@ public class ApplicationControllerTest {
 
 		RequestBuilder request = MockMvcRequestBuilders.get("/applications/bookings/{regCenterId}", regCenterId)
 				.param("regCenterId", regCenterId).param("appointmentDate", appointmentDate)
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8);
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
@@ -126,8 +126,8 @@ public class ApplicationControllerTest {
 		MainResponseDTO<ApplicationsListDTO> response = new MainResponseDTO<ApplicationsListDTO>();
 		Mockito.when(applicationService.getAllApplicationsForUser()).thenReturn(response);
 
-		RequestBuilder request = MockMvcRequestBuilders.get("/applications").accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+		RequestBuilder request = MockMvcRequestBuilders.get("/applications").accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 
@@ -138,7 +138,7 @@ public class ApplicationControllerTest {
 		Mockito.when(applicationService.getAllApplicationsForUserForBookingType(type)).thenReturn(response);
 
 		RequestBuilder request = MockMvcRequestBuilders.get("/applications").param("type", type)
-				.accept(MediaType.APPLICATION_JSON_UTF8).contentType(MediaType.APPLICATION_JSON_UTF8);
+				.accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 

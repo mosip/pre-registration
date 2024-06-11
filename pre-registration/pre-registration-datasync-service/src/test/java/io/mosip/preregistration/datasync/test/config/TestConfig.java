@@ -38,4 +38,22 @@ public class TestConfig {
 		requestFactory.setHttpClient(httpClient);
 		return new RestTemplate(requestFactory);
 	}
+	
+	@Bean
+	public RestTemplate plainRestTemplate() throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+		TrustStrategy acceptingTrustStrategy = (X509Certificate[] chain, String authType) -> true;
+
+		SSLContext sslContext = org.apache.http.ssl.SSLContexts.custom().loadTrustMaterial(null, acceptingTrustStrategy)
+				.build();
+
+		SSLConnectionSocketFactory csf = new SSLConnectionSocketFactory(sslContext);
+
+		HttpClientConnectionManager connectionManager = PoolingHttpClientConnectionManagerBuilder.create()
+				.setSSLSocketFactory(csf).build();
+		CloseableHttpClient httpClient = HttpClients.custom().setConnectionManager(connectionManager).build();
+		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
+
+		requestFactory.setHttpClient(httpClient);
+		return new RestTemplate(requestFactory);
+	}
 }

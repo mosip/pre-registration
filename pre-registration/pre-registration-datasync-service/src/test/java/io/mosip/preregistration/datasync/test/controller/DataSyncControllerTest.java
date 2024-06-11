@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -31,7 +30,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.context.junit4.SpringRunner;
@@ -53,11 +51,12 @@ import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;
 import io.mosip.preregistration.datasync.service.DataSyncService;
 
+/*
 @ComponentScan(basePackages = { "io.mosip.preregistration.core.*,io.mosip.preregistration.document.*"
 		+ ",io.mosip.preregistration.datasync.*, io.mosip.kernel.core.*"
 		+ ",io.mosip.kernel.emailnotifier.*,io.mosip.kernel.smsnotifier.*,io.mosip.kernel.cryotomanager.*"
 		+ ",io.mosip.kernel.auditmanger.*,io.mosip.kernel.idgenerator.*" })
-/*
+
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 @RunWith(SpringRunner.class)
 @ContextConfiguration(classes = {TestConfig.class, TestContext.class, TemplateConfiguration.class, WebApplicationContext.class})
@@ -70,15 +69,14 @@ public class DataSyncControllerTest {
 	@Autowired
 	private MockMvc mockMvc;
 
-	
 	private SignatureResponse signResponse;
-	
+
 	@Mock
 	private RequestValidator requestValidator;
 
 	@MockBean
 	private DataSyncService dataSyncService;
-	
+
 	@MockBean
 	ClientCryptoManagerService clientCryptoManagerService;
 
@@ -103,8 +101,8 @@ public class DataSyncControllerTest {
 	MainResponseDTO<ReverseDatasyncReponseDTO> mainReverseDataSyncResponseDTO = new MainResponseDTO<>();
 
 	@Before
-	public void setUp() throws URISyntaxException, FileNotFoundException, IOException, ParseException,
-			org.json.simple.parser.ParseException {
+	public void setUp()
+			throws URISyntaxException, org.json.simple.parser.ParseException, FileNotFoundException, IOException {
 		bytes = new byte[1024];
 		resTime = new Timestamp(System.currentTimeMillis());
 
@@ -132,7 +130,7 @@ public class DataSyncControllerTest {
 		reverseDataSyncRequestDTO.setPreRegistrationIds(pre_registration_ids);
 		mainReverseDataSyncRequestDTO.setRequest(reverseDataSyncRequestDTO);
 
-		signResponse=new SignatureResponse();
+		signResponse = new SignatureResponse();
 		signResponse.setData("asdasdsadf4e");
 		signResponse.setTimestamp(LocalDateTime.now(ZoneOffset.UTC));
 	}
@@ -150,9 +148,7 @@ public class DataSyncControllerTest {
 		preRegArchiveDTO.setTimeSlotTo("09:46");
 		preRegArchiveDTO.setZipBytes(bytes);
 		mainPreRegArchiveDTO.setResponse(preRegArchiveDTO);
-		mainPreRegArchiveDTO
-		.setResponsetime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date()));
-//		Mockito.when(signingService.sign(Mockito.any())).thenReturn(signResponse);
+		mainPreRegArchiveDTO.setResponsetime(new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'").format(new Date()));
 		Mockito.when(dataSyncService.getPreRegistrationData("97285429827016")).thenReturn(mainPreRegArchiveDTO);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get("/sync/{preRegistrationId}", "97285429827016")
 				.contentType(MediaType.APPLICATION_JSON);
@@ -162,7 +158,6 @@ public class DataSyncControllerTest {
 	@WithUserDetails("reg-officer")
 	@Test
 	public void retrieveAllpregIdSuccessTest() throws Exception {
-
 		Map<String, String> list = new HashMap<>();
 		list.put("97285429827016", "2019-01-17T13:24:53.419Z");
 		list.put("56014280251746", "2019-01-17T13:24:51.665Z");
