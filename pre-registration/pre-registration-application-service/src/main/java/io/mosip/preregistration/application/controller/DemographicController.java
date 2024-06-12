@@ -49,6 +49,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
+import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_ID;
+
 /**
  * This class provides different API's to perform operations on
  * pre-registration.
@@ -115,7 +119,7 @@ public class DemographicController {
 	public ResponseEntity<MainResponseDTO<DemographicCreateResponseDTO>> addPreRegDemographicData(
 			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject,
 			@ApiParam(hidden = true) Errors errors) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration controller for add preregistration with json object" + jsonObject);
 		requestValidator.validateId(CREATE, jsonObject.getId(), errors);
 		DataValidationUtil.validate(errors, CREATE);
@@ -145,7 +149,7 @@ public class DemographicController {
 			@Validated @RequestBody(required = true) MainRequestDTO<DemographicRequestDTO> jsonObject,
 			@ApiParam(hidden = true) Errors errors) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration controller for Update preregistration with json object" + jsonObject);
 		requestValidator.validateId(UPDATE, jsonObject.getId(), errors);
 		DataValidationUtil.validate(errors, UPDATE);
@@ -170,7 +174,7 @@ public class DemographicController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<DemographicResponseDTO>> getPreRegDemographicData(
 			@PathVariable("preRegistrationId") String preRegistraionId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration controller for fetching all demographic data with preregistrationId"
 						+ preRegistraionId);
 		return ResponseEntity.status(HttpStatus.OK).body(preRegistrationService.getDemographicData(preRegistraionId));
@@ -198,7 +202,7 @@ public class DemographicController {
 			@PathVariable("preRegistrationId") String preRegId,
 			@RequestParam(value = "statusCode", required = true) String status) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration controller for fetching all demographic data with preRegId " + preRegId
 						+ " and status " + status);
 		return ResponseEntity.status(HttpStatus.OK)
@@ -225,7 +229,7 @@ public class DemographicController {
 	public ResponseEntity<MainResponseDTO<DemographicMetadataDTO>> getAllPreRegApplications(HttpServletRequest res,
 			@RequestParam(value = "pageIndex", required = false) String pageIdx) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration controller for fetching all applications with userId ");
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.getAllApplicationDetails(userId, pageIdx));
@@ -250,7 +254,7 @@ public class DemographicController {
 	public ResponseEntity<MainResponseDTO<PreRegistartionStatusDTO>> getPreRegApplicationStatus(
 			@PathVariable("preRegistrationId") String preId) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration controller for fetching all applicationStatus with preId " + preId);
 		return ResponseEntity.status(HttpStatus.OK).body(preRegistrationService.getApplicationStatus(preId, userId));
 	}
@@ -274,7 +278,7 @@ public class DemographicController {
 	public ResponseEntity<MainResponseDTO<DeletePreRegistartionDTO>> deletePreRegApplication(
 			@PathVariable("preRegistrationId") String preId) {
 		String userId = preRegistrationService.authUserDetails().getUserId();
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration controller for deletion of individual with preId " + preId);
 
 		return ResponseEntity.status(HttpStatus.OK).body(preRegistrationService.deleteIndividual(preId, userId));
@@ -309,9 +313,8 @@ public class DemographicController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<?>> getPreRegDemographicAndDocumentData(
 			@PathVariable("preregistrationId") String preregistrationId) {
-		log.info("In demographic controller to getFullPreRegApplication {}", preregistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In demographic controller to getFullPreRegApplication " + preregistrationId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.getPregistrationInfo(preregistrationId));
 	}
-
 }

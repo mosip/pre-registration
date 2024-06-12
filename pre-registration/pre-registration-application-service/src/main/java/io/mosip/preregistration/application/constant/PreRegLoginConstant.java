@@ -1,7 +1,14 @@
 package io.mosip.preregistration.application.constant;
 
 public class PreRegLoginConstant {
+	private PreRegLoginConstant() {
+		throw new IllegalStateException("PreRegLoginConstant class");
+	}
 
+	public static final String LOGGER_SESSIONID = "PRE-REGISTRATION";
+	public static final String LOGGER_IDTYPE = "APPLICATION SERVICE";
+	public static final String LOGGER_ID = "";
+	
 	public static final String OTP_SMS_TEMPLATE = "pre.reg.login.otp.sms.template";
 	public static final String OTP_SUBJECT_TEMPLATE = "pre.reg.login.otp.mail.subject.template";
 	public static final String OTP_CONTENT_TEMPLATE = "pre.reg.login.otp.mail.content.template";

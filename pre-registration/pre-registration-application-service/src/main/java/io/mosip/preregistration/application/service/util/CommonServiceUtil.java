@@ -16,6 +16,7 @@ import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -57,6 +58,7 @@ import io.mosip.preregistration.demographic.exception.system.JsonParseException;
  * @since 1.0.0
  */
 @Component
+@RefreshScope
 public class CommonServiceUtil {
 	/**
 	 * logger instance
@@ -235,11 +237,9 @@ public class CommonServiceUtil {
 		Set<String> mandatoryDocCat = demographicServiceUtil.getMandatoryDocCatogery();
 
 		log.info("mandatory Docs category --> {}", mandatoryDocCat);
-		List<String> validMandatoryDocumentForApplicant = applicantValidDocuments.getDocumentCategories().stream()
+		return applicantValidDocuments.getDocumentCategories().stream()
 				.filter(docCat -> mandatoryDocCat.contains(docCat.getCode())).map(docCat -> docCat.getCode())
 				.collect(Collectors.toList());
-
-		return validMandatoryDocumentForApplicant;
 	}
 
 	public MainResponseDTO<String> updatePreRegistrationStatus(String preRegId, String status, String userId) {
@@ -262,7 +262,6 @@ public class CommonServiceUtil {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
 					"Error in updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
-			// new DemographicExceptionCatcher().handle(ex, response);
 			ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(ex.getErrorCode(), ex.getErrorText());
 			List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
 			errorList.add(errorDetails);

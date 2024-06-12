@@ -582,5 +582,4 @@ public class DocumentServiceTest {
 	public void setupTest() {
 		documentUploadService.setup();
 	}
-
 }

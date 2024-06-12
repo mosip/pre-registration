@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
@@ -43,8 +41,6 @@ import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.kernel.core.util.JsonUtils;
 import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.preregistration.application.code.DemographicRequestCodes;
-import io.mosip.preregistration.application.dto.ApplicantTypeRequestDTO;
-import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
 import io.mosip.preregistration.application.dto.ApplicationInfoMetadataDTO;
 import io.mosip.preregistration.application.dto.DeletePreRegistartionDTO;
 import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
@@ -53,7 +49,6 @@ import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
 import io.mosip.preregistration.application.dto.DemographicViewDTO;
 import io.mosip.preregistration.application.dto.IdSchemaDto;
-import io.mosip.preregistration.application.dto.SchemaResponseDto;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
@@ -61,7 +56,6 @@ import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
 import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
 import io.mosip.preregistration.application.exception.DemographicServiceException;
 import io.mosip.preregistration.application.exception.DocumentNotFoundException;
-import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
@@ -80,7 +74,6 @@ import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
-import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.PreRegIdsByRegCenterIdDTO;
@@ -91,7 +84,6 @@ import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
-import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.InvalidPreRegistrationIdException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
@@ -99,7 +91,6 @@ import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
-import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
 
@@ -144,7 +135,7 @@ public class DemographicService implements DemographicServiceIntf {
 	private DocumentServiceIntf documentServiceImpl;
 
 	@Autowired
-	private CommonServiceUtil commonServiceUtil;
+	CommonServiceUtil commonServiceUtil;
 	
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
@@ -178,11 +169,6 @@ public class DemographicService implements DemographicServiceIntf {
 	 */
 	@Value("${mosip.preregistration.demographic.retrieve.basic.id}")
 	private String retrieveId;
-	/**
-	 * Reference for ${retrieveDetailsId} from property file
-	 */
-	@Value("${mosip.preregistration.demographic.retrieve.details.id}")
-	private String retrieveDetailsId;
 
 	/**
 	 * Reference for ${retrieveStatusId} from property file
@@ -227,12 +213,6 @@ public class DemographicService implements DemographicServiceIntf {
 	@Value("${mosip.pregistration.pagesize}")
 	private String pageSize;
 
-	/**
-	 * Reference for ${mosip.utc-datetime-pattern} from property file
-	 */
-	@Value("${mosip.utc-datetime-pattern}")
-	private String dateFormat;
-
 	@Value("${preregistration.config.identityjson}")
 	private String preregistrationIdJson;
 	/**
@@ -254,7 +234,6 @@ public class DemographicService implements DemographicServiceIntf {
 	
 	@Value("${mosip.utc-datetime-pattern}")
 	private String mosipDateTimeFormat;
-
 
 	/**
 	 * This method acts as a post constructor to initialize the required request
