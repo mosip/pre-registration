@@ -41,9 +41,6 @@ public class AnonymousProfileServiceTest {
 
 	@Value("${mosip.utc-datetime-pattern}")
 	private String utcDateTimePattern;
-	
-    @Value("${mosip.preregistration.anonymous-profile-username}")
-    private String anonymousProfileUsername;
 
 	@Value("${mosip.preregistration.anonymous-profile-username}")
     private String anonymousProfileUsername;
