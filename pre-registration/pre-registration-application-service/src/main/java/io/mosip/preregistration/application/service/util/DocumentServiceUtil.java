@@ -45,7 +45,6 @@ import io.mosip.preregistration.application.exception.DemographicGetDetailsExcep
 import io.mosip.preregistration.application.exception.DocumentNotValidException;
 import io.mosip.preregistration.application.exception.DocumentSizeExceedException;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
-import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
@@ -93,7 +92,7 @@ public class DocumentServiceUtil {
 	ValidationUtil validationUtil;
 
 	@Autowired
-	private DemographicService demographgicService;
+	private CommonServiceUtil commonServiceUtil;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -235,7 +234,6 @@ public class DocumentServiceUtil {
 			throw new InvalidDocumentIdExcepion(DocumentErrorCodes.PRG_PAM_DOC_019.toString(),
 					DocumentErrorMessages.INVALID_DOCUMENT_ID.getMessage());
 		}
-
 	}
 
 	public boolean isValidCatCode(String catCode) {
@@ -306,9 +304,10 @@ public class DocumentServiceUtil {
 	 */
 	public boolean fileExtensionCheck(MultipartFile file) {
 		log.info("sessionId", "idType", "id", "In fileExtensionCheck method of document service util");
-		//List<String> fileExtensionList = Arrays.asList(fileExtension.split("\\s*,\\s*"));
+		// List<String> fileExtensionList =
+		// Arrays.asList(fileExtension.split("\\s*,\\s*"));
 		List<String> fileExtensionList = Arrays.asList(fileExtension.split(","));
-		List<String> fileExtensionTrimmedList = new ArrayList<String>(); 
+		List<String> fileExtensionTrimmedList = new ArrayList<String>();
 		fileExtensionList.forEach(str -> fileExtensionTrimmedList.add(str.trim()));
 		if (fileExtensionTrimmedList.contains(FilenameUtils.getExtension(file.getOriginalFilename()).toUpperCase())) {
 			return true;
@@ -324,7 +323,6 @@ public class DocumentServiceUtil {
 	 * @param documentDto DocumentRequestDTO
 	 * @return boolean
 	 */
-
 	public boolean isValidRequest(DocumentRequestDTO documentDto, String preRegistrationId) {
 		log.info("sessionId", "idType", "id", "In isValidRequest method of document service util");
 		if (isNull(preRegistrationId)) {
@@ -338,29 +336,29 @@ public class DocumentServiceUtil {
 	 * This method checks the file extension
 	 * 
 	 * @param file pass uploaded file
-	 * @throws java.io.IOException 
+	 * @throws java.io.IOException
 	 * @throws DocumentNotValidException if uploaded document is not valid
 	 */
-    public void virusScanCheck(MultipartFile file) throws java.io.IOException {
-        try {
-            log.info("sessionId", "idType", "id", "In isVirusScanSuccess method of document service util");
-            Boolean scanSuccess = virusScan.scanDocument(file.getBytes());
-            if (!scanSuccess) {
-                throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
-                        DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
-            }
-        } catch (VirusScannerException e) {
-            log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
-            log.error("sessionId", "idType", "id", e.getMessage());
-            throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
-                    DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
-        }
-    }
+	public void virusScanCheck(MultipartFile file) throws java.io.IOException {
+		try {
+			log.info("sessionId", "idType", "id", "In isVirusScanSuccess method of document service util");
+			Boolean scanSuccess = virusScan.scanDocument(file.getBytes());
+			if (!scanSuccess) {
+				throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
+						DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
+			}
+		} catch (VirusScannerException e) {
+			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
+			log.error("sessionId", "idType", "id", e.getMessage());
+			throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
+					DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
+		}
+	}
 
 	public DemographicResponseDTO getPreRegInfoRestService(String preId) {
 		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of document service util");
 
-		MainResponseDTO<DemographicResponseDTO> getDemographicData = demographgicService.getDemographicData(preId);
+		MainResponseDTO<DemographicResponseDTO> getDemographicData = commonServiceUtil.getDemographicData(preId);
 		if (getDemographicData.getErrors() != null) {
 			throw new DemographicGetDetailsException(getDemographicData.getErrors().get(0).getErrorCode(),
 					getDemographicData.getErrors().get(0).getMessage());
@@ -382,28 +380,26 @@ public class DocumentServiceUtil {
 
 	public List<String> validMandatoryDocuments(DemographicEntity demographicEntity)
 			throws org.json.simple.parser.ParseException {
-		return demographgicService.validMandatoryDocumentsForApplicant(demographicEntity);
+		return commonServiceUtil.validMandatoryDocumentsForApplicant(demographicEntity);
 	}
 
 	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> availableDocs,
 			List<String> validMandatoryDocForApplicant) {
-		if (validMandatoryDocForApplicant.size() == 0) {
+		if (validMandatoryDocForApplicant.isEmpty()) {
 			return false;
 		} else {
 			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (validMandatoryDocForApplicant.size() > 0) {
+			if (!validMandatoryDocForApplicant.isEmpty()) {
 				return true;
 			} else {
 				return false;
 			}
 		}
-
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
-		demographgicService.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
+		commonServiceUtil.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
 				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getCreatedBy());
 	}
-
 }

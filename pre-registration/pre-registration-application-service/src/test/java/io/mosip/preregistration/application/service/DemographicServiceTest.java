@@ -28,7 +28,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
-import java.util.stream.Collectors;
 
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -46,7 +45,6 @@ import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.ParameterizedTypeReference;
@@ -72,8 +70,6 @@ import org.springframework.web.client.RestTemplate;
  */
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -97,6 +93,7 @@ import io.mosip.preregistration.application.exception.RecordFailedToUpdateExcept
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsException;
 import io.mosip.preregistration.application.repository.DemographicRepository;
+import io.mosip.preregistration.application.service.util.CommonServiceUtil;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 //import io.mosip.preregistration.booking.service.BookingServiceIntf;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -138,6 +135,27 @@ import io.mosip.preregistration.demographic.exception.system.SystemIllegalArgume
 @ContextConfiguration(classes = { DemographicServiceIntf.class })
 public class DemographicServiceTest {
 
+	@Mock
+	private CryptoUtil cryptoUtil;
+
+	@InjectMocks
+	private CommonServiceUtil commonServiceUtil;
+
+	/**
+	 * Autowired reference for $link{DemographicServiceUtil}
+	 */
+	@Mock
+	DemographicServiceUtil demographicServiceUtil;
+
+	@Mock
+	ValidationUtil validationUtil;
+
+	/**
+	 * Mocking the DemographicRepository bean
+	 */
+	@Mock
+	private DemographicRepository demographicRepository;
+
 	/**
 	 * Autowired reference for $link{DemographicService}
 	 */
@@ -146,12 +164,6 @@ public class DemographicServiceTest {
 
 	@InjectMocks
 	DemographicService demographicService;
-
-	/**
-	 * Mocking the DemographicRepository bean
-	 */
-	@Mock
-	private DemographicRepository demographicRepository;
 
 	/**
 	 * Mocking the RestTemplateBuilder bean
@@ -171,15 +183,6 @@ public class DemographicServiceTest {
 	@Mock(name = "idObjectValidator")
 	private IdObjectValidator jsonValidator;
 
-	/**
-	 * Autowired reference for $link{DemographicServiceUtil}
-	 */
-	@Mock
-	DemographicServiceUtil serviceUtil;
-
-	@Mock
-	ValidationUtil validationUtil;
-
 	JSONParser parser = new JSONParser();
 
 	@Mock
@@ -194,9 +197,6 @@ public class DemographicServiceTest {
 
 	@Mock
 	private AuditLogUtil auditLogUtil;
-
-	@Mock
-	private CryptoUtil cryptoUtil;
 
 	@Mock
 	private RequestValidator requestValidator;
@@ -328,6 +328,7 @@ public class DemographicServiceTest {
 	public void setup() throws ParseException, FileNotFoundException, IOException,
 			org.json.simple.parser.ParseException, URISyntaxException {
 
+		MockitoAnnotations.openMocks(this);
 		MockitoAnnotations.initMocks(this);
 		mapper = new ObjectMapper();
 		auditRequestDto = new AuditRequestDto();
@@ -337,7 +338,10 @@ public class DemographicServiceTest {
 		ReflectionTestUtils.setField(preRegistrationService, "preregistrationIdJson",
 				"preregistration.config.identityjson");
 		ReflectionTestUtils.setField(preRegistrationService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-
+		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		ReflectionTestUtils.setField(preRegistrationService, "commonServiceUtil", commonServiceUtil);
+		ReflectionTestUtils.setField(demographicService, "commonServiceUtil", commonServiceUtil);
+		
 		preRegistrationEntity = new DemographicEntity();
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = new URI(
@@ -361,7 +365,7 @@ public class DemographicServiceTest {
 		preRegistrationEntity.setCreatedBy("9988905444");
 		preRegistrationEntity.setStatusCode("Pending_Appointment");
 		preRegistrationEntity.setUpdateDateTime(times);
-		List<DocumentEntity> documentEntity = new ArrayList<DocumentEntity>();
+		List<DocumentEntity> documentEntity = new ArrayList<>();
 		DocumentEntity e = new DocumentEntity();
 		e.setDocCatCode("POA");
 		documentEntity.add(e);
@@ -371,7 +375,7 @@ public class DemographicServiceTest {
 				.setDemogDetailHash(HashUtill.hashUtill(jsonTestObject.toJSONString().getBytes()).toString());
 		userEntityDetails.add(preRegistrationEntity);
 
-		logger.info("Entity " + preRegistrationEntity);
+		logger.info("Entity {}", preRegistrationEntity);
 
 		preRegistrationViewDTO = new DemographicViewDTO();
 		preRegistrationViewDTO.setStatusCode("Pending_Appointment");
@@ -405,10 +409,10 @@ public class DemographicServiceTest {
 		responseDTO = new MainResponseDTO<DemographicResponseDTO>();
 		responseCreateDTO = new MainResponseDTO<DemographicCreateResponseDTO>();
 
-		responseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
+		responseDTO.setResponsetime(demographicServiceUtil.getCurrentResponseTime());
 
 		responseDTO.setErrors(null);
-		responseCreateDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
+		responseCreateDTO.setResponsetime(demographicServiceUtil.getCurrentResponseTime());
 		responseCreateDTO.setErrors(null);
 
 		auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
@@ -450,7 +454,7 @@ public class DemographicServiceTest {
 		documentResultDto.setResponse(documentMultipartResponseDTO);
 
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
-		Mockito.when(serviceUtil.getJson(Mockito.any()))
+		Mockito.when(demographicServiceUtil.getJson(Mockito.any()))
 				.thenReturn("{\n" + "	\"identity\": {\n" + "		\"name\": {\n" + "			\"value\": \"abcd\"\n"
 						+ "		},\n" + "		\"dob\": {\n" + "			\"value\": \"2021\"\n" + "		}\n"
 						+ "	},\n" + "	\"documents\": {\n" + "		\"poa\": {\n" + "			\"value\": \"poa\"\n"
@@ -466,8 +470,7 @@ public class DemographicServiceTest {
 		applicationEntity.setBookingStatusCode("Booked");
 		applicationEntity.setSlotFromTime(fDate);
 		applicationEntity.setSlotToTime(tDate);
-		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
-
+		Mockito.when(demographicServiceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 	}
 
 	@Test
@@ -477,10 +480,11 @@ public class DemographicServiceTest {
 		preRegistrationEntity.setDemogDetailHash(HashUtill.hashUtill(preRegistrationEntity.getApplicantDetailJson()));
 		demographicResponseDTO = new DemographicResponseDTO();
 		demographicResponseDTO.setPreRegistrationId("98746563542672");
-		Mockito.when(serviceUtil.setterForCreateDTO(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(demographicServiceUtil.setterForCreateDTO(Mockito.any())).thenReturn(demographicResponseDTO);
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any())).thenReturn(jsonObject.toString().getBytes());
-		MainResponseDTO<DemographicResponseDTO> res = preRegistrationService.getDemographicData("98746563542672");
+
+		MainResponseDTO<DemographicResponseDTO> res = preRegistrationService.getDemographicData("98746563542672");		
 		assertEquals("98746563542672", res.getResponse().getPreRegistrationId());
 	}
 
@@ -502,7 +506,7 @@ public class DemographicServiceTest {
 		demographicResponseDTO.setDemographicDetails(jsonObject);
 		demographicResponseDTO.setPreRegistrationId("");
 		demographicResponseDTO.setCreatedBy("9988905444");
-		demographicResponseDTO.setCreatedDateTime(serviceUtil.getLocalDateString(times));
+		demographicResponseDTO.setCreatedDateTime(demographicServiceUtil.getLocalDateString(times));
 		demographicResponseDTO.setStatusCode("Pending_Appointment");
 		createPreRegistrationDTO = new DemographicRequestDTO();
 		createPreRegistrationDTO.setDemographicDetails(jsonObject);
@@ -516,7 +520,7 @@ public class DemographicServiceTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<String>>() {
 				}))).thenReturn(res);
-		Mockito.when(serviceUtil.generateId()).thenReturn("98746563542672");
+		Mockito.when(demographicServiceUtil.generateId()).thenReturn("98746563542672");
 		responseDTO.setResponse(demographicResponseDTO);
 		MainResponseDTO<io.mosip.preregistration.application.dto.DemographicCreateResponseDTO> actualRes = preRegistrationService
 				.addPreRegistration(request);
@@ -638,7 +642,7 @@ public class DemographicServiceTest {
 	public void getApplicationDetailsTransactionFailureCheck() throws Exception {
 		String userId = "9988905444";
 
-		Mockito.when(serviceUtil.isNull(Mockito.any())).thenReturn(true);
+		Mockito.when(demographicServiceUtil.isNull(Mockito.any())).thenReturn(true);
 		// DataAccessLayerException exception = new
 		// DataAccessLayerException(DemographicErrorCodes.PRG_PAM_APP_002.toString(),
 		// DemographicErrorMessages.PRE_REGISTRATION_TABLE_NOT_ACCESSIBLE.toString(),
@@ -672,11 +676,11 @@ public class DemographicServiceTest {
 		// delResponseDto.setStatus(Boolean.TRUE);
 		delResponseDto.setErrors(null);
 		delResponseDto.setResponse(deleteDTO);
-		delResponseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
-		Mockito.when(serviceUtil.isNull(Mockito.any())).thenReturn(false);
-		Mockito.when(serviceUtil.checkStatusForDeletion(Mockito.any())).thenReturn(true);
+		delResponseDto.setResponsetime(demographicServiceUtil.getCurrentResponseTime());
+		Mockito.when(demographicServiceUtil.isNull(Mockito.any())).thenReturn(false);
+		Mockito.when(demographicServiceUtil.checkStatusForDeletion(Mockito.any())).thenReturn(true);
 		MainResponseDTO<DeleteBookingDTO> e = new MainResponseDTO<DeleteBookingDTO>();
-		Mockito.when(serviceUtil.deleteBooking(Mockito.any())).thenReturn(e);
+		Mockito.when(demographicServiceUtil.deleteBooking(Mockito.any())).thenReturn(e);
 
 		Mockito.when(demographicRepository.findBypreRegistrationId(preRegId)).thenReturn(preRegistrationEntity);
 
@@ -719,7 +723,7 @@ public class DemographicServiceTest {
 		deleteBookingDTO.setPreRegistrationId("98746563542672");
 		List<DeleteBookingDTO> list = new ArrayList<>();
 		MainResponseDTO<DeleteBookingDTO> e = new MainResponseDTO<DeleteBookingDTO>();
-		Mockito.when(serviceUtil.deleteBooking(Mockito.any())).thenReturn(e);
+		Mockito.when(demographicServiceUtil.deleteBooking(Mockito.any())).thenReturn(e);
 		Mockito.when(demographicRepository.findBypreRegistrationId(preRegId)).thenReturn(preRegistrationEntity);
 		assertNotNull(preRegistrationService.deleteIndividual(preRegId, userId));
 	}
@@ -742,7 +746,7 @@ public class DemographicServiceTest {
 	@Test
 	public void updatePreRegistrationStatusTest() {
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
-		Mockito.when(serviceUtil.isStatusValid(Mockito.any())).thenReturn(true);
+		Mockito.when(demographicServiceUtil.isStatusValid(Mockito.any())).thenReturn(true);
 		MainResponseDTO<String> res = preRegistrationService.updatePreRegistrationStatus("98746563542672", "Booked",
 				userId);
 		assertEquals("STATUS_UPDATED_SUCESSFULLY", res.getResponse());
@@ -752,7 +756,7 @@ public class DemographicServiceTest {
 	@Test
 	public void updatePreRegistrationStatusTests() {
 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
-		Mockito.when(serviceUtil.isStatusValid(Mockito.any())).thenReturn(true);
+		Mockito.when(demographicServiceUtil.isStatusValid(Mockito.any())).thenReturn(true);
 
 		ExceptionJSONInfoDTO err = new ExceptionJSONInfoDTO("PRG_PAM_DOC_015", "");
 		List<ExceptionJSONInfoDTO> errlist = new ArrayList<>();
@@ -894,7 +898,7 @@ public class DemographicServiceTest {
 
 		delResponseDto.setErrors(null);
 		delResponseDto.setResponse(deleteDTO);
-		delResponseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
+		delResponseDto.setResponsetime(demographicServiceUtil.getCurrentResponseTime());
 
 		ResponseEntity<MainResponseDTO<DocumentDeleteResponseDTO>> res = new ResponseEntity<>(delResponseDto,
 				HttpStatus.OK);
@@ -907,8 +911,8 @@ public class DemographicServiceTest {
 		Mockito.when(documentServiceIntf.deleteAllByPreId(Mockito.anyString())).thenReturn(deleteAllByPreId1);
 		MainResponseDTO<DeleteBookingDTO> deleteBooking = new MainResponseDTO<>();
 		deleteBooking.setErrors(errlist);
-		Mockito.when(serviceUtil.deleteBooking(preRegistrationEntity.getPreRegistrationId())).thenReturn(deleteBooking);
-		Mockito.when(serviceUtil.checkStatusForDeletion(Mockito.any())).thenReturn(true);
+		Mockito.when(demographicServiceUtil.deleteBooking(preRegistrationEntity.getPreRegistrationId())).thenReturn(deleteBooking);
+		Mockito.when(demographicServiceUtil.checkStatusForDeletion(Mockito.any())).thenReturn(true);
 
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
@@ -936,17 +940,17 @@ public class DemographicServiceTest {
 		demographicEntity.setLangCode("");
 		String status = StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
 		String userId = "987654321";
-		Mockito.when(serviceUtil.isStatusValid(status)).thenReturn(true);
+		Mockito.when(demographicServiceUtil.isStatusValid(status)).thenReturn(true);
 		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
 		Collection<DocumentCategoryAndTypeResponseDto> documentCategories = new ArrayList<DocumentCategoryAndTypeResponseDto>();
 		DocumentCategoryAndTypeResponseDto documentCategoryAndTypeResponseDto = new DocumentCategoryAndTypeResponseDto();
 		documentCategoryAndTypeResponseDto.setCode("abc");
 		Set<String> mandatoryDocCat = new HashSet<>();
 		mandatoryDocCat.add("");
-		Mockito.when(serviceUtil.getMandatoryDocCatogery()).thenReturn(mandatoryDocCat);
+		Mockito.when(demographicServiceUtil.getMandatoryDocCatogery()).thenReturn(mandatoryDocCat);
 		documentCategories.add(documentCategoryAndTypeResponseDto);
 		applicantValidDocuments.setDocumentCategories(documentCategories);
-		Mockito.when(serviceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
 				.thenReturn(applicantValidDocuments);
 		demographicService.statusCheck(demographicEntity, status, userId);
 	}
@@ -964,17 +968,17 @@ public class DemographicServiceTest {
 		demographicEntity.setLangCode("");
 		String status = StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
 		String userId = "987654321";
-		Mockito.when(serviceUtil.isStatusValid(status)).thenReturn(true);
+		Mockito.when(demographicServiceUtil.isStatusValid(status)).thenReturn(true);
 		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
 		Collection<DocumentCategoryAndTypeResponseDto> documentCategories = new ArrayList<DocumentCategoryAndTypeResponseDto>();
 		DocumentCategoryAndTypeResponseDto documentCategoryAndTypeResponseDto = new DocumentCategoryAndTypeResponseDto();
 		documentCategoryAndTypeResponseDto.setCode("abc");
 		Set<String> mandatoryDocCat = new HashSet<>();
 		mandatoryDocCat.add("abc");
-		Mockito.when(serviceUtil.getMandatoryDocCatogery()).thenReturn(mandatoryDocCat);
+		Mockito.when(demographicServiceUtil.getMandatoryDocCatogery()).thenReturn(mandatoryDocCat);
 		documentCategories.add(documentCategoryAndTypeResponseDto);
 		applicantValidDocuments.setDocumentCategories(documentCategories);
-		Mockito.when(serviceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
+		Mockito.when(demographicServiceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
 				.thenReturn(applicantValidDocuments);
 		demographicService.statusCheck(demographicEntity, status, userId);
 	}
@@ -1025,11 +1029,11 @@ public class DemographicServiceTest {
 		request.setRequesttime(Date.from(Instant.now()));
 		request.setRequest(demographicRequest);
 		MainResponseDTO<DemographicUpdateResponseDTO> mainResponseDTO = new MainResponseDTO<DemographicUpdateResponseDTO>();
-		Mockito.when((MainResponseDTO<DemographicUpdateResponseDTO>) serviceUtil.getMainResponseDto(request))
+		Mockito.when((MainResponseDTO<DemographicUpdateResponseDTO>) demographicServiceUtil.getMainResponseDto(request))
 				.thenReturn(mainResponseDTO);
 
 		IdSchemaDto idSchema = new IdSchemaDto();
-		Mockito.when(serviceUtil.getSchema()).thenReturn(idSchema);
+		Mockito.when(demographicServiceUtil.getSchema()).thenReturn(idSchema);
 		idSchema.setId(userId);
 		idSchema.setSchemaJson(identityMappingJson);
 		idSchema.setIdVersion(1.0);
@@ -1053,7 +1057,7 @@ public class DemographicServiceTest {
 		request.setRequest(demographicRequest);
 
 		IdSchemaDto idSchema = new IdSchemaDto();
-		Mockito.when(serviceUtil.getSchema()).thenReturn(idSchema);
+		Mockito.when(demographicServiceUtil.getSchema()).thenReturn(idSchema);
 		idSchema.setId(userId);
 		idSchema.setSchemaJson(identityMappingJson);
 		idSchema.setIdVersion(1.0);
@@ -1076,7 +1080,7 @@ public class DemographicServiceTest {
 		demographicRequest.setRequiredFields(requiredFields);
 
 		MainResponseDTO<DemographicUpdateResponseDTO> mainResponseDTO = new MainResponseDTO<DemographicUpdateResponseDTO>();
-		Mockito.when((MainResponseDTO<DemographicUpdateResponseDTO>) serviceUtil.getMainResponseDto(request))
+		Mockito.when((MainResponseDTO<DemographicUpdateResponseDTO>) demographicServiceUtil.getMainResponseDto(request))
 				.thenReturn(mainResponseDTO);
 		mainResponseDTO.setId("12345");
 		request.setId(userId);
@@ -1085,13 +1089,13 @@ public class DemographicServiceTest {
 		request.setRequest(demographicRequest);
 
 		IdSchemaDto idSchema = new IdSchemaDto();
-		Mockito.when(serviceUtil.getSchema()).thenReturn(idSchema);
+		Mockito.when(demographicServiceUtil.getSchema()).thenReturn(idSchema);
 		idSchema.setId(userId);
 		idSchema.setSchemaJson(identityMappingJson);
 		idSchema.setIdVersion(1.0);
 		LocalDateTime time = LocalDateTime.now();
 		String t = time.toString();
-		Mockito.when(serviceUtil.getCurrentResponseTime()).thenReturn(t);
+		Mockito.when(demographicServiceUtil.getCurrentResponseTime()).thenReturn(t);
 		DemographicEntity demographicEntity = new DemographicEntity();
 		demographicEntity.setCreatedBy("12345");
 		Mockito.when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(demographicEntity);
