@@ -36,7 +36,6 @@ import io.mosip.preregistration.application.controller.LoginController;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OTPWithLangCodeDTO;
 import io.mosip.preregistration.application.dto.User;
-import io.mosip.preregistration.application.exception.DeprecatedException;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;

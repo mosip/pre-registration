@@ -1,6 +1,10 @@
 
 package io.mosip.preregistration.datasync.service.util;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -16,8 +20,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.simple.JSONObject;
@@ -98,6 +100,7 @@ import io.mosip.preregistration.datasync.exception.system.SystemFileIOException;
 import io.mosip.preregistration.datasync.repository.DemographicConsumedRepository;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
+import jakarta.annotation.PostConstruct;
 
 /**
  * This class is used to define Error codes for data sync and reverse data sync
@@ -235,7 +238,7 @@ public class DataSyncServiceUtil {
 	 * @return true or false
 	 */
 	public boolean validateDataSyncRequest(DataSyncRequestDTO dataSyncRequest, MainResponseDTO<?> mainResponseDTO) {
-		log.info("sessionId", "idType", "id", "In validateDataSyncRequest method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateDataSyncRequest method of datasync service util");
 		String regId = dataSyncRequest.getRegistrationCenterId();
 		String fromDate = dataSyncRequest.getFromDate();
 		String format = "yyyy-MM-dd";
@@ -273,7 +276,7 @@ public class DataSyncServiceUtil {
 	 */
 	public boolean validateReverseDataSyncRequest(ReverseDataSyncRequestDTO reverseDataSyncRequest,
 			MainResponseDTO<?> mainResponseDTO) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In validateReverseDataSyncRequest sync preregids" + reverseDataSyncRequest.getPreRegistrationIds());
 		List<String> preRegIdsList = reverseDataSyncRequest.getPreRegistrationIds();
 		if (preRegIdsList == null || isNull(preRegIdsList)) {
@@ -294,7 +297,7 @@ public class DataSyncServiceUtil {
 	 */
 	public BookingDataByRegIdDto getBookedPreIdsByDateAndRegCenterIdRestService(String fromDate, String toDate,
 			String regCenterId) {
-		log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetPreIdsRestService method of datasync service util");
 		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = null;
 		try {
 			Map<String, String> params = new HashMap<>();
@@ -309,7 +312,7 @@ public class DataSyncServiceUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
-			log.info("sessionId", "idType", "id", "In callGetPreIdsRestService method URL- " + uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetPreIdsRestService method URL- " + uriBuilder);
 			ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
@@ -329,8 +332,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetPreIdsRestService method of datasync service util - " + ex.getMessage());
 			throw new RecordNotFoundForDateRange(ErrorCodes.PRG_DATA_SYNC_016.getCode(),
 					ErrorMessages.BOOKING_NOT_FOUND.getMessage(), null);
@@ -348,7 +351,7 @@ public class DataSyncServiceUtil {
 	 * @return List<ApplicationDetailResponseDTO>
 	 */
 	public List<ApplicationDetailResponseDTO> getAllBookedApplicationIds(String fromDate,String toDate, String regCenterId) {
-		log.info("sessionId", "idType", "id", "In getAllBookedApplicationIds method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getAllBookedApplicationIds method of datasync service util");
 		List<ApplicationDetailResponseDTO> applicationDetailResponseList = new ArrayList<ApplicationDetailResponseDTO>();
 		try {
 			UriComponentsBuilder builder = UriComponentsBuilder
@@ -366,7 +369,7 @@ public class DataSyncServiceUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builderFull.build().encode(StandardCharsets.UTF_8).toUriString();
-			log.info("sessionId", "idType", "id", "In getAllBookedApplicationIds method URL- " + uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getAllBookedApplicationIds method URL- " + uriBuilder);
 			ResponseEntity<MainResponseDTO<List<ApplicationDetailResponseDTO>>> respEntity = selfTokenRestTemplate
 					.exchange(uriBuilder, HttpMethod.GET, httpEntity,
 							new ParameterizedTypeReference<MainResponseDTO<List<ApplicationDetailResponseDTO>>>() {
@@ -385,8 +388,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In getAllBookedApplicationIds method of datasync service util - " + ex.getMessage());
 			throw new RecordNotFoundForDateRange(ErrorCodes.PRG_DATA_SYNC_016.getCode(),
 					ErrorMessages.BOOKING_NOT_FOUND.getMessage(), null);
@@ -403,7 +406,7 @@ public class DataSyncServiceUtil {
 	 * @return responsestatusDto
 	 */
 	public DocumentsMetaData getDocDetails(String preId) {
-		log.info("sessionId", "idType", "id", "In callGetDocDetailsRestService method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetDocDetailsRestService method of datasync service util");
 		DocumentsMetaData responsestatusDto = new DocumentsMetaData();
 		try {
 			Map<String, String> params = new HashMap<>();
@@ -415,14 +418,14 @@ public class DataSyncServiceUtil {
 			HttpEntity<MainResponseDTO<DocumentsMetaData>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
-			log.info("sessionId", "idType", "id", "In callGetDocRestService method URL- " + uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetDocRestService method URL- " + uriBuilder);
 			ResponseEntity<MainResponseDTO<DocumentsMetaData>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity, new ParameterizedTypeReference<MainResponseDTO<DocumentsMetaData>>() {
 					}, params);
 			MainResponseDTO<DocumentsMetaData> body = respEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null) {
-					log.info("sessionId", "idType", "id",
+					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 							"In callGetDocRestService method of datasync service util - Document not found for the pre_registration_id");
 				} else {
 					Object obj = body.getResponse();
@@ -430,8 +433,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetDocRestService method of datasync service util - " + ex.getMessage());
 
 			throw new DocumentGetDetailsException(ErrorCodes.PRG_DATA_SYNC_006.getCode(),
@@ -449,7 +452,7 @@ public class DataSyncServiceUtil {
 	 * @return responsestatusDto
 	 */
 	public DocumentDTO getDocBytesDetails(String docId, String preId) {
-		log.info("sessionId", "idType", "id", "In callGetBytesDocRestService method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetBytesDocRestService method of datasync service util");
 		DocumentDTO responsestatusDto = new DocumentDTO();
 		try {
 			Map<String, String> params = new HashMap<>();
@@ -463,14 +466,14 @@ public class DataSyncServiceUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<DocumentDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
-			log.info("sessionId", "idType", "id", "In callGetBytesDocRestService method URL- " + uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetBytesDocRestService method URL- " + uriBuilder);
 			ResponseEntity<MainResponseDTO<DocumentDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder, HttpMethod.GET,
 					httpEntity, new ParameterizedTypeReference<MainResponseDTO<DocumentDTO>>() {
 					}, params);
 			MainResponseDTO<DocumentDTO> body = respEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null) {
-					log.info("sessionId", "idType", "id",
+					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 							"In callGetBytesDocRestService method of datasync service util - Document not found for the documentId");
 				} else {
 					Object obj = body.getResponse();
@@ -478,8 +481,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetBytesDocRestService method of datasync service util - " + ex.getMessage());
 
 			throw new DocumentGetDetailsException(ErrorCodes.PRG_DATA_SYNC_006.getCode(),
@@ -496,7 +499,7 @@ public class DataSyncServiceUtil {
 	 * @return responsestatusDto
 	 */
 	public DemographicResponseDTO getPreRegistrationData(String preId) {
-		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetPreRegInfoRestService method of datasync service util");
 		DemographicResponseDTO responsestatusDto = new DemographicResponseDTO();
 		try {
 			Map<String, Object> params = new HashMap<>();
@@ -508,7 +511,7 @@ public class DataSyncServiceUtil {
 			HttpEntity<MainResponseDTO<DemographicResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
-			log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method URL- " + uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetPreRegInfoRestService method URL- " + uriBuilder);
 			ResponseEntity<MainResponseDTO<DemographicResponseDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<DemographicResponseDTO>>() {
@@ -527,8 +530,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetPreRegInfoRestService method of datasync service util - " + ex.getMessage());
 
 			throw new DemographicGetDetailsException(ErrorCodes.PRG_DATA_SYNC_007.getCode(),
@@ -546,7 +549,7 @@ public class DataSyncServiceUtil {
 	 * 
 	 */
 	public BookingRegistrationDTO getAppointmentDetails(String preId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In callGetAppointmentDetailsRestService method of datasync service util");
 		BookingRegistrationDTO bookingRegistrationDTO = null;
 		try {
@@ -558,7 +561,7 @@ public class DataSyncServiceUtil {
 			HttpEntity<MainResponseDTO<BookingRegistrationDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode().toUriString();
 			uriBuilder += "{preRegistrationId}";
-			log.info("sessionId", "idType", "id", "In callGetAppointmentDetailsRestService method URL- " + uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetAppointmentDetailsRestService method URL- " + uriBuilder);
 			ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 					HttpMethod.GET, httpEntity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
@@ -581,8 +584,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetAppointmentDetailsRestService method of datasync service util - " + ex.getMessage());
 			throw new DemographicGetDetailsException(ErrorCodes.PRG_DATA_SYNC_016.getCode(),
 					ErrorMessages.BOOKING_NOT_FOUND.getMessage(), null);
@@ -600,7 +603,7 @@ public class DataSyncServiceUtil {
 	 */
 	public PreRegArchiveDTO preparePreRegArchiveDTO(DemographicResponseDTO preRegistrationDTO,
 			BookingRegistrationDTO bookingRegistrationDTO) {
-		log.info("sessionId", "idType", "id", "In preparePreRegArchiveDTO method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In preparePreRegArchiveDTO method of datasync service util");
 		PreRegArchiveDTO preRegArchiveDTO = new PreRegArchiveDTO();
 		preRegArchiveDTO.setPreRegistrationId(preRegistrationDTO.getPreRegistrationId());
 		if (!Objects.isNull(bookingRegistrationDTO)) {
@@ -622,7 +625,7 @@ public class DataSyncServiceUtil {
 	 */
 
 	public JSONObject getIdJSONValue(String demographicData) throws ParseException {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getIdJSONValue method of datasync service util to get getIdJSONValue ");
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) jsonParser.parse(demographicData);
@@ -640,7 +643,7 @@ public class DataSyncServiceUtil {
 	 */
 	public PreRegArchiveDTO archivingFiles(DemographicResponseDTO preRegistrationDTO,
 			BookingRegistrationDTO bookingRegistrationDTO, DocumentsMetaData documentEntityList, String machineId) {
-		log.info("sessionId", "idType", "id", "In archivingFiles method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In archivingFiles method of datasync service util");
 		PreRegArchiveDTO preRegArchiveDTO = null;
 		try {
 			preRegArchiveDTO = preparePreRegArchiveDTO(preRegistrationDTO, bookingRegistrationDTO);
@@ -651,7 +654,7 @@ public class DataSyncServiceUtil {
 					.jsonStringToJavaMap(JsonUtils.javaObjectToJsonString(identityJson));
 			Map<String, Object> finalMap = prepareIdentityMap(documentEntityList, inputFile, identityMap,
 					preRegistrationDTO.getPreRegistrationId());
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In archivingFiles method of datasync service util, Json file content - "
 							+ new JSONObject(finalMap).toJSONString());
 			String encryptionPublickey = getEncryptionKey(machineId);
@@ -660,8 +663,8 @@ public class DataSyncServiceUtil {
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In archivingFiles method of datasync service util - " + ex.getMessage());
 			throw new ZipFileCreationException(ErrorCodes.PRG_DATA_SYNC_005.getCode(),
 					ErrorMessages.FAILED_TO_CREATE_A_ZIP_FILE.getMessage(), null);
@@ -723,8 +726,8 @@ public class DataSyncServiceUtil {
 			return JsonUtils.jsonStringToJavaMap(JsonUtils.javaObjectToJsonString(documentMetaDataDTO));
 		} catch (JsonParseException | JsonMappingException | io.mosip.kernel.core.exception.IOException
 				| JsonProcessingException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In prepareDocumentMetaData method of datasync service util for JSONException - "
 							+ ex.getMessage());
 		}
@@ -762,7 +765,7 @@ public class DataSyncServiceUtil {
 	 * @return byteArray
 	 */
 	private static byte[] getCompressed(Map<String, byte[]> inputFIle) {
-		log.info("sessionId", "idType", "id", "In getCompressed method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getCompressed method of datasync service util");
 		byte[] byteArray = null;
 		try {
 			ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
@@ -774,8 +777,8 @@ public class DataSyncServiceUtil {
 			zipOutputStream.close();
 			byteArray = byteArrayOutputStream.toByteArray();
 		} catch (IOException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In getCompressed method of datasync service util for FileNotFoundException - " + ex.getMessage());
 			throw new SystemFileIOException(ErrorCodes.PRG_DATA_SYNC_014.getCode(),
 					ErrorMessages.FILE_IO_EXCEPTION.getMessage(), null);
@@ -791,15 +794,15 @@ public class DataSyncServiceUtil {
 	 * @param zipOutputStream
 	 */
 	private static void zipping(String fileName, byte[] fileToZip, ZipOutputStream zipOutputStream) {
-		log.info("sessionId", "idType", "id", "In zipping method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In zipping method of datasync service util");
 		try {
 			ZipEntry entry = new ZipEntry(fileName);
 			zipOutputStream.putNextEntry(entry);
 			zipOutputStream.write(fileToZip);
 			zipOutputStream.flush();
 		} catch (IOException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In zipping method of datasync service util for IOException - " + ex.getMessage());
 			throw new SystemFileIOException(ErrorCodes.PRG_DATA_SYNC_014.getCode(),
 					ErrorMessages.FILE_IO_EXCEPTION.getMessage(), null);
@@ -813,7 +816,7 @@ public class DataSyncServiceUtil {
 	 * @return true if key not null and return false if key is null.
 	 */
 	public boolean isNull(Object key) {
-		log.info("sessionId", "idType", "id", "In isNull method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In isNull method of datasync service util");
 		if (key instanceof String) {
 			if (key.equals(""))
 				return true;
@@ -828,7 +831,7 @@ public class DataSyncServiceUtil {
 	}
 
 	public Map<String, String> getPreregistrationUpdatedTime(PreRegIdsByRegCenterIdDTO preRegIdsDTO) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In callGetPreRegInfoRestService method of datasync service util " + preRegIdsDTO);
 		Map<String, String> response = null;
 		try {
@@ -857,8 +860,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (RestClientException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetUpdatedTimeRestService method of datasync service util - " + ex.getMessage());
 
 			throw new DemographicGetDetailsException(ErrorCodes.PRG_DATA_SYNC_007.getCode(),
@@ -868,7 +871,7 @@ public class DataSyncServiceUtil {
 	}
 
 	public PreRegistrationIdsDTO getLastUpdateTimeStamp(PreRegIdsByRegCenterIdDTO preRegIdsDTO) {
-		log.info("sessionId", "idType", "id", "In getLastUpdateTimeStamp method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getLastUpdateTimeStamp method of datasync service util");
 		PreRegistrationIdsDTO preRegistrationIdsDTO = new PreRegistrationIdsDTO();
 		Map<String, String> preRegMap = getPreregistrationUpdatedTime(preRegIdsDTO);
 		preRegistrationIdsDTO.setCountOfPreRegIds(String.valueOf(preRegMap.size()));
@@ -879,7 +882,7 @@ public class DataSyncServiceUtil {
 
 	public ReverseDatasyncReponseDTO reverseDateSyncSave(Date reqDateTime, ReverseDataSyncRequestDTO request,
 			String userId) {
-		log.info("sessionId", "idType", "id", "In reverseDateSyncSave method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In reverseDateSyncSave method of datasync service util");
 		List<InterfaceDataSyncEntity> entityList = new ArrayList<>();
 		List<ProcessedPreRegEntity> processedEntityList = new ArrayList<>();
 		List<String> preIdLists = request.getPreRegistrationIds();
@@ -918,7 +921,7 @@ public class DataSyncServiceUtil {
 
 	public ReverseDatasyncReponseDTO storeReverseDataSync(List<InterfaceDataSyncEntity> entityList,
 			List<ProcessedPreRegEntity> processedEntityList) {
-		log.info("sessionId", "idType", "id", "In storeReverseDataSync method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In storeReverseDataSync method of datasync service util");
 		int savedListSize = 0;
 		List<String> preIds = new ArrayList<>();
 		ReverseDatasyncReponseDTO reponseDTO = new ReverseDatasyncReponseDTO();
@@ -939,8 +942,8 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (DataAccessLayerException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In storeReverseDataSync method of datasync service util - " + ex.getMessage());
 			throw new TableNotAccessibleException(ErrorCodes.PRG_DATA_SYNC_012.getCode(),
 					ErrorMessages.FAILED_TO_STORE_PRE_REGISTRATION_IDS.getMessage());
@@ -949,17 +952,17 @@ public class DataSyncServiceUtil {
 	}
 
 	public String getCurrentResponseTime() {
-		log.info("sessionId", "idType", "id", "In getCurrentResponseTime method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getCurrentResponseTime method of datasync service util");
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
 	}
 
 	public String getDateString(Date date) {
-		log.info("sessionId", "idType", "id", "In getDateString method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDateString method of datasync service util");
 		return DateUtils.formatDate(date, dateTimeFormat);
 	}
 
 	public Map<String, String> prepareRequestMap(MainRequestDTO<?> requestDto) {
-		log.info("sessionId", "idType", "id", "In prepareRequestMap method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In prepareRequestMap method of datasync service util");
 		Map<String, String> requestMap = new HashMap<>();
 		requestMap.put("id", requestDto.getId());
 		requestMap.put("version", requestDto.getVersion());
@@ -983,7 +986,7 @@ public class DataSyncServiceUtil {
 	}
 
 	public String getEncryptionKey(String machineId) {
-		log.info("sessionId", "idType", "id", "In callGetMachinePublickey  method of datasync service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetMachinePublickey  method of datasync service util");
 		String encryptionPublickey = null;
 		try {
 			if (machineId != null) {
@@ -993,7 +996,7 @@ public class DataSyncServiceUtil {
 				headers.setContentType(MediaType.APPLICATION_JSON);
 				HttpEntity<MainResponseDTO<ClientPublickeyDTO>> httpEntity = new HttpEntity<>(headers);
 				String uriBuilder = builder.build().encode().toUriString();
-				log.info("sessionId", "idType", "id", "In callGetMachinePublickey method URL-{} " + uriBuilder);
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetMachinePublickey method URL-{} " + uriBuilder);
 				ResponseEntity<MainResponseDTO<ClientPublickeyDTO>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
 						HttpMethod.GET, httpEntity,
 						new ParameterizedTypeReference<MainResponseDTO<ClientPublickeyDTO>>() {
@@ -1001,7 +1004,7 @@ public class DataSyncServiceUtil {
 				MainResponseDTO<ClientPublickeyDTO> body = respEntity.getBody();
 				if (body != null) {
 					if (body.getErrors() != null) {
-						log.info("sessionId", "idType", "id",
+						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 								"In callGetMachinePublickey method of datasync service util - unable to get envryption publickey for the machineID");
 					} else {
 						if (body.getResponse() != null) {
@@ -1013,7 +1016,7 @@ public class DataSyncServiceUtil {
 
 		} catch (RestClientException ex) {
 			log.debug("{}", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetMachinePublickey method of datasync service util - {}" + ex.getMessage());
 
 			throw new ZipFileCreationException(ErrorCodes.PRG_DATA_SYNC_018.getCode(),

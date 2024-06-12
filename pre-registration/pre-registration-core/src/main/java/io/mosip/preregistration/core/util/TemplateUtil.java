@@ -1,5 +1,9 @@
 package io.mosip.preregistration.core.util;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,7 +87,8 @@ public class TemplateUtil {
 		String url = resourceUrl + "/" + (String) langCode + "/" + templatetypecode;
 		HttpHeaders headers = new HttpHeaders();
 		HttpEntity<RequestWrapper<TemplateResponseListDTO>> httpEntity = new HttpEntity<>(headers);
-		log.info("sessionId", "idType", "id", "In getTemplate method of TemplateUtil service url: " + url);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getTemplate method of TemplateUtil service url: " + url);
 		ResponseEntity<ResponseWrapper<TemplateResponseListDTO>> respEntity = restTemplate.exchange(url, HttpMethod.GET,
 				httpEntity, new ParameterizedTypeReference<ResponseWrapper<TemplateResponseListDTO>>() {
 				});
@@ -104,9 +109,9 @@ public class TemplateUtil {
 	 * @return
 	 * @throws IOException
 	 */
-	public String templateMerge(String bookingType, String fileText, NotificationDTO acknowledgementDTO, String langCode)
-			throws IOException {
-		log.info("sessionId", "idType", "id", "In templateMerge method of TemplateUtil service ");
+	public String templateMerge(String bookingType, String fileText, NotificationDTO acknowledgementDTO,
+			String langCode) throws IOException {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In templateMerge method of TemplateUtil service ");
 		String mergeTemplate = null;
 		Map<String, Object> map = mapSetting(bookingType, langCode, acknowledgementDTO);
 		InputStream templateInputStream = new ByteArrayInputStream(fileText.getBytes(Charset.forName("UTF-8")));
@@ -126,7 +131,8 @@ public class TemplateUtil {
 	 */
 	public Map<String, Object> mapSetting(String bookingType, String langCode, NotificationDTO acknowledgementDTO) {
 		Map<String, Object> responseMap = new HashMap<>();
-		log.info("sessionId", "idType", "id", "In mapSetting method of TemplateUtil service {}", acknowledgementDTO);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In mapSetting method of TemplateUtil service {}",
+				acknowledgementDTO);
 		DateTimeFormatter dateFormate = DateTimeFormatter.ofPattern("dd MMM yyyy");
 		DateTimeFormatter timeFormate = DateTimeFormatter.ofPattern("h:mma");
 

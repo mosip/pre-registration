@@ -4,6 +4,10 @@
  */
 package io.mosip.preregistration.application.service.util;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -128,7 +132,7 @@ public class DocumentServiceUtil {
 	 */
 	public MainRequestDTO<DocumentRequestDTO> createUploadDto(String documentJsonString, String preRegistrationId)
 			throws JSONException, JsonParseException, JsonMappingException, IOException, ParseException {
-		log.info("sessionId", "idType", "id", "In createUploadDto method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In createUploadDto method of document service util");
 		MainRequestDTO<DocumentRequestDTO> uploadReqDto = new MainRequestDTO<>();
 		JSONObject documentData = new JSONObject(documentJsonString);
 		JSONObject docDTOData = (JSONObject) documentData.get("request");
@@ -154,7 +158,7 @@ public class DocumentServiceUtil {
 	 */
 	public DocumentEntity dtoToEntity(MultipartFile file, DocumentRequestDTO dto, String userId,
 			String preRegistrationId, DocumentEntity getentity) {
-		log.info("sessionId", "idType", "id", "In dtoToEntity method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In dtoToEntity method of document service util");
 		DocumentEntity documentEntity = new DocumentEntity();
 		documentEntity.setDocumentId(UUIDGeneratorUtil.generateId());
 		documentEntity.setDocId(preRegistrationId + "/" + dto.getDocCatCode() + "_" + documentEntity.getDocumentId());
@@ -182,7 +186,7 @@ public class DocumentServiceUtil {
 	 * @return true if key is null, else false
 	 */
 	public boolean isNull(Object key) {
-		log.info("sessionId", "idType", "id", "In isNull method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In isNull method of document service util");
 		if (key instanceof String) {
 			if (key.equals(""))
 				return true;
@@ -201,34 +205,35 @@ public class DocumentServiceUtil {
 	 * @return maximum file size defined.
 	 */
 	public long getMaxFileSize() {
-		log.info("sessionId", "idType", "id", "In getMaxFileSize method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getMaxFileSize method of document service util");
 		return Math.multiplyExact(this.maxFileSize, Math.multiplyExact(1024, 1024));
 	}
 
 	/**
 	 * @return defined document extension.
 	 *//*
-		 * public String getFileExtension() { log.info("sessionId", "idType", "id",
-		 * "In getFileExtension method of document service util"); return
+		 * public String getFileExtension() { log.info(LOGGER_SESSIONID, LOGGER_IDTYPE,
+		 * LOGGER_ID "In getFileExtension method of document service util"); return
 		 * this.fileExtension; }
 		 */
 
 	public String getCurrentResponseTime() {
-		log.info("sessionId", "idType", "id", "In getCurrentResponseTime method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getCurrentResponseTime method of document service util");
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), utcDateTimePattern);
 	}
 
 	public String getDateString(Date date) {
-		log.info("sessionId", "idType", "id", "In getDateString method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDateString method of document service util");
 		return DateUtils.formatDate(date, utcDateTimePattern);
 	}
 
 	public Integer parseDocumentId(String documentId) {
-		log.info("sessionId", "idType", "id", "In parseDocumentId method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In parseDocumentId method of document service util");
 		try {
 			return Integer.parseInt(documentId);
 		} catch (NumberFormatException ex) {
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In parseDocumentId method of document service util- " + ex.getMessage());
 
 			throw new InvalidDocumentIdExcepion(DocumentErrorCodes.PRG_PAM_DOC_019.toString(),
@@ -237,7 +242,7 @@ public class DocumentServiceUtil {
 	}
 
 	public boolean isValidCatCode(String catCode) {
-		log.info("sessionId", "idType", "id", "In isValidCatCode method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In isValidCatCode method of document service util");
 		if (catCode.equals("POA")) {
 			return true;
 		} else {
@@ -249,7 +254,7 @@ public class DocumentServiceUtil {
 
 	public DocumentEntity documentEntitySetter(String destinationPreId, DocumentEntity sourceEntity,
 			DocumentEntity destEntity) throws java.io.IOException {
-		log.info("sessionId", "idType", "id", "In documentEntitySetter method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In documentEntitySetter method of document service util");
 		DocumentEntity copyDocumentEntity = new DocumentEntity();
 		if (destEntity != null) {
 			copyDocumentEntity.setDocumentId(destEntity.getDocumentId());
@@ -286,7 +291,7 @@ public class DocumentServiceUtil {
 	 * @return true if file size is within the limit, else false
 	 */
 	public boolean fileSizeCheck(long uploadedFileSize) {
-		log.info("sessionId", "idType", "id", "In fileSizeCheck method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In fileSizeCheck method of document service util");
 		long maxAllowedSize = getMaxFileSize();
 		if (uploadedFileSize < maxAllowedSize) {
 			return true;
@@ -303,7 +308,7 @@ public class DocumentServiceUtil {
 	 * @throws DocumentNotValidException if uploaded document is not valid
 	 */
 	public boolean fileExtensionCheck(MultipartFile file) {
-		log.info("sessionId", "idType", "id", "In fileExtensionCheck method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In fileExtensionCheck method of document service util");
 		// List<String> fileExtensionList =
 		// Arrays.asList(fileExtension.split("\\s*,\\s*"));
 		List<String> fileExtensionList = Arrays.asList(fileExtension.split(","));
@@ -324,7 +329,7 @@ public class DocumentServiceUtil {
 	 * @return boolean
 	 */
 	public boolean isValidRequest(DocumentRequestDTO documentDto, String preRegistrationId) {
-		log.info("sessionId", "idType", "id", "In isValidRequest method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In isValidRequest method of document service util");
 		if (isNull(preRegistrationId)) {
 			throw new InvalidRequestException(DocumentErrorCodes.PRG_PAM_DOC_018.toString(),
 					DocumentErrorMessages.INVALID_PRE_ID.getMessage(), null);
@@ -341,22 +346,24 @@ public class DocumentServiceUtil {
 	 */
 	public void virusScanCheck(MultipartFile file) throws java.io.IOException {
 		try {
-			log.info("sessionId", "idType", "id", "In isVirusScanSuccess method of document service util");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In isVirusScanSuccess method of document service util");
 			Boolean scanSuccess = virusScan.scanDocument(file.getBytes());
 			if (!scanSuccess) {
 				throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
 						DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
 			}
 		} catch (VirusScannerException e) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
-			log.error("sessionId", "idType", "id", e.getMessage());
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(e));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, e.getMessage());
 			throw new VirusScannerException(DocumentErrorCodes.PRG_PAM_DOC_010.toString(),
 					DocumentErrorMessages.DOCUMENT_FAILED_IN_VIRUS_SCAN.getMessage());
 		}
 	}
 
 	public DemographicResponseDTO getPreRegInfoRestService(String preId) {
-		log.info("sessionId", "idType", "id", "In callGetPreRegInfoRestService method of document service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In callGetPreRegInfoRestService method of document service util");
 
 		MainResponseDTO<DemographicResponseDTO> getDemographicData = commonServiceUtil.getDemographicData(preId);
 		if (getDemographicData.getErrors() != null) {
@@ -370,10 +377,11 @@ public class DocumentServiceUtil {
 			throws org.json.simple.parser.ParseException {
 		List<String> availableDocuments = demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
 				.collect(Collectors.toList());
-		log.info("uploaded documents for user {} ----> {}", demographicEntity.getPreRegistrationId(),
-				availableDocuments);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "uploaded documents for user {"
+				+ demographicEntity.getPreRegistrationId() + "} ----> {" + availableDocuments + "}");
 		List<String> mandatoryDoc = validMandatoryDocuments(demographicEntity);
-		log.info("mandatory documents for user {} ----> {}", demographicEntity.getPreRegistrationId(), mandatoryDoc);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "mandatory documents for user {"
+				+ demographicEntity.getPreRegistrationId() + "} ----> {" + mandatoryDoc + "}");
 		return compareUploadedDocListAndValidMandatoryDocList(availableDocuments, mandatoryDoc);
 
 	}

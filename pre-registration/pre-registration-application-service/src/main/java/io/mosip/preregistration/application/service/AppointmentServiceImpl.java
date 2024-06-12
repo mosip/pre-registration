@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.service;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -57,16 +61,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
 	private DemographicService demographicService;
-	
+
 	@Autowired
 	private DocumentService documentService;
-	
+
 	/**
 	 * Autowired reference for {@link #AnonymousProfileUtil}
 	 */
 	@Autowired
 	AnonymousProfileUtil anonymousProfileUtil;
-	
+
 	@Value("${version}")
 	private String version;
 
@@ -90,7 +94,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
-	
+
 	@Autowired
 	private DocumentDAO documentDAO;
 
@@ -107,16 +111,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 				.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		availablityResponse.setVersion(version);
 		try {
-			log.info("In appointment service to get slots availablity");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In appointment service to get slots availablity");
 			availablityResponse.setResponse(appointmentUtils.getSlotAvailablityByRegCenterId(registrationCenterId));
 		} catch (AppointmentExecption ex) {
-			log.error("Exception has occured while fetching the slots availablity for a regCenterId {} ex: {}",
-					registrationCenterId, ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception has occured while fetching the slots availablity for a regCenterId {"
+							+ registrationCenterId + "} ex: " + ExceptionUtils.getStackTrace(ex));
 			availablityResponse.setErrors(setErrors(ex));
 		}
 
 		return availablityResponse;
-
 	}
 
 	@Override
@@ -127,30 +131,34 @@ public class AppointmentServiceImpl implements AppointmentService {
 		appointmentDetailsResponse
 				.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			log.info("In appointment service to get appointment details");
-			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In appointment service to get appointment details");
+			// first check if the applicationId/preRegistrationId belongs to the logged in
+			// user or not
 			userValidation(preRegistrationId);
 			BookingRegistrationDTO bookingrespose = appointmentUtils.fetchAppointmentDetails(preRegistrationId);
 			appointmentDetailsResponse.setResponse(bookingrespose);
-	
+
 		} catch (AppointmentExecption ex) {
-			log.error("Exception has occurred while fetching appointment details:", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception has occurred while fetching appointment details:" + ExceptionUtils.getStackTrace(ex));
 			appointmentDetailsResponse.setErrors(setErrors(ex));
 		}
 		return appointmentDetailsResponse;
 	}
-	
+
 	private void userValidation(String applicationId) {
 		String authUserId = authUserDetails().getUserId();
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
-			log.info("sessionId", "idType", "id", "In userValidation method of AppointmentService with applicationId "
-					+ applicationId + " and userID " + authUserId);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In userValidation method of AppointmentService with applicationId " + applicationId
+							+ " and userID " + authUserId);
 			ApplicationEntity applicationEntity = null;
 			try {
 				applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
 			} catch (Exception ex) {
-				log.error("Invaid applicationId/Not Record Found for the ID", applicationId);
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Invaid applicationId/Not Record Found for the ID : " + applicationId);
 				throw new AppointmentExecption(ApplicationErrorCodes.PRG_APP_013.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
@@ -160,7 +168,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			}
 		}
 	}
-	
+
 	/**
 	 * This method is used to get the list of authorization role
 	 * 
@@ -175,40 +183,43 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 		return listWORole;
 	}
-	
+
 	@Override
 	public MainResponseDTO<BookingStatusDTO> makeAppointment(MainRequestDTO<BookingRequestDTO> bookingDTO,
 			String preRegistrationId, String userAgent) {
-		MainResponseDTO<BookingStatusDTO> bookAppointmentResponse = new MainResponseDTO<BookingStatusDTO>();
+		MainResponseDTO<BookingStatusDTO> bookAppointmentResponse = new MainResponseDTO<>();
 		bookAppointmentResponse.setId(appointmentBookId);
 		bookAppointmentResponse.setVersion(version);
 		bookAppointmentResponse
 				.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			log.info("In appointment service to make an appointment for ID : {}", preRegistrationId);
-			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In appointment service to make an appointment for ID : " + preRegistrationId);
+			// first check if the applicationId/preRegistrationId belongs to the logged in
+			// user or not
 			userValidation(preRegistrationId);
 			BookingStatusDTO bookingResponse = appointmentUtils.makeAppointment(bookingDTO, preRegistrationId);
 			if (bookingResponse.getBookingMessage() != null || !bookingResponse.getBookingMessage().isBlank()) {
-				log.info(
-						"In appointment booked successfully , updating the applications and demographic tables for ID:{}",
-						preRegistrationId);
-				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, bookingDTO.getRequest(), StatusCodes.BOOKED.getCode());
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"In appointment booked successfully , updating the applications and demographic tables for ID: "
+								+ preRegistrationId);
+				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId,
+						bookingDTO.getRequest(), StatusCodes.BOOKED.getCode());
 				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 					createAnonymousProfile(userAgent, preRegistrationId, bookingDTO.getRequest());
 					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
-						authUserDetails().getUserId());
+							authUserDetails().getUserId());
 				}
 				bookAppointmentResponse.setResponse(bookingResponse);
 			}
 		} catch (AppointmentExecption ex) {
-			log.error("Exception has occurred while booking appointment : ", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception has occurred while booking appointment : " + ExceptionUtils.getStackTrace(ex));
 			bookAppointmentResponse.setErrors(setErrors(ex));
 		}
 		return bookAppointmentResponse;
 	}
 
-	 
 	@Override
 	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegistrationId) {
 		MainResponseDTO<DeleteBookingDTO> deleteResponse = new MainResponseDTO<DeleteBookingDTO>();
@@ -216,81 +227,88 @@ public class AppointmentServiceImpl implements AppointmentService {
 		deleteResponse.setVersion(version);
 		deleteResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			log.info("Deleting appointment for ID:{}", preRegistrationId);
-			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Deleting appointment for ID: " + preRegistrationId);
+			// first check if the applicationId/preRegistrationId belongs to the logged in
+			// user or not
 			userValidation(preRegistrationId);
 			DeleteBookingDTO res = appointmentUtils.deleteBooking(preRegistrationId);
 			if (res != null && (res.getDeletedBy() != null && res.getDeletedDateTime() != null
 					&& res.getPreRegistrationId() != null)) {
-				log.info(
-						"In appointment deleted successfully for ID:{}, updating the applications and demographic tables",
-						preRegistrationId);
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In appointment deleted successfully for ID:{"
+						+ preRegistrationId + "}, updating the applications and demographic tables");
 				this.updateApplicationEntity(preRegistrationId, null, null);
 				deleteResponse.setResponse(res);
 			}
 
 		} catch (AppointmentExecption ex) {
-			log.error("Exception has occured while deleting an appointment : {}", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception has occured while deleting an appointment : " + ExceptionUtils.getStackTrace(ex));
 			deleteResponse.setErrors(setErrors(ex));
 		}
 		return deleteResponse;
 	}
-	 
-	 @Override
+
+	@Override
 	public MainResponseDTO<DeleteBookingDTO> deleteBookingAndUpdateApplicationStatus(String preRegistrationId) {
-		MainResponseDTO<DeleteBookingDTO> deleteResponse = new MainResponseDTO<DeleteBookingDTO>();
+		MainResponseDTO<DeleteBookingDTO> deleteResponse = new MainResponseDTO<>();
 		deleteResponse.setId(appointmentDeletelId);
 		deleteResponse.setVersion(version);
 		deleteResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			log.info("Deleting appointment for ID:{}", preRegistrationId);
-			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Deleting appointment for ID: " + preRegistrationId);
+			// first check if the applicationId/preRegistrationId belongs to the logged in
+			// user or not
 			userValidation(preRegistrationId);
 			DeleteBookingDTO res = appointmentUtils.deleteBooking(preRegistrationId);
 			if (res != null && (res.getDeletedBy() != null && res.getDeletedDateTime() != null
 					&& res.getPreRegistrationId() != null)) {
-				log.info(
-						"In appointment deleted successfully for ID:{}, updating the applications and demographic tables",
-						preRegistrationId);
-				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null, StatusCodes.CANCELLED.getCode());
-				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
-					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
-						authUserDetails().getUserId());
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In appointment deleted successfully for ID:{ "
+						+ preRegistrationId + " }, updating the applications and demographic tables");
+				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null,
+						StatusCodes.CANCELLED.getCode());
+				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
+					this.demographicService.updatePreRegistrationStatus(preRegistrationId,
+							StatusCodes.CANCELLED.getCode(), authUserDetails().getUserId());
 				}
 				deleteResponse.setResponse(res);
 			}
 
 		} catch (AppointmentExecption ex) {
-			log.error("Exception has occured while deleting an appointment : {}", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception has occured while deleting an appointment : " + ExceptionUtils.getStackTrace(ex));
 			deleteResponse.setErrors(setErrors(ex));
 		}
 		return deleteResponse;
-	} 
+	}
 
 	@Override
 	public MainResponseDTO<CancelBookingResponseDTO> cancelAppointment(String preRegistrationId) {
-		MainResponseDTO<CancelBookingResponseDTO> cancelResponse = new MainResponseDTO<CancelBookingResponseDTO>();
+		MainResponseDTO<CancelBookingResponseDTO> cancelResponse = new MainResponseDTO<>();
 		cancelResponse.setId(appointmentCancelId);
 		cancelResponse.setVersion(version);
 		cancelResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			log.info("Cancelling appointment for ID:{}", preRegistrationId);
-			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
-			userValidation(preRegistrationId);	
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Cancelling appointment for ID: " + preRegistrationId);
+			// first check if the applicationId/preRegistrationId belongs to the logged in
+			// user or not
+			userValidation(preRegistrationId);
 			CancelBookingResponseDTO response = appointmentUtils.cancelAppointment(preRegistrationId);
 			if (response != null && (response.getMessage() != null && response.getTransactionId() != null)) {
-				log.info("In appointment cancelled successfully , updating the applications and demographic tables",
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"In appointment cancelled successfully , updating the applications and demographic tables",
 						preRegistrationId);
-				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null, StatusCodes.CANCELLED.getCode());
-				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
-					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
-						authUserDetails().getUserId());
+				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null,
+						StatusCodes.CANCELLED.getCode());
+				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
+					this.demographicService.updatePreRegistrationStatus(preRegistrationId,
+							StatusCodes.CANCELLED.getCode(), authUserDetails().getUserId());
 				}
 				cancelResponse.setResponse(response);
 			}
 
 		} catch (AppointmentExecption ex) {
-			log.error("Exception has occured while cancelling an appointment : {}", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception has occured while cancelling an appointment : " + ExceptionUtils.getStackTrace(ex));
 			cancelResponse.setErrors(setErrors(ex));
 		}
 
@@ -298,7 +316,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest, 
+	public MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest,
 			String userAgent) {
 		MainResponseDTO<BookingStatus> multiBookingResponse = new MainResponseDTO<BookingStatus>();
 		multiBookingResponse.setId(appointmentBookId);
@@ -306,13 +324,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 				.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		multiBookingResponse.setVersion(version);
 		try {
-			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
+			// first check if the applicationId/preRegistrationId belongs to the logged in
+			// user or not
 			bookingRequest.getRequest().getBookingRequest().stream().forEach(action -> {
 				String preRegistrationId = action.getPreRegistrationId();
 				userValidation(preRegistrationId);
 			});
 			BookingStatus bookingStatus = appointmentUtils.multiAppointmentBooking(bookingRequest);
-			if (bookingStatus != null && bookingStatus.getBookingStatusResponse().size() > 0) {
+			if (bookingStatus != null && !bookingStatus.getBookingStatusResponse().isEmpty()) {
 
 				bookingRequest.getRequest().getBookingRequest().stream().forEach(action -> {
 					String preRegistrationId = action.getPreRegistrationId();
@@ -321,24 +340,26 @@ public class AppointmentServiceImpl implements AppointmentService {
 					bookRequest.setRegistrationCenterId(action.getRegistrationCenterId());
 					bookRequest.setSlotToTime(action.getSlotToTime());
 					bookRequest.setSlotFromTime(action.getSlotFromTime());
-					ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, bookRequest, StatusCodes.BOOKED.getCode());
-					if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
+					ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, bookRequest,
+							StatusCodes.BOOKED.getCode());
+					if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 						createAnonymousProfile(userAgent, preRegistrationId, bookRequest);
-						this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
-							authUserDetails().getUserId());
-					}	
+						this.demographicService.updatePreRegistrationStatus(preRegistrationId,
+								StatusCodes.BOOKED.getCode(), authUserDetails().getUserId());
+					}
 				});
 			}
 			multiBookingResponse.setResponse(bookingStatus);
 		} catch (AppointmentExecption ex) {
-			log.error("Exception has occured while booking an appointment : {}", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception has occured while booking an appointment : " + ExceptionUtils.getStackTrace(ex));
 			multiBookingResponse.setErrors(setErrors(ex));
 		}
 		return multiBookingResponse;
 	}
 
 	private void createAnonymousProfile(String userAgent, String preRegistrationId, BookingRequestDTO bookRequest) {
-		log.info("In createAnonymousProfile()");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In createAnonymousProfile()");
 		try {
 			// get the demographic data, documents data, booking data to create anonymous
 			// profile
@@ -347,7 +368,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			DemographicResponseDTO demographicData = demographicService.getDemographicData(preRegistrationId)
 					.getResponse();
 			DocumentsMetaData documentsData = null;
-			Boolean documentExists = documentDAO.existsByPreregId(preRegistrationId);
+			boolean documentExists = documentDAO.existsByPreregId(preRegistrationId);
 			if (documentExists) {
 				documentsData = documentService.getAllDocumentForPreId(preRegistrationId).getResponse();
 			}
@@ -356,7 +377,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 			bookingData.setRegDate(bookRequest.getRegDate());
 			bookingData.setSlotFromTime(bookRequest.getSlotFromTime());
 			bookingData.setSlotToTime(bookRequest.getSlotToTime());
-			log.info("In createAnonymousProfile() Status of application: " + demographicData.getStatusCode());
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In createAnonymousProfile() Status of application: " + demographicData.getStatusCode());
 			// insert the anonymous profile only if the appointment is being booked for the
 			// only for the first time
 			if (demographicData != null
@@ -366,9 +388,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 				anonymousProfileUtil.saveAnonymousProfile(demographicData, documentsData, bookingData, browserInfo);
 			}
 		} catch (AnonymousProfileException apex) {
-			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
-			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -"
-					+ apex.getMessage());
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(apex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -"
+							+ apex.getMessage());
 		}
 	}
 
@@ -378,7 +401,8 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			applicationEntity = applicationRepostiory.getOne(preRegistrationId);
 		} catch (Exception ex) {
-			log.error("Invaid applicationId/Not Record Found for the ID", preRegistrationId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Invaid applicationId/Not Record Found for the ID " + preRegistrationId);
 			throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_014.getCode(),
 					ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage());
 		}
@@ -390,8 +414,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			applicationEntity.setSlotToTime(null);
 			applicationEntity.setRegistrationCenterId(null);
 			if ((applicationEntity.getBookingType().equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
-					|| applicationEntity.getBookingType()
-							.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString()))
+					|| applicationEntity.getBookingType().equals(BookingTypeCodes.UPDATE_REGISTRATION.toString()))
 					&& newStatus != null) {
 				applicationEntity.setBookingStatusCode(newStatus);
 			}
@@ -404,8 +427,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 					LocalTime.parse(bookingInfo.getSlotToTime(), DateTimeFormatter.ofPattern("H:mm:ss")));
 			applicationEntity.setRegistrationCenterId(bookingInfo.getRegistrationCenterId());
 			if ((applicationEntity.getBookingType().equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
-					|| applicationEntity.getBookingType()
-							.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString()))
+					|| applicationEntity.getBookingType().equals(BookingTypeCodes.UPDATE_REGISTRATION.toString()))
 					&& newStatus != null) {
 				applicationEntity.setBookingStatusCode(newStatus);
 			}
@@ -415,20 +437,19 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			return applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
-			log.error("Failed to update application for the preregistrationId:{}", preRegistrationId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to update application for the preregistrationId: " + preRegistrationId);
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 					String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), preRegistrationId));
 		}
 	}
 
 	private List<ExceptionJSONInfoDTO> setErrors(AppointmentExecption ex) {
-		List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
+		List<ExceptionJSONInfoDTO> explist = new ArrayList<>();
 		ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
 		exception.setErrorCode(ex.getErrorCode());
 		exception.setMessage(ex.getErrorMessage());
 		explist.add(exception);
 		return explist;
-
 	}
-
 }

@@ -37,6 +37,9 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
 
 @RestController
 @Tag(name = "appointment-controller", description = "Appointment Controller")
@@ -57,7 +60,7 @@ public class AppointmentController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<AvailabilityDto>> getAvailability(
 			@PathVariable("registrationCenterId") String registrationCenterId) {
-		log.info("fetch availablity for regID: {}", registrationCenterId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "fetch availablity for regID: " + registrationCenterId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.getSlotAvailablity(registrationCenterId));
 	}
 
@@ -73,7 +76,7 @@ public class AppointmentController {
 			@PathVariable("preRegistrationId") String preRegistrationId,
 			@Validated @RequestBody(required = true) MainRequestDTO<BookingRequestDTO> bookingDTO,
 			@ApiParam(hidden = true) Errors errors, @RequestHeader(value = "User-Agent") String userAgent) {
-		log.info("Book an appointment for preRegId: {}", preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Book an appointment for preRegId: " + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(appointmentService.makeAppointment(bookingDTO, preRegistrationId, userAgent));
 	}
@@ -88,7 +91,8 @@ public class AppointmentController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> getAppointments(
 			@PathVariable("preRegistrationId") String preRegistrationId) {
-		log.info("To fetch appointment details for preRegID: {}", preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"To fetch appointment details for preRegID: " + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.getAppointmentDetails(preRegistrationId));
 	}
 
@@ -102,7 +106,8 @@ public class AppointmentController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> cancelBook(
 			@PathVariable("preRegistrationId") String preRegistrationId) {
-		log.info("Cancel the appointment for preRegId :{} ", preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Cancel the appointment for preRegId : " + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.cancelAppointment(preRegistrationId));
 	}
 
@@ -116,7 +121,8 @@ public class AppointmentController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> internalCancelBook(
 			@PathVariable("preRegistrationId") String preRegistrationId) {
-		log.info("Cancel the appointment for preRegId called internally :{} ", preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Cancel the appointment for preRegId called internally :" + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.cancelAppointment(preRegistrationId));
 	}
 
@@ -129,7 +135,7 @@ public class AppointmentController {
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))), })
 	public ResponseEntity<MainResponseDTO<DeleteBookingDTO>> discardIndividual(
 			@RequestParam(value = "preRegistrationId") String preId) {
-		log.info("Delete booking with preId: {}", preId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Delete booking with preId: " + preId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(appointmentService.deleteBookingAndUpdateApplicationStatus(preId));
 	}

@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.service;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
 import java.util.HashMap;
 import java.util.Map;
 
@@ -62,7 +66,6 @@ public class GenerateQRcodeService {
 	public void setupBookingService() {
 		requiredRequestMap.put("version", version);
 		requiredRequestMap.put("id", id);
-
 	}
 
 	/**
@@ -74,7 +77,7 @@ public class GenerateQRcodeService {
 	public MainResponseDTO<QRCodeResponseDTO> generateQRCode(MainRequestDTO<String> data) {
 		byte[] qrCode = null;
 
-		log.info("sessionId", "idType", "id", "In generateQRCode service of generateQRCode ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In generateQRCode service of generateQRCode ");
 		QRCodeResponseDTO responsedto = null;
 
 		MainResponseDTO<QRCodeResponseDTO> response = new MainResponseDTO<>();
@@ -98,12 +101,11 @@ public class GenerateQRcodeService {
 			response.setResponsetime(serviceUtil.getCurrentResponseTime());
 
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id", "In generateQRCode service of generateQRCode " + ex.getMessage());
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In generateQRCode service of generateQRCode " + ex.getMessage());
 			new QRcodeExceptionCatcher().handle(ex, response);
 		}
 
 		return response;
 	}
-
 }
