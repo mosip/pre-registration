@@ -516,7 +516,8 @@ public class DemographicServiceUtil {
 			// uriBuilder.append(
 			// "http://104.211.212.28:51000/preregistration/dev/master/PreRegistrationIdentitiyMapping.json");
 			log.info("sessionId", "idType", "id", " URL in demographic service util of getJson " + uriBuilder);
-			return restTemplate.getForObject(uriBuilder.toString(), String.class);
+//			return restTemplate.getForObject(uriBuilder.toString(), String.class);
+			return null;
 		} catch (Exception ex) {
 			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
 			log.error("sessionId", "idType", "id",
