@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.controller;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.util.Map;
 import java.util.Objects;
 
@@ -117,7 +121,6 @@ public class LoginController {
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTP(
 			@Validated @RequestBody MainRequestDTO<OtpRequestDTO> userOtpRequest,
 			@ApiParam(hidden = true) Errors errors) {
-
 		loginValidator.validateId(SENDOTP, userOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, SENDOTP);
 		if (!allowSendOtpApi)
@@ -146,7 +149,6 @@ public class LoginController {
 	public ResponseEntity<MainResponseDTO<AuthNResponse>> sendOTPWithLangCode(
 			@Validated @RequestBody MainRequestDTO<OTPWithLangCodeDTO> userOtpRequest,
 			@ApiParam(hidden = true) Errors errors) {
-
 		loginValidator.validateId(SENDOTP, userOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, SENDOTP);
 		MainRequestDTO<OtpRequestDTO> MainRequestDTO = new MainRequestDTO<>();
@@ -178,7 +180,7 @@ public class LoginController {
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiParam(hidden = true) Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
 
-		log.debug("User ID: {}", userIdOtpRequest.getRequest().getUserId());
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "User ID: "+ userIdOtpRequest.getRequest().getUserId());
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		MainResponseDTO<AuthNResponse> responseBody = loginService.validateWithUserIdOtp(userIdOtpRequest);

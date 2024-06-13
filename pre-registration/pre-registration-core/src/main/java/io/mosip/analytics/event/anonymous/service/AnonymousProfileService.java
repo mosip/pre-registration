@@ -1,5 +1,9 @@
 package io.mosip.analytics.event.anonymous.service;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
@@ -62,8 +66,8 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 	 */
 	@Override
 	public AnonymousProfileResponseDTO saveAnonymousProfile(AnonymousProfileRequestDTO requestDto) {
-		log.info("sessionId", "idType", "id", "In saveAnonymousProfile() method of AnonymousProfileService");
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In saveAnonymousProfile() method of AnonymousProfileService");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Pre Registration start time : " + DateUtils.getUTCCurrentDateTimeString());
 		AnonymousProfileResponseDTO responseDto = new AnonymousProfileResponseDTO();
 		try {
@@ -83,15 +87,14 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 			responseDto.setCreatedDateTime(getLocalDateString(responseEntity.getCreateDateTime()));
 			responseDto.setUpdatedBy(responseEntity.getUpdatedBy());
 			responseDto.setUpdatedDateTime(getLocalDateString(responseEntity.getUpdateDateTime()));
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Pre Registration end time : " + DateUtils.getUTCCurrentDateTimeString());
 		} catch (Exception exception) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(exception));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(exception));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In saveAnonymousProfile() method of AnonymousProfileService - " + exception.getMessage());
 		}
 		return responseDto;
-
 	}
 
 	public String getLocalDateString(LocalDateTime date) {
@@ -100,5 +103,4 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(utcDateTimePattern);
 		return date.format(dateTimeFormatter);
 	}
-
 }

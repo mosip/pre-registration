@@ -30,6 +30,10 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
 /**
  * This class provides API's to generate the QR code operations on
  * pre-registration.
@@ -79,7 +83,7 @@ public class GenerateQRcodeController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<QRCodeResponseDTO>> generateQRCode(
 			@Validated @RequestBody MainRequestDTO<String> data, @ApiParam(hidden = true) Errors errors) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In generateQRCode controller for generateQRCode generation with request " + data);
 		requestValidator.validateId(QRCODE, data.getId(), errors);
 		DataValidationUtil.validate(errors, QRCODE);

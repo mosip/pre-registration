@@ -14,9 +14,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.kernel.signature.dto.SignResponseDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.util.ResponseFilter;
 import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.errorcodes.ErrorMessages;

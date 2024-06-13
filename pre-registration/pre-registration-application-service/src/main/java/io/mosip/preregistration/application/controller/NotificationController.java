@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.controller;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
 import jakarta.servlet.http.HttpServletRequest;
 
 import io.swagger.v3.oas.annotations.media.Content;
@@ -63,9 +67,9 @@ public class NotificationController {
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = true) String langCode,
 			@RequestPart(value = "attachment", required = false) MultipartFile file, HttpServletRequest res) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In notification controller for send notification with request notification dto  " + jsonbObject);
-		log.debug("sessionId", "idType", "id", res.getHeader("Cookie"));
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, res.getHeader("Cookie"));
 		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, false),
 				HttpStatus.OK);
 	}
@@ -91,9 +95,9 @@ public class NotificationController {
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = false) String langCode,
 			@RequestPart(value = "attachment", required = false) MultipartFile file, HttpServletRequest res) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In notification controller for send notification with request notification dto  " + jsonbObject);
-		log.debug("sessionId", "idType", "id", res.getHeader("Cookie"));
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, res.getHeader("Cookie"));
 		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, true),
 				HttpStatus.OK);
 	}
@@ -119,10 +123,10 @@ public class NotificationController {
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = false) String langCode,
 			@RequestPart(value = "attachment", required = false) MultipartFile file, HttpServletRequest res) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In notification controller for sendNotificationsInternal() with request notification dto  "
 						+ jsonbObject);
-		log.debug("sessionId", "idType", "id", res.getHeader("Cookie"));
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, res.getHeader("Cookie"));
 		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, false),
 				HttpStatus.OK);
 	}

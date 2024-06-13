@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -18,25 +17,19 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.env.Environment;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.client.HttpClientErrorException;
 
 import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
 import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
 import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.OtpUser;
 import io.mosip.preregistration.application.dto.User;
-import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
-import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
-import io.mosip.preregistration.application.exception.ConfigFileNotFoundException;
 import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
 import io.mosip.preregistration.application.exception.InvalidateTokenException;
 import io.mosip.preregistration.application.exception.SendOtpFailedException;
@@ -135,9 +128,9 @@ public class LoginServiceTest {
 
 	@Value("${prereg.auth.jwt.secret}")
 	private String jwtSecret;
-	
+
 	@Mock
-    private Environment env;
+	private Environment env;
 
 	MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request = new MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken>();
 
@@ -152,8 +145,8 @@ public class LoginServiceTest {
 		// ReflectionTestUtils.setField(spyAuthService, "uiConfigParams", "abcd");
 		// ReflectionTestUtils.setField(this, "uiConfigParams", "abcd");
 		ReflectionTestUtils.setField(authService, "uiConfigParams", uiConfigParams);
-		//ReflectionTestUtils.setField(authService, "globalFileName", "abcd");
-		//ReflectionTestUtils.setField(authService, "preRegFileName", "abcd");
+		// ReflectionTestUtils.setField(authService, "globalFileName", "abcd");
+		// ReflectionTestUtils.setField(authService, "preRegFileName", "abcd");
 		ReflectionTestUtils.setField(authService, "configId", "mosip.preregistration.login.id.config");
 		ReflectionTestUtils.setField(authService, "jwtTokenExpiryTime", "1800");
 		ReflectionTestUtils.setField(authService, "jwtAudience", "adad");
@@ -234,7 +227,6 @@ public class LoginServiceTest {
 				"userName");
 		Mockito.verify(spyAuthService, Mockito.times(1)).setAuditValues("eventId", "eventName", "eventType",
 				"description", "idType", "userId", "userName");
-
 	}
 
 	@Test
@@ -258,9 +250,7 @@ public class LoginServiceTest {
 				"userName");
 		Mockito.verify(spyAuthService, Mockito.times(1)).setAuditValues("eventId", "eventName", "eventType",
 				"description", "idType", "userId", "userName");
-
 	}
-
 
 	@Test
 	public void validateWithUserIdOtp() {

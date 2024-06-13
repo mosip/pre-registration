@@ -11,9 +11,9 @@ import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
-import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_SESSIONID;
-import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_IDTYPE;
-import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
 
 @Configuration
 public class ApplicationEventListerner {

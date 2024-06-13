@@ -1,5 +1,9 @@
 package io.mosip.preregistration.batchjob.repository.utils;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
@@ -110,7 +114,7 @@ public class BatchJpaRepositoryImpl {
 			entity = demographicRepository.findBypreRegistrationId(preRegId);
 			if (entity == null) {
 				processedPreIdRepository.deleteBypreRegistrationId(preRegId);
-				log.info("sessionId", "idType", "id", "Deleted Invalid Pre-Registration ID");
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Deleted Invalid Pre-Registration ID");
 			}
 			demographicRepository.flush();
 		} catch (DataAccessLayerException e) {
@@ -161,7 +165,8 @@ public class BatchJpaRepositoryImpl {
 
 		ApplicationEntity entity = null;
 		try {
-			entity = applicationRepository.findByApplicationIdAndBookingStatusCode(applicationID, StatusCodes.BOOKED.getCode());
+			entity = applicationRepository.findByApplicationIdAndBookingStatusCode(applicationID,
+					StatusCodes.BOOKED.getCode());
 		} catch (DataAccessLayerException e) {
 			throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
 					ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
@@ -186,7 +191,7 @@ public class BatchJpaRepositoryImpl {
 		}
 		return entity;
 	}
-	
+
 	public List<RegistrationBookingEntity> getAllRegistrationAppointmentDetails(LocalDate bookingDate) {
 		try {
 			List<RegistrationBookingEntity> entity = regAppointmentRepository.findByBookingPKBookingDate(bookingDate);
@@ -206,7 +211,7 @@ public class BatchJpaRepositoryImpl {
 		try {
 			entityList = processedPreIdRepository.findBystatusComments(statusComment);
 			if (entityList == null || entityList.isEmpty()) {
-				log.info("sessionId", "idType", "id",
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"There are currently no Pre-Registration-Ids to update status to consumed");
 				throw new NoPreIdAvailableException(ErrorCodes.PRG_PAM_BAT_001.getCode(),
 						ErrorMessages.NO_PRE_REGISTRATION_ID_FOUND_TO_UPDATE_STATUS.getMessage());
@@ -225,9 +230,9 @@ public class BatchJpaRepositoryImpl {
 	 */
 	public List<RegistrationBookingEntity> getAllOldDateBooking() {
 		try {
-			List<RegistrationBookingEntity> entityList = regAppointmentRepository.findByRegDateBetween(StatusCodes.BOOKED.getCode(), 
-									LocalDate.now());
-			return entityList;			
+			List<RegistrationBookingEntity> entityList = regAppointmentRepository
+					.findByRegDateBetween(StatusCodes.BOOKED.getCode(), LocalDate.now());
+			return entityList;
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_005.getCode(),
 					ErrorMessages.REG_APPOINTMENT_TABLE_NOT_ACCESSIBLE.getMessage());
@@ -260,7 +265,8 @@ public class BatchJpaRepositoryImpl {
 	public void deleteDemographic(DemographicEntity demographicEntity) {
 		try {
 			demographicRepository.delete(demographicEntity);
-			log.info("sessionId", "idType", "id", "In deleteDemographic to delete consumed demographic details");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In deleteDemographic to delete consumed demographic details");
 
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_004.getCode(),
@@ -273,7 +279,8 @@ public class BatchJpaRepositoryImpl {
 		try {
 			documentEntity.forEach(iterate -> {
 				documentRespository.delete(iterate);
-				log.info("sessionId", "idType", "id", "In deleteDocument to delete consumed demographic details");
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"In deleteDocument to delete consumed demographic details");
 			});
 
 		} catch (Exception e) {
@@ -296,18 +303,20 @@ public class BatchJpaRepositoryImpl {
 	public void deleteBooking(RegistrationBookingEntity bookingEntity) {
 		try {
 			regAppointmentRepository.delete(bookingEntity);
-			log.info("sessionId", "idType", "id", "In deleteBooking to delete consumed demographic details");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In deleteBooking to delete consumed demographic details");
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_005.getCode(),
 					ErrorMessages.REG_APPOINTMENT_TABLE_NOT_ACCESSIBLE.getMessage());
 		}
 	}
-	
+
 	/** Deleting Booking details the consumed demographic data. */
 	public void deleteApplications(ApplicationEntity applicationEntity) {
 		try {
 			applicationRepository.delete(applicationEntity);
-			log.info("sessionId", "idType", "id", "In deleteapplications to delete consumed demographic details");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In deleteapplications to delete consumed demographic details");
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_019.getCode(),
 					ErrorMessages.APPLICATIONS_TABLE_NOT_ACCESSIBLE.getMessage());
@@ -321,7 +330,8 @@ public class BatchJpaRepositoryImpl {
 	public boolean updateConsumedBooking(RegistrationBookingEntityConsumed bookingEntityConsumed) {
 		try {
 			appointmentConsumedRepository.save(bookingEntityConsumed);
-			log.info("sessionId", "idType", "id", "In updateConsumedBooking to update reg_appointment_consumed");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In updateConsumedBooking to update reg_appointment_consumed");
 			return true;
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_008.getCode(),
@@ -336,7 +346,7 @@ public class BatchJpaRepositoryImpl {
 	public boolean updateConsumedDemographic(DemographicEntityConsumed entityConsumed) {
 		try {
 			demographicConsumedRepository.save(entityConsumed);
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In updateConsumedDemographic to update applicant_demographic_consumed");
 			return true;
 		} catch (DataAccessLayerException e) {
@@ -352,7 +362,8 @@ public class BatchJpaRepositoryImpl {
 	public boolean updateConsumedDocument(DocumentEntityConsumed entityConsumed) {
 		try {
 			documentConsumedRepository.save(entityConsumed);
-			log.info("sessionId", "idType", "id", "In updateConsumedDemographic to update applicant_document_consumed");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In updateConsumedDemographic to update applicant_document_consumed");
 			return true;
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_010.getCode(),
@@ -541,5 +552,4 @@ public class BatchJpaRepositoryImpl {
 		log.info("Flushing Availability...");
 		availabilityRepository.flush();
 	}
-
 }

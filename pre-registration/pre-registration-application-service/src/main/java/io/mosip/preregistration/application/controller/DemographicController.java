@@ -49,9 +49,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 
-import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_SESSIONID;
-import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_IDTYPE;
-import static io.mosip.preregistration.application.constant.PreRegLoginConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
 
 /**
  * This class provides different API's to perform operations on
@@ -313,7 +313,8 @@ public class DemographicController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<?>> getPreRegDemographicAndDocumentData(
 			@PathVariable("preregistrationId") String preregistrationId) {
-		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In demographic controller to getFullPreRegApplication " + preregistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In demographic controller to getFullPreRegApplication " + preregistrationId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(preRegistrationService.getPregistrationInfo(preregistrationId));
 	}

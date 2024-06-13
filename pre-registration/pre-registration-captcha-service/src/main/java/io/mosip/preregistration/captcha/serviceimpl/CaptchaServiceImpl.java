@@ -1,5 +1,9 @@
 package io.mosip.preregistration.captcha.serviceimpl;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -51,9 +55,9 @@ public class CaptchaServiceImpl implements CaptchaService {
 
 	@Override
 	public Object validateCaptcha(Object captchaRequest) {
-
-		log.info("sessionId", "idType", "id", "In pre-registration captcha service to validate the token request"
-				+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In pre-registration captcha service to validate the token request"
+						+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken());
 
 		validateCaptchaRequest((CaptchaRequestDTO) captchaRequest);
 
@@ -66,27 +70,27 @@ public class CaptchaServiceImpl implements CaptchaService {
 		GoogleCaptchaDTO captchaResponse = null;
 
 		try {
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration captcha service try block to validate the token request via a google verify site rest call"
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl);
-			
+
 			captchaResponse = this.restTemplate.postForObject(recaptchaVerifyUrl, param, GoogleCaptchaDTO.class);
 			if (captchaResponse != null) {
-				log.debug("sessionId", "idType", "id", captchaResponse.toString());
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, captchaResponse.toString());
 			}
 		} catch (RestClientException ex) {
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration captcha service to validate the token request via a google verify site rest call has failed --->"
 							+ ((CaptchaRequestDTO) captchaRequest).getCaptchaToken() + "  " + recaptchaVerifyUrl + "  "
 							+ ex);
-			if (captchaResponse != null && captchaResponse.getErrorCodes() !=null) {
-			throw new CaptchaException(captchaResponse.getErrorCodes().get(0).getErrorCode(),
-					captchaResponse.getErrorCodes().get(0).getMessage());
+			if (captchaResponse != null && captchaResponse.getErrorCodes() != null) {
+				throw new CaptchaException(captchaResponse.getErrorCodes().get(0).getErrorCode(),
+						captchaResponse.getErrorCodes().get(0).getMessage());
 			}
 		}
 
-		if (captchaResponse!=null && captchaResponse.isSuccess()) {
-			log.info("sessionId", "idType", "id",
+		if (captchaResponse != null && captchaResponse.isSuccess()) {
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration captcha service token request has been successfully verified --->"
 							+ captchaResponse.isSuccess());
 			mainResponse.setId(mosipcaptchaValidateId);
@@ -98,7 +102,7 @@ public class CaptchaServiceImpl implements CaptchaService {
 			mainResponse.setResponse(response);
 		} else {
 			if (captchaResponse != null) {
-				log.error("sessionId", "idType", "id",
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"In pre-registration captcha service token request has failed --->"
 								+ captchaResponse.isSuccess());
 			}
@@ -114,13 +118,11 @@ public class CaptchaServiceImpl implements CaptchaService {
 
 		}
 		return mainResponse;
-
 	}
 
 	private void validateCaptchaRequest(CaptchaRequestDTO captchaRequest) {
-
-	 if (captchaRequest.getCaptchaToken() == null || captchaRequest.getCaptchaToken().trim().length() == 0) {
-		 	log.debug("sessionId", "idType", "id", captchaRequest.toString());
+		if (captchaRequest.getCaptchaToken() == null || captchaRequest.getCaptchaToken().trim().length() == 0) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, captchaRequest.toString());
 			throw new InvalidRequestCaptchaException(CaptchaErrorCode.INVALID_CAPTCHA_REQUEST.getErrorCode(),
 					CaptchaErrorCode.INVALID_CAPTCHA_REQUEST.getErrorMessage());
 		}
@@ -130,5 +132,4 @@ public class CaptchaServiceImpl implements CaptchaService {
 		String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
 	}
-
 }

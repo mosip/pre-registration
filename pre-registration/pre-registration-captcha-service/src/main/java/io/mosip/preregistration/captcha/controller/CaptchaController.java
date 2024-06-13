@@ -1,5 +1,9 @@
 package io.mosip.preregistration.captcha.controller;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -55,7 +59,7 @@ public class CaptchaController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<?> validateCaptcha(@Validated @RequestBody MainRequestDTO<CaptchaRequestDTO> captchaRequest,
 			@ApiParam(hidden = true) Errors errors) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, 
 				"In pre-registration captcha controller to validate the recaptcha token" + captchaRequest);
 		requestValidator.validateId(VALIDATE, captchaRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATE);

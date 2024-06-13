@@ -10,11 +10,9 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 import jakarta.persistence.Column;
-import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
 import lombok.Setter;
 
 /**

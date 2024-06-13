@@ -2,8 +2,6 @@ package io.mosip.preregistration.captcha.dto;
 
 import java.io.Serializable;
 
-import jakarta.validation.constraints.NotNull;
-
 import lombok.Data;
 
 @Data

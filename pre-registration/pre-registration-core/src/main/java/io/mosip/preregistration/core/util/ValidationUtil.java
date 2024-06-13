@@ -1,5 +1,9 @@
 package io.mosip.preregistration.core.util;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -100,7 +104,7 @@ public class ValidationUtil {
 	private static final String NAME = "name";
 
 	public boolean requestValidator(MainRequestDTO<?> mainRequest) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In requestValidator method of pre-registration core with mainRequest " + mainRequest);
 		if (mainRequest.getId() == null) {
 			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_001.getCode(),
@@ -120,8 +124,8 @@ public class ValidationUtil {
 
 	public boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
 
-		log.debug("sessionId", "idType", "id", "In requestValidator");
-		log.info("sessionId", "idType", "id", "In requestValidator method of pre-registration core with requestMap "
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In requestValidator");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In requestValidator method of pre-registration core with requestMap "
 				+ requestMap + " againt requiredRequestMap " + requiredRequestMap);
 		for (String key : requestMap.keySet()) {
 			if (key.equals(RequestCodes.ID) && (requestMap.get(RequestCodes.ID) == null
@@ -161,7 +165,7 @@ public class ValidationUtil {
 	}
 
 	public boolean requstParamValidator(Map<String, String> requestMap) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In requstParamValidator method of pre-registration core with requestMap " + requestMap);
 		for (String key : requestMap.keySet()) {
 			if (key.equals(RequestCodes.USER_ID) && (requestMap.get(RequestCodes.USER_ID) == null
@@ -260,11 +264,11 @@ public class ValidationUtil {
 		if (validDocsMap.containsKey(catCode)) {
 			List<String> docTypes = (List<String>) validDocsMap.get(catCode);
 			if (docTypes.contains(typeCode)) {
-				log.debug("sessionId", "idType", "id",
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"inside validateDocuments inside second if preRegistrationId " + preRegistrationId);
 				return true;
 			} else {
-				log.debug("sessionId", "idType", "id",
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"inside validateDocuments inside else preRegistrationId " + preRegistrationId);
 				throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_017.toString(),
 						ErrorMessages.INVALID_DOC_TYPE_CODE.getMessage() + "   " + validDocsMap + "  catcode " + catCode
@@ -272,7 +276,7 @@ public class ValidationUtil {
 						null);
 			}
 		} else {
-			log.debug("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"inside validateDocuments inside second else  preRegistrationId " + preRegistrationId);
 			throw new InvalidRequestException(ErrorCodes.PRG_CORE_REQ_018.toString(),
 					ErrorMessages.INVALID_DOC_CAT_CODE.getMessage() + "   " + validDocsMap + "  langCode " + langCode,
@@ -302,15 +306,15 @@ public class ValidationUtil {
 	}
 
 	public static boolean parseDate(String reqDate, String format) {
-		log.info("sessionId", "idType", "id", "In parseDate method of core validation util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In parseDate method of core validation util");
 		try {
 			SimpleDateFormat sdf = new SimpleDateFormat(format);
 			sdf.setLenient(false);
 			sdf.parse(reqDate);
 			LocalDate.parse(reqDate);
 		} catch (Exception e) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
-			log.error("sessionId", "idType", "id", "In parseDate method of core validation util - " + e.getMessage());
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(e));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In parseDate method of core validation util - " + e.getMessage());
 			return false;
 		}
 		return true;
@@ -335,9 +339,9 @@ public class ValidationUtil {
 				ResponseWrapper<PageDTO<ValidDocumentsResponseDTO>> body = response.getBody();
 				if (body != null) {
 					if (body.getErrors() != null && !body.getErrors().isEmpty()) {
-						log.debug("sessionId", "idType", "id",
+						log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 								"inside getAllDocCategories inside else  preRegistrationId ");
-						log.debug("sessionId", "idType", "id", " cat code" + body.getErrors().toString());
+						log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, " cat code" + body.getErrors().toString());
 						throw new MasterDataNotAvailableException(body.getErrors().get(0).getErrorCode(),
 								body.getErrors().get(0).getMessage());
 					}
@@ -352,16 +356,16 @@ public class ValidationUtil {
 			} while (pageNo != totalPage);
 			log.info("validDocsMap {}", validDocsMap);
 		} catch (RestClientException e) {
-			log.debug("sessionId", "idType", "id", "inside getAllDocCategories inside catch preRegistrationId ");
-			log.debug("sessionId", "idType", "id", "---- " + ExceptionUtils.getStackTrace(e));
-			log.error("sessionId", "idType", "id", "---- docCatMap " + validDocsMap + ExceptionUtils.getStackTrace(e));
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "inside getAllDocCategories inside catch preRegistrationId ");
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "---- " + ExceptionUtils.getStackTrace(e));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "---- docCatMap " + validDocsMap + ExceptionUtils.getStackTrace(e));
 			throw new MasterDataNotAvailableException(ErrorCodes.PRG_CORE_REQ_022.toString(),
 					ErrorMessages.MASTERDATA_SERVICE_CALL_FAIL.toString(), e.getCause());
 		}
 	}
 
 	public Map<String, String> prepareRequestMap(MainRequestDTO<?> requestDto) {
-		log.info("sessionId", "idType", "id", "In prepareRequestMap method of Login Service Util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In prepareRequestMap method of Login Service Util");
 		Map<String, String> requestMap = new HashMap<>();
 		requestMap.put("id", requestDto.getId());
 		requestMap.put("version", requestDto.getVersion());
