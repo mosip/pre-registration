@@ -1,16 +1,17 @@
 package io.mosip.preregistration.datasync.service;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,10 +41,10 @@ import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
-import io.mosip.preregistration.datasync.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.datasync.dto.ApplicationDTO;
-import io.mosip.preregistration.datasync.dto.ApplicationsDTO;
+import io.mosip.preregistration.datasync.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
+import io.mosip.preregistration.datasync.dto.ApplicationsDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
@@ -51,6 +52,7 @@ import io.mosip.preregistration.datasync.dto.ReverseDataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
 import io.mosip.preregistration.datasync.exception.util.DataSyncExceptionCatcher;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
+import jakarta.annotation.PostConstruct;
 
 /**
  * This class provides different service to perform operation for datasync
@@ -81,13 +83,13 @@ public class DataSyncService {
 	 */
 	@Autowired
 	AuditLogUtil auditLogUtil;
-	
+
 	/**
 	 * Autowired reference for {@link #AnonymousProfileUtil}
 	 */
 	@Autowired
 	AnonymousProfileUtil anonymousProfileUtil;
-	
+
 	/**
 	 * This method acts as a post constructor to initialize the required request
 	 * parameters.
@@ -144,7 +146,7 @@ public class DataSyncService {
 			MainRequestDTO<DataSyncRequestDTO> dataSyncRequest) {
 		PreRegistrationIdsDTO preRegistrationIdsDTO = null;
 		MainResponseDTO<PreRegistrationIdsDTO> responseDto = new MainResponseDTO<>();
-		log.info("sessionId", "idType", "id", "In retrieveAllPreRegIds method of datasync service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In retrieveAllPreRegIds method of datasync service ");
 		boolean isRetrieveAllSuccess = false;
 		responseDto.setId(fetchAllId);
 		responseDto.setVersion(version);
@@ -171,8 +173,8 @@ public class DataSyncService {
 		} catch (
 
 		Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In retrieveAllPreRegIds method of datasync service - " + ex.getMessage());
 			new DataSyncExceptionCatcher().handle(ex, responseDto);
 		} finally {
@@ -190,7 +192,7 @@ public class DataSyncService {
 		}
 		return responseDto;
 	}
-	
+
 	/**
 	 * This method is use to retrieve all appointments for a registration center id,
 	 * booked between a from date and to date
@@ -202,7 +204,8 @@ public class DataSyncService {
 			MainRequestDTO<DataSyncRequestDTO> dataSyncRequest) {
 
 		MainResponseDTO<ApplicationsDTO> responseDto = new MainResponseDTO<>();
-		log.info("sessionId", "idType", "id", "In retrieveAllAppointmentsSyncV2 method of datasync service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In retrieveAllAppointmentsSyncV2 method of datasync service ");
 		boolean isRetrieveAllSuccess = false;
 		responseDto.setId(fetchAllId);
 		responseDto.setVersion(version);
@@ -215,10 +218,9 @@ public class DataSyncService {
 				if (serviceUtil.isNull(dataSyncRequestDTO.getToDate())) {
 					dataSyncRequestDTO.setToDate(dataSyncRequestDTO.getFromDate());
 				}
-				List<ApplicationDTO> applicationsList = new ArrayList<ApplicationDTO>();	
+				List<ApplicationDTO> applicationsList = new ArrayList<ApplicationDTO>();
 				List<ApplicationDetailResponseDTO> applicationDetailResponseList = serviceUtil
-						.getAllBookedApplicationIds(dataSyncRequestDTO.getFromDate(),
-								dataSyncRequestDTO.getToDate(),
+						.getAllBookedApplicationIds(dataSyncRequestDTO.getFromDate(), dataSyncRequestDTO.getToDate(),
 								dataSyncRequestDTO.getRegistrationCenterId());
 				for (ApplicationDetailResponseDTO applicationDetails : applicationDetailResponseList) {
 					ApplicationDTO application = new ApplicationDTO();
@@ -237,8 +239,8 @@ public class DataSyncService {
 		} catch (
 
 		Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In retrieveAllAppointmentsSyncV2 method of datasync service - " + ex.getMessage());
 			new DataSyncExceptionCatcher().handle(ex, responseDto);
 		} finally {
@@ -280,11 +282,12 @@ public class DataSyncService {
 	private String getUTCTimeStamp(Map<LocalDate, SlotTimeDto> value) {
 		String timestamp = null;
 		for (Entry<LocalDate, SlotTimeDto> v : value.entrySet()) {
-			timestamp = v.getKey().atTime(v.getValue().getFromTime()).format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
+			timestamp = v.getKey().atTime(v.getValue().getFromTime())
+					.format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
 		}
 		return timestamp;
 	}
-	
+
 	/**
 	 * Assuming one pre-reg id will have one appointTime and single time slot
 	 * 
@@ -298,7 +301,7 @@ public class DataSyncService {
 			LocalTime fromLocalTime = LocalTime.parse(fromTime);
 			timestamp = appDate.atTime(fromLocalTime).format(DateTimeFormatter.ofPattern(UTC_DATETIME_PATTERN));
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			return null;
 		}
 		return timestamp;
@@ -313,7 +316,7 @@ public class DataSyncService {
 	public MainResponseDTO<PreRegArchiveDTO> getPreRegistrationData(String preId) {
 		MainResponseDTO<PreRegArchiveDTO> responseDto = new MainResponseDTO<>();
 		PreRegArchiveDTO preRegArchiveDTO = null;
-		log.info("sessionId", "idType", "id", "In getPreRegistrationData method of datasync service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getPreRegistrationData method of datasync service ");
 		boolean isRetrieveSuccess = false;
 		responseDto.setId(fetchId);
 		responseDto.setVersion(version);
@@ -327,8 +330,8 @@ public class DataSyncService {
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In getPreRegistrationData method of datasync service - " + ex.getMessage());
 			new DataSyncExceptionCatcher().handle(ex, responseDto);
 		} finally {
@@ -355,7 +358,7 @@ public class DataSyncService {
 	public MainResponseDTO<PreRegArchiveDTO> fetchPreRegistrationData(String preId, String machineId) {
 		MainResponseDTO<PreRegArchiveDTO> responseDto = new MainResponseDTO<>();
 		PreRegArchiveDTO preRegArchiveDTO = null;
-		log.info("sessionId", "idType", "id", "In fetchPreRegistrationData method of datasync service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In fetchPreRegistrationData method of datasync service ");
 		boolean isRetrieveSuccess = false;
 		responseDto.setId(fetchId);
 		responseDto.setVersion(version);
@@ -373,7 +376,8 @@ public class DataSyncService {
 			responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 			responseDto.setResponse(preRegArchiveDTO);
 			isRetrieveSuccess = true;
-			// insert the anonymous profile only if the appointment is being prefetched for the first time
+			// insert the anonymous profile only if the appointment is being prefetched for
+			// the first time
 			if (!preRegistrationDTO.getStatusCode().equals(StatusCodes.BOOKED.getCode())
 					&& !preRegistrationDTO.getStatusCode().equals(StatusCodes.PREFETCHED.getCode())
 					&& !preRegistrationDTO.getStatusCode().equals(StatusCodes.EXPIRED.getCode())
@@ -385,10 +389,11 @@ public class DataSyncService {
 				serviceUtil.updateApplicationStatusToPreFectched(preId);
 			}
 		} catch (AnonymousProfileException apex) {
-			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(apex));
-			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -" + apex.getMessage());
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, "id" + ExceptionUtils.getStackTrace(apex));
+			log.error("Unable to save AnonymousProfile in getPreRegistrationData method of datasync service -"
+					+ apex.getMessage());
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id" + ExceptionUtils.getStackTrace(ex));
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, "id" + ExceptionUtils.getStackTrace(ex));
 			log.error("In getPreRegistrationData method of datasync service -" + ex.getMessage());
 			new DataSyncExceptionCatcher().handle(ex, responseDto);
 		} finally {
@@ -417,7 +422,8 @@ public class DataSyncService {
 			MainRequestDTO<ReverseDataSyncRequestDTO> reverseDataSyncRequest) {
 		MainResponseDTO<ReverseDatasyncReponseDTO> responseDto = new MainResponseDTO<>();
 		ReverseDatasyncReponseDTO reverseDatasyncReponse = null;
-		log.info("sessionId", "idType", "id", "In storeConsumedPreRegistrations method of datasync service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In storeConsumedPreRegistrations method of datasync service ");
 		boolean isSaveSuccess = false;
 		responseDto.setId(storeId);
 		responseDto.setVersion(version);
@@ -436,8 +442,8 @@ public class DataSyncService {
 			}
 			isSaveSuccess = true;
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In storeConsumedPreRegistrations method of datasync service - " + ex.getMessage());
 
 			new DataSyncExceptionCatcher().handle(ex, responseDto);

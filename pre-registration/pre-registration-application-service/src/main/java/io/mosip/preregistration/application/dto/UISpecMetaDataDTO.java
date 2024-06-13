@@ -3,7 +3,6 @@ package io.mosip.preregistration.application.dto;
 import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import org.json.simple.JSONObject;
 
 import lombok.Data;
 

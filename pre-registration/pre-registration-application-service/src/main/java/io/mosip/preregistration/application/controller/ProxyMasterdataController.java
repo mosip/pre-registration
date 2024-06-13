@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.controller;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -37,7 +41,7 @@ public class ProxyMasterdataController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<?> masterDataGetProxyController(@RequestBody(required = false) String body,
 			HttpServletRequest request) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In masterDataGetProxyController method with request url: " + request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(service.getMasterDataResponse(body, request));
 	}
@@ -50,7 +54,7 @@ public class ProxyMasterdataController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<?> masterDataPostProxyController(@RequestBody(required = false) String body,
 			HttpServletRequest request) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In masterDataPostProxyController method with request url" + request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.OK).body(service.getMasterDataResponse(body, request));
 	}

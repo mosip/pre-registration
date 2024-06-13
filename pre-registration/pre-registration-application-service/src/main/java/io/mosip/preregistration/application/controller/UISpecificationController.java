@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.controller;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -42,8 +46,8 @@ public class UISpecificationController {
 	public ResponseEntity<MainResponseDTO<UISpecMetaDataDTO>> getLatestPublishedSchema(
 			@RequestParam(name = "version", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double version,
 			@RequestParam(name = "identitySchemaVersion", defaultValue = "0", required = false) @ApiParam(value = "version", defaultValue = "0") double identitySchemaVersion) {
-		log.info("In UISpecification Controller to getLatestPublishedSchema");
-		log.info("version {} identitySchemaVersion {}", version, identitySchemaVersion);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"In UISpecification Controller to getLatestPublishedSchema");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "version {" + version + "} identitySchemaVersion {" + identitySchemaVersion + "}");
 		return ResponseEntity.status(HttpStatus.OK).body(uiSpecService.getLatestUISpec(version, identitySchemaVersion));
 	}
 
@@ -58,7 +62,7 @@ public class UISpecificationController {
 	public ResponseEntity<MainResponseDTO<PageDTO<UISpecMetaDataDTO>>> getAllPublishedSchema(
 			@RequestParam(name = "pageNumber", defaultValue = "0") @ApiParam(value = "page number", defaultValue = "0") int pageNumber,
 			@RequestParam(name = "pageSize", defaultValue = "10") @ApiParam(value = "page size", defaultValue = "10") int pageSize) {
-		log.info("In UISpecification Controller to getAllPublishedSchema");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In UISpecification Controller to getAllPublishedSchema");
 		return ResponseEntity.status(HttpStatus.OK).body(uiSpecService.getAllUISpec(pageNumber, pageSize));
 	}
 }

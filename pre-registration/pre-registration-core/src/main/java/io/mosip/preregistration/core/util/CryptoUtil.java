@@ -1,5 +1,9 @@
 package io.mosip.preregistration.core.util;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 
@@ -44,19 +48,18 @@ public class CryptoUtil {
 
 	@Value("${cryptoResource.url}")
 	public String cryptoResourceUrl;
-	
+
 	@Value("${preregistration.crypto.applicationId}")
 	public String cryptoApplcationId;
-	
+
 	@Value("${preregistration.crypto.referenceId}")
 	public String cryptoReferenceId;
-	
+
 	@Value("${preregistration.crypto.PrependThumbprint}")
 	public boolean cryptoPrependThumbprint;
 
-
 	public byte[] encrypt(byte[] originalInput, LocalDateTime localDateTime) {
-		log.info("sessionId", "idType", "id", "In encrypt method of CryptoUtil service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In encrypt method of CryptoUtil service ");
 
 		ResponseEntity<ResponseWrapper<CryptoManagerResponseDTO>> response = null;
 		byte[] encryptedBytes = null;
@@ -73,12 +76,12 @@ public class CryptoUtil {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<RequestWrapper<CryptoManagerRequestDTO>> request = new HttpEntity<>(requestKernel, headers);
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In encrypt method of CryptoUtil service cryptoResourceUrl: " + cryptoResourceUrl + "/encrypt");
 			response = restTemplate.exchange(cryptoResourceUrl + "/encrypt", HttpMethod.POST, request,
 					new ParameterizedTypeReference<ResponseWrapper<CryptoManagerResponseDTO>>() {
 					});
-			log.info("sessionId", "idType", "id", "encrypt response of " + response);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "encrypt response of " + response);
 			ResponseWrapper<CryptoManagerResponseDTO> body = response.getBody();
 			if (body != null) {
 				if (!(body.getErrors() == null || body.getErrors().isEmpty())) {
@@ -89,8 +92,8 @@ public class CryptoUtil {
 				}
 			}
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In encrypt method of CryptoUtil Util for Exception- " + ex.getMessage());
 			throw ex;
 		}
@@ -99,7 +102,7 @@ public class CryptoUtil {
 	}
 
 	public byte[] decrypt(byte[] originalInput, LocalDateTime localDateTime) {
-		log.info("sessionId", "idType", "id", "In decrypt method of CryptoUtil service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In decrypt method of CryptoUtil service ");
 		ResponseEntity<ResponseWrapper<CryptoManagerResponseDTO>> response = null;
 		byte[] decodedBytes = null;
 		try {
@@ -117,7 +120,7 @@ public class CryptoUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 
 			HttpEntity<RequestWrapper<CryptoManagerRequestDTO>> request = new HttpEntity<>(requestKernel, headers);
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In decrypt method of CryptoUtil service cryptoResourceUrl: " + cryptoResourceUrl + "/decrypt");
 			response = restTemplate.exchange(cryptoResourceUrl + "/decrypt", HttpMethod.POST, request,
 					new ParameterizedTypeReference<ResponseWrapper<CryptoManagerResponseDTO>>() {
@@ -132,13 +135,11 @@ public class CryptoUtil {
 				}
 			}
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In decrypt method of CryptoUtil Util for Exception- " + ex.getMessage());
 			throw ex;
 		}
 		return decodedBytes;
-
 	}
-
 }

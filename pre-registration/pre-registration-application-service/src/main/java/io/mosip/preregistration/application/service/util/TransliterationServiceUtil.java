@@ -9,7 +9,6 @@ import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,10 +16,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.util.DateUtils;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.application.code.TransliterationRequestCodes;
 import io.mosip.preregistration.application.dto.TransliterationRequestDTO;
 import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 
 /**
  * This class provides the utility methods for Transliteration application.
@@ -114,5 +113,4 @@ public class TransliterationServiceUtil {
 		}
 		return supportedLang.contains(dto.getFromFieldLang()) && supportedLang.contains(dto.getToFieldLang());
 	}
-
 }
