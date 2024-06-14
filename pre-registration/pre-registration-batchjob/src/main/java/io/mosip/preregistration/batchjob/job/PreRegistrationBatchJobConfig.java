@@ -16,6 +16,7 @@ import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.tasklet.Tasklet;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,7 +35,7 @@ import javax.sql.DataSource;
 
 /**
  * @author Aiham Hasan
- * @since 1.0.0
+ * @since 1.2.0
  *
  */
 @Configuration
@@ -55,11 +56,12 @@ public class PreRegistrationBatchJobConfig {
 	@Autowired
 	private ApplicationsBookingCheckTasklet applicationBookingCheckTasklet;
 
-	@Bean
-	public PlatformTransactionManager transactionManager(DataSource dataSource) {
-		return new DataSourceTransactionManager(dataSource);
-	}
-
+//  Commeting it as transactionManager is imported from Kernel-Auth-Adapter Jar
+//	@Bean
+//	public PlatformTransactionManager transactionManager(DataSource dataSource) {
+//		return new DataSourceTransactionManager(dataSource);
+//	}
+	
 	@Bean
 	public Step consumedStatusStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
 		return new StepBuilder("consumedStatusStep", jobRepository).tasklet(consumedStatusTasklet, transactionManager)
@@ -86,31 +88,31 @@ public class PreRegistrationBatchJobConfig {
 	}
 
 	@Bean
-	public Job purgeExpiredSlotsJob(JobRepository jobRepository, Step purgeExpiredSlotsStep) {
+	public Job purgeExpiredSlotsJob(JobRepository jobRepository,@Qualifier("purgeExpiredSlotsStep") Step purgeExpiredSlotsStep) {
 		return new JobBuilder("purgeExpiredSlotsJob", jobRepository).incrementer(new RunIdIncrementer())
 				.start(purgeExpiredSlotsStep).build();
 	}
-
+	
 	@Bean
-	public Job consumedStatusJob(JobRepository jobRepository, Step consumedStatusStep) {
+	public Job consumedStatusJob(JobRepository jobRepository,@Qualifier("consumedStatusStep") Step consumedStatusStep) {
 		return new JobBuilder("consumedStatusJob", jobRepository).incrementer(new RunIdIncrementer())
 				.start(consumedStatusStep).build();
 	}
 
 	@Bean
-	public Job expiredStatusJob(JobRepository jobRepository, Step expiredStatusStep) {
+	public Job expiredStatusJob(JobRepository jobRepository,@Qualifier("expiredStatusStep")  Step expiredStatusStep) {
 		return new JobBuilder("expiredStatusJob", jobRepository).incrementer(new RunIdIncrementer())
 				.start(expiredStatusStep).build();
 	}
 
 	@Bean
-	public Job updateApplicationForBookingCheckJob(JobRepository jobRepository, Step updateBookingInApplicationsStep) {
+	public Job updateApplicationForBookingCheckJob(JobRepository jobRepository,@Qualifier("updateBookingInApplicationsStep") Step updateBookingInApplicationsStep) {
 		return new JobBuilder("updateApplicationForBookingCheckJob", jobRepository).incrementer(new RunIdIncrementer())
 				.start(updateBookingInApplicationsStep).build();
 	}
 
-	@Bean(name = "regCenterPartitionerJob")
-	public Job regCenterPartitionerJob(JobRepository jobRepository, Step slotGenerationStep) {
+	@Bean
+	public Job regCenterPartitionerJob(JobRepository jobRepository,@Qualifier("slotGenerationStep") Step slotGenerationStep) {
 		return new JobBuilder("regCenterPartitionerJob", jobRepository)
 				.preventRestart()
 				.incrementer(new RunIdIncrementer())

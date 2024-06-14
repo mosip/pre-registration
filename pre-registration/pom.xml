@@ -89,7 +89,6 @@
 		<modelmapper.version>0.7.4</modelmapper.version>
 		<java.interceptor.version>1.2</java.interceptor.version>
 		<icu.version>63.1</icu.version>
-		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 
 		<sonar.coverage.exclusions>
 			**/code/**,

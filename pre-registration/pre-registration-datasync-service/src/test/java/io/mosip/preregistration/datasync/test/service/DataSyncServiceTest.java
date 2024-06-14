@@ -38,6 +38,7 @@ import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ParseException;
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.preregistration.application.config.Config;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -67,7 +68,7 @@ import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 import io.mosip.preregistration.datasync.test.config.TestConfig;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TestConfig.class, TestContext.class, WebApplicationContext.class})
+@ContextConfiguration(classes = {Config.class, TestConfig.class, TestContext.class, WebApplicationContext.class})
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 public class DataSyncServiceTest {
 

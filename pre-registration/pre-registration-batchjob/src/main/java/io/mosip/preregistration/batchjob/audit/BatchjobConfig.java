@@ -11,6 +11,9 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
+
+import io.mosip.kernel.dataaccess.hibernate.config.HibernateDaoConfig;
 
 /**
  * This class is used for Swagger configuration, also to configure Host and
@@ -24,6 +27,7 @@ import org.springframework.context.annotation.Configuration;
  */
 @Configuration
 @ConfigurationProperties("mosip.preregistration.batchjob")
+@Import({ HibernateDaoConfig.class })
 public class BatchjobConfig {
 
 	/** The id. */

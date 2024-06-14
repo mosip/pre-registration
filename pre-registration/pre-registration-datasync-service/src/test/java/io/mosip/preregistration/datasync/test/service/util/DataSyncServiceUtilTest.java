@@ -43,6 +43,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
+import io.mosip.preregistration.application.config.Config;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -75,7 +76,7 @@ import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 import io.mosip.preregistration.datasync.test.config.TestConfig;
 
 @RunWith(SpringRunner.class)
-@ContextConfiguration(classes = {TestConfig.class, TestContext.class, /*TemplateConfiguration.class, */ WebApplicationContext.class})
+@ContextConfiguration(classes = {Config.class, TestConfig.class, TestContext.class, /*TemplateConfiguration.class, */ WebApplicationContext.class})
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 public class DataSyncServiceUtilTest {
 

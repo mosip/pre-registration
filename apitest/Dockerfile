@@ -1,4 +1,4 @@
-FROM eclipse-temurin:21-jre-alpine
+FROM mosipdev/openjdk-21-jre:latest
 
 ARG SOURCE
 ARG COMMIT_HASH
@@ -16,22 +16,12 @@ ARG container_user=mosip
 ARG container_user_group=mosip
 
 # can be passed during Docker build as build time environment for github branch to pickup configuration from.
-ARG container_user_uid=1002
+ARG container_user_uid=1001
 
 # can be passed during Docker build as build time environment for github branch to pickup configuration from.
 ARG container_user_gid=1001
 
 ARG KUBECTL_VERSION=1.22.9
-
-
-# install packages and create user
-RUN apk -q update \
-&& apk add -q unzip jq \
-&& addgroup -g ${container_user_gid} ${container_user_group} \
-&& adduser -s /bin/sh -u ${container_user_uid} -G ${container_user_group} -h /home/${container_user} --disabled-password ${container_user} \
-&& curl -LO "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
-&& chmod +x kubectl \
-&& mv kubectl /usr/local/bin/
 
 # set working directory for the user
 WORKDIR /home/${container_user}

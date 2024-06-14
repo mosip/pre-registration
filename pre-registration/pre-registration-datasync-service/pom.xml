@@ -17,6 +17,7 @@
 	<properties>
 		<!-- Mosip kernel -->
 		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
+		<pre.registration.application.service.version>1.2.1-java21-SNAPSHOT</pre.registration.application.service.version>
 		<pre.application.service.version>1.2.1-java21-SNAPSHOT</pre.application.service.version>
 		<kernel.keymanager.version>1.2.1-java21-SNAPSHOT</kernel.keymanager.version>
 		<kernel.ref.idobjectvalidator.version>1.2.1-java21-SNAPSHOT</kernel.ref.idobjectvalidator.version>
@@ -59,6 +60,12 @@
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>io.mosip.preregistration</groupId>
+			<artifactId>pre-registration-application-service</artifactId>
+			<version>${pre.registration.application.service.version}</version>
+			<classifier>lib</classifier>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>

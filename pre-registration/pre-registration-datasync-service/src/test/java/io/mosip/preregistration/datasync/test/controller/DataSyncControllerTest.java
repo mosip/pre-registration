@@ -32,6 +32,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -39,6 +40,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.signatureutil.model.SignatureResponse;
+import io.mosip.preregistration.application.config.Config;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.util.RequestValidator;
@@ -54,6 +56,7 @@ import io.mosip.preregistration.datasync.service.DataSyncService;
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 @RunWith(SpringRunner.class)
 @AutoConfigureMockMvc
+@ContextConfiguration(classes = {Config.class})
 public class DataSyncControllerTest {
 
 	@Autowired

@@ -24,8 +24,8 @@ import lombok.Setter;
 /**
  * This entity class defines the database table details for PreRegistration.
  * 
- * @author Kishan Rathore
- * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  *
  */
 @Component
@@ -38,8 +38,8 @@ public class DemographicEntityConsumed implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6705845720255847210L;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
-	private List<DocumentEntity> documentEntity;
+//	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
+//	private List<DocumentEntity> documentEntity;
 
 //	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "applicationId")
 //	private ApplicationEntity applicationEntity;
