@@ -9,8 +9,9 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -21,12 +22,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import io.mosip.kernel.core.templatemanager.spi.TemplateManager;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -36,33 +43,58 @@ import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
 import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
+import io.mosip.preregistration.core.config.TestConfig;
 import io.mosip.preregistration.core.util.NotificationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.core.util.TemplateUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@TestPropertySource("classpath:application.properties")
+@ContextConfiguration(classes = { TestConfig.class, TestContext.class, WebApplicationContext.class,
+        ObjectMapper.class, TemplateManager.class})
 public class NotificationUtilTest {
-
+    
 	@Value("${emailResourse.url}")
 	private String emailResourseUrl;
 
 	@Value("${smsResourse.url}")
 	private String smsResourseUrl;
+	
+    @Value("${email.acknowledgement.template}")
+    private String emailAcknowledgement;
 
+    @Value("${email.acknowledgement.subject.template}")
+    private String emailAcknowledgementSubject;
+
+    @Value("${cancel.appointment.email.subject}")
+    private String cancelAppointmentEmailSubject;
+
+    @Value("${sms.acknowledgement.template}")
+    private String smsAcknowledgement;
+
+    @Value("${cancel.appoinment.template}")
+    private String cancelAppoinment;
+
+    @Value("${booking.resource.url}")
+    private String getAppointmentResourseUrl;
+
+    @Value("${mosip.utc-datetime-pattern}")
+    private String dateTimeFormat;
+    
 	@MockBean
 	private RequestValidator validator;
 
-	@Autowired
+	@Mock
 	private TemplateUtil templateUtil;
 
-	@Autowired
+	@Mock
 	private ObjectMapper mapper;
 
-	@MockBean(name = "selfTokenRestTemplate")
+	@Mock(name = "selfTokenRestTemplate")
 	RestTemplate restTemplate;
 
-	@Autowired
+	@InjectMocks
 	NotificationUtil notificationUtil;
 
 	private NotificationDTO notificationDTO;
@@ -123,6 +155,16 @@ public class NotificationUtilTest {
 		appEntityResp.setApplicationId("423288662552");
 		appEntityResp.setBookingType(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString());
 		appEntity.setResponse(appEntityResp);
+		
+	    ReflectionTestUtils.setField(notificationUtil, "emailResourseUrl", "emailResourseUrl");
+	    ReflectionTestUtils.setField(notificationUtil, "smsResourseUrl", "smsResourseUrl");
+	    ReflectionTestUtils.setField(notificationUtil, "emailAcknowledgement", "emailAcknowledgement");
+	    ReflectionTestUtils.setField(notificationUtil, "emailAcknowledgementSubject", "emailAcknowledgementSubject");
+	    ReflectionTestUtils.setField(notificationUtil, "cancelAppointmentEmailSubject", "cancelAppointmentEmailSubject");
+	    ReflectionTestUtils.setField(notificationUtil, "smsAcknowledgement", "smsAcknowledgement");
+	    ReflectionTestUtils.setField(notificationUtil, "cancelAppoinment", "cancelAppoinment");
+	    ReflectionTestUtils.setField(notificationUtil, "getAppointmentResourseUrl", "getAppointmentResourseUrl");
+	    ReflectionTestUtils.setField(notificationUtil, "dateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 	}
 
 	@Test

@@ -1,6 +1,10 @@
 package io.mosip.preregistration.datasync.controller;
 
-import javax.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotNull;
+
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -69,7 +73,7 @@ public class DataSyncController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<PreRegistrationIdsDTO>> retrieveAllPreRegids(
 			@RequestBody(required = true) MainRequestDTO<DataSyncRequestDTO> dataSyncDto) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In Datasync controller for retreiving all the pre-registrations for object  " + dataSyncDto);
 		return ResponseEntity.status(HttpStatus.OK).body(dataSyncService.retrieveAllPreRegIds(dataSyncDto));
 	}
@@ -93,7 +97,7 @@ public class DataSyncController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<ApplicationsDTO>> retrieveAllAppointmentsSyncV2(
 			@RequestBody(required = true) MainRequestDTO<DataSyncRequestDTO> dataSyncDto) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In Datasync controller for retreiving all the appointments for  " + dataSyncDto);
 		return ResponseEntity.status(HttpStatus.OK).body(dataSyncService.retrieveAllAppointmentsSyncV2(dataSyncDto));
 	}
@@ -116,7 +120,7 @@ public class DataSyncController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<PreRegArchiveDTO>> retrievePreRegistrations(
 			@PathVariable(required = true, value = "preRegistrationId") String preRegistrationId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In Datasync controller for retreiving pre-registration data with preRegId " + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(dataSyncService.getPreRegistrationData(preRegistrationId));
 	}
@@ -135,7 +139,7 @@ public class DataSyncController {
 	public ResponseEntity<MainResponseDTO<PreRegArchiveDTO>> retrievePreRegistrations(
 			@PathVariable(required = true, value = "preRegistrationId") String preRegistrationId,
 			@PathVariable(required = true, value = "machineId") String machineId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In Datasync controller for retreiving pre-registration data with preRegId and machineId "
 						+ preRegistrationId + " " + machineId);
 		return ResponseEntity.status(HttpStatus.OK)
@@ -161,7 +165,7 @@ public class DataSyncController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<ReverseDatasyncReponseDTO>> storeConsumedPreRegistrationsIds(
 			@NotNull @RequestBody(required = true) MainRequestDTO<ReverseDataSyncRequestDTO> consumedData) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In Datasync controller for storing the consumed preregistration with object" + consumedData);
 		return ResponseEntity.status(HttpStatus.OK).body(dataSyncService.storeConsumedPreRegistrations(consumedData));
 	}

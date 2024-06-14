@@ -13,37 +13,36 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 
-
 public class GenericUtil {
-	
+
 	private GenericUtil() {
 	}
-	
+
 	private static String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
-	
+
 	public static String getCurrentResponseTime() {
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
 	}
-	
+
 	/**
 	 * This method will return the MainResponseDTO with id and version
 	 * 
 	 * @param mainRequestDto
 	 * @return MainResponseDTO<?>
 	 */
-	public  MainResponseDTO<?> getMainResponseDto(MainRequestDTO<?> mainRequestDto ){
-		MainResponseDTO<?> response=new MainResponseDTO<>();
+	public MainResponseDTO<?> getMainResponseDto(MainRequestDTO<?> mainRequestDto) {
+		MainResponseDTO<?> response = new MainResponseDTO<>();
 		response.setId(mainRequestDto.getId());
 		response.setVersion(mainRequestDto.getVersion());
-		
+
 		return response;
 	}
-	
-	public static  <T extends BaseUncheckedException> ResponseEntity<MainResponseDTO<?>> errorResponse(final T e,MainResponseDTO<?> response){
-		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(), 
-				e.getErrorText());
+
+	public static <T extends BaseUncheckedException> ResponseEntity<MainResponseDTO<?>> errorResponse(final T e,
+			MainResponseDTO<?> response) {
+		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(), e.getErrorText());
 		MainResponseDTO<?> errorRes = response;
-		List<ExceptionJSONInfoDTO> errorList=new ArrayList<>();
+		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
 		errorList.add(errorDetails);
 		errorRes.setErrors(errorList);
 		errorRes.setResponsetime(getCurrentResponseTime());

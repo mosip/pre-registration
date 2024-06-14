@@ -14,9 +14,10 @@ import org.springframework.http.client.SimpleClientHttpRequestFactory;
 @Configuration
 public class SSLConfig {
 
-	@Bean
-	public SimpleClientHttpRequestFactory simpleClientHttpRequestFactory() {
-		return new SimpleClientHttpRequestFactory();
-	}
+    //Commenting it as its used from Auth Adapter
+	// @Bean
+	// public SimpleClientHttpRequestFactory simpleClientHttpRequestFactory() {
+	// 	return new SimpleClientHttpRequestFactory();
+	// }
 
 }

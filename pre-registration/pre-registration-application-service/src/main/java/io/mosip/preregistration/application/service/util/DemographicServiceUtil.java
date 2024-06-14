@@ -20,8 +20,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import javax.annotation.PostConstruct;
-
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
@@ -99,6 +97,11 @@ import io.mosip.preregistration.demographic.exception.system.DateParseException;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
 import io.mosip.preregistration.demographic.exception.system.SystemIllegalArgumentException;
+import jakarta.annotation.PostConstruct;
+
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
 
 /**
  * This class provides the utility methods for DemographicService
@@ -106,6 +109,8 @@ import io.mosip.preregistration.demographic.exception.system.SystemIllegalArgume
  * @author Ravi C Balaji
  * @author Sanober Noor
  * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  */
 @Component
 @RefreshScope
@@ -158,11 +163,11 @@ public class DemographicServiceUtil {
 	private ObjectMapper mapper;
 
 	@PostConstruct
-    public void init() {
+	public void init() {
 		mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
 		mapper.registerModule(new JavaTimeModule());
 	}
-	
+
 	/**
 	 * This setter method is used to assign the initial demographic entity values to
 	 * the createDTO
@@ -171,7 +176,8 @@ public class DemographicServiceUtil {
 	 * @return createDTO with the values
 	 */
 	public DemographicResponseDTO setterForCreateDTO(DemographicEntity demographicEntity) {
-		log.info("sessionId", "idType", "id", "In setterForCreateDTO method of pre-registration service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In setterForCreateDTO method of pre-registration service util");
 		JSONParser jsonParser = new JSONParser();
 		DemographicResponseDTO createDto = new DemographicResponseDTO();
 		try {
@@ -185,14 +191,14 @@ public class DemographicServiceUtil {
 			createDto.setUpdatedBy(demographicEntity.getUpdatedBy());
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
 					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage(), ex.getCause());
 		} catch (EncryptionFailedException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw ex;
 		}
@@ -208,7 +214,8 @@ public class DemographicServiceUtil {
 	 */
 	public DemographicCreateResponseDTO setterForCreatePreRegistration(DemographicEntity demographicEntity,
 			JSONObject requestJson) {
-		log.info("sessionId", "idType", "id", "In setterForCreateDTO method of pre-registration service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In setterForCreateDTO method of pre-registration service util");
 		DemographicCreateResponseDTO createDto = new DemographicCreateResponseDTO();
 		try {
 			createDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
@@ -217,8 +224,8 @@ public class DemographicServiceUtil {
 			createDto.setLangCode(demographicEntity.getLangCode());
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
 		} catch (EncryptionFailedException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw ex;
 		}
@@ -233,7 +240,8 @@ public class DemographicServiceUtil {
 	 * @return createDTO with the values
 	 */
 	public DemographicUpdateResponseDTO setterForUpdatePreRegistration(DemographicEntity demographicEntity) {
-		log.info("sessionId", "idType", "id", "In setterForCreateDTO method of pre-registration service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In setterForCreateDTO method of pre-registration service util");
 		JSONParser jsonParser = new JSONParser();
 		DemographicUpdateResponseDTO createDto = new DemographicUpdateResponseDTO();
 		try {
@@ -244,14 +252,14 @@ public class DemographicServiceUtil {
 			createDto.setLangCode(demographicEntity.getLangCode());
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
 		} catch (ParseException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
 					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage(), ex.getCause());
 		} catch (EncryptionFailedException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
 			throw ex;
 		}
@@ -271,26 +279,31 @@ public class DemographicServiceUtil {
 	public DemographicEntity prepareDemographicEntityForCreate(DemographicRequestDTO demographicRequest,
 			String statuscode, String userId, String preRegistrationId) {
 
-		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In prepareDemographicEntity method of pre-registration service util");
 		DemographicEntity demographicEntity = new DemographicEntity();
 		saveAndUpdateApplicationEntity(preRegistrationId, BookingTypeCodes.NEW_PREREGISTRATION.getBookingTypeCode(),
 				ApplicationStatusCode.DRAFT.getApplicationStatusCode(), StatusCodes.APPLICATION_INCOMPLETE.getCode(),
 				userId);
 		demographicEntity.setPreRegistrationId(preRegistrationId);
 		LocalDateTime encryptionDateTime = DateUtils.getUTCCurrentDateTime();
-		log.info("sessionId", "idType", "id", "Encryption start time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption start time : " + DateUtils.getUTCCurrentDateTimeString());
 		byte[] encryptedDemographicDetails = cryptoUtil
 				.encrypt(demographicRequest.getDemographicDetails().toJSONString().getBytes(), encryptionDateTime);
-		log.info("sessionId", "idType", "id", "Encryption end time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption end time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		demographicEntity.setLangCode(demographicRequest.getLangCode());
 		demographicEntity.setCrAppuserId(userId);
 		demographicEntity.setCreatedBy(userId);
 		demographicEntity.setCreateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setStatusCode(statuscode);
-		log.info("sessionId", "idType", "id", "Hashing start time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing start time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setDemogDetailHash(HashUtill.hashUtill(demographicEntity.getApplicantDetailJson()));
-		log.info("sessionId", "idType", "id", "Hashing end time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing end time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setUpdatedBy(userId);
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
@@ -309,23 +322,28 @@ public class DemographicServiceUtil {
 	public DemographicEntity prepareDemographicEntityForUpdate(DemographicEntity demographicEntity,
 			DemographicRequestDTO demographicRequest, String statuscode, String userId, String preRegistrationId)
 			throws EncryptionFailedException {
-		log.info("sessionId", "idType", "id", "In prepareDemographicEntity method of pre-registration service util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In prepareDemographicEntity method of pre-registration service util");
 		ApplicationEntity applicationEntity = findApplicationById(preRegistrationId);
 		saveAndUpdateApplicationEntity(preRegistrationId, applicationEntity.getBookingType(),
 				applicationEntity.getApplicationStatusCode(), applicationEntity.getBookingStatusCode(),
 				applicationEntity.getCrBy());
 		demographicEntity.setPreRegistrationId(preRegistrationId);
 		LocalDateTime encryptionDateTime = DateUtils.getUTCCurrentDateTime();
-		log.info("sessionId", "idType", "id", "Encryption start time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption start time : " + DateUtils.getUTCCurrentDateTimeString());
 		byte[] encryptedDemographicDetails = cryptoUtil
 				.encrypt(demographicRequest.getDemographicDetails().toJSONString().getBytes(), encryptionDateTime);
-		log.info("sessionId", "idType", "id", "Encryption end time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption end time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setApplicantDetailJson(encryptedDemographicDetails);
 		demographicEntity.setLangCode(demographicRequest.getLangCode());
 		demographicEntity.setStatusCode(statuscode);
-		log.info("sessionId", "idType", "id", "Hashing start time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing start time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setDemogDetailHash(HashUtill.hashUtill(demographicEntity.getApplicantDetailJson()));
-		log.info("sessionId", "idType", "id", "Hashing end time : " + DateUtils.getUTCCurrentDateTimeString());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing end time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
 		return demographicEntity;
@@ -340,7 +358,7 @@ public class DemographicServiceUtil {
 	 */
 
 	public Map<String, String> prepareRequestMap(MainRequestDTO<?> requestDto) {
-		log.info("sessionId", "idType", "id", "In prepareRequestMap method of Login Service Util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In prepareRequestMap method of Login Service Util");
 		Map<String, String> requestMap = new HashMap<>();
 		requestMap.put("id", requestDto.getId());
 		requestMap.put("version", requestDto.getVersion());
@@ -367,7 +385,8 @@ public class DemographicServiceUtil {
 	 */
 	public JSONArray getValueFromIdentity(byte[] demographicData, String identityKey)
 			throws ParseException, org.json.simple.parser.ParseException {
-		log.info("sessionId", "idType", "id", "In getValueFromIdentity method of pre-registration service util ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getValueFromIdentity method of pre-registration service util ");
 		JSONParser jsonParser = new JSONParser();
 		JSONObject jsonObj = (JSONObject) jsonParser.parse(new String(demographicData));
 		JSONObject identityObj = (JSONObject) jsonObj.get(DemographicRequestCodes.IDENTITY.getCode());
@@ -387,7 +406,7 @@ public class DemographicServiceUtil {
 	 */
 
 	public String getIdJSONValue(String demographicData, String value) throws ParseException {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getValueFromIdentity method of pe-registration service util to get getIdJSONValue ");
 
 		JSONParser jsonParser = new JSONParser();
@@ -427,7 +446,8 @@ public class DemographicServiceUtil {
 	 * @return true or false
 	 */
 	public boolean checkStatusForDeletion(String statusCode) {
-		log.info("sessionId", "idType", "id", "In checkStatusForDeletion method of pre-registration service util ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In checkStatusForDeletion method of pre-registration service util ");
 
 		if (!statusCode.equals(StatusCodes.EXPIRED.getCode())) {
 			return true;
@@ -442,12 +462,13 @@ public class DemographicServiceUtil {
 	}
 
 	public Date getDateFromString(String date) {
-		log.info("sessionId", "idType", "id", "In getDateFromString method of pre-registration service util ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getDateFromString method of pre-registration service util ");
 		try {
 			return new SimpleDateFormat(utcDateTimePattern).parse(date);
 		} catch (java.text.ParseException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In getDateFromString method of pre-registration service- " + ex.getCause());
 			throw new DateParseException(DemographicErrorCodes.PRG_PAM_APP_011.getCode(),
 					DemographicErrorMessages.UNSUPPORTED_DATE_FORMAT.getMessage(), ex.getCause());
@@ -473,7 +494,7 @@ public class DemographicServiceUtil {
 	 * @return MainResponseDTO<?>
 	 */
 	public MainResponseDTO<?> getMainResponseDto(MainRequestDTO<?> mainRequestDto) {
-		log.info("sessionId", "idType", "id", "In getMainResponseDTO method of Login Common Util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getMainResponseDTO method of Login Common Util");
 		MainResponseDTO<?> response = new MainResponseDTO<>();
 		response.setId(mainRequestDto.getId());
 		response.setVersion(mainRequestDto.getVersion());
@@ -516,14 +537,16 @@ public class DemographicServiceUtil {
 					.append(configLabel + "/").append(filename);
 			// uriBuilder.append(
 			// "http://104.211.212.28:51000/preregistration/dev/master/PreRegistrationIdentitiyMapping.json");
-			log.info("sessionId", "idType", "id", " URL in demographic service util of getJson " + uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					" URL in demographic service util of getJson " + uriBuilder);
 			return restTemplate.getForObject(uriBuilder.toString(), String.class);
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
-			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
-					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+//			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
+//					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+			return null;
 		}
 	}
 
@@ -532,13 +555,14 @@ public class DemographicServiceUtil {
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(pridURl);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callRegCenterDateRestService method of Booking Service URL- " + uriBuilder);
-			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
-					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
+			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = selfTokenrestTemplate.exchange(
+					uriBuilder, HttpMethod.GET, entity,
+					new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
 					});
 			ResponseWrapper<PridFetchResponseDto> body = responseEntity.getBody();
 			if (body != null) {
@@ -556,8 +580,8 @@ public class DemographicServiceUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callRegCenterDateRestService method of Booking Service Util for HttpClientErrorException- "
 							+ ex.getMessage());
 			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
@@ -572,7 +596,7 @@ public class DemographicServiceUtil {
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(idSchemaConfig);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
@@ -587,7 +611,7 @@ public class DemographicServiceUtil {
 				}
 				response = body.getResponse();
 			}
-			
+
 			if (response == null) {
 				throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 						DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
@@ -606,7 +630,7 @@ public class DemographicServiceUtil {
 			Map<String, String> headersMap, Class<?> responseClass) {
 		ResponseEntity<?> response = null;
 		try {
-			log.info("sessionId", "idType", "id", "In getResponseEntity method of Login Common Util");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getResponseEntity method of Login Common Util");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(mediaType);
 			HttpEntity<?> request = null;
@@ -618,10 +642,11 @@ public class DemographicServiceUtil {
 			} else {
 				request = new HttpEntity<>(headers);
 			}
-			log.info("sessionId", "idType", "id", "In call to kernel rest service :" + url);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In call to kernel rest service :" + url);
 			response = restTemplate.exchange(url, httpMethodType, request, responseClass);
 		} catch (RestClientException ex) {
-			log.error("sessionId", "idType", "id", "Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
 		return response;
@@ -643,7 +668,8 @@ public class DemographicServiceUtil {
 		List<Object> demographicKeys = Arrays.asList(
 				((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
 
-		log.debug("IdentitySchemakeys: {} and PreRegIdentitykeys: {}", identityKeys, demographicKeys);
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "IdentitySchemakeys: {" + identityKeys.toString()
+				+ "} and PreRegIdentitykeys: {" + demographicKeys.toString() + "}");
 
 		JSONObject demographicJson = new JSONObject();
 
@@ -662,7 +688,8 @@ public class DemographicServiceUtil {
 
 	public ApplicationEntity saveAndUpdateApplicationEntity(String preId, String bookingTypeCode,
 			String applicationStatusCode, String bookingStatusCode, String userId) {
-		log.info("Creating/Updating an applications in applications table with ID: {}", preId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Creating/Updating an applications in applications table with ID: " + preId);
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(preId);
 		applicationEntity.setApplicationStatusCode(applicationStatusCode);
@@ -676,8 +703,9 @@ public class DemographicServiceUtil {
 		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
-			log.error("Error while persisting applications entity");
-			log.error("Excepction {}", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while persisting applications entity -" + ex.getMessage());
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_009.getCode(),
 					ApplicationErrorMessages.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
 		}
@@ -685,8 +713,9 @@ public class DemographicServiceUtil {
 	}
 
 	public void updateApplicationStatus(String applicationId, String status, String userId) {
-		log.info("Updating applications status in applications table with statuscode: {} for applicationId: {}", status,
-				applicationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Updating applications status in applications table with statuscode: {" + status
+						+ "} for applicationId: {" + applicationId + "}");
 		try {
 			ApplicationEntity applicationEntity = findApplicationById(applicationId);
 			applicationEntity.setBookingStatusCode(status);
@@ -697,16 +726,16 @@ public class DemographicServiceUtil {
 			}
 			applicationRepostiory.update(applicationEntity);
 		} catch (Exception ex) {
-			log.info("Error while updating status for applications");
-			log.info("Excepction {}", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while updating status for applications -" + ex.getMessage());
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
 					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
 		}
-
 	}
 
 	public ApplicationEntity findApplicationById(String applicationId) {
-		log.info("Fetching applications entry for applicationID: {}", applicationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"Fetching applications entry for applicationID: "+ applicationId);
 		ApplicationEntity applicationEntity = null;
 		try {
 			applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
@@ -722,7 +751,7 @@ public class DemographicServiceUtil {
 	}
 
 	public void deleteApplicationFromApplications(String applicationId) {
-		log.info("Deleting applications entry for applicationID: {}", applicationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"Deleting applications entry for applicationID: "+ applicationId);
 		try {
 			applicationRepostiory.deleteById(applicationId);
 		} catch (DatabaseOperationException e) {
@@ -734,7 +763,7 @@ public class DemographicServiceUtil {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public Set<String> getDataCaptureLaanguage(JSONObject jsonObject) {
 
-		log.info("In getDataCaputureLanguage method");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDataCaputureLanguage method");
 
 		Set<String> dataCaptureLang = null;
 
@@ -742,7 +771,7 @@ public class DemographicServiceUtil {
 				.asList(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
 
 		for (Object key : demographicKeys) {
-			log.info("key--->{}", key);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"key--->"+ key);
 
 			Object demograhicObject = ((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).get(key);
 
@@ -761,7 +790,6 @@ public class DemographicServiceUtil {
 				}).collect(Collectors.toSet());
 
 				break;
-
 			}
 		}
 		return dataCaptureLang;
@@ -785,7 +813,6 @@ public class DemographicServiceUtil {
 			attribute.setAttribute((String) key);
 			attribute.setValue(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).get(key));
 			attributeList.add(attribute);
-
 		}
 
 		attributes.setAttributes(attributeList);
@@ -796,20 +823,20 @@ public class DemographicServiceUtil {
 
 	public String getApplicantypeCode(ApplicantTypeRequestDTO applicantTypeRequest) {
 
-		log.info("In getApplicantypeCode method ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"In getApplicantypeCode method ");
 		String applicantTypeCode = null;
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder
 					.fromHttpUrl(masterdataResourseUrl + "/getApplicantType");
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			RequestWrapper<ApplicantTypeRequestDTO> request = new RequestWrapper<>();
 			request.setRequest(applicantTypeRequest);
 			HttpEntity<RequestWrapper<ApplicantTypeRequestDTO>> entity = new HttpEntity<>(request, headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 
-			ResponseEntity<ResponseWrapper<ApplicantTypeResponseDTO>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
-					HttpMethod.POST, entity,
+			ResponseEntity<ResponseWrapper<ApplicantTypeResponseDTO>> responseEntity = selfTokenrestTemplate.exchange(
+					uriBuilder, HttpMethod.POST, entity,
 					new ParameterizedTypeReference<ResponseWrapper<ApplicantTypeResponseDTO>>() {
 					});
 
@@ -820,13 +847,15 @@ public class DemographicServiceUtil {
 							body.getErrors().get(0).getMessage());
 				}
 				ApplicantTypeResponseDTO applicantTypeResponseDTO = body.getResponse();
-				if (applicantTypeResponseDTO != null && applicantTypeResponseDTO.getApplicantType() !=  null) {
-					applicantTypeCode = applicantTypeResponseDTO.getApplicantType().getApplicantTypeCode();	
+				if (applicantTypeResponseDTO != null && applicantTypeResponseDTO.getApplicantType() != null) {
+					applicantTypeCode = applicantTypeResponseDTO.getApplicantType().getApplicantTypeCode();
 				}
 			}
-			
+
 		} catch (RestClientException ex) {
-			log.error("restcall failed to get applicanttype", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"restcall failed to get applicanttype -" + ex.getMessage());
 			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 					DemographicErrorMessages.MASTERDATA_RESTCALL_FAIL.getMessage());
 		}
@@ -836,14 +865,14 @@ public class DemographicServiceUtil {
 	@SuppressWarnings({ "rawtypes" })
 	public ApplicantValidDocumentDto getDocCatAndTypeForApplicantCode(String applicantTypeCode, String langCode) {
 		ResponseWrapper<ApplicantValidDocumentDto> response = new ResponseWrapper<>();
-		log.info("In getDocCatAndTypeForApplicantCode method ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDocCatAndTypeForApplicantCode method ");
 		ResponseEntity<ResponseWrapper<ApplicantValidDocumentDto>> responseEntity = null;
 		try {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(
 					masterdataResourseUrl + "/applicanttype/" + applicantTypeCode + "/languages?languages=" + langCode);
 
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity entity = new HttpEntity<>(headers);
 
 			String uriBuilder = regbuilder.build().encode().toUriString();
@@ -862,7 +891,9 @@ public class DemographicServiceUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.error("restcall failed to get documentcategories for applicanttype code", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"restcall failed to get documentcategories for applicanttype code -" + ex.getMessage());
 			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
 					DemographicErrorMessages.MASTERDATA_RESTCALL_FAIL.getMessage());
 		}
@@ -882,5 +913,4 @@ public class DemographicServiceUtil {
 
 		return mandatoryDocs;
 	}
-
 }

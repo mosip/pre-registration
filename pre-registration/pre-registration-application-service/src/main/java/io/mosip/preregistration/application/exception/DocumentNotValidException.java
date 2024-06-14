@@ -9,8 +9,10 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
 /**
- * This class defines the DocumentNotValidException that occurs when document is
- * invalid
+ * The DocumentNotValidException class represents an exception that occurs when
+ * document is invalid. This class extends {@link BaseUncheckedException} and
+ * includes various constructors for different use cases, as well as a
+ * {@link MainResponseDTO} object for additional error information.
  * 
  * @author Kishan Rathore
  * @since 1.0.0
@@ -19,10 +21,10 @@ import lombok.Getter;
 
 @Getter
 public class DocumentNotValidException extends BaseUncheckedException {
-
 	/** The Constant serialVersionUID. */
-	private static final long serialVersionUID = 5252109871704396987L;
-	
+	private static final long serialVersionUID = 1L;
+
+	/** The main response DTO associated with the exception. */
 	private MainResponseDTO<?> response;
 
 	/**
@@ -34,39 +36,39 @@ public class DocumentNotValidException extends BaseUncheckedException {
 	}
 
 	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 * @param cause
-	 *            pass Error cause
-	 */
-	public DocumentNotValidException(String errorCode, String message, Throwable cause) {
-		super(errorCode, message, cause);
-	}
-
-	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 */
-	public DocumentNotValidException(String errorCode, String message) {
-		super(errorCode, message);
-	}
-	
-	/**
+	 * Constructs a new {@code DocumentNotValidException} with the specified error
+	 * code, error errorMessage, and rootCause.
 	 * 
-	 * @param errorCode
-	 *    	     pass Error code
-	 * @param message
-	 *           pass Error Message
-	 * @param response
-	 * 			 pass response
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error errorMessage.
+	 * @param rootCause    the cause of the error.
 	 */
-	public DocumentNotValidException(String errorCode, String message,MainResponseDTO<?> response) {
-		super(errorCode, message);
-		this.response=response;
+	public DocumentNotValidException(String errorCode, String errorMessage, Throwable cause) {
+		super(errorCode, errorMessage, cause);
 	}
 
+	/**
+	 * Constructs a new {@code DocumentNotValidException} with the specified error
+	 * code and error message.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 */
+	public DocumentNotValidException(String errorCode, String errorMessage) {
+		super(errorCode, errorMessage);
+	}
+
+	/**
+	 * Constructs a new {@code DocumentNotValidException} with the specified error
+	 * code, error message, and response.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param response     the {@link MainResponseDTO} object containing additional
+	 *                     information about the error.
+	 */
+	public DocumentNotValidException(String errorCode, String errorMessage, MainResponseDTO<?> response) {
+		super(errorCode, errorMessage);
+		this.response = response;
+	}
 }

@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
-import org.joda.time.DateTime;
 import org.json.JSONException;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,7 +29,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
@@ -178,7 +176,6 @@ public class DocumentServiceTest {
 		ReflectionTestUtils.setField(documentUploadService, "objectStoreAccountName", "abcd");
 
 		multipartFile = new MockMultipartFile("file", "Doc.pdf", "mixed/multipart", new FileInputStream(file));
-
 	}
 
 	@Test
@@ -553,7 +550,7 @@ public class DocumentServiceTest {
 		documentRequestDTOList.setRequest(documentRequestDTO);
 		responseUpload.setId(documentId);
 		responseUpload.setVersion("12");
-		responseUpload.setResponsetime(DateTime.now().toString());
+		responseUpload.setResponsetime(LocalDateTime.now().toString());
 		responseUpload.setResponse(docResp);
 		requiredRequestMap.put("id", "123");
 		Mockito.doReturn(documentRequestDTOList).when(serviceUtil).createUploadDto(docJson, documentId);
@@ -569,7 +566,7 @@ public class DocumentServiceTest {
 		documentRequestDTOList.setRequest(documentRequestDTO);
 		responseUpload.setId(documentId);
 		responseUpload.setVersion("12");
-		responseUpload.setResponsetime(DateTime.now().toString());
+		responseUpload.setResponsetime(LocalDateTime.now().toString());
 		responseUpload.setResponse(docResp);
 		requiredRequestMap.put("id", "123");
 		Mockito.when(serviceUtil.createUploadDto(Mockito.any(), Mockito.any())).thenReturn(documentRequestDTOList);
@@ -583,5 +580,4 @@ public class DocumentServiceTest {
 	public void setupTest() {
 		documentUploadService.setup();
 	}
-
 }

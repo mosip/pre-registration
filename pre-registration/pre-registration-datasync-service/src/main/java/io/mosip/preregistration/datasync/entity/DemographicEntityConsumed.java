@@ -6,20 +6,13 @@ package io.mosip.preregistration.datasync.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
 
-import io.mosip.preregistration.core.common.entity.DocumentEntity;
-import lombok.AccessLevel;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -40,8 +33,8 @@ public class DemographicEntityConsumed implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6705845720255847210L;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
-	private List<DocumentEntity> documentEntity;
+	//@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
+	//private List<DocumentEntity> documentEntity;
 
 	/** The pre registration id. */
 	@Column(name = "prereg_id", nullable = false)
@@ -49,10 +42,10 @@ public class DemographicEntityConsumed implements Serializable {
 	private String preRegistrationId;
 
 	/** The JSON */
-	@Column(name = "demog_detail")
-	@Setter(AccessLevel.NONE)
+	@Column(name = "demog_detail", nullable = false, columnDefinition = "bytea")
 	private byte[] applicantDetailJson;
 
+	 // Getter and Setter methods for requesttime are overridden manually
 	public void setApplicantDetailJson(byte[] applicantDetailJson) {
 		this.applicantDetailJson = applicantDetailJson != null ? applicantDetailJson.clone() : null;
 	}

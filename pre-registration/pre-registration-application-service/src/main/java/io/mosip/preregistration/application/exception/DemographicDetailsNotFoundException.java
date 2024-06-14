@@ -13,30 +13,30 @@ public class DemographicDetailsNotFoundException extends BaseUncheckedException 
 	private static final long serialVersionUID = 1L;
 	private final MainResponseDTO<?> mainResponseDTO;
 	private List<ExceptionJSONInfoDTO> errorList;
-	
+
 	public List<ExceptionJSONInfoDTO> getErrorList() {
 		return errorList;
 	}
 
-	
 	public MainResponseDTO<?> getMainResposneDTO() {
 		return mainResponseDTO;
 	}
+
 	/**
 	 * @param msg
 	 */
-	public DemographicDetailsNotFoundException(List<ExceptionJSONInfoDTO> errorList,MainResponseDTO<?> response) {
-		this.errorList=errorList;
-		this.mainResponseDTO=response;
+	public DemographicDetailsNotFoundException(List<ExceptionJSONInfoDTO> errorList, MainResponseDTO<?> response) {
+		this.errorList = errorList;
+		this.mainResponseDTO = response;
 	}
 
 	/**
 	 * @param errCode
 	 * @param msg
 	 */
-	public DemographicDetailsNotFoundException(String errCode, String msg,MainResponseDTO<?> response) {
+	public DemographicDetailsNotFoundException(String errCode, String msg, MainResponseDTO<?> response) {
 		super(errCode, msg);
-		this.mainResponseDTO=response;
+		this.mainResponseDTO = response;
 	}
 
 	/**
@@ -44,10 +44,9 @@ public class DemographicDetailsNotFoundException extends BaseUncheckedException 
 	 * @param msg
 	 * @param cause
 	 */
-	public DemographicDetailsNotFoundException(String errCode, String msg, Throwable cause,MainResponseDTO<?> response) {
+	public DemographicDetailsNotFoundException(String errCode, String msg, Throwable cause,
+			MainResponseDTO<?> response) {
 		super(errCode, msg, cause);
-		this.mainResponseDTO=response;
+		this.mainResponseDTO = response;
 	}
 }
-
-

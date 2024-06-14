@@ -1,7 +1,6 @@
 package io.mosip.preregistration.captcha.exception;
 
 import io.mosip.kernel.core.exception.BaseUncheckedException;
-import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 
 public class InvalidRequestCaptchaException extends BaseUncheckedException {
 

@@ -73,6 +73,8 @@ import org.springframework.test.context.ContextConfiguration;
 /**
  * @author Sanober Noor
  * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  */
 
 @RunWith(JUnit4.class)

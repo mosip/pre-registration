@@ -7,30 +7,25 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.2.1-java21-SNAPSHOT</version>
 	</parent>
-	<version>1.2.1-SNAPSHOT</version>
-
 
 	<artifactId>pre-registration-core</artifactId>
-
+	<version>1.2.1-java21-SNAPSHOT</version>
 	<name>pre-registration-core</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 
 	<properties>
-		<kernel.core.version>1.2.1-SNAPSHOT</kernel.core.version>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<kernel.templatemanager.velocity.version>1.2.1-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.logger.logback.version>1.2.1-SNAPSHOT</kernel.logger.logback.version>
-		<kernel.dataaccess.hibernate.version>1.2.1-SNAPSHOT</kernel.dataaccess.hibernate.version>
-
+		<!-- Mosip kernel -->
+		<kernel.templatemanager.velocity.version>1.2.1-java21-SNAPSHOT</kernel.templatemanager.velocity.version>
+		<kernel.logger.logback.version>1.2.1-java21-SNAPSHOT</kernel.logger.logback.version>
+		<kernel.dataaccess.hibernate.version>1.2.1-java21-SNAPSHOT</kernel.dataaccess.hibernate.version>
 	</properties>
 
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring.boot.version}</version>
 			<exclusions>
 				<exclusion>
 					<groupId>com.fasterxml.jackson.datatype</groupId>
@@ -41,13 +36,11 @@
 		<dependency>
 			<groupId>org.apache.httpcomponents</groupId>
 			<artifactId>httpclient</artifactId>
-			<version>${apache.httpclient.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
-			<version>${junit.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.kernel</groupId>
@@ -70,12 +63,6 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.projectlombok</groupId>
-			<artifactId>lombok</artifactId>
-			<version>${lombok.version}</version>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
 			<groupId>io.mosip.kernel</groupId>
 			<artifactId>kernel-logger-logback</artifactId>
 			<version>${kernel.logger.logback.version}</version>
@@ -94,33 +81,15 @@
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
-			<version>${postgresql.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springdoc</groupId>
-			<artifactId>springdoc-openapi-ui</artifactId>
-			<version>1.5.8</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.springframework</groupId>
-					<artifactId>spring-webmvc</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger2</artifactId>
-			<version>${swagger.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>io.springfox</groupId>
-			<artifactId>springfox-swagger-ui</artifactId>
-			<version>${swagger.version}</version>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>${springdoc.openapi.starter.webmvc.ui.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.h2database</groupId>
 			<artifactId>h2</artifactId>
-			<version>${h2.version}</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -131,18 +100,26 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${spring.boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>com.googlecode.json-simple</groupId>
 			<artifactId>json-simple</artifactId>
-			<version>${jsonsimple.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-collections4</artifactId>
-			<version>${commons-collections4.version}</version>
 		</dependency>
-		
+		<dependency>
+			<groupId>org.junit.vintage</groupId>
+			<artifactId>junit-vintage-engine</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
 	</dependencies>
 </project>

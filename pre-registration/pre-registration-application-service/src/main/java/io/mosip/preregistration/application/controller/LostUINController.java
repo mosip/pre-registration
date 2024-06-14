@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.controller;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -26,13 +30,13 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import springfox.documentation.annotations.ApiIgnore;
 
 @RestController
 @Tag(name = "lost-uin-controller", description = "Lost UIN Controller")
@@ -77,8 +81,8 @@ public class LostUINController {
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<ApplicationResponseDTO>> addLostUinApplication(
 			@Validated @RequestBody(required = true) MainRequestDTO<ApplicationRequestDTO> jsonObject,
-			@ApiIgnore Errors errors) {
-		log.info("sessionId", "idType", "id",
+			@ApiParam(hidden = true) Errors errors) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration LostUINController for createNewApplication with json object" + jsonObject);
 		requestValidator.validateId(LOST_UIN_CREATE_ID, jsonObject.getId(), errors);
 		DataValidationUtil.validate(errors, LOST_UIN_CREATE_ID);
@@ -102,7 +106,7 @@ public class LostUINController {
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))), })
 	public ResponseEntity<MainResponseDTO<DeleteApplicationDTO>> deleteLostUinApplication(
 			@PathVariable("applicationId") String applicationId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In pre-registration LostUINController for deleteApplication with preId " + applicationId);
 		return ResponseEntity.status(HttpStatus.OK).body(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
