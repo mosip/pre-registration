@@ -33,6 +33,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * @author Sanober Noor
  * @author Tapaswini Behera
  * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  */
 @RestController
 @Tag(name = "notification-controller", description = "Notification Controller")

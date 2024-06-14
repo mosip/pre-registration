@@ -63,6 +63,8 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
  * @author Jagadishwari S
  * @author Ravi C Balaji
  * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  */
 
 @RestController

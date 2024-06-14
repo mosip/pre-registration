@@ -40,6 +40,8 @@ import io.mosip.preregistration.core.util.ValidationUtil;
 /**
  * @author Sanober Noor
  * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
 @SpringBootTest(classes = DocumentServiceUtil.class)

@@ -70,6 +70,8 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
  * 
  * @author Sanober Noor
  * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  *
  */
 @Component
