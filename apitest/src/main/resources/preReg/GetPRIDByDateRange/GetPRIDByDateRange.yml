@@ -2,6 +2,7 @@ GetPRIDByDateRange:
    Prereg_GetPRIDByDateRange_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/sync
       role: regproc
+      checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRangeResult

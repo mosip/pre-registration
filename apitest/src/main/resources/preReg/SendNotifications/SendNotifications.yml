@@ -1,10 +1,10 @@
 SendNotifications:
    Prereg_SendNotifications_All_Valid_Smoke:
-      endPoint: /preregistration/v1/notification
+      endPoint: /preregistration/v1/notification/notify
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
-      inputTemplate: preReg/SendNotifications/sendNotifications_$LANGNUMBER$
+      inputTemplate: preReg/SendNotifications/sendNotificationsNotify
       outputTemplate: preReg/SendNotifications/sendNotificationsResult
       input: '{ 
     "id":"mosip.pre-registration.notification.notify",
@@ -14,10 +14,9 @@ SendNotifications:
   "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
   "appointmentDate":"$ID:GetAppointmentDetails_BookByPRID_All_Valid_Smoke_sid_appointment_date$",
   "appointmentTime":"$ID:GetAppointmentDetails_BookByPRID_All_Valid_Smoke_sid_time_slot_from$",
-  "mobNum":"9090872300",
-  "emailID":"mosipuser123@mailinator.com",
-  "additionalRecipient":false,
-  "isBatch":false           
+  "mobNum":"9090872333",
+  "emailID":"mosipuser1234@mailinator.com",
+  "isBatch":true           
 }'
       output: '{
 }'
@@ -46,7 +45,7 @@ SendNotifications:
       endPoint: /preregistration/v1/notification
       role: batch
       restMethod: post
-      inputTemplate: preReg/SendNotifications/sendNotifications_$LANGNUMBER$
+      inputTemplate: preReg/SendNotifications/sendNotificationsNotify
       outputTemplate: preReg/error
       input: '{ 
     "id":"mosip.pre-registration.notification.notifyasdf",
@@ -72,7 +71,7 @@ SendNotifications:
       endPoint: /preregistration/v1/notification
       role: batch
       restMethod: post
-      inputTemplate: preReg/SendNotifications/sendNotifications_$LANGNUMBER$
+      inputTemplate: preReg/SendNotifications/sendNotificationsNotify
       outputTemplate: preReg/error
       input: '{ 
     "id":"mosip.pre-registration.notification.notify",
