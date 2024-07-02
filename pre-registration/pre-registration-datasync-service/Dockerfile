@@ -42,6 +42,9 @@ ENV artifactory_url_env=${artifactory_url}
 # environment variable to pass iam_adapter url, at docker runtime
 ENV iam_adapter_url_env=${iam_adapter_url}
 
+# environment variable to pass virusscanner url, at docker runtime
+ENV virusscanner_url_env=${virusscanner_url}
+
 # can be passed during Docker build as build time environment for github branch to pickup configuration from.
 ARG container_user=mosip
 
@@ -90,6 +93,9 @@ CMD if [ "$is_glowroot_env" = "present" ]; then \
     java -jar -javaagent:glowroot/glowroot.jar -Dloader.path="${loader_path_env}" -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
     else \
     wget -q --show-progress "${iam_adapter_url_env}" -O "${loader_path_env}"/kernel-auth-adapter.jar; \
+    wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/io/mosip/kernel/kernel-ref-idobjectvalidator/kernel-ref-idobjectvalidator.jar -O "${loader_path_env}"/kernel-ref-idobjectvalidator.jar ; \
+    wget -q --show-progress "${artifactory_url_env}"/artifactory/libs-release-local/icu4j/kernel-transliteration-icu4j.jar -O "${loader_path_env}"/kernel-transliteration-icu4j.jar ; \
+    wget -q --show-progress "${virusscanner_url_env}" -O "${loader_path_env}"/kernel-virusscanner-clamav.jar; \
     java -jar -Dloader.path="${loader_path_env}" -Dspring.cloud.config.label="${spring_config_label_env}" -Dspring.profiles.active="${active_profile_env}" -Dspring.cloud.config.uri="${spring_config_url_env}" pre-registration-datasync-service.jar ; \
     fi
 
