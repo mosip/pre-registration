@@ -26,7 +26,27 @@
 		<kernel.qrcodegenerator.zxing.version>1.2.1-java21-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
 		<kernel.transliteration.icu4j.version>1.2.1-java21-SNAPSHOT</kernel.transliteration.icu4j.version>
 		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
+		<kernel.bom.version>1.2.1-java21-SNAPSHOT</kernel.bom.version>
+		<lombok.version>1.18.30</lombok.version>
 	</properties>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>io.mosip.kernel</groupId>
+				<artifactId>kernel-bom</artifactId>
+				<version>${kernel.bom.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+			<dependency>
+				<groupId>org.projectlombok</groupId>
+				<artifactId>lombok</artifactId>
+				<version>${lombok.version}</version>
+				<scope>provided</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
