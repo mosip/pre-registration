@@ -544,9 +544,8 @@ public class DemographicServiceUtil {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
-//			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
-//					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
-			return null;
+			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
+					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
 		}
 	}
 
