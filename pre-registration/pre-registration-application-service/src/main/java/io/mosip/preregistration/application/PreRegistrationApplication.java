@@ -2,12 +2,13 @@ package io.mosip.preregistration.application;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.cloud.CloudFoundryVcapEnvironmentPostProcessor;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
 @EnableCaching
-@SpringBootApplication
+@SpringBootApplication(exclude = CloudFoundryVcapEnvironmentPostProcessor.class)
 @ComponentScan(basePackages = { "io.mosip.*", "${mosip.lang.traslate.adapter.impl.basepackage}" }, excludeFilters = {
 		@ComponentScan.Filter(type = FilterType.REGEX, pattern = {
 				"io\\.mosip\\.kernel\\.keymigrate\\.service\\.spi\\.KeyMigratorService",
