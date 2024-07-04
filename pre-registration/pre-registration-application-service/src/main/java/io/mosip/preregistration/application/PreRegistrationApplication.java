@@ -8,7 +8,7 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
 @EnableCaching
-@SpringBootApplication(exclude = CloudFoundryVcapEnvironmentPostProcessor.class)
+@SpringBootApplication
 @ComponentScan(basePackages = { "io.mosip.*", "${mosip.lang.traslate.adapter.impl.basepackage}" }, excludeFilters = {
 		@ComponentScan.Filter(type = FilterType.REGEX, pattern = {
 				"io\\.mosip\\.kernel\\.keymigrate\\.service\\.spi\\.KeyMigratorService",
