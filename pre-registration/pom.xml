@@ -42,7 +42,7 @@
 		<springdoc.openapi.maven.plugin>0.2</springdoc.openapi.maven.plugin>
 
 		<!-- Swagger -->
-		<springdoc.openapi.starter.webmvc.ui.version>2.5.0</springdoc.openapi.starter.webmvc.ui.version>
+		<springdoc.openapi.starter.webmvc.ui.version>2.6.0</springdoc.openapi.starter.webmvc.ui.version>
 
 		<!-- Core -->
 		<spring.version>5.0.4.RELEASE</spring.version>
