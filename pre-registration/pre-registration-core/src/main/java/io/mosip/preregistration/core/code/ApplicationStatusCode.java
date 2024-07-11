@@ -1,7 +1,6 @@
 package io.mosip.preregistration.core.code;
 
 public enum ApplicationStatusCode {
-
 	DRAFT("DRAFT"),
 
 	SUBMITTED("SUBMITTED"),
@@ -17,5 +16,4 @@ public enum ApplicationStatusCode {
 	public String getApplicationStatusCode() {
 		return applicationStatusCode;
 	}
-
 }

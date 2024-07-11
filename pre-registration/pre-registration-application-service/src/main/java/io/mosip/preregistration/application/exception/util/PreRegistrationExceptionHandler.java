@@ -8,8 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.annotation.Resource;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -499,14 +499,14 @@ public class PreRegistrationExceptionHandler {
 		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
 	}
 
-    @ExceptionHandler(HttpMessageNotReadableException.class)
-    public ResponseEntity<ResponseWrapper<ServiceError>> onHttpMessageNotReadable(
-            final HttpServletRequest httpServletRequest, final HttpMessageNotReadableException e) throws IOException {
-        ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
-        String errorMessage = StringUtils.substringBefore(e.getMessage(), ":");
-        ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_015.getCode(), errorMessage);
-        errorResponse.getErrors().add(error);
-        return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+	@ExceptionHandler(HttpMessageNotReadableException.class)
+	public ResponseEntity<ResponseWrapper<ServiceError>> onHttpMessageNotReadable(
+			final HttpServletRequest httpServletRequest, final HttpMessageNotReadableException e) throws IOException {
+		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
+		String errorMessage = StringUtils.substringBefore(e.getMessage(), ":");
+		ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_015.getCode(), errorMessage);
+		errorResponse.getErrors().add(error);
+		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
 	}
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })
@@ -838,11 +838,10 @@ public class PreRegistrationExceptionHandler {
 	public ResponseEntity<MainResponseDTO<?>> primaryKeyValidationException(final PrimaryKeyValidationException e) {
 		return GenericUtil.errorResponse(e, e.getResponse());
 	}
-	
-	
+
 	@ExceptionHandler(DeprecatedException.class)
 	public ResponseEntity<MainResponseDTO<?>> sizeExceedException(DeprecatedException e) {
-		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(),e.getErrorMessage());
+		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(), e.getErrorMessage());
 		MainResponseDTO<?> errorRes = new MainResponseDTO<>();
 		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
 		errorList.add(errorDetails);

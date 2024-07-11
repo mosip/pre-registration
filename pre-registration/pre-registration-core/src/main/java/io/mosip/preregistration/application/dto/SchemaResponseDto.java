@@ -13,9 +13,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SchemaResponseDto {
-
-	
-	/** The id schema. */
-	
+	/** The id schema. */	
 	private JSONObject idSchema;
 }

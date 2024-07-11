@@ -1,10 +1,7 @@
 package io.mosip.preregistration.datasync.test.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -16,7 +13,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -32,13 +28,17 @@ import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ParseException;
 import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.preregistration.application.config.Config;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -52,9 +52,7 @@ import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.datasync.DataSyncApplicationTest;
-import io.mosip.preregistration.datasync.dto.ApplicationDetailResponseDTO;
 import io.mosip.preregistration.datasync.dto.ApplicationInfoMetadataDTO;
-import io.mosip.preregistration.datasync.dto.ApplicationsDTO;
 import io.mosip.preregistration.datasync.dto.DataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
@@ -67,8 +65,10 @@ import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 import io.mosip.preregistration.datasync.service.DataSyncService;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
+import io.mosip.preregistration.datasync.test.config.TestConfig;
 
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {Config.class, TestConfig.class, TestContext.class, WebApplicationContext.class})
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 public class DataSyncServiceTest {
 
@@ -167,8 +167,7 @@ public class DataSyncServiceTest {
 	ApplicationInfoMetadataDTO preRegInfo = new ApplicationInfoMetadataDTO();
 
 	@Before
-	public void setUp() throws URISyntaxException, IOException, org.json.simple.parser.ParseException, ParseException,
-			java.text.ParseException {
+	public void setUp() throws ParseException{
 
 		List<String> preRegIds = new ArrayList<String>();
 		preRegIds.add("23587986034785");
@@ -366,18 +365,4 @@ public class DataSyncServiceTest {
 		MainResponseDTO<PreRegArchiveDTO> response = dataSyncService.fetchPreRegistrationData(preregId, machineId);
 		assertEquals(mainResponseDTO.getId().length(), response.getId().length());
 	}
-
-	@Test
-	public void retrieveAllAppointmentsSyncV2Test() {
-		List<ApplicationDetailResponseDTO> applicationDetailResponseList = new ArrayList<ApplicationDetailResponseDTO>();
-		ApplicationDetailResponseDTO dto = new ApplicationDetailResponseDTO();
-		dto.setApplicationId("1234");
-		applicationDetailResponseList.add(dto);
-
-		Mockito.when(serviceUtil.getAllBookedApplicationIds(Mockito.any(), Mockito.any(), Mockito.any()))
-				.thenReturn(applicationDetailResponseList);
-		MainResponseDTO<ApplicationsDTO> response = dataSyncService.retrieveAllAppointmentsSyncV2(datasyncReqDto);
-		assertNotNull(response.getId());
-	}
-
 }

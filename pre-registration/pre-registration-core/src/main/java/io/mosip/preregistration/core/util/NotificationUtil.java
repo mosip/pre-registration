@@ -1,5 +1,9 @@
 package io.mosip.preregistration.core.util;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.io.IOException;
 import java.util.Date;
 
@@ -80,7 +84,8 @@ public class NotificationUtil {
 	public MainResponseDTO<NotificationResponseDTO> notify(String notificationType, NotificationDTO acknowledgementDTO,
 			MultipartFile file, String bookingType) throws IOException {
 
-		log.info("sessionId", "idType", "id", "In notify method of NotificationUtil service:" + notificationType);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In notify method of NotificationUtil service:" + notificationType);
 
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		if (notificationType.equals(RequestCodes.SMS)) {
@@ -103,7 +108,7 @@ public class NotificationUtil {
 	 */
 	public MainResponseDTO<NotificationResponseDTO> emailNotification(String bookingType,
 			NotificationDTO acknowledgementDTO, MultipartFile file) throws IOException {
-		log.info("sessionId", "idType", "id", "In emailNotification method of NotificationUtil service");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In emailNotification method of NotificationUtil service");
 		HttpEntity<byte[]> doc = null;
 		String fileText = null;
 		if (file != null) {
@@ -148,7 +153,7 @@ public class NotificationUtil {
 		}
 		emailMap.add("mailTo", acknowledgementDTO.getEmailID());
 		HttpEntity<MultiValueMap<Object, Object>> httpEntity = new HttpEntity<>(emailMap, headers);
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In emailNotification method of NotificationUtil service emailResourseUrl: " + emailResourseUrl);
 		try {
 			resp = restTemplate.exchange(emailResourseUrl, HttpMethod.POST, httpEntity,
@@ -180,7 +185,7 @@ public class NotificationUtil {
 	 */
 	public String getEmailSubject(String bookingType, NotificationDTO acknowledgementDTO, String templateTypeCode)
 			throws IOException {
-		log.info("sessionId", "idType", "id", "In getEmailSubject method of NotificationUtil service");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getEmailSubject method of NotificationUtil service");
 		String emailSubject = "";
 		int noOfLang = acknowledgementDTO.getFullName().size();
 		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
@@ -204,7 +209,7 @@ public class NotificationUtil {
 	 */
 	public MainResponseDTO<NotificationResponseDTO> smsNotification(String bookingType,
 			NotificationDTO acknowledgementDTO) throws IOException {
-		log.info("sessionId", "idType", "id", "In smsNotification method of NotificationUtil service");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In smsNotification method of NotificationUtil service");
 		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
 		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
 		String mergeTemplate = null;
@@ -235,7 +240,7 @@ public class NotificationUtil {
 		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<RequestWrapper<SMSRequestDTO>> httpEntity = new HttpEntity<>(req, headers);
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In smsNotification method of NotificationUtil service smsResourseUrl: " + smsResourseUrl);
 		resp = restTemplate.exchange(smsResourseUrl, HttpMethod.POST, httpEntity,
 				new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
@@ -257,34 +262,37 @@ public class NotificationUtil {
 		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> responseEntity = null;
 		String url = getAppointmentResourseUrl + "/appointment/" + preRegId;
 		try {
-			log.info("sessionId", "idType", "id", "In callBookingService method of DemographicServiceUtil" + url);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In callBookingService method of DemographicServiceUtil" + url);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<?> entity = new HttpEntity<>(headers);
-			log.debug("sessionId", "idType", "id", entity.toString());
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, entity.toString());
 			responseEntity = restTemplate.exchange(url, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					});
-			log.debug("sessionId", "idType", "id", responseEntity.toString());
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, responseEntity.toString());
 			MainResponseDTO<BookingRegistrationDTO> body = responseEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
-					log.error("sessionId", "idType", "id", body.getErrors().toString());
+					log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, body.getErrors().toString());
 					response.setErrors(body.getErrors());
 				} else {
 					response.setResponse(body.getResponse());
 				}
 			}
-			log.info("sessionId", "idType", "id", "In call to booking rest service :" + url);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In call to booking rest service :" + url);
 		} catch (Exception ex) {
-			log.debug("sessionId", "idType", "id", "Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Booking rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("Rest call failed");
 		}
 		return response;
 	}
 
 	public String getCurrentResponseTime() {
-		log.info("sessionId", "idType", "id", "In getCurrentResponseTime method of NotificationUtil service");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getCurrentResponseTime method of NotificationUtil service");
 		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
 	}
 }

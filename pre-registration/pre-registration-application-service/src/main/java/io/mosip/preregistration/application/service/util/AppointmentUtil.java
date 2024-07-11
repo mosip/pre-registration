@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.service.util;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -63,14 +67,14 @@ public class AppointmentUtil {
 				.toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<MainResponseDTO<AvailabilityDto>> responseEntity = null;
 
 		try {
-			log.info("Fetching slots availablity for url : {}", constructedAvailablityUrl);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Fetching slots availablity for url : "+ constructedAvailablityUrl);
 			responseEntity = restTemplate.exchange(constructedAvailablityUrl, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<AvailabilityDto>>() {
 					});
@@ -83,8 +87,8 @@ public class AppointmentUtil {
 				response.setResponse(body.getResponse());
 			}
 		} catch (RestClientException ex) {
-			log.error("Error while fetching availablity for regCenterID:{}", regCenterId);
-			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while fetching availablity for regCenterID: "+ regCenterId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_FETCH_AVAILABLITY.getCode(),
 					AppointmentErrorCodes.FAILED_TO_FETCH_AVAILABLITY.getMessage());
 		}
@@ -101,13 +105,13 @@ public class AppointmentUtil {
 				.toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(bookingDTO, headers);
 
 		ResponseEntity<MainResponseDTO<BookingStatusDTO>> responseEntity = null;
 
-		log.info("making an appointment rest call for url : {}", constructedAppointmentUrl);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "making an appointment rest call for url : "+ constructedAppointmentUrl);
 
 		try {
 			responseEntity = restTemplate.exchange(constructedAppointmentUrl, HttpMethod.POST, entity,
@@ -124,8 +128,8 @@ public class AppointmentUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.error("Error while booking an appointment for preRegistrationId:{}", preRegistrationId);
-			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while booking an appointment for preRegistrationId:"+ preRegistrationId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.BOOKING_FAILED.getCode(),
 					AppointmentErrorCodes.BOOKING_FAILED.getMessage());
 		}
@@ -146,10 +150,9 @@ public class AppointmentUtil {
 
 		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> responseEntity = null;
 
-		log.info("Fetching appointment details rest call for url : {}", constructedAppointmentUrl);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Fetching appointment details rest call for url : "+ constructedAppointmentUrl);
 
 		try {
-
 			responseEntity = restTemplate.exchange(constructedAppointmentUrl, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
 					});
@@ -163,8 +166,8 @@ public class AppointmentUtil {
 				response.setResponse(body.getResponse());
 			}
 		} catch (RestClientException ex) {
-			log.error("Error while fetching appointment details for preRegistrationId:{}", preRegistrationId);
-			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while fetching appointment details for preRegistrationId:" + preRegistrationId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_FETCH_APPOINTMENT_DETAILS.getCode(),
 					AppointmentErrorCodes.FAILED_TO_FETCH_APPOINTMENT_DETAILS.getMessage());
 		}
@@ -186,7 +189,7 @@ public class AppointmentUtil {
 
 			HttpEntity<?> entity = new HttpEntity<>(headers);
 
-			log.info("Delete an appointment rest call for url : {}", constructedAppointmentUrl);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Delete an appointment rest call for url : "+ constructedAppointmentUrl);
 
 			responseEntity = restTemplate.exchange(constructedAppointmentUrl, HttpMethod.DELETE, entity,
 					new ParameterizedTypeReference<MainResponseDTO<DeleteBookingDTO>>() {
@@ -202,13 +205,12 @@ public class AppointmentUtil {
 			}
 
 		} catch (RestClientException ex) {
-			log.error("Booking RestCall Exception " + ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Booking RestCall Exception " + ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_DELETE_APPOINTMENT.getCode(),
 					AppointmentErrorCodes.FAILED_TO_DELETE_APPOINTMENT.getMessage());
 		}
 
 		return response.getResponse();
-
 	}
 
 	public CancelBookingResponseDTO cancelAppointment(String preRegistrationId) {
@@ -220,13 +222,13 @@ public class AppointmentUtil {
 				.toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(headers);
 
 		ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> responseEntity = null;
 
-		log.info("Cancel an appointment rest call for url : {}", constructedAppointmentUrl);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Cancel an appointment rest call for url : "+ constructedAppointmentUrl);
 
 		try {
 			responseEntity = restTemplate.exchange(constructedAppointmentUrl, HttpMethod.PUT, entity,
@@ -242,8 +244,8 @@ public class AppointmentUtil {
 				response.setResponse(body.getResponse());
 			}
 		} catch (RestClientException ex) {
-			log.error("Error while Cancelling an appointment for preRegistrationId:{}", preRegistrationId);
-			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Cancelling an appointment for preRegistrationId: "+ preRegistrationId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.CANCEL_APPOINTMENT_FAILED.getCode(),
 					AppointmentErrorCodes.CANCEL_APPOINTMENT_FAILED.getMessage());
 		}
@@ -251,17 +253,17 @@ public class AppointmentUtil {
 	}
 
 	public BookingStatus multiAppointmentBooking(MainRequestDTO<MultiBookingRequest> bookingRequest) {
-		MainResponseDTO<BookingStatus> response =  new MainResponseDTO<>();
+		MainResponseDTO<BookingStatus> response = new MainResponseDTO<>();
 		String constructedAppointmentUrl = UriComponentsBuilder.fromHttpUrl(multiBookingUrl).toUriString();
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(bookingRequest, headers);
 
 		ResponseEntity<MainResponseDTO<BookingStatus>> responseEntity = null;
 
-		log.info("Multi Booking appointment rest call for url : {}", constructedAppointmentUrl);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Multi Booking appointment rest call for url : "+ constructedAppointmentUrl);
 
 		try {
 			responseEntity = restTemplate.exchange(constructedAppointmentUrl, HttpMethod.POST, entity,
@@ -276,14 +278,11 @@ public class AppointmentUtil {
 				}
 				response.setResponse(body.getResponse());
 			}
-
 		} catch (RestClientException ex) {
-			log.error(ERROR_TRACE, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			throw new AppointmentExecption(AppointmentErrorCodes.MULTI_BOOKING_FAILED.getCode(),
 					AppointmentErrorCodes.MULTI_BOOKING_FAILED.getMessage());
 		}
 		return response.getResponse();
-
 	}
-
 }

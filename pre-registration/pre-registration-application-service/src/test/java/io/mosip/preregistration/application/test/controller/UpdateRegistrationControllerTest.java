@@ -1,6 +1,6 @@
 package io.mosip.preregistration.application.test.controller;
 
-import org.joda.time.DateTime;
+import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -93,7 +93,7 @@ public class UpdateRegistrationControllerTest {
 		applicationDto.setBookingType("UPDATE_REGISTRATION");
 		mainResponseDto.setResponse(applicationDto);
 		mainResponseDto.setId(createId);
-		mainResponseDto.setResponsetime(DateTime.now().toString());
+		mainResponseDto.setResponsetime(LocalDateTime.now().toString());
 
 		Mockito.when(applicationService.addLostOrUpdateApplication(mainRequestDto,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString())).thenReturn(mainResponseDto);
@@ -112,8 +112,8 @@ public class UpdateRegistrationControllerTest {
 		Mockito.when(applicationService.deleteLostOrUpdateApplication(applicationId, bookingType)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders
 				.delete("/applications/updateregistration/{applicationId}", applicationId)
-				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+				.param("applicationId", applicationId).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockmvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 

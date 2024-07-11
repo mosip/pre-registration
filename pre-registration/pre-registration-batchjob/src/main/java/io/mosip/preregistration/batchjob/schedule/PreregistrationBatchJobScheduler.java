@@ -14,6 +14,7 @@ import org.springframework.batch.core.repository.JobExecutionAlreadyRunningExcep
 import org.springframework.batch.core.repository.JobInstanceAlreadyCompleteException;
 import org.springframework.batch.core.repository.JobRestartException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -44,18 +45,23 @@ public class PreregistrationBatchJobScheduler {
 	@Autowired
 	private JobLauncher jobLauncher;
 
+	@Qualifier("regCenterPartitionerJob")
 	@Autowired
 	private Job regCenterPartitionerJob;
 
+	@Qualifier("consumedStatusJob")
 	@Autowired
 	private Job consumedStatusJob;
 
+	@Qualifier("expiredStatusJob")
 	@Autowired
 	private Job expiredStatusJob;
 	
+	@Qualifier("updateApplicationForBookingCheckJob")
 	@Autowired
 	private Job updateApplicationForBookingCheckJob;
 
+	@Qualifier("purgeExpiredSlotsJob")
 	@Autowired
 	private Job purgeExpiredSlotsJob;
 

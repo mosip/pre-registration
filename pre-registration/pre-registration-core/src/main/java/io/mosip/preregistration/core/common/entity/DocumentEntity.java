@@ -7,19 +7,17 @@ package io.mosip.preregistration.core.common.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.NamedQuery;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
  * This entity class defines the database table details for Document.
@@ -32,14 +30,12 @@ import lombok.Setter;
  *
  */
 @Entity
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "applicant_document", schema = "prereg")
 @NamedQuery(name = "DocumentEntity.findSingleDocument", query = "SELECT d FROM DocumentEntity d WHERE d.demographicEntity.preRegistrationId= :preId AND d.docCatCode= :catCode")
 public class DocumentEntity implements Serializable {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1692781286748263575L;
 
@@ -144,6 +140,4 @@ public class DocumentEntity implements Serializable {
 	 */
 	@Column(name = "doc_ref_id")
 	private String refNumber;
-
-
 }

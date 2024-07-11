@@ -1,5 +1,9 @@
 package io.mosip.preregistration.core.util;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -7,7 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
-import javax.annotation.PostConstruct;
+import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -111,7 +115,7 @@ public class AuditLogUtil {
 	}
 
 	public void saveAuditDetails(AuditRequestDto auditRequestDto) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In saveAuditDetails method of AugitLogUtil service - " + auditRequestDto);
 
 		auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
@@ -134,7 +138,7 @@ public class AuditLogUtil {
 	}
 
 	public boolean callAuditManager(AuditRequestDto auditRequestDto) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In callAuditManager method of AugitLogUtil service - " + auditRequestDto);
 
 		boolean auditFlag = false;
@@ -143,11 +147,11 @@ public class AuditLogUtil {
 			RequestWrapper<AuditRequestDto> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(auditRequestDto);
 			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<RequestWrapper<AuditRequestDto>> requestEntity = new HttpEntity<>(requestKernel, headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
 
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callAuditManager method of AugitLogUtil service auditUrl: " + uriBuilder);
 			ResponseEntity<String> responseEntity2 = restTemplate.exchange(uriBuilder, HttpMethod.POST, requestEntity,
 					new ParameterizedTypeReference<String>() {
@@ -157,8 +161,8 @@ public class AuditLogUtil {
 					responseToString(response.getResponse()), AuditResponseDto.class);
 			auditFlag = responseDTO.isStatus();
 		} catch (HttpClientErrorException ex) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callAuditManager method of AugitLogUtil Util for HttpClientErrorException- "
 							+ ex.getResponseBodyAsString());
 		}
@@ -191,7 +195,7 @@ public class AuditLogUtil {
 			objectMapper.enable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 			return objectMapper.readValue(serviceResponseBody, responseClass);
 		} catch (IOException e) {
-			log.debug("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(e));
 			throw new ParseResponseException(ErrorCodes.PRG_CORE_REQ_021.getCode(),
 					ErrorMessages.ERROR_WHILE_PARSING.getMessage(), null);
 
@@ -206,7 +210,7 @@ public class AuditLogUtil {
 	 * @return
 	 */
 	public void saveAuditDetails(AuditRequestDto auditRequestDto, HttpHeaders header) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In saveAuditDetails method of AugitLogUtil service - " + auditRequestDto);
 
 		auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
@@ -228,7 +232,6 @@ public class AuditLogUtil {
 		callAuditManager(auditRequestDto, header);
 	}
 
-
 	/**
 	 * For Auditing Login Services
 	 * 
@@ -237,7 +240,7 @@ public class AuditLogUtil {
 	 * @return
 	 */
 	public boolean callAuditManager(AuditRequestDto auditRequestDto, HttpHeaders headers) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In callAuditManager method of AugitLogUtil service - " + auditRequestDto);
 
 		boolean auditFlag = false;
@@ -248,7 +251,7 @@ public class AuditLogUtil {
 			HttpEntity<RequestWrapper<AuditRequestDto>> requestEntity = new HttpEntity<>(requestKernel, headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
 
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callAuditManager method of AugitLogUtil service auditUrl: " + uriBuilder);
 			ResponseEntity<ResponseWrapper<AuditResponseDto>> responseEntity2 = restTemplate.exchange(uriBuilder,
 					HttpMethod.POST, requestEntity,
@@ -259,11 +262,10 @@ public class AuditLogUtil {
 				auditFlag = body.getResponse().isStatus();
 			}
 		} catch (HttpClientErrorException ex) {
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callAuditManager method of AugitLogUtil Util for HttpClientErrorException- "
 							+ ex.getResponseBodyAsString());
 		}
 		return auditFlag;
 	}
-
 }

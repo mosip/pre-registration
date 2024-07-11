@@ -425,7 +425,7 @@
 ////	public void successSaveImplTest() throws Exception {
 ////
 ////		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
-////		requestMap.put("id", createId);
+////		requestMap.put(LOGGER_ID createId);
 ////		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 ////		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
 ////        PridFetchResponseDto dto=new PridFetchResponseDto();
@@ -472,7 +472,7 @@
 ////		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
 ////		HttpServerErrorException errorException = new HttpServerErrorException(HttpStatus.BAD_GATEWAY, "httpError");
 ////
-////		requestMap.put("id", createId);
+////		requestMap.put(LOGGER_ID createId);
 ////		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 ////		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
 ////
@@ -519,7 +519,7 @@
 //// 		DataAccessLayerException exception = new DataAccessLayerException(ErrorCodes.PRG_PAM_APP_002.toString(),
 //// 				ErrorMessages.PRE_REGISTRATION_TABLE_NOT_ACCESSIBLE.toString(), null);
 //// 		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
-//// 		requestMap.put("id", createId);
+//// 		requestMap.put(LOGGER_ID createId);
 //// 		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 //// 		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
 //
@@ -547,7 +547,7 @@
 //	@Test
 //	public void successUpdateTest() throws Exception {
 //		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
-//		requestMap.put("id", updateId);
+//		requestMap.put(LOGGER_ID updateId);
 //		request.setId(updateId);
 //		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 //		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
@@ -573,7 +573,7 @@
 //	 * updateFailureCheck() throws Exception { HttpRequestException exception = new
 //	 * HttpRequestException(ErrorCodes.PRG_PAM_APP_007.name(),
 //	 * ErrorMessages.JSON_PARSING_FAILED.name()); byte[] encryptedDemographicDetails
-//	 * = { 1, 0, 1, 0, 1, 0 }; requestMap.put("id", updateId);
+//	 * = { 1, 0, 1, 0, 1, 0 }; requestMap.put(LOGGER_ID updateId);
 //	 * request.setId(updateId);
 //	 * Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 //	 * Mockito.when(cryptoUtil.encrypt(Mockito.any(),
@@ -660,7 +660,7 @@
 ////	public void invalidUserTest() throws FileNotFoundException, IOException, org.json.simple.parser.ParseException,
 ////			IdObjectIOException, IdObjectValidationFailedException, InvalidIdSchemaException {
 ////		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
-////		requestMap.put("id", updateId);
+////		requestMap.put(LOGGER_ID updateId);
 ////		request.setId(updateId);
 ////		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 ////		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
@@ -687,7 +687,7 @@
 ////			org.json.simple.parser.ParseException, IdObjectIOException, IdObjectValidationFailedException, InvalidIdSchemaException {
 ////		HttpServerErrorException errorException = new HttpServerErrorException(HttpStatus.BAD_GATEWAY, "httpError");
 ////		byte[] encryptedDemographicDetails = jsonTestObject.toJSONString().getBytes();// { 1, 0, 1, 0, 1, 0 };
-////		requestMap.put("id", updateId);
+////		requestMap.put(LOGGER_ID updateId);
 ////		request.setId(updateId);
 ////		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 ////		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn(encryptedDemographicDetails);
@@ -912,7 +912,7 @@
 //		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> respEntity = new ResponseEntity<>(dto, HttpStatus.OK);
 //
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingRegistrationDTO>>() {
@@ -1128,7 +1128,7 @@
 //		Mockito.when(demographicRepository.findBypreRegistrationId(preRegId)).thenReturn(null);
 //
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(MainResponseDTO.class))).thenThrow(exception);
 //		preRegistrationService.deleteIndividual(preRegId, userId);
@@ -1166,7 +1166,7 @@
 //		MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId1 = new MainResponseDTO<>();
 //		deleteAllByPreId1.setErrors(fullname);
 //		Mockito.when(documentServiceIntf.deleteAllByPreId(Mockito.anyString())).thenReturn(deleteAllByPreId1);
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
 //				}), Mockito.anyMap())).thenReturn(res);
@@ -1213,7 +1213,7 @@
 //		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 //				HttpStatus.OK);
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId1 = new MainResponseDTO<>();
 //		deleteAllByPreId1.setErrors(null);
 //		Mockito.when(documentServiceIntf.deleteAllByPreId(Mockito.anyString())).thenReturn(deleteAllByPreId1);
@@ -1267,7 +1267,7 @@
 //		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 //				HttpStatus.OK);
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
 //				}))).thenReturn(res);
@@ -1315,7 +1315,7 @@
 //		ResponseEntity<MainResponseDTO<DeleteBookingDTO>> res1 = new ResponseEntity<>(delBookingResponseDTO,
 //				HttpStatus.OK);
 //		HttpHeaders headers = new HttpHeaders();
-//		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//		headers.setContentType(MediaType.APPLICATION_JSON);
 //		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.DELETE), Mockito.any(),
 //				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<DocumentDeleteResponseDTO>>() {
 //				}), Mockito.anyMap())).thenReturn(res);
@@ -1334,7 +1334,7 @@
 //	@Test
 //	public void updateByPreIdTest() {
 //		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(preRegistrationEntity);
-//		requestMap.put("id", createId);
+//		requestMap.put(LOGGER_ID createId);
 //		request.setId(updateId);
 //		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 //		createPreRegistrationDTO = new DemographicRequestDTO();
@@ -1375,7 +1375,7 @@
 //	// HttpStatus.OK);
 //	//
 //	// HttpHeaders headers = new HttpHeaders();
-//	// headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+//	// headers.setContentType(MediaType.APPLICATION_JSON);
 //	//
 //	// MainResponseDTO<DocumentDeleteResponseDTO> deleteAllByPreId = new
 //	// MainResponseDTO<>();
@@ -1394,7 +1394,7 @@
 //// 	@Test(expected = RecordNotFoundException.class)
 //// 	public void RecordNotFoundExceptionTest() {
 //// 		Mockito.when(demographicRepository.findBypreRegistrationId("98746563542672")).thenReturn(null);
-//// 		requestMap.put("id", createId);
+//// 		requestMap.put(LOGGER_ID createId);
 //// 		request.setId(updateId);
 ////		Mockito.when(serviceUtil.prepareRequestMap(request)).thenReturn(requestMap);
 //// 		createPreRegistrationDTO = new DemographicRequestDTO();

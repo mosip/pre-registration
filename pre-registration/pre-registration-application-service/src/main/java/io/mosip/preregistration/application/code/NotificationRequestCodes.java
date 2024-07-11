@@ -10,6 +10,8 @@ package io.mosip.preregistration.application.code;
  * 
  * @author Sanober Noor
  * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  */
 
 public enum NotificationRequestCodes {

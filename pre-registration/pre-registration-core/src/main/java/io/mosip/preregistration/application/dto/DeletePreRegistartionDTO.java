@@ -33,7 +33,7 @@ public class DeletePreRegistartionDTO implements Serializable {
 
 	/** The create date time. */
 	private Date deletedDateTime;
-	
+
 	public void setPreRegistrationId(String preRegistrationId) {
 		this.preRegistrationId = preRegistrationId;
 	}
@@ -43,6 +43,6 @@ public class DeletePreRegistartionDTO implements Serializable {
 	}
 
 	public void setDeletedDateTime(Date deletedDateTime) {
-		this.deletedDateTime =deletedDateTime !=null ? new Date(deletedDateTime.getTime()) : null;
+		this.deletedDateTime = deletedDateTime != null ? new Date(deletedDateTime.getTime()) : null;
 	}
 }

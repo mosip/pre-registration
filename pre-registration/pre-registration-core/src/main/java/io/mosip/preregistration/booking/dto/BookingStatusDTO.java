@@ -1,11 +1,8 @@
 package io.mosip.preregistration.booking.dto;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class BookingStatusDTO {
-	
 	private String bookingMessage;
 }
