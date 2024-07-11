@@ -592,22 +592,57 @@ CreatePrereg:
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
-      outputTemplate: preReg/error
+      outputTemplate: preReg/createPrereg/createPreregResult
       input: '{
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$, 
-  "dateOfBirth": "2045/01/01",
+  "dateOfBirth": "1996/01/01",
   "version": "1.0",
   "langCode": "$1STLANG$",
   "requesttime": "$TIMESTAMP$",
   "id": "mosip.pre-registration.demographic.create"
 }'
       output: '{
-      "errors": [
-    {
-      "errorCode": "KER-IOV-004"
-    }
-  ]
+}'
+   Prereg_CreatePrereg_cancell_incomplete_prid_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
+   Prereg_CreatePrereg_cancell_pending_appoinment_prid_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
 }'

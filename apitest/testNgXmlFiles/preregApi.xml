@@ -31,6 +31,9 @@
 			<class name="io.mosip.testrig.apirig.testscripts.CreatePreReg" />
 		</classes>
 	</test>
+	
+	
+	
 	 <test name="UpdatePreregistration">
 		<parameter name="ymlFile"
 			value="preReg/UpdatePreregistration/UpdatePreregistration.yml" />
@@ -39,6 +42,8 @@
 			<class name="io.mosip.testrig.apirig.testscripts.UpdatePrereg" />
 		</classes>
 	</test>
+	
+	
 	<test name="GetApplicationWithPrId">
 		<parameter name="ymlFile"
 			value="preReg/GetApplicationWithPrId/GetApplicationWithPrId.yml" />
@@ -70,6 +75,7 @@
 			<class name="io.mosip.testrig.apirig.testscripts.PostWithFormPathParamAndFile" />
 		</classes>
 	</test>
+	
 	<test name="UpdateDocRefID">
 		<parameter name="ymlFile"
 			value="preReg/UpdateDocRefID/UpdateDocRefID.yml" />
@@ -86,6 +92,7 @@
 		</classes>
 	</test> 
 	
+	
 	<test name="UpdatePreRegStatus">
 		<parameter name="ymlFile"
 			value="preReg/UpdatePreRegStatus/updatePreRegStatus.yml" />
@@ -94,6 +101,8 @@
 			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
 		</classes>
 	</test>
+	
+	
 	<test name="GetAllDocForPrId">
 		<parameter name="ymlFile"
 			value="preReg/GetAllDocForPrId/GetAllDocForPrId.yml" />
@@ -120,9 +129,11 @@
 			value="preReg/bookAppointment/bookAppointment.yml" />
 		<parameter name="pathParams" value="preRegistrationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PostWithPathParamsAndBody" />
+			<class name="io.mosip.testrig.apirig.testscripts.BookAppoinment" />
 		</classes>
 	</test>
+	
+	
 	
 	<test name="FetchAppointmentDetailsByPrid">
 		<parameter name="ymlFile"
@@ -141,6 +152,7 @@
 	</test>
 	
 	
+	
 	<test name="GetAppointmentDetails">
 		<parameter name="ymlFile"
 			value="preReg/GetAppointmentDetails/GetAppointmentDetails.yml" />
@@ -149,6 +161,26 @@
 			<class name="io.mosip.testrig.apirig.testscripts.GetWithParamForAutoGenId" />  
 		</classes>
 	</test> 
+	
+	<test name="CancelAppointment">
+		<parameter name="ymlFile"
+			value="preReg/CancelAppointment/CancelAppointment.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
+		</classes>
+	</test>
+	
+	
+	<test name="CancelApplicationsAppointment">
+		<parameter name="ymlFile"
+			value="preReg/CancelApplicationsAppointment/CancelApplicationsAppointment.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
+		</classes>
+	</test>
+	
+	
+	
 	<test name="GetAvailableSlotForRegCentreId">
 		<parameter name="ymlFile"
 			value="preReg/GetAvailableSlotForRegCentreId/GetAvailableSlotForRegCentreId.yml" />
@@ -156,6 +188,15 @@
 			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
 		</classes>
 	</test>
+	
+	<test name="GetBookingsForRegCenter">
+		<parameter name="ymlFile"
+			value="preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+	</test>
+	
 	<test name="GetPRIDForRegCent">
 		<parameter name="ymlFile"
 			value="preReg/GetPRIDForRegCent/GetPRIDForRegCent.yml" />
@@ -180,6 +221,9 @@
 			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
+	
+	
+	
 	<test name="DeleteAllDocForaPRID">
 		<parameter name="ymlFile"
 			value="preReg/DeleteAllDocForaPRID/DeleteAllDocForaPRID.yml" />
@@ -187,20 +231,9 @@
 			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
-	<test name="CancelAppointment">
-		<parameter name="ymlFile"
-			value="preReg/CancelAppointment/CancelAppointment.yml" />
-		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
-		</classes>
-	</test>
-	<test name="CancelApplicationsAppointment">
-		<parameter name="ymlFile"
-			value="preReg/CancelApplicationsAppointment/CancelApplicationsAppointment.yml" />
-		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
-		</classes>
-	</test>
+	
+
+	
 	<test name="DeleteBooking">
 		<parameter name="ymlFile"
 			value="preReg/DeleteBooking/DeleteBooking.yml" />
@@ -208,6 +241,9 @@
 			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
+	
+	
+	
 	<test name="InvalidateToken">
 		<parameter name="ymlFile"
 			value="preReg/InvalidateToken/InvalidateToken.yml" />
@@ -267,6 +303,9 @@
 			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
+	
+	
+	
 	<test name="DeletePreRegistration">
 		<parameter name="ymlFile"
 			value="preReg/DeletePreRegistration/DeletePreRegistration.yml" />
@@ -274,6 +313,7 @@
 			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
+	
 	
 	 <test name="GetPreRegInfo">
 		<parameter name="ymlFile"

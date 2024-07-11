@@ -11,3 +11,32 @@ GetAllApplicationsWithapplicationId:
 }'
       output: '{
 }'
+   Prereg_GetAllApplicationsWithapplicationId_with_expired:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId
+      outputTemplate: preReg/GetAllApplicationsWithapplicationId/getAllApplicationsResult
+      input: '{
+   "applicationId": "$ID:CreatePrereg_with_future_date_preRegistrationId$"
+}'
+      output: '{
+}'
+   Prereg_GetAllApplicationsWithapplicationId_with_invalid_app;icationId:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId
+      outputTemplate: preReg/error
+      input: '{
+   "applicationId": "26363gdgdb@636e4gdg"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_016"
+    }
+  ]
+}'

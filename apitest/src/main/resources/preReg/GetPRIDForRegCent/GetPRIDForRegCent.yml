@@ -1,6 +1,6 @@
 GetPRIDForRegCent:
    Prereg_GetPRIDForRegCent_All_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/appointment/preRegistrationId/{registrationCenterId}?from_date=2020-10-01&to_date=2024-10-13
+      endPoint: /preregistration/v1/appointment/preRegistrationId/{registrationCenterId}?from_date=2020-10-01&to_date=2034-10-13
       role: batch
       restMethod: get
       inputTemplate: preReg/GetPRIDForRegCent/getPRIDForRegCent
