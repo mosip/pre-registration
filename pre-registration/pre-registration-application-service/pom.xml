@@ -6,11 +6,11 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.1-java21-SNAPSHOT</version>
+		<version>1.2.1-SNAPSHOT</version>
 	</parent>
 	
 	<artifactId>pre-registration-application-service</artifactId>
-	<version>1.2.1-java21-SNAPSHOT</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<name>Pre-Registration Application Service Project</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 	
@@ -20,13 +20,13 @@
 		<org.ehcache.version>3.10.8</org.ehcache.version>
 
 		<!-- Mosip kernel -->
-		<kernel.khazana.version>1.2.1-java21-SNAPSHOT</kernel.khazana.version>
-		<kernel.idobjectvalidator.version>1.2.1-java21-SNAPSHOT</kernel.idobjectvalidator.version>
-		<kernel.templatemanager.velocity.version>1.2.1-java21-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.qrcodegenerator.zxing.version>1.2.1-java21-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
-		<kernel.transliteration.icu4j.version>1.2.1-java21-SNAPSHOT</kernel.transliteration.icu4j.version>
-		<pre.registration.core.version>1.2.1-java21-SNAPSHOT</pre.registration.core.version>
-		<kernel.bom.version>1.2.1-java21-SNAPSHOT</kernel.bom.version>
+		<kernel.khazana.version>1.2.1-SNAPSHOT</kernel.khazana.version>
+		<kernel.idobjectvalidator.version>1.2.1-SNAPSHOT</kernel.idobjectvalidator.version>
+		<kernel.templatemanager.velocity.version>1.2.1-SNAPSHOT</kernel.templatemanager.velocity.version>
+		<kernel.qrcodegenerator.zxing.version>1.2.1-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
+		<kernel.transliteration.icu4j.version>1.2.1-SNAPSHOT</kernel.transliteration.icu4j.version>
+		<pre.registration.core.version>1.2.1-SNAPSHOT</pre.registration.core.version>
+		<kernel.bom.version>1.2.1-SNAPSHOT</kernel.bom.version>
 		<lombok.version>1.18.30</lombok.version>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 	</properties>
