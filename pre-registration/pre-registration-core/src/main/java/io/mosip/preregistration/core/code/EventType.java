@@ -16,5 +16,4 @@ public enum EventType {
 
 	/** The security. */
 	SECURITY,
-
 }

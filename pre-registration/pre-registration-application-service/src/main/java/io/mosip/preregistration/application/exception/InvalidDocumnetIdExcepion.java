@@ -6,17 +6,19 @@ package io.mosip.preregistration.application.exception;
 
 import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 
 /**
- * This class defines the DocumentFailedToUploadException that occurs when
- * document upload fails
+ * The InvalidDocumnetIdExcepion class represents an exception indicating an
+ * invalid document ID. This class extends {@link BaseUncheckedException} and
+ * includes various constructors for different use cases, as well as a
+ * {@link MainResponseDTO} object for additional error information.
  * 
  * @author Kishan Rathore
  * @since 1.0.0
  * 
  */
 public class InvalidDocumnetIdExcepion extends BaseUncheckedException {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7303748392658525834L;
 
@@ -28,43 +30,43 @@ public class InvalidDocumnetIdExcepion extends BaseUncheckedException {
 	}
 
 	/**
-	 * @param message
-	 *            pass Error Message
+	 * Constructs a new {@code InvalidDocumnetIdExcepion} with the specified error
+	 * message
+	 * 
+	 * @param errorMessage the detailed error message.
 	 */
-	public InvalidDocumnetIdExcepion(String message) {
-		super(DocumentErrorCodes.PRG_PAM_DOC_009.toString(), message);
+	public InvalidDocumnetIdExcepion(String errorMessage) {
+		super(DocumentErrorCodes.PRG_PAM_DOC_009.toString(), errorMessage);
 	}
 
 	/**
-	 * @param message
-	 *            pass Error Message
-	 * @param cause
-	 *            pass Error cause
+	 * Constructs a new {@code InvalidDocumnetIdExcepion} with the specified error
+	 * message, and rootCause.
+	 * 
+	 * @param errorMessage the detailed error message.
+	 * @param rootCause    the cause of the error.
 	 */
-	public InvalidDocumnetIdExcepion(String message, Throwable cause) {
-		super(DocumentErrorCodes.PRG_PAM_DOC_009.toString(), message, cause);
+	public InvalidDocumnetIdExcepion(String errorMessage, Throwable rootCause) {
+		super(DocumentErrorCodes.PRG_PAM_DOC_009.toString(), errorMessage, rootCause);
 	}
 
 	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 * @param cause
-	 *            pass Error cause
+	 * Constructs a new {@code InvalidDocumnetIdExcepion} with the specified error
+	 * code, error message, and rootCause.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param rootCause    the cause of the error.
 	 */
-	public InvalidDocumnetIdExcepion(String errorCode, String message, Throwable cause) {
-		super(errorCode, message, cause);
+	public InvalidDocumnetIdExcepion(String errorCode, String message, Throwable rootCause) {
+		super(errorCode, message, rootCause);
 	}
 
 	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
+	 * @param errorCode pass Error code
+	 * @param message   pass Error Message
 	 */
 	public InvalidDocumnetIdExcepion(String errorCode, String message) {
 		super(errorCode, message);
 	}
-
 }

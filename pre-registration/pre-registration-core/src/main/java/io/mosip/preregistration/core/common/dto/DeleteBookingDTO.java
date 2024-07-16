@@ -3,10 +3,8 @@ package io.mosip.preregistration.core.common.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -16,14 +14,13 @@ import lombok.ToString;
  * @author Tapaswini Behera
  * @since 1.0.0
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 public class DeleteBookingDTO implements Serializable {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+
 	/** The pre-registration-Id. */
 	private String preRegistrationId;
 
@@ -31,17 +28,14 @@ public class DeleteBookingDTO implements Serializable {
 	private String deletedBy;
 
 	/** The create date time. */
-	@Setter(AccessLevel.NONE)
-	@Getter(AccessLevel.NONE)
 	private Date deletedDateTime;
 
+	// Getter and Setter methods for requesttime are overridden manually
 	public Date getDeletedDateTime() {
-		return deletedDateTime!=null? new Date(deletedDateTime.getTime()):null;
+		return deletedDateTime != null ? new Date(deletedDateTime.getTime()) : null;
 	}
 
 	public void setDeletedDateTime(Date deletedDateTime) {
-		this.deletedDateTime =deletedDateTime !=null ? new Date(deletedDateTime.getTime()):null;
+		this.deletedDateTime = deletedDateTime != null ? new Date(deletedDateTime.getTime()) : null;
 	}
-	
 }
-

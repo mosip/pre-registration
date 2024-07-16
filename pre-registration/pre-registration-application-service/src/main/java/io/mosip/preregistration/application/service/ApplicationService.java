@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.service;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -133,7 +137,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 	}
 
 	public MainResponseDTO<String> saveUIEventAudit(UIAuditRequest auditRequest) {
-		log.info("In saveUIEventAudit method");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In saveUIEventAudit method");
 		MainResponseDTO<String> response = new MainResponseDTO<String>();
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		response.setVersion(version);
@@ -148,12 +152,12 @@ public class ApplicationService implements ApplicationServiceIntf {
 					.concat("Consent_Text: " + HMACUtils2.digestAsPlainText(template.getBytes()));
 			auditRequest.setDescription(hashedDescription);
 			AuditRequestDto auditRequestDto = setAuditValues(auditRequest);
-			log.info("In saveUIEventAudit method saving audit  details {}", auditRequestDto);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In saveUIEventAudit method saving audit  details "+ auditRequestDto);
 			auditUtil.saveAuditDetails(auditRequestDto);
-			log.info("Request audit logged successfully");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Request audit logged successfully");
 			response.setResponse("Audit Logged Successfully");
 		} catch (Exception ex) {
-			log.error("Exception error occured while saving audit Request {}", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Exception error occured while saving audit Request ", ex);
 			throw new AuditFailedException(ApplicationErrorCodes.PRG_APP_007.getCode(),
 					ApplicationErrorMessages.AUDIT_FAILED.getMessage());
 		}
@@ -287,18 +291,18 @@ public class ApplicationService implements ApplicationServiceIntf {
 	@Override
 	public MainResponseDTO<ApplicationResponseDTO> addLostOrUpdateApplication(
 			MainRequestDTO<ApplicationRequestDTO> request, String bookingType) {
-		log.info("sessionId", "idType", "id", "In addLostOrUpdateApplication method of pre-registration service ");
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In addLostOrUpdateApplication method of pre-registration service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Add Application start time : " + DateUtils.getUTCCurrentDateTimeString());
 		MainResponseDTO<ApplicationResponseDTO> mainResponseDTO = null;
 		boolean isSuccess = false;
 		try {
-			log.info("sessionId", "idType", "id", "bookingType : " + bookingType);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "bookingType : " + bookingType);
 			mainResponseDTO = (MainResponseDTO<ApplicationResponseDTO>) serviceUtil.getMainResponseDto(request);
 			ApplicationRequestDTO applicationRequest = request.getRequest();
 			validationUtil.langvalidation(applicationRequest.getLangCode());
 			String applicationId = serviceUtil.generateId();
-			log.info("sessionId", "idType", "id", "applicationId : " + applicationId);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "applicationId : " + applicationId);
 			ApplicationEntity applicationEntity = serviceUtil.saveAndUpdateApplicationEntity(applicationId, bookingType,
 					ApplicationStatusCode.SUBMITTED.getApplicationStatusCode(),
 					StatusCodes.PENDING_APPOINTMENT.getCode(), authUserDetails().getUserId());
@@ -315,17 +319,17 @@ public class ApplicationService implements ApplicationServiceIntf {
 			appplicationResponse.setUpdatedDateTime(serviceUtil.getLocalDateString(applicationEntity.getUpdDtime()));
 			mainResponseDTO.setResponse(appplicationResponse);
 			mainResponseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
-			log.info("sessionId", "idType", "id",
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Add Application n end time : " + DateUtils.getUTCCurrentDateTimeString());
 		} catch (HttpServerErrorException | HttpClientErrorException e) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(e));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(e));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration service of addLostOrUpdateApplication - " + e.getResponseBodyAsString());
 			List<ServiceError> errorList = ExceptionUtils.getServiceErrorList(e.getResponseBodyAsString());
 			new DemographicExceptionCatcher().handle(new DemographicServiceException(errorList, null), mainResponseDTO);
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration service of addLostOrUpdateApplication- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, mainResponseDTO);
 		} finally {
@@ -380,7 +384,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 	@Override
 	public MainResponseDTO<DeleteApplicationDTO> deleteLostOrUpdateApplication(String applicationId,
 			String bookingType) {
-		log.info("sessionId", "idType", "id", "In deleteLostOrUpdateApplication method of pre-registration service ");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In deleteLostOrUpdateApplication method of pre-registration service ");
 		MainResponseDTO<DeleteApplicationDTO> response = new MainResponseDTO<>();
 		DeleteApplicationDTO deleteDto = new DeleteApplicationDTO();
 		Map<String, String> requestParamMap = new HashMap<>();
@@ -422,8 +426,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 			}
 			isDeleteSuccess = true;
 		} catch (Exception ex) {
-			log.error("sessionId", "idType", "id", ExceptionUtils.getStackTrace(ex));
-			log.error("sessionId", "idType", "id",
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In pre-registration deleteLostOrUpdateApplication service- " + ex.getMessage());
 			new DemographicExceptionCatcher().handle(ex, response);
 		} finally {
@@ -461,12 +465,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedBy(userId);
-			log.info("Number of applications found for the current user: {}", applicationEntities.size());
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
-			log.error("Error while Getting the Applications for the userId: {} ", userId);
-			log.error("Exception trace", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Getting the Applications for the userId : " + userId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Getting the Applications for the userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
 		return response;
@@ -498,11 +503,12 @@ public class ApplicationService implements ApplicationServiceIntf {
 			}
 			userValidation(applicationEntity);
 			applicationBookingStatus= applicationEntity.getBookingStatusCode();
-			log.info("Application STATUS : {} for the Application Id: {}", applicationBookingStatus, applicationId);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Application STATUS : {" + applicationBookingStatus + "} for the Application Id: {"+ applicationId +"}");
 			response.setResponse(applicationBookingStatus);
 		} catch (Exception ex) {
-			log.error("Error while Getting the Application Info for applicationId ", applicationId);
-			log.error("Exception trace", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Getting the Application Info for applicationId: " + applicationId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Getting the Application Info for applicationId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
 		return response;
@@ -512,14 +518,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 		String authUserId = authUserDetails().getUserId();
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
-			log.info("sessionId", "idType", "id", "In userValidation method of ApplicationService with applicationId "
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
 					+ applicationEntity.getApplicationId() + " and userID " + authUserId);
 			if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
-		}	
-		
+		}			
 	}
 
 	/**
@@ -560,13 +565,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(userId,
 					type.toUpperCase());
-			log.info("Number of applications found for the current user: {} and booking type: {}",
-					applicationEntities.size(), type);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: {" + applicationEntities.size() + "} and booking type: {" + type + "}");
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
-			log.error("Error while Getting the Applications for the userId: {} ", userId);
-			log.error("Exception trace", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Getting the Application Info for userId: " + userId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Getting the Application Info for userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
 		return response;

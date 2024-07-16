@@ -5,17 +5,16 @@ import java.time.LocalDateTime;
 
 import lombok.Data;
 
-
 @Data
 public class CryptoManagerRequestDTO implements Serializable {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = -1614969246905533759L;
+
 	/**
 	 * Application id of decrypting module
 	 */
-
 	private String applicationId;
 
 	/**
@@ -33,7 +32,6 @@ public class CryptoManagerRequestDTO implements Serializable {
 	 */
 
 	private LocalDateTime timeStamp;
-	
-	private boolean prependThumbprint;
 
+	private boolean prependThumbprint;
 }

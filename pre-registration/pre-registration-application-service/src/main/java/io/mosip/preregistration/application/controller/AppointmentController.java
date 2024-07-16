@@ -30,13 +30,16 @@ import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import springfox.documentation.annotations.ApiIgnore;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
 
 @RestController
 @Tag(name = "appointment-controller", description = "Appointment Controller")
@@ -52,30 +55,28 @@ public class AppointmentController {
 	@Operation(summary = "Fetch availability Data", description = "Fetch availability Data", tags = "appointment-controller")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Availablity details fetched successfully"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<AvailabilityDto>> getAvailability(
 			@PathVariable("registrationCenterId") String registrationCenterId) {
-		log.info("fetch availablity for regID: {}", registrationCenterId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "fetch availablity for regID: " + registrationCenterId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.getSlotAvailablity(registrationCenterId));
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostappointmentpregid())")
 	@PostMapping(path = "/applications/appointment/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Booking Appointment", description = "Booking Appointment", tags = "appointment-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Appointment Booked Successfully"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Appointment Booked Successfully"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<BookingStatusDTO>> bookAppoinment(
 			@PathVariable("preRegistrationId") String preRegistrationId,
 			@Validated @RequestBody(required = true) MainRequestDTO<BookingRequestDTO> bookingDTO,
-			@ApiIgnore Errors errors,
-			@RequestHeader(value = "User-Agent") String userAgent) {
-		log.info("Book an appointment for preRegId: {}", preRegistrationId);
+			@ApiParam(hidden = true) Errors errors, @RequestHeader(value = "User-Agent") String userAgent) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Book an appointment for preRegId: " + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(appointmentService.makeAppointment(bookingDTO, preRegistrationId, userAgent));
 	}
@@ -85,75 +86,72 @@ public class AppointmentController {
 	@Operation(summary = "Fetch Appointment details", description = "Fetch Appointment details", tags = "appointment-controller")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Appointment details fetched Successfully"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> getAppointments(
 			@PathVariable("preRegistrationId") String preRegistrationId) {
-		log.info("To fetch appointment details for preRegID: {}", preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"To fetch appointment details for preRegID: " + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.getAppointmentDetails(preRegistrationId));
-
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getCancelappointmentpreregid())")
 	@PutMapping(path = "/applications/appointment/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Cancel an booked appointment", description = "Cancel an booked appointment", tags = "appointment-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Appointment cancelled successfully"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Appointment cancelled successfully"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> cancelBook(
 			@PathVariable("preRegistrationId") String preRegistrationId) {
-		log.info("Cancel the appointment for preRegId :{} ", preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Cancel the appointment for preRegId : " + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.cancelAppointment(preRegistrationId));
 	}
-	
+
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getCancelappointmentpreregid())")
 	@PutMapping(path = "/internal/applications/appointment/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
-	@Operation(summary = "Cancel an booked appointment. Used internally by batch job", description = "Cancel an booked appointment. Used internally by batch job,",
-			tags = "appointment-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Appointment cancelled successfully"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@Operation(summary = "Cancel an booked appointment. Used internally by batch job", description = "Cancel an booked appointment. Used internally by batch job,", tags = "appointment-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Appointment cancelled successfully"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<CancelBookingResponseDTO>> internalCancelBook(
 			@PathVariable("preRegistrationId") String preRegistrationId) {
-		log.info("Cancel the appointment for preRegId called internally :{} ", preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Cancel the appointment for preRegId called internally :" + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.cancelAppointment(preRegistrationId));
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getDeleteappointmentpreregid())")
 	@DeleteMapping(path = "/applications/appointment", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Discard Booking", description = "CDiscard Booking", tags = "appointment-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Deletion of Booking is successfully"),
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Deletion of Booking is successfully"),
 			@ApiResponse(responseCode = "204", description = "No Content"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			})
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))), })
 	public ResponseEntity<MainResponseDTO<DeleteBookingDTO>> discardIndividual(
 			@RequestParam(value = "preRegistrationId") String preId) {
-		log.info("Delete booking with preId: {}", preId);
-		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.deleteBookingAndUpdateApplicationStatus(preId));
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Delete booking with preId: " + preId);
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(appointmentService.deleteBookingAndUpdateApplicationStatus(preId));
 	}
 
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostappointmentmulti())")
 	@PostMapping(path = "/applications/appointment", produces = MediaType.APPLICATION_JSON_VALUE, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "Booking Appointment", description = "Booking Appointment", tags = "appointment-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Appointment Booked Successfully"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Appointment Booked Successfully"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<BookingStatus>> bookMultiAppoinment(
 			@Validated @RequestBody(required = true) MainRequestDTO<MultiBookingRequest> bookingRequest,
 			@RequestHeader(value = "User-Agent") String userAgent) {
-		return ResponseEntity.status(HttpStatus.OK).body(appointmentService.makeMultiAppointment(bookingRequest, userAgent));
+		return ResponseEntity.status(HttpStatus.OK)
+				.body(appointmentService.makeMultiAppointment(bookingRequest, userAgent));
 	}
-
 }

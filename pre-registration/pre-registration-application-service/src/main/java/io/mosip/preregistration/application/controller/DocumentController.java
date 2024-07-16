@@ -4,6 +4,22 @@
  */
 package io.mosip.preregistration.application.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
+
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.DocumentResponseDTO;
 import io.mosip.preregistration.application.service.DocumentServiceIntf;
@@ -18,15 +34,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import jakarta.validation.Valid;
 
-import javax.validation.Valid;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
 
 /**
  * This class provides different API's to perform operations on Document upload.
@@ -60,25 +72,24 @@ public class DocumentController {
 	 * @return response in a format specified in API document
 	 * 
 	 */
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostdocumentspreregistrationid())")
 	@PostMapping(path = "/documents/{preRegistrationId}", consumes = { "multipart/form-data" })
 	@Operation(summary = "fileUpload", description = "Document Upload", tags = "document-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Document uploaded successfully"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Document uploaded successfully"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<DocumentResponseDTO>> fileUpload(
 			@PathVariable(value = "preRegistrationId") String preRegistrationId,
 			@RequestPart(value = "Document request", required = true) String reqDto,
 			@RequestPart(value = "file", required = true) MultipartFile file) {
-		log.debug("sessionId", "idType", "id", "In doc controller ");
-		log.debug("sessionId", "idType", "id", "Pre-id " + preRegistrationId);
-		log.info("sessionId", "idType", "id",
-				"In fileUpload method of document controller to upload the document for request " + reqDto.toString());
-		log.info("sessionId", "idType", "id", "iN Controller v2");
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In doc controller ");
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Pre-id " + preRegistrationId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In fileUpload method of document controller to upload the document for request " + reqDto);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "iN Controller v2");
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(documentUploadService.uploadDocument(file, reqDto, preRegistrationId));
@@ -95,22 +106,21 @@ public class DocumentController {
 	 * 
 	 * @return response in a format specified in API document
 	 */
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPutdocumentspreregistrationid())")
 	@PutMapping(path = "/documents/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "copyDocument", description = "Copy uploaded document", tags = "document-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Document successfully copied"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Document successfully copied"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<DocumentResponseDTO>> copyDocument(
 			@Valid @PathVariable(required = true, value = "preRegistrationId") String preRegistrationId,
 			@Valid @RequestParam(required = true) String catCode,
 			@Valid @RequestParam(required = true) String sourcePreId) {
 
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In copyDocument method of document controller to copy the document for request " + catCode + ","
 						+ sourcePreId + "," + preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK)
@@ -123,18 +133,18 @@ public class DocumentController {
 	 * @param pre_registration_id pass preRegistrationId
 	 * @return response in a format specified in API document
 	 */
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_
+	// ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetdocumentspreregistrationid())")
 	@GetMapping(path = "/documents/preregistration/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "getDocumentforDocId", description = "Get All Document for Pre-Registration Id", tags = "document-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Documents reterived successfully"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Documents reterived successfully"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<DocumentsMetaData>> getAllDocumentforPreid(
 			@Valid @PathVariable(required = true) String preRegistrationId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getAllDocumentforPreid method of document controller to get all the document for pre_registration_id "
 						+ preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK)
@@ -148,19 +158,19 @@ public class DocumentController {
 	 * @param preRegistrationId pass preRegistrationId as request param
 	 * @return response in a format specified in API document
 	 */
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_
+	// ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getGetdocumentsdocumentid())")
 	@GetMapping(path = "/documents/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "getDocumentforDocId", description = "Get All Document for Document Id", tags = "document-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Documents reterived successfully"),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Documents reterived successfully"),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<DocumentDTO>> getDocumentforDocId(
 			@Valid @PathVariable(required = true) String documentId,
 			@Valid @RequestParam(required = true, value = "preRegistrationId") String preRegistrationId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getAllDocumentforDocId method of document controller to get all the document for documentId "
 						+ documentId);
 		return ResponseEntity.status(HttpStatus.OK)
@@ -175,25 +185,21 @@ public class DocumentController {
 	 * @param preRegistrationId pass the preRegistratoinId
 	 * @return response in a format specified in API document
 	 */
-
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getDeletedocumentsdocumentid())")
 	@DeleteMapping(path = "/documents/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "deleteDocument", description = "Delete document by document Id", tags = "document-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Document successfully deleted"),
-			@ApiResponse(responseCode = "204", description = "No Content" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Document successfully deleted"),
+			@ApiResponse(responseCode = "204", description = "No Content", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))), })
 	public ResponseEntity<MainResponseDTO<DocumentDeleteResponseDTO>> deleteDocument(
 			@Valid @PathVariable(required = true) String documentId,
 			@Valid @RequestParam(required = true, value = "preRegistrationId") String preRegistrationId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In deleteDocument method of document controller to delete the document for documentId " + documentId);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(documentUploadService.deleteDocument(documentId, preRegistrationId));
-
 	}
 
 	/**
@@ -203,43 +209,41 @@ public class DocumentController {
 	 * @return response in a format specified in API document
 	 */
 
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getDeletedocumentspreregistrationid())")
 	@DeleteMapping(path = "/documents/preregistration/{preRegistrationId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "deleteAllByPreId", description = "Delete all documents by pre-registration Id", tags = "document-controller")
-	@ApiResponses(value = {
-			@ApiResponse(responseCode = "200", description = "Documents successfully deleted"),
-			@ApiResponse(responseCode = "204", description = "No Content" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-	})
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "Documents successfully deleted"),
+			@ApiResponse(responseCode = "204", description = "No Content", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))), })
 	public ResponseEntity<MainResponseDTO<DocumentDeleteResponseDTO>> deleteAllByPreId(
 			@Valid @PathVariable(required = true) String preRegistrationId) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In deleteDocument method of document controller to delete all the document for preId "
 						+ preRegistrationId);
 		return ResponseEntity.status(HttpStatus.OK).body(documentUploadService.deleteAllByPreId(preRegistrationId));
 	}
 
-	//@PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_ ADMIN')")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL','REGISTRATION_OFFICER','REGISTRATION_SUPERVISOR','REGISTRATION_
+	// ADMIN')")
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPutdocumentsdocumentid())")
 	@PutMapping(path = "/documents/document/{documentId}", produces = MediaType.APPLICATION_JSON_VALUE)
 	@Operation(summary = "updateDocRefId", description = "update document reference Id", tags = "document-controller")
 	@ApiResponses(value = {
 			@ApiResponse(responseCode = "200", description = "Document Reference Id successfully updated"),
-			@ApiResponse(responseCode = "201", description = "Created" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "401", description = "Unauthorized" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "403", description = "Forbidden" ,content = @Content(schema = @Schema(hidden = true))),
-			@ApiResponse(responseCode = "404", description = "Not Found" ,content = @Content(schema = @Schema(hidden = true)))})
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
 	public ResponseEntity<MainResponseDTO<String>> updateDocRefId(
 			@Valid @PathVariable(required = true) String documentId,
 			@Valid @RequestParam(required = true, value = "preRegistrationId") String preRegistrationId,
 			@Valid @RequestParam(required = true, value = "refNumber") String refNumebr) {
-		log.info("sessionId", "idType", "id",
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In updateDocRefId method of document controller to update the docRefId for documentId " + documentId
 						+ "preregistrationId " + preRegistrationId + "DocRefId " + refNumebr);
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(documentUploadService.updateDocRefId(documentId, preRegistrationId, refNumebr));
-
 	}
 }

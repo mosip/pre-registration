@@ -11,8 +11,9 @@ import java.util.Map;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 
-import springfox.documentation.swagger2.annotations.EnableSwagger2;
+import io.mosip.kernel.dataaccess.hibernate.config.HibernateDaoConfig;
 
 /**
  * This class is used for Swagger configuration, also to configure Host and
@@ -25,13 +26,13 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
  *
  */
 @Configuration
-@EnableSwagger2
 @ConfigurationProperties("mosip.preregistration.batchjob")
+@Import({ HibernateDaoConfig.class })
 public class BatchjobConfig {
-	
+
 	/** The id. */
 	private Map<String, String> id;
-	
+
 	/**
 	 * Sets the id.
 	 *
@@ -40,7 +41,6 @@ public class BatchjobConfig {
 	public void setId(Map<String, String> id) {
 		this.id = id;
 	}
-	
 
 	/**
 	 * Id.
@@ -51,5 +51,4 @@ public class BatchjobConfig {
 	public Map<String, String> ic() {
 		return Collections.unmodifiableMap(id);
 	}
-
 }

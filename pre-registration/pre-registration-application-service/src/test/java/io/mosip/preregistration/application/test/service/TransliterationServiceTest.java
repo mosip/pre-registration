@@ -7,7 +7,6 @@ package io.mosip.preregistration.application.test.service;
 
 import static org.junit.Assert.assertEquals;
 
-import org.springframework.test.context.ContextConfiguration;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,30 +17,25 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.ContextConfiguration;
 
-import org.mockito.MockitoAnnotations;
-import org.mockito.Mock;
-import org.mockito.InjectMocks;
+import io.mosip.kernel.core.transliteration.spi.Transliteration;
 import io.mosip.kernel.core.util.DateUtils;
 import io.mosip.preregistration.application.dto.TransliterationRequestDTO;
 import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
 import io.mosip.preregistration.application.entity.LanguageIdEntity;
-import io.mosip.preregistration.application.exception.MandatoryFieldRequiredException;
 import io.mosip.preregistration.application.exception.UnSupportedLanguageException;
 import io.mosip.preregistration.application.repository.LanguageIdRepository;
-import io.mosip.preregistration.application.service.AppointmentServiceImpl;
 import io.mosip.preregistration.application.service.TransliterationService;
 import io.mosip.preregistration.application.service.util.TransliterationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.kernel.core.transliteration.spi.Transliteration;
-import org.junit.runners.JUnit4;
 
 @RunWith(JUnit4.class)
 @SpringBootTest

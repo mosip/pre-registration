@@ -1,22 +1,19 @@
 package io.mosip.preregistration.booking.dto;
 
-
 import java.io.Serializable;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import io.swagger.annotations.ApiModelProperty;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 
-@Getter
-@Setter
+@Data
 public class CancelBookingDTO implements Serializable {
-	
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
-	
+
 	/**
 	 * registration Center Id
 	 */
@@ -35,7 +32,7 @@ public class CancelBookingDTO implements Serializable {
 	@JsonProperty("time_slot_from")
 	@ApiModelProperty(value = "From Time Slot", position = 4)
 	private String slotFromTime;
-	
+
 	/**
 	 * booked to Time Slot
 	 */

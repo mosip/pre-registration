@@ -9,8 +9,10 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
 /**
- * This class defines the DocumentFailedToUploadException that occurs when
- * document upload fails
+ * The InvalidDocumentIdExcepion class that occurs when document upload
+ * fails. This class extends {@link BaseUncheckedException} and includes various
+ * constructors for different use cases, as well as a {@link MainResponseDTO}
+ * object for additional error information.
  * 
  * @author Kishan Rathore
  * @since 1.0.0
@@ -19,10 +21,10 @@ import lombok.Getter;
 
 @Getter
 public class InvalidDocumentIdExcepion extends BaseUncheckedException {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 7303748392658525834L;
-	
+
+	/** The main response DTO associated with the exception. */
 	private MainResponseDTO<?> response;
 
 	/**
@@ -32,41 +34,40 @@ public class InvalidDocumentIdExcepion extends BaseUncheckedException {
 		super();
 	}
 
-
 	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 * @param cause
-	 *            pass Error cause
-	 */
-	public InvalidDocumentIdExcepion(String errorCode, String message, Throwable cause) {
-		super(errorCode, message, cause);
-	}
-
-	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 */
-	public InvalidDocumentIdExcepion(String errorCode, String message) {
-		super(errorCode, message);
-	}
-	
-	/**
+	 * Constructs a new {@code InvalidDocumentIdExcepion} with the specified
+	 * error code, error message, and rootCause.
 	 * 
-	 * @param errorCode
-	 *    	     pass Error code
-	 * @param message
-	 *           pass Error Message
-	 * @param response
-	 * 			 pass response
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param rootCause    the cause of the error.
 	 */
-	public InvalidDocumentIdExcepion(String errorCode, String message,MainResponseDTO<?> response) {
-		super(errorCode, message);
-		this.response=response;
+	public InvalidDocumentIdExcepion(String errorCode, String errorMessage, Throwable rootCause) {
+		super(errorCode, errorMessage, rootCause);
 	}
 
+	/**
+	 * Constructs a new {@code InvalidDocumentIdExcepion} with the specified
+	 * error code and error message.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 */
+	public InvalidDocumentIdExcepion(String errorCode, String errorMessage) {
+		super(errorCode, errorMessage);
+	}
+
+	/**
+	 * Constructs a new {@code InvalidDocumentIdExcepion} with the specified
+	 * error code, error message, and response.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param response     the {@link MainResponseDTO} object containing additional
+	 *                     information about the error.
+	 */
+	public InvalidDocumentIdExcepion(String errorCode, String errorMessage, MainResponseDTO<?> response) {
+		super(errorCode, errorMessage);
+		this.response = response;
+	}
 }
