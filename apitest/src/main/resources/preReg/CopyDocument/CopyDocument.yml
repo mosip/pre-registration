@@ -1,6 +1,7 @@
 CopyDocument:
    Prereg_CopyDocument_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
+      description: Copy the valid Proof of Address (POA) document
       role: batch
       restMethod: put
       inputTemplate: preReg/CopyDocument/copyDocument
@@ -15,6 +16,7 @@ CopyDocument:
 }'
    Prereg_CopyDocument_in_Valid_doc_cat_code_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
+      description: Copy the Proof of Address (POA) document with the invalid document category code
       role: batch
       restMethod: put
       inputTemplate: preReg/CopyDocument/copyDocument
@@ -49,6 +51,7 @@ CopyDocument:
 }'
    Prereg_CopyDocument_Invalid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
+      description: Copy the Proof of Address (POA) document with the invalid preregistration ID
       role: batch
       restMethod: put
       inputTemplate: preReg/CopyDocument/copyDocument

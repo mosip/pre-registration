@@ -1,8 +1,8 @@
 SendOtp:
    Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
       description: Send OTP with a valid phone number on the phone channel
+      role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/SendOtp/sendotpResult
@@ -18,8 +18,8 @@ SendOtp:
 
    Prereg_SendOtp_Invalid_Phone_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
       description: Send OTP by providing an invalid phone number on the phone channel side
+      role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/error
@@ -39,8 +39,8 @@ SendOtp:
 
    Prereg_SendOtp_MISSING_Phone_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
       description: Sent OTP without a phone number
+      role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/error
@@ -60,8 +60,8 @@ SendOtp:
 
    Prereg_SendOtp_SpacialCharacter_Val_Phone_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
-      description: Sent OTP with special characters through the phone channel 
+      description: Sent OTP with special characters through the phone channel
+      role: batch 
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/error
@@ -81,8 +81,8 @@ SendOtp:
 
    Prereg_SendOtp_All_Valid_Smoke_email_sid:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
       description: Send OTP using a valid email address through the email channel
+      role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/SendOtp/sendotpResult
@@ -98,8 +98,8 @@ SendOtp:
 
    Prereg_SendOtp_Invalid__email_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
       description: Send OTP using an invalid email address via the email channel
+      role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/error
@@ -119,8 +119,8 @@ SendOtp:
 
    Prereg_SendOtp_Missing_email_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
       description: Sent OTP without an email address via the email channel
+      role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/error
@@ -140,8 +140,8 @@ SendOtp:
 
    Prereg_SendOtp_SpacialCharacter_email_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
       description: Sent OTP with special characters through the email channel
+      role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
       outputTemplate: preReg/error

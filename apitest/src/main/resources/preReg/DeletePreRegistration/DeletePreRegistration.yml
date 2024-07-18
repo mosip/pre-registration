@@ -1,6 +1,7 @@
 DeletePreRegistration:
    Prereg_DeletePreRegistration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      description: Delete the preregistration with a valid preregistration ID
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeletePreRegistration/deletePreRegistration
@@ -13,6 +14,7 @@ DeletePreRegistration:
 }'
    Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      description: Delete the preregistration with an invalid preregistration ID
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeletePreRegistration/deletePreRegistration

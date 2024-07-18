@@ -1,6 +1,7 @@
 FetchApplicationByPrid:
    Prereg_FetchApplicationByPrid_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      description: Fetch demographic details using a valid PRID
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
@@ -9,10 +10,11 @@ FetchApplicationByPrid:
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
-  "preRegistrationId": "59286406501581"
+  "preRegistrationId": "59286406501581
 }'
    Prereg_FetchApplicationByPrid_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      description: Fetch demographic details using an invalid PRID
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid

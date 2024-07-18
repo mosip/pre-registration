@@ -1,6 +1,7 @@
 FetchAppointmentDetailsByPrid:
    Prereg_FetchAppointmentDetailsByPrid_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Fetch appointment details for the preregistration ID
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchAppointmentDetailsByPrid/fetchAppointmentDetailsByPrid
@@ -13,6 +14,7 @@ FetchAppointmentDetailsByPrid:
 }'
    Prereg_FetchAppointmentDetailsByPrid_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Fetch appointment details for the invalid preregistration ID
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchAppointmentDetailsByPrid/fetchAppointmentDetailsByPrid

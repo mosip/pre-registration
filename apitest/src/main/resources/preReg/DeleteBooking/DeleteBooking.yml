@@ -1,6 +1,7 @@
 DeleteBooking:
    Prereg_DeleteBooking_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment?preRegistrationId={preRegistrationId}
+      description: Delete bookings for all valid preregistration ID
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeleteBooking/deleteBooking

@@ -1,6 +1,7 @@
 GetApplicationWithPrId:
    Prereg_GetApplicationWithPrId_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/{preRegistrationId}
+      description: Retrieve application with an invalid pre-registration ID (PRID)
       role: batch
       restMethod: get
       inputTemplate: preReg/GetApplicationWithPrId/getApplicationWithPrId

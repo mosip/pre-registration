@@ -1,6 +1,7 @@
 Transliteration:
    Prereg_Transliteration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/transliteration/transliterate
+      description: Retrieve the preregistration data using valid transliteration
       role: batch
       restMethod: post
       inputTemplate: preReg/Transliteration/translate
@@ -22,6 +23,7 @@ Transliteration:
 }'
    Prereg_Transliteration_inValid_tofieldlang:
       endPoint: /preregistration/v1/transliteration/transliterate
+      description: Retrieve the transliteration data for an invalid to-field language
       role: batch
       restMethod: post
       inputTemplate: preReg/Transliteration/translate
@@ -44,6 +46,7 @@ Transliteration:
 }'
    Prereg_Transliteration_inValid_fromfieldlang:
       endPoint: /preregistration/v1/transliteration/transliterate
+      description: Retrieve the Transliteration data for an invalid 'to-field' language
       role: batch
       restMethod: post
       inputTemplate: preReg/Transliteration/translate
