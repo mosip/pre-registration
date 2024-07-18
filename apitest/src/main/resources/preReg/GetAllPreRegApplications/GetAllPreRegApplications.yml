@@ -1,6 +1,7 @@
 GetAllPreRegApplications:
    Prereg_GetAllPreRegApplications_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications
+      description: Retrieve all preregistered applications with a valid preregistration ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -12,6 +13,7 @@ GetAllPreRegApplications:
 }'
    Prereg_GetAllPreRegApplications_LOST_UIN_APPLICATION_sid:
       endPoint: /preregistration/v1/applications
+      description: Retrieve all preregistered applications with a preregistration ID associated with the lost UIN application
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -23,6 +25,7 @@ GetAllPreRegApplications:
 }'
    Prereg_GetAllPreRegApplications_DELETE_UIN_APPLICATION_sid:
       endPoint: /preregistration/v1/applications
+      description: Retrieve all preregistered applications with a preregistration ID associated with a deleted UIN application
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get

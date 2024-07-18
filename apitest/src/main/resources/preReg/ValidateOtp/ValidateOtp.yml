@@ -1,8 +1,8 @@
 ValidateOtp:
    Prereg_ValidateOtp_All_Valid_Smoke_Phone_sid:
       endPoint: /preregistration/v1/login/validateOtp
-      role: batch
       description: Validating OTP with a valid phone number
+      role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/ValidateOtp/validateOtp
@@ -19,8 +19,8 @@ ValidateOtp:
 
    Prereg_ValidateOtp_Invalid_Phone_Neg:
       endPoint: /preregistration/v1/login/validateOtp
-      role: batch
       description: Validating OTP with an invalid phone number
+      role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/ValidateOtp/validateOtp
@@ -42,8 +42,8 @@ ValidateOtp:
 
    Prereg_ValidateOtp_SpacialCharacters_Phone_Neg:
       endPoint: /preregistration/v1/login/validateOtp
-      role: batch
       description: Validating OTP with a phone number containing special characters
+      role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/ValidateOtp/validateOtp
@@ -65,8 +65,8 @@ ValidateOtp:
 
    Prereg_ValidateOtp_All_Valid_Smoke_email_sid:
       endPoint: /preregistration/v1/login/validateOtp
-      role: batch
       description: validating OPT with valid email address
+      role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/ValidateOtp/validateOtp
@@ -83,8 +83,8 @@ ValidateOtp:
 
    Prereg_ValidateOtp_SpacialCharacters_Email_Neg:
       endPoint: /preregistration/v1/login/validateOtp
-      role: batch
       description: Validating OTP with an email address containing special characters
+      role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/ValidateOtp/validateOtp
@@ -105,8 +105,8 @@ ValidateOtp:
 }'
    Prereg_ValidateOtp_Invalid_Email_Neg:
       endPoint: /preregistration/v1/login/validateOtp
-      role: batch
       description: Validating OTP with an invalid email address
+      role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/ValidateOtp/validateOtp

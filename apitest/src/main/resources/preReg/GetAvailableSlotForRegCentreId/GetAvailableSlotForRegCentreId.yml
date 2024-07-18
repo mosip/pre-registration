@@ -1,6 +1,7 @@
 GetAvailableSlotForRegCentreId:
    Prereg_GetAvailableSlotForRegCentreId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
+      description: Retrieve available slots for a valid registration center ID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
@@ -13,6 +14,7 @@ GetAvailableSlotForRegCentreId:
 }'
    Prereg_GetAvailableSlotForRegCentreId_inValid_registrationCenterId_sid:
       endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
+      description: Retrieve available slots for an invalid registration center ID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
@@ -29,6 +31,7 @@ GetAvailableSlotForRegCentreId:
 }'
    Prereg_GetAvailableSlotForRegCentreId_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
+      description: Retrieve available slots for a valid registration center ID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId

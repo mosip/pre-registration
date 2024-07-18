@@ -1,6 +1,7 @@
 GetAppointmentDetails:
    Prereg_GetAppointmentDetails_BookByPRID_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Retrieve appointment details booked by a valid PRID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails
@@ -13,6 +14,7 @@ GetAppointmentDetails:
 }'
    Prereg_GetAppointmentDetails_with_cancelled_appoinment:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Retrieve appointment details for a cancelled appointment
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails
@@ -25,6 +27,7 @@ GetAppointmentDetails:
 }'
    Prereg_GetAppointmentDetails_AllValid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Retrieve appointment details for a valid preregistrationID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails
@@ -38,6 +41,7 @@ GetAppointmentDetails:
 
    Prereg_GetAppointmentDetails_inValid_preRegistrationId:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Retrieve appointment details for a invalid preregistrationID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails
@@ -54,6 +58,7 @@ GetAppointmentDetails:
 }'
    Prereg_GetAppointmentDetails_empty_space_preRegistrationId:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Retrieve appointment details for an empty space preregistration ID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails

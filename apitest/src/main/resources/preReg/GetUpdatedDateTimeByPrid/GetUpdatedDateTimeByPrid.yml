@@ -1,6 +1,7 @@
 GetUpdatedDateTimeByPrid:
    Prereg_GetUpdatedDateTimeByPrid_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/updatedTime
+      description: Retrieve all applications with the application ID using valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -27,6 +28,7 @@ GetUpdatedDateTimeByPrid:
 }'
    Prereg_GetUpdatedDateTimeByPrid_InValid_ID:
       endPoint: /preregistration/v1/applications/prereg/updatedTime
+      description: Retrieve all applications with the application ID using invalid ID
       role: batch
       restMethod: post
       inputTemplate: preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPrid

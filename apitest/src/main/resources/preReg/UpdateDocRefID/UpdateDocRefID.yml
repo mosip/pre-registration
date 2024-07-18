@@ -1,6 +1,7 @@
 UpdateDocRefID:
    Prereg_UpdateDocRefID_All_Valid_Smoke_POA_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      description: Update the document reference ID for the valid Proof of Address (POA)
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -15,6 +16,7 @@ UpdateDocRefID:
 }'
    Prereg_UpdateDocRefID_All_Valid_Smoke_POI_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      description: Update the document reference ID for the valid Proof of Identity (POI)
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -29,6 +31,7 @@ UpdateDocRefID:
 }'
    Prereg_UpdateDocRefID_All_Valid_Smoke_POB_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      description: Update the document reference ID for the valid Proof of Date of Birth (POB)
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -43,6 +46,7 @@ UpdateDocRefID:
 }'
    Prereg_UpdateDocRefID_All_Valid_Smoke_POR_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      description: Update the document reference ID for the valid Proof of Residence (POR)
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -57,6 +61,7 @@ UpdateDocRefID:
 }'
    Prereg_UpdateDocRefID_inValid_documentId:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      description: Update the document reference ID for the invalid document ID
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdateDocRefID/updateDocRefID
@@ -76,6 +81,7 @@ UpdateDocRefID:
 
    Prereg_UpdateDocRefID_All_SpatialCharacter_RefNum_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      description: Update the document reference ID with the special character and reference number 
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -96,6 +102,7 @@ UpdateDocRefID:
 
    Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      description: Update the document reference ID with an exceeding limit and reference number
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put

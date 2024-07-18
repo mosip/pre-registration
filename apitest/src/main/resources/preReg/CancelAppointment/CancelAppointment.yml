@@ -1,6 +1,7 @@
 CancelAppointment:
    Prereg_CancelAppointment_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Cancel appointment for a valid preregistration ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -13,6 +14,7 @@ CancelAppointment:
 }'
    Prereg_CancelAppointment_with_already_cancelled_appoinment:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Canceling an appointment that has already been cancelled
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -30,6 +32,7 @@ CancelAppointment:
 }'
    Prereg_CancelAppointment_cancell_incomplete_appoinment:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Canceling an appointment with an incomplete appointment data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -47,6 +50,7 @@ CancelAppointment:
 }'
    Prereg_CancelAppointment_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      description: Canceling an appointment with an invalid preregistration ID
       role: batch
       restMethod: put
       inputTemplate: preReg/CancelAppointment/cancelAppointment

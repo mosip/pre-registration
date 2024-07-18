@@ -1,6 +1,7 @@
 DeleteAllDocForaPRID:
    Prereg_DeletePreRegistration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      description: Delete preregistration with all valid preregistration ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -13,6 +14,7 @@ DeleteAllDocForaPRID:
 }'
    Prereg_DeletePreRegistration_InValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      description: Delete preregistration with an invalid preregisteration ID
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeleteAllDocForaPRID/deleteAllDocForaPRID
