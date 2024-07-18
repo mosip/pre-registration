@@ -1,7 +1,10 @@
 package io.mosip.preregistration.application.util;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.io.IOException;
-import java.io.StringReader;
 import java.security.KeyManagementException;
 import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
@@ -14,11 +17,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
-import java.util.Properties;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -108,7 +110,7 @@ public class LoginCommonUtil {
 
 	@Value("${mosip.preregistration.captcha.id.validate}")
 	private String captchaRequestId;
-	
+
 	private static final String MOSIP_MANDATORY_LANGUAGE = "mosip.mandatory-languages";
 	private static final String MOSIP_OPTIONAL_LANGUAGE = "mosip.optional-languages";
 	private static final String MOSIP_MIN_LANGUAGE_COUNT = "mosip.min-languages.count";
@@ -121,7 +123,7 @@ public class LoginCommonUtil {
 	 * @return MainResponseDTO<?>
 	 */
 	public MainResponseDTO<?> getMainResponseDto(MainRequestDTO<?> mainRequestDto) {
-		log.info("In getMainResponseDTO method of Login Common Util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getMainResponseDTO method of Login Common Util");
 		MainResponseDTO<?> response = new MainResponseDTO<>();
 		response.setId(mainRequestDto.getId());
 		response.setVersion(mainRequestDto.getVersion());
@@ -148,7 +150,7 @@ public class LoginCommonUtil {
 			Map<String, String> headersMap, Class<?> responseClass) {
 		ResponseEntity<?> response = null;
 		try {
-			log.info("In getResponseEntity method of Login Common Util");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getResponseEntity method of Login Common Util");
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(mediaType);
 			HttpEntity<?> request = null;
@@ -160,14 +162,14 @@ public class LoginCommonUtil {
 			} else {
 				request = new HttpEntity<>(headers);
 			}
-			log.info("In call to kernel rest service :{}", url);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In call to kernel rest service :{}" + url);
 			response = restTemplate.exchange(url, httpMethodType, request, responseClass);
 		} catch (RestClientException ex) {
-			log.debug("Kernel rest call exception ", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
 			throw new RestClientException("rest call failed");
 		}
 		return response;
-
 	}
 
 	/**
@@ -178,7 +180,8 @@ public class LoginCommonUtil {
 	 * @return List<String>
 	 */
 	public List<String> validateUserId(String userId) {
-		log.info("In validateUserIdandLangCode method of Login Common Util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In validateUserIdandLangCode method of Login Common Util");
 		List<String> list = new ArrayList<>();
 		if (userId == null || userId.isEmpty()) {
 			throw new InvalidRequestException(LoginErrorCodes.PRG_AUTH_008.getCode(),
@@ -202,7 +205,7 @@ public class LoginCommonUtil {
 	 * @param user
 	 */
 	public void validateOtpAndUserid(User user) {
-		log.info("In validateOtpAndUserid method of Login Common Util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateOtpAndUserid method of Login Common Util");
 		if (user.getUserId() == null) {
 			throw new InvalidRequestException(LoginErrorCodes.PRG_AUTH_008.getCode(),
 					LoginErrorMessages.INVALID_REQUEST_USERID.getMessage(), null);
@@ -225,7 +228,6 @@ public class LoginCommonUtil {
 		} catch (IOException e) {
 			throw new ParseResponseException(LoginErrorCodes.PRG_AUTH_011.getCode(),
 					LoginErrorMessages.ERROR_WHILE_PARSING.getMessage(), null);
-
 		}
 	}
 
@@ -245,7 +247,6 @@ public class LoginCommonUtil {
 		} catch (IOException e) {
 			throw new ParseResponseException(LoginErrorCodes.PRG_AUTH_011.getCode(),
 					LoginErrorMessages.ERROR_WHILE_PARSING.getMessage(), null);
-
 		}
 	}
 
@@ -259,7 +260,6 @@ public class LoginCommonUtil {
 		try {
 			return objectMapper.writeValueAsString(response);
 		} catch (JsonProcessingException e) {
-
 			throw new ParseResponseException("", "", null);
 		}
 	}
@@ -271,7 +271,7 @@ public class LoginCommonUtil {
 	 * @return
 	 */
 	public Map<String, String> createRequestMap(MainRequestDTO<?> requestDto) {
-		log.info("In prepareRequestMap method of Login Service Util");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In prepareRequestMap method of Login Service Util");
 		Map<String, String> requestMap = new HashMap<>();
 		requestMap.put("id", requestDto.getId());
 		requestMap.put("version", requestDto.getVersion());
@@ -302,7 +302,8 @@ public class LoginCommonUtil {
 
 	public void validateLanguageProperties(Map<String, String> responseParamsMap) {
 		try {
-			log.info("In validateLanguageProperties method of  logincommon util");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In validateLanguageProperties method of  logincommon util");
 
 			List<Object> mandatoryLanguages = Arrays.asList(env.getProperty(MOSIP_MANDATORY_LANGUAGE).split(","))
 					.stream().distinct().collect(Collectors.toList());
@@ -370,10 +371,9 @@ public class LoginCommonUtil {
 					mandatoryLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
 			responseParamsMap.put(MOSIP_OPTIONAL_LANGUAGE,
 					optionalLanguages.stream().map(lang -> String.valueOf(lang)).collect(Collectors.joining(",")));
-		} catch (
-
-		Exception e) {
-			log.error("Exception in validateLanguageProperties of logincommonutil ", e);
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Exception in validateLanguageProperties of logincommonutil ", ExceptionUtils.getStackTrace(ex));
 			throw new LanguagePropertiesException(LoginErrorCodes.PRG_AUTH_015.getCode(),
 					LoginErrorMessages.LANGUAGE_PROPERTIES_NOT_FOUND.getMessage());
 		}
@@ -400,14 +400,13 @@ public class LoginCommonUtil {
 				log.info("{} specified is invaild overriding to default value : 1", prop);
 				return 1;
 			}
-
 		}
 	}
 
 	public CaptchaResposneDTO validateCaptchaToken(String captchaToken) {
 		MainResponseDTO<CaptchaResposneDTO> response = new MainResponseDTO<>();
 		if (captchaToken == null || captchaToken.isBlank()) {
-			log.error("Validating Captcha token is null or blank");
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Validating Captcha token is null or blank");
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_ERROR.getErrorMessage());
 		}
@@ -421,11 +420,12 @@ public class LoginCommonUtil {
 		captchaRequest.setVersion(version);
 		captchaRequest.setId(captchaRequestId);
 		HttpHeaders header = new HttpHeaders();
-		header.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		header.setContentType(MediaType.APPLICATION_JSON);
 		HttpEntity<?> entity = new HttpEntity<>(captchaRequest, header);
 		ResponseEntity<MainResponseDTO<CaptchaResposneDTO>> responseEntity = null;
 		try {
-			log.debug("Calling captcha service to validate token {}", captchaRequest);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Calling captcha service to validate token ",
+					captchaRequest);
 
 			responseEntity = restTemplate.exchange(captchaUrl, HttpMethod.POST, entity,
 					new ParameterizedTypeReference<MainResponseDTO<CaptchaResposneDTO>>() {
@@ -439,16 +439,16 @@ public class LoginCommonUtil {
 				} else {
 					response.setResponse(body.getResponse());
 				}
-				
+
 			}
 		} catch (RestClientException ex) {
-			log.error("Error while Calling captcha service to validate token {}", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Calling captcha service to validate token " + ExceptionUtils.getStackTrace(ex));
 			throw new PreRegLoginException(PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorCode(),
 					PreRegLoginErrorConstants.CAPTCHA_SEVER_ERROR.getErrorMessage());
 		}
 
 		return response.getResponse();
-
 	}
 
 	public String sendOtpJwtToken(String userId) {
@@ -456,5 +456,4 @@ public class LoginCommonUtil {
 				.setExpiration(Date.from(Instant.now().plusSeconds(otpExpiryTime))).setAudience(jwtAudience).toString();
 
 	}
-
 }

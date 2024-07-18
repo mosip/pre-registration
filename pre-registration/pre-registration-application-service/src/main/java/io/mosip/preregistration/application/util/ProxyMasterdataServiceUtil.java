@@ -1,9 +1,14 @@
 package io.mosip.preregistration.application.util;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.net.URI;
 import java.net.URLDecoder;
+import java.text.MessageFormat;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -35,14 +40,13 @@ public class ProxyMasterdataServiceUtil {
 	@Qualifier("selfTokenRestTemplate")
 	@Autowired
 	private RestTemplate restTemplate;
-	
 
 	private Logger log = LoggerConfiguration.logConfig(ProxyMasterdataServiceUtil.class);
 
 	@SuppressWarnings("deprecation")
 	public URI getUrl(HttpServletRequest request) {
 
-		log.info("sessionId", "idType", "id", "In getUrl method of proxyMasterDataServiceUtil");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getUrl method of proxyMasterDataServiceUtil");
 
 		String query = request.getQueryString();
 		String requestUrl = request.getRequestURI();
@@ -54,24 +58,24 @@ public class ProxyMasterdataServiceUtil {
 			url = baseUrl + "/" + version
 					+ requestUrl.replace(request.getContextPath() + "/proxy", "").strip().toString();
 			uri = UriComponentsBuilder.fromHttpUrl(url).query(decodedQuery).build().toUri();
-			log.info("sessionId", "idType", "id", " Requested Url is: " + uri);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, " Requested Url is: " + uri);
 		} else {
 			url = baseUrl + "/" + version
 					+ requestUrl.replace(request.getContextPath() + "/proxy", "").strip().toString();
 			uri = UriComponentsBuilder.fromHttpUrl(url).build().toUri();
 
-			log.info("sessionId", "idType", "id", " Requested Url is: " + uri);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, " Requested Url is: " + uri);
 		}
 		return uri;
 	}
 
 	public HttpMethod getHttpMethodType(HttpServletRequest request) {
-
-		log.info("sessionId", "idType", "id", "In getHttpMethodType method of proxyMasterDataServiceUtil");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getHttpMethodType method of proxyMasterDataServiceUtil");
 
 		HttpMethod httpMethod = null;
 
-		log.info("sessionId", "idType", "id", " Request Method Type: " + request.getMethod());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, " Request Method Type: " + request.getMethod());
 
 		switch (request.getMethod()) {
 		case "GET":
@@ -91,41 +95,28 @@ public class ProxyMasterdataServiceUtil {
 			break;
 		}
 		return httpMethod;
-
 	}
 
-	
-	
-	@Cacheable(value = "masterdata-cache", key = "'MasterdataCache'+#uri" , condition = "!#uri.toString().contains('getApplicantType')" )
+	@Cacheable(value = "masterdata-cache", key = "'MasterdataCache'+#uri", condition = "!#uri.toString().contains('getApplicantType')")
 	public Object masterDataRestCall(URI uri, String body, HttpMethod methodType) {
-		
-		log.info("In masterDataRestCall method with request url {} body : {}", uri, body);
-      
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, MessageFormat.format("In masterDataRestCall method with request url {0} body : {1}", uri, body));
+
 		ResponseEntity<?> response = null;
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON_UTF8);
+		headers.setContentType(MediaType.APPLICATION_JSON);
 
 		HttpEntity<?> entity = new HttpEntity<>(body, headers);
-
-		log.info("sessionId", "idType", "id", "httpEntity " + entity);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "httpEntity " + entity);
 
 		try {
-
 			response = restTemplate.exchange(uri, methodType, entity, String.class);
-
-			log.info("Proxy MasterData Call response for " + uri + response.getBody());
-
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Proxy MasterData Call response for " + uri + response.getBody());
 		} catch (Exception e) {
-
-			log.error("Proxy MasterData Call Exception response for url {} ", uri, ExceptionUtils.getStackTrace(e));
-
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Proxy MasterData Call Exception response for url "+ uri + " Error:" + ExceptionUtils.getStackTrace(e));
 			throw new MasterDataException("PRG_MSD_APP_001", "Failed to fetch masterdata information");
-
 		}
 
 		return response.getBody();
-
 	}
-
 }

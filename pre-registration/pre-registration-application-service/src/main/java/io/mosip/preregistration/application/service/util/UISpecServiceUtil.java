@@ -1,8 +1,13 @@
 package io.mosip.preregistration.application.service.util;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.util.List;
 import java.util.Objects;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,12 +52,12 @@ public class UISpecServiceUtil {
 	private final String domain = "pre-registration";
 
 	public List<UISpecResponseDTO> getUISchema(Double version, Double idSchemaVersion) {
-		log.info("In  UISpec serviceutil getUIschema method");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In  UISpec serviceutil getUIschema method");
 		List<UISpecResponseDTO> response = null;
 		ResponseEntity<ResponseWrapper<List<UISpecResponseDTO>>> responseEntity = null;
 		ResponseWrapper<List<UISpecResponseDTO>> body = null;
 		try {
-			log.info("Calling masterdata service to get ui spec");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Calling masterdata service to get ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder
 					.fromHttpUrl(materdataResourceUrl + "/uispec/" + domain + "/latest");
 
@@ -66,7 +71,8 @@ public class UISpecServiceUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<?> entity = new HttpEntity<>(headers);
 
-			log.info("masterdata service to get ui spec uri {} ", uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"masterdata service to get ui spec uri  " + uriBuilder);
 
 			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<ResponseWrapper<List<UISpecResponseDTO>>>() {
@@ -75,44 +81,45 @@ public class UISpecServiceUtil {
 			body = responseEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
-					log.info("error while fetching uispec {}", body.getErrors());
+					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+							"error while fetching uispec " + body.getErrors().toString());
 					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
 							body.getErrors().get(0).getMessage());
 				}
 				response = body.getResponse();
 			}
-			
-			log.info("ui spec response {}", response);
+
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "ui spec response " + response);
 			if (Objects.isNull(response)) {
 				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 						ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 			}
 
 		} catch (RestClientException ex) {
-			log.error("error while fetching uispec {}", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"error while fetching uispec " + ExceptionUtils.getStackTrace(ex));
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 					ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 		} catch (Exception ex) {
-			log.error("error while fetching uispec {}", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"error while fetching uispec " + ExceptionUtils.getStackTrace(ex));
 			if (body != null && body.getErrors() != null && !body.getErrors().isEmpty()) {
-				throw new UISpecException(body.getErrors().get(0).getErrorCode(),
-						body.getErrors().get(0).getMessage());
+				throw new UISpecException(body.getErrors().get(0).getErrorCode(), body.getErrors().get(0).getMessage());
 			} else {
 				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 						ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 			}
 		}
 		return response;
-
 	}
 
 	public PageDTO<UISpecResponseDTO> getAllUISchema(int pageNumber, int pageSize) {
-		log.info("In  UISpec serviceutil getAllUISchema method");
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In  UISpec serviceutil getAllUISchema method");
 		PageDTO<UISpecResponseDTO> response = null;
 		ResponseEntity<ResponseWrapper<PageDTO<UISpecResponseDTO>>> responseEntity = null;
 		ResponseWrapper<PageDTO<UISpecResponseDTO>> body = null;
 		try {
-			log.info("Calling masterdata service to get ui spec");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Calling masterdata service to get ui spec");
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(materdataResourceUrl + "/uispec/all");
 
 			MultiValueMap<String, String> params = new LinkedMultiValueMap<>();
@@ -125,7 +132,8 @@ public class UISpecServiceUtil {
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<?> entity = new HttpEntity<>(headers);
 
-			log.info("masterdata service to get ui spec uri {} ", uriBuilder);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"masterdata service to get ui spec uri  " + uriBuilder);
 
 			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<ResponseWrapper<PageDTO<UISpecResponseDTO>>>() {
@@ -134,35 +142,35 @@ public class UISpecServiceUtil {
 			body = responseEntity.getBody();
 			if (body != null) {
 				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
-					log.info("error while fetching uispec {}", body.getErrors());
+					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "error while fetching uispec ",
+							body.getErrors().toString());
 					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
 							body.getErrors().get(0).getMessage());
 				}
 				response = body.getResponse();
 			}
 
-			log.info("uispec resposne {}", response);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "uispec resposne " + response);
 			if (Objects.isNull(response)) {
 				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 						ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 			}
 
 		} catch (RestClientException ex) {
-			log.error("error while fetching uispec {}", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"error while fetching uispec " + ExceptionUtils.getStackTrace(ex));
 			throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 					ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 		} catch (Exception ex) {
-			log.error("error while fetching uispec {}", ex);
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"error while fetching uispec " + ExceptionUtils.getStackTrace(ex));
 			if (body != null && body.getErrors() != null && !body.getErrors().isEmpty()) {
-				throw new UISpecException(body.getErrors().get(0).getErrorCode(),
-						body.getErrors().get(0).getMessage());
+				throw new UISpecException(body.getErrors().get(0).getErrorCode(), body.getErrors().get(0).getMessage());
 			} else {
 				throw new UISpecException(ApplicationErrorCodes.PRG_APP_003.getCode(),
 						ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
 			}
 		}
 		return response;
-
 	}
-
 }

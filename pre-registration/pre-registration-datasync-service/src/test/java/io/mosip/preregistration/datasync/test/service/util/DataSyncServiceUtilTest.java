@@ -35,11 +35,15 @@ import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.clientcrypto.service.spi.ClientCryptoManagerService;
+import io.mosip.preregistration.application.config.Config;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -69,8 +73,10 @@ import io.mosip.preregistration.datasync.exception.RecordNotFoundForDateRange;
 import io.mosip.preregistration.datasync.repository.InterfaceDataSyncRepo;
 import io.mosip.preregistration.datasync.repository.ProcessedDataSyncRepo;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
+import io.mosip.preregistration.datasync.test.config.TestConfig;
 
 @RunWith(SpringRunner.class)
+@ContextConfiguration(classes = {Config.class, TestConfig.class, TestContext.class, /*TemplateConfiguration.class, */ WebApplicationContext.class})
 @SpringBootTest(classes = { DataSyncApplicationTest.class })
 public class DataSyncServiceUtilTest {
 
@@ -199,8 +205,6 @@ public class DataSyncServiceUtilTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = new URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020", "%20"));
 		file = new File(uri.getPath());
-		// mockMultipartFile = new MockMultipartFile("file", "Doc.pdf",
-		// "mixed/multipart", new FileInputStream(file));
 	}
 
 	@Test
@@ -436,7 +440,6 @@ public class DataSyncServiceUtilTest {
 		mainResponseDTO.setResponsetime(resTime);
 		List<ExceptionJSONInfoDTO> exceptionJSONInfoDTOs = new ArrayList<>();
 		ExceptionJSONInfoDTO exceptionJSONInfoDTO = new ExceptionJSONInfoDTO();
-//		exceptionJSONInfoDTO.setErrorCode(ErrorCodes.PRG_PAM_APP_002.toString());
 		exceptionJSONInfoDTO.setMessage(ErrorMessages.DEMOGRAPHIC_GET_RECORD_FAILED.toString());
 		exceptionJSONInfoDTOs.add(exceptionJSONInfoDTO);
 		mainResponseDTO.setErrors(exceptionJSONInfoDTOs);
@@ -476,7 +479,6 @@ public class DataSyncServiceUtilTest {
 		responseDTO.setResponsetime(resTime);
 		List<ExceptionJSONInfoDTO> exceptionJSONInfoDTOs = new ArrayList<>();
 		ExceptionJSONInfoDTO exceptionJSONInfoDTO = new ExceptionJSONInfoDTO();
-//		exceptionJSONInfoDTO.setErrorCode(ErrorCodes.PRG_PAM_APP_002.toString());
 		exceptionJSONInfoDTO.setMessage(ErrorMessages.BOOKING_NOT_FOUND.toString());
 		exceptionJSONInfoDTOs.add(exceptionJSONInfoDTO);
 		responseDTO.setErrors(exceptionJSONInfoDTOs);
@@ -521,7 +523,7 @@ public class DataSyncServiceUtilTest {
 	private JSONParser parser = null;
 
 	@Test
-	public void archivingFilesTest() throws FileNotFoundException, IOException, ParseException {
+	public void archivingFilesTest() throws IOException, ParseException {
 		parser = new JSONParser();
 
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -597,7 +599,6 @@ public class DataSyncServiceUtilTest {
 		multipartResponseDTOs.setDocTypCode("RNC");
 		multipartResponseDTOs.setLangCode("ENG");
 		responsestatusDto.add(multipartResponseDTOs);
-		// documentDTO.setDocument(file.toString().getBytes());
 		documentDTO = null;
 		responsestatusDto.add(multipartResponseDTOs);
 		documentsMetaData.setDocumentsMetaData(responsestatusDto);

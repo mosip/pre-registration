@@ -23,7 +23,6 @@ import io.mosip.preregistration.application.exception.UnSupportedLanguageExcepti
 import io.mosip.preregistration.application.service.TransliterationService;
 import io.mosip.preregistration.application.service.util.TransliterationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.RequestValidator;
 
 /**

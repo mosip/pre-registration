@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.service;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.Cacheable;
@@ -68,7 +73,6 @@ public class LoginService {
 	 */
 	@Autowired
 	private LoginCommonUtil loginCommonUtil;
-
 
 	@Value("${ui.config.params}")
 	private String uiConfigParams;
@@ -126,7 +130,8 @@ public class LoginService {
 	OTPManager otpmanager;
 
 	@Autowired
-    private Environment env;
+	private Environment env;
+
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
 	 * 
@@ -144,7 +149,8 @@ public class LoginService {
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
-			log.info("Response after loginCommonUtil {}", response);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Response after loginCommonUtil " + response.toString());
 
 			userid = userOtpRequest.getRequest().getUserId();
 			otpChannel = loginCommonUtil.validateUserId(userid);
@@ -191,8 +197,8 @@ public class LoginService {
 	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
 
-		log.info("In validateCaptchaAndSendOtp method with userId and langCode{}", request.getRequest().getUserId(),
-				request.getRequest().getUserId());
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method with userId "
+				+ request.getRequest().getUserId() + "and langCode " + request.getRequest().getUserId());
 		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
 				.getMainResponseDto(request);
 
@@ -227,11 +233,10 @@ public class LoginService {
 			response.setResponse(authRes);
 
 		} catch (PreRegLoginException ex) {
-
-			log.error("In validateCaptchaAndSendOtp method of login service- ", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method of login service- " + ExceptionUtils.getFullStackTrace(ex));
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		} catch (Exception ex) {
-			log.error("In validateCaptchaAndSendOtp method of login service- ", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method of login service- " + ExceptionUtils.getFullStackTrace(ex));
 			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
 		}
 		response.setResponsetime(LocalDateTime.now().toString());
@@ -271,10 +276,10 @@ public class LoginService {
 			response.setResponse(authresponse);
 			isSuccess = true;
 		} catch (PreRegLoginException ex) {
-			log.error("In calluserIdOtp method of login service- ", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In calluserIdOtp method of login service- " + ExceptionUtils.getFullStackTrace(ex));
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} catch (RuntimeException ex) {
-			log.error("In calluserIdOtp method of login service- ", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In calluserIdOtp method of login service- " + ExceptionUtils.getFullStackTrace(ex));
 			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
 		} finally {
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
@@ -320,16 +325,15 @@ public class LoginService {
 			userId = clamis.getBody().get("userId").toString();
 			response.setResponse("Loggedout successfully");
 			isSuccess = true;
-		} catch (JwtException e) {
-			log.error("JwtException, logout failed :", e);
-			MainResponseDTO<String> res = new MainResponseDTO<String>();
+		} catch (JwtException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "JwtException, logout failed " + ExceptionUtils.getFullStackTrace(ex));
+			MainResponseDTO<String> res = new MainResponseDTO<>();
 			res.setResponse("Failed to invalidate the auth token");
-			new LoginExceptionCatcher().handle(e, "invalidateToken", res);
+			new LoginExceptionCatcher().handle(ex, "invalidateToken", res);
 		} catch (Exception ex) {
 			log.error("In call invalidateToken method of login service- ", ex);
 			new LoginExceptionCatcher().handle(ex, "invalidateToken", response);
 		} finally {
-			System.out.println(response);
 			response.setResponsetime(GenericUtil.getCurrentResponseTime());
 
 			if (isSuccess) {
@@ -370,9 +374,9 @@ public class LoginService {
 			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
 			auditLogUtil.saveAuditDetails(auditRequestDto);
 		} catch (LoginServiceException ex) {
-			log.error("In setAuditvalue of login service:", StringUtils.join(ex.getValidationErrorList(), ","));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + StringUtils.join(ex.getValidationErrorList(), ","));
 		} catch (Exception ex) {
-			log.error("In setAuditvalue of login service:", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + ExceptionUtils.getFullStackTrace(ex));
 		}
 	}
 
@@ -391,13 +395,13 @@ public class LoginService {
 		try {
 			loginCommonUtil.validateLanguageProperties(responseParamsMap);
 			String[] uiParams = uiConfigParams.split(",");
-			for (String uiParam: uiParams) {
+			for (String uiParam : uiParams) {
 				if (env.getProperty(uiParam) != null) {
 					responseParamsMap.put(uiParam, env.getProperty(uiParam));
 				}
-			}			
+			}
 		} catch (Exception ex) {
-			log.error("In login service of getConfig ", ex);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In login service of getConfig " + ExceptionUtils.getFullStackTrace(ex));
 			new LoginExceptionCatcher().handle(ex, "config", res);
 		}
 		res.setResponse(responseParamsMap);
@@ -407,7 +411,7 @@ public class LoginService {
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
 		log.info("In generateJWTToken method of loginservice:{} {}", userId, issuerUrl);
-		Map<String, Object> claims = new HashMap<String, Object>();
+		Map<String, Object> claims = new HashMap<>();
 		claims.put("userId", userId);
 		claims.put("scope", jwtScope);
 		claims.put("user_name", userId);
@@ -420,13 +424,13 @@ public class LoginService {
 					.setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt(jwtTokenExpiryTime))))
 					.setAudience(jwtAudience).signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret))
 					.compact();
-			log.info("Auth token generarted");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Auth token generarted");
 		} else {
 			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
 					.setSubject(userId).setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt("0"))))
 					.setAudience(jwtAudience).signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret))
 					.compact();
-			log.info("Auth token generarted:");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Auth token generarted:");
 		}
 
 		return jws;
@@ -445,11 +449,11 @@ public class LoginService {
 			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
 			userId = clamis.getBody().get("userId").toString();
 			issuer = clamis.getBody().getIssuer();
-		} catch (JwtException e) {
-			log.error("Failed to generate logout token:", e);
+		} catch (JwtException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Failed to generate logout token:" + ExceptionUtils.getFullStackTrace(ex));
 			MainResponseDTO<String> res = new MainResponseDTO<String>();
 			res.setResponse("Failed to generate logout token");
-			new LoginExceptionCatcher().handle(e, "invalidateToken", res);
+			new LoginExceptionCatcher().handle(ex, "invalidateToken", res);
 		}
 		return this.generateJWTToken(userId, issuer, null);
 	}

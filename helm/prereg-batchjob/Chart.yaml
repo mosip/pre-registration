@@ -1,0 +1,20 @@
+apiVersion: v2
+name: prereg-batchjob
+description: A Helm chart for MOSIP Pre-registration Batchjob service
+type: application
+version: 0.0.1-develop
+appVersion: ""
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
+home: https://mosip.io
+keywords:
+  - mosip
+  - prereg-batchjob
+  - kernel
+maintainers:
+  - email: info@mosip.io
+    name: MOSIP

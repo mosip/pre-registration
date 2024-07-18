@@ -6,8 +6,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Map;
 
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.impl.client.HttpClients;
+import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
+import org.apache.hc.client5.http.impl.classic.HttpClients;
+import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -57,12 +58,15 @@ public class Config {
 	@Bean
 	public RestTemplate restTemplateConfig()
 			throws KeyManagementException, NoSuchAlgorithmException, KeyStoreException {
+				var connnectionManagerBuilder = PoolingHttpClientConnectionManagerBuilder.create()
+			     .setMaxConnPerRoute(maxConnectionPerRoute)
+			     .setMaxConnTotal(totalMaxConnection);
+			var connectionManager = connnectionManagerBuilder.build();
 			HttpClientBuilder httpClientBuilder = HttpClients.custom()
-				.setMaxConnPerRoute(maxConnectionPerRoute)
-				.setMaxConnTotal(totalMaxConnection).disableCookieManagement();
+					.setConnectionManager(connectionManager)
+					.disableCookieManagement();
 		HttpComponentsClientHttpRequestFactory requestFactory = new HttpComponentsClientHttpRequestFactory();
 		requestFactory.setHttpClient(httpClientBuilder.build());
 		return new RestTemplate(requestFactory);
 	}
-
 }

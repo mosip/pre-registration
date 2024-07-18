@@ -2,11 +2,10 @@ package io.mosip.preregistration.core.common.dto;
 
 import java.time.LocalDateTime;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-
 import com.fasterxml.jackson.annotation.JsonFormat;
 
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,7 +22,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuditRequestDto {
-
 	@NotNull
 	@Size(min = 1, max = 64)
 	private String eventId;
@@ -83,6 +81,4 @@ public class AuditRequestDto {
 
 	@Size(max = 2048)
 	private String description;
-	
-
 }

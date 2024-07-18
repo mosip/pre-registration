@@ -1,6 +1,5 @@
 package io.mosip.preregistration.application.service;
 
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -38,7 +37,6 @@ import io.mosip.preregistration.application.exception.PreRegLoginException;
 import io.mosip.preregistration.application.repository.OtpTxnRepository;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import junit.framework.Assert;
 
 @RunWith(JUnit4.class)
 @SpringBootTest
@@ -273,7 +271,7 @@ public class OTPManagerTest {
 //		headers.setContentType(MediaType.APPLICATION_JSON);
 //		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 //		JSONObject jsonObject = new JSONObject();
-//		jsonObject.put("id", tokenUrl);
+//		jsonObject.put(LOGGER_ID tokenUrl);
 //		jsonObject.put("metadata", new JSONObject());
 //		JSONObject jsonObject1 = new JSONObject();
 //		jsonObject1.put("clientId", clientId);

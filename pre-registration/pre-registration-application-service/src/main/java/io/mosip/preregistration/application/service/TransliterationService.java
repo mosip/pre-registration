@@ -4,12 +4,16 @@
  */
 package io.mosip.preregistration.application.service;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import net.logstash.logback.encoder.org.apache.commons.lang3.exception.ExceptionUtils;
 import io.mosip.kernel.core.transliteration.spi.Transliteration;
 import io.mosip.preregistration.application.dto.TransliterationRequestDTO;
 import io.mosip.preregistration.application.dto.TransliterationResponseDTO;
@@ -70,7 +74,8 @@ public class TransliterationService {
 						TransliterationErrorMessage.INCORRECT_MANDATORY_FIELDS.getMessage(), responseDTO);
 			}
 		} catch (Exception e) {
-			log.error("Failed to transliterate >>", e);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to transliterate " + ExceptionUtils.getMessage(e));
 			throw new UnSupportedLanguageException(TransliterationErrorCodes.PRG_TRL_APP_002.getCode(),
 					TransliterationErrorMessage.UNSUPPORTED_LANGUAGE.getMessage(), responseDTO);
 		}

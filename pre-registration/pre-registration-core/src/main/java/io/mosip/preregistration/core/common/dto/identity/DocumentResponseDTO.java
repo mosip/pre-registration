@@ -6,18 +6,26 @@ package io.mosip.preregistration.core.common.dto.identity;
 
 import java.io.Serializable;
 
-import lombok.Getter;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 /**
- * This DTO class is used to accept the response values for document upload.
+ * The {@code Identity} class represents an identity with various personal
+ * information fields. It implements {@link Serializable} for allowing instances
+ * to be serialized. The class is annotated with {@link Data} to generate
+ * getters, setters, and other utility methods. The {@link Component} annotation
+ * makes it a Spring bean, and {@link JsonIgnoreProperties} is used to ignore
+ * unknown JSON properties during deserialization.
  * 
  * @author Kishan Rathore
  * @since 1.0.0
  */
-@Getter
-@Setter
+
+@Data
 @NoArgsConstructor
 public class DocumentResponseDTO implements Serializable {
 
@@ -25,28 +33,32 @@ public class DocumentResponseDTO implements Serializable {
 	private static final long serialVersionUID = 7070542323407937205L;
 
 	/**
-	 * PreRegistration Id
+	 * The PreRegistration ID associated with the document.
 	 */
 	private String preRegistrationId;
+	
 	/**
-	 * Document Id
+	 * The Document Id
 	 */
 	private String docId;
+	
 	/**
-	 * Document Name
+	 * The Document Name
 	 */
 	private String docName;
+	
 	/**
-	 * Document Category
+	 * The Document Category Code.
 	 */
 	private String docCatCode;
+
 	/**
-	 * Document Type
+	 * The Document Type Code
 	 */
 	private String docTypCode;
-	/**
-	 * Response Message
-	 */
+	
+	 /**
+     * The Document File Format.
+     */
 	private String docFileFormat;
-
 }

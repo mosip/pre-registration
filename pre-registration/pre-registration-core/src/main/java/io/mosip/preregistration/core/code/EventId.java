@@ -51,6 +51,4 @@ public enum EventId {
 	
 	/** Id for UI event ex. consent . */
 	PRE_414;
-	
-
 }
