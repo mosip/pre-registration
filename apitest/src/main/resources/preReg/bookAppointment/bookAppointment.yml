@@ -41,7 +41,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_CancelApplicationsAppointment_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
-      decsription: Book an appointment to cancel applications the existing appointment
+      description: Book an appointment to cancel applications the existing appointment
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
