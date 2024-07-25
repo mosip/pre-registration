@@ -1,7 +1,11 @@
 UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
+<<<<<<< HEAD
       description: Update the status of an application to 'Pending Appointment' using the prereg ID and status code 
+=======
+      description: Update the status of an application to 'Pending Appointment' using the preregistration ID and status code 
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -15,7 +19,11 @@ UpdatePreRegStatus:
 }'
    Prereg_UpdatePreRegStatus_for_expired_testcase_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
+<<<<<<< HEAD
       description: Update the status of the expired test case application using the prereg ID and status code     
+=======
+      description: Update the status of the expired test case application using the preregistration ID and status code     
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -43,7 +51,11 @@ UpdatePreRegStatus:
 }'
    Prereg_UpdatePreRegStatus_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
+<<<<<<< HEAD
       description: Update the application status to 'Pending Appointment' using the prereg ID and status code 
+=======
+      description: Update the application status to 'Pending Appointment' using the preregistration ID and status code 
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -57,7 +69,11 @@ UpdatePreRegStatus:
 }'
    Prereg_UpdatePreRegStatus_CA_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
+<<<<<<< HEAD
       description: Update the status of an application to'Pending Appointment'for canceling using the prereg ID and status code 
+=======
+      description:  Update the status of an application to 'Pending Appointment' for canceling using the preregistration ID and status code 
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -71,7 +87,11 @@ UpdatePreRegStatus:
 }'
    Prereg_UpdatePreRegStatus_Smoke_alldel_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
+<<<<<<< HEAD
       description: Update the status of an application to 'pending  Appointment' for deleted the prereg ID and status code 
+=======
+      description: Update the status of an application to 'pending  Appointment' for deleted the preregistration ID and status code 
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -99,7 +119,11 @@ UpdatePreRegStatus:
 }'
    Prereg_UpdatePreRegStatus_Smoke_CancelApplicationsAppointment_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
+<<<<<<< HEAD
       description: Update the status of an application to'cancell application Appointment'using the prereg ID and status code
+=======
+      description: Update the status of an application to 'cancell application Appointment' using the preregistration ID and status code
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get

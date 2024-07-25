@@ -1,7 +1,11 @@
 GetPreRegInfoByPrid:
    Prereg_GetPreRegInfoByPrid_Valid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
+<<<<<<< HEAD
       description: Retrieve preregistration information using the preReg Id with a valid preRegistrationId
+=======
+      description: Retrieve preregistration information using the preRegistrationId with a valid preRegistrationId
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       restMethod: get
       inputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid
@@ -18,7 +22,11 @@ GetPreRegInfoByPrid:
 
    Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
+<<<<<<< HEAD
       description: Retrieve preregistration information using the preReg Id with an invalid preRegistrationId
+=======
+      description: Retrieve preregistration information using the preRegistrationId with an invalid preRegistrationId
+>>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       restMethod: get
       inputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid
