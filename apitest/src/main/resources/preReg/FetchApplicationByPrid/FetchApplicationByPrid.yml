@@ -10,7 +10,7 @@ FetchApplicationByPrid:
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
-  "preRegistrationId": "59286406501581
+  "preRegistrationId": "59286406501581"
 }'
    Prereg_FetchApplicationByPrid_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
