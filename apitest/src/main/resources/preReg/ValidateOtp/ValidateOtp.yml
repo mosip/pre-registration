@@ -63,7 +63,7 @@ ValidateOtp:
   ]
 }'
 
-   Prereg_ValidateOtp_All_Valid_Smoke_email_sid:
+   Prereg_SendOtp_All_Valid_Smoke_email_sid:
       endPoint: /preregistration/v1/login/validateOtp
       description: validating OPT with valid email address
       role: batch
