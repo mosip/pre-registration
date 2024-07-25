@@ -13,11 +13,7 @@ GetAllPreRegApplications:
 }'
    Prereg_GetAllPreRegApplications_LOST_UIN_APPLICATION_sid:
       endPoint: /preregistration/v1/applications
-<<<<<<< HEAD
       description: Retrieve all preregistered applications with a prereg ID associated with the lost UIN application
-=======
-      description: Retrieve all preregistered applications with a preregistration ID associated with the lost UIN application
->>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -29,11 +25,7 @@ GetAllPreRegApplications:
 }'
    Prereg_GetAllPreRegApplications_DELETE_UIN_APPLICATION_sid:
       endPoint: /preregistration/v1/applications
-<<<<<<< HEAD
       description: Retrieve all preregistered applications with a prereg ID associated with a deleted UIN application
-=======
-      description: Retrieve all preregistered applications with a preregistration ID associated with a deleted UIN application
->>>>>>> 4bb61d041f58c858bd56de329d882bcdf42cdf74
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
