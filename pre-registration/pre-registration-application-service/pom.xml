@@ -224,6 +224,11 @@
 					<version>${kernel.idobjectvalidator.version}</version>
 				</dependency>
 				<dependency>
+					<groupId>io.mosip.kernel</groupId>
+					<artifactId>kernel-transliteration-icu4j</artifactId>
+					<version>${kernel.transliteration.icu4j.version}</version>
+				</dependency>
+				<dependency>
 					<groupId>org.junit.vintage</groupId>
 					<artifactId>junit-vintage-engine</artifactId>
 				</dependency>
