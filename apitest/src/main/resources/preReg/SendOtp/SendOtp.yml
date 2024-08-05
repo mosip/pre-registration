@@ -1,20 +1,4 @@
 SendOtp:
-   Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/SendOtp/sendotpResult
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "9090872300",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-  "status": "success"
-}'
-
    Prereg_SendOtp_Invalid_Phone_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       role: batch
@@ -75,22 +59,6 @@ SendOtp:
   ]
 }'
 
-   Prereg_SendOtp_All_Valid_Smoke_email_sid:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/SendOtp/sendotpResult
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "john.doe@mailinator.com",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-  "status": "success"
-}'
-
    Prereg_SendOtp_Invalid__email_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       role: batch
@@ -149,4 +117,34 @@ SendOtp:
       "errorCode": "PRG_PAM_LGN_008"
     }
   ]
+}'
+   Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/SendOtp/sendotpResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "9090872300",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "status": "success"
+}'
+   Prereg_SendOtp_All_Valid_Smoke_email_sid:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/SendOtp/sendotpResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "john.doe@mailinator.com",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "status": "success"
 }'

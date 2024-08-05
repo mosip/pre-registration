@@ -23,7 +23,7 @@ GetAllApplicationsWithapplicationId:
 }'
       output: '{
 }'
-   Prereg_GetAllApplicationsWithapplicationId_with_invalid_app;icationId:
+   Prereg_GetAllApplicationsWithapplicationId_with_invalid_applicationId:
       endPoint: /preregistration/v1/applications/{applicationId}
       role: batch
       checkErrorsOnlyInResponse: true
@@ -36,7 +36,7 @@ GetAllApplicationsWithapplicationId:
       output: '{
   "errors": [
     {
-      "errorCode": "PRG_APP_016"
+      "errorCode": "PRG_APP_013"
     }
   ]
 }'
