@@ -16,14 +16,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AuditLogEventCodes implements Serializable {
-
-	/**
-	 * 
-	 */
+	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4812141703022119560L;
 
 	private String eventId;
-	private String eventType;
-	private String eventName;
 
+	private String eventType;
+
+	private String eventName;
 }

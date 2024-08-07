@@ -6,31 +6,21 @@ package io.mosip.preregistration.batchjob.entity;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.List;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
 
 import org.springframework.stereotype.Component;
 
-import io.mosip.preregistration.core.common.entity.ApplicationEntity;
-import io.mosip.preregistration.core.common.entity.DocumentEntity;
-import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
-import lombok.AccessLevel;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
  * This entity class defines the database table details for PreRegistration.
  * 
- * @author Kishan Rathore
- * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
  *
  */
 @Component
@@ -43,15 +33,15 @@ public class DemographicEntityConsumed implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6705845720255847210L;
 
-	@OneToMany(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
-	private List<DocumentEntity> documentEntity;
+//	@OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL, mappedBy = "demographicEntity")
+//	private List<DocumentEntity> documentEntity;
 
 //	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "applicationId")
 //	private ApplicationEntity applicationEntity;
 
 //	@OneToOne(fetch = FetchType.EAGER,cascade=CascadeType.ALL, mappedBy = "demographicEntity")
 //	private RegistrationBookingEntity registrationBookingEntity;
-	
+
 	/** The pre registration id. */
 	@Column(name = "prereg_id", nullable = false)
 	@Id
@@ -59,11 +49,11 @@ public class DemographicEntityConsumed implements Serializable {
 
 	/** The JSON */
 	@Column(name = "demog_detail")
-	@Setter(AccessLevel.NONE)
 	private byte[] applicantDetailJson;
-	
+
+	// Setter methods for requesttime are overridden manually
 	public void setApplicantDetailJson(byte[] applicantDetailJson) {
-		this.applicantDetailJson =applicantDetailJson !=null ? applicantDetailJson.clone():null;
+		this.applicantDetailJson = applicantDetailJson != null ? applicantDetailJson.clone() : null;
 	}
 
 	/** The status_code */

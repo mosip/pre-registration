@@ -1,0 +1,16 @@
+{{- if .Values.istio.enabled }}
+apiVersion: networking.istio.io/v1alpha3
+kind: Gateway
+metadata:
+  name: prereg-gateway
+spec:
+  selector:
+    istio: {{ .Values.istio.ingressController.name }}
+  servers:
+  - port:
+      number: 80
+      name: http
+      protocol: HTTP
+    hosts:
+      {{- include "common.tplvalues.render" ( dict "value" .Values.istio.hosts "context" $ ) | nindent 6 }}
+{{- end }}

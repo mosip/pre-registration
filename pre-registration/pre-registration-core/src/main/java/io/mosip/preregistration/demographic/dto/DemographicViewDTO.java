@@ -9,9 +9,8 @@ import java.io.Serializable;
 import org.json.simple.JSONObject;
 
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -21,8 +20,7 @@ import lombok.ToString;
  * @since 1.0.0
  */
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 public class DemographicViewDTO implements Serializable {
@@ -47,5 +45,4 @@ public class DemographicViewDTO implements Serializable {
 	 * Document response DTO
 	 */
 	private JSONObject demographicMetadata;
-
 }

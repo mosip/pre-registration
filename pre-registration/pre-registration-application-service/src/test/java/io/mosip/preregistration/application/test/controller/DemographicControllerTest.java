@@ -372,8 +372,8 @@ public class DemographicControllerTest {
 		Mockito.when(preRegistrationService.getDemographicData(preRegistrationId)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/applications/prereg/{preRegistrationId}", preRegistrationId)
-				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 	
@@ -391,8 +391,8 @@ public class DemographicControllerTest {
 		Mockito.when(preRegistrationService.getPregistrationInfo(preRegistrationId)).thenReturn(response);
 		RequestBuilder request = MockMvcRequestBuilders
 				.get("/applications/prereg/info/{preRegistrationId}", preRegistrationId)
-				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON_UTF8)
-				.contentType(MediaType.APPLICATION_JSON_UTF8);
+				.param("preRegistrationId", preRegistrationId).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON);
 		mockMvc.perform(request).andExpect(MockMvcResultMatchers.status().isOk());
 	}
 

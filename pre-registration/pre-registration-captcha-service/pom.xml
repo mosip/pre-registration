@@ -8,38 +8,41 @@
 		<artifactId>pre-registration-parent</artifactId>
 		<version>1.2.1-SNAPSHOT</version>
 	</parent>
+	
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
+	<version>1.2.1-SNAPSHOT</version>
 
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
-	<version>1.2.1-SNAPSHOT</version>
-
+	
 	<properties>
-		<java.version>11</java.version>
-		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
+		<!-- Mosip kernel -->
+		<kernel.keymanager.version>1.2.1-SNAPSHOT</kernel.keymanager.version>
+		<kernel.transliteration.icu4j.version>1.2.1-SNAPSHOT</kernel.transliteration.icu4j.version>
+		<kernel.idobjectvalidator.version>1.2.1-SNAPSHOT</kernel.idobjectvalidator.version>
+		<kernel.bom.version>1.2.1-SNAPSHOT</kernel.bom.version>
 		<pre.registration.core.version>1.2.1-SNAPSHOT</pre.registration.core.version>
 	</properties>
 
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>org.springframework.boot</groupId>
-				<artifactId>spring-boot-dependencies</artifactId>
-				<version>${spring.boot.version}</version>
+				<groupId>io.mosip.kernel</groupId>
+				<artifactId>kernel-bom</artifactId>
+				<version>${kernel.bom.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
-			<dependency>
-				<groupId>org.projectlombok</groupId>
-				<artifactId>lombok</artifactId>
-				<version>${lombok.version}</version>
-				<scope>compile</scope>
-			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<dependencies>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
@@ -51,7 +54,14 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
-			<version>${spring-cloud-config.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -83,6 +93,10 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -90,7 +104,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.version}</version>
+				<version>${spring.boot.maven.plugin.version}</version>
 				<configuration>
 					<executable>true</executable>
 				</configuration>
@@ -116,12 +130,21 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0-rc1</version>
+					<version>${kernel.idobjectvalidator.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.1-SNAPSHOT</version>
+					<version>${kernel.transliteration.icu4j.version}</version>
+				</dependency>
+				<dependency>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</dependency>
+				<dependency>
+					<groupId>junit</groupId>
+					<artifactId>junit</artifactId>
+					<scope>test</scope>
 				</dependency>
 			</dependencies>
 			<build>
@@ -129,7 +152,7 @@
 					<plugin>
 						<groupId>org.springframework.boot</groupId>
 						<artifactId>spring-boot-maven-plugin</artifactId>
-						<version>${spring.boot.version}</version>
+						<version>${spring.boot.maven.plugin.version}</version>
 						<configuration>
 							<executable>true</executable>
 							<layout>ZIP</layout>
@@ -166,7 +189,7 @@
 					<plugin>
 						<groupId>org.springdoc</groupId>
 						<artifactId>springdoc-openapi-maven-plugin</artifactId>
-						<version>0.2</version>
+						<version>${springdoc.openapi.maven.plugin}</version>
 						<executions>
 							<execution>
 								<id>integration-test</id>
@@ -176,7 +199,8 @@
 							</execution>
 						</executions>
 						<configuration>
-							<apiDocsUrl>http://localhost:9089/preregistration/v1/captcha/v3/api-docs/Pre-Registration-captcha</apiDocsUrl>
+							<apiDocsUrl>
+								http://localhost:9089/preregistration/v1/captcha/v3/api-docs/Pre-Registration-captcha</apiDocsUrl>
 							<outputFileName>${artifactId}-openapi.json</outputFileName>
 							<outputDir>${project.build.directory}</outputDir>
 							<skip>false</skip>

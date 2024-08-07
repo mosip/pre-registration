@@ -22,7 +22,7 @@ public class CephConnectionUnavailableException extends BaseUncheckedException {
 
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
-	
+
 	private MainResponseDTO<?> response;
 
 	/**
@@ -32,41 +32,33 @@ public class CephConnectionUnavailableException extends BaseUncheckedException {
 		super();
 	}
 
-
 	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
-	 * @param cause
-	 *            pass Error cause
+	 * @param errorCode pass Error code
+	 * @param message   pass Error Message
+	 * @param cause     pass Error cause
 	 */
-	public CephConnectionUnavailableException(String errorCode, String message, Throwable cause,MainResponseDTO<?> response) {
+	public CephConnectionUnavailableException(String errorCode, String message, Throwable cause,
+			MainResponseDTO<?> response) {
 		super(errorCode, message, cause);
-		this.response=response;
+		this.response = response;
 	}
 
 	/**
-	 * @param errorCode
-	 *            pass Error code
-	 * @param message
-	 *            pass Error Message
+	 * @param errorCode pass Error code
+	 * @param message   pass Error Message
 	 */
 	public CephConnectionUnavailableException(String errorCode, String message) {
 		super(errorCode, message);
 	}
-	
+
 	/**
 	 * 
-	 * @param errorCode
-	 *    	     pass Error code
-	 * @param message
-	 *           pass Error Message
-	 * @param response
-	 * 			 pass response
+	 * @param errorCode pass Error code
+	 * @param message   pass Error Message
+	 * @param response  pass response
 	 */
-	public CephConnectionUnavailableException(String errorCode, String message,MainResponseDTO<?> response) {
+	public CephConnectionUnavailableException(String errorCode, String message, MainResponseDTO<?> response) {
 		super(errorCode, message);
-		this.response=response;
+		this.response = response;
 	}
 }

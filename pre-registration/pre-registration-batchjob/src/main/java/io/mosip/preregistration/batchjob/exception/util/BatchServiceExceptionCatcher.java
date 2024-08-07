@@ -5,7 +5,6 @@
 package io.mosip.preregistration.batchjob.exception.util;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
-import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.batchjob.exception.NoPreIdAvailableException;
 import io.mosip.preregistration.batchjob.exception.NoValidPreIdFoundException;
 import io.mosip.preregistration.batchjob.exception.RestCallException;

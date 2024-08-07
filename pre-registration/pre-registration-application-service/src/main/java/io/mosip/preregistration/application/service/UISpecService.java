@@ -1,5 +1,9 @@
 package io.mosip.preregistration.application.service;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -7,6 +11,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,7 +28,6 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 @Service
 public class UISpecService {
-
 	@Value("${version}")
 	private String version;
 
@@ -48,17 +52,18 @@ public class UISpecService {
 
 	public MainResponseDTO<UISpecMetaDataDTO> getLatestUISpec(double version, double identitySchemaVersion) {
 		log.info("In UISpec service getUIspec method");
-		MainResponseDTO<UISpecMetaDataDTO> response = new MainResponseDTO<UISpecMetaDataDTO>();
+		MainResponseDTO<UISpecMetaDataDTO> response = new MainResponseDTO<>();
 		response.setVersion(this.version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			log.info("fetching the UiSpec version {} and identitySchemaVersion {}", version, identitySchemaVersion);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"fetching the UiSpec version {} and identitySchemaVersion {}", version, identitySchemaVersion);
 			List<UISpecResponseDTO> uiSchema = serviceUtil.getUISchema(version, identitySchemaVersion);
 			List<UISpecMetaDataDTO> fetchedSchema = prepareResponse(uiSchema);
 			response.setResponse(getLatestPublishedSchema(fetchedSchema));
 		} catch (UISpecException ex) {
-			log.error("Exception occured while fetching the UiSpec");
-			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Exception occured while fetching the UiSpec");
+			List<ExceptionJSONInfoDTO> explist = new ArrayList<>();
 			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
 			exception.setErrorCode(ex.getErrorCode());
 			exception.setMessage(ex.getMessage());
@@ -75,9 +80,9 @@ public class UISpecService {
 		response.setVersion(this.version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			log.info("fetching the All published UiSpec");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "fetching the All published UiSpec");
 			PageDTO<UISpecResponseDTO> res = serviceUtil.getAllUISchema(pageNumber, pageSize);
-			PageDTO<UISpecMetaDataDTO> fetchedSchema = new PageDTO<UISpecMetaDataDTO>();
+			PageDTO<UISpecMetaDataDTO> fetchedSchema = new PageDTO<>();
 			fetchedSchema.setData(filterPreRegSpec(res.getData()));
 			fetchedSchema.setPageNo(res.getPageNo());
 			fetchedSchema.setPageSize(res.getPageSize());
@@ -86,12 +91,12 @@ public class UISpecService {
 			fetchedSchema.setSort(res.getSort());
 			response.setResponse(fetchedSchema);
 		} catch (UISpecException ex) {
-			log.error("Exception occured while fetching all the UiSpec");
-			List<ExceptionJSONInfoDTO> explist = new ArrayList<ExceptionJSONInfoDTO>();
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Exception occured while fetching all the UiSpec");
+			List<ExceptionJSONInfoDTO> explist = new ArrayList<>();
 			ExceptionJSONInfoDTO exception = new ExceptionJSONInfoDTO();
 			exception.setErrorCode(ex.getErrorCode());
 			exception.setMessage(ex.getMessage());
-			log.error("Exception {}", exception);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Exception " + ExceptionUtils.getFullStackTrace(ex));
 			explist.add(exception);
 			response.setErrors(explist);
 		}
@@ -126,7 +131,7 @@ public class UISpecService {
 	}
 
 	private List<UISpecMetaDataDTO> filterPreRegSpec(List<UISpecResponseDTO> data) {
-		List<UISpecResponseDTO> filteredData = new ArrayList<UISpecResponseDTO>();
+		List<UISpecResponseDTO> filteredData = new ArrayList<>();
 		data.forEach(spec -> {
 			if (spec.getDomain().equals(domain)) {
 				filteredData.add(spec);
@@ -134,5 +139,4 @@ public class UISpecService {
 		});
 		return prepareResponse(filteredData);
 	}
-
 }

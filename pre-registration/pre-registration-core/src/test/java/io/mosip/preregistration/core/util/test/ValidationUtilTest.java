@@ -10,20 +10,28 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.preregistration.core.code.RequestCodes;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.config.TestConfig;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.mosip.preregistration.core.util.ValidationUtil;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@TestPropertySource("classpath:application.properties")
+@ContextConfiguration(classes = { TestConfig.class, TestContext.class, WebApplicationContext.class,
+        ValidationUtil.class })
 public class ValidationUtilTest {
 	Map<String, String> requestMap = null;
 	Map<String, String> requiredRequestMap = null;
@@ -31,7 +39,7 @@ public class ValidationUtilTest {
 
 	@Autowired
 	ValidationUtil validationUtil;	
-	@MockBean
+	@Mock
 	private RequestValidator validator;
 
 	@Before

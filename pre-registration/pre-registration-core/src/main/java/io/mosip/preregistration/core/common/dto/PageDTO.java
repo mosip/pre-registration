@@ -18,11 +18,15 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PageDTO<T> {
-
 	private int pageNo;
+
 	private int pageSize;
+
 	private Sort sort;
+
 	private long totalItems;
+
 	private int totalPages;
+
 	private List<T> data;
 }

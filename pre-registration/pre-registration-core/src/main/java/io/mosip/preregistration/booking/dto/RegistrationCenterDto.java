@@ -1,4 +1,5 @@
 package io.mosip.preregistration.booking.dto;
+
 import java.time.LocalTime;
 
 import lombok.Getter;
@@ -6,13 +7,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-
 @Getter
 @Setter
 @NoArgsConstructor
 @ToString
 public class RegistrationCenterDto {
-
 	private String id;
 
 	private String name;
@@ -58,5 +57,4 @@ public class RegistrationCenterDto {
 	private LocalTime lunchEndTime;
 
 	private Boolean isActive;
-
 }

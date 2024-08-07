@@ -7,24 +7,22 @@ package io.mosip.preregistration.core.common.dto;
 import java.io.Serializable;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
- * This DTO class defines the errorcodes and errormessages during exception handling.
+ * This DTO class defines the errorcodes and errormessages during exception
+ * handling.
  * 
  * @author Rajath KR
  * @since 1.0.0
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 @AllArgsConstructor
 public class ExceptionJSONInfoDTO implements Serializable {
-	
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 3999014525078508265L;
 
@@ -32,10 +30,9 @@ public class ExceptionJSONInfoDTO implements Serializable {
 	 * Error Code
 	 */
 	private String errorCode;
-	
+
 	/**
 	 * Error Message
 	 */
 	private String message;
-
 }

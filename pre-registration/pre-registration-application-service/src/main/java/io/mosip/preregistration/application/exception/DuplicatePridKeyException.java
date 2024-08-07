@@ -4,44 +4,70 @@ import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
+/**
+ * The DuplicatePridKeyException class represents an exception indicating
+ * duplicate primary key errors. This class extends
+ * {@link BaseUncheckedException} and includes various constructors for
+ * different use cases, as well as a {@link MainResponseDTO} object for
+ * additional error information.
+ * 
+ * @author Rajath KR
+ * @since 1.0.0
+ *
+ */
+
 @Getter
 public class DuplicatePridKeyException extends BaseUncheckedException {
-
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;
+
+	/** The main response DTO associated with the exception. */
 	private MainResponseDTO<?> mainresponseDTO;
 
-
 	/**
-	 * @param msg pass the error message
+	 * Constructs a new {@code DuplicatePridKeyException} with the specified
+	 * error message
+	 * 
+	 * @param errorMessage the detailed error message.
 	 */
-	public DuplicatePridKeyException(String msg) {
-		super("", msg);
+	public DuplicatePridKeyException(String errorMessage) {
+		super("", errorMessage);
 	}
 
 	/**
-	 * @param errCode pass the error code
-	 * @param msg pass the error message
+	 * Constructs a new {@code DuplicatePridKeyException} with the specified
+	 * error code and error message.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
 	 */
-	public DuplicatePridKeyException(String errCode, String msg) {
-		super(errCode, msg);
-	}
-	/**
-	 * @param errCode pass the error code
-	 * @param msg pass the error message
-	 */
-	public DuplicatePridKeyException(String errCode, String msg,MainResponseDTO<?> response) {
-		super(errCode, msg);
-		this.mainresponseDTO=response;
+	public DuplicatePridKeyException(String errorCode, String errorMessage) {
+		super(errorCode, errorMessage);
 	}
 
 	/**
-	 * @param errCode pass the error code
-	 * @param msg pass the error message
-	 * @param cause pass the cause
+	 * Constructs a new {@code DuplicatePridKeyException} with the specified
+	 * error code, error message, and response.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param response     the {@link MainResponseDTO} object containing additional
+	 *                     information about the error.
 	 */
-	public DuplicatePridKeyException(String errCode, String msg, Throwable cause) {
-		super(errCode, msg, cause);
+	public DuplicatePridKeyException(String errorCode, String errorMessage, MainResponseDTO<?> response) {
+		super(errorCode, errorMessage);
+		this.mainresponseDTO = response;
 	}
 
+	/**
+	 * Constructs a new {@code DuplicatePridKeyException} with the specified
+	 * error code, error message, and rootCause.
+	 * 
+	 * @param errorCode    the error code representing the specific error condition.
+	 * @param errorMessage the detailed error message.
+	 * @param rootCause    the cause of the error.
+	 */
+	public DuplicatePridKeyException(String errorCode, String errorMessage, Throwable rootCause) {
+		super(errorCode, errorMessage, rootCause);
+	}
 }

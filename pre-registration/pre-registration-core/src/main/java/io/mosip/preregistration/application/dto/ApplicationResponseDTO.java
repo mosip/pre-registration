@@ -2,9 +2,8 @@ package io.mosip.preregistration.application.dto;
 
 import java.io.Serializable;
 
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import lombok.ToString;
 
 /**
@@ -15,8 +14,7 @@ import lombok.ToString;
  * @since 1.2.0
  *
  */
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @ToString
 public class ApplicationResponseDTO implements Serializable {
@@ -55,10 +53,9 @@ public class ApplicationResponseDTO implements Serializable {
 	 * language code
 	 */
 	private String langCode;
-	
+
 	/**
 	 * the booking type
 	 */
 	private String bookingType;
-
 }

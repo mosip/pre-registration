@@ -11,28 +11,23 @@ public class CryptocoreException extends BaseUncheckedException {
 	private MainResponseDTO<?> mainresponseDTO;
 
 	/**
-	 * @param msg
-	 *            pass the error message
+	 * @param msg pass the error message
 	 */
 	public CryptocoreException(String msg) {
 		super("", msg);
 	}
 
 	/**
-	 * @param errCode
-	 *            pass the error code
-	 * @param msg
-	 *            pass the error message
+	 * @param errCode pass the error code
+	 * @param msg     pass the error message
 	 */
 	public CryptocoreException(String errCode, String msg) {
 		super(errCode, msg);
 	}
 
 	/**
-	 * @param errCode
-	 *            pass the error code
-	 * @param msg
-	 *            pass the error message
+	 * @param errCode pass the error code
+	 * @param msg     pass the error message
 	 */
 	public CryptocoreException(String errCode, String msg, MainResponseDTO<?> response) {
 		super(errCode, msg);

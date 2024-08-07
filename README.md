@@ -2,14 +2,14 @@
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=mosip_pre-registration&metric=alert_status)](https://sonarcloud.io/dashboard?branch=develop&id=mosip_pre-registration)
 
 # Pre-registration 
-This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://docs.mosip.io/1.2.0/modules/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/)
+This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://docs.mosip.io/1.2.0/modules/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/). Pre-registration Developers Guide [here](https://docs.mosip.io/1.2.0/modules/pre-registration/pre-registration-developer-setup)
 
 Pre-registration module consists of the following services:
 1. Application
 2. Booking
 3. Batchjob
-4. Captcha
-5. Datasync
+4. Datasync
+5. Capthca
 
 ## Database
 See [DB guide](db_scripts/README.md)
@@ -20,7 +20,7 @@ To run Pre-registration services, run [Config Server](https://docs.mosip.io/1.2.
 ## Build & run (for developers)
 Prerequisites:
 1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
-1. JDK 1.11  
+1. JDK 21 and Java21 Artifactory Jars [here](https://oss.sonatype.org/content/repositories/snapshots/io/mosip/)  
 1. Build and install:
     ```
     $ cd kernel

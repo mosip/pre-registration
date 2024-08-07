@@ -5,16 +5,13 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class DemographicBookingRightJoin implements Serializable {
-	
 	/**
 	 * 
 	 */
@@ -22,7 +19,7 @@ public class DemographicBookingRightJoin implements Serializable {
 
 	/** Status of the preid */
 	private String statusCode;
-	
+
 	/** Registration center id. */
 	private String registrationCenterId;
 
@@ -34,6 +31,4 @@ public class DemographicBookingRightJoin implements Serializable {
 
 	/** Appointment date. */
 	private LocalDate regDate;
-
-
 }

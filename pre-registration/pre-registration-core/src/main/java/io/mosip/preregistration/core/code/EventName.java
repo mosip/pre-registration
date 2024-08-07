@@ -46,5 +46,4 @@ public enum EventName {
 	
 	/** Triggering batch-service for expired status . */
 	EXPIREDSTATUS
-
 }
