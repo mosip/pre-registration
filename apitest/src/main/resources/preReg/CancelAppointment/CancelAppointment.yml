@@ -26,7 +26,7 @@ CancelAppointment:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_APP_013"
+      "errorCode": "PRG_BOOK_RCI_013"
     }
   ]
 }'
@@ -44,7 +44,7 @@ CancelAppointment:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_APP_013"
+      "errorCode": "PRG_BOOK_RCI_013"
     }
   ]
 }'

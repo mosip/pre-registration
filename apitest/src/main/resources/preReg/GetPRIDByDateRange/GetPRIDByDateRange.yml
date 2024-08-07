@@ -3,6 +3,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       description: Retrieve the PRID within the given date range
       role: regproc
+      checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRangeResult

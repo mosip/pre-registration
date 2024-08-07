@@ -34,7 +34,7 @@ AddLostUinApplication:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_014"
+      "errorCode": "PRG_PAM_CORE_001"
     }
   ]
 }'
@@ -42,7 +42,6 @@ AddLostUinApplication:
       endPoint: /preregistration/v1/applications/lostuin
       description: Process the lost UIN application with an invalid language code
       role: batch
-      templateFields: ["langCode"]
       restMethod: post
       inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
       outputTemplate: preReg/error
@@ -53,8 +52,11 @@ AddLostUinApplication:
   "id": "mosip.pre-registration.lostuin.create"
 }'
       output: '{
-  "bookingType": "LOST_FORGOTTEN_UIN",
-  "applicationStatusCode": "SUBMITTED"
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014"
+    }
+  ]
 }'
    Prereg_AddLostUinApplication_without_version:
       endPoint: /preregistration/v1/applications/lostuin
@@ -73,7 +75,7 @@ AddLostUinApplication:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_014"
+      "errorCode": "PRG_CORE_REQ_002"
     }
   ]
 }'
@@ -94,7 +96,7 @@ AddLostUinApplication:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_014"
+      "errorCode": "PRG_CORE_REQ_002"
     }
   ]
 }'
@@ -115,7 +117,7 @@ AddLostUinApplication:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_014"
+      "errorCode": "PRG_CORE_REQ_002"
     }
   ]
 }'
@@ -174,7 +176,7 @@ AddLostUinApplication:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_014"
+      "errorCode": "PRG_CORE_REQ_003"
     }
   ]
 }'

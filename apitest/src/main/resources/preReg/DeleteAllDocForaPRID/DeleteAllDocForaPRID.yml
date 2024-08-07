@@ -25,7 +25,7 @@ DeleteAllDocForaPRID:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_PAM_APP_005",
+      "errorCode": "PRG_PAM_APP_005"
     }
   ]
 }'
