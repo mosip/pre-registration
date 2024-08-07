@@ -3,8 +3,8 @@ GetBookingsForRegCenter:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=2020-10-01&to_date=2034-10-13
       role: batch
       restMethod: get
-      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
-      outputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreIdResult
+      inputTemplate: preReg/GetBookingsForRegCenter/getBookingsForRegCenter
+      outputTemplate: preReg/GetBookingsForRegCenter/getBookingsForRegCenterResult
       input: '{
   "regCenterId": "10003"
 }'
@@ -15,7 +15,7 @@ GetBookingsForRegCenter:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=2020-45461&to_date=2034-10-13
       role: batch
       restMethod: get
-      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+      inputTemplate: preReg/GetBookingsForRegCenter/getBookingsForRegCenter
       outputTemplate: preReg/error
       input: '{
   "regCenterId": "10003"
@@ -31,7 +31,7 @@ GetBookingsForRegCenter:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=2020-10-01&to_date=2034-10-13
       role: batch
       restMethod: get
-      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+      inputTemplate: preReg/GetBookingsForRegCenter/getBookingsForRegCenter
       outputTemplate: preReg/error
       input: '{
   "regCenterId": "10@@#$$003"
@@ -47,7 +47,7 @@ GetBookingsForRegCenter:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=20204555&to_date=2034-10-13
       role: batch
       restMethod: get
-      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+      inputTemplate: preReg/GetBookingsForRegCenter/getBookingsForRegCenter
       outputTemplate: preReg/error
       input: '{
   "regCenterId": "10@@#$$003"

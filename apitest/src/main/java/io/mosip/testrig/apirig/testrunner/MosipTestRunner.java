@@ -71,7 +71,7 @@ public class MosipTestRunner {
 			ConfigManager.init();
 			BaseTestCase.suiteSetup();
 			setLogLevels();
-			AdminTestUtil.encryptDecryptUtil = new EncryptionDecrptionUtil();
+			//AdminTestUtil.encryptDecryptUtil = new EncryptionDecrptionUtil();
 
 			// For now we are not doing health check for qa-115.
 			if (BaseTestCase.isTargetEnvLTS()) {
@@ -83,6 +83,8 @@ public class MosipTestRunner {
 			KeycloakUserManager.removeUser();
 			KeycloakUserManager.createUsers();
 			KeycloakUserManager.closeKeycloakInstance();
+			
+			List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
 
 			List<String> localLanguageList = new ArrayList<>(BaseTestCase.getLanguageList());
 			AdminTestUtil.getLocationData();
