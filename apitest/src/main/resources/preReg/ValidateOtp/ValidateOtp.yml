@@ -1,5 +1,5 @@
 ValidateOtp:
-   Prereg_SendOtp_All_Valid_Smoke_email_sid:
+   Prereg_ValidateOtp_All_Valid_Smoke_email_sid:
       endPoint: /preregistration/v1/login/validateOtp
       role: batch
       checkErrorsOnlyInResponse: true
@@ -10,7 +10,7 @@ ValidateOtp:
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
   "userId": "john.doe@mailinator.com",
-  "otp": "111111",
+  "otp": "DYNAMICOTP",
   "id": "mosip.pre-registration.login.useridotp"
 }'
       output: '{
@@ -26,13 +26,13 @@ ValidateOtp:
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
   "userId": "9090872300",
-  "otp": "111111",
+  "otp": "DYNAMICOTP",
   "id": "mosip.pre-registration.login.useridotp"
 }'
       output: '{
 }'
 
-   Prereg_ValidateOtp_Invalid_Phone_Neg:
+   Prereg_ValidateOtp_Invalid_Phone_Neg_INVALIDOTP:
       endPoint: /preregistration/v1/login/validateOtp
       role: batch
       checkErrorsOnlyInResponse: true
@@ -43,7 +43,7 @@ ValidateOtp:
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
   "userId": "909",
-  "otp": "111111",
+  "otp": "DYNAMICOTP",
   "id": "mosip.pre-registration.login.useridotp"
 }'
       output: '{
@@ -53,7 +53,7 @@ ValidateOtp:
     }
   ]
 }'
-   Prereg_ValidateOtp_SpacialCharacters_Phone_Neg:
+   Prereg_ValidateOtp_SpacialCharacters_Phone_Neg_INVALIDOTP:
       endPoint: /preregistration/v1/login/validateOtp
       role: batch
       checkErrorsOnlyInResponse: true
@@ -64,7 +64,7 @@ ValidateOtp:
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
   "userId": "$!(",
-  "otp": "111111",
+  "otp": "DYNAMICOTP",
   "id": "mosip.pre-registration.login.useridotp"
 }'
       output: '{
@@ -74,7 +74,7 @@ ValidateOtp:
     }
   ]
 }'
-   Prereg_ValidateOtp_SpacialCharacters_Email_Neg:
+   Prereg_ValidateOtp_SpacialCharacters_Email_Neg_INVALIDOTP:
       endPoint: /preregistration/v1/login/validateOtp
       role: batch
       checkErrorsOnlyInResponse: true
@@ -85,7 +85,7 @@ ValidateOtp:
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
   "userId": "john.doe@mail$!inator.com",
-  "otp": "111111",
+  "otp": "DYNAMICOTP",
   "id": "mosip.pre-registration.login.useridotp"
 }'
       output: '{
@@ -95,7 +95,7 @@ ValidateOtp:
     }
   ]
 }'
-   Prereg_ValidateOtp_Invalid_Email_Neg:
+   Prereg_ValidateOtp_Invalid_Email_Neg_INVALIDOTP:
       endPoint: /preregistration/v1/login/validateOtp
       role: batch
       checkErrorsOnlyInResponse: true
@@ -106,7 +106,7 @@ ValidateOtp:
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
   "userId": "joh23",
-  "otp": "111111",
+  "otp": "DYNAMICOTP",
   "id": "mosip.pre-registration.login.useridotp"
 }'
       output: '{

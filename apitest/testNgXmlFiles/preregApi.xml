@@ -9,20 +9,6 @@
 	</listeners>
 	
 	
-	<test name="SendOtp">
-		<parameter name="ymlFile"
-			value="preReg/SendOtp/SendOtp.yml" />
-		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
-		</classes>
-	</test>
-	<test name="ValidateOtp">
-		<parameter name="ymlFile"
-			value="preReg/ValidateOtp/ValidateOtp.yml" />
-		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
-		</classes>
-	</test> 
 	  <test name="CreatePreregistration">
 		<parameter name="ymlFile"
 			value="preReg/createPrereg/createPrereg.yml" />
@@ -331,5 +317,20 @@
 		</classes>
 	</test>
 	
+	
+	<test name="SendOtp">
+		<parameter name="ymlFile"
+			value="preReg/SendOtp/SendOtp.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+		</classes>
+	</test>
+	<test name="ValidateOtp">
+		<parameter name="ymlFile"
+			value="preReg/ValidateOtp/ValidateOtp.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+		</classes>
+	</test> 
 	
 </suite>

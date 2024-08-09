@@ -19,7 +19,7 @@ GetAllApplicationsWithapplicationId:
       inputTemplate: preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId
       outputTemplate: preReg/GetAllApplicationsWithapplicationId/getAllApplicationsResult
       input: '{
-   "applicationId": "$ID:CreatePrereg_with_future_date_preRegistrationId$"
+   "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
 }'

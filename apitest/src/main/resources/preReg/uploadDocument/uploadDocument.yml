@@ -709,7 +709,7 @@ UploadDocument:
    "errors": [
     {
       "errorCode": "PRG_CORE_REQ_017"
-    
+    }
   ]
 }'
    Prereg_UploadDocument_missing_docTypCode_sid:
