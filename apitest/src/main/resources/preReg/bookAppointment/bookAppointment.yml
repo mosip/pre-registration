@@ -613,7 +613,7 @@ BookAppointment:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_013"
+      "errorCode": "PRG_BOOK_RCI_002"
       
     }
   ]
