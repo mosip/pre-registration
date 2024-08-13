@@ -1,6 +1,7 @@
 BookAppointment:
    Prereg_BookAppointment_All_Valid_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appoinment valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -20,6 +21,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_CA_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment to cancel the existing appointment
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -39,6 +41,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_CancelApplicationsAppointment_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment to cancel applications the existing appointment
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -58,6 +61,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an invalid preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -81,6 +85,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_blank_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a blank preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -105,6 +110,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Invalid_Id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a invalid preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -128,6 +134,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Blank_Id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a blank ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -152,6 +159,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Blank_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a blank version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -175,6 +183,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Missing_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a missing version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -198,6 +207,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Invalid_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a invalid version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -221,6 +231,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Invalid_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an invalid registration center ID 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -245,6 +256,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Missing_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a missing registration center ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -269,6 +281,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Blank_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a blank registration center ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -293,6 +306,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Blank_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a blank appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -317,6 +331,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Missing_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a missing appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -340,6 +355,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Invalid_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a invalid appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -364,6 +380,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Invalid_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an invalid time slot
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -387,6 +404,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Missing_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a missing time slot
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -410,6 +428,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Invalid_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an invalid time slot from
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -433,6 +452,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Blank_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an Blank time slot form
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -456,6 +476,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Blank_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an blank time slot
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -479,6 +500,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_missing_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an missing time slot from
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -502,6 +524,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_missing_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a missing request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -525,6 +548,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Invalid_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a invalid request time 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -549,6 +573,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_Blank_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a Blank request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -572,6 +597,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_previous_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with a previous date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -596,6 +622,7 @@ BookAppointment:
 
    Prereg_BookAppointment_On_holiday:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment on a holiday 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -621,6 +648,7 @@ BookAppointment:
 
    Prereg_BookAppointment_with_expired_status:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an expired status
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -646,6 +674,7 @@ BookAppointment:
 }'
    Prereg_BookAppointment_with_All_InValid_data:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Book an appointment with an invalid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post

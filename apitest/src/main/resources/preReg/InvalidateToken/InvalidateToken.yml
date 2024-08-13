@@ -1,6 +1,7 @@
 InvalidateToken:
    Prereg_InvalidateToken_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/login/invalidateToken
+      description: Invalidate token using valid data
       role: batch
       restMethod: post
       inputTemplate: preReg/InvalidateToken/invalidatetoken

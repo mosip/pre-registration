@@ -1,6 +1,7 @@
 DeleteSpecificDocForaPRID:
    Prereg_DeleteSpecificDocForaPRID_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      description: Delete specific document for a valid PRID 
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -15,6 +16,7 @@ DeleteSpecificDocForaPRID:
 }'
    Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      description: Delete preregistration with an invalid PRID
       role: batch
       restMethod: post
       inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
@@ -32,6 +34,7 @@ DeleteSpecificDocForaPRID:
 }'
    Prereg_DeletePreRegistration_inValid_documentId_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      description: Delete preregistration with an invalid document ID 
       role: batch
       restMethod: post
       inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID

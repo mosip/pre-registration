@@ -1,6 +1,7 @@
 CancelApplicationsAppointment:
    Prereg_CancelApplicationsAppointment_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Canceling appointment for a valid preregistration ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -13,6 +14,7 @@ CancelApplicationsAppointment:
 }'
    Prereg_CancelApplicationsAppointment_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      description: Canceling appointment for an invalid preregistration ID
       role: batch
       restMethod: put
       inputTemplate: preReg/CancelApplicationsAppointment/cancelApplicationsAppointment

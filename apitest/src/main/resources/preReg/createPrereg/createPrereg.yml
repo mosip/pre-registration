@@ -1,6 +1,7 @@
 CreatePrereg:
    Prereg_CreatePrereg_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating demographic details with valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -21,6 +22,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_book_appoinment_without_update_prereg_status_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration for booking an appointment without updating preregistration status
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -41,6 +43,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with a valid updated document reference ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -62,6 +65,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_All_Valid_Smoke_BookByPRID_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration for a valid booking using the PRID (Patient Registration ID)
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -84,6 +88,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating demographic details with valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -105,6 +110,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_Smoke_alldel_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration to delete data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -126,6 +132,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_Smoke_CancellAppointment_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration data to cancel a booked appointment
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -147,6 +154,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_Smoke_CancelApplicationsAppointment_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration and cancelling the appointment after booking
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -168,6 +176,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_All_Valid_Smoke_for_expiry_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration, booking an appointment, and checking the expiration status if the user does not reach the center by the scheduled slot time
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -188,6 +197,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_in_Valid_id_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating demographic details with an invalid field ID
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -213,6 +223,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_missing_id_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with a missing ID
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -238,6 +249,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_blank_id_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with a blank ID
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -263,6 +275,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_missing_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration without specifying a langcode
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -288,6 +301,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_invalid_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with an invalid langcode 
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -313,6 +327,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_invalid_email_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with an invalid email address
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -338,6 +353,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_invalid_requesttime_format_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with an invalid request-time format
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -363,6 +379,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_missing_requesttime_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration without specifying a request time
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -388,6 +405,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_previous_date_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with a previous date
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -413,6 +431,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_invalid_version_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with an invalid version
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -438,6 +457,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_missing_version_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration without specifying a version
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -464,6 +484,7 @@ CreatePrereg:
 
    Prereg_CreatePrereg_Invalid_PostalCode_Neg:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with an invalid postal code
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -491,6 +512,7 @@ CreatePrereg:
 
    Prereg_CreatePrereg_SpacialCharacter_PostalCode_Neg:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with a special character in the postal code
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -517,6 +539,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_Invalid_OTP_Neg:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with an invalid OTP
       role: invalidBatch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -543,6 +566,7 @@ CreatePrereg:
 }'   
    Prereg_CreatePrereg_All_Valid_Smoke_date_verification_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with an invalid OTP
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -563,7 +587,8 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_with_special_characters_date:
       endPoint: /preregistration/v1/applications/prereg
-      role: batch
+      description: Creating preregistration with special characters on the date filed 
+      role: batch 
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -588,6 +613,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_with_future_date:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration with a future date
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -608,6 +634,7 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_cancell_incomplete_prid_sid:
       endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration and canceling the incomplete PRID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -628,7 +655,8 @@ CreatePrereg:
 }'
    Prereg_CreatePrereg_cancell_pending_appoinment_prid_sid:
       endPoint: /preregistration/v1/applications/prereg
-      role: batch
+      description: Creating preregistration and canceling pending appointment using PRID
+      role: batch 
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg

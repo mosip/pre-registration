@@ -1,6 +1,7 @@
 DeleteLostUinApplication:
    Prereg_DeleteLostUinApplication_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
+      description: Delete the lost UIN application with valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -14,6 +15,7 @@ DeleteLostUinApplication:
 }'
    Prereg_DeleteLostUinApplication_after_its_deletion:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
+      description: Delete the lost UIN application after it has been removed
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -31,6 +33,7 @@ DeleteLostUinApplication:
 }'
    Prereg_DeleteLostUinApplication_multiple_application_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
+      description: Delete the lost UIN application with multiple preregistration IDs for the application
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -44,6 +47,7 @@ DeleteLostUinApplication:
 }'
    Prereg_DeleteLostUinApplication_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
+      description: Delete the lost UIN application with an invalid preregistration ID
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeleteLostUinApplication/deleteLostUinApplication
@@ -60,6 +64,7 @@ DeleteLostUinApplication:
 }'
    Prereg_DeleteLostUinApplication_random_number_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
+      description: Delete the lost UIN application with a random number preregistration ID
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeleteLostUinApplication/deleteLostUinApplication
