@@ -1,5 +1,6 @@
 SendNotifications:
    Prereg_SendNotifications_All_Valid_Smoke:
+      description: Trigger notification with valid data
       endPoint: /preregistration/v1/notification/notify
       role: batch
       checkErrorsOnlyInResponse: true
@@ -22,6 +23,7 @@ SendNotifications:
 }'
    Prereg_SendNotifications_Notify_All_Valid_Smoke:
       endPoint: /preregistration/v1/notification/notify
+      description: Trigger notification to notify with valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -43,6 +45,7 @@ SendNotifications:
 }'
    Prereg_SendNotifications_InValid_id:
       endPoint: /preregistration/v1/notification
+      description: Trigger notification with an invalid ID
       role: batch
       restMethod: post
       inputTemplate: preReg/SendNotifications/sendNotificationsNotify
@@ -69,6 +72,7 @@ SendNotifications:
 }'
    Prereg_SendNotifications_InValid_preRegId:
       endPoint: /preregistration/v1/notification
+      description: Trigger notification with an invalid pre-registration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/SendNotifications/sendNotificationsNotify

@@ -1,6 +1,7 @@
 GetAllApplicationsWithapplicationId:
    Prereg_GetAllApplicationsWithapplicationId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/{applicationId}
+      description: Retrieve all applications with the application ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -13,6 +14,7 @@ GetAllApplicationsWithapplicationId:
 }'
    Prereg_GetAllApplicationsWithapplicationId_with_expired:
       endPoint: /preregistration/v1/applications/{applicationId}
+      description: Retrieve all applications with the expired application ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -25,6 +27,7 @@ GetAllApplicationsWithapplicationId:
 }'
    Prereg_GetAllApplicationsWithapplicationId_with_invalid_applicationId:
       endPoint: /preregistration/v1/applications/{applicationId}
+      description: Retrieve all applications with an invalid application ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get

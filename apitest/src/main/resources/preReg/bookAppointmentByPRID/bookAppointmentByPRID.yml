@@ -1,6 +1,7 @@
 BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_All_Valid_Smoke:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for validation 
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -20,6 +21,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an invalid preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -43,6 +45,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_blank_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a blank preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -66,6 +69,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_missing_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a missing  preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -89,6 +93,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_inValid_Id:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a invalid preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -112,6 +117,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Blank_Id:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a blank ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -135,6 +141,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Blank_version:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a blank version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -158,6 +165,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Missing_version:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a missing version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -181,6 +189,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Invalid_version:
       endPoint: /preregistration/v1/applications/appointment
+      description: Schedule an appointment with a PRID for a invalid version 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -204,6 +213,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Invalid_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an invalid registration center ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -227,6 +237,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Missing_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an missing registration center ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -250,6 +261,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Blank_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an Blank registration center ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -273,6 +285,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Blank_appointment_date:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an Blank appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -296,6 +309,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Missing_appointment_date:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a missing appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -319,6 +333,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Invalid_appointment_date:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an invalid appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -343,6 +358,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_blank_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an Blank time slot to
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -366,6 +382,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_blank_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an Blank time slot from
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -389,6 +406,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Missing_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an missing time slot to
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -412,6 +430,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Missing_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for an missing time slot from
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -435,6 +454,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_missing_requesttime:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a missing request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -458,6 +478,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Invalid_requesttime:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a invalid request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -482,6 +503,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_Blank_requesttime:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a Blank request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -505,6 +527,7 @@ BookAppointmentByPRID:
 }'
    Prereg_BookAppointmentByPRID_previous_requesttime:
       endPoint: /preregistration/v1/applications/appointment
+      description: Book an appointment with a PRID for a previous request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
