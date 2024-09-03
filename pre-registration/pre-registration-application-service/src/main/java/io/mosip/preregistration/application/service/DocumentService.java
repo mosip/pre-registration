@@ -17,6 +17,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
+import com.itextpdf.text.DocumentException;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -225,6 +226,9 @@ public class DocumentService implements DocumentServiceIntf {
 			if (validationUtil.requestValidator(prepareRequestParamMap(docReqDto), requiredRequestMap)) {
 				if (scanDocument) {
 					serviceUtil.virusScanCheck(file);
+				}
+				if (serviceUtil.isPasswordProtectedFile(file)) {
+					throw new DocumentException(DocumentErrorMessages.PASSWORD_PROTECTION_ERROR.getMessage());
 				}
 				if (serviceUtil.fileSizeCheck(file.getSize()) && serviceUtil.fileExtensionCheck(file)) {
 					serviceUtil.isValidRequest(docReqDto.getRequest(), preRegistrationId);

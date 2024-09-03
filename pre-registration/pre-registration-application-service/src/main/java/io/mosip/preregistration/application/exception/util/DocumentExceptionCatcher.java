@@ -4,6 +4,7 @@
  */
 package io.mosip.preregistration.application.exception.util;
 
+import com.itextpdf.text.DocumentException;
 import org.json.JSONException;
 import org.postgresql.util.PSQLException;
 
@@ -88,7 +89,13 @@ public class DocumentExceptionCatcher {
 			throw new DocumentFailedToCopyException(ex1.getErrorCode(), ex1.getErrorText(), response);
 		} else if (ex instanceof InvalidDocumentIdExcepion ex1) {
 			throw new InvalidDocumentIdExcepion(ex1.getErrorCode(), ex1.getErrorText(), response);
-		} else if (ex instanceof DemographicGetDetailsException ex1) {
+		} else if (ex instanceof DocumentException) {
+			try {
+				throw new DocumentException(DocumentErrorMessages.PASSWORD_PROTECTION_ERROR.getMessage());
+			} catch (DocumentException e) {
+				throw new RuntimeException(e);
+			}
+        } else if (ex instanceof DemographicGetDetailsException ex1) {
 			throw new DemographicGetDetailsException(ex1.getErrorCode(), ex1.getErrorText(), response);
 		} else if (ex instanceof FSServerException ex1) {
 			throw new FSServerException(ex1.getErrorCode(), ex1.getErrorText(), response);
