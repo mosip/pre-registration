@@ -8,7 +8,6 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
 import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
 import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
 
-import java.awt.image.BufferedImage;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
@@ -62,8 +61,6 @@ import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
-
-import javax.imageio.ImageIO;
 
 /**
  * This class provides the utility methods for DocumentService
@@ -412,49 +409,30 @@ public class DocumentServiceUtil {
 	public boolean isPasswordProtectedFile(MultipartFile file) {
 		String contentType = file.getContentType();
 		List<String> supportedExtensions = Arrays.asList(fileExtension.split(","));
-		try {
-			if (supportedExtensions.contains("PDF") && "application/pdf".equals(contentType)) {
-				return checkPdfPasswordProtection(file);
+		if (supportedExtensions.contains("PDF") && "application/pdf".equals(contentType)) {
+			PDDocument document = null;
+			try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
+				document = Loader.loadPDF(inputStream.readAllBytes());
+				document.isEncrypted();
+			} catch (InvalidPasswordException e) {
+				log.error("Invalid password for PDF", file.getOriginalFilename(), e);
+				return true;
+			} catch (java.io.IOException e) {
+				log.error("Error checking for password protection", file.getOriginalFilename(), e);
+				return false;
+			} finally {
+				if (document != null){
+					try {
+						document.close();
+					} catch (java.io.IOException e){
+						log.warn("Error closing PDF document", e);
+					}
+				}
 			}
-			else if ((supportedExtensions.contains("JPEG") && "image/jpeg".equals(contentType))) {
-				return checkImagePasswordProtection(file);
-			} else if (supportedExtensions.contains("PNG") && "image//png".equals(contentType)) {
-				return checkImagePasswordProtection(file);
-			} else if (supportedExtensions.contains("JPG") && "image/jpg".equals(contentType)){
-				return checkImagePasswordProtection(file);
-			}
-		} catch (Exception e) {
-			log.error("Unexpected error during password protection check: {}", e.getMessage(), e);
+			return document.isEncrypted();
 		}
 		return false;
-	}
-
-	private boolean checkPdfPasswordProtection(MultipartFile file) {
-		try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
-			PDDocument document = Loader.loadPDF(inputStream.readAllBytes());
-			boolean isEncrypted = document.isEncrypted();
-			document.close();
-			return isEncrypted;
-		}
-		catch (InvalidPasswordException e) {
-			log.error("Invalid password for PDF", file.getOriginalFilename(), e);
-			return true;
-		}
-		catch (java.io.IOException e) {
-			log.error("Error checking for password protection in PDF", file.getOriginalFilename(), e);
-			return false;
-		}
     }
-
-	private boolean checkImagePasswordProtection(MultipartFile file) {
-		try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
-			BufferedImage image = ImageIO.read(inputStream);
-			return image == null;
-		} catch (java.io.IOException e) {
-			log.error("Error checking for password protection in Image", file.getOriginalFilename(), e);
-			return false;
-		}
-	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {

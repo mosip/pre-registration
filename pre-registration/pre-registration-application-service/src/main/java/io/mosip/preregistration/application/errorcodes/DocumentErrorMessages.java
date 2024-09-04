@@ -135,7 +135,7 @@ public enum DocumentErrorMessages {
 	DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS("Document table not able to update by this status"),
 
 	/**
-	 * ErrorCode for Password Protection files
+	 * ErrorMessage for Password Protection files
 	 */
 	PASSWORD_PROTECTION_ERROR("Password-protected file is not allowed for upload");
 
