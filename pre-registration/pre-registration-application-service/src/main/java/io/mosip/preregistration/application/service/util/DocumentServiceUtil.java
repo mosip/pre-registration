@@ -413,7 +413,6 @@ public class DocumentServiceUtil {
 			PDDocument document = null;
 			try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
 				document = Loader.loadPDF(inputStream.readAllBytes());
-				document.isEncrypted();
 			} catch (InvalidPasswordException e) {
 				log.error("Invalid password for PDF", file.getOriginalFilename(), e);
 				return true;
@@ -429,7 +428,6 @@ public class DocumentServiceUtil {
 					}
 				}
 			}
-			return document.isEncrypted();
 		}
 		return false;
     }
