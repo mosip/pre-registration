@@ -332,5 +332,39 @@
 			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
 		</classes>
 	</test> 
-	
+	<test name="FetchAvailabilityData">
+		<parameter name="ymlFile"
+			value="preReg/FetchAvailabilityData/FetchAvailabilityData.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+	</test>
+		 <test name="GetPreRegDemographicDataByPrid">
+		<parameter name="ymlFile"
+			value="preReg/GetPreRegDemographicDataByPrid/GetPreRegDemographicDataByPrid.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+	</test>
+	 <test name="GetApplicationsApplicationID">
+		<parameter name="ymlFile"
+			value="preReg/GetApplicationsApplicationID/GetApplicationsApplicationID.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+	</test>
+	 <test name="GetApplicationStatusByApplicationID">
+		<parameter name="ymlFile"
+			value="preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+	</test>
+		<test name="GetAllPreRegApplicationsDemographic">
+		<parameter name="ymlFile"
+			value="preReg/GetAllPreRegApplicationsDemographic/GetAllPreRegApplicationsDemographic.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+		</classes>
+		</test>
 </suite>
