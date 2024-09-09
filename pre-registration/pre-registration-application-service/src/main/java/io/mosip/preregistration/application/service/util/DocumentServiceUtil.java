@@ -406,7 +406,7 @@ public class DocumentServiceUtil {
 		}
 	}
 
-	public boolean isPasswordProtectedFile(MultipartFile file) {
+	public boolean isPasswordProtectedFile(MultipartFile file) throws java.io.IOException {
 		String contentType = file.getContentType();
 		List<String> supportedExtensions = Arrays.asList(fileExtension.split(","));
 		if (supportedExtensions.contains("PDF") && "application/pdf".equals(contentType)) {
@@ -416,16 +416,9 @@ public class DocumentServiceUtil {
 			} catch (InvalidPasswordException e) {
 				log.error("Invalid password for PDF", file.getOriginalFilename(), e);
 				return true;
-			} catch (java.io.IOException e) {
-				log.error("Error checking for password protection", file.getOriginalFilename(), e);
-				return false;
 			} finally {
 				if (document != null){
-					try {
-						document.close();
-					} catch (java.io.IOException e){
-						log.warn("Error closing PDF document", e);
-					}
+					document.close();
 				}
 			}
 		}
