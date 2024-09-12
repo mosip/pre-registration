@@ -11,6 +11,7 @@ GetApplicationsApplicationID:
   "applicationId": "52917592714578"
 }'
       output: '{
+  "applicationId": "52917592714578"
 }'
    Prereg_GetApplicationsApplicationID_InValid_applicationID:
       endPoint: /preregistration/v1/applications/{applicationId}

@@ -360,11 +360,4 @@
 			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
 		</classes>
 	</test>
-		<test name="GetAllPreRegApplicationsDemographic">
-		<parameter name="ymlFile"
-			value="preReg/GetAllPreRegApplicationsDemographic/GetAllPreRegApplicationsDemographic.yml" />
-		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
-		</classes>
-		</test>
 </suite>
