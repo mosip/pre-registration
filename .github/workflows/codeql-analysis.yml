@@ -36,3 +36,5 @@ on:
 jobs:
   analyze:
     uses: mosip/kattu/.github/workflows/codeql-analysis.yml@master
+    with:
+      SERVICE_LOCATION: ./pre-registration
