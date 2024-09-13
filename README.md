@@ -12,36 +12,68 @@ Pre-registration module consists of the following services:
 5. Capthca
 
 ## Database
-See [DB guide](db_scripts)
+See [DB guide](db_scripts/README.md)
 
 ## Config-Server
 To run Pre-registration services, run [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
 
 ## Build & run (for developers)
-Pre-requisites:
+Prerequisites:
 1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
-2. The project requires JDK 21.0.3 and mvn version - 3.9.6
-3. Build and install:
+1. JDK 21 and Java21 Artifactory Jars [here](https://oss.sonatype.org/content/repositories/snapshots/io/mosip/)  
+1. Build and install:
     ```
     $ cd kernel
     $ mvn install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
     ```
-4. Build Docker for a service:
+1. Build Docker for a service:
     ```
     $ cd <service folder>
     $ docker build -f Dockerfile
     ```
-## Deploy
-To deploy Commons services on Kubernetes cluster using Dockers refer to [Sandbox Deployment](https://docs.mosip.io/1.2.0/deploymentnew/v3-installation).
+
+## Deployment in K8 cluster with other MOSIP services:
+### Pre-requisites
+* Set KUBECONFIG variable to point to existing K8 cluster kubeconfig file:
+    ```
+    export KUBECONFIG=~/.kube/<k8s-cluster.config>
+    ```
+### Install
+  ```
+    $ cd deploy
+    $ ./install.sh
+   ```
+### Delete
+  ```
+    $ cd deploy
+    $ ./delete.sh
+   ```
+### Restart
+  ```
+    $ cd deploy
+    $ ./restart.sh
+   ```
+
+## To deploy Prereg apitestrig within k8s cluster:
+### Install
+  ```
+    $ cd ./apitest/deploy/prereg-apitestrig
+    $ ./install.sh
+   ```
+### Delete
+  ```
+    $ cd ./apitest/deploy/prereg-apitestrig
+    $ ./delete.sh
+   ```
 
 ## Configuration
 Refer to the [configuration guide](docs/configuration.md).
 
 ## Test
-Automated functional tests available in [Functional Tests repo](api-test).
+Automated functional tests available in [Functional Tests repo](https://github.com/mosip/mosip-functional-tests).
 
 ## APIs
-API documentation is available [here](https://mosip.github.io/documentation/1.2.0/1.2.0.html).
+API documentation is available [here](https://mosip.github.io/documentation/).
 
 ## License
 This project is licensed under the terms of [Mozilla Public License 2.0](LICENSE).
