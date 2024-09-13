@@ -31,8 +31,40 @@ Prerequisites:
     $ cd <service folder>
     $ docker build -f Dockerfile
     ```
-## Deploy
-To deploy Commons services on Kubernetes cluster using Dockers refer to [Sandbox Deployment](https://docs.mosip.io/1.2.0/deployment/sandbox-deployment).
+
+## Deployment in K8 cluster with other MOSIP services:
+### Pre-requisites
+* Set KUBECONFIG variable to point to existing K8 cluster kubeconfig file:
+    ```
+    export KUBECONFIG=~/.kube/<k8s-cluster.config>
+    ```
+### Install
+  ```
+    $ cd deploy
+    $ ./install.sh
+   ```
+### Delete
+  ```
+    $ cd deploy
+    $ ./delete.sh
+   ```
+### Restart
+  ```
+    $ cd deploy
+    $ ./restart.sh
+   ```
+
+## To deploy Prereg apitestrig within k8s cluster:
+### Install
+  ```
+    $ cd ./apitest/deploy/prereg-apitestrig
+    $ ./install.sh
+   ```
+### Delete
+  ```
+    $ cd ./apitest/deploy/prereg-apitestrig
+    $ ./delete.sh
+   ```
 
 ## Configuration
 Refer to the [configuration guide](docs/configuration.md).
