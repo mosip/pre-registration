@@ -54,18 +54,6 @@ Prerequisites:
     $ ./restart.sh
    ```
 
-## To deploy Prereg apitestrig within k8s cluster:
-### Install
-  ```
-    $ cd ./apitest/deploy/prereg-apitestrig
-    $ ./install.sh
-   ```
-### Delete
-  ```
-    $ cd ./apitest/deploy/prereg-apitestrig
-    $ ./delete.sh
-   ```
-
 ## Configuration
 Refer to the [configuration guide](docs/configuration.md).
 
