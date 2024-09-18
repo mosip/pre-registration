@@ -34,6 +34,7 @@ import io.mosip.testrig.apirig.utils.KeycloakUserManager;
 import io.mosip.testrig.apirig.utils.MispPartnerAndLicenseKeyGeneration;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.PartnerRegistration;
+import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 /**
  * Class to initiate mosip api test execution
@@ -70,6 +71,7 @@ public class MosipTestRunner {
 			}
 			ConfigManager.init();
 			BaseTestCase.suiteSetup();
+			SkipTestCaseHandler.loadTestcaseToBeSkippedList("testCaseSkippedList.txt");
 			setLogLevels();
 
 
