@@ -674,3 +674,24 @@ CreatePrereg:
 }'
       output: '{
 }'
+   Prereg_CreatePrereg_Smoke_PreRegDemographicData_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      description: Creating preregistration appointment using PRID for demographic data
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/createPrereg/createPrereg
+      outputTemplate: preReg/createPrereg/createPreregResult
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$, 
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create"
+}'
+      output: '{
+}'
