@@ -31,6 +31,7 @@ import io.mosip.testrig.apirig.utils.AuthenticationTestException;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
+import io.mosip.testrig.apirig.utils.PreRegUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
@@ -83,6 +84,7 @@ public class CreatePreReg extends AdminTestUtil implements ITest {
 	public void test(TestCaseDTO testCaseDTO)
 			throws AuthenticationTestException, AdminTestException, NoSuchAlgorithmException {
 		testCaseName = testCaseDTO.getTestCaseName();
+		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);

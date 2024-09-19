@@ -27,6 +27,7 @@ import io.mosip.testrig.apirig.utils.AuthenticationTestException;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
+import io.mosip.testrig.apirig.utils.PreRegUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
@@ -77,6 +78,7 @@ public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil imp
 	@Test(dataProvider = "testcaselist")
 	public void test(TestCaseDTO testCaseDTO) throws AdminTestException {
 		testCaseName = testCaseDTO.getTestCaseName();
+		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
 		String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
 		testCaseDTO = AdminTestUtil.filterHbs(testCaseDTO);
 		if (HealthChecker.signalTerminateExecution) {
