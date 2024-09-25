@@ -8,20 +8,21 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
 import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
 import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
 
+import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -404,6 +405,25 @@ public class DocumentServiceUtil {
 			}
 		}
 	}
+
+	public boolean isPasswordProtectedFile(MultipartFile file) throws java.io.IOException {
+		String contentType = file.getContentType();
+		List<String> supportedExtensions = Arrays.asList(fileExtension.split(","));
+		if (supportedExtensions.contains("PDF") && "application/pdf".equals(contentType)) {
+			PDDocument document = null;
+			try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
+				document = Loader.loadPDF(inputStream.readAllBytes());
+			} catch (InvalidPasswordException e) {
+				log.error("Invalid password for PDF", file.getOriginalFilename(), e);
+				return true;
+			} finally {
+				if (document != null){
+					document.close();
+				}
+			}
+		}
+		return false;
+    }
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {

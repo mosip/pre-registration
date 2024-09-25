@@ -226,6 +226,10 @@ public class DocumentService implements DocumentServiceIntf {
 				if (scanDocument) {
 					serviceUtil.virusScanCheck(file);
 				}
+				if (serviceUtil.isPasswordProtectedFile(file)) {
+					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_025.toString(),
+							DocumentErrorMessages.PASSWORD_PROTECTION_ERROR.getMessage());
+				}
 				if (serviceUtil.fileSizeCheck(file.getSize()) && serviceUtil.fileExtensionCheck(file)) {
 					serviceUtil.isValidRequest(docReqDto.getRequest(), preRegistrationId);
 					validationUtil.langvalidation(docReqDto.getRequest().getLangCode());
