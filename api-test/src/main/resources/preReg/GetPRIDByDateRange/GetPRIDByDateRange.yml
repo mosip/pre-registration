@@ -1,0 +1,416 @@
+GetPRIDByDateRange:
+   Prereg_GetPRIDByDateRange_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the given date range
+      role: regproc
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRangeResult
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2030-10-11"
+}'
+      output: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids"
+}'
+   Prereg_GetPRIDByDateRange_inValid_id:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the Invalid ID
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mop.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_blank_id:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the blank ID
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_missing_id:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the missing ID
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "$REMOVE$",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_invalid_version:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the invalid version
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1djhsnb@@@0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_002"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_missing_version:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the missing version
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "$REMOVE$",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_002"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_blank_version:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the blank version
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_002"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_blank_requesttime:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the request time that is blank 
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_003"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_missing_requesttime:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the missing request time 
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$REMOVE$",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_003"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_Invalid_requesttime:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the invalid request time
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "OVEdgeu37373",
+  "registrationCenterId": "10003",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_015"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_Invalid_registrationCenterId:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the invalid registration center ID
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "100fff01",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_032"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_blank_registrationCenterId:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range for the blank registration center ID
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_DATA_SYNC_009"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_missing_registrationCenterId:
+      endPoint: /preregistration/v1/sync
+      description:  Retrieve the PRID within the specified date range for the missing registration center ID
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "$REMOVE$",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_DATA_SYNC_009"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_missing_fromDate:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range where the fromDate is missing
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10001",
+  "fromDate": "$REMOVE$",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_019"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_Invalid_fromDate:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range where the fromDate is missing
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10001",
+  "fromDate": "2020-05dfddd-09",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_019"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_blank_fromDate:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range where the fromDate field is blank
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10001",
+  "fromDate": "",
+  "toDate": "2021-10-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_019"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_blank_toDate:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range where the toDate field is blank
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10001",
+  "fromDate": "2020-05-09",
+  "toDate": ""
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_032"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_missing_toDate:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range where the toDate field is missing 
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10001",
+  "fromDate": "2020-05-09",
+  "toDate": "$REMOVE$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_032"
+    }
+  ]
+}'
+   Prereg_GetPRIDByDateRange_Invalid_toDate:
+      endPoint: /preregistration/v1/sync
+      description: Retrieve the PRID within the specified date range where the 'toDate' field is invalid
+      role: regproc
+      restMethod: post
+      inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.datasync.fetch.ids",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registrationCenterId": "10001",
+  "fromDate": "2020-05-09",
+  "toDate": "2021-1dddd0-11"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_019"
+    }
+  ]
+}'

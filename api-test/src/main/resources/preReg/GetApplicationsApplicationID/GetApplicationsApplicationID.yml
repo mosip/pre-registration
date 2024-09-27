@@ -1,0 +1,32 @@
+GetApplicationsApplicationID:
+   Prereg_GetApplicationsApplicationID_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      description: Retrieve the application by application ID
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetApplicationsApplicationID/getApplicationsApplicationID
+      outputTemplate: preReg/GetApplicationsApplicationID/getApplicationsApplicationIDResult
+      input: '{
+  "applicationId": "52917592714578"
+}'
+      output: '{
+  "applicationId": "52917592714578"
+}'
+   Prereg_GetApplicationsApplicationID_InValid_applicationID:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      description: Retrieve the application by invalid application ID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetApplicationsApplicationID/getApplicationsApplicationID
+      outputTemplate: preReg/error
+      input: '{   
+   "applicationId": "erwsdhgqw5dcfbz"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
