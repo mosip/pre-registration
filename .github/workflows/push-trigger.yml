@@ -20,6 +20,7 @@ on:
       - 1.*
       - develop*
       - MOSIP*
+      - DSD*
 
 jobs:
   build-maven-pre-registration:
