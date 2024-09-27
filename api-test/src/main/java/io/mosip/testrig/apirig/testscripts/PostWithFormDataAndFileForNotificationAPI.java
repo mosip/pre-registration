@@ -27,13 +27,15 @@ import io.mosip.testrig.apirig.utils.AuthenticationTestException;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
+import io.mosip.testrig.apirig.utils.PreRegUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class PostWithPathParamsAndBody extends AdminTestUtil implements ITest {
-	private static final Logger logger = Logger.getLogger(PostWithPathParamsAndBody.class);
+public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil implements ITest {
+	private static final Logger logger = Logger.getLogger(PostWithFormDataAndFileForNotificationAPI.class);
 	protected String testCaseName = "";
-	public String pathParams = null;
+	String idKeyName = null;
+	public Response response = null;
 
 	@BeforeClass
 	public static void setLogLevel() {
@@ -59,7 +61,7 @@ public class PostWithPathParamsAndBody extends AdminTestUtil implements ITest {
 	@DataProvider(name = "testcaselist")
 	public Object[] getTestCaseList(ITestContext context) {
 		String ymlFile = context.getCurrentXmlTest().getLocalParameters().get("ymlFile");
-		pathParams = context.getCurrentXmlTest().getLocalParameters().get("pathParams");
+		idKeyName = context.getCurrentXmlTest().getLocalParameters().get("idKeyName");
 		logger.info("Started executing yml: " + ymlFile);
 		return getYmlTestData(ymlFile);
 	}
@@ -74,19 +76,19 @@ public class PostWithPathParamsAndBody extends AdminTestUtil implements ITest {
 	 * @throws AdminTestException
 	 */
 	@Test(dataProvider = "testcaselist")
-	public void test(TestCaseDTO testCaseDTO) throws AuthenticationTestException, AdminTestException {
-		String regCenterId = null;
+	public void test(TestCaseDTO testCaseDTO) throws AdminTestException {
+		testCaseName = testCaseDTO.getTestCaseName();
+		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
+		String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
+		testCaseDTO = AdminTestUtil.filterHbs(testCaseDTO);
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
 		}
 
-		
 
-		String inputJosn = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
-		
-		Response response = postWithPathParamsBodyAndCookie(ApplnURI + testCaseDTO.getEndPoint(), inputJosn, COOKIENAME,
-				testCaseDTO.getRole(), testCaseDTO.getTestCaseName(), pathParams);
+		response = postWithMultipartFormDataAndFile(ApplnURI + testCaseDTO.getEndPoint(), inputJson,
+				testCaseDTO.getRole(), testCaseDTO.getTestCaseName(), idKeyName);
 
 		Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
 				response.asString(), getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()),
@@ -97,6 +99,7 @@ public class PostWithPathParamsAndBody extends AdminTestUtil implements ITest {
 			throw new AdminTestException("Failed at output validation");
 
 	}
+
 
 	/**
 	 * The method ser current test name to result
@@ -117,5 +120,4 @@ public class PostWithPathParamsAndBody extends AdminTestUtil implements ITest {
 			Reporter.log("Exception : " + e.getMessage());
 		}
 	}
-
 }
