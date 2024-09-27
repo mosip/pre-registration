@@ -29,7 +29,7 @@ WORKDIR /home/${container_user}
 ENV work_dir=/home/${container_user}
 
 # Combine all necessary files into a single COPY command
-COPY ./apitest/target $work_dir/
+COPY ./api-test/target $work_dir/
 COPY entrypoint.sh $work_dir
 
 # install packages and create user
