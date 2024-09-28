@@ -1,0 +1,31 @@
+FetchAvailabilityDataByCenterID:
+   Prereg_FetchAvailabilityDataByCenterID_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/appointment/slots/availability/10003
+      description: Fetch the available data by center ID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchAvailabilityData/fetchAvailabilityData
+      outputTemplate: preReg/FetchAvailabilityData/fetchAvailabilityDataResult
+      input: '{
+  "registrationCenterId": "10003"
+}'
+      output: '{
+  "regCenterId": "10003"
+}'
+   Prereg_FetchAvailabilityData_inValid_CenterID_Smoke_sid:
+      endPoint: /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}
+      description: Fetch the available data by invalid center ID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchAvailabilityData/fetchAvailabilityData
+      outputTemplate: preReg/error
+      input: '{
+  "registrationCenterId": "@#@$W#"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "KER-MSD-215"
+    }
+  ]
+}'
