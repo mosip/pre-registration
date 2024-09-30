@@ -17,11 +17,11 @@
 	<properties>
 		<!-- Mosip kernel -->
 		<kernel.khazana.version>1.3.0-SNAPSHOT</kernel.khazana.version>
-		<kernel.idobjectvalidator.version>1.3.0-SNAPSHOT</kernel.idobjectvalidator.version>
-		<kernel.templatemanager.velocity.version>1.3.0-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.qrcodegenerator.zxing.version>1.3.0-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
-		<kernel.transliteration.icu4j.version>1.3.0-SNAPSHOT</kernel.transliteration.icu4j.version>
-		<kernel.bom.version>1.3.0-SNAPSHOT</kernel.bom.version>
+		<kernel.idobjectvalidator.version>1.3.0-beta.1</kernel.idobjectvalidator.version>
+		<kernel.templatemanager.velocity.version>1.3.0-beta.1</kernel.templatemanager.velocity.version>
+		<kernel.qrcodegenerator.zxing.version>1.3.0-beta.1</kernel.qrcodegenerator.zxing.version>
+		<kernel.transliteration.icu4j.version>1.3.0-beta.1</kernel.transliteration.icu4j.version>
+		<kernel.bom.version>1.3.0-beta.1</kernel.bom.version>
 		<pre.registration.core.version>1.3.0-SNAPSHOT</pre.registration.core.version>
 		<!-- Others -->
 		<org.hamcrest.version>2.1</org.hamcrest.version>
