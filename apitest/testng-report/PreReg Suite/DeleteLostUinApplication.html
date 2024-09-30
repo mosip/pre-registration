@@ -1,0 +1,279 @@
+<html>
+<head>
+<title>TestNG:  DeleteLostUinApplication</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>DeleteLostUinApplication</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>4/1/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 18 18:59:56 IST 2024</td>
+</tr>
+<tr><td>Total time:</td><td>2 seconds (2510 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-failed'>
+<tr><td colspan='4' align='center'><b>FAILED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.DeleteWithParam.Prereg_DeleteLostUinApplication_after_its_deletion()'><b>Prereg_DeleteLostUinApplication_after_its_deletion</b><br>Test class: io.mosip.testrig.apirig.testscripts.DeleteWithParam (Prereg_DeleteLostUinApplication_random_number_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_DeleteLostUinApplication_after_its_deletion, endPoint=/preregistration/v1/applications/prereg/{applicationId}, role=batch, templateFields=null, input={ "applicationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$" }, output={ "errors": [ { "errorCode": "PRG_PAM_APP_005" } ] }, inputTemplate=preReg/DeleteLostUinApplication/deleteLostUinApplication, outputTemplate=preReg/error, restMethod=delete, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Delete the lost UIN application after it has been removed)<br/>
+<a href="#Output-1869366370" onClick='toggleBox("Output-1869366370", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1869366370" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1869366370">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/{applicationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "applicationId": "21408468927027"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:57 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=212]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.delete",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:57.542Z",
+  "response": {}
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_APP_005</td>
+    <td>NOT AVAILABLE</td>
+    <td bgcolor='RED'>FAIL</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td><div><pre>io.mosip.testrig.apirig.utils.AdminTestException: Failed at output validation
+	at io.mosip.testrig.apirig.testscripts.DeleteWithParam.test(DeleteWithParam.java:114)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:154)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.startTestRunner(MosipTestRunner.java:145)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.main(MosipTestRunner.java:89)
+... Removed 22 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace1869366370", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace1869366370'><pre>io.mosip.testrig.apirig.utils.AdminTestException: Failed at output validation
+	at io.mosip.testrig.apirig.testscripts.DeleteWithParam.test(DeleteWithParam.java:114)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:108)
+	at org.testng.internal.MethodInvocationHelper$1.runTestMethod(MethodInvocationHelper.java:209)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:154)
+	at org.testng.internal.MethodInvocationHelper.invokeHookable(MethodInvocationHelper.java:221)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:657)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:869)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1193)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.privateRun(TestRunner.java:744)
+	at org.testng.TestRunner.run(TestRunner.java:602)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:380)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:375)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:340)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:289)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1301)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1226)
+	at org.testng.TestNG.runSuites(TestNG.java:1144)
+	at org.testng.TestNG.run(TestNG.java:1115)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.startTestRunner(MosipTestRunner.java:145)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.main(MosipTestRunner.java:89)
+</pre></div></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.DeleteWithParam@1c7cd434</td></tr>
+</table><p>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.DeleteWithParam.Prereg_DeleteLostUinApplication_All_Valid_Smoke_sid()'><b>Prereg_DeleteLostUinApplication_All_Valid_Smoke_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.DeleteWithParam (Prereg_DeleteLostUinApplication_random_number_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_DeleteLostUinApplication_All_Valid_Smoke_sid, endPoint=/preregistration/v1/applications/prereg/{applicationId}, role=batch, templateFields=null, input={ "applicationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$" }, output={ "deletedBy": "$IGNORE$" }, inputTemplate=preReg/DeleteLostUinApplication/deleteLostUinApplication, outputTemplate=preReg/DeleteLostUinApplication/deleteLostUinApplicationResult, restMethod=delete, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Delete the lost UIN application with valid data)<br/>
+<a href="#Output-970591815" onClick='toggleBox("Output-970591815", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-970591815" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-970591815">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/{applicationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "applicationId": "21408468927027"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:57 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=243]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.delete",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:57.009Z",
+  "response": {}
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.DeleteWithParam@1c7cd434</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.DeleteWithParam.Prereg_DeleteLostUinApplication_inValid_preRegistrationId_sid()'><b>Prereg_DeleteLostUinApplication_inValid_preRegistrationId_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.DeleteWithParam (Prereg_DeleteLostUinApplication_random_number_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_DeleteLostUinApplication_inValid_preRegistrationId_sid, endPoint=/preregistration/v1/applications/prereg/{applicationId}, role=batch, templateFields=null, input={ "applicationId": "nhhh654443@@ffffv" }, output={ "errors": [ { "errorCode": "PRG_PAM_APP_005" } ] }, inputTemplate=preReg/DeleteLostUinApplication/deleteLostUinApplication, outputTemplate=preReg/error, restMethod=delete, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Delete the lost UIN application with an invalid preregistration ID)<br/>
+<a href="#Output-671948173" onClick='toggleBox("Output-671948173", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-671948173" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-671948173">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/{applicationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "applicationId": "nhhh654443@@ffffv"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:58 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=18]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.delete",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:58.596Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005",
+      "message": "No record found for the requested user id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_APP_005</td>
+    <td>PRG_PAM_APP_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.DeleteWithParam@1c7cd434</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.DeleteWithParam.Prereg_DeleteLostUinApplication_multiple_application_sid()'><b>Prereg_DeleteLostUinApplication_multiple_application_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.DeleteWithParam (Prereg_DeleteLostUinApplication_random_number_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_DeleteLostUinApplication_multiple_application_sid, endPoint=/preregistration/v1/applications/prereg/{applicationId}, role=batch, templateFields=null, input={ "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$" }, output={ "deletedBy": "$IGNORE$" }, inputTemplate=preReg/DeleteLostUinApplication/deleteLostUinApplication, outputTemplate=preReg/DeleteLostUinApplication/deleteLostUinApplicationResult, restMethod=delete, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Delete the lost UIN application with multiple preregistration IDs for the application)<br/>
+<a href="#Output-39148434" onClick='toggleBox("Output-39148434", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-39148434" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-39148434">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/{applicationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "applicationId": "54780465168560"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:58 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=266]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.delete",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:58.219Z",
+  "response": {}
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.DeleteWithParam@1c7cd434</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.DeleteWithParam.Prereg_DeleteLostUinApplication_random_number_sid()'><b>Prereg_DeleteLostUinApplication_random_number_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.DeleteWithParam (Prereg_DeleteLostUinApplication_random_number_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_DeleteLostUinApplication_random_number_sid, endPoint=/preregistration/v1/applications/prereg/{applicationId}, role=batch, templateFields=null, input={ "applicationId": "12736445738389" }, output={ "errors": [ { "errorCode": "PRG_PAM_APP_005" } ] }, inputTemplate=preReg/DeleteLostUinApplication/deleteLostUinApplication, outputTemplate=preReg/error, restMethod=delete, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Delete the lost UIN application with a random number preregistration ID)<br/>
+<a href="#Output-1536044711" onClick='toggleBox("Output-1536044711", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1536044711" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1536044711">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/{applicationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "applicationId": "12736445738389"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:58 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=24]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.delete",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:58.963Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005",
+      "message": "No record found for the requested user id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_APP_005</td>
+    <td>PRG_PAM_APP_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.DeleteWithParam@1c7cd434</td></tr>
+</table><p>
+</body>
+</html>

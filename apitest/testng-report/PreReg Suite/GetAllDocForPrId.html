@@ -1,0 +1,172 @@
+<html>
+<head>
+<title>TestNG:  GetAllDocForPrId</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>GetAllDocForPrId</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>2/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 18 18:48:50 IST 2024</td>
+</tr>
+<tr><td>Total time:</td><td>0 seconds (953 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.GetWithParam.Prereg_GetAllDocForPrId_All_Valid_Smoke_sid()'><b>Prereg_GetAllDocForPrId_All_Valid_Smoke_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.GetWithParam (Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_GetAllDocForPrId_All_Valid_Smoke_sid, endPoint=/preregistration/v1/documents/preregistration/{preRegistrationId}, role=batch, templateFields=null, input={ "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$" }, output={ "docCatCode": "$IGNORE$", "docTypCode": "$IGNORE$" }, inputTemplate=preReg/GetAllDocForPrId/getAllDocForPrId, outputTemplate=preReg/GetAllDocForPrId/getAllDocForPrIdResult, restMethod=get, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Retrieve all documents associated with the valid Pre-Registration ID)<br/>
+<a href="#Output-785197732" onClick='toggleBox("Output-785197732", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-785197732" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-785197732">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/preregistration/{preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "26587217563912"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:50 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=221]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.document.fetch.metadata",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:50.843Z",
+  "response": {
+    "documentsMetaData": [
+      {
+        "docName": "doc_POA.pdf",
+        "documentId": "72220ee0-75c0-11ef-96a1-2d55be7ef44a",
+        "docCatCode": "POA",
+        "docTypCode": "RNC",
+        "langCode": "eng"
+      },
+      {
+        "docName": "doc_POI.pdf",
+        "documentId": "73350582-75c0-11ef-96a1-cf20e80dae10",
+        "docCatCode": "POI",
+        "docTypCode": "CIN",
+        "langCode": "eng"
+      },
+      {
+        "docName": "doc_POB.pdf",
+        "documentId": "7395c323-75c0-11ef-96a1-0d3919c51528",
+        "docCatCode": "POB",
+        "docTypCode": "COB",
+        "langCode": "eng"
+      },
+      {
+        "docName": "doc_POR.pdf",
+        "documentId": "73ee9184-75c0-11ef-96a1-af8cc00811d7",
+        "docCatCode": "POR",
+        "docTypCode": "CRN",
+        "langCode": "eng"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.GetWithParam@7e0f9528</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.GetWithParam.Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid()'><b>Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.GetWithParam (Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid, endPoint=/preregistration/v1/documents/preregistration/{preRegistrationId}, role=batch, templateFields=null, input={ "preRegistrationId": "jhgf4324" }, output={ "errors": [ { "errorCode": "PRG_PAM_APP_005" } ] }, inputTemplate=preReg/GetAllDocForPrId/getAllDocForPrId, outputTemplate=preReg/error, restMethod=get, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Retrieve all documents associated with the invalid Pre-Registration ID)<br/>
+<a href="#Output-1981749800" onClick='toggleBox("Output-1981749800", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1981749800" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1981749800">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/preregistration/{preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "jhgf4324"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:51 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=24]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.document.fetch.metadata",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:51.230Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005",
+      "message": "No data found for the requested pre-registration id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_APP_005</td>
+    <td>PRG_PAM_APP_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.GetWithParam@7e0f9528</td></tr>
+</table><p>
+</body>
+</html>

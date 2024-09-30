@@ -1,0 +1,251 @@
+<html>
+<head>
+<title>TestNG:  CopyDocument</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>CopyDocument</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>4/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 18 18:48:42 IST 2024</td>
+</tr>
+<tr><td>Total time:</td><td>1 seconds (1862 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_CopyDocument_All_Valid_Smoke_sid()'><b>Prereg_CopyDocument_All_Valid_Smoke_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_CopyDocument_Invalid_preRegistrationId_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_CopyDocument_All_Valid_Smoke_sid, endPoint=/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}, role=batch, templateFields=null, input={ "doc_cat_code" : "POA", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$" }, output={ "docCatCode":"POA", "docTypCode": "RNC" }, inputTemplate=preReg/CopyDocument/copyDocument, outputTemplate=preReg/CopyDocument/copyDocumentResult, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Copy the valid Proof of Address (POA) document)<br/>
+<a href="#Output-1877441175" onClick='toggleBox("Output-1877441175", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1877441175" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1877441175">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "26587217563912",
+  "doc_cat_code": "POA"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:43 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=353]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.document.copy",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:43.648Z",
+  "response": {
+    "preRegistrationId": "26587217563912",
+    "docId": "72220ee0-75c0-11ef-96a1-2d55be7ef44a",
+    "docName": "doc_POA.pdf",
+    "docCatCode": "POA",
+    "docTypCode": "RNC",
+    "docFileFormat": "pdf"
+  }
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>response.docTypCode</td>
+    <td>RNC</td>
+    <td>RNC</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+  <tr>
+    <td>response.docCatCode</td>
+    <td>POA</td>
+    <td>POA</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@23648d2d</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_CopyDocument_Invalid_preRegistrationId_sid()'><b>Prereg_CopyDocument_Invalid_preRegistrationId_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_CopyDocument_Invalid_preRegistrationId_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_CopyDocument_Invalid_preRegistrationId_sid, endPoint=/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}, role=batch, templateFields=null, input={ "doc_cat_code" : "POA", "preRegistrationId": "zsvahhv@345rc" }, output={ "errors": [ { "errorCode": "PRG_PAM_APP_005" } ] }, inputTemplate=preReg/CopyDocument/copyDocument, outputTemplate=preReg/error, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Copy the Proof of Address (POA) document with the invalid preregistration ID)<br/>
+<a href="#Output-1025072405" onClick='toggleBox("Output-1025072405", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1025072405" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1025072405">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "zsvahhv@345rc",
+  "doc_cat_code": "POA"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:44 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=22]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.document.copy",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:44.821Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005",
+      "message": "No data found for the requested pre-registration id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_APP_005</td>
+    <td>PRG_PAM_APP_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@23648d2d</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_CopyDocument_blank_doc_cat_code_sid()'><b>Prereg_CopyDocument_blank_doc_cat_code_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_CopyDocument_Invalid_preRegistrationId_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_CopyDocument_blank_doc_cat_code_sid, endPoint=/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}, role=batch, templateFields=null, input={ "doc_cat_code" : "", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_017" } ] }, inputTemplate=preReg/CopyDocument/copyDocument, outputTemplate=preReg/error, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Copy the blank document and categorize it with the code)<br/>
+<a href="#Output-1650828616" onClick='toggleBox("Output-1650828616", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1650828616" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1650828616">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "26587217563912",
+  "doc_cat_code": ""
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:44 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=20]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.document.copy",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:44.447Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_017",
+      "message": "Document Category code is invalid"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_017</td>
+    <td>PRG_CORE_REQ_017</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@23648d2d</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_CopyDocument_in_Valid_doc_cat_code_sid()'><b>Prereg_CopyDocument_in_Valid_doc_cat_code_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_CopyDocument_Invalid_preRegistrationId_sid)<br>Parameters: TestCaseDTO(testCaseName=Prereg_CopyDocument_in_Valid_doc_cat_code_sid, endPoint=/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}, role=batch, templateFields=null, input={ "doc_cat_code" : "saxs@34dbjhj", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_017" } ] }, inputTemplate=preReg/CopyDocument/copyDocument, outputTemplate=preReg/error, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Copy the Proof of Address (POA) document with the invalid document category code)<br/>
+<a href="#Output-1251438918" onClick='toggleBox("Output-1251438918", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1251438918" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1251438918">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "26587217563912",
+  "doc_cat_code": "saxs@34dbjhj"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:44 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=28]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.document.copy",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:44.069Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_017",
+      "message": "Document Category code is invalid"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_017</td>
+    <td>PRG_CORE_REQ_017</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@23648d2d</td></tr>
+</table><p>
+</body>
+</html>

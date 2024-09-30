@@ -1,0 +1,163 @@
+<html>
+<head>
+<title>TestNG:  GetUpdatedDateTimeByPrid</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>GetUpdatedDateTimeByPrid</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>2/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 18 18:59:37 IST 2024</td>
+</tr>
+<tr><td>Total time:</td><td>0 seconds (735 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.SimplePost.Prereg_GetUpdatedDateTimeByPrid_All_Valid_Smoke_sid()'><b>Prereg_GetUpdatedDateTimeByPrid_All_Valid_Smoke_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.SimplePost (Prereg_GetUpdatedDateTimeByPrid_InValid_ID)<br>Parameters: TestCaseDTO(testCaseName=Prereg_GetUpdatedDateTimeByPrid_All_Valid_Smoke_sid, endPoint=/preregistration/v1/applications/prereg/updatedTime, role=batch, templateFields=null, input={ "id": "mosip.pre-registration.demographic.retrieve.date", "version": "1.0", "requesttime": "$TIMESTAMP$", "registartion_center_id": "10003", "pre_registration_ids": [ { "pre_registration_id":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$" }, { "pre_registration_id":"$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$" }, { "pre_registration_id":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$" } ] }, output={ }, inputTemplate=preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPrid, outputTemplate=preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPridResult, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Retrieve all applications with the application ID using valid data)<br/>
+<a href="#Output-30013970" onClick='toggleBox("Output-30013970", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-30013970" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-30013970">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/updatedTime) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.retrieve.date",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:29:37.329Z",
+  "request": {
+    "registartion_center_id": "10003",
+    "pre_registration_ids": [
+      "26587217563912",
+      "21408468927027",
+      "28018908328642"
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:37 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=12]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.retrieve.date",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:37.670Z",
+  "response": {
+    "26587217563912": "2024-09-18T13:17:56.347943",
+    "28018908328642": "2024-09-18T13:17:57.134450",
+    "21408468927027": "2024-09-18T13:17:30.770921"
+  }
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.SimplePost@795f6681</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.SimplePost.Prereg_GetUpdatedDateTimeByPrid_InValid_ID()'><b>Prereg_GetUpdatedDateTimeByPrid_InValid_ID</b><br>Test class: io.mosip.testrig.apirig.testscripts.SimplePost (Prereg_GetUpdatedDateTimeByPrid_InValid_ID)<br>Parameters: TestCaseDTO(testCaseName=Prereg_GetUpdatedDateTimeByPrid_InValid_ID, endPoint=/preregistration/v1/applications/prereg/updatedTime, role=batch, templateFields=null, input={ "id": "mosip.pre-registration.demographic.retrieve.date", "version": "1.0", "requesttime": "$TIMESTAMP$", "registartion_center_id": "10003", "pre_registration_ids": [ { "pre_registration_id":"rtr4243456rsdgfb" } ] }, output={ "errors": [ { "errorCode": "PRG_PAM_APP_005" } ] }, inputTemplate=preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPrid, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Retrieve all applications with the application ID using invalid ID)<br/>
+<a href="#Output-267063122" onClick='toggleBox("Output-267063122", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-267063122" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-267063122">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/updatedTime) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.retrieve.date",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:29:37.690Z",
+  "request": {
+    "registartion_center_id": "10003",
+    "pre_registration_ids": [
+      "rtr4243456rsdgfb"
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:38 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=8]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.retrieve.date",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:38.038Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005",
+      "message": "No data found for the requested pre-registration id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_APP_005</td>
+    <td>PRG_PAM_APP_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.SimplePost@795f6681</td></tr>
+</table><p>
+</body>
+</html>

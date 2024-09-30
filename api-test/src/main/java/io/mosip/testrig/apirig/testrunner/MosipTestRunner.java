@@ -34,6 +34,7 @@ import io.mosip.testrig.apirig.utils.KeycloakUserManager;
 import io.mosip.testrig.apirig.utils.MispPartnerAndLicenseKeyGeneration;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.PartnerRegistration;
+import io.mosip.testrig.apirig.utils.PreRegConfigManager;
 import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 /**
@@ -69,7 +70,7 @@ public class MosipTestRunner {
 			} else {
 				ExtractResource.copyCommonResources();
 			}
-			ConfigManager.init();
+			PreRegConfigManager.init();
 			BaseTestCase.suiteSetup();
 			SkipTestCaseHandler.loadTestcaseToBeSkippedList("testCaseSkippedList.txt");
 			setLogLevels();

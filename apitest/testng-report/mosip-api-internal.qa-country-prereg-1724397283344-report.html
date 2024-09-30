@@ -1,0 +1,3852 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.1//EN" "http://www.w3.org/TR/xhtml11/DTD/xhtml11.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"><head><title>TestNG Report</title><style type="text/css">table {margin-bottom:10px;border-collapse:collapse;empty-cells:show}th,td {border:1px solid #009;padding:.25em .5em}th {vertical-align:bottom}td {vertical-align:top}table a {font-weight:bold}.stripe td {background-color: #E6EBF9}.num {text-align:right}.passedodd td {background-color: #3F3}.passedeven td {background-color: #0A0}.skippedodd td {background-color: #DDD}.skippedeven td {background-color: #CCC}.failedodd td,.attn {background-color: #F33}.failedeven td,.stripe .attn {background-color: #D00}.stacktrace {white-space:pre;font-family:monospace}.totop {font-size:85%;text-align:center;border-bottom:2px solid #000}</style></head><body><table><tr><th>Test</th><th># Passed</th><th># Skipped</th><th># Failed</th><th>Time (ms)</th><th>Included Groups</th><th>Excluded Groups</th></tr><tr><th colspan="7">PreReg Suite</th></tr><tr><td><a href="#t0">CreatePreregistration</a></td><td class="num">0</td><td class="num">0</td><td class="num attn">1</td><td class="num">7,435</td><td></td><td></td></tr></table><table id='summary'><thead><tr><th>Class</th><th>Method</th><th>Start</th><th>Time (ms)</th></tr></thead><tbody><tr><th colspan="4">PreReg Suite</th></tr></tbody><tbody id="t0"><tr><th colspan="4">CreatePreregistration &#8212; failed</th></tr><tr class="failedeven"><td rowspan="1">io.mosip.testrig.apirig.testscripts.CreatePreReg</td><td><a href="#m0">Prereg_CreatePrereg_All_Valid_Smoke_sid</a></td><td rowspan="1">1724397297117</td><td rowspan="1">3359</td></tr></tbody></table><h2>CreatePreregistration</h2><h3 id="m0">io.mosip.testrig.apirig.testscripts.CreatePreReg#Prereg_CreatePrereg_All_Valid_Smoke_sid</h3><table class="result"><tr class="param"><th>Parameter #1</th></tr><tr class="param stripe"><td>TestCaseDTO(testCaseName=Prereg_CreatePrereg_All_Valid_Smoke_sid, endPoint=/preregistration/v1/applications/prereg, role=invalidBatch, templateFields=null, input={ &quot;postalCode&quot;: &quot;14022&quot;, &quot;phone&quot;: &quot;8249742850&quot;, &quot;email&quot;: &quot;goku@technoforte.co.in&quot;, &quot;IDSchemaVersion&quot;: $SCHEMAVERSION$, &quot;dateOfBirth&quot;: &quot;1996/01/01&quot;, &quot;version&quot;: &quot;1.0&quot;, &quot;langCode&quot;: &quot;$1STLANG$&quot;, &quot;functionalId&quot;: &quot;16262&quot;, &quot;requesttime&quot;: &quot;$TIMESTAMP$&quot;, &quot;id&quot;: &quot;mosip.pre-registration.demographic.create&quot; }, output={ }, inputTemplate={&quot;request&quot;:{&quot;requiredFields&quot;:[&quot;IDSchemaVersion&quot;,&quot;fullName&quot;,&quot;dateOfBirth&quot;,&quot;gender&quot;,&quot;addressLine1&quot;,&quot;region&quot;,&quot;province&quot;,&quot;city&quot;,&quot;zone&quot;,&quot;postalCode&quot;,&quot;phone&quot;,&quot;email&quot;,&quot;functionalId&quot;,&quot;residenceStatus&quot;],&quot;demographicDetails&quot;:{&quot;identity&quot;:{&quot;gender&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_gender&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_gender&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_gender&quot;}],&quot;city&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_city&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_city&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_city&quot;}],&quot;postalCode&quot;:&quot;{{postalCode}}&quot;,&quot;fullName&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_fullName&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_fullName&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_fullName&quot;}],&quot;dateOfBirth&quot;:&quot;{{dateOfBirth}}&quot;,&quot;functionalId&quot;:&quot;{{functionalId}}&quot;,&quot;IDSchemaVersion&quot;:1.4,&quot;province&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_province&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_province&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_province&quot;}],&quot;zone&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_zone&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_zone&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_zone&quot;}],&quot;phone&quot;:&quot;{{phone}}&quot;,&quot;addressLine1&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_addressLine1&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_addressLine1&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_addressLine1&quot;}],&quot;residenceStatus&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_residenceStatus&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_residenceStatus&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_residenceStatus&quot;}],&quot;region&quot;:[{&quot;language&quot;:&quot;eng&quot;,&quot;value&quot;:&quot;TEST_region&quot;},{&quot;language&quot;:&quot;ara&quot;,&quot;value&quot;:&quot;TEST_region&quot;},{&quot;language&quot;:&quot;fra&quot;,&quot;value&quot;:&quot;TEST_region&quot;}],&quot;email&quot;:&quot;{{email}}&quot;}},&quot;langCode&quot;:&quot;{{langCode}}&quot;},&quot;requesttime&quot;:&quot;{{requesttime}}&quot;,&quot;id&quot;:&quot;{{id}}&quot;,&quot;version&quot;:&quot;{{version}}&quot;}, outputTemplate=preReg/createPrereg/createPreregResult, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Creating demographic details with valid data)</td></tr><tr><th>Messages</th></tr><tr><td><div class="messages"><b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Fri, 23 Aug 2024 07:14:59 GMT, Content-Type=application/vnd.spring-boot.actuator.v2+json;charset=UTF-8, Content-Length=108535, Connection=keep-alive, x-content-type-options=nosniff, x-xss-protection=1; mode=block, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=21]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "activeProfiles": [
+    "default"
+  ],
+  "propertySources": [
+    {
+      "name": "server.ports",
+      "properties": {
+        "local.server.port": {
+          "value": 8086
+        }
+      }
+    },
+    {
+      "name": "configService:configClient",
+      "properties": {
+        "config.client.version": {
+          "value": "d4c71fdf3db8021bd1be8c0b6eb0a43b20f887a2"
+        }
+      }
+    },
+    {
+      "name": "configService:overrides",
+      "properties": {
+        "softhsm.kernel.security.pin": {
+          "value": "16100640"
+        },
+        "resident.captcha.site.key": {
+          "value": "******"
+        },
+        "ida.websub.masterdata.titles.callback.secret": {
+          "value": "******"
+        },
+        "mosip.resident.client.secret": {
+          "value": "******"
+        },
+        "smtp.host": {
+          "value": "mock-smtp.mock-smtp"
+        },
+        "mosip.misp.client.secret": {
+          "value": "******"
+        },
+        "keycloak.internal.url": {
+          "value": "http://keycloak.keycloak"
+        },
+        "keycloak.internal.host": {
+          "value": "keycloak.keycloak"
+        },
+        "mosip.policymanager.client.secret": {
+          "value": "******"
+        },
+        "keycloak.external.url": {
+          "value": "https://iam.qa-country.mosip.net"
+        },
+        "resident.websub.credential.status.update.secret": {
+          "value": "******"
+        },
+        "mosip.reg.client.secret": {
+          "value": "******"
+        },
+        "s3.pretext.value": {
+          "value": ""
+        },
+        "mosip.syncdata.client.secret": {
+          "value": "******"
+        },
+        "mosip.crereq.client.secret": {
+          "value": "******"
+        },
+        "activemq.password": {
+          "value": "******"
+        },
+        "mosip.digitalcard.client.secret": {
+          "value": "******"
+        },
+        "s3.secretkey": {
+          "value": "******"
+        },
+        "mosip.pms.client.secret": {
+          "value": "******"
+        },
+        "prereg.captcha.site.key": {
+          "value": "******"
+        },
+        "resident.captcha.secret.key": {
+          "value": "******"
+        },
+        "esignet.captcha.site.key": {
+          "value": "******"
+        },
+        "mosip.idrepo.client.secret": {
+          "value": "******"
+        },
+        "mpartner.default.digitalcard.secret": {
+          "value": "******"
+        },
+        "mosip.admin.host": {
+          "value": "admin.qa-country.mosip.net"
+        },
+        "smtp.secret": {
+          "value": "******"
+        },
+        "mimoto.wallet.binding.partner.api.key": {
+          "value": "******"
+        },
+        "mosip.api.public.host": {
+          "value": "api.qa-country.mosip.net"
+        },
+        "mosip.resident.host": {
+          "value": "resident.qa-country.mosip.net"
+        },
+        "ida.websub.authtype.callback.secret": {
+          "value": "******"
+        },
+        "mosip.ida.client.secret": {
+          "value": "******"
+        },
+        "resident.websub.auth.transaction.status.secret": {
+          "value": "******"
+        },
+        "mosip.auth.client.secret": {
+          "value": "******"
+        },
+        "print.websub.hub.secret": {
+          "value": "******"
+        },
+        "ida.websub.credential.issue.callback.secret": {
+          "value": "******"
+        },
+        "resident.oidc.clientid": {
+          "value": "EOpsFgdX9p2bJ2cfNK7b05Usam6FuiEue-MuF3cypTI"
+        },
+        "sms.host": {
+          "value": "mock-smtp.mock-smtp"
+        },
+        "mpartner.default.print.secret": {
+          "value": "******"
+        },
+        "mosip.compliance.host": {
+          "value": "compliance.qa-country.mosip.net"
+        },
+        "keycloak.external.host": {
+          "value": "iam.qa-country.mosip.net"
+        },
+        "mosip.kernel.tokenid.partnercode.salt": {
+          "value": "5WHkopCCckXUAB5A"
+        },
+        "mosip.admin.client.secret": {
+          "value": "******"
+        },
+        "s3.region": {
+          "value": ""
+        },
+        "mosip.esignet.host": {
+          "value": "esignet.qa-country.mosip.net"
+        },
+        "resident.websub.regproc.workflow.complete.secret": {
+          "value": "******"
+        },
+        "sms.secret": {
+          "value": "******"
+        },
+        "keycloak.admin.password": {
+          "value": "******"
+        },
+        "ida.websub.hotlist.callback.secret": {
+          "value": "******"
+        },
+        "mosip.kernel.tokenid.uin.salt": {
+          "value": "yWRepNHUueMSBoqx"
+        },
+        "ida.websub.partner.service.callback.secret": {
+          "value": "******"
+        },
+        "mosip.api.internal.host": {
+          "value": "api-internal.qa-country.mosip.net"
+        },
+        "prereg.captcha.secret.key": {
+          "value": "******"
+        },
+        "mosip.resident.request.credential.encryption.key": {
+          "value": "******"
+        },
+        "mosip.datsha.client.secret": {
+          "value": "******"
+        },
+        "ida.websub.ca.certificate.callback.secret": {
+          "value": "******"
+        },
+        "s3.accesskey": {
+          "value": "******"
+        },
+        "mimoto.oidc.keystore.password": {
+          "value": "******"
+        },
+        "mosip.regproc.client.secret": {
+          "value": "******"
+        },
+        "redis.password": {
+          "value": "******"
+        },
+        "smtp.port": {
+          "value": "8025"
+        },
+        "activemq.core.port": {
+          "value": "61616"
+        },
+        "mosip.signup.host": {
+          "value": "signup.qa-country.mosip.net"
+        },
+        "smtp.username": {
+          "value": ""
+        },
+        "mosip.creser.client.secret": {
+          "value": "******"
+        },
+        "mpartner.default.auth.secret": {
+          "value": "******"
+        },
+        "mosip.prereg.host": {
+          "value": "prereg.qa-country.mosip.net"
+        },
+        "sms.port": {
+          "value": "8080"
+        },
+        "mpartner.default.mobile.secret": {
+          "value": "******"
+        },
+        "activemq.host": {
+          "value": "activemq-activemq-artemis.activemq"
+        },
+        "mosip.abis.client.secret": {
+          "value": "******"
+        },
+        "softhsm.esignet.security.pin": {
+          "value": "62467428"
+        },
+        "sms.username": {
+          "value": ""
+        },
+        "hub.secret.encryption.key": {
+          "value": "******"
+        },
+        "mosip.ida.kyc.token.secret": {
+          "value": "******"
+        },
+        "mosip.pmp.host": {
+          "value": "pmp.qa-country.mosip.net"
+        },
+        "mosip.esignet.misp.key": {
+          "value": "******"
+        },
+        "mosip.toolkit.client.secret": {
+          "value": "******"
+        },
+        "esignet.captcha.secret.key": {
+          "value": "******"
+        },
+        "mosip.prereg.client.secret": {
+          "value": "******"
+        },
+        "idrepo.websub.vid.credential.update.secret": {
+          "value": "******"
+        },
+        "softhsm.ida.security.pin": {
+          "value": "42246707"
+        },
+        "mosip.partner.crypto.p12.password": {
+          "value": "******"
+        },
+        "mosip.creser.idpass.client.secret": {
+          "value": "******"
+        },
+        "ida.websub.masterdata.templates.callback.secret": {
+          "value": "******"
+        },
+        "resident.websub.authtype.status.secret": {
+          "value": "******"
+        },
+        "softhsm.mock.identity.system.security.pin": {
+          "value": "72843336"
+        },
+        "mimoto.oidc.partner.clientid": {
+          "value": ""
+        },
+        "db.dbuser.password": {
+          "value": "******"
+        },
+        "mosip.hotlist.client.secret": {
+          "value": "******"
+        }
+      }
+    },
+    {
+      "name": "configService:https://github.com/mosip/mosip-config/kernel-default.properties",
+      "properties": {
+        "softhsm.kernel.security.pin": {
+          "value": "${softhsm.security.pin}"
+        },
+        "mosip.kernel.syncdata.auth-manager-base-uri": {
+          "value": "http://authmanager.kernel/v1/authmanager"
+        },
+        "mosip.kernel.syncdata.auth-manager-roles": {
+          "value": "/roles"
+        },
+        "mosip.kernel.syncdata.auth-user-details": {
+          "value": "/userdetails"
+        },
+        "mosip.kernel.syncdata.syncdata-request-id": {
+          "value": "SYNCDATA.REQUEST"
+        },
+        "mosip.kernel.syncdata.syncdata-version-id": {
+          "value": "v1.0"
+        },
+        "mosip.kernel.syncdata.registration-center-config-file": {
+          "value": "registration-default.properties"
+        },
+        "mosip.kernel.syncdata.global-config-file": {
+          "value": "application-default.properties"
+        },
+        "mosip.kernel.syncdata.syncjob-base-url": {
+          "value": "${mosip.kernel.syncdata.syncjob.url}/v1/syncjob/syncjobdef"
+        },
+        "mosip.kernel.syncdata-service-idschema-url": {
+          "value": "http://masterdata.kernel/v1/masterdata/idschema/latest"
+        },
+        "mosip.kernel.sms.enabled": {
+          "value": "true"
+        },
+        "mosip.kernel.sms.country.code": {
+          "value": "+91"
+        },
+        "mosip.kernel.sms.number.length": {
+          "value": "10"
+        },
+        "mosip.kernel.sms.gateway": {
+          "value": "${sms.gateway.provider}"
+        },
+        "mosip.kernel.sms.api": {
+          "value": "http://mock-smtp.mock-smtp:8080/sendsms"
+        },
+        "mosip.kernel.sms.authkey": {
+          "value": "******"
+        },
+        "mosip.kernel.sms.route": {
+          "value": "mock"
+        },
+        "mosip.kernel.sms.sender": {
+          "value": "AD-MOSIP"
+        },
+        "mosip.kernel.sms.unicode": {
+          "value": "unicode"
+        },
+        "mosip.kernel.sms.number.min.length": {
+          "value": "8"
+        },
+        "mosip.kernel.sms.number.max.length": {
+          "value": "10"
+        },
+        "mosip.kernel.sms.password": {
+          "value": "******"
+        },
+        "mosip.kernel.notification.email.from": {
+          "value": "do-not-reply@mosip.io"
+        },
+        "spring.mail.host": {
+          "value": "mock-smtp.mock-smtp"
+        },
+        "spring.mail.username": {
+          "value": ""
+        },
+        "spring.mail.password": {
+          "value": "******"
+        },
+        "spring.mail.port": {
+          "value": "8025"
+        },
+        "spring.mail.properties.mail.transport.protocol": {
+          "value": "smtp"
+        },
+        "spring.mail.properties.mail.smtp.starttls.required": {
+          "value": "false"
+        },
+        "spring.mail.properties.mail.smtp.starttls.enable": {
+          "value": "false"
+        },
+        "spring.mail.properties.mail.smtp.auth": {
+          "value": "false"
+        },
+        "spring.mail.debug": {
+          "value": "false"
+        },
+        "spring.servlet.multipart.enabled": {
+          "value": "true"
+        },
+        "spring.servlet.multipart.max-file-size": {
+          "value": "5MB"
+        },
+        "mosip.kernel.keymanager.hsm.keystore-type": {
+          "value": "PKCS11"
+        },
+        "mosip.kernel.keymanager.hsm.config-path": {
+          "value": "/config/softhsm-application.conf"
+        },
+        "mosip.kernel.keymanager.hsm.keystore-pass": {
+          "value": "16100640"
+        },
+        "mosip.kernel.client.crypto.use-resident-service-module-key": {
+          "value": "******"
+        },
+        "mosip.kernel.auditmanager-service-logs-location": {
+          "value": "logs/audit.log"
+        },
+        "auth.jwt.secret": {
+          "value": "******"
+        },
+        "auth.jwt.base": {
+          "value": "Mosip-Token"
+        },
+        "auth.jwt.expiry": {
+          "value": "6000000"
+        },
+        "auth.token.header": {
+          "value": "Authorization"
+        },
+        "auth.refreshtoken.header": {
+          "value": "RefreshToken"
+        },
+        "auth.jwt.refresh.expiry": {
+          "value": "86400000"
+        },
+        "auth.primary.language": {
+          "value": "eng"
+        },
+        "otp.manager.api.generate": {
+          "value": "http://otpmanager.kernel/v1/otpmanager/otp/generate"
+        },
+        "otp.manager.api.verify": {
+          "value": "http://otpmanager.kernel/v1/otpmanager/otp/validate"
+        },
+        "otp.sender.api.email.send": {
+          "value": "http://notifier.kernel/v1/notifier/email/send"
+        },
+        "otp.sender.api.sms.send": {
+          "value": "http://notifier.kernel/v1/notifier/sms/send"
+        },
+        "masterdata.api.template": {
+          "value": "http://masterdata.kernel/v1/masterdata/templates/"
+        },
+        "masterdata.api.template.otp": {
+          "value": "/otp-sms-template"
+        },
+        "idrepo.api.getuindetails": {
+          "value": "http://identity.idrepo/v1/identity/uin/{uin}"
+        },
+        "mosip.kernel.auth.app.id": {
+          "value": "auth"
+        },
+        "mosip.kernel.auth.client.id": {
+          "value": "mosip-auth-client"
+        },
+        "mosip.kernel.auth.secret.key": {
+          "value": "******"
+        },
+        "mosip.kernel.ida.app.id": {
+          "value": "ida"
+        },
+        "mosip.kernel.ida.client.id": {
+          "value": "mosip-ida-client"
+        },
+        "mosip.kernel.ida.secret.key": {
+          "value": "******"
+        },
+        "mosip.kernel.vid.min-unused-threshold": {
+          "value": "100000"
+        },
+        "mosip.kernel.vid.vids-to-generate": {
+          "value": "200000"
+        },
+        "mosip.kernel.vid.time-to-release-after-expiry": {
+          "value": "5"
+        },
+        "mosip.kernel.vid.pool-population-timeout": {
+          "value": "10000000"
+        },
+        "kernel.vid.revoke-scheduler-type": {
+          "value": "cron"
+        },
+        "kernel.vid.revoke-scheduler-seconds": {
+          "value": "0"
+        },
+        "kernel.vid.revoke-scheduler-minutes": {
+          "value": "0"
+        },
+        "kernel.vid.revoke-scheduler-hours": {
+          "value": "23"
+        },
+        "kernel.vid.revoke-scheduler-days_of_month": {
+          "value": "*"
+        },
+        "kernel.vid.revoke-scheduler-months": {
+          "value": "*"
+        },
+        "kernel.vid.revoke-scheduler-days_of_week": {
+          "value": "*"
+        },
+        "kernel.vid.isolator-scheduler-type": {
+          "value": "cron"
+        },
+        "kernel.vid.isolator-scheduler-seconds": {
+          "value": "0"
+        },
+        "kernel.vid.isolator-scheduler-minutes": {
+          "value": "0"
+        },
+        "kernel.vid.isolator-scheduler-hours": {
+          "value": "*"
+        },
+        "kernel.vid.isolator-scheduler-days_of_month": {
+          "value": "*"
+        },
+        "kernel.vid.isolator-scheduler-months": {
+          "value": "*"
+        },
+        "kernel.vid.isolator-scheduler-days_of_week": {
+          "value": "*"
+        },
+        "mosip.kernel.prid.min-unused-threshold": {
+          "value": "1000"
+        },
+        "mosip.kernel.prid.prids-to-generate": {
+          "value": "2000"
+        },
+        "mosip.kernel.prid.pool-population-timeout": {
+          "value": "10000000"
+        },
+        "mosip.kernel.prid.sequence-limit": {
+          "value": "3"
+        },
+        "kernel.prid.revoke-scheduler-type": {
+          "value": "cron"
+        },
+        "kernel.prid.revoke-scheduler-seconds": {
+          "value": "0"
+        },
+        "kernel.prid.revoke-scheduler-minutes": {
+          "value": "0"
+        },
+        "kernel.prid.revoke-scheduler-hours": {
+          "value": "23"
+        },
+        "kernel.prid.revoke-scheduler-days_of_month": {
+          "value": "*"
+        },
+        "kernel.prid.revoke-scheduler-months": {
+          "value": "*"
+        },
+        "kernel.prid.revoke-scheduler-days_of_week": {
+          "value": "*"
+        },
+        "mosip.kernel.database.hostname": {
+          "value": "postgres-postgresql.postgres"
+        },
+        "mosip.kernel.database.port": {
+          "value": "5432"
+        },
+        "javax.persistence.jdbc.driver": {
+          "value": "org.postgresql.Driver"
+        },
+        "hibernate.dialect": {
+          "value": "org.hibernate.dialect.PostgreSQL95Dialect"
+        },
+        "hibernate.jdbc.lob.non_contextual_creation": {
+          "value": "true"
+        },
+        "hibernate.hbm2ddl.auto": {
+          "value": "none"
+        },
+        "hibernate.show_sql": {
+          "value": "false"
+        },
+        "hibernate.format_sql": {
+          "value": "false"
+        },
+        "hibernate.connection.charSet": {
+          "value": "utf8"
+        },
+        "hibernate.cache.use_second_level_cache": {
+          "value": "false"
+        },
+        "hibernate.cache.use_query_cache": {
+          "value": "false"
+        },
+        "hibernate.cache.use_structured_entries": {
+          "value": "false"
+        },
+        "hibernate.generate_statistics": {
+          "value": "false"
+        },
+        "logging.level.org.hibernate.SQL": {
+          "value": "ERROR"
+        },
+        "logging.level.org.hibernate.type": {
+          "value": "ERROR"
+        },
+        "admin_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_kernel"
+        },
+        "admin_database_username": {
+          "value": "kerneluser"
+        },
+        "admin_database_password": {
+          "value": "******"
+        },
+        "syncjob_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_master"
+        },
+        "syncjob_database_username": {
+          "value": "masteruser"
+        },
+        "syncjob_database_password": {
+          "value": "******"
+        },
+        "audit_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_audit"
+        },
+        "audit_database_username": {
+          "value": "audituser"
+        },
+        "audit_database_password": {
+          "value": "******"
+        },
+        "masterdata_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_master"
+        },
+        "masterdata_database_username": {
+          "value": "masteruser"
+        },
+        "masterdata_database_password": {
+          "value": "******"
+        },
+        "uin.swagger.base-url": {
+          "value": "https://qa.mosip.io"
+        },
+        "uin_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_kernel"
+        },
+        "uin_database_username": {
+          "value": "kerneluser"
+        },
+        "uin_database_password": {
+          "value": "******"
+        },
+        "hibernate.current_session_context_class": {
+          "value": "org.springframework.orm.hibernate5.SpringSessionContext"
+        },
+        "id_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_kernel"
+        },
+        "id_database_username": {
+          "value": "kerneluser"
+        },
+        "id_database_password": {
+          "value": "******"
+        },
+        "vid_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_kernel"
+        },
+        "vid_database_username": {
+          "value": "kerneluser"
+        },
+        "vid_database_password": {
+          "value": "******"
+        },
+        "prid_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_kernel"
+        },
+        "prid_database_username": {
+          "value": "kerneluser"
+        },
+        "prid_database_password": {
+          "value": "******"
+        },
+        "keymanager.persistence.jdbc.driver": {
+          "value": "org.postgresql.Driver"
+        },
+        "keymanager_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_keymgr"
+        },
+        "keymanager_database_password": {
+          "value": "******"
+        },
+        "keymanager_database_username": {
+          "value": "keymgruser"
+        },
+        "otpmanager_database_username": {
+          "value": "kerneluser"
+        },
+        "otpmanager_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_kernel"
+        },
+        "otpmanager_database_password": {
+          "value": "******"
+        },
+        "syncdata_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_master"
+        },
+        "syncdata_database_username": {
+          "value": "masteruser"
+        },
+        "syncdata_database_password": {
+          "value": "******"
+        },
+        "ridgenerator_database_username": {
+          "value": "regprcuser"
+        },
+        "ridgenerator_database_url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_regprc"
+        },
+        "ridgenerator_database_password": {
+          "value": "******"
+        },
+        "mosip.iam.base.url": {
+          "value": "http://keycloak.keycloak"
+        },
+        "mosip.iam.base-url": {
+          "value": "http://keycloak.keycloak"
+        },
+        "mosip.iam.admin-realm-id": {
+          "value": "admin"
+        },
+        "mosip.iam.default.realm-id": {
+          "value": "mosip"
+        },
+        "mosip.iam.open-id-url": {
+          "value": "http://keycloak.keycloak/auth/realms/{realmId}/protocol/openid-connect/"
+        },
+        "mosip.iam.realm.operations.base-url": {
+          "value": "http://keycloak.keycloak/auth/admin/realms/{realmId}"
+        },
+        "mosip.iam.admin-url": {
+          "value": "http://keycloak.keycloak/auth/admin/"
+        },
+        "mosip.iam.roles-extn-url": {
+          "value": "realms/mosip/roles"
+        },
+        "mosip.iam.users-extn-url": {
+          "value": "realms/mosip/users"
+        },
+        "mosip.iam.role-user-mapping-url": {
+          "value": "/{userId}/role-mappings/realm"
+        },
+        "mosip.iam.role-based-user-url": {
+          "value": "realms/{realm}/roles/{role-name}/users"
+        },
+        "keycloak.realm": {
+          "value": "registration-client"
+        },
+        "keycloak.resource": {
+          "value": "account"
+        },
+        "keycloak.auth-server-url": {
+          "value": "http://keycloak.keycloak/auth"
+        },
+        "keycloak.ssl-required": {
+          "value": "none"
+        },
+        "keycloak.public-client": {
+          "value": "true"
+        },
+        "keycloak.use-resource-role-mappings": {
+          "value": "true"
+        },
+        "keycloak.verify-token-audience": {
+          "value": "true"
+        },
+        "mosip.iam.authorization_endpoint": {
+          "value": "https://iam.qa-country.mosip.net/auth/realms/{realmId}/protocol/openid-connect/auth"
+        },
+        "mosip.iam.token_endpoint": {
+          "value": "http://keycloak.keycloak/auth/realms/{realmId}/protocol/openid-connect/token"
+        },
+        "mosip.authmanager.base-url": {
+          "value": "http://authmanager.kernel/v1/authmanager"
+        },
+        "mosip.admin.login_flow.name": {
+          "value": "authorization_code"
+        },
+        "mosip.admin.login_flow.response_type": {
+          "value": "code"
+        },
+        "mosip.admin.login_flow.scope": {
+          "value": "cls"
+        },
+        "mosip.admin.clientid": {
+          "value": "mosip-admin-client"
+        },
+        "mosip.admin.clientsecret": {
+          "value": "******"
+        },
+        "mosip.admin.redirecturi": {
+          "value": "http://authmanager.kernel/v1/authmanager/login-redirect/"
+        },
+        "mosip.admin_realm_id": {
+          "value": "mosip"
+        },
+        "mosip.iam.master.realm-id": {
+          "value": "master"
+        },
+        "mosip.iam.pre-reg_user_password": {
+          "value": "******"
+        },
+        "db_3_DS.keycloak.ipaddress": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_kernel"
+        },
+        "db_3_DS.keycloak.port": {
+          "value": "5432"
+        },
+        "db_3_DS.keycloak.username": {
+          "value": "kerneluser"
+        },
+        "db_3_DS.keycloak.password": {
+          "value": "******"
+        },
+        "db_3_DS.keycloak.driverClassName": {
+          "value": "org.postgresql.Driver"
+        },
+        "mosip.keycloak.admin.client.id": {
+          "value": "admin-cli"
+        },
+        "mosip.keycloak.admin.user.id": {
+          "value": "admin"
+        },
+        "mosip.keycloak.admin.secret.key": {
+          "value": "******"
+        },
+        "mosip.iam.impl.basepackage": {
+          "value": "io.mosip.kernel.auth.defaultimpl"
+        },
+        "mosip.auth.adapter.impl.basepackage": {
+          "value": "io.mosip.kernel.auth.defaultadapter"
+        },
+        "master.search.maximum.rows": {
+          "value": "50"
+        },
+        "mosip.level": {
+          "value": "2"
+        },
+        "mosip.kernel.masterdata.audit-url": {
+          "value": "http://auditmanager.kernel/v1/auditmanager/audits"
+        },
+        "mosip.keycloak.max-no-of-users": {
+          "value": "20000"
+        },
+        "mosip.kernel.sign-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/sign"
+        },
+        "masterdata.registerdevice.timestamp.validate": {
+          "value": "+10"
+        },
+        "mosip.kernel.prereg.realm-id": {
+          "value": "mosip"
+        },
+        "mosip.kernel.prereg.client.id": {
+          "value": "mosip-prereg-client"
+        },
+        "mosip.kernel.prereg.secret.key": {
+          "value": "******"
+        },
+        "kernel.uin.transfer-scheduler-type": {
+          "value": "cron"
+        },
+        "kernel.uin.transfer-scheduler-seconds": {
+          "value": "0"
+        },
+        "kernel.uin.transfer-scheduler-minutes": {
+          "value": "0"
+        },
+        "kernel.uin.transfer-scheduler-hours": {
+          "value": "*"
+        },
+        "kernel.uin.transfer-scheduler-days_of_month": {
+          "value": "*"
+        },
+        "kernel.uin.transfer-scheduler-months": {
+          "value": "*"
+        },
+        "kernel.uin.transfer-scheduler-days_of_week": {
+          "value": "*"
+        },
+        "auth.server.admin.validate.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/authorize/admin/validateToken"
+        },
+        "mosip.kernel.auth.proxy-otp-value": {
+          "value": "111111"
+        },
+        "mosip.security.provider.name": {
+          "value": "SunPKCS11-pkcs11-proxy"
+        },
+        "mosip.ui.spec.default.domain": {
+          "value": "registration-client"
+        },
+        "mosip.security.csrf-enable": {
+          "value": "false"
+        },
+        "mosip.security.cors-enable": {
+          "value": "false"
+        },
+        "mosip.security.origins": {
+          "value": "localhost:8080"
+        },
+        "mosip.security.secure-cookie": {
+          "value": "false"
+        },
+        "mosip.root.key.applicationid": {
+          "value": "ROOT"
+        },
+        "mosip.kernel.certificate.sign.algorithm": {
+          "value": "SHA256withRSA"
+        },
+        "mosip.kernel.keymanager.certificate.default.common-name": {
+          "value": "www.mosip.io"
+        },
+        "mosip.kernel.keymanager.certificate.default.organizational-unit": {
+          "value": "MOSIP-TECH-CENTER"
+        },
+        "mosip.kernel.keymanager.certificate.default.organization": {
+          "value": "IITB"
+        },
+        "mosip.kernel.keymanager.certificate.default.location": {
+          "value": "BANGALORE"
+        },
+        "mosip.kernel.keymanager.certificate.default.state": {
+          "value": "KA"
+        },
+        "mosip.kernel.keymanager.certificate.default.country": {
+          "value": "IN"
+        },
+        "mosip.kernel.zkcrypto.masterkey.application.id": {
+          "value": "KERNEL"
+        },
+        "mosip.kernel.zkcrypto.masterkey.reference.id": {
+          "value": "IDENTITY_CACHE"
+        },
+        "mosip.kernel.zkcrypto.publickey.application.id": {
+          "value": "IDA"
+        },
+        "mosip.kernel.zkcrypto.publickey.reference.id": {
+          "value": "PUBLIC_KEY"
+        },
+        "mosip.kernel.zkcrypto.wrap.algorithm-name": {
+          "value": "AES/ECB/NoPadding"
+        },
+        "mosip.kernel.zkcrypto.derive.encrypt.algorithm-name": {
+          "value": "AES/ECB/PKCS5Padding"
+        },
+        "mosip.kernel.partner.sign.masterkey.application.id": {
+          "value": "PMS"
+        },
+        "datastores": {
+          "value": "ldap_1_DS,db_1_DS,db_2_DS"
+        },
+        "mosip.kernel.partner.allowed.domains": {
+          "value": "AUTH,DEVICE,FTM,MISP"
+        },
+        "mosip.kernel.keymanager.autogen.appids.list": {
+          "value": "ROOT,KERNEL:SIGN,PRE_REGISTRATION,REGISTRATION,REGISTRATION_PROCESSOR,ID_REPO,KERNEL:IDENTITY_CACHE,RESIDENT,PMS,ADMIN_SERVICES,DIGITAL_CARD,COMPLIANCE_TOOLKIT"
+        },
+        "zkcrypto.random.key.generate.count": {
+          "value": "10000"
+        },
+        "mosip.kernel.keymanager.autogen.basekeys.list": {
+          "value": "RESIDENT:mpartner-default-resident,COMPLIANCE_TOOLKIT:COMP-FIR"
+        },
+        "mosip.kernel.keymanager.keystore.keyreference.enable.cache": {
+          "value": "false"
+        },
+        "mosip.kernel.syncdata-service-machine-url": {
+          "value": "http://masterdata.kernel/v1/masterdata/machines/%s/eng"
+        },
+        "mosip.syncdata.tpm.required": {
+          "value": "false"
+        },
+        "mosip.kernel.registrationclient.app.id": {
+          "value": "registrationclient"
+        },
+        "mosip.kernel.registrationclient.client.id": {
+          "value": "mosip-reg-client"
+        },
+        "mosip.kernel.registrationclient.secret.key": {
+          "value": "******"
+        },
+        "mosip.kernel.authtoken.NEW.internal.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/authenticate/internal/useridPwd"
+        },
+        "mosip.kernel.authtoken.OTP.internal.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/authenticate/internal/userotp"
+        },
+        "mosip.kernel.authtoken.REFRESH.internal.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/authorize/internal/refreshToken/registrationclient"
+        },
+        "mosip.kernel.auth.sendotp.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/authenticate/sendotp"
+        },
+        "syncdata.websub.topic.ca-cert": {
+          "value": "CA_CERTIFICATE_UPLOADED"
+        },
+        "syncdata.websub.callback.secret.ca-cert": {
+          "value": "secret"
+        },
+        "syncdata.websub.callback.url.path.ca-cert": {
+          "value": "/callback/partner/ca_certificate"
+        },
+        "syncdata.websub.callback.url.ca-cert": {
+          "value": "http://syncdata.kernel/v1/syncdata/callback/partner/ca_certificate"
+        },
+        "syncdata.websub.resubscription.retry.count": {
+          "value": "3"
+        },
+        "subscriptions-delay-on-startup": {
+          "value": "120000"
+        },
+        "PACKET_RESUME_API": {
+          "value": "https://api-internal.qa-country.mosip.net/registrationprocessor/v1/workflowmanager/workflowaction"
+        },
+        "PACKET_PAUSE_API": {
+          "value": "https://api-internal.qa-country.mosip.net/registrationprocessor/v1/workflowmanager/workflow/search"
+        },
+        "KEYBASEDTOKENAPI": {
+          "value": "http://authmanager.kernel/v1/authmanager/authenticate/clientidsecretkey"
+        },
+        "masterdata.websub.resubscription.delay.millis": {
+          "value": "48000000"
+        },
+        "masterdata.subscriptions-delay-on-startup": {
+          "value": "120000"
+        },
+        "syncdata.websub.resubscription.delay.millis": {
+          "value": "48000000"
+        },
+        "mosip.admin.ui.configs": {
+          "value": "version:LTS;locationHierarchyLevel:4;mandatoryLanguages:eng;optionalLanguages:ara,fra;supportedLanguages: eng,ara,fra;leftToRightOrientation:eng,fra;rightToLeftOrientation:ara;countryCode:1000;filterValueMaxRecords:20;filterValueMaxCount:{\"default\":20,\"registrationcenters\":500,\"locations\":300}"
+        },
+        "mosip.kernel.keymanager.113nothumbprint.support": {
+          "value": "false"
+        },
+        "mosip.kernel.masterdata.auth-manager-base-uri": {
+          "value": "http://authmanager.kernel/v1/authmanager"
+        },
+        "mosip.kernel.masterdata.auth-user-details": {
+          "value": "/userdetails"
+        },
+        "scheduling.job.cron": {
+          "value": "0 0 2 * * ?"
+        },
+        "zone.user.details.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/userdetails"
+        },
+        "auth.server.admin.allowed.audience": {
+          "value": "mosip-toolkit-android-client,mosip-toolkit-client,mosip-regproc-client,mosip-prereg-client,mosip-admin-client,mosip-crereq-client,mosip-creser-client,mosip-datsha-client,mosip-ida-client,mosip-resident-client,mosip-reg-client,mpartner-default-print,mosip-idrepo-client,mpartner-default-auth,mosip-syncdata-client,mosip-masterdata-client,mosip-idrepo-client,mosip-pms-client,mosip-hotlist-client,mobileid_newlogic,opencrvs-partner,mosip-deployment-client,mpartner-default-digitalcard,mpartner-default-mobile,mosip-signup-client"
+        },
+        "mosip.iam.adapter.appid": {
+          "value": "admin"
+        },
+        "mosip.iam.adapter.clientid": {
+          "value": "mosip-admin-client"
+        },
+        "mosip.iam.adapter.clientsecret": {
+          "value": "******"
+        },
+        "mosip.service-context": {
+          "value": "/v1/masterdata"
+        },
+        "spring.jpa.properties.hibernate.jdbc.lob.non_contextual_creation": {
+          "value": "true"
+        },
+        "mosip.role.admin.masterdata.getapplicationconfigs": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getconfigs": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getapplicationtypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getapplicationtypeslangcode": {
+          "value": "PRE_REGISTRATION_ADMIN,RESIDENT,GLOBAL_ADMIN,ZONAL_ADMIN,INDIVIDUAL,REGISTRATION_PROCESSOR,PRE_REGISTRATION,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,PARTNER,AUTH_PARTNER,PARTNER_ADMIN,DEVICE_PROVIDER,DEVICE_MANAGER"
+        },
+        "mosip.role.admin.masterdata.getapplicationtypescodelangcode": {
+          "value": "RESIDENT,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,INDIVIDUAL,REGISTRATION_PROCESSOR,PRE_REGISTRATION,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,PARTNER,AUTH_PARTNER,PARTNER_ADMIN,DEVICE_PROVIDER,DEVICE_MANAGER"
+        },
+        "mosip.role.admin.masterdata.postapplicationtypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getgetbiometricattributesbyauthtype": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.postbiometricattributes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getbiometrictypes": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getbiometrictypeslangcode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_PROCESSOR,REGISTRATION_OFFICER"
+        },
+        "mosip.role.admin.masterdata.getbiometrictypescodelangcode": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_PROCESSOR,REGISTRATION_OFFICER"
+        },
+        "mosip.role.admin.masterdata.postbiometrictypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postblocklistedwordswords": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postblocklistedwords": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putblocklistedwords": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putblocklistedwordsdetails": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deleteblocklistedwordsword": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getblocklistedwordsall": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postblocklistedwordssearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postblocklistedwordsfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchblocklistedwords": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,REGISTRATION_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdeviceslanguagecode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER"
+        },
+        "mosip.role.admin.masterdata.getdeviceslanguagecodedevicetype": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER"
+        },
+        "mosip.role.admin.masterdata.postdevices": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdevices": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdevicesmappeddevicesregcenterid": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicessearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicesfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdevicesdecommissiondeviceid": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchdevices": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdeviceshistoriesidlangcodeeffdatetimes": {
+          "value": "REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdeviceprovider": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PARTNER_ADMIN,PARTNER,AUTH_PARTNER,DEVICE_MANAGER,DEVICE_PROVIDER"
+        },
+        "mosip.role.admin.masterdata.putdeviceprovider": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PARTNER_ADMIN,PARTNER,AUTH_PARTNER,DEVICE_MANAGER,DEVICE_PROVIDER"
+        },
+        "mosip.role.admin.masterdata.postdeviceprovidermanagementvalidate": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,DEVICE_PROVIDER,DEVICE_MANAGER"
+        },
+        "mosip.role.admin.masterdata.deletedevicederegisterdevicecode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdeviceupdatestatus": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdevicespecifications": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,DEVICE_MANAGER,DEVICE_PROVIDER,PARTNER,AUTH_PARTNER,PARTNER_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdevicespecificationsdevicetypecode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,DEVICE_MANAGER,DEVICE_PROVIDER,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicespecifications": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdevicespecifications": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletedevicespecificationsid": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdevicespecificationsall": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicespecificationssearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicespecificationsfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchdevicespecifications": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicetypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdevicetypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdevicetypesall": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,DEVICE_MANAGER,PRE_REGISTRATION_ADMIN,DEVICE_PROVIDER,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicetypessearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdevicetypesfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchdevicetypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdocumentcategorieslangcode": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,DEVICE_MANAGER,DEVICE_PROVIDER,PARTNER,PARTNER_ADMIN,RESIDENT,INDIVIDUAL,PRE_REGISTRATION,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdocumentcategoriescode": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,DEVICE_MANAGER,DEVICE_PROVIDER,PARTNER,PARTNER_ADMIN,RESIDENT,INDIVIDUAL,PRE_REGISTRATION,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdocumentcategories": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdocumentcategories": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletedocumentcategoriescode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdocumentcategoriesall": {
+          "value": "PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdocumentcategoriessearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdocumentcategoriesfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchdocumentcategories": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdocumenttypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdocumenttypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletedocumenttypescode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdocumenttypesall": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdocumenttypesfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdocumenttypessearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchdocumenttypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdocumenttypesmissingidslangcode": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdynamicfields": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putdynamicfields": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchdynamicfieldsall": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchdynamicfields": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletedynamicfields": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletedynamicfieldsid": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdynamicfieldssearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postfoundationaltrustprovider": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PARTNER,AUTH_PARTNER,PARTNER_ADMIN,DEVICE_PROVIDER,DEVICE_MANAGER"
+        },
+        "mosip.role.admin.masterdata.putfoundationaltrustprovider": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PARTNER,AUTH_PARTNER,PARTNER_ADMIN,DEVICE_PROVIDER,DEVICE_MANAGER"
+        },
+        "mosip.role.admin.masterdata.postgendertypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putgendertypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletegendertypescode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getgendertypesall": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,CENTRAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postgendertypessearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postgendertypesfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getholidays": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getholidaysholidayid": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getholidaysholidayidlangcode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,INDIVIDUAL,PRE_REGISTRATION,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postholidays": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putholidays": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchholidays": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deleteholidays": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getholidaysall": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postholidayssearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postholidaysfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getholidaysmissingidslangcode": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postidtypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getindividualtypesall": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,CENTRAL_ADMIN,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.postindividualtypessearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postindividualtypesfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postindividualtypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putindividualtypes": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postlanguages": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getlocations": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putlocations": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchlocations": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletelocationslocationcode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getlocationsall": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postlocationssearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,REGISTRATION_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postlocationsfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN,REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getlocationslevellangcode": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getlocationsmissingidslangcode": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getlocationhierarchylevels": {
+          "value": "INDIVIDUAL,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,ZONAL_ADMIN,default,GLOBAL_ADMIN,PRE_REGISTRATION,REGISTRATION_ADMIN,REGISTRATION_OPERATOR"
+        },
+        "mosip.role.admin.masterdata.getmachinesidlangcode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,REGISTRATION_CLIENT,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR,RESIDENT"
+        },
+        "mosip.role.admin.masterdata.getmachineslangcode": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,REGISTRATION_CLIENT,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.getmachines": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,REGISTRATION_CLIENT,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.deletemachinesid": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getmachinesmappedmachinesregcenterid": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,REGISTRATION_CLIENT,REGISTRATION_OFFICER"
+        },
+        "mosip.role.admin.masterdata.postmachinessearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,RESIDENT,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachinesfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putmachinesdecommissionmachineid": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachines": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,RESIDENT,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putmachines": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchmachines": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getmachineshistoriesidlangcode": {
+          "value": "REGISTRATION_PROCESSOR,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachinespecifications": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putmachinespecifications": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchmachinespecifications": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletemachinespecificationsid": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getmachinespecificationsall": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,REGISTRATION_OFFICER,REGISTRATION_SUPERVISOR,REGISTRATION_PROCESSOR,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachinespecificationssearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachinespecificationsfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachinetypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putmachinetypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchmachinetypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getmachinetypesall": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachinetypessearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmachinetypesfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getmodulesidlangcode": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getmoduleslangcode": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postmosipdeviceservice": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putmosipdeviceservice": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postpacketrejectionreasonsreasoncategory": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postpacketrejectionreasonsreasonlist": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getpacketrejectionreasonsreasoncategorycodelangcode": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.getpacketrejectionreasons": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.postpacketresume": {
+          "value": "REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postpacketsearch": {
+          "value": "REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getpossiblevaluesfieldname": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistereddevices": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistereddevicesderegister": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putregistereddevicesupdatestatus": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getgetlocspecificregistrationcenterslangcode": {
+          "value": "INDIVIDUAL,REGISTRATION_PROCESSOR,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION"
+        },
+        "mosip.role.admin.masterdata.getgetregistrationcenterholidayslangcode": {
+          "value": "INDIVIDUAL,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR,ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION"
+        },
+        "mosip.role.admin.masterdata.getgetcoordinatespecificregistrationcenters": {
+          "value": "INDIVIDUAL,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION,RESIDENT"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentersidlangcode": {
+          "value": "INDIVIDUAL,REGISTRATION_PROCESSOR,ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,PRE_REGISTRATION,RESIDENT"
+        },
+        "mosip.role.admin.masterdata.getregistrationcenters": {
+          "value": "INDIVIDUAL,ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,PRE_REGISTRATION"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentersidlangcodehierarchylevel": {
+          "value": "INDIVIDUAL,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION"
+        },
+        "mosip.role.admin.masterdata.getregistrationcenterspagelangcode": {
+          "value": "INDIVIDUAL,REGISTRATION_PROCESSOR,ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,PRE_REGISTRATION,RESIDENT"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentersvalidateidlangcode": {
+          "value": "INDIVIDUAL,REGISTRATION_PROCESSOR,ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,PRE_REGISTRATION"
+        },
+        "mosip.role.admin.masterdata.deleteregistrationcentersregistrationcenterid": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getregistrationcenterslangcodehierarchylevelnames": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR,INDIVIDUAL,PRE_REGISTRATION,RESIDENT"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentersall": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistrationcenterssearch": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistrationcentersfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistrationcenters": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putregistrationcenters": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putregistrationcentersdecommission": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchregistrationcenters": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putregistrationcenterslanguage": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putregistrationcentersnonlanguage": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentersmissingids": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getgetzonespecificregistrationcenterslangcode": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getregistrationcenterdevicehistoryregcenteriddeviceid": {
+          "value": "REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,GLOBAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentershistoryregistrationcenterid": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistrationcentertypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putregistrationcentertypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deleteregistrationcentertypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentertypesall": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,INDIVIDUAL,PRE_REGISTRATION,REGISTRATION_PROCESSOR,REGISTRATION_CLIENT,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistrationcentertypesfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postregistrationcentertypessearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchregistrationcentertypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getregistrationcentertypesmissingidslangcode": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getgetregistrationmachineusermappinghistory": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,REGISTRATION_PROCESSOR,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postidschema": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putidschema": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putidschemapublish": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deleteidschema": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getidschemaall": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getidschemalatest": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,REGISTRATION_CLIENT,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,RESIDENT,ID_REPOSITORY"
+        },
+        "mosip.role.admin.masterdata.posttemplates": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.puttemplates": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletetemplatesid": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.gettemplatestemplatetypecodescode": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,INDIVIDUAL,PRE_REGISTRATION,ID_AUTHENTICATION,AUTH,PRE_REGISTRATION_ADMIN,RESIDENT,PARTNER,AUTH_PARTNER,PARTNER_ADMIN,DEVICE_PROVIDER,DEVICE_MANAGER,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,PRINT_PARTNER,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.gettemplatesall": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.posttemplatessearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.posttemplatesfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchtemplates": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.gettemplatesmissingidslangcode": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.posttemplatefileformats": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.puttemplatefileformats": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletetemplatefileformatscode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.gettemplatefileformatscodelangcode": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.gettemplatefileformatslangcode": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchtemplatefileformats": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.posttemplatetypes": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.posttitle": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.puttitle": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.puttitlecode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.gettitleall": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.posttitlesearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.posttitlefiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postuispec": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putuispec": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postuispecpublish": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deleteuispec": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getuispecall": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN,PRE_REGISTRATION_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getusersid": {
+          "value": "PRE_REGISTRATION_ADMIN,ID_AUTHENTICATION,ZONAL_ADMIN,REGISTRATION_OFFICER,REGISTRATION_SUPERVISOR,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.getusers": {
+          "value": "PRE_REGISTRATION_ADMIN,ID_AUTHENTICATION,ZONAL_ADMIN,REGISTRATION_OFFICER,REGISTRATION_SUPERVISOR,REGISTRATION_PROCESSOR"
+        },
+        "mosip.role.admin.masterdata.getusercentermapping": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putusercentermapping": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchusercentermapping": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deleteusersid": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getuserdetails": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getuserssearch": {
+          "value": "PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getusersideffdtimes": {
+          "value": "INDIVIDUAL,PRE_REGISTRATION_ADMIN,ID_AUTHENTICATION,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,ZONAL_ADMIN,PRE_REGISTRATION,RESIDENT"
+        },
+        "mosip.role.admin.masterdata.postvaliddocuments": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletevaliddocumentsdoccategorycode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getvaliddocumentsall": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postvaliddocumentssearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postvaliddocumentsfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putvaliddocumentsmapdoccategorycode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putvaliddocumentsunmapdoccategorycode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,MASTERDATA_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getzoneshierarchylangcode": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getzoneszonename": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN,REGISTRATION_OFFICER,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR,PRE_REGISTRATION,REGISTRATION_SUPERVISOR,RESIDENT,INDIVIDUAL,ID_AUTHENTICATION"
+        },
+        "mosip.role.admin.masterdata.getzonesauthorize": {
+          "value": "GLOBAL_ADMIN,PRE_REGISTRATION_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postzonesfiltervalues": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putzoneuser": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postzoneuser": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletezoneuseruseridzonecode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getzoneuserhistoryuserid": {
+          "value": "ZONAL_ADMIN,REGISTRATION_OFFICER,PRE_REGISTRATION_ADMIN,REGISTRATION_PROCESSOR,PRE_REGISTRATION,REGISTRATION_SUPERVISOR,RESIDENT,INDIVIDUAL,ID_AUTHENTICATION"
+        },
+        "mosip.role.admin.masterdata.patchzoneuser": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postzoneusersearch": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdocumentcategoriesmissingidslangcode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.getdynamicfieldmissingidslangcode": {
+          "value": "GLOBAL_ADMIN,ZONAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.deletelanguagescode": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.patchlanguages": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.postdynamicfieldsfiltervalues": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.admin.masterdata.putlanguages": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,GLOBAL_ADMIN"
+        },
+        "mosip.role.kernel.postemailsend": {
+          "value": "ZONAL_ADMIN,PRE_REGISTRATION_ADMIN,AUTH,ID_AUTHENTICATION,RESIDENT,REGISTRATION_ADMIN,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,INDIVIDUAL"
+        },
+        "mosip.role.kernel.postsmssend": {
+          "value": "PRE_REGISTRATION_ADMIN,AUTH,ID_AUTHENTICATION,RESIDENT,REGISTRATION_ADMIN,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,REGISTRATION_SUPERVISOR,INDIVIDUAL"
+        },
+        "mosip.role.kernel.postotpgenerate": {
+          "value": "PRE_REGISTRATION_ADMIN,INDIVIDUAL,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,ID_AUTHENTICATION,AUTH,RESIDENT,REGISTRATION_OFFICER"
+        },
+        "mosip.role.kernel.getotpvalidate": {
+          "value": "PRE_REGISTRATION_ADMIN,INDIVIDUAL,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,ID_AUTHENTICATION,AUTH,RESIDENT,REGISTRATION_OFFICER"
+        },
+        "mosip.role.kernel.getgenerateridcenteridmachineid": {
+          "value": "REGISTRATION_PROCESSOR,RESIDENT"
+        },
+        "mosip.role.kernel.postaudits": {
+          "value": "MASTERDATA_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION,PRE_REGISTRATION_ADMIN,RESIDENT,ZONAL_ADMIN,GLOBAL_ADMIN,ID_REPOSITORY,HOTLIST_ADMIN"
+        },
+        "mosip.role.keymanager.postcssign": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postcsverifysign": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.posttpmencrypt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.posttpmdecrypt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.posttpmsigningpublickey": {
+          "value": "******"
+        },
+        "mosip.role.keymanager.posttpmencryptionpublickey": {
+          "value": "******"
+        },
+        "mosip.role.keymanager.postencrypt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT,ID_REPOSITORY,CREDENTIAL_REQUEST,HOTLIST_ADMIN"
+        },
+        "mosip.role.keymanager.postdecrypt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT,ID_REPOSITORY,CREDENTIAL_REQUEST,HOTLIST_ADMIN"
+        },
+        "mosip.role.keymanager.postencryptwithpin": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postdecryptwithpin": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postencryptdt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postdecryptdt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postgeneratemasterkeyobjecttype": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.getgetcertificate": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT,KEY_MAKER"
+        },
+        "mosip.role.keymanager.postgeneratecsr": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postuploadcertificate": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postuploadotherdomaincertificate": {
+          "value": "PARTNER_ADMIN,ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postgeneratesymmetrickey": {
+          "value": "******"
+        },
+        "mosip.role.keymanager.putrevokekey": {
+          "value": "******"
+        },
+        "mosip.role.keymanager.postmigratebasekey": {
+          "value": "******"
+        },
+        "mosip.role.keymanager.getzktempcertificate": {
+          "value": "KEY_MIGRATION_ADMIN"
+        },
+        "mosip.role.keymanager.postlicensegenerate": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postmigratezkkeys": {
+          "value": "KEY_MIGRATION_ADMIN"
+        },
+        "mosip.role.keymanager.postuploadcacertificate": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PARTNER_ADMIN"
+        },
+        "mosip.role.keymanager.postuploadpartnercertificate": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PARTNER_ADMIN,PARTNER"
+        },
+        "mosip.role.keymanager.getgetpartnercertificatepartnercertid": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PARTNER_ADMIN,PARTNER"
+        },
+        "mosip.role.keymanager.postverifycertificatetrust": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,PARTNER_ADMIN,PARTNER"
+        },
+        "mosip.role.keymanager.postsign": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postvalidate": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postpdfsign": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT,PRINT_PARTNER,CREDENTIAL_REQUEST"
+        },
+        "mosip.role.keymanager.postjwtsign": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postjwtverify": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.getuinpartnercode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,ID_AUTHENTICATION,RESIDENT"
+        },
+        "mosip.role.keymanager.postzkencrypt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postzkdecrypt": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.role.keymanager.postzkreencryptrandomkey": {
+          "value": "******"
+        },
+        "mosip.role.keymanager.postjwssign": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT,CREDENTIAL_ISSUANCE"
+        },
+        "mosip.role.keymanager.postcwtsign": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,RESIDENT,PRINT_PARTNER,CREDENTIAL_ISSUANCE"
+        },
+        "mosip.role.keymanager.postcwtdecode": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,RESIDENT,PRINT_PARTNER,CREDENTIAL_ISSUANCE"
+        },
+        "mosip.role.keymanager.postcwtverify": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,RESIDENT,PRINT_PARTNER,CREDENTIAL_ISSUANCE"
+        },
+        "mosip.role.keymanager.postgenerateargon2hash": {
+          "value": "ZONAL_ADMIN,GLOBAL_ADMIN,INDIVIDUAL,ID_AUTHENTICATION,TEST,REGISTRATION_ADMIN,REGISTRATION_SUPERVISOR,REGISTRATION_OFFICER,REGISTRATION_PROCESSOR,PRE_REGISTRATION_ADMIN,RESIDENT"
+        },
+        "mosip.kernel.keymanager.jwtsign.validate.json": {
+          "value": "false"
+        },
+        "auth.allowed.urls": {
+          "value": "http://localhost:5000/"
+        },
+        "mosip.kernel.masterdata.code.validate.regex": {
+          "value": "[^a-z0-9]"
+        },
+        "mosip.kernel.masterdata.name.validate.regex": {
+          "value": "[^a-z]"
+        },
+        "mosip.iam.post-logout-uri-param-key": {
+          "value": "******"
+        },
+        "mosip.iam.end-session-endpoint-path": {
+          "value": "/protocol/openid-connect/logout"
+        },
+        "mosip.kernel.keymgr.hsm.health.check.enabled": {
+          "value": "false"
+        },
+        "mosip.service.end-points": {
+          "value": "dd5737cb38b0d354e925a031d1662cae45feb891135577d72d75017f71a3c72d38d157158eb9e12d8e51ffb3e66e1397eb0e20040939ad145363a00c458f247c53a712c564467770d08b0cab22b967ba71d09e75a4c53492f23bb29e4c529a87787e7652c720b8eb7ce61ffc4ea6efe89be9d85034fcb135582af662290eacc0392ea96c15fef0a20694cd24c553ec3325e1450e4fb6ea773b200fcdc5d097014e7ff1794d93330c40f50fce4c20d15fc9b0ddced67877cf51ecf38d7b3fb352e176fe12956e0e2e1d43ac77dd200085dac1d3e3fe49475d5077b6bff6162c53a2d00fdbc5cd12a0aa983165916cb9cd72b2eff9c8bf7bc92bea2619fc0900b5936655a16a96fe8b188fa06a625760f78b1273a66137228095305ca32093b1fda5faac87b1ae172caa990776fa6dc52f6f1863848b21e42eb1af5ee530f12af7ef94aa8bccb254fe65c69870338e7bae1a95f344c9fcb806ac7801466168c81de7262e1a0bf49c62ee0c3676babbc718ba790e7b9428482443f6e612c9ef497702a79c9a49d47ab98d97a868e7f2ce1b7febc3d09afadbf5555e21234290aaaef94681c78326d7c178316b7d211f2a72dfb5a39e6badda11d4ee42b79c003fdf1d83d72aee288f6c8ad6e5f66c2dae350d50f5aec39360b8cce5e3682ef6f8adb7a6377a9580d420944f98c98390d3a2f7a0682d26991a60e3ab79401c63233c5a18b1902f715ebf595107563d9a60d3280c1baed1777e894660ea1e05b6433e2653af499b286fdb6380b29d32953bd23de2ec8f2c441b0e22c3877f85aa23046e2830fb9f94dced2ee55f107c8160f05bfa5436620898b36d18ae26bd4c7400e3d51f85bad2a81665aa7baf7d10cb792067b600fb0277fb0119aa9186c3d1a2079c56ca999ce1d4930b9ea77f80d88bb2afbb93002b77c3d5f5a895822dacc6038112160bf280d392599c268d504aff4e933fa4308ab50d25793c93fd2a51b1c7d2938219ff84202ae286cb1b9650ec5dfd79dabad2acf2b44fbc08170c097c93a9d663b4c130392bd536d86a87cd11ab074d3db666dcf2f40349d1056ce2708cfcfbcdd868a8073acd9a2241159e64cae84eceabd8acb83afbeeafa822defd7616bfd5801f1976392872f61e637bc21c3db4fe30d6c1de644d2291ce9d48ff1afff9f1ab596620553fd669cfa38dc5ccea6286abbcd93ca8b434b2b6d42129d72e7daa91001d43005d781369c054b36a6158d4f2cc6c6136565733b13cd7d306c715809f2d9a5024abcffbc0ef3b58585b881f6509bd1876b923494445a2a430ddf5e517b49b65647f54a2e10a002224269c78a38b6ddbddc02176d93e1e280cfdefc317efe361babe0eb3688c9d3406c4ef7a1851ddc7d511703b1d4e2c449792abd523c6eadfbfea13cf862478d75196f8133deadc31222fa6be3cd1cac015f2af1865d834bda4e7f3352cc72116d732ed384a0b94237810bf5909ea453f9052aeb0ae6d492e7ed4d2c33145e38a79742ca23294f3dc89e3cafcfbc8349aae712172bd661137ad6179df3bcc1f03b80af7c82b8a1aa91140086e663ff257d8084680c00c9a31f9c96e0b3d350192851c0c279b8159070e5f1f06153d132447fddbbf1dbb7378b84c38dc1c5f2f8cbbfcd8a478f78b1ed6ed44a0d81a88be605b66a5caad776ab1ae7c8a88362efef9b43d261dd292324e173606fabd3b8ade5fce14671d274d33e93f975d12071473fa7b0289a99a151ce67b3070f44001b5d74b3087ad1fbd071605fd62fa5f86454b881fd1ad86bd565b33248d47100d862dcc57dc0e9f673e25b0845b27d06b38c30ca975efb8031444459d776f6221a90fa51b971a4054332411de943afd8b"
+        }
+      }
+    },
+    {
+      "name": "configService:https://github.com/mosip/mosip-config/application-default.properties",
+      "properties": {
+        "aplication.configuration.level.version": {
+          "value": "LTS"
+        },
+        "mosip.recommended.centers.locCode": {
+          "value": "4"
+        },
+        "mosipbox.public.url": {
+          "value": "https://api-internal.qa-country.mosip.net"
+        },
+        "mosip.api.internal.url": {
+          "value": "https://api-internal.qa-country.mosip.net"
+        },
+        "mosip.api.public.url": {
+          "value": "https://api.qa-country.mosip.net"
+        },
+        "mosip.kernel.authmanager.url": {
+          "value": "http://authmanager.kernel"
+        },
+        "mosip.kernel.masterdata.url": {
+          "value": "http://masterdata.kernel"
+        },
+        "mosip.kernel.keymanager.url": {
+          "value": "http://keymanager.keymanager"
+        },
+        "mosip.kernel.auditmanager.url": {
+          "value": "http://auditmanager.kernel"
+        },
+        "mosip.kernel.notification.url": {
+          "value": "http://notifier.kernel"
+        },
+        "mosip.kernel.idgenerator.url": {
+          "value": "http://idgenerator.kernel"
+        },
+        "mosip.kernel.otpmanager.url": {
+          "value": "http://otpmanager.kernel"
+        },
+        "mosip.kernel.syncdata.url": {
+          "value": "http://syncdata.kernel"
+        },
+        "mosip.kernel.pridgenerator.url": {
+          "value": "http://pridgenerator.kernel"
+        },
+        "mosip.kernel.ridgenerator.url": {
+          "value": "http://ridgenerator.kernel"
+        },
+        "mosip.idrepo.identity.url": {
+          "value": "http://identity.idrepo"
+        },
+        "mosip.idrepo.vid.url": {
+          "value": "http://vid.idrepo"
+        },
+        "mosip.admin.hotlist.url": {
+          "value": "http://admin-hotlist.admin"
+        },
+        "mosip.admin.service.url": {
+          "value": "http://admin-service.admin"
+        },
+        "mosip.admin.ui.url": {
+          "value": "http://admin-ui.admin"
+        },
+        "mosip.pms.policymanager.url": {
+          "value": "http://pms-policy.pms"
+        },
+        "mosip.pms.partnermanager.url": {
+          "value": "http://pms-partner.pms"
+        },
+        "mosip.pms.ui.url": {
+          "value": "http://pms-ui.pms"
+        },
+        "mosip.idrepo.credrequest.generator.url": {
+          "value": "http://credentialrequest.idrepo"
+        },
+        "mosip.idrepo.credential.service.url": {
+          "value": "http://credential.idrepo"
+        },
+        "mosip.datashare.url": {
+          "value": "http://datashare.datashare"
+        },
+        "mosip.mock.biosdk.url": {
+          "value": "http://biosdk-service.biosdk"
+        },
+        "mosip.idrepo.biosdk.url": {
+          "value": "http://biosdk-service.biosdk"
+        },
+        "mosip.regproc.workflow.url": {
+          "value": "http://regproc-workflow.regproc"
+        },
+        "mosip.regproc.status.service.url": {
+          "value": "http://regproc-status.regproc"
+        },
+        "mosip.regproc.transaction.service.url": {
+          "value": "http://regproc-trans.regproc"
+        },
+        "mosip.packet.receiver.url": {
+          "value": "http://regproc-group1.regproc"
+        },
+        "mosip.websub.url": {
+          "value": "http://websub.websub"
+        },
+        "mosip.regproc.biosdk.url": {
+          "value": "http://biosdk-service.biosdk"
+        },
+        "mosip.consolidator.url": {
+          "value": "http://websub-consolidator.websub"
+        },
+        "mosip.file.server.url": {
+          "value": "http://mosip-file-server.mosip-file-server"
+        },
+        "mosip.ida.internal.url": {
+          "value": "http://ida-internal.ida"
+        },
+        "mosip.ida.auth.url": {
+          "value": "http://ida-auth.ida"
+        },
+        "mosip.ida.otp.url": {
+          "value": "http://ida-otp.ida"
+        },
+        "mosip.resident.url": {
+          "value": "http://resident.resident"
+        },
+        "mosip.artifactory.url": {
+          "value": "http://artifactory.artifactory"
+        },
+        "mosip.esignet.service.url": {
+          "value": "http://esignet.esignet"
+        },
+        "kafka.profile": {
+          "value": "kafka.svc.cluster.local"
+        },
+        "kafka.port": {
+          "value": "9092"
+        },
+        "mosip.digitalcard.service.url": {
+          "value": "http://digitalcard.digitalcard"
+        },
+        "config.server.file.storage.uri": {
+          "value": "http://config-server.config-server/config/kernel-masterdata-service/default/country-data/"
+        },
+        "mosip.idobjectvalidator.masterdata.rest.uri": {
+          "value": "http://masterdata.kernel/v1/masterdata/possiblevalues/{subType}"
+        },
+        "mosip.kernel.idobjectvalidator.identity.id-schema-version-path": {
+          "value": "identity.IDSchemaVersion"
+        },
+        "mosip.kernel.idobjectvalidator.identity.dob-path": {
+          "value": "identity.dateOfBirth"
+        },
+        "mosip.idobjectvalidator.refresh-cache-on-unknown-value": {
+          "value": "false"
+        },
+        "mosip.kernel.idobjectvalidator.date-format": {
+          "value": "uuuu/MM/dd"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.id-repository.new-registration": {
+          "value": "IDSchemaVersion,UIN,fullName,dateOfBirth|age,gender,addressLine1,region,province,city,zone"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.id-repository.update-uin": {
+          "value": "IDSchemaVersion,UIN"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.reg-processor.new-registration": {
+          "value": "IDSchemaVersion,UIN,fullName,dateOfBirth|age,gender,addressLine1,region,province,city,zone,postalCode,residenceStatus,referenceIdentityNumber"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.reg-processor.child-registration": {
+          "value": "IDSchemaVersion,UIN,fullName,dateOfBirth|age,gender,addressLine1,region,province,city,zone,postalCode,residenceStatus,referenceIdentityNumber,parentOrGuardianName,parentOrGuardianRID|parentOrGuardianUIN,parentOrGuardianBiometrics"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.reg-processor.other": {
+          "value": "IDSchemaVersion,UIN"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.reg-processor.lost": {
+          "value": "IDSchemaVersion"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.reg-processor.biometric_correction": {
+          "value": "IDSchemaVersion"
+        },
+        "mosip.kernel.idobjectvalidator.mandatory-attributes.reg-processor.opencrvs_new": {
+          "value": "IDSchemaVersion"
+        },
+        "mosip.kernel.idobjectvalidator.masterdata.value-not-available": {
+          "value": "NA"
+        },
+        "mosip.idrepo.identity.allowedBioAttributes": {
+          "value": "individualBiometrics"
+        },
+        "mosip.idrepo.identity.bioAttributes": {
+          "value": "individualBiometrics,parentOrGuardianBiometrics"
+        },
+        "mosip.country.code": {
+          "value": "1000"
+        },
+        "mosip.supported-languages": {
+          "value": "eng,ara,fra"
+        },
+        "mosip.right_to_left_orientation": {
+          "value": "ara"
+        },
+        "mosip.left_to_right_orientation": {
+          "value": "eng,fra"
+        },
+        "mosip.prereg.app-id": {
+          "value": "PRE_REGISTRATION"
+        },
+        "mosip.reg.app-id": {
+          "value": "REGISTRATION"
+        },
+        "mosip.regproc.app-id": {
+          "value": "REGISTRATION_PROCESSOR"
+        },
+        "mosip.ida.app-id": {
+          "value": "IDA"
+        },
+        "mosip.ida.ref-id": {
+          "value": "INTERNAL"
+        },
+        "mosip.idrepo.app-id": {
+          "value": "ID_REPO"
+        },
+        "mosip.utc-datetime-pattern": {
+          "value": "yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSS\u0027Z\u0027"
+        },
+        "mosip.sign.header": {
+          "value": "response-signature"
+        },
+        "mosip.signed.response.header": {
+          "value": "response-signature"
+        },
+        "mosip.kernel.xsdstorage-uri": {
+          "value": "http://config-server.config-server/config/kernel-masterdata-service/default/country-data/"
+        },
+        "mosip.kernel.xsdfile": {
+          "value": "mosip-cbeff.xsd"
+        },
+        "mosip.kernel.applicant.type.age.limit": {
+          "value": "5"
+        },
+        "mosip.kernel.applicantType.mvel.file": {
+          "value": "applicanttype.mvel"
+        },
+        "mosip.kernel.config.server.file.storage.uri": {
+          "value": "http://config-server.config-server/config/kernel-masterdata-service/default/country-data/"
+        },
+        "mosip.kernel.pin.length": {
+          "value": "6"
+        },
+        "mosip.kernel.tspid.length": {
+          "value": "4"
+        },
+        "mosip.kernel.partnerid.length": {
+          "value": "4"
+        },
+        "mosip.kernel.tokenid.length": {
+          "value": "36"
+        },
+        "mosip.kernel.registrationcenterid.length": {
+          "value": "5"
+        },
+        "mosip.kernel.machineid.length": {
+          "value": "5"
+        },
+        "mosip.kernel.rid.length": {
+          "value": "29"
+        },
+        "mosip.kernel.rid.timestamp-length": {
+          "value": "14"
+        },
+        "mosip.kernel.rid.sequence-length": {
+          "value": "5"
+        },
+        "mosip.kernel.prid.length": {
+          "value": "14"
+        },
+        "mosip.kernel.tokenid.sequence-limit": {
+          "value": "3"
+        },
+        "mosip.kernel.prid.sequence-limit": {
+          "value": "3"
+        },
+        "mosip.kernel.prid.repeating-block-limit": {
+          "value": "3"
+        },
+        "mosip.kernel.prid.repeating-limit": {
+          "value": "2"
+        },
+        "mosip.kernel.prid.not-start-with": {
+          "value": "0,1"
+        },
+        "mosip.kernel.prid.restricted-numbers": {
+          "value": "786,666"
+        },
+        "mosip.kernel.vid.length": {
+          "value": "16"
+        },
+        "mosip.kernel.vid.length.sequence-limit": {
+          "value": "3"
+        },
+        "mosip.kernel.vid.length.repeating-block-limit": {
+          "value": "2"
+        },
+        "mosip.kernel.vid.length.repeating-limit": {
+          "value": "2"
+        },
+        "mosip.kernel.vid.not-start-with": {
+          "value": "0,1"
+        },
+        "mosip.kernel.vid.restricted-numbers": {
+          "value": "786,666"
+        },
+        "mosip.kernel.uin.length": {
+          "value": "10"
+        },
+        "mosip.kernel.uin.min-unused-threshold": {
+          "value": "200000"
+        },
+        "mosip.kernel.uin.uins-to-generate": {
+          "value": "500000"
+        },
+        "mosip.kernel.uin.restricted-numbers": {
+          "value": "786,666"
+        },
+        "mosip.kernel.uin.length.sequence-limit": {
+          "value": "3"
+        },
+        "mosip.kernel.uin.length.repeating-block-limit": {
+          "value": "2"
+        },
+        "mosip.kernel.uin.length.repeating-limit": {
+          "value": "2"
+        },
+        "mosip.kernel.uin.length.reverse-digits-limit": {
+          "value": "5"
+        },
+        "mosip.kernel.uin.length.digits-limit": {
+          "value": "5"
+        },
+        "mosip.kernel.uin.not-start-with": {
+          "value": "0,1"
+        },
+        "mosip.kernel.uin.length.conjugative-even-digits-limit": {
+          "value": "3"
+        },
+        "auth.server.validate.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/authorize/admin/validateToken"
+        },
+        "auth.server.admin.issuer.internal.uri": {
+          "value": "http://keycloak.keycloak/auth/realms/"
+        },
+        "auth.server.admin.issuer.uri": {
+          "value": "https://iam.qa-country.mosip.net/auth/realms/"
+        },
+        "auth-token-generator.rest.issuerUrl": {
+          "value": "http://keycloak.keycloak/auth/realms/mosip"
+        },
+        "mosip.keycloak.issuerUrl": {
+          "value": "http://keycloak.keycloak/auth/realms/mosip"
+        },
+        "mosip.auth.adapter.impl.basepackage": {
+          "value": "io.mosip.kernel.auth.defaultadapter"
+        },
+        "mosip.kernel.auth.adapter.ssl-bypass": {
+          "value": "true"
+        },
+        "mosip.kernel.auth.appid-realm-map": {
+          "value": "{prereg:\u0027mosip\u0027,ida:\u0027mosip\u0027,registrationclient:\u0027mosip\u0027,regproc:\u0027mosip\u0027,partner:\u0027mosip\u0027,resident:\u0027mosip\u0027,admin:\u0027mosip\u0027,crereq:\u0027mosip\u0027,creser:\u0027mosip\u0027,datsha:\u0027mosip\u0027,idrepo:\u0027mosip\u0027,hotlist:\u0027mosip\u0027,digitalcard:\u0027mosip\u0027,signup:\u0027mosip\u0027}"
+        },
+        "mosip.kernel.auth.appids.realm.map": {
+          "value": "{prereg:\u0027mosip\u0027,ida:\u0027mosip\u0027,registrationclient:\u0027mosip\u0027,regproc:\u0027mosip\u0027,partner:\u0027mosip\u0027,resident:\u0027mosip\u0027,admin:\u0027mosip\u0027,crereq:\u0027mosip\u0027,creser:\u0027mosip\u0027,datsha:\u0027mosip\u0027,idrepo:\u0027mosip\u0027,hotlist:\u0027mosip\u0027,digitalcard:\u0027mosip\u0027,signup:\u0027mosip\u0027}"
+        },
+        "mosip.kernel.crypto.asymmetric-algorithm-name": {
+          "value": "RSA/ECB/OAEPWITHSHA-256ANDMGF1PADDING"
+        },
+        "mosip.kernel.crypto.symmetric-algorithm-name": {
+          "value": "AES/GCM/PKCS5Padding"
+        },
+        "mosip.kernel.keygenerator.asymmetric-algorithm-name": {
+          "value": "RSA"
+        },
+        "mosip.kernel.keygenerator.symmetric-algorithm-name": {
+          "value": "AES"
+        },
+        "mosip.kernel.keygenerator.asymmetric-key-length": {
+          "value": "2048"
+        },
+        "mosip.kernel.keygenerator.symmetric-key-length": {
+          "value": "256"
+        },
+        "mosip.kernel.data-key-splitter": {
+          "value": "#KEY_SPLITTER#"
+        },
+        "mosip.kernel.crypto.gcm-tag-length": {
+          "value": "128"
+        },
+        "mosip.kernel.crypto.hash-algorithm-name": {
+          "value": "PBKDF2WithHmacSHA512"
+        },
+        "mosip.kernel.crypto.hash-symmetric-key-length": {
+          "value": "256"
+        },
+        "mosip.kernel.crypto.hash-iteration": {
+          "value": "100000"
+        },
+        "mosip.kernel.crypto.sign-algorithm-name": {
+          "value": "RS256"
+        },
+        "mosip.kernel.keymanager-service-publickey-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/publickey/{applicationId}"
+        },
+        "mosip.kernel.keymanager-service-decrypt-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/decrypt"
+        },
+        "mosip.kernel.keymanager-service-auth-decrypt-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/auth/decrypt"
+        },
+        "mosip.kernel.keymanager-service-sign-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/sign"
+        },
+        "mosip.kernel.keymanager.cert.url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/getCertificate"
+        },
+        "mosip.kernel.keymanager-service-CsSign-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/cssign"
+        },
+        "mosip.sign.applicationid": {
+          "value": "KERNEL"
+        },
+        "mosip.sign.refid": {
+          "value": "SIGN"
+        },
+        "mosip.kernel.cryptomanager.request_id": {
+          "value": "CRYPTOMANAGER.REQUEST"
+        },
+        "mosip.kernel.cryptomanager.request_version": {
+          "value": "v1.0"
+        },
+        "mosip.kernel.signature.signature-request-id": {
+          "value": "SIGNATURE.REQUEST"
+        },
+        "mosip.kernel.signature.signature-version-id": {
+          "value": "v1.0"
+        },
+        "mosip.idrepo.identity.uin-status.registered": {
+          "value": "ACTIVATED"
+        },
+        "mosip.idrepo.identity.uin-status": {
+          "value": "ACTIVATED,BLOCKED,DEACTIVATED"
+        },
+        "mosip.kernel.otp.default-length": {
+          "value": "6"
+        },
+        "mosip.kernel.otp.mac-algorithm": {
+          "value": "HmacSHA512"
+        },
+        "mosip.kernel.otp.expiry-time": {
+          "value": "180"
+        },
+        "mosip.kernel.otp.key-freeze-time": {
+          "value": "1800"
+        },
+        "mosip.kernel.otp.validation-attempt-threshold": {
+          "value": "10"
+        },
+        "mosip.kernel.otp.min-key-length": {
+          "value": "3"
+        },
+        "mosip.kernel.otp.max-key-length": {
+          "value": "64"
+        },
+        "mosip.kernel.licensekey.length": {
+          "value": "16"
+        },
+        "mosip.kernel.licensekey.permissions": {
+          "value": "OTP Trigger,OTP Authentication,Demo Authentication - Identity Data Match,Demo Authentication - Address Data Match,Demo Authentication - Full Address Data Match,Demo Authentication - Secondary Language Match,Biometric Authentication - FMR Data Match,Biometric Authentication - IIR Data Match,Biometric Authentication - FID Data Match,Static Pin Authentication,eKYC - limited,eKYC - Full,eKYC - No"
+        },
+        "mosip.kernel.virus-scanner.host": {
+          "value": "clamav.clamav"
+        },
+        "mosip.kernel.virus-scanner.port": {
+          "value": "3310"
+        },
+        "mosip.kernel.transliteration.arabic-language-code": {
+          "value": "ara"
+        },
+        "mosip.kernel.transliteration.english-language-code": {
+          "value": "eng"
+        },
+        "mosip.kernel.transliteration.french-language-code": {
+          "value": "fra"
+        },
+        "mosip.kernel.transliteration.franch-language-code": {
+          "value": "fra"
+        },
+        "mosip.default.dob.month": {
+          "value": "01"
+        },
+        "mosip.default.dob.day": {
+          "value": "01"
+        },
+        "mosip.login.mode": {
+          "value": "email,mobile"
+        },
+        "mosip.registration.processor.notification.types": {
+          "value": "EMAIL"
+        },
+        "mosip.notificationtype": {
+          "value": "SMS|EMAIL"
+        },
+        "mosip.kernel.sms.proxy-sms": {
+          "value": "false"
+        },
+        "mosip.kernel.auth.proxy-otp": {
+          "value": "true"
+        },
+        "mosip.kernel.auth.proxy-email": {
+          "value": "true"
+        },
+        "mosip.notification.language-type": {
+          "value": "BOTH"
+        },
+        "logging.level.org.springframework.web.filter.CommonsRequestLoggingFilter": {
+          "value": "INFO"
+        },
+        "mosip.min-digit-longitude-latitude": {
+          "value": "4"
+        },
+        "mosip.kernel.filtervalue.max_columns": {
+          "value": "20"
+        },
+        "auth.server.admin.validate.url": {
+          "value": "http://authmanager.kernel/v1/authmanager/authorize/admin/validateToken"
+        },
+        "mosip.iris_threshold": {
+          "value": "0"
+        },
+        "mosip.leftslap_fingerprint_threshold": {
+          "value": "0"
+        },
+        "mosip.rightslap_fingerprint_threshold": {
+          "value": "0"
+        },
+        "mosip.thumbs_fingerprint_threshold": {
+          "value": "0"
+        },
+        "mosip.facequalitythreshold": {
+          "value": "0"
+        },
+        "mosip.fingerprint.provider": {
+          "value": "io.mosip.kernel.bioapi.impl.BioApiImpl"
+        },
+        "mosip.face.provider": {
+          "value": "io.mosip.kernel.bioapi.impl.BioApiImpl"
+        },
+        "mosip.iris.provider": {
+          "value": "io.mosip.kernel.bioapi.impl.BioApiImpl"
+        },
+        "mosip.uin.alias": {
+          "value": ""
+        },
+        "mosip.kernel.salt-generator.chunk-size": {
+          "value": "10"
+        },
+        "mosip.kernel.salt-generator.start-sequence": {
+          "value": "0"
+        },
+        "mosip.kernel.salt-generator.end-sequence": {
+          "value": "999"
+        },
+        "server.max-http-header-size": {
+          "value": "10000000"
+        },
+        "management.endpoint.metrics.enabled": {
+          "value": "true"
+        },
+        "management.endpoints.web.exposure.include": {
+          "value": "*"
+        },
+        "management.endpoint.prometheus.enabled": {
+          "value": "true"
+        },
+        "management.metrics.export.prometheus.enabled": {
+          "value": "true"
+        },
+        "mosip.kernel.syncdata-service-idschema-url": {
+          "value": "http://masterdata.kernel/v1/masterdata/idschema/latest"
+        },
+        "mosip.kernel.syncdata-service-dynamicfield-url": {
+          "value": "http://masterdata.kernel/v1/masterdata/dynamicfields"
+        },
+        "mosip.kernel.syncdata-service-get-tpm-publicKey-url": {
+          "value": "http://syncdata.kernel/v1/syncdata/tpm/publickey/"
+        },
+        "mosip.kernel.keymanager-service-validate-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/validate"
+        },
+        "mosip.kernel.keymanager-service-csverifysign-url": {
+          "value": "http://keymanager.keymanager/v1/keymanager/csverifysign"
+        },
+        "mosip.registration.gps_device_enable_flag": {
+          "value": "n"
+        },
+        "packetmanager.default.read.strategy": {
+          "value": "defaultPriority"
+        },
+        "packetmanager.default.priority": {
+          "value": "source:REGISTRATION_CLIENT/process:BIOMETRIC_CORRECTION|NEW|UPDATE|LOST,source:RESIDENT/process:ACTIVATED|DEACTIVATED|RES_UPDATE|RES_REPRINT,source:OPENCRVS/process:OPENCRVS_NEW"
+        },
+        "packetmanager.name.source": {
+          "value": "{default:\u0027REGISTRATION_CLIENT\u0027,resident:\u0027RESIDENT\u0027,opencrvs:\u0027OPENCRVS\u0027}"
+        },
+        "packetmanager.packet.signature.disable-verification": {
+          "value": "true"
+        },
+        "mosip.commons.packetnames": {
+          "value": "id,evidence,optional"
+        },
+        "provider.packetreader.mosip": {
+          "value": "source:REGISTRATION_CLIENT,process:NEW|UPDATE|LOST|BIOMETRIC_CORRECTION,classname:io.mosip.commons.packet.impl.PacketReaderImpl"
+        },
+        "provider.packetreader.resident": {
+          "value": "source:RESIDENT,process:ACTIVATED|DEACTIVATED|RES_UPDATE|LOST|RES_REPRINT,classname:io.mosip.commons.packet.impl.PacketReaderImpl"
+        },
+        "provider.packetreader.opencrvs": {
+          "value": "source:OPENCRVS,process:OPENCRVS_NEW,classname:io.mosip.commons.packet.impl.PacketReaderImpl"
+        },
+        "provider.packetwriter.mosip": {
+          "value": "source:REGISTRATION_CLIENT,process:NEW|UPDATE|LOST|BIOMETRIC_CORRECTION,classname:io.mosip.commons.packet.impl.PacketWriterImpl"
+        },
+        "provider.packetwriter.resident": {
+          "value": "source:RESIDENT,process:ACTIVATED|DEACTIVATED|RES_UPDATE|LOST|RES_REPRINT,classname:io.mosip.commons.packet.impl.PacketWriterImpl"
+        },
+        "provider.packetwriter.opencrvs": {
+          "value": "source:OPENCRVS,process:OPENCRVS_NEW,classname:io.mosip.commons.packet.impl.PacketWriterImpl"
+        },
+        "objectstore.adapter.name": {
+          "value": "S3Adapter"
+        },
+        "object.store.s3.bucket-name-prefix": {
+          "value": ""
+        },
+        "mosip.commons.packet.manager.schema.validator.convertIdSchemaToDouble": {
+          "value": "true"
+        },
+        "objectstore.crypto.name": {
+          "value": "OnlinePacketCryptoServiceImpl"
+        },
+        "default.provider.version": {
+          "value": "v1.0"
+        },
+        "object.store.base.location": {
+          "value": "/home/mosip"
+        },
+        "hazelcast.config": {
+          "value": "classpath:hazelcast_default.xml"
+        },
+        "object.store.swift.username": {
+          "value": "test"
+        },
+        "object.store.swift.password": {
+          "value": "******"
+        },
+        "object.store.swift.url": {
+          "value": "http://localhost:8080"
+        },
+        "packet.manager.account.name": {
+          "value": "packet-manager"
+        },
+        "CRYPTOMANAGER_DECRYPT": {
+          "value": "http://keymanager.keymanager/v1/keymanager/decrypt"
+        },
+        "CRYPTOMANAGER_ENCRYPT": {
+          "value": "http://keymanager.keymanager/v1/keymanager/encrypt"
+        },
+        "IDSCHEMAURL": {
+          "value": "http://masterdata.kernel/v1/masterdata/idschema/latest"
+        },
+        "KEYMANAGER_SIGN": {
+          "value": "http://keymanager.keymanager/v1/keymanager/sign"
+        },
+        "AUDIT_URL": {
+          "value": "http://auditmanager.kernel/v1/auditmanager/audits"
+        },
+        "packet.default.source": {
+          "value": "id"
+        },
+        "schema.default.fieldCategory": {
+          "value": "pvt,none"
+        },
+        "mosip.stage.environment": {
+          "value": "Developer"
+        },
+        "logging.level.root": {
+          "value": "INFO"
+        },
+        "logging.level.io.mosip": {
+          "value": "INFO"
+        },
+        "logging.level.io.vertx": {
+          "value": "INFO"
+        },
+        "logging.level.io.mosip.registration.processor.status": {
+          "value": "INFO"
+        },
+        "logging.level.io.mosip.kernel.auth.defaultadapter.filter": {
+          "value": "INFO"
+        },
+        "server.tomcat.accesslog.enabled": {
+          "value": "true"
+        },
+        "server.tomcat.accesslog.directory": {
+          "value": "/dev"
+        },
+        "server.tomcat.accesslog.prefix": {
+          "value": "stdout"
+        },
+        "server.tomcat.accesslog.buffered": {
+          "value": "false"
+        },
+        "server.tomcat.accesslog.suffix": {
+          "value": ""
+        },
+        "server.tomcat.accesslog.file-date-format": {
+          "value": ""
+        },
+        "server.tomcat.accesslog.pattern": {
+          "value": "{\"@timestamp\":\"%{yyyy-MM-dd\u0027T\u0027HH:mm:ss.SSS\u0027Z\u0027}t\",\"level\":\"ACCESS\",\"level_value\":70000,\"traceId\":\"%{X-B3-TraceId}i\",\"statusCode\":%s,\"req.requestURI\":\"%U\",\"bytesSent\":%b,\"timeTaken\":%T,\"appName\":\"kernel-masterdata-service\",\"req.userAgent\":\"%{User-Agent}i\",\"req.xForwardedFor\":\"%{X-Forwarded-For}i\",\"req.referer\":\"%{Referer}i\",\"req.method\":\"%m\",\"req.remoteHost\":\"%a\"}"
+        },
+        "server.tomcat.accesslog.className": {
+          "value": "io.mosip.kernel.core.logger.config.SleuthValve"
+        },
+        "websub.hub.url": {
+          "value": "http://websub.websub/hub/"
+        },
+        "websub.publish.url": {
+          "value": "http://websub.websub/hub/"
+        },
+        "mosip.mandatory-languages": {
+          "value": "eng"
+        },
+        "mosip.optional-languages": {
+          "value": "ara,fra"
+        },
+        "mosip.min-languages.count": {
+          "value": "2"
+        },
+        "mosip.max-languages.count": {
+          "value": "3"
+        },
+        "mosip.default.template-languages": {
+          "value": "eng,ara,fra"
+        },
+        "mosip.default.user-preferred-language-attribute": {
+          "value": "preferredLang"
+        },
+        "mosip.identity.mapping-file": {
+          "value": "http://config-server.config-server/config/kernel-masterdata-service/default/country-data//identity-mapping.json"
+        },
+        "mosip.notification.timezone": {
+          "value": "GMT+05:30"
+        },
+        "mosip.centertypecode.validate.regex": {
+          "value": "^[a-zA-Z0-9]([_-](?![_-])|[a-zA-Z0-9]){0,34}[a-zA-Z0-9]$"
+        },
+        "openapi.service.servers[0].url": {
+          "value": "https://api-internal.qa-country.mosip.net/v1/masterdata"
+        },
+        "openapi.service.servers[0].description": {
+          "value": "For Swagger"
+        },
+        "mosip.auth.filter_disable": {
+          "value": "false"
+        },
+        "mosip.digitalcard.uincard.password": {
+          "value": "******"
+        },
+        "mosip.digitalcard.pdf.password.enable.flag": {
+          "value": "true"
+        },
+        "auth.types.allowed": {
+          "value": "otp-email,otp-phone,demo,bio-FINGER,bio-IRIS,bio-FACE,otp"
+        },
+        "mosip.access_token.subject.claim-name": {
+          "value": "sub"
+        },
+        "mosip.registration.processor.rid.delimiter": {
+          "value": "-PDF"
+        },
+        "mosip.webui.auto.logout.idle": {
+          "value": "180"
+        },
+        "mosip.webui.auto.logout.ping": {
+          "value": "30"
+        },
+        "mosip.webui.auto.logout.timeout": {
+          "value": "60"
+        },
+        "mosip.kernel.pdf_owner_password": {
+          "value": "******"
+        }
+      }
+    },
+    {
+      "name": "servletContextInitParams",
+      "properties": {}
+    },
+    {
+      "name": "systemProperties",
+      "properties": {
+        "awt.toolkit": {
+          "value": "sun.awt.X11.XToolkit"
+        },
+        "java.specification.version": {
+          "value": "11"
+        },
+        "sun.cpu.isalist": {
+          "value": ""
+        },
+        "sun.jnu.encoding": {
+          "value": "UTF-8"
+        },
+        "java.class.path": {
+          "value": "kernel-masterdata-service.jar"
+        },
+        "java.vm.vendor": {
+          "value": "Oracle Corporation"
+        },
+        "sun.arch.data.model": {
+          "value": "64"
+        },
+        "java.vendor.url": {
+          "value": "https://openjdk.java.net/"
+        },
+        "catalina.useNaming": {
+          "value": "false"
+        },
+        "user.timezone": {
+          "value": "Etc/UTC"
+        },
+        "os.name": {
+          "value": "Linux"
+        },
+        "java.vm.specification.version": {
+          "value": "11"
+        },
+        "sun.java.launcher": {
+          "value": "SUN_STANDARD"
+        },
+        "sun.boot.library.path": {
+          "value": "/usr/local/openjdk-11/lib"
+        },
+        "sun.java.command": {
+          "value": "******"
+        },
+        "jdk.debug": {
+          "value": "release"
+        },
+        "sun.cpu.endian": {
+          "value": "little"
+        },
+        "user.home": {
+          "value": "/home/mosip"
+        },
+        "user.language": {
+          "value": "en"
+        },
+        "java.specification.vendor": {
+          "value": "Oracle Corporation"
+        },
+        "java.version.date": {
+          "value": "2022-07-19"
+        },
+        "java.home": {
+          "value": "/usr/local/openjdk-11"
+        },
+        "spring.profiles.active": {
+          "value": "default"
+        },
+        "file.separator": {
+          "value": "/"
+        },
+        "java.vm.compressedOopsMode": {
+          "value": "32-bit"
+        },
+        "line.separator": {
+          "value": "\n"
+        },
+        "java.specification.name": {
+          "value": "Java Platform API Specification"
+        },
+        "java.vm.specification.vendor": {
+          "value": "Oracle Corporation"
+        },
+        "java.awt.graphicsenv": {
+          "value": "sun.awt.X11GraphicsEnvironment"
+        },
+        "java.awt.headless": {
+          "value": "true"
+        },
+        "spring.cloud.config.label": {
+          "value": "country-data"
+        },
+        "LOG_LEVEL_PATTERN": {
+          "value": "%5p [kernel-masterdata-service,%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-}]"
+        },
+        "java.protocol.handler.pkgs": {
+          "value": "org.springframework.boot.loader"
+        },
+        "sun.management.compiler": {
+          "value": "HotSpot 64-Bit Tiered Compilers"
+        },
+        "java.runtime.version": {
+          "value": "11.0.16+8"
+        },
+        "user.name": {
+          "value": "mosip"
+        },
+        "path.separator": {
+          "value": ":"
+        },
+        "os.version": {
+          "value": "5.15.0-1055-aws"
+        },
+        "java.runtime.name": {
+          "value": "OpenJDK Runtime Environment"
+        },
+        "file.encoding": {
+          "value": "UTF-8"
+        },
+        "spring.beaninfo.ignore": {
+          "value": "true"
+        },
+        "sun.nio.ch.bugLevel": {
+          "value": ""
+        },
+        "java.vm.name": {
+          "value": "OpenJDK 64-Bit Server VM"
+        },
+        "java.vendor.version": {
+          "value": "18.9"
+        },
+        "java.vendor.url.bug": {
+          "value": "https://bugreport.java.com/bugreport/"
+        },
+        "java.io.tmpdir": {
+          "value": "/tmp"
+        },
+        "catalina.home": {
+          "value": "/tmp/tomcat.6990160438374673465.8086"
+        },
+        "com.zaxxer.hikari.pool_number": {
+          "value": "1"
+        },
+        "java.version": {
+          "value": "11.0.16"
+        },
+        "user.dir": {
+          "value": "/home/mosip"
+        },
+        "os.arch": {
+          "value": "amd64"
+        },
+        "java.vm.specification.name": {
+          "value": "Java Virtual Machine Specification"
+        },
+        "PID": {
+          "value": "7"
+        },
+        "java.awt.printerjob": {
+          "value": "sun.print.PSPrinterJob"
+        },
+        "spring.cloud.config.uri": {
+          "value": "http://config-server.config-server/config"
+        },
+        "sun.os.patch.level": {
+          "value": "unknown"
+        },
+        "catalina.base": {
+          "value": "/tmp/tomcat.6990160438374673465.8086"
+        },
+        "loader.path": {
+          "value": "/home/mosip/additional_jars/"
+        },
+        "java.library.path": {
+          "value": "/usr/java/packages/lib:/usr/lib64:/lib64:/lib:/usr/lib"
+        },
+        "java.vm.info": {
+          "value": "mixed mode, sharing"
+        },
+        "java.vendor": {
+          "value": "Oracle Corporation"
+        },
+        "java.vm.version": {
+          "value": "11.0.16+8"
+        },
+        "sun.io.unicode.encoding": {
+          "value": "UnicodeLittle"
+        },
+        "java.class.version": {
+          "value": "55.0"
+        }
+      }
+    },
+    {
+      "name": "systemEnvironment",
+      "properties": {
+        "PATH": {
+          "value": "/usr/local/openjdk-11/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin",
+          "origin": "System Environment Property \"PATH\""
+        },
+        "PRIDGENERATOR_SERVICE_HOST": {
+          "value": "10.43.150.246",
+          "origin": "System Environment Property \"PRIDGENERATOR_SERVICE_HOST\""
+        },
+        "OTPMANAGER_PORT": {
+          "value": "tcp://10.43.157.53:80",
+          "origin": "System Environment Property \"OTPMANAGER_PORT\""
+        },
+        "iam_adapter_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/io/mosip/kernel/kernel-auth-adapter.jar",
+          "origin": "System Environment Property \"iam_adapter_url_env\""
+        },
+        "AUTHMANAGER_PORT": {
+          "value": "tcp://10.43.154.17:80",
+          "origin": "System Environment Property \"AUTHMANAGER_PORT\""
+        },
+        "AUDITMANAGER_PORT": {
+          "value": "tcp://10.43.28.1:80",
+          "origin": "System Environment Property \"AUDITMANAGER_PORT\""
+        },
+        "SYNCDATA_SERVICE_HOST": {
+          "value": "10.43.13.240",
+          "origin": "System Environment Property \"SYNCDATA_SERVICE_HOST\""
+        },
+        "AUTHMANAGER_PORT_80_TCP": {
+          "value": "tcp://10.43.154.17:80",
+          "origin": "System Environment Property \"AUTHMANAGER_PORT_80_TCP\""
+        },
+        "hub_config_file_url_env": {
+          "value": "http://config-server.config-server/config/*/default/country-data/websub-service.toml",
+          "origin": "System Environment Property \"hub_config_file_url_env\""
+        },
+        "SYNCDATA_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"SYNCDATA_PORT_80_TCP_PROTO\""
+        },
+        "OTPMANAGER_SERVICE_HOST": {
+          "value": "10.43.157.53",
+          "origin": "System Environment Property \"OTPMANAGER_SERVICE_HOST\""
+        },
+        "PWD": {
+          "value": "/home/mosip",
+          "origin": "System Environment Property \"PWD\""
+        },
+        "active_profile_env": {
+          "value": "default",
+          "origin": "System Environment Property \"active_profile_env\""
+        },
+        "PRIDGENERATOR_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"PRIDGENERATOR_SERVICE_PORT\""
+        },
+        "virusscanner_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/clamav/kernel-virusscanner-clamav.jar",
+          "origin": "System Environment Property \"virusscanner_url_env\""
+        },
+        "AUDITMANAGER_PORT_80_TCP_ADDR": {
+          "value": "10.43.28.1",
+          "origin": "System Environment Property \"AUDITMANAGER_PORT_80_TCP_ADDR\""
+        },
+        "regproc_jars_env": {
+          "value": "/artifactory/libs-release-local/clamav/kernel-virusscanner-clamav.jar",
+          "origin": "System Environment Property \"regproc_jars_env\""
+        },
+        "NOTIFIER_SERVICE_HOST": {
+          "value": "10.43.210.110",
+          "origin": "System Environment Property \"NOTIFIER_SERVICE_HOST\""
+        },
+        "SYNCDATA_PORT_80_TCP": {
+          "value": "tcp://10.43.13.240:80",
+          "origin": "System Environment Property \"SYNCDATA_PORT_80_TCP\""
+        },
+        "RIDGENERATOR_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"RIDGENERATOR_SERVICE_PORT\""
+        },
+        "PRIDGENERATOR_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"PRIDGENERATOR_PORT_80_TCP_PORT\""
+        },
+        "KUBERNETES_SERVICE_PORT_HTTPS": {
+          "value": "443",
+          "origin": "System Environment Property \"KUBERNETES_SERVICE_PORT_HTTPS\""
+        },
+        "MASTERDATA_PORT_80_TCP_ADDR": {
+          "value": "10.43.52.224",
+          "origin": "System Environment Property \"MASTERDATA_PORT_80_TCP_ADDR\""
+        },
+        "RIDGENERATOR_SERVICE_HOST": {
+          "value": "10.43.229.255",
+          "origin": "System Environment Property \"RIDGENERATOR_SERVICE_HOST\""
+        },
+        "SYNCDATA_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"SYNCDATA_SERVICE_PORT\""
+        },
+        "KUBERNETES_PORT": {
+          "value": "tcp://10.43.0.1:443",
+          "origin": "System Environment Property \"KUBERNETES_PORT\""
+        },
+        "work_dir": {
+          "value": "/home/mosip",
+          "origin": "System Environment Property \"work_dir\""
+        },
+        "JAVA_HOME": {
+          "value": "/usr/local/openjdk-11",
+          "origin": "System Environment Property \"JAVA_HOME\""
+        },
+        "IDGENERATOR_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"IDGENERATOR_SERVICE_PORT\""
+        },
+        "zip_file_path": {
+          "value": "/artifactory/libs-release-local/hsm/client.zip",
+          "origin": "System Environment Property \"zip_file_path\""
+        },
+        "NOTIFIER_PORT_80_TCP": {
+          "value": "tcp://10.43.210.110:80",
+          "origin": "System Environment Property \"NOTIFIER_PORT_80_TCP\""
+        },
+        "IDGENERATOR_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"IDGENERATOR_PORT_80_TCP_PROTO\""
+        },
+        "artifactory_url_env": {
+          "value": "http://artifactory.artifactory:80",
+          "origin": "System Environment Property \"artifactory_url_env\""
+        },
+        "runtime_dep_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/io/mosip/kernel/",
+          "origin": "System Environment Property \"runtime_dep_url_env\""
+        },
+        "SYNCDATA_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"SYNCDATA_PORT_80_TCP_PORT\""
+        },
+        "JAVA_VERSION": {
+          "value": "11.0.16",
+          "origin": "System Environment Property \"JAVA_VERSION\""
+        },
+        "AUDITMANAGER_PORT_80_TCP": {
+          "value": "tcp://10.43.28.1:80",
+          "origin": "System Environment Property \"AUDITMANAGER_PORT_80_TCP\""
+        },
+        "PRIDGENERATOR_PORT_80_TCP": {
+          "value": "tcp://10.43.150.246:80",
+          "origin": "System Environment Property \"PRIDGENERATOR_PORT_80_TCP\""
+        },
+        "AUDITMANAGER_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"AUDITMANAGER_PORT_80_TCP_PROTO\""
+        },
+        "KUBERNETES_PORT_443_TCP_ADDR": {
+          "value": "10.43.0.1",
+          "origin": "System Environment Property \"KUBERNETES_PORT_443_TCP_ADDR\""
+        },
+        "spring_config_label_env": {
+          "value": "country-data",
+          "origin": "System Environment Property \"spring_config_label_env\""
+        },
+        "NOTIFIER_PORT_80_TCP_ADDR": {
+          "value": "10.43.210.110",
+          "origin": "System Environment Property \"NOTIFIER_PORT_80_TCP_ADDR\""
+        },
+        "IDGENERATOR_PORT_80_TCP_ADDR": {
+          "value": "10.43.149.235",
+          "origin": "System Environment Property \"IDGENERATOR_PORT_80_TCP_ADDR\""
+        },
+        "KUBERNETES_PORT_443_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"KUBERNETES_PORT_443_TCP_PROTO\""
+        },
+        "esignet_wrapper_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/esignet/esignet-wrapper.zip",
+          "origin": "System Environment Property \"esignet_wrapper_url_env\""
+        },
+        "IDGENERATOR_SERVICE_HOST": {
+          "value": "10.43.149.235",
+          "origin": "System Environment Property \"IDGENERATOR_SERVICE_HOST\""
+        },
+        "OTPMANAGER_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"OTPMANAGER_PORT_80_TCP_PORT\""
+        },
+        "NOTIFIER_PORT": {
+          "value": "tcp://10.43.210.110:80",
+          "origin": "System Environment Property \"NOTIFIER_PORT\""
+        },
+        "is_glowroot_env": {
+          "value": "absent",
+          "origin": "System Environment Property \"is_glowroot_env\""
+        },
+        "MASTERDATA_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"MASTERDATA_PORT_80_TCP_PROTO\""
+        },
+        "RIDGENERATOR_PORT_80_TCP_ADDR": {
+          "value": "10.43.229.255",
+          "origin": "System Environment Property \"RIDGENERATOR_PORT_80_TCP_ADDR\""
+        },
+        "AUTHMANAGER_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"AUTHMANAGER_PORT_80_TCP_PROTO\""
+        },
+        "IDGENERATOR_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"IDGENERATOR_PORT_80_TCP_PORT\""
+        },
+        "AUTHMANAGER_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"AUTHMANAGER_PORT_80_TCP_PORT\""
+        },
+        "MASTERDATA_PORT_80_TCP": {
+          "value": "tcp://10.43.52.224:80",
+          "origin": "System Environment Property \"MASTERDATA_PORT_80_TCP\""
+        },
+        "MASTERDATA_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"MASTERDATA_SERVICE_PORT\""
+        },
+        "KUBERNETES_PORT_443_TCP": {
+          "value": "tcp://10.43.0.1:443",
+          "origin": "System Environment Property \"KUBERNETES_PORT_443_TCP\""
+        },
+        "preregistration_i18n_bundle_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/i18n/pre-registration-i18n-bundle.zip",
+          "origin": "System Environment Property \"preregistration_i18n_bundle_url_env\""
+        },
+        "iam_adapter_regproc_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/io/mosip/kernel/kernel-auth-adapter.jar",
+          "origin": "System Environment Property \"iam_adapter_regproc_url_env\""
+        },
+        "PRIDGENERATOR_PORT_80_TCP_ADDR": {
+          "value": "10.43.150.246",
+          "origin": "System Environment Property \"PRIDGENERATOR_PORT_80_TCP_ADDR\""
+        },
+        "MASTERDATA_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"MASTERDATA_PORT_80_TCP_PORT\""
+        },
+        "auth_wrapper_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/idp/idp-auth-wrapper/authentication-wrapper.jar",
+          "origin": "System Environment Property \"auth_wrapper_url_env\""
+        },
+        "AUDITMANAGER_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"AUDITMANAGER_PORT_80_TCP_PORT\""
+        },
+        "OTPMANAGER_PORT_80_TCP": {
+          "value": "tcp://10.43.157.53:80",
+          "origin": "System Environment Property \"OTPMANAGER_PORT_80_TCP\""
+        },
+        "MASTERDATA_PORT": {
+          "value": "tcp://10.43.52.224:80",
+          "origin": "System Environment Property \"MASTERDATA_PORT\""
+        },
+        "RIDGENERATOR_PORT": {
+          "value": "tcp://10.43.229.255:80",
+          "origin": "System Environment Property \"RIDGENERATOR_PORT\""
+        },
+        "OTPMANAGER_PORT_80_TCP_ADDR": {
+          "value": "10.43.157.53",
+          "origin": "System Environment Property \"OTPMANAGER_PORT_80_TCP_ADDR\""
+        },
+        "MASTERDATA_SERVICE_HOST": {
+          "value": "10.43.52.224",
+          "origin": "System Environment Property \"MASTERDATA_SERVICE_HOST\""
+        },
+        "container_user": {
+          "value": "mosip",
+          "origin": "System Environment Property \"container_user\""
+        },
+        "IDGENERATOR_PORT_80_TCP": {
+          "value": "tcp://10.43.149.235:80",
+          "origin": "System Environment Property \"IDGENERATOR_PORT_80_TCP\""
+        },
+        "KUBERNETES_SERVICE_HOST": {
+          "value": "10.43.0.1",
+          "origin": "System Environment Property \"KUBERNETES_SERVICE_HOST\""
+        },
+        "LANG": {
+          "value": "C.UTF-8",
+          "origin": "System Environment Property \"LANG\""
+        },
+        "loader_path_env": {
+          "value": "/home/mosip/additional_jars/",
+          "origin": "System Environment Property \"loader_path_env\""
+        },
+        "cache_provider_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/cache/cache-provider.jar",
+          "origin": "System Environment Property \"cache_provider_url_env\""
+        },
+        "RIDGENERATOR_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"RIDGENERATOR_PORT_80_TCP_PORT\""
+        },
+        "cache_config_url_env": {
+          "value": "http://config-server.config-server/config/*/default/country-data/hazelcast_cache.xml",
+          "origin": "System Environment Property \"cache_config_url_env\""
+        },
+        "NOTIFIER_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"NOTIFIER_SERVICE_PORT\""
+        },
+        "AUDITMANAGER_SERVICE_HOST": {
+          "value": "10.43.28.1",
+          "origin": "System Environment Property \"AUDITMANAGER_SERVICE_HOST\""
+        },
+        "NOTIFIER_PORT_80_TCP_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"NOTIFIER_PORT_80_TCP_PORT\""
+        },
+        "consolidator_config_file_url_env": {
+          "value": "http://config-server.config-server/config/*/default/country-data/websub-consolidator.toml",
+          "origin": "System Environment Property \"consolidator_config_file_url_env\""
+        },
+        "SYNCDATA_PORT_80_TCP_ADDR": {
+          "value": "10.43.13.240",
+          "origin": "System Environment Property \"SYNCDATA_PORT_80_TCP_ADDR\""
+        },
+        "AUTHMANAGER_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"AUTHMANAGER_SERVICE_PORT\""
+        },
+        "spring_config_url_env": {
+          "value": "http://config-server.config-server/config",
+          "origin": "System Environment Property \"spring_config_url_env\""
+        },
+        "NOTIFIER_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"NOTIFIER_PORT_80_TCP_PROTO\""
+        },
+        "RIDGENERATOR_PORT_80_TCP": {
+          "value": "tcp://10.43.229.255:80",
+          "origin": "System Environment Property \"RIDGENERATOR_PORT_80_TCP\""
+        },
+        "AUTHMANAGER_SERVICE_PORT_HTTP": {
+          "value": "80",
+          "origin": "System Environment Property \"AUTHMANAGER_SERVICE_PORT_HTTP\""
+        },
+        "RIDGENERATOR_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"RIDGENERATOR_PORT_80_TCP_PROTO\""
+        },
+        "JDK_JAVA_OPTIONS": {
+          "value": "-Xms1500M -Xmx1500M",
+          "origin": "System Environment Property \"JDK_JAVA_OPTIONS\""
+        },
+        "OTPMANAGER_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"OTPMANAGER_PORT_80_TCP_PROTO\""
+        },
+        "SYNCDATA_PORT": {
+          "value": "tcp://10.43.13.240:80",
+          "origin": "System Environment Property \"SYNCDATA_PORT\""
+        },
+        "KUBERNETES_SERVICE_PORT": {
+          "value": "443",
+          "origin": "System Environment Property \"KUBERNETES_SERVICE_PORT\""
+        },
+        "AUTHMANAGER_SERVICE_HOST": {
+          "value": "10.43.154.17",
+          "origin": "System Environment Property \"AUTHMANAGER_SERVICE_HOST\""
+        },
+        "PRIDGENERATOR_PORT": {
+          "value": "tcp://10.43.150.246:80",
+          "origin": "System Environment Property \"PRIDGENERATOR_PORT\""
+        },
+        "OTPMANAGER_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"OTPMANAGER_SERVICE_PORT\""
+        },
+        "IDGENERATOR_PORT": {
+          "value": "tcp://10.43.149.235:80",
+          "origin": "System Environment Property \"IDGENERATOR_PORT\""
+        },
+        "HOSTNAME": {
+          "value": "masterdata-74b4bf57bb-j7tqs",
+          "origin": "System Environment Property \"HOSTNAME\""
+        },
+        "iam_adapter_regproc_ext_url_env": {
+          "value": "http://artifactory.artifactory:80/artifactory/libs-release-local/io/mosip/kernel/kernel-auth-adapter.jar",
+          "origin": "System Environment Property \"iam_adapter_regproc_ext_url_env\""
+        },
+        "KUBERNETES_PORT_443_TCP_PORT": {
+          "value": "443",
+          "origin": "System Environment Property \"KUBERNETES_PORT_443_TCP_PORT\""
+        },
+        "PRIDGENERATOR_PORT_80_TCP_PROTO": {
+          "value": "tcp",
+          "origin": "System Environment Property \"PRIDGENERATOR_PORT_80_TCP_PROTO\""
+        },
+        "AUDITMANAGER_SERVICE_PORT": {
+          "value": "80",
+          "origin": "System Environment Property \"AUDITMANAGER_SERVICE_PORT\""
+        },
+        "HOME": {
+          "value": "/home/mosip",
+          "origin": "System Environment Property \"HOME\""
+        },
+        "AUTHMANAGER_PORT_80_TCP_ADDR": {
+          "value": "10.43.154.17",
+          "origin": "System Environment Property \"AUTHMANAGER_PORT_80_TCP_ADDR\""
+        }
+      }
+    },
+    {
+      "name": "applicationConfig: [classpath:/application.yml]",
+      "properties": {
+        "mosip.global.end-points[0]": {
+          "value": "/**/assets/**",
+          "origin": "class path resource [application.yml]:5:9"
+        },
+        "mosip.global.end-points[1]": {
+          "value": "/**/icons/**",
+          "origin": "class path resource [application.yml]:6:9"
+        },
+        "mosip.global.end-points[2]": {
+          "value": "/**/screenshots/**",
+          "origin": "class path resource [application.yml]:7:9"
+        },
+        "mosip.global.end-points[3]": {
+          "value": "/favicon**",
+          "origin": "class path resource [application.yml]:8:9"
+        },
+        "mosip.global.end-points[4]": {
+          "value": "/**/favicon**",
+          "origin": "class path resource [application.yml]:9:9"
+        },
+        "mosip.global.end-points[5]": {
+          "value": "/**/css/**",
+          "origin": "class path resource [application.yml]:10:9"
+        },
+        "mosip.global.end-points[6]": {
+          "value": "/**/js/**",
+          "origin": "class path resource [application.yml]:11:9"
+        },
+        "mosip.global.end-points[7]": {
+          "value": "/**/error**",
+          "origin": "class path resource [application.yml]:12:9"
+        },
+        "mosip.global.end-points[8]": {
+          "value": "/**/webjars/**",
+          "origin": "class path resource [application.yml]:13:9"
+        },
+        "mosip.global.end-points[9]": {
+          "value": "/**/csrf",
+          "origin": "class path resource [application.yml]:14:9"
+        },
+        "mosip.global.end-points[10]": {
+          "value": "/*/",
+          "origin": "class path resource [application.yml]:15:9"
+        },
+        "mosip.global.end-points[11]": {
+          "value": "/**/authenticate/**",
+          "origin": "class path resource [application.yml]:16:9"
+        },
+        "mosip.global.end-points[12]": {
+          "value": "/**/actuator/**",
+          "origin": "class path resource [application.yml]:17:9"
+        },
+        "mosip.global.end-points[13]": {
+          "value": "/sendOtp",
+          "origin": "class path resource [application.yml]:18:9"
+        },
+        "mosip.global.end-points[14]": {
+          "value": "/validateOtp",
+          "origin": "class path resource [application.yml]:19:9"
+        },
+        "mosip.global.end-points[15]": {
+          "value": "/invalidateToken",
+          "origin": "class path resource [application.yml]:20:9"
+        },
+        "mosip.global.end-points[16]": {
+          "value": "/config",
+          "origin": "class path resource [application.yml]:21:9"
+        },
+        "mosip.global.end-points[17]": {
+          "value": "/login",
+          "origin": "class path resource [application.yml]:22:9"
+        },
+        "mosip.global.end-points[18]": {
+          "value": "/logout",
+          "origin": "class path resource [application.yml]:23:9"
+        },
+        "mosip.global.end-points[19]": {
+          "value": "/validateOTP",
+          "origin": "class path resource [application.yml]:24:9"
+        },
+        "mosip.global.end-points[20]": {
+          "value": "/sendOTP",
+          "origin": "class path resource [application.yml]:25:9"
+        },
+        "mosip.global.end-points[21]": {
+          "value": "/**/login",
+          "origin": "class path resource [application.yml]:26:9"
+        },
+        "mosip.global.end-points[22]": {
+          "value": "/**/login/**",
+          "origin": "class path resource [application.yml]:27:9"
+        },
+        "mosip.global.end-points[23]": {
+          "value": "/**/login-redirect/**",
+          "origin": "class path resource [application.yml]:28:9"
+        },
+        "mosip.global.end-points[24]": {
+          "value": "/**/logout",
+          "origin": "class path resource [application.yml]:29:9"
+        },
+        "mosip.global.end-points[25]": {
+          "value": "/**/h2-console/**",
+          "origin": "class path resource [application.yml]:30:9"
+        },
+        "mosip.global.end-points[26]": {
+          "value": "/**/**/license/**",
+          "origin": "class path resource [application.yml]:31:9"
+        },
+        "mosip.global.end-points[27]": {
+          "value": "/**/callback/**",
+          "origin": "class path resource [application.yml]:32:9"
+        },
+        "mosip.global.end-points[28]": {
+          "value": "/**/authenticate/**",
+          "origin": "class path resource [application.yml]:33:9"
+        },
+        "mosip.global.end-points[29]": {
+          "value": "/**/authmanager/**",
+          "origin": "class path resource [application.yml]:35:9"
+        },
+        "mosip.global.end-points[30]": {
+          "value": "/**/v2/api-docs",
+          "origin": "class path resource [application.yml]:36:9"
+        },
+        "mosip.global.end-points[31]": {
+          "value": "/**/swagger-resources/**",
+          "origin": "class path resource [application.yml]:37:9"
+        },
+        "mosip.global.end-points[32]": {
+          "value": "/**/configuration/ui",
+          "origin": "class path resource [application.yml]:38:9"
+        },
+        "mosip.global.end-points[33]": {
+          "value": "/**/configuration/security",
+          "origin": "class path resource [application.yml]:39:9"
+        },
+        "mosip.global.end-points[34]": {
+          "value": "/**/v3/api-docs/**",
+          "origin": "class path resource [application.yml]:41:9"
+        },
+        "mosip.global.end-points[35]": {
+          "value": "/**/swagger-ui.html",
+          "origin": "class path resource [application.yml]:42:9"
+        },
+        "mosip.global.end-points[36]": {
+          "value": "/**/swagger-ui/**",
+          "origin": "class path resource [application.yml]:43:9"
+        }
+      }
+    },
+    {
+      "name": "springCloudClientHostInfo",
+      "properties": {
+        "spring.cloud.client.hostname": {
+          "value": "masterdata-74b4bf57bb-j7tqs"
+        },
+        "spring.cloud.client.ip-address": {
+          "value": "10.42.4.142"
+        }
+      }
+    },
+    {
+      "name": "applicationConfig: [classpath:/bootstrap.properties]",
+      "properties": {
+        "spring.profiles.active": {
+          "value": "local1",
+          "origin": "class path resource [bootstrap.properties]:3:24"
+        },
+        "spring.cloud.config.name": {
+          "value": "kernel",
+          "origin": "class path resource [bootstrap.properties]:4:26"
+        },
+        "spring.application.name": {
+          "value": "kernel-masterdata-service",
+          "origin": "class path resource [bootstrap.properties]:5:25"
+        },
+        "management.endpoint.health.show-details": {
+          "value": "always",
+          "origin": "class path resource [bootstrap.properties]:9:41"
+        },
+        "management.endpoints.web.exposure.include": {
+          "value": "info,health,refresh,mappings,prometheus",
+          "origin": "class path resource [bootstrap.properties]:10:43"
+        },
+        "management.endpoint.metrics.enabled": {
+          "value": "true",
+          "origin": "class path resource [bootstrap.properties]:11:37"
+        },
+        "management.endpoint.prometheus.enabled": {
+          "value": "true",
+          "origin": "class path resource [bootstrap.properties]:12:40"
+        },
+        "management.metrics.export.prometheus.enabled": {
+          "value": "true",
+          "origin": "class path resource [bootstrap.properties]:13:46"
+        },
+        "server.port": {
+          "value": "8086",
+          "origin": "class path resource [bootstrap.properties]:15:13"
+        },
+        "server.servlet.context-path": {
+          "value": "/v1/masterdata",
+          "origin": "class path resource [bootstrap.properties]:16:29"
+        },
+        "health.config.enabled": {
+          "value": "false",
+          "origin": "class path resource [bootstrap.properties]:20:23"
+        },
+        "mosip.min-digit-longitude-latitude": {
+          "value": "4",
+          "origin": "class path resource [bootstrap.properties]:22:36"
+        },
+        "javax.persistence.jdbc.url": {
+          "value": "jdbc:postgresql://postgres-postgresql.postgres:5432/mosip_master",
+          "origin": "class path resource [bootstrap.properties]:24:28"
+        },
+        "javax.persistence.jdbc.user": {
+          "value": "masteruser",
+          "origin": "class path resource [bootstrap.properties]:25:29"
+        },
+        "javax.persistence.jdbc.password": {
+          "value": "******",
+          "origin": "class path resource [bootstrap.properties]:26:33"
+        },
+        "javax.persistence.jdbc.schema": {
+          "value": "kernel",
+          "origin": "class path resource [bootstrap.properties]:27:31"
+        },
+        "openapi.info.title": {
+          "value": "Admin Master Service",
+          "origin": "class path resource [bootstrap.properties]:30:20"
+        },
+        "openapi.info.description": {
+          "value": "Admin Master for CRUD",
+          "origin": "class path resource [bootstrap.properties]:31:26"
+        },
+        "openapi.info.version": {
+          "value": "1.0",
+          "origin": "class path resource [bootstrap.properties]:32:22"
+        },
+        "openapi.info.license.name": {
+          "value": "Mosip",
+          "origin": "class path resource [bootstrap.properties]:33:27"
+        },
+        "openapi.info.license.url": {
+          "value": "https://docs.mosip.io/platform/license",
+          "origin": "class path resource [bootstrap.properties]:34:26"
+        },
+        "mosipbox.public.url": {
+          "value": "http://localhost:8086",
+          "origin": "class path resource [bootstrap.properties]:35:21"
+        },
+        "openapi.service.servers[0].url": {
+          "value": "https://api-internal.qa-country.mosip.net/v1/masterdata",
+          "origin": "class path resource [bootstrap.properties]:36:32"
+        },
+        "openapi.service.servers[0].description": {
+          "value": "Admin Masterdata url",
+          "origin": "class path resource [bootstrap.properties]:37:40"
+        },
+        "openapi.group.name": {
+          "value": "Admin Master Service",
+          "origin": "class path resource [bootstrap.properties]:38:20"
+        },
+        "openapi.group.paths[0]": {
+          "value": "/**",
+          "origin": "class path resource [bootstrap.properties]:39:24"
+        }
+      }
+    },
+    {
+      "name": "class path resource [springdoc.swagger-ui.config]",
+      "properties": {
+        "springdoc.swagger-ui.version": {
+          "value": "3.51.1"
+        }
+      }
+    },
+    {
+      "name": "defaultProperties",
+      "properties": {
+        "logging.pattern.level": {
+          "value": "%5p [kernel-masterdata-service,%X{X-B3-TraceId:-},%X{X-B3-SpanId:-},%X{X-Span-Export:-}]"
+        }
+      }
+    }
+  ]
+}</textarea> </div></pre><br/><b><u>Request: </u></b>(End Point URL: https://api-internal.qa-country.mosip.net/preregistration/v1/applications/prereg) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "requiredFields": [
+      "IDSchemaVersion",
+      "fullName",
+      "dateOfBirth",
+      "gender",
+      "addressLine1",
+      "region",
+      "province",
+      "city",
+      "zone",
+      "postalCode",
+      "phone",
+      "email",
+      "functionalId",
+      "residenceStatus"
+    ],
+    "demographicDetails": {
+      "identity": {
+        "gender": [
+          {
+            "language": "eng",
+            "value": "TEST_gender"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_gender"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_gender"
+          }
+        ],
+        "city": [
+          {
+            "language": "eng",
+            "value": "TEST_city"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_city"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_city"
+          }
+        ],
+        "postalCode": "14022",
+        "fullName": [
+          {
+            "language": "eng",
+            "value": "TEST_fullName"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_fullName"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_fullName"
+          }
+        ],
+        "dateOfBirth": "1996/01/01",
+        "functionalId": "16262",
+        "IDSchemaVersion": 1.4,
+        "province": [
+          {
+            "language": "eng",
+            "value": "TEST_province"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_province"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_province"
+          }
+        ],
+        "zone": [
+          {
+            "language": "eng",
+            "value": "TEST_zone"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_zone"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_zone"
+          }
+        ],
+        "phone": "8249742850",
+        "addressLine1": [
+          {
+            "language": "eng",
+            "value": "TEST_addressLine1"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_addressLine1"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_addressLine1"
+          }
+        ],
+        "residenceStatus": [
+          {
+            "language": "eng",
+            "value": "TEST_residenceStatus"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_residenceStatus"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_residenceStatus"
+          }
+        ],
+        "region": [
+          {
+            "language": "eng",
+            "value": "TEST_region"
+          },
+          {
+            "language": "ara",
+            "value": "TEST_region"
+          },
+          {
+            "language": "fra",
+            "value": "TEST_region"
+          }
+        ],
+        "email": "goku@technoforte.co.in"
+      }
+    },
+    "langCode": "eng"
+  },
+  "requesttime": "2024-08-23T07:14:59.658Z",
+  "id": "mosip.pre-registration.demographic.create",
+  "version": "1.0"
+}</textarea> </div></pre><br/><b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Fri, 23 Aug 2024 07:15:00 GMT, Content-Type=application/json;charset=UTF-8, Transfer-Encoding=chunked, Connection=keep-alive, x-content-type-options=nosniff, x-xss-protection=1; mode=block, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=314]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.demographic.create",
+  "version": "1.0",
+  "responsetime": "2024-08-23T07:15:00.435Z",
+  "errors": [
+    {
+      "errorCode": "KER-IOV-004",
+      "message": "Invalid input parameter - identity/functionalId"
+    }
+  ]
+}</textarea> </div></pre></div></td></tr><tr><th>Exception</th></tr><tr><td><div class="stacktrace">io.mosip.testrig.apirig.utils.AdminTestException: Response has errors
+	at io.mosip.testrig.apirig.utils.OutputValidationUtil.doJsonOutputValidation(OutputValidationUtil.java:523)
+	at io.mosip.testrig.apirig.utils.OutputValidationUtil.doJsonOutputValidation(OutputValidationUtil.java:512)
+	at io.mosip.testrig.apirig.testscripts.CreatePreReg.test(CreatePreReg.java:121)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:180)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.startTestRunner(MosipTestRunner.java:145)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.main(MosipTestRunner.java:89)
+... Removed 24 stack frames</div></td></tr></table><p class="totop"><a href="#summary">back to summary</a></p></body></html>

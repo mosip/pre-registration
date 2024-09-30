@@ -1,0 +1,1317 @@
+<html>
+<head>
+<title>TestNG:  BookAppointmentByPRID</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>BookAppointmentByPRID</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>22/1/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 18 18:54:46 IST 2024</td>
+</tr>
+<tr><td>Total time:</td><td>273 seconds (273045 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-failed'>
+<tr><td colspan='4' align='center'><b>FAILED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_blank_preRegistrationId()'><b>Prereg_BookAppointmentByPRID_blank_preRegistrationId</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_blank_preRegistrationId, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_APP_013" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a blank preregistration ID)<br/>
+<a href="#Output-943787237" onClick='toggleBox("Output-943787237", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-943787237" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-943787237">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:25:22.233Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:25:22 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=42]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:25:22.608Z",
+  "response": {
+    "bookingStatusResponse": []
+  }
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_APP_013</td>
+    <td>NOT AVAILABLE</td>
+    <td bgcolor='RED'>FAIL</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td><div><pre>io.mosip.testrig.apirig.utils.AdminTestException: Failed at output validation
+	at io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.test(BookAppoinmentByPrid.java:122)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:154)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.startTestRunner(MosipTestRunner.java:145)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.main(MosipTestRunner.java:89)
+... Removed 22 stack frames</pre></div><a href='#' onClick='toggleBox("stack-trace943787237", this, "Click to show all stack frames", "Click to hide stack frames")'>Click to show all stack frames</a>
+<div class='stack-trace' id='stack-trace943787237'><pre>io.mosip.testrig.apirig.utils.AdminTestException: Failed at output validation
+	at io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.test(BookAppoinmentByPrid.java:122)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(DirectMethodHandleAccessor.java:103)
+	at java.base/java.lang.reflect.Method.invoke(Method.java:580)
+	at org.testng.internal.MethodInvocationHelper.invokeMethod(MethodInvocationHelper.java:108)
+	at org.testng.internal.MethodInvocationHelper$1.runTestMethod(MethodInvocationHelper.java:209)
+	at org.springframework.test.context.testng.AbstractTestNGSpringContextTests.run(AbstractTestNGSpringContextTests.java:154)
+	at org.testng.internal.MethodInvocationHelper.invokeHookable(MethodInvocationHelper.java:221)
+	at org.testng.internal.Invoker.invokeMethod(Invoker.java:657)
+	at org.testng.internal.Invoker.invokeTestMethod(Invoker.java:869)
+	at org.testng.internal.Invoker.invokeTestMethods(Invoker.java:1193)
+	at org.testng.internal.TestMethodWorker.invokeTestMethods(TestMethodWorker.java:126)
+	at org.testng.internal.TestMethodWorker.run(TestMethodWorker.java:109)
+	at org.testng.TestRunner.privateRun(TestRunner.java:744)
+	at org.testng.TestRunner.run(TestRunner.java:602)
+	at org.testng.SuiteRunner.runTest(SuiteRunner.java:380)
+	at org.testng.SuiteRunner.runSequentially(SuiteRunner.java:375)
+	at org.testng.SuiteRunner.privateRun(SuiteRunner.java:340)
+	at org.testng.SuiteRunner.run(SuiteRunner.java:289)
+	at org.testng.SuiteRunnerWorker.runSuite(SuiteRunnerWorker.java:52)
+	at org.testng.SuiteRunnerWorker.run(SuiteRunnerWorker.java:86)
+	at org.testng.TestNG.runSuitesSequentially(TestNG.java:1301)
+	at org.testng.TestNG.runSuitesLocally(TestNG.java:1226)
+	at org.testng.TestNG.runSuites(TestNG.java:1144)
+	at org.testng.TestNG.run(TestNG.java:1115)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.startTestRunner(MosipTestRunner.java:145)
+	at io.mosip.testrig.apirig.testrunner.MosipTestRunner.main(MosipTestRunner.java:89)
+</pre></div></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+</table><p>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_All_Valid_Smoke()'><b>Prereg_BookAppointmentByPRID_All_Valid_Smoke</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_All_Valid_Smoke, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRIDResult, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for validation)<br/>
+<a href="#Output-487566917" onClick='toggleBox("Output-487566917", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-487566917" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-487566917">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:24:57.945Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:00:00",
+        "time_slot_to": "09:15:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:24:58 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=559]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:24:58.303Z",
+  "response": {
+    "bookingStatusResponse": [
+      {
+        "bookingMessage": "Appointment booked successfully"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>12</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Blank_Id()'><b>Prereg_BookAppointmentByPRID_Blank_Id</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Blank_Id, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_PAM_CORE_001" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a blank ID)<br/>
+<a href="#Output-2100075365" onClick='toggleBox("Output-2100075365", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-2100075365" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-2100075365">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:25:57.673Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:25:58 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=17]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:25:58.024Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001",
+      "message": "Request id is invalid"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_CORE_001</td>
+    <td>PRG_PAM_CORE_001</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Blank_appointment_date()'><b>Prereg_BookAppointmentByPRID_Blank_appointment_date</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Blank_appointment_date, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_008" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an Blank appointment date)<br/>
+<a href="#Output-1414726159" onClick='toggleBox("Output-1414726159", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1414726159" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1414726159">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:27:20.582Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:27:20 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=33]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:27:20.927Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_008",
+      "message": "Booking date time not selected"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_008</td>
+    <td>PRG_BOOK_RCI_008</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Blank_registration_center_id()'><b>Prereg_BookAppointmentByPRID_Blank_registration_center_id</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Blank_registration_center_id, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_007" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an Blank registration center ID)<br/>
+<a href="#Output-1327282178" onClick='toggleBox("Output-1327282178", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1327282178" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1327282178">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:27:08.763Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:27:09 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=42]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:27:09.112Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_007",
+      "message": "Registration center id not entered"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_007</td>
+    <td>PRG_BOOK_RCI_007</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Blank_requesttime()'><b>Prereg_BookAppointmentByPRID_Blank_requesttime</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Blank_requesttime, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_003" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a Blank request time)<br/>
+<a href="#Output-161350569" onClick='toggleBox("Output-161350569", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-161350569" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-161350569">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:07 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=11]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:07.721Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_003",
+      "message": "Invalid request time"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_003</td>
+    <td>PRG_CORE_REQ_003</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Blank_version()'><b>Prereg_BookAppointmentByPRID_Blank_version</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Blank_version, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_002" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a blank version)<br/>
+<a href="#Output-1972597101" onClick='toggleBox("Output-1972597101", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1972597101" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1972597101">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "",
+  "requesttime": "2024-09-18T13:26:09.477Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:26:09 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=11]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:26:09.837Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002",
+      "message": "Request version is invalid"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_002</td>
+    <td>PRG_CORE_REQ_002</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Invalid_appointment_date()'><b>Prereg_BookAppointmentByPRID_Invalid_appointment_date</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Invalid_appointment_date, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "njdus6w22ybsh", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_031"
+} ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an invalid appointment date)<br/>
+<a href="#Output-1149771724" onClick='toggleBox("Output-1149771724", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1149771724" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1149771724">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:27:44.473Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "njdus6w22ybsh",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:27:44 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=28]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:27:44.817Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_031",
+      "message": "Invalid Booking Date Time found for preregistration id - 28018908328642"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_031</td>
+    <td>PRG_BOOK_RCI_031</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Invalid_registration_center_id()'><b>Prereg_BookAppointmentByPRID_Invalid_registration_center_id</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Invalid_registration_center_id, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "363wgbsion_center_id", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "KER-MSD-215" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an invalid registration center ID)<br/>
+<a href="#Output-1058976188" onClick='toggleBox("Output-1058976188", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1058976188" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1058976188">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:26:45.029Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "363wgbsion_center_id",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:26:45 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=56]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:26:45.383Z",
+  "errors": [
+    {
+      "errorCode": "KER-MSD-215",
+      "message": "Registration Center not found"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>KER-MSD-215</td>
+    <td>KER-MSD-215</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Invalid_requesttime()'><b>Prereg_BookAppointmentByPRID_Invalid_requesttime</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Invalid_requesttime, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "qerwgtgf" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_015"
+} ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a invalid request time)<br/>
+<a href="#Output-375027924" onClick='toggleBox("Output-375027924", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-375027924" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-375027924">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "qerwgtgf",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:28:55 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=2]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "responsetime": "2024-09-18T13:28:55.912Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_015",
+      "message": "JSON parse error"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_015</td>
+    <td>PRG_CORE_REQ_015</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Invalid_version()'><b>Prereg_BookAppointmentByPRID_Invalid_version</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Invalid_version, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "snsjd73t33ybyh2334@FDh", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_002" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Schedule an appointment with a PRID for a invalid version)<br/>
+<a href="#Output-1735125919" onClick='toggleBox("Output-1735125919", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1735125919" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1735125919">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "snsjd73t33ybyh2334@FDh",
+  "requesttime": "2024-09-18T13:26:33.183Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:26:33 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=10]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:26:33.546Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002",
+      "message": "Request version is invalid"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_002</td>
+    <td>PRG_CORE_REQ_002</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Missing_appointment_date()'><b>Prereg_BookAppointmentByPRID_Missing_appointment_date</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Missing_appointment_date, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$REMOVE$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_008" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a missing appointment date)<br/>
+<a href="#Output-533035292" onClick='toggleBox("Output-533035292", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-533035292" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-533035292">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "bookingRequest": [
+      {
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00",
+        "registration_center_id": "10003",
+        "preRegistrationId": "28018908328642"
+      }
+    ]
+  },
+  "requesttime": "2024-09-18T13:27:32.657Z",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:27:33 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=35]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:27:33.013Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_008",
+      "message": "Booking date time not selected"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_008</td>
+    <td>PRG_BOOK_RCI_008</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>12</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Missing_registration_center_id()'><b>Prereg_BookAppointmentByPRID_Missing_registration_center_id</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Missing_registration_center_id, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$REMOVE$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_007" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an missing registration center ID)<br/>
+<a href="#Output-559210048" onClick='toggleBox("Output-559210048", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-559210048" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-559210048">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "bookingRequest": [
+      {
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00",
+        "appointment_date": "2024-09-20",
+        "preRegistrationId": "28018908328642"
+      }
+    ]
+  },
+  "requesttime": "2024-09-18T13:26:56.857Z",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:26:57 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=73]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:26:57.203Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_007",
+      "message": "Registration center id not entered"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_007</td>
+    <td>PRG_BOOK_RCI_007</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Missing_time_slot_from()'><b>Prereg_BookAppointmentByPRID_Missing_time_slot_from</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Missing_time_slot_from, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$REMOVE$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_003" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an missing time slot from)<br/>
+<a href="#Output-1322292940" onClick='toggleBox("Output-1322292940", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1322292940" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1322292940">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "bookingRequest": [
+      {
+        "time_slot_to": "09:30:00",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "preRegistrationId": "28018908328642"
+      }
+    ]
+  },
+  "requesttime": "2024-09-18T13:28:31.942Z",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:28:32 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=50]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:28:32.300Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003",
+      "message": "User has not selected time slot"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Missing_time_slot_to()'><b>Prereg_BookAppointmentByPRID_Missing_time_slot_to</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Missing_time_slot_to, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$REMOVE$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_003" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an missing time slot to)<br/>
+<a href="#Output-1719999512" onClick='toggleBox("Output-1719999512", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1719999512" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1719999512">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "bookingRequest": [
+      {
+        "time_slot_from": "09:15:00",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "preRegistrationId": "28018908328642"
+      }
+    ]
+  },
+  "requesttime": "2024-09-18T13:28:20.090Z",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:28:20 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=47]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:28:20.446Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003",
+      "message": "User has not selected time slot"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_Missing_version()'><b>Prereg_BookAppointmentByPRID_Missing_version</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_Missing_version, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "$REMOVE$", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_002" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a missing version)<br/>
+<a href="#Output-21387540" onClick='toggleBox("Output-21387540", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-21387540" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-21387540">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "bookingRequest": [
+      {
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "preRegistrationId": "28018908328642"
+      }
+    ]
+  },
+  "requesttime": "2024-09-18T13:26:21.314Z",
+  "id": "mosip.pre-registration.booking.book"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:26:21 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=15]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:26:21.665Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_002",
+      "message": "Request version is invalid"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_002</td>
+    <td>PRG_CORE_REQ_002</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_blank_time_slot_from()'><b>Prereg_BookAppointmentByPRID_blank_time_slot_from</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_blank_time_slot_from, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_003" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an Blank time slot from)<br/>
+<a href="#Output-454309070" onClick='toggleBox("Output-454309070", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-454309070" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-454309070">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:28:08.219Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:28:08 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=40]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:28:08.582Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003",
+      "message": "User has not selected time slot"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_blank_time_slot_to()'><b>Prereg_BookAppointmentByPRID_blank_time_slot_to</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_blank_time_slot_to, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_BOOK_RCI_003" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an Blank time slot to)<br/>
+<a href="#Output-1137706550" onClick='toggleBox("Output-1137706550", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1137706550" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1137706550">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:27:56.336Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": ""
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:27:56 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=53]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:27:56.684Z",
+  "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_003",
+      "message": "User has not selected time slot"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td>PRG_BOOK_RCI_003</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_inValid_Id()'><b>Prereg_BookAppointmentByPRID_inValid_Id</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_inValid_Id, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "moe.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_PAM_CORE_001" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a invalid preregistration ID)<br/>
+<a href="#Output-1042824986" onClick='toggleBox("Output-1042824986", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1042824986" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1042824986">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "moe.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:25:45.909Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:25:46 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=12]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:25:46.245Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_CORE_001",
+      "message": "Request id is invalid"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_CORE_001</td>
+    <td>PRG_PAM_CORE_001</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_inValid_preRegistrationId()'><b>Prereg_BookAppointmentByPRID_inValid_preRegistrationId</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_inValid_preRegistrationId, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"1234fgfgdb", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_APP_013" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for an invalid preregistration ID)<br/>
+<a href="#Output-749256016" onClick='toggleBox("Output-749256016", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-749256016" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-749256016">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2024-09-18T13:25:10.269Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "1234fgfgdb",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:25:10 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=45]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:25:10.637Z",
+  "errors": [
+    {
+      "errorCode": "PRG_APP_013",
+      "message": "No Records Found"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_APP_013</td>
+    <td>PRG_APP_013</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_missing_preRegistrationId()'><b>Prereg_BookAppointmentByPRID_missing_preRegistrationId</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_missing_preRegistrationId, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$REMOVE$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$TIMESTAMP$" }, output={ "errors": [ { "errorCode": "PRG_APP_013" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a missing  preregistration ID)<br/>
+<a href="#Output-1889288666" onClick='toggleBox("Output-1889288666", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1889288666" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1889288666">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "bookingRequest": [
+      {
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20"
+      }
+    ]
+  },
+  "requesttime": "2024-09-18T13:25:34.118Z",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:25:34 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=43]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:25:34.460Z",
+  "errors": [
+    {
+      "errorCode": "PRG_APP_013",
+      "message": "No Records Found"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_APP_013</td>
+    <td>PRG_APP_013</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_missing_requesttime()'><b>Prereg_BookAppointmentByPRID_missing_requesttime</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_missing_requesttime, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "$REMOVE$" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_003" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a missing request time)<br/>
+<a href="#Output-1957308871" onClick='toggleBox("Output-1957308871", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1957308871" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1957308871">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "request": {
+    "bookingRequest": [
+      {
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "preRegistrationId": "28018908328642"
+      }
+    ]
+  },
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:28:44 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=12]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:28:44.125Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_003",
+      "message": "Invalid request time"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_003</td>
+    <td>PRG_CORE_REQ_003</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid.Prereg_BookAppointmentByPRID_previous_requesttime()'><b>Prereg_BookAppointmentByPRID_previous_requesttime</b><br>Test class: io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid (Prereg_BookAppointmentByPRID_previous_requesttime)<br>Parameters: TestCaseDTO(testCaseName=Prereg_BookAppointmentByPRID_previous_requesttime, endPoint=/preregistration/v1/applications/appointment, role=batch, templateFields=null, input={ "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$", "registration_center_id": "$registration_center_id$", "id": "mosip.pre-registration.booking.book", "version": "1.0", "appointment_date": "$appointment_date$", "time_slot_from": "$time_slot_from$", "time_slot_to": "$time_slot_to$", "requesttime": "2017-02-15T04:31:23.613Z" }, output={ "errors": [ { "errorCode": "PRG_CORE_REQ_013" } ] }, inputTemplate=preReg/bookAppointmentByPRID/bookAppointmentByPRID, outputTemplate=preReg/error, restMethod=post, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Book an appointment with a PRID for a previous request time)<br/>
+<a href="#Output-1765776053" onClick='toggleBox("Output-1765776053", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1765776053" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1765776053">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/appointment) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "requesttime": "2017-02-15T04:31:23.613Z",
+  "request": {
+    "bookingRequest": [
+      {
+        "preRegistrationId": "28018908328642",
+        "registration_center_id": "10003",
+        "appointment_date": "2024-09-20",
+        "time_slot_from": "09:15:00",
+        "time_slot_to": "09:30:00"
+      }
+    ]
+  }
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:29:19 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=12]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:29:19.529Z",
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_013",
+      "message": "Request date should be current date"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_CORE_REQ_013</td>
+    <td>PRG_CORE_REQ_013</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>11</td>
+<td>io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid@2cae5fa7</td></tr>
+</table><p>
+</body>
+</html>

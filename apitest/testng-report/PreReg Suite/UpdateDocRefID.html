@@ -1,0 +1,301 @@
+<html>
+<head>
+<title>TestNG:  UpdateDocRefID</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>UpdateDocRefID</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>7/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 18 18:48:40 IST 2024</td>
+</tr>
+<tr><td>Total time:</td><td>2 seconds (2665 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_UpdateDocRefID_All_SpatialCharacter_RefNum_Neg()'><b>Prereg_UpdateDocRefID_All_SpatialCharacter_RefNum_Neg</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg)<br>Parameters: TestCaseDTO(testCaseName=Prereg_UpdateDocRefID_All_SpatialCharacter_RefNum_Neg, endPoint=/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}, role=batch, templateFields=null, input={ "documentId": "89jsn$!", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$", "refNumber":"text" }, output={ "errors": [ { "errorCode": "PRG_PAM_DOC_005" } ] }, inputTemplate=preReg/UpdateDocRefID/updateDocRefID, outputTemplate=preReg/error, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Update the document reference ID with the special character and reference number)<br/>
+<a href="#Output-1162358658" onClick='toggleBox("Output-1162358658", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1162358658" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1162358658">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "documentId": "89jsn$!",
+  "preRegistrationId": "54780465168560",
+  "refNumber": "text"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:42 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=6]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.preregistration.docrefId.update",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:42.590Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005",
+      "message": "Documents is not found for the requested pre-registration id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_DOC_005</td>
+    <td>PRG_PAM_DOC_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@c5e69a5</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_UpdateDocRefID_All_Valid_Smoke_POA_sid()'><b>Prereg_UpdateDocRefID_All_Valid_Smoke_POA_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg)<br>Parameters: TestCaseDTO(testCaseName=Prereg_UpdateDocRefID_All_Valid_Smoke_POA_sid, endPoint=/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}, role=batch, templateFields=null, input={ "documentId": "$ID:UploadDocument_All_Valid_Smoke_UpdateDocRefID_sid_docId$", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$", "refNumber":"text" }, output={ }, inputTemplate=preReg/UpdateDocRefID/updateDocRefID, outputTemplate=preReg/UpdateDocRefID/updateDocRefIDResult, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Update the document reference ID for the valid Proof of Address (POA))<br/>
+<a href="#Output-451573149" onClick='toggleBox("Output-451573149", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-451573149" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-451573149">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "documentId": "7478a915-75c0-11ef-96a1-2da899e80ecb",
+  "preRegistrationId": "54780465168560",
+  "refNumber": "text"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:40 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=18]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.preregistration.docrefId.update",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:40.685Z",
+  "response": "STATUS_UPDATED_SUCESSFULLY"
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@c5e69a5</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_UpdateDocRefID_All_Valid_Smoke_POB_sid()'><b>Prereg_UpdateDocRefID_All_Valid_Smoke_POB_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg)<br>Parameters: TestCaseDTO(testCaseName=Prereg_UpdateDocRefID_All_Valid_Smoke_POB_sid, endPoint=/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}, role=batch, templateFields=null, input={ "documentId": "$ID:UploadDocument_All_Valid_Smoke_POB_UpdateDocRefID_sid_docId$", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$", "refNumber":"text" }, output={ }, inputTemplate=preReg/UpdateDocRefID/updateDocRefID, outputTemplate=preReg/UpdateDocRefID/updateDocRefIDResult, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Update the document reference ID for the valid Proof of Date of Birth (POB))<br/>
+<a href="#Output-721322586" onClick='toggleBox("Output-721322586", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-721322586" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-721322586">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "documentId": "7550e0a7-75c0-11ef-96a1-1b602768b1e3",
+  "preRegistrationId": "54780465168560",
+  "refNumber": "text"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:41 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=24]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.preregistration.docrefId.update",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:41.437Z",
+  "response": "STATUS_UPDATED_SUCESSFULLY"
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@c5e69a5</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_UpdateDocRefID_All_Valid_Smoke_POI_sid()'><b>Prereg_UpdateDocRefID_All_Valid_Smoke_POI_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg)<br>Parameters: TestCaseDTO(testCaseName=Prereg_UpdateDocRefID_All_Valid_Smoke_POI_sid, endPoint=/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}, role=batch, templateFields=null, input={ "documentId": "$ID:UploadDocument_All_Valid_Smoke_POI_UpdateDocRefID_sid_docId$", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$", "refNumber":"text" }, output={ }, inputTemplate=preReg/UpdateDocRefID/updateDocRefID, outputTemplate=preReg/UpdateDocRefID/updateDocRefIDResult, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Update the document reference ID for the valid Proof of Identity (POI))<br/>
+<a href="#Output-24057252" onClick='toggleBox("Output-24057252", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-24057252" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-24057252">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "documentId": "74f4b6e6-75c0-11ef-96a1-c30b26acaa67",
+  "preRegistrationId": "54780465168560",
+  "refNumber": "text"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:41 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=16]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.preregistration.docrefId.update",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:41.064Z",
+  "response": "STATUS_UPDATED_SUCESSFULLY"
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@c5e69a5</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_UpdateDocRefID_All_Valid_Smoke_POR_sid()'><b>Prereg_UpdateDocRefID_All_Valid_Smoke_POR_sid</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg)<br>Parameters: TestCaseDTO(testCaseName=Prereg_UpdateDocRefID_All_Valid_Smoke_POR_sid, endPoint=/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}, role=batch, templateFields=null, input={ "documentId": "$ID:UploadDocument_All_Valid_Smoke_POR_UpdateDocRefID_sid_docId$", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$", "refNumber":"text" }, output={ }, inputTemplate=preReg/UpdateDocRefID/updateDocRefID, outputTemplate=preReg/UpdateDocRefID/updateDocRefIDResult, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Update the document reference ID for the valid Proof of Residence (POR))<br/>
+<a href="#Output-754817802" onClick='toggleBox("Output-754817802", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-754817802" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-754817802">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "documentId": "75b87c18-75c0-11ef-96a1-9b07279b7b89",
+  "preRegistrationId": "54780465168560",
+  "refNumber": "text"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:41 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=18]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.preregistration.docrefId.update",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:41.802Z",
+  "response": "STATUS_UPDATED_SUCESSFULLY"
+}</textarea> </div></pre><br/>
+<b style="background-color: #0A0;">Marking test case as passed. As Output validation not performed and no errors in the response</b><br>
+<br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@c5e69a5</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg()'><b>Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg)<br>Parameters: TestCaseDTO(testCaseName=Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg, endPoint=/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}, role=batch, templateFields=null, input={ "documentId": "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$", "refNumber":"text" }, output={ "errors": [ { "errorCode": "PRG_PAM_DOC_005" } ] }, inputTemplate=preReg/UpdateDocRefID/updateDocRefID, outputTemplate=preReg/error, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=true, allowedErrorCodes=null, kycFields=null, description=Update the document reference ID with an exceeding limit and reference number)<br/>
+<a href="#Output-101272276" onClick='toggleBox("Output-101272276", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-101272276" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-101272276">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "documentId": "qwertyuiopasdfghjklzxcvbnmqwertyuiopasdfghjklzxcvbnm",
+  "preRegistrationId": "54780465168560",
+  "refNumber": "text"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:42 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=6]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.preregistration.docrefId.update",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:42.950Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005",
+      "message": "Documents is not found for the requested pre-registration id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_DOC_005</td>
+    <td>PRG_PAM_DOC_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@c5e69a5</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.PutWithPathParam.Prereg_UpdateDocRefID_inValid_documentId()'><b>Prereg_UpdateDocRefID_inValid_documentId</b><br>Test class: io.mosip.testrig.apirig.testscripts.PutWithPathParam (Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg)<br>Parameters: TestCaseDTO(testCaseName=Prereg_UpdateDocRefID_inValid_documentId, endPoint=/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}, role=batch, templateFields=null, input={ "documentId": "eafvsbegrw134", "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$", "refNumber":"text" }, output={ "errors": [ { "errorCode": "PRG_PAM_DOC_005" } ] }, inputTemplate=preReg/UpdateDocRefID/updateDocRefID, outputTemplate=preReg/error, restMethod=put, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Update the document reference ID for the invalid document ID)<br/>
+<a href="#Output-224447405" onClick='toggleBox("Output-224447405", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-224447405" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-224447405">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "documentId": "eafvsbegrw134",
+  "preRegistrationId": "54780465168560",
+  "refNumber": "text"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:18:42 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=40]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "id": "mosip.preregistration.docrefId.update",
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:18:42.205Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005",
+      "message": "Documents is not found for the requested pre-registration id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_DOC_005</td>
+    <td>PRG_PAM_DOC_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.PutWithPathParam@c5e69a5</td></tr>
+</table><p>
+</body>
+</html>

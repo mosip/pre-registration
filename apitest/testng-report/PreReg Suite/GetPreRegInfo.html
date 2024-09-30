@@ -1,0 +1,474 @@
+<html>
+<head>
+<title>TestNG:  GetPreRegInfo</title>
+<link href="../testng.css" rel="stylesheet" type="text/css" />
+<link href="../my-testng.css" rel="stylesheet" type="text/css" />
+
+<style type="text/css">
+.log { display: none;} 
+.stack-trace { display: none;} 
+</style>
+<script type="text/javascript">
+<!--
+function flip(e) {
+  current = e.style.display;
+  if (current == 'block') {
+    e.style.display = 'none';
+    return 0;
+  }
+  else {
+    e.style.display = 'block';
+    return 1;
+  }
+}
+
+function toggleBox(szDivId, elem, msg1, msg2)
+{
+  var res = -1;  if (document.getElementById) {
+    res = flip(document.getElementById(szDivId));
+  }
+  else if (document.all) {
+    // this is the way old msie versions work
+    res = flip(document.all[szDivId]);
+  }
+  if(elem) {
+    if(res == 0) elem.innerHTML = msg1; else elem.innerHTML = msg2;
+  }
+
+}
+
+function toggleAllBoxes() {
+  if (document.getElementsByTagName) {
+    d = document.getElementsByTagName('div');
+    for (i = 0; i < d.length; i++) {
+      if (d[i].className == 'log') {
+        flip(d[i]);
+      }
+    }
+  }
+}
+
+// -->
+</script>
+
+</head>
+<body>
+<h2 align='center'>GetPreRegInfo</h2><table border='1' align="center">
+<tr>
+<td>Tests passed/Failed/Skipped:</td><td>2/0/0</td>
+</tr><tr>
+<td>Started on:</td><td>Wed Sep 18 19:00:00 IST 2024</td>
+</tr>
+<tr><td>Total time:</td><td>1 seconds (1259 ms)</td>
+</tr><tr>
+<td>Included groups:</td><td></td>
+</tr><tr>
+<td>Excluded groups:</td><td></td>
+</tr>
+</table><p/>
+<small><i>(Hover the method name to see the test class name)</i></small><p/>
+<table width='100%' border='1' class='invocation-passed'>
+<tr><td colspan='4' align='center'><b>PASSED TESTS</b></td></tr>
+<tr><td><b>Test method</b></td>
+<td width="30%"><b>Exception</b></td>
+<td width="10%"><b>Time (seconds)</b></td>
+<td><b>Instance</b></td>
+</tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.GetWithParam.Prereg_GetPreRegInfoByPrid_Valid_preRegistrationId()'><b>Prereg_GetPreRegInfoByPrid_Valid_preRegistrationId</b><br>Test class: io.mosip.testrig.apirig.testscripts.GetWithParam (Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId)<br>Parameters: TestCaseDTO(testCaseName=Prereg_GetPreRegInfoByPrid_Valid_preRegistrationId, endPoint=/preregistration/v1/applications/prereg/info/{preRegistrationId}, role=batch, templateFields=null, input={ "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$" }, output={ "postalCode":"14022", "dateOfBirth": "$IGNORE$", "IDSchemaVersion": "$IGNORE$", "phone": "$IGNORE$" }, inputTemplate=preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid, outputTemplate=preReg/GetPreRegInfoByPrid/getPreRegInfoByPridResult, restMethod=get, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Retrieve preregistration information using the preReg Id with a valid preRegistrationId)<br/>
+<a href="#Output-1677727024" onClick='toggleBox("Output-1677727024", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-1677727024" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-1677727024">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/info/{preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "26587217563912"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:30:01 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=525]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:30:00.493Z",
+  "response": {
+    "demographicResponse": {
+      "preRegistrationId": "26587217563912",
+      "createdBy": "robin.hood@mailinator.com",
+      "createdDateTime": "2024-09-18T13:17:27.859Z",
+      "updatedBy": "robin.hood@mailinator.com",
+      "updatedDateTime": "2024-09-18T13:17:56.347Z",
+      "statusCode": "Cancelled",
+      "langCode": "eng",
+      "demographicDetails": {
+        "identity": {
+          "gender": [
+            {
+              "language": "eng",
+              "value": "TEST_gender"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_gender"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_gender"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_gender"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_gender"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_gender"
+            }
+          ],
+          "city": [
+            {
+              "language": "eng",
+              "value": "TEST_city"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_city"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_city"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_city"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_city"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_city"
+            }
+          ],
+          "postalCode": "14022",
+          "fullName": [
+            {
+              "language": "eng",
+              "value": "TEST_fullName"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_fullName"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_fullName"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_fullName"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_fullName"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_fullName"
+            }
+          ],
+          "dateOfBirth": "1996/01/01",
+          "IDSchemaVersion": 0.3,
+          "province": [
+            {
+              "language": "eng",
+              "value": "TEST_province"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_province"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_province"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_province"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_province"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_province"
+            }
+          ],
+          "zone": [
+            {
+              "language": "eng",
+              "value": "TEST_zone"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_zone"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_zone"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_zone"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_zone"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_zone"
+            }
+          ],
+          "phone": "8249742850",
+          "addressLine1": [
+            {
+              "language": "eng",
+              "value": "TEST_addressLine1"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_addressLine1"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_addressLine1"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_addressLine1"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_addressLine1"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_addressLine1"
+            }
+          ],
+          "addressLine2": [
+            {
+              "language": "eng",
+              "value": "TEST_addressLine2"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_addressLine2"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_addressLine2"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_addressLine2"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_addressLine2"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_addressLine2"
+            }
+          ],
+          "residenceStatus": [
+            {
+              "language": "eng",
+              "value": "TEST_residenceStatus"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_residenceStatus"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_residenceStatus"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_residenceStatus"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_residenceStatus"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_residenceStatus"
+            }
+          ],
+          "addressLine3": [
+            {
+              "language": "eng",
+              "value": "TEST_addressLine3"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_addressLine3"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_addressLine3"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_addressLine3"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_addressLine3"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_addressLine3"
+            }
+          ],
+          "region": [
+            {
+              "language": "eng",
+              "value": "TEST_region"
+            },
+            {
+              "language": "ara",
+              "value": "TEST_region"
+            },
+            {
+              "language": "fra",
+              "value": "TEST_region"
+            },
+            {
+              "language": "tam",
+              "value": "TEST_region"
+            },
+            {
+              "language": "hin",
+              "value": "TEST_region"
+            },
+            {
+              "language": "kan",
+              "value": "TEST_region"
+            }
+          ],
+          "email": "goku@hogwarts.co.in"
+        }
+      }
+    },
+    "documentsMetaData": {
+      "documentsMetaData": [
+        {
+          "docName": "doc_POI.pdf",
+          "documentId": "73350582-75c0-11ef-96a1-cf20e80dae10",
+          "docCatCode": "POI",
+          "docTypCode": "CIN",
+          "langCode": "eng"
+        },
+        {
+          "docName": "doc_POB.pdf",
+          "documentId": "7395c323-75c0-11ef-96a1-0d3919c51528",
+          "docCatCode": "POB",
+          "docTypCode": "COB",
+          "langCode": "eng"
+        },
+        {
+          "docName": "doc_POR.pdf",
+          "documentId": "73ee9184-75c0-11ef-96a1-af8cc00811d7",
+          "docCatCode": "POR",
+          "docTypCode": "CRN",
+          "langCode": "eng"
+        }
+      ]
+    }
+  }
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>response.demographicResponse.demographicDetails.identity.phone</td>
+    <td>8249742850</td>
+    <td>8249742850</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+  <tr>
+    <td>response.demographicResponse.demographicDetails.identity.dateOfBirth</td>
+    <td>1996/01/01</td>
+    <td>1996/01/01</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+  <tr>
+    <td>response.demographicResponse.demographicDetails.identity.email</td>
+    <td>goku@hogwarts.co.in</td>
+    <td>goku@hogwarts.co.in</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+  <tr>
+    <td>response.demographicResponse.demographicDetails.identity.postalCode</td>
+    <td>14022</td>
+    <td>14022</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.GetWithParam@27df5806</td></tr>
+<tr>
+<td title='io.mosip.testrig.apirig.testscripts.GetWithParam.Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId()'><b>Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId</b><br>Test class: io.mosip.testrig.apirig.testscripts.GetWithParam (Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId)<br>Parameters: TestCaseDTO(testCaseName=Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId, endPoint=/preregistration/v1/applications/prereg/info/{preRegistrationId}, role=batch, templateFields=null, input={ "preRegistrationId": "123456" }, output={ "errors": [ { "errorCode": "PRG_PAM_APP_005" } ] }, inputTemplate=preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid, outputTemplate=preReg/error, restMethod=get, regenerateHbs=false, validityCheckRequired=false, auditLogCheck=false, checkErrorsOnlyInResponse=false, allowedErrorCodes=null, kycFields=null, description=Retrieve preregistration information using the preReg Id with an invalid preRegistrationId)<br/>
+<a href="#Output-522821571" onClick='toggleBox("Output-522821571", this, "Show output", "Hide output");'>Show output</a>
+
+<a href="#Output-522821571" onClick="toggleAllBoxes();">Show all outputs</a>
+<div class='log' id="Output-522821571">
+<b><u>Request: </u></b>(End Point URL: https://api-internal.dev-staging.mosip.net/preregistration/v1/applications/prereg/info/{preRegistrationId}) <pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>No headers</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "preRegistrationId": "123456"
+}</textarea> </div></pre><br/>
+<b><u>Response: </u></b><pre><div style='padding: 0; margin: 0;'><textarea style='border: solid 1px gray; background-color: lightgray; width: 100%; padding: 0; margin: 0;' name='headers' rows='2' readonly='true'>[Server=nginx, Date=Wed, 18 Sep 2024 13:30:01 GMT, Content-Type=application/json, Transfer-Encoding=chunked, Connection=keep-alive, vary=Origin,Access-Control-Request-Method,Access-Control-Request-Headers, x-content-type-options=nosniff, x-xss-protection=0, cache-control=no-cache, no-store, max-age=0, must-revalidate, pragma=no-cache, expires=0, strict-transport-security=max-age=31536000 ; includeSubDomains, x-frame-options=SAMEORIGIN, x-envoy-upstream-service-time=8]</textarea></div><div> <textarea style='border:solid 1px black;' name='message' rows='6' cols='160' readonly='true'>{
+  "version": "1.0",
+  "responsetime": "2024-09-18T13:30:01.390Z",
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005",
+      "message": "No data found for the requested pre-registration id"
+    }
+  ]
+}</textarea> </div></pre><br/>
+<b> Output validation: </b>EXPECTED vs ACTUAL
+<table width='100%' charset='UTF8'>
+  <tr style='background-color: #d3d3d3;'>
+    <th>FieldName</th>
+    <th>Expected Value</th> 
+    <th>Actual Value</th>
+    <th>Status</th>
+  </tr>
+  <tr>
+    <td>(errors)[0].errorCode</td>
+    <td>PRG_PAM_APP_005</td>
+    <td>PRG_PAM_APP_005</td>
+    <td bgcolor='Green'>PASS</td>
+  </tr>
+</table><br/>
+</div>
+</td>
+<td></td>
+<td>0</td>
+<td>io.mosip.testrig.apirig.testscripts.GetWithParam@27df5806</td></tr>
+</table><p>
+</body>
+</html>
