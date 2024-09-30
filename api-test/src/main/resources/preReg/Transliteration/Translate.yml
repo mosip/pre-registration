@@ -1,0 +1,69 @@
+Transliteration:
+   Prereg_Transliteration_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/transliteration/transliterate
+      description: Retrieve the preregistration data using valid transliteration
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/Transliteration/translate
+      outputTemplate: preReg/Transliteration/translateResult
+      input: '{
+  "id": "mosip.pre-registration.transliteration.transliterate",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "from_field_value": "string",
+  "from_field_lang": "eng",
+  "to_field_lang": "ara"
+ 
+}'
+      output: '{
+  "from_field_value": "string",
+  "from_field_lang": "eng",
+  "to_field_value": "سترِنگ",
+  "to_field_lang": "ara"
+}'
+   Prereg_Transliteration_inValid_tofieldlang:
+      endPoint: /preregistration/v1/transliteration/transliterate
+      description: Retrieve the transliteration data for an invalid to-field language
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/Transliteration/translate
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.transliteration.transliterate",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "from_field_value": "string",
+  "from_field_lang": "eng",
+  "to_field_lang": "asdlka"
+ 
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_TRL_APP_002"
+    }
+  ]
+}'
+   Prereg_Transliteration_inValid_fromfieldlang:
+      endPoint: /preregistration/v1/transliteration/transliterate
+      description: Retrieve the Transliteration data for an invalid 'to-field' language
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/Transliteration/translate
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.transliteration.transliterate",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "from_field_value": "string",
+  "from_field_lang": "wqeffv",
+  "to_field_lang": "ara"
+ 
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_TRL_APP_002"
+    }
+  ]
+}'

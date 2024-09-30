@@ -1,0 +1,35 @@
+GetPreRegDemographicDataByPrid:
+   Prereg_GetPreRegDemographicDataByPrid_Valid_preRegistrationId:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      description: Retrieve the PreReg demographic data by PRID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPrid
+      outputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPridResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_preRegistrationId$"
+}'
+      output: '{
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_preRegistrationId$",
+  "postalCode":"14022",
+  "dateOfBirth": "$IGNORE$",
+  "IDSchemaVersion": "$IGNORE$",
+  "phone": "$IGNORE$"
+}'
+   Prereg_GetPreRegDemographicDataByPrid_inValid_preRegistrationId:
+      endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
+      description: Retrieve the PreReg demographic data by invalid PRID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "123456"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'

@@ -1,0 +1,14 @@
+DeleteBooking:
+   Prereg_DeleteBooking_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/appointment?preRegistrationId={preRegistrationId}
+      description: Delete bookings for all valid preregistration ID
+      role: batch
+      restMethod: delete
+      inputTemplate: preReg/DeleteBooking/deleteBooking
+      outputTemplate: preReg/DeleteBooking/deleteBookingResult
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "deletedBy":"robin.hood@mailinator.com"
+}'   
