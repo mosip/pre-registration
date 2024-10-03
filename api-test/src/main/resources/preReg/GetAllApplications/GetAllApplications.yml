@@ -13,7 +13,7 @@ GetAllApplications:
       output: '{
 }'
    Prereg_GetAllApplications_InValid:
-      endPoint: /preregistration/v1/applications
+      endPoint: /preregistration/v1/applications?type={type}
       description: Retrieve all applications with invalid data
       role: batch
       checkErrorsOnlyInResponse: true
