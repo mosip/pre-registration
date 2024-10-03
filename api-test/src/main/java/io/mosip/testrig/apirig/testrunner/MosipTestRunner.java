@@ -34,6 +34,7 @@ import io.mosip.testrig.apirig.utils.KeycloakUserManager;
 import io.mosip.testrig.apirig.utils.MispPartnerAndLicenseKeyGeneration;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.PartnerRegistration;
+import io.mosip.testrig.apirig.utils.PreRegConfigManager;
 import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 /**
@@ -70,7 +71,7 @@ public class MosipTestRunner {
 			} else {
 				ExtractResource.copyCommonResources();
 			}
-			ConfigManager.init();
+			PreRegConfigManager.init();
 			BaseTestCase.suiteSetup(getRunType());
 			SkipTestCaseHandler.loadTestcaseToBeSkippedList("testCaseSkippedList.txt");
 			setLogLevels();
@@ -148,25 +149,6 @@ public class MosipTestRunner {
 		runner.run();
 	}
 
-	/**
-	 * The method to return class loader resource path
-	 * 
-	 * @return String
-	 * @throws IOException
-	 */
-	/*
-	 * public static String getGlobalResourcePath() { if
-	 * (checkRunType().equalsIgnoreCase("JAR")) { return new
-	 * File(jarUrl).getParentFile().getAbsolutePath() +
-	 * "/MosipTestResource/MosipTemporaryTestResource"; } else if
-	 * (checkRunType().equalsIgnoreCase("IDE")) { String path = new
-	 * File(MosipTestRunner.class.getClassLoader().getResource("").getPath()).
-	 * getAbsolutePath() + "/MosipTestResource/MosipTemporaryTestResource"; if
-	 * (path.contains(GlobalConstants.TESTCLASSES)) path =
-	 * path.replace(GlobalConstants.TESTCLASSES, "classes"); return path; } return
-	 * "Global Resource File Path Not Found"; }
-	 */
-
 	public static String getGlobalResourcePath() {
 		if (cachedPath != null) {
 			return cachedPath;
@@ -192,15 +174,6 @@ public class MosipTestRunner {
 
 	public static String getResourcePath() {
 		return getGlobalResourcePath();
-//		if (checkRunType().equalsIgnoreCase("JAR")) {
-//			return new File(jarUrl).getParentFile().getAbsolutePath();
-//		} else if (checkRunType().equalsIgnoreCase("IDE")) {
-//			String path = new File(MosipTestRunner.class.getClassLoader().getResource("").getPath()).getAbsolutePath();
-//			if (path.contains(GlobalConstants.TESTCLASSES))
-//				path = path.replace(GlobalConstants.TESTCLASSES, "classes");
-//			return path;
-//		}
-//		return "Global Resource File Path Not Found";
 	}
 
 	public static String generatePulicKey() {
