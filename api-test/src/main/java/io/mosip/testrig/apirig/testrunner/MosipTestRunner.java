@@ -64,6 +64,7 @@ public class MosipTestRunner {
 			for (String envName : envMap.keySet()) {
 				LOGGER.info(String.format("ENV %s = %s%n", envName, envMap.get(envName)));
 			}
+			BaseTestCase.setRunContext(getRunType(), jarUrl);
 			ExtractResource.removeOldMosipTestTestResource();
 			if (getRunType().equalsIgnoreCase("JAR")) {
 				ExtractResource.extractCommonResourceFromJar();
@@ -148,25 +149,6 @@ public class MosipTestRunner {
 		runner.run();
 	}
 
-	/**
-	 * The method to return class loader resource path
-	 * 
-	 * @return String
-	 * @throws IOException
-	 */
-	/*
-	 * public static String getGlobalResourcePath() { if
-	 * (getRunType().equalsIgnoreCase("JAR")) { return new
-	 * File(jarUrl).getParentFile().getAbsolutePath() +
-	 * "/MosipTestResource/MosipTemporaryTestResource"; } else if
-	 * (getRunType().equalsIgnoreCase("IDE")) { String path = new
-	 * File(MosipTestRunner.class.getClassLoader().getResource("").getPath()).
-	 * getAbsolutePath() + "/MosipTestResource/MosipTemporaryTestResource"; if
-	 * (path.contains(GlobalConstants.TESTCLASSES)) path =
-	 * path.replace(GlobalConstants.TESTCLASSES, "classes"); return path; } return
-	 * "Global Resource File Path Not Found"; }
-	 */
-
 	public static String getGlobalResourcePath() {
 		if (cachedPath != null) {
 			return cachedPath;
@@ -192,15 +174,6 @@ public class MosipTestRunner {
 
 	public static String getResourcePath() {
 		return getGlobalResourcePath();
-//		if (getRunType().equalsIgnoreCase("JAR")) {
-//			return new File(jarUrl).getParentFile().getAbsolutePath();
-//		} else if (getRunType().equalsIgnoreCase("IDE")) {
-//			String path = new File(MosipTestRunner.class.getClassLoader().getResource("").getPath()).getAbsolutePath();
-//			if (path.contains(GlobalConstants.TESTCLASSES))
-//				path = path.replace(GlobalConstants.TESTCLASSES, "classes");
-//			return path;
-//		}
-//		return "Global Resource File Path Not Found";
 	}
 
 	public static String generatePulicKey() {
