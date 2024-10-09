@@ -169,7 +169,7 @@ SendOtp:
    Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_09
-	  description: Send OTP with a valid phone number on the phone channel
+      description: Send OTP with a valid phone number on the phone channel
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -186,7 +186,7 @@ SendOtp:
    Prereg_SendOtp_All_Valid_Smoke_email_sid:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_10
-	  description: Send OTP with a valid phone number on the phone channel
+      description: Send OTP with a valid phone number on the phone channel
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp

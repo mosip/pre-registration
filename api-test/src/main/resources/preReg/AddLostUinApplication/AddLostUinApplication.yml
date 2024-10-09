@@ -129,7 +129,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/lostuin
-     uniqueIdentifier: TC_prereg_AddLostUinApplication_07
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_07
       description: Process the lost UIN application with a valid data
       role: batch
       templateFields: ["langCode"]

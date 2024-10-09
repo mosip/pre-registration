@@ -14,7 +14,7 @@ GetAllApplications:
       output: '{
 }'
    Prereg_GetAllApplications_InValid:
-      endPoint: /preregistration/v1/applications
+      endPoint: /preregistration/v1/applications?type={type}
       uniqueIdentifier: TC_prereg_GetAllApplications_02
       description: Retrieve all applications with invalid data
       role: batch

@@ -2,7 +2,7 @@ SendNotifications:
    Prereg_SendNotifications_All_Valid_Smoke:
       endPoint: /preregistration/v1/notification/notify
       uniqueIdentifier: TC_prereg_SendNotifications_01
-	  description: Trigger notification with valid data
+      description: Trigger notification with valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
