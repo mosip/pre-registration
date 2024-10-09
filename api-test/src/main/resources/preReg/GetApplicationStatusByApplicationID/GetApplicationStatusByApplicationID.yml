@@ -1,6 +1,7 @@
 GetApplicationStatusByApplicationID:
    Prereg_GetApplicationStatusByApplicationID_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/status/{applicationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusByApplicationID_01
       description: Retrieve the application status by application ID
       role: batch
       checkErrorsOnlyInResponse: true
@@ -15,6 +16,7 @@ GetApplicationStatusByApplicationID:
 }'
    Prereg_GetApplicationStatusByApplicationID_InValid_applicationId:
       endPoint: /preregistration/v1/applications/status/{applicationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusByApplicationID_02
       description: Retrieve the application status by invalid application ID
       role: batch
       restMethod: get

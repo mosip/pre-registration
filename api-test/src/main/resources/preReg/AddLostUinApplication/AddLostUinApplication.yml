@@ -1,6 +1,7 @@
 AddLostUinApplication:
    Prereg_AddLostUinApplication_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_01
       description: process the lost UIN application with a valid ID
       role: batch
       templateFields: ["langCode"]
@@ -19,6 +20,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_Invalid_id:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_02
       description: process the lost UIN application with an invalid ID
       role: batch
       templateFields: ["langCode"]
@@ -40,6 +42,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_invalid_lang_code:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_03
       description: Process the lost UIN application with an invalid language code
       role: batch
       restMethod: post
@@ -60,6 +63,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_without_version:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_04
       description: Process the lost UIN application without specifying the version
       role: batch
       templateFields: ["langCode"]
@@ -81,6 +85,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_without_version_attribute:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_05
       description: Process the lost UIN application without specifying the version and attribute
       role: batch
       templateFields: ["langCode"]
@@ -102,6 +107,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_with_INVALID_version:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_06
       description: Process the lost UIN application with an invalid version
       role: batch
       templateFields: ["langCode"]
@@ -123,6 +129,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/lostuin
+     uniqueIdentifier: TC_prereg_AddLostUinApplication_07
       description: Process the lost UIN application with a valid data
       role: batch
       templateFields: ["langCode"]
@@ -142,6 +149,7 @@ AddLostUinApplication:
 
    Prereg_AddLostUinApplication_inValid_langcode:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_08
       description: Process the lost UIN application with an invalid language code
       role: batch
       restMethod: post
@@ -162,6 +170,7 @@ AddLostUinApplication:
 }'
    Prereg_AddLostUinApplication_without_any_data:
       endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_AddLostUinApplication_09
       description: Process the lost UIN application with no data provided
       role: batch
       restMethod: post

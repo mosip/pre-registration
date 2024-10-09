@@ -1,6 +1,7 @@
 AddUpdateRegistration:
    Prereg_AddUpdateRegistration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/updateregistration
+      uniqueIdentifier: TC_prereg_AddUpdateRegistration_01
       description: add an update to the registration with valid data
       role: batch
       templateFields: ["langCode"]
@@ -20,6 +21,7 @@ AddUpdateRegistration:
 
    Prereg_AddUpdateRegistration_inValid_langcode:
       endPoint: /preregistration/v1/applications/updateregistration
+      uniqueIdentifier: TC_prereg_AddUpdateRegistration_02
       description: add an update to the registration with an invalid data
       role: batch
       restMethod: post

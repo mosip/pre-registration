@@ -1,6 +1,7 @@
 GetAllDocForPrId:
    Prereg_GetAllDocForPrId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_01
       description: Retrieve all documents associated with the valid Pre-Registration ID
       role: batch
       checkErrorsOnlyInResponse: true
@@ -16,6 +17,7 @@ GetAllDocForPrId:
 }'
    Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_02
       description: Retrieve all documents associated with the invalid Pre-Registration ID
       role: batch
       restMethod: get

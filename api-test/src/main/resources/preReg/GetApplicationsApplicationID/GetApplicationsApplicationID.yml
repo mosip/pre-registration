@@ -1,6 +1,7 @@
 GetApplicationsApplicationID:
    Prereg_GetApplicationsApplicationID_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/{applicationId}
+      uniqueIdentifier: TC_prereg_GetApplicationsApplicationID_01
       description: Retrieve the application by application ID
       role: batch
       checkErrorsOnlyInResponse: true
@@ -15,6 +16,7 @@ GetApplicationsApplicationID:
 }'
    Prereg_GetApplicationsApplicationID_InValid_applicationID:
       endPoint: /preregistration/v1/applications/{applicationId}
+      uniqueIdentifier: TC_prereg_GetApplicationsApplicationID_02
       description: Retrieve the application by invalid application ID
       role: batch
       restMethod: get

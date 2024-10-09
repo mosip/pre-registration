@@ -1,6 +1,7 @@
 GetAllApplications:
    Prereg_GetAllApplications_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_GetAllApplications_01
       description: Retrieve all applications with valid data
       role: batch
       checkErrorsOnlyInResponse: true
@@ -13,7 +14,8 @@ GetAllApplications:
       output: '{
 }'
    Prereg_GetAllApplications_InValid:
-      endPoint: /preregistration/v1/applications?type={type}
+      endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_GetAllApplications_02
       description: Retrieve all applications with invalid data
       role: batch
       checkErrorsOnlyInResponse: true
@@ -32,6 +34,7 @@ GetAllApplications:
 }'
    Prereg_GetAllApplications_InValid_Type:
       endPoint: /preregistration/v1/applications?type={type}
+      uniqueIdentifier: TC_prereg_GetAllApplications_03
       description: Retrieve all applications with an invalid type
       role: batch
       restMethod: get
@@ -49,6 +52,7 @@ GetAllApplications:
 }'
    Prereg_GetAllApplications_Valid_Type_Smoke_sid:
       endPoint: /preregistration/v1/applications?type={type}
+      uniqueIdentifier: TC_prereg_GetAllApplications_04
       description: Retrieve all applications with a valid type
       role: batch
       checkErrorsOnlyInResponse: true
