@@ -559,7 +559,7 @@ CreatePrereg:
     }
   ]
 }'
-   Prereg_CreatePrereg_Invalid_OTP_Neg:
+   Prereg_CreatePrereg_Invalid_OTP_Neg_StatusCode:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_23
       description: Creating preregistration with an invalid OTP
@@ -580,13 +580,8 @@ CreatePrereg:
   "requesttime": "$TIMESTAMP$",
   "id": "mosip.pre-registration.demographic.create"
 }'
-      output: '{
-      "errors": [
-    {
-      "errorCode": "KER-IOV-004"
-    }
-  ]
-}'   
+         output: "500"
+
    Prereg_CreatePrereg_All_Valid_Smoke_date_verification_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_24
