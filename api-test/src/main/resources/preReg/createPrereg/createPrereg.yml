@@ -580,7 +580,7 @@ CreatePrereg:
   "requesttime": "$TIMESTAMP$",
   "id": "mosip.pre-registration.demographic.create"
 }'
-         output: "500"
+      output: "500"
 
    Prereg_CreatePrereg_All_Valid_Smoke_date_verification_sid:
       endPoint: /preregistration/v1/applications/prereg
