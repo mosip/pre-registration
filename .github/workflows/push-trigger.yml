@@ -80,7 +80,7 @@ jobs:
 
   sonar_analysis:
     needs: build-maven-pre-registration
-    if: "${{  github.event_name != 'pull_request' }}"
+    if: "${{ github.event_name != 'pull_request' }}"
     uses: mosip/kattu/.github/workflows/maven-sonar-analysis.yml@master
     with:
       SERVICE_LOCATION: ./pre-registration
@@ -92,3 +92,28 @@ jobs:
       OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
       GPG_SECRET: ${{ secrets.GPG_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  trivy_scan:
+    needs: build-dockers
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+          - SERVICE_NAME: 'pre-registration-application-service'
+          - SERVICE_NAME: 'pre-registration-batchjob'
+          - SERVICE_NAME: 'pre-registration-datasync-service'
+          - SERVICE_NAME: 'pre-registration-captcha-service'
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+      - name: Run Trivy vulnerability scanner
+        uses: aquasecurity/trivy-action@master
+        with:
+          image-ref: 'docker.io/your_dockerhub_namespace/${{ matrix.SERVICE_NAME }}:latest'
+          format: 'sarif'
+          output: 'trivy-report-${{ matrix.SERVICE_NAME }}.sarif'
+      - name: Upload SARIF file
+        uses: actions/upload-artifact@v3
+        with:
+          name: trivy-report-${{ matrix.SERVICE_NAME }}
+          path: trivy-report-${{ matrix.SERVICE_NAME }}.sarif
