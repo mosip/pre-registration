@@ -110,6 +110,10 @@ public enum DocumentErrorCodes {
 	/**
 	 * ErrorCode for DOCUMENT_TABLE_NOTACCESSIBLE BY BOOKED OR EXPIRED STATUS
 	 */
-	PRG_PAM_DOC_024;
+	PRG_PAM_DOC_024,
+	/**
+	 * ErrorCode for Password Protection files
+	 */
+	PRG_PAM_DOC_025;
 
 }

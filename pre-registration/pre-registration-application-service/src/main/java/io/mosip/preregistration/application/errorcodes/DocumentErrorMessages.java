@@ -132,7 +132,12 @@ public enum DocumentErrorMessages {
 	/**
 	 * ErrorMessage for PRG_PAM_DOC_012
 	 */
-	DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS("Document table not able to update by this status");
+	DOCUMENT_TABLE_NOTACCESSIBLE_BY_BOOKED_OR_EXPIRED_STATUS("Document table not able to update by this status"),
+
+	/**
+	 * ErrorMessage for Password Protection files
+	 */
+	PASSWORD_PROTECTION_ERROR("Password-protected file is not allowed for upload");
 
 	private DocumentErrorMessages(String message) {
 		this.message = message;
