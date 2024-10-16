@@ -20,8 +20,9 @@ function installing_prereg() {
   helm repo update
 
   echo Copy configmaps
-  sed -i 's/\r$//' copy_cm.sh
-  ./copy_cm.sh
+  $COPY_UTIL configmap global default $NS
+  $COPY_UTIL configmap artifactory-share artifactory $NS
+  $COPY_UTIL configmap config-server-share config-server $NS
 
   API_HOST=`kubectl get cm global -o jsonpath={.data.mosip-api-host}`
   PREREG_HOST=`kubectl get cm global -o jsonpath={.data.mosip-prereg-host}`
