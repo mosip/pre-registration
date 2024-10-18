@@ -1,6 +1,7 @@
 GetApplicationStatusWithPrId:
    Prereg_GetApplicationStatusWithPrId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_01
       description: Retrieve the application status using a valid PRID
       role: batch
       restMethod: get
@@ -14,6 +15,7 @@ GetApplicationStatusWithPrId:
 }'
    Prereg_GetApplicationStatusWithPrId_inValid_PRID_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_02
       description: Retrieve the application status using an invalid PRID
       role: batch
       restMethod: get
@@ -31,6 +33,7 @@ GetApplicationStatusWithPrId:
 }'
    Prereg_GetApplicationStatusWithPrId_Blank_PRID_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_03
       description: Retrieve the application status using an blank PRID
       role: batch
       restMethod: get

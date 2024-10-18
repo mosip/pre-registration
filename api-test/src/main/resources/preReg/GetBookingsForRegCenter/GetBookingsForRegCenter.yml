@@ -1,6 +1,7 @@
 GetBookingsForRegCenter:
    Prereg_GetBookingsForRegCenter_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13
+      uniqueIdentifier: TC_prereg_GetBookingsForRegCenter_01
       description: Retrieve booking for a valid registration center ID
       role: batch
       restMethod: get
@@ -14,6 +15,7 @@ GetBookingsForRegCenter:
 }'
    Prereg_GetBookingsForRegCenter_with_InValid_date_format:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?from_date=2020-45461&to_date=2034-10-13
+      uniqueIdentifier: TC_prereg_GetBookingsForRegCenter_02
       description: Retrieve booking for a registration center with an invalid date format
       role: batch
       restMethod: get
@@ -31,6 +33,7 @@ GetBookingsForRegCenter:
 }'
    Prereg_GetBookingsForRegCenter_with_InValid_regcenter:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13
+      uniqueIdentifier: TC_prereg_GetBookingsForRegCenter_03
       description: Retrieve booking for a registration center with an invalid registration center ID
       role: batch
       restMethod: get
@@ -48,6 +51,7 @@ GetBookingsForRegCenter:
 }'
    Prereg_GetBookingsForRegCenter_with_InValid_regcenter_invalidDate:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=20204y464tg1&appointmentToDate=2034-10-13
+      uniqueIdentifier: TC_prereg_GetBookingsForRegCenter_04
       description: Retrieve booking for a registration center with an invalid registration center ID and an invalid date
       role: batch
       restMethod: get
