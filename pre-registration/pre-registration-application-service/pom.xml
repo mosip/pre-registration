@@ -22,6 +22,7 @@
 		<kernel.qrcodegenerator.zxing.version>1.3.0-beta.1</kernel.qrcodegenerator.zxing.version>
 		<kernel.transliteration.icu4j.version>1.3.0-beta.1</kernel.transliteration.icu4j.version>
 		<kernel.bom.version>1.3.0-beta.1</kernel.bom.version>
+		<mosip.openid.bridge.version>1.3.0-beta.1</mosip.openid.bridge.version>
 		<pre.registration.core.version>1.3.0-SNAPSHOT</pre.registration.core.version>
 		<!-- Others -->
 		<org.hamcrest.version>2.1</org.hamcrest.version>
@@ -221,7 +222,7 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-auth-adapter</artifactId>
-					<version>${project.version}</version>
+					<version>${mosip.openid.bridge.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
