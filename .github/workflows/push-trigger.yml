@@ -202,3 +202,9 @@ jobs:
       OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
       GPG_SECRET: ${{ secrets.GPG_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  call-trivy-scan:
+    uses: mosip/kattu/.github/workflows/trivy.yml@develop
+    with:
+            service_name: 'apitest-prereg'
+            version: 'latest'
