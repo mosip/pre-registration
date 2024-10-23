@@ -202,3 +202,18 @@ jobs:
       OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
       GPG_SECRET: ${{ secrets.GPG_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  trivy-scan:
+     needs: build-dockers
+     uses: mosip/kattu/.github/workflows/trivy.yml@develop
+     strategy:
+      matrix:
+       include:
+        - SERVICE_NAME: 'pre-registration-application-service'
+        - SERVICE_NAME: 'pre-registration-batchjob'
+        - SERVICE_NAME: 'pre-registration-datasync-service'
+        - SERVICE_NAME: 'pre-registration-captcha-service'
+
+     with:
+      service_name: ${{ matrix.SERVICE_NAME }}
+      version: $'{{ github.ref_name }}'
