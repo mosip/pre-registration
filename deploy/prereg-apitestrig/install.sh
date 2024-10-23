@@ -6,8 +6,9 @@ if [ $# -ge 1 ] ; then
   export KUBECONFIG=$1
 fi
 
-NS=mimoto
+NS=prereg
 CHART_VERSION=0.0.1-develop
+COPY_UTIL=../copy_cm_func.sh
 
 echo Create $NS namespace
 kubectl create ns $NS
@@ -18,7 +19,6 @@ function installing_apitestrig() {
   helm repo update
 
   echo Copy Configmaps
-  COPY_UTIL=../copy_cm_func.sh
   $COPY_UTIL configmap global default $NS
   $COPY_UTIL configmap keycloak-host keycloak $NS
   $COPY_UTIL configmap artifactory-share artifactory $NS
@@ -97,8 +97,8 @@ function installing_apitestrig() {
      echo "eSignet service is not deployed. hence will be skipping esignet related test-cases..."
  fi
 
-  echo Installing apitestrig
-  helm -n $NS install apitestrig mosip/apitestrig \
+  echo Installing prereg apitestrig
+  helm -n $NS install prereg-apitestrig mosip/apitestrig \
   --set crontime="0 $time * * *" \
   -f values.yaml  \
   --version $CHART_VERSION \
@@ -117,7 +117,7 @@ function installing_apitestrig() {
   --set apitestrig.configmaps.apitestrig.NS="$NS" \
   $ENABLE_INSECURE
 
-  echo Installed apitestrig.
+  echo Installed prereg apitestrig.
   return 0
 }
 
