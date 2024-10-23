@@ -1,6 +1,7 @@
 GetPreRegDemographicDataByPrid:
    Prereg_GetPreRegDemographicDataByPrid_Valid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetPreRegDemographicDataByPrid_01
       description: Retrieve the PreReg demographic data by PRID
       role: batch
       restMethod: get
@@ -18,6 +19,7 @@ GetPreRegDemographicDataByPrid:
 }'
    Prereg_GetPreRegDemographicDataByPrid_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetPreRegDemographicDataByPrid_02
       description: Retrieve the PreReg demographic data by invalid PRID
       role: batch
       restMethod: get

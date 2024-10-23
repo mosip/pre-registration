@@ -1,6 +1,7 @@
 UploadDocument:
    Prereg_UploadDocument_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_01
       description: Upload the valid document preregistration ID 
       role: batch
       restMethod: post
@@ -25,6 +26,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Rebook_the_booked_appoinment_Smoke_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_02
       description:  Upload the document to rebook the booked appointment
       role: batch
       restMethod: post
@@ -49,6 +51,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POI_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_03
       description:  Upload the valid Proof of Identity (POI) document
       role: batch
       restMethod: post
@@ -73,6 +76,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POB_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_04
       description:  Upload the valid Proof of Date of Birth (POB) document
       role: batch
       restMethod: post
@@ -97,6 +101,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POR_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_05
       description: Upload the valid Proof of Residence (POR) document
       role: batch
       restMethod: post
@@ -121,6 +126,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_UpdateDocRefID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_06
       description: upload the valid document with the updated document reference ID
       role: batch
       restMethod: post
@@ -145,6 +151,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POI_UpdateDocRefID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_07
       description: Upload the valid Proof of Identity (POI) document with the updated reference ID
       role: batch
       restMethod: post
@@ -169,6 +176,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POB_UpdateDocRefID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_08
       description:  Upload the valid Proof of Date of Birth (POB) document with the updated reference ID
       role: batch
       restMethod: post
@@ -193,6 +201,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POR_UpdateDocRefID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_09
       description:  Upload the valid Proof of Residence (POR) document with the updated reference ID
       role: batch
       restMethod: post
@@ -217,6 +226,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_BookByPRID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_10
       description: Upload the valid document to book an appointment using PRID
       role: batch
       restMethod: post
@@ -241,6 +251,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POI_BookByPRID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_11
       description:  Upload the valid Proof of Identity (POI) document to book an appointment using PRID
       role: batch
       restMethod: post
@@ -265,6 +276,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POB_BookByPRID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_12
       description: Upload the valid Proof of Date of Birth (POB) document to book an appointment using PRID
       role: batch
       restMethod: post
@@ -289,6 +301,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POR_BookByPRID_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_13
       description: Upload the valid Proof of Residence (POR) document to book an appointment using PRID
       role: batch
       restMethod: post
@@ -313,6 +326,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_14
       description: Upload the valid Proof of Address (POA) document
       role: batch
       restMethod: post
@@ -337,6 +351,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Valid_Smoke_POI_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_15
       description: Upload the valid Proof of Identity (POI) document
       role: batch
       restMethod: post
@@ -361,6 +376,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Valid_POB_Smoke_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_16
       description: Upload the valid Proof of Date of Birth (POB) document
       role: batch
       restMethod: post
@@ -385,6 +401,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Valid_POR_Smoke_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_17
       description: Upload the valid Proof of Residence (POR) document
       role: batch
       restMethod: post
@@ -409,6 +426,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_alldel_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_18
       description: Upload the Proof of Address (POA) document for deletion
       role: batch
       restMethod: post
@@ -433,6 +451,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_POI_alldel_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_19
       description: Upload the Proof of Identity (POI) document for deletion
       role: batch
       restMethod: post
@@ -457,6 +476,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_POB_alldel_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_20
       description: Upload the Proof of Date of Birth (POB) document for deletion
       role: batch
       restMethod: post
@@ -481,6 +501,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_POR_alldel_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_21
       description: Upload the Proof of Residence (POR) document for deletion
       role: batch
       restMethod: post
@@ -505,6 +526,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_cancellappointment_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_22
       description: Upload the valid Proof of Address (POA) document to cancelling the appointment
       role: batch
       restMethod: post
@@ -529,6 +551,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_cancellappointment_POI_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_23
       description: Upload the valid Proof of Address (POI) document to cancelling the appointment
       role: batch
       restMethod: post
@@ -553,6 +576,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_cancellappointment_POB_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_24
       description: Upload the valid Proof of Date of Birth (POB) document to cancel the appointment
       role: batch
       restMethod: post
@@ -577,6 +601,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_cancellappointment_POR_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_25
       description: Upload the valid Proof of Residence (POR) document to cancel the appointment
       role: batch
       restMethod: post
@@ -601,6 +626,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_CancelApplicationsAppointment_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_26
       description: Upload the valid Proof of Address (POA) document to cancel the application appointment
       role: batch
       restMethod: post
@@ -625,6 +651,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_CancelApplicationsAppointment_POI_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_27
       description: Upload the valid Proof of Identity (POI) document to cancel the application appointment
       role: batch
       restMethod: post
@@ -649,6 +676,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_CancelApplicationsAppointment_POB_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_28
       description: Upload the valid Proof of Date of Birth (POB) document to cancel the application appointment
       role: batch
       restMethod: post
@@ -673,6 +701,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Smoke_CancelApplicationsAppointment_POR_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_29
       description: Upload the valid Proof of Residence (POR) document to cancel the application appointment
       role: batch
       restMethod: post
@@ -697,6 +726,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_inValid_docTypCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_30
       description: Upload the invalid Proof of Address (POA) document type code
       role: batch
       restMethod: post
@@ -721,6 +751,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_blank_docTypCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_31
       description: Upload the blank Proof of Address (POA) document type code
       role: batch
       restMethod: post
@@ -745,6 +776,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_missing_docTypCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_32
       description: Upload the Proof of Address (POA) document without the document type code
       role: batch
       restMethod: post
@@ -769,6 +801,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_blank_doccatCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_33
       description: Upload the Proof of Address (POA) document blank the document category code
       role: batch
       restMethod: post
@@ -793,6 +826,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_missing_doccatCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_34
       description: Upload the Proof of Address (POA) document without the document category code
       role: batch
       restMethod: post
@@ -817,6 +851,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Invalid_doccatCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_35
       description: Upload the Proof of Address (POA) document with the invalid document category code
       role: batch
       restMethod: post
@@ -841,6 +876,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Invalid_langCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_36
       description: Upload the Proof of Address (POA) document with the invalid language code 
       role: batch
       restMethod: post
@@ -866,6 +902,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_missing_langCode_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_37
       description: Upload the Proof of Address (POA) document with the missing document category code
       role: batch
       restMethod: post
@@ -891,6 +928,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_inValid_id_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_38
       description: Upload the Proof of Address (POA) document with an invalid ID
       role: batch
       restMethod: post
@@ -916,6 +954,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_Blank_id_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_39
       description: Upload the Proof of Address (POA) document with a blank ID
       role: batch
       restMethod: post
@@ -944,6 +983,7 @@ UploadDocument:
 
    Prereg_UploadDocument_All_Valid_Smoke_expiry_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_40
       description: Upload the Proof of Address (POA) document with an expired ID
       role: batch
       restMethod: post
@@ -968,6 +1008,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POI_expired_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_41
       description: Upload the Proof of Identity (POI) document with an expired ID
       role: batch
       restMethod: post
@@ -992,6 +1033,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POB_expired_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_42
       description: Upload the Proof of Date of Birth (POB) document with an expired ID
       role: batch
       restMethod: post
@@ -1016,6 +1058,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POR_expired_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_43
       description: Upload the Proof of Residence (POR) document with an expired ID
       role: batch
       restMethod: post
@@ -1041,6 +1084,7 @@ UploadDocument:
 
    Prereg_UploadDocument_All_Valid_Smoke_cancell_pending_appoinment_prid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_44
       description: Upload the Proof of Address (POA) document to cancel a pending appointment with PRID
       role: batch
       restMethod: post
@@ -1065,6 +1109,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POI_cancell_pending_appoinment_prid_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_45
       description: Upload the Proof of Identity (POI) document to cancel a pending appointment with PRID
       role: batch
       restMethod: post
@@ -1089,6 +1134,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POB_cancell_pending_appoinment_prid_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_46
       description: Upload the Proof of date of Birth (POB) document to cancel a pending appointment with PRID
       role: batch
       restMethod: post
@@ -1113,6 +1159,7 @@ UploadDocument:
 }'
    Prereg_UploadDocument_All_Valid_Smoke_POR_cancell_pending_appoinment_prid_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UploadDocument_47
       description: Upload the Proof of Residence (POR) document to cancel a pending appointment with PRID
       role: batch
       restMethod: post

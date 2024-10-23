@@ -1,6 +1,7 @@
 UpdatePreregistration:
    Prereg_UpdatePrereg_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_01
       description: Update demographic data for a new preregistration application
       role: batch
       restMethod: put
@@ -23,6 +24,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_All_Valid_Smoke_BookByPRID_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_02
       description: Update the demographic data for booking an appointment with the new PRID
       role: batch
       restMethod: put
@@ -45,6 +47,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_inValid_dateOfBirth_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_03
       description: Update the demographic data with an invalid date of birth
       role: batch
       restMethod: put
@@ -71,6 +74,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_missing_Version_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_04
       description: Update the demographic data with a missing version number
       role: batch
       restMethod: put
@@ -97,6 +101,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_invalid_Version_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_05
       description: Update the demographic data with an invalid version 
       role: batch
       restMethod: put
@@ -123,6 +128,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_invalid_email_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_06
       description: Update the demographic data with an invalid email address
       role: batch
       restMethod: put
@@ -149,6 +155,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_missing_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_07
       description: Update the demographic data with an missing language code 
       role: batch
       restMethod: put
@@ -175,6 +182,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_INVALID_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_08
       description: Update the demographic data with an invalid language code
       role: batch
       restMethod: put
@@ -201,6 +209,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_INVALID_requesttime_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_09
       description: Update the demographic data with an invalid request time
       role: batch
       restMethod: put
@@ -227,6 +236,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_Missing_requesttime_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_010
       description: Update the demographic data without a request time
       role: batch
       restMethod: put
@@ -253,6 +263,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_previous_date_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_011
       description: Update the demographic data with a past date
       role: batch
       restMethod: put
@@ -279,6 +290,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_invalid_id_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_012
       description: Update the demographic data with an invalid ID
       role: batch
       restMethod: put
@@ -305,6 +317,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_missing_id_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_013
       description: Update the demographic data with a missing ID
       role: batch
       restMethod: put
@@ -331,6 +344,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_blank_id_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_014
       description: Update the demographic data with a blank ID
       role: batch
       restMethod: put
@@ -357,6 +371,7 @@ UpdatePreregistration:
 }'
    Prereg_UpdatePrereg_update_date_without_Status_change_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_UpdatePreregistration_015
       description: Update the demographic data for date of birth without changing the status
       role: batch
       restMethod: put
