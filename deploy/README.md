@@ -10,9 +10,13 @@
   ```
 
 ## Uninstall
-
 ```sh
 ./delete.sh
+```
+
+## Restart
+```sh
+./restart.sh
 ```
 
 ## Test

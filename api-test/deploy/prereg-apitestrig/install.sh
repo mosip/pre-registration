@@ -6,8 +6,9 @@ if [ $# -ge 1 ] ; then
   export KUBECONFIG=$1
 fi
 
-NS=apitestrig
+NS=prereg
 CHART_VERSION=1.3.0-beta.1-develop
+COPY_UTIL=../copy_cm_func.sh
 
 echo Create $NS namespace
 kubectl create ns $NS
@@ -17,11 +18,16 @@ function installing_apitestrig() {
   kubectl label ns $NS istio-injection=disabled --overwrite
   helm repo update
 
-  echo Copy configmaps
-  ./copy_cm.sh
+  echo Copy Configmaps
+  $COPY_UTIL configmap global default $NS
+  $COPY_UTIL configmap keycloak-host keycloak $NS
+  $COPY_UTIL configmap artifactory-share artifactory $NS
+  $COPY_UTIL configmap config-server-share config-server $NS
 
-  echo Copy secrets
-  ./copy_secrets.sh
+  echo echo Copy Secrtes
+  $COPY_UTIL secret keycloak-client-secrets keycloak $NS
+  $COPY_UTIL secret s3 s3 $NS
+  $COPY_UTIL secret postgres-postgresql postgres $NS
 
   echo "Delete s3, db, & apitestrig configmap if exists"
   kubectl -n $NS delete --ignore-not-found=true configmap s3
@@ -91,8 +97,8 @@ function installing_apitestrig() {
      echo "eSignet service is not deployed. hence will be skipping esignet related test-cases..."
  fi
 
-  echo Installing apitestrig
-  helm -n $NS install apitestrig mosip/apitestrig \
+  echo Installing prereg apitestrig
+  helm -n $NS install prereg-apitestrig mosip/apitestrig \
   --set crontime="0 $time * * *" \
   -f values.yaml  \
   --version $CHART_VERSION \
@@ -111,7 +117,7 @@ function installing_apitestrig() {
   --set apitestrig.configmaps.apitestrig.NS="$NS" \
   $ENABLE_INSECURE
 
-  echo Installed apitestrig.
+  echo Installed prereg apitestrig.
   return 0
 }
 
