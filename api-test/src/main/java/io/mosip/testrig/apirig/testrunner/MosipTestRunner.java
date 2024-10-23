@@ -88,12 +88,6 @@ public class MosipTestRunner {
 			KeycloakUserManager.createUsers();
 			KeycloakUserManager.closeKeycloakInstance();
 			
-			//List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
-
-			// List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
-
-			// List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
-
 			startTestRunner();
 		} catch (Exception e) {
 			LOGGER.error("Exception " + e.getMessage());

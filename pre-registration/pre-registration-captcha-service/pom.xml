@@ -18,10 +18,10 @@
 	
 	<properties>
 		<!-- Mosip kernel -->
-		<kernel.keymanager.version>1.3.0-SNAPSHOT</kernel.keymanager.version>
-		<kernel.transliteration.icu4j.version>1.3.0-SNAPSHOT</kernel.transliteration.icu4j.version>
-		<kernel.idobjectvalidator.version>1.3.0-SNAPSHOT</kernel.idobjectvalidator.version>
-		<kernel.bom.version>1.3.0-SNAPSHOT</kernel.bom.version>
+		<kernel.keymanager.version>1.3.0-beta.1</kernel.keymanager.version>
+		<kernel.transliteration.icu4j.version>1.3.0-beta.1</kernel.transliteration.icu4j.version>
+		<kernel.idobjectvalidator.version>1.3.0-beta.1</kernel.idobjectvalidator.version>
+		<kernel.bom.version>1.3.0-beta.1</kernel.bom.version>
 		<pre.registration.core.version>1.3.0-SNAPSHOT</pre.registration.core.version>
 	</properties>
 
