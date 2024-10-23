@@ -3,7 +3,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_01
       description: Retrieve the PRID within the given date range
-      role: regproc
+      role: admin
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
@@ -23,7 +23,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_02
       description: Retrieve the PRID within the specified date range for the Invalid ID
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -46,7 +46,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_03
       description: Retrieve the PRID within the specified date range for the blank ID
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -69,7 +69,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_04
       description: Retrieve the PRID within the specified date range for the missing ID
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -92,7 +92,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_05
       description: Retrieve the PRID within the specified date range for the invalid version
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -115,7 +115,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_06
       description: Retrieve the PRID within the specified date range for the missing version
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -138,7 +138,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_07
       description: Retrieve the PRID within the specified date range for the blank version
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -161,7 +161,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_08
       description: Retrieve the PRID within the specified date range for the request time that is blank 
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -184,7 +184,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_09
       description: Retrieve the PRID within the specified date range for the missing request time 
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -207,7 +207,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_10
       description: Retrieve the PRID within the specified date range for the invalid request time
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -230,7 +230,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_11
       description: Retrieve the PRID within the specified date range for the invalid registration center ID
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -253,7 +253,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_12
       description: Retrieve the PRID within the specified date range for the blank registration center ID
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -276,7 +276,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_13
       description:  Retrieve the PRID within the specified date range for the missing registration center ID
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -299,7 +299,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_14
       description: Retrieve the PRID within the specified date range where the fromDate is missing
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -322,7 +322,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_15
       description: Retrieve the PRID within the specified date range where the fromDate is missing
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -345,7 +345,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_16
       description: Retrieve the PRID within the specified date range where the fromDate field is blank
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -368,7 +368,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_17
       description: Retrieve the PRID within the specified date range where the toDate field is blank
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -391,7 +391,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_18
       description: Retrieve the PRID within the specified date range where the toDate field is missing 
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
@@ -414,7 +414,7 @@ GetPRIDByDateRange:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_19
       description: Retrieve the PRID within the specified date range where the 'toDate' field is invalid
-      role: regproc
+      role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
       outputTemplate: preReg/error
