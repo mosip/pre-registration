@@ -1,6 +1,7 @@
 ValidateOtp:
   Prereg_ValidateOtp_All_Valid_Smoke_email_sid:
     endPoint: /preregistration/v1/login/validateOtp
+    uniqueIdentifier: TC_prereg_ValidateOtp_01
     description: Validating OTP with a valid phone number
     role: batch
     checkErrorsOnlyInResponse: true
@@ -18,6 +19,7 @@ ValidateOtp:
 
   Prereg_ValidateOtp_All_Valid_Smoke_Phone_sid:
     endPoint: /preregistration/v1/login/validateOtp
+    uniqueIdentifier: TC_prereg_ValidateOtp_02
     description: Validating OTP with an invalid phone number
     role: batch
     restMethod: post
@@ -40,6 +42,7 @@ ValidateOtp:
 
   Prereg_ValidateOtp_Invalid_Phone_Neg_INVALIDOTP:
     endPoint: /preregistration/v1/login/validateOtp
+    uniqueIdentifier: TC_prereg_ValidateOtp_03
     description: Validating OTP with a phone number containing special characters
     role: batch
     checkErrorsOnlyInResponse: true
@@ -63,6 +66,7 @@ ValidateOtp:
 
   Prereg_ValidateOtp_SpacialCharacters_Phone_Neg_INVALIDOTP:
     endPoint: /preregistration/v1/login/validateOtp
+    uniqueIdentifier: TC_prereg_ValidateOtp_04
     description: Validating OTP with a valid email address
     role: batch
     checkErrorsOnlyInResponse: true
@@ -86,6 +90,7 @@ ValidateOtp:
 
   Prereg_ValidateOtp_SpacialCharacters_Email_Neg_INVALIDOTP:
     endPoint: /preregistration/v1/login/validateOtp
+    uniqueIdentifier: TC_prereg_ValidateOtp_05
     description: Validating OTP with an email address containing special characters
     role: batch
     checkErrorsOnlyInResponse: true
@@ -109,6 +114,7 @@ ValidateOtp:
 
   Prereg_ValidateOtp_Invalid_Email_Neg_INVALIDOTP:
     endPoint: /preregistration/v1/login/validateOtp
+    uniqueIdentifier: TC_prereg_ValidateOtp_06
     description: Validating OTP with an invalid email address
     role: batch
     checkErrorsOnlyInResponse: true

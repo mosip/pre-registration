@@ -76,7 +76,6 @@ public class MosipTestRunner {
 			SkipTestCaseHandler.loadTestcaseToBeSkippedList("testCaseSkippedList.txt");
 			setLogLevels();
 
-
 			// For now we are not doing health check for qa-115.
 			if (BaseTestCase.isTargetEnvLTS()) {
 				HealthChecker healthcheck = new HealthChecker();
@@ -87,10 +86,6 @@ public class MosipTestRunner {
 			KeycloakUserManager.removeUser();
 			KeycloakUserManager.createUsers();
 			KeycloakUserManager.closeKeycloakInstance();
-			
-			//List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
-
-			// List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
 
 			startTestRunner();
 		} catch (Exception e) {

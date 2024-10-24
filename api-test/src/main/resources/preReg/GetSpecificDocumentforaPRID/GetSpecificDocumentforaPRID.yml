@@ -1,6 +1,7 @@
 GetSpecificDocumentforaPRID:
    Prereg_GetSpecificDocumentforaPRID_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetSpecificDocumentforaPRID_01
       description: Retrieve the specific document with a valid preregistration ID
       role: batch
       checkErrorsOnlyInResponse: true
@@ -16,6 +17,7 @@ GetSpecificDocumentforaPRID:
 }'
    Prereg_GetSpecificDocumentforaPRID_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetSpecificDocumentforaPRID_02
       description: Retrieve the specific document with an invalid preregistration ID
       role: batch
       restMethod: get
@@ -34,6 +36,7 @@ GetSpecificDocumentforaPRID:
 }'
    Prereg_GetSpecificDocumentforaPRID_inValid_documentId_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetSpecificDocumentforaPRID_03
       description: Retrieve the specific document with an invalid document ID
       role: batch
       restMethod: get

@@ -1,6 +1,7 @@
 FetchAvailabilityDataByCenterID:
    Prereg_FetchAvailabilityDataByCenterID_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment/slots/availability/10003
+      uniqueIdentifier: TC_prereg_FetchAvailabilityDataByCenterID_01
       description: Fetch the available data by center ID
       role: batch
       restMethod: get
@@ -14,6 +15,7 @@ FetchAvailabilityDataByCenterID:
 }'
    Prereg_FetchAvailabilityData_inValid_CenterID_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment/slots/availability/{registrationCenterId}
+      uniqueIdentifier: TC_prereg_FetchAvailabilityDataByCenterID_02
       description: Fetch the available data by invalid center ID
       role: batch
       restMethod: get
