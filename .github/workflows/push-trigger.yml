@@ -216,4 +216,5 @@ jobs:
 
      with:
       service_name: ${{ matrix.SERVICE_NAME }}
-      version: 'develop'
+      version: ${{ github.event.pull_request.base.ref }}
+
