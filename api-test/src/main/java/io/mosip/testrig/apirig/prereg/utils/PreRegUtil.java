@@ -1,9 +1,12 @@
-package io.mosip.testrig.apirig.utils;
+package io.mosip.testrig.apirig.prereg.utils;
 
 import org.apache.log4j.Logger;
 import org.testng.SkipException;
 
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
+import io.mosip.testrig.apirig.utils.AdminTestUtil;
+import io.mosip.testrig.apirig.utils.GlobalConstants;
+import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 public class PreRegUtil extends AdminTestUtil {
 

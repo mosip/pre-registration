@@ -1,4 +1,4 @@
-package io.mosip.testrig.apirig.testscripts;
+package io.mosip.testrig.apirig.prereg.testscripts;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -20,6 +20,8 @@ import org.testng.internal.TestResult;
 
 import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
+import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
+import io.mosip.testrig.apirig.prereg.utils.PreRegUtil;
 import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
@@ -27,16 +29,13 @@ import io.mosip.testrig.apirig.utils.AuthenticationTestException;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
-import io.mosip.testrig.apirig.utils.PreRegConfigManager;
-import io.mosip.testrig.apirig.utils.PreRegUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil implements ITest {
-	private static final Logger logger = Logger.getLogger(PostWithFormDataAndFileForNotificationAPI.class);
+public class PostWithPathParamsAndBody extends AdminTestUtil implements ITest {
+	private static final Logger logger = Logger.getLogger(PostWithPathParamsAndBody.class);
 	protected String testCaseName = "";
-	String idKeyName = null;
-	public Response response = null;
+	public String pathParams = null;
 
 	@BeforeClass
 	public static void setLogLevel() {
@@ -62,7 +61,7 @@ public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil imp
 	@DataProvider(name = "testcaselist")
 	public Object[] getTestCaseList(ITestContext context) {
 		String ymlFile = context.getCurrentXmlTest().getLocalParameters().get("ymlFile");
-		idKeyName = context.getCurrentXmlTest().getLocalParameters().get("idKeyName");
+		pathParams = context.getCurrentXmlTest().getLocalParameters().get("pathParams");
 		logger.info("Started executing yml: " + ymlFile);
 		return getYmlTestData(ymlFile);
 	}
@@ -77,19 +76,20 @@ public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil imp
 	 * @throws AdminTestException
 	 */
 	@Test(dataProvider = "testcaselist")
-	public void test(TestCaseDTO testCaseDTO) throws AdminTestException {
-		testCaseName = testCaseDTO.getTestCaseName();
+	public void test(TestCaseDTO testCaseDTO) throws AuthenticationTestException, AdminTestException {
 		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
-		String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
-		testCaseDTO = AdminTestUtil.filterHbs(testCaseDTO);
+		String regCenterId = null;
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
 		}
 
+		
 
-		response = postWithMultipartFormDataAndFile(ApplnURI + testCaseDTO.getEndPoint(), inputJson,
-				testCaseDTO.getRole(), testCaseDTO.getTestCaseName(), idKeyName);
+		String inputJosn = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
+		
+		Response response = postWithPathParamsBodyAndCookie(ApplnURI + testCaseDTO.getEndPoint(), inputJosn, COOKIENAME,
+				testCaseDTO.getRole(), testCaseDTO.getTestCaseName(), pathParams);
 
 		Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
 				response.asString(), getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()),
@@ -100,7 +100,6 @@ public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil imp
 			throw new AdminTestException("Failed at output validation");
 
 	}
-
 
 	/**
 	 * The method ser current test name to result
@@ -121,4 +120,5 @@ public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil imp
 			Reporter.log("Exception : " + e.getMessage());
 		}
 	}
+
 }
