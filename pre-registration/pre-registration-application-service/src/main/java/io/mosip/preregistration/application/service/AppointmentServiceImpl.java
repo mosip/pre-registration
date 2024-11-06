@@ -147,6 +147,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	private void userValidation(String applicationId) {
+		this.applicationIdValidation(applicationId);
 		String authUserId = authUserDetails().getUserId();
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
@@ -155,7 +156,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 							+ " and userID " + authUserId);
 			ApplicationEntity applicationEntity = null;
 			try {
-				applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
+				applicationEntity = applicationRepostiory.findById(applicationId).orElseThrow();
 			} catch (Exception ex) {
 				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"Invaid applicationId/Not Record Found for the ID : " + applicationId);
@@ -166,6 +167,15 @@ public class AppointmentServiceImpl implements AppointmentService {
 				throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
 						AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
 			}
+		}
+	}
+
+	private void applicationIdValidation(String applicationId) {
+		if (applicationId == null || applicationId.trim().isEmpty()) {
+			throw new AppointmentExecption(
+					ApplicationErrorCodes.PRG_APP_013.getCode(),
+					"preRegistrationId cannot be empty."
+			);
 		}
 	}
 
