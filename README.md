@@ -12,7 +12,7 @@ Pre-registration module consists of the following services:
 5. Capthca
 
 ## Database
-See [DB guide](db_scripts/README.md)
+See [DB guide](db_scripts)
 
 ## Config-Server
 To run Pre-registration services, run [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
@@ -20,25 +20,25 @@ To run Pre-registration services, run [Config Server](https://docs.mosip.io/1.2.
 ## Build & run (for developers)
 Prerequisites:
 1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
-1. JDK 21 and Java21 Artifactory Jars [here](https://oss.sonatype.org/content/repositories/snapshots/io/mosip/)  
-1. Build and install:
+2. The project requires JDK 21.0 and mvn version - 3.9.6
+3. Build and install:
     ```
     $ cd kernel
     $ mvn install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
     ```
-1. Build Docker for a service:
+4. Build Docker for a service:
     ```
     $ cd <service folder>
     $ docker build -f Dockerfile
     ```
 ## Deploy
-To deploy Commons services on Kubernetes cluster using Dockers refer to [Sandbox Deployment](https://docs.mosip.io/1.2.0/deployment/sandbox-deployment).
+To deploy Commons services on Kubernetes cluster using Dockers refer to [Sandbox Deployment](https://docs.mosip.io/1.2.0/deploymentnew/v3-installation).
 
 ## Configuration
 Refer to the [configuration guide](docs/configuration.md).
 
 ## Test
-Automated functional tests available in [Functional Tests repo](https://github.com/mosip/mosip-functional-tests).
+Automated functional tests available in [Functional Tests repo](api-test).
 
 ## APIs
 API documentation is available [here](https://mosip.github.io/documentation/).
