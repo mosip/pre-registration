@@ -23,20 +23,12 @@ Prerequisites:
     $ cd <service folder>
     $ docker build -f Dockerfile
 
-## Default Port and Context Path
-
-  * server.port=9092
-  * server.servlet.context-path=/preregistration/v1
-
-## Swagger URL
-* https://{dns-name}:9092/preregistration/v1/application-service/swagger-ui.html
-
-## Roles to Access the URL
-
-* INDIVIDUAL
-* REGISTRATION_OFFICER
-* REGISTRATION_SUPERVISOR
-* REGISTRATION_ADMIN
+## Configuration
+The configuration of the services is controlled by the following property files that are accessible in this [repository](https://github.com/mosip/mosip-config/tree/master).
+Please refer to the required released tagged version for configuration
+:
+1. [Configuration-Application](https://github.com/mosip/mosip-config/blob/master/application-default.properties)
+2. [Configuration-Pre-Registration](https://github.com/mosip/mosip-config/blob/master/pre-registration-default.properties)
 
 ## API Dependencies
 	

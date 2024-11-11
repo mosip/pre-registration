@@ -22,28 +22,17 @@ Prerequisites:
     $ cd <service folder>
     $ docker build -f Dockerfile
  
+
+## Configuration
+The configuration of the services is controlled by the following property files that are accessible in this [repository](https://github.com/mosip/mosip-config/tree/master).
+Please refer to the required released tagged version for configuration
+:
+1. [Configuration-Application](https://github.com/mosip/mosip-config/blob/master/application-default.properties)
+2. [Configuration-Pre-Registration](https://github.com/mosip/mosip-config/blob/master/pre-registration-default.properties)
+
+
 ## APIs
 API documentation is available [here](https://mosip.github.io/documentation/1.2.0/pre-registration-datasync-service.html).
-
-## Default Port and Context Path
-
-  * server.port=9094
-  * server.servlet.context-path=/preregistration/v1
-
-
-
-## URL
-
-* https://{dns-name}:9094/preregistration/v1/sync/swagger-ui.html
- 
-
-## Roles to Access the URL
-
-* REGISTRATION_OFFICER
-* REGISTRATION_SUPERVISOR
-* REGISTRATION_ ADMIN
-* REGISTRATION_PROCESSOR
-
 
 ## API Dependencies
 
