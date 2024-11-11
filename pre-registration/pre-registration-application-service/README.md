@@ -9,6 +9,20 @@ This service manages to provide the following service to the Pre-registration ap
   * Notification- This service details used by Pre-Registration portal to trigger notification via SMS or email.
   * Login - This service details used by Pre-Registration portal to authenticate user by sending OTP to the user, validating  with userid and OTP. 
 
+## Build & run (for developers)
+Prerequisites:
+1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
+2. The project requires JDK 21.0.3 and mvn version - 3.9.6
+3. Build and install:
+    ```
+    $ cd kernel
+    $ mvn install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
+    ```
+4. Build Docker for a service:
+    ```
+    $ cd <service folder>
+    $ docker build -f Dockerfile
+
 ## Default Port and Context Path
 
   * server.port=9092

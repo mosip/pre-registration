@@ -20,7 +20,7 @@ To run Pre-registration services, run [Config Server](https://docs.mosip.io/1.2.
 ## Build & run (for developers)
 Prerequisites:
 1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
-2. The project requires JDK 21.0 and mvn version - 3.9.6
+2. The project requires JDK 21.0.3 and mvn version - 3.9.6
 3. Build and install:
     ```
     $ cd kernel
@@ -41,7 +41,7 @@ Refer to the [configuration guide](docs/configuration.md).
 Automated functional tests available in [Functional Tests repo](api-test).
 
 ## APIs
-API documentation is available [here](https://mosip.github.io/documentation/).
+API documentation is available [here](https://mosip.github.io/documentation/1.2.0/1.2.0.html).
 
 ## License
 This project is licensed under the terms of [Mozilla Public License 2.0](LICENSE).
