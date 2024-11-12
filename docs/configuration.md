@@ -1,7 +1,9 @@
 # Pre-registration Configuration Guide
 
 ## Property files
-The configuration of the services is controlled by the following property files:
+The configuration of the services is controlled by the following property files that are accessible in this [repository](https://github.com/mosip/mosip-config/tree/master).
+Please refer to the required released tagged version for configuration
+:
 * `application-default.propertes`
 * `pre-registration-default.propertes`
 
