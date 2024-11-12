@@ -9,20 +9,26 @@ This service manages to provide the following service to the Pre-registration ap
   * Notification- This service details used by Pre-Registration portal to trigger notification via SMS or email.
   * Login - This service details used by Pre-Registration portal to authenticate user by sending OTP to the user, validating  with userid and OTP. 
 
-## Default Port and Context Path
+## Build & run (for developers)
+Prerequisites:
+1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
+2. The project requires JDK 21.0.3 and mvn version - 3.9.6
+3. Build and install:
+    ```
+    $ cd kernel
+    $ mvn install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
+    ```
+4. Build Docker for a service:
+    ```
+    $ cd <service folder>
+    $ docker build -f Dockerfile
 
-  * server.port=9092
-  * server.servlet.context-path=/preregistration/v1
-
-## Swagger URL
-* https://{dns-name}:9092/preregistration/v1/application-service/swagger-ui.html
-
-## Roles to Access the URL
-
-* INDIVIDUAL
-* REGISTRATION_OFFICER
-* REGISTRATION_SUPERVISOR
-* REGISTRATION_ADMIN
+## Configuration
+The configuration of the services is controlled by the following property files that are accessible in this [repository](https://github.com/mosip/mosip-config/tree/master).
+Please refer to the required released tagged version for configuration
+:
+1. [Configuration-Application](https://github.com/mosip/mosip-config/blob/master/application-default.properties)
+2. [Configuration-Pre-Registration](https://github.com/mosip/mosip-config/blob/master/pre-registration-default.properties)
 
 ## API Dependencies
 	
