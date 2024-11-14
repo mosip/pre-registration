@@ -95,7 +95,7 @@ public class CreatePreReg extends AdminTestUtil implements ITest {
 		String[] templateFields = testCaseDTO.getTemplateFields();
 
 		String jsonInput = testCaseDTO.getInput();
-
+		testCaseName = isTestCaseValidForExecution(testCaseDTO);
 		String inputJson = getJsonFromTemplate(jsonInput, testCaseDTO.getInputTemplate(), false);
 		String outputJson = getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate());
 		if (testCaseDTO.getTemplateFields() != null && templateFields.length > 0) {

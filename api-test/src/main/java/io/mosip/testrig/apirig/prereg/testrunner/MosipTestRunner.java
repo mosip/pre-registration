@@ -79,6 +79,7 @@ public class MosipTestRunner {
 			suiteSetup(getRunType());
 			SkipTestCaseHandler.loadTestcaseToBeSkippedList("testCaseSkippedList.txt");
 			setLogLevels();
+			AdminTestUtil.getRequiredField();
 
 			// For now we are not doing health check for qa-115.
 			if (BaseTestCase.isTargetEnvLTS()) {
