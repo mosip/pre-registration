@@ -18,7 +18,7 @@ See [DB guide](db_scripts)
 To run Pre-registration services, run [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
 
 ## Build & run (for developers)
-Prerequisites:
+Pre-requisites:
 1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
 2. The project requires JDK 21.0.3 and mvn version - 3.9.6
 3. Build and install:
