@@ -150,4 +150,3 @@ To run the tests for both **Smoke** and **Regression**:
 ## License
 
 This project is licensed under the terms of the [Mozilla Public License 2.0]
-
