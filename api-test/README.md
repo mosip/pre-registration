@@ -4,20 +4,14 @@
 
 The **Pre Registration API Test Rig** is designed for the execution of module-wise automation API tests for the pre-registration services. This test rig utilizes **Java REST Assured** and **TestNG** frameworks to automate testing of the pre-registration API functionalities. The key focus is to validate the pre-registration creation, appointment booking and related functionalities provided by the pre-registration module.
 
----
-
 ## Test Categories
 
 - **Smoke**: Contains only positive test scenarios for quick verification.
 - **Regression**: Includes all test scenarios, covering both positive and negative cases.
 
----
-
 ## Coverage
 
-This test rig covers only **external API endpoints** exposed by the pre registration services module.
-
----
+This test rig covers only **external API endpoints** exposed by the admin services module.
 
 ## Pre-requisites
 
@@ -26,7 +20,6 @@ Before running the automation tests, ensure the following software is installed 
 - **Java 21** (or a compatible version)
 - **Maven 3.9.6** (or higher)
 - **Lombok** (Refer to [Lombok Project](https://projectlombok.org/))
-- **setting.xml** ([download here](https://github.com/mosip/mosip-functional-tests/blob/master/settings.xml))
 
 ### For Windows
 
@@ -38,8 +31,6 @@ Before running the automation tests, ensure the following software is installed 
 - The `settings.xml` file should be present in two places:
   - In the regular Maven configuration folder (`/conf`)
   - Under `/usr/local/maven/conf/`
-
----
 
 ## Access Test Automation Code
 
@@ -60,17 +51,6 @@ You can access the test automation code using either of the following methods:
    git clone https://github.com/mosip/pre-registration
    ```
 
----
-
-## Update the property file
-1. Navigate to the prereg.properties file located at:
-    ```sh
-    pre-registration\api-test\src\main\resources\config\prereg.properties
-2. Open the file in your preferred editor
-3. Update the client secret values and other required credentials as per your environment
-
----
-
 ## Build Test Automation Code
 
 Once the repository is cloned or downloaded, follow these steps to build and install the test automation code:
@@ -87,8 +67,6 @@ Once the repository is cloned or downloaded, follow these steps to build and ins
 
 This will download the required dependencies and prepare the test suite for execution.
 
----
-
 ## Execute Test Automation Suite
 
 You can execute the test automation code using either of the following methods:
@@ -104,7 +82,7 @@ To execute the tests using Jar, use the following steps:
 
 2. Run the automation test suite JAR file:
    ```
-   java -jar -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-1.2.1-SNAPSHOT-jar-with-dependencies.jar
+   java -jar -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-1.3.0-SNAPSHOT-jar-with-dependencies.jar
    ```
    
 # Using Eclipse IDE
@@ -136,7 +114,7 @@ To execute the tests using Eclipse IDE, use the following steps:
    - Go to `Run` > `Run Configurations`.
    - In the **Run Configurations** window, create a new configuration for your tests:
      - Right-click on **Java Application** and select **New**.
-     - In the **Main** tab, select the project by browsing the location where the `api-test` folder is saved, and select the **Main class** as `io.mosip.testrig.apirig.prereg.testrunner.MosipTestRunner`.
+     - In the **Main** tab, select the project by browsing the location where the `api-test` folder is saved, and select the **Main class** as `io.mosip.testrig.apirig.esignet.testrunner.MosipTestRunner`.
    - In the **Arguments** tab, add the necessary **VM arguments**:
      - **VM Arguments**:
        ```
@@ -152,44 +130,23 @@ To execute the tests using Eclipse IDE, use the following steps:
 ## 6. **View Test Results**
 
    - After the tests are executed, you can view the detailed results in the `api-test\testng-report` directory.
-   - The report will have two sections:
-       - One section for pre-requisite APIs test cases.
-       - Another section for core test cases.
 
----
 
-## Test Report Column Definitions
-This section describes the meaning of each column in the test report:
-- **Total (T)**
-  The total number of test cases considered in the report.
-- **Passed (P)**
-  Indicates the number of test cases that executed successfully with the expected results.
-- **Failed (F)**
-  Indicates the number of test cases that failed due to issues such as output validation mismatches or unexpected errors during execution.
-- **Skipped (S)**
-  Represents test cases that were not executed due to missing prerequisites or data dependencies.
-- **Ignored (I)**
-  Represents test cases that were intentionally not executed due to limitations such as unsupported features, incompatibilities, or undeployed services.
-- **Known Issues (KI)**
-  Indicates test cases that failed but are already acknowledged as known issues for the current release, typically linked with a bug or defect ID.
- 
-## Details of Arguments Used
+   
+### Details of Arguments Used
 
 - **env.user**: Replace `<env_name>` with the appropriate environment name (e.g., `dev`, `qa`, etc.).
 - **env.endpoint**: The environment where the application under test is deployed. Replace `<base_env>` with the correct base URL for the environment (e.g., `https://api-internal.<env_name>.mosip.net`).
 - **env.testLevel**: Set this to `smoke` to run only smoke test cases, or `smokeAndRegression` to run both smoke and regression tests.
-- **jar**: Specify the name of the JAR file to execute. The version will change according to the development code version. For example, the current version may look like `apitest-prereg-1.2.1-SNAPSHOT-jar-with-dependencies.jar`.
+- **jar**: Specify the name of the JAR file to execute. The version will change according to the development code version. For example, the current version may look like `apitest-prereg-1.3.0-SNAPSHOT-jar-with-dependencies.jar`.
 
-### Build and Run Info
+## Build and Run
 
 To run the tests for both **Smoke** and **Regression**:
 
 1. Ensure the correct environment and test level parameters are set.
-2. Execute the tests as shown in the command above to validate Pre registration services API functionalities.
-
----
+2. Execute the tests as shown in the command above to validate admin services API functionalities.
 
 ## License
 
-This project is licensed under the terms of the [Mozilla Public License 2.0](https://github.com/mosip/mosip-platform/blob/master/LICENSE)
-
+This project is licensed under the terms of the [Mozilla Public License 2.0]
