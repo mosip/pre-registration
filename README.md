@@ -4,7 +4,7 @@
 # Pre-registration 
 This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://docs.mosip.io/1.2.0/modules/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/). Pre-registration Developers Guide [here](https://docs.mosip.io/1.2.0/modules/pre-registration/pre-registration-developer-setup)
 
-Pre-registration module consists of the following services:
+Pre-registration module consists of the following services :
 1. Application
 2. Booking
 3. Batchjob
