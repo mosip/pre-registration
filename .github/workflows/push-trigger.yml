@@ -81,7 +81,7 @@ jobs:
   sonar_analysis:
     needs: build-maven-pre-registration
     if: "${{  github.event_name != 'pull_request' }}"
-    uses: mosip/kattu/.github/workflows/maven-sonar-analysis-new.yml@master-java21
+    uses: mosip/kattu/.github/workflows/maven-sonar-analysis-new.yml@develop
     with:
       SERVICE_LOCATION: ./pre-registration
     secrets:
@@ -191,7 +191,7 @@ jobs:
   sonar_analysis_apitest_prereg:
     needs: build-maven-apitest-prereg
     if: "${{  github.event_name != 'pull_request' }}"
-    uses: mosip/kattu/.github/workflows/maven-sonar-analysis-new.yml@master-java21
+    uses: mosip/kattu/.github/workflows/maven-sonar-analysis-new.yml@develop
     with:
       SERVICE_LOCATION: ./api-test
     secrets:
