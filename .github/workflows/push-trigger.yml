@@ -81,7 +81,7 @@ jobs:
   sonar_analysis:
     needs: build-maven-pre-registration
     if: "${{  github.event_name != 'pull_request' }}"
-    uses: mosip/kattu/.github/workflows/maven-sonar-analysis-new.yml@master-java21
+    uses: mosip/kattu/.github/workflows/maven-sonar-analysis-new.yml@develop
     with:
       SERVICE_LOCATION: ./pre-registration
     secrets:
@@ -108,7 +108,7 @@ jobs:
   publish_to_nexus_apitest_prereg:
     if: "${{ !contains(github.ref, 'master') && github.event_name != 'pull_request' && github.event_name != 'release' && github.event_name != 'prerelease' && github.event_name != 'publish' }}"
     needs: build-maven-apitest-prereg
-    uses: mosip/kattu/.github/workflows/maven-publish-to-nexus.yml@master-java21
+    uses: mosip/kattu/.github/workflows/maven-publish-to-nexus.yml@develop
     with:
       SERVICE_LOCATION: ./api-test
     secrets:
