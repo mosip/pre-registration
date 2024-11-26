@@ -8,27 +8,31 @@ This service enables Pre-Registration to a registration client, request to retri
 
 [Design](https://github.com/mosip/pre-registration/blob/master/design/pre-registration/pre-registration-data-sync-service.md)
 
+## Build & run (for developers)
+Prerequisites:
+1. [Config Server](https://docs.mosip.io/1.2.0/modules/module-configuration#config-server)
+2. The project requires JDK 21.0.3 and mvn version - 3.9.6
+3. Build and install:
+    ```
+    $ cd kernel
+    $ mvn install -DskipTests=true -Dmaven.javadoc.skip=true -Dgpg.skip=true
+    ```
+4. Build Docker for a service:
+    ```
+    $ cd <service folder>
+    $ docker build -f Dockerfile
  
 
-## Default Port and Context Path
+## Configuration
+The configuration of the services is controlled by the following property files that are accessible in this [repository](https://github.com/mosip/mosip-config/tree/master).
+Please refer to the required released tagged version for configuration
+:
+1. [Configuration-Application](https://github.com/mosip/mosip-config/blob/master/application-default.properties)
+2. [Configuration-Pre-Registration](https://github.com/mosip/mosip-config/blob/master/pre-registration-default.properties)
 
-  * server.port=9094
-  * server.servlet.context-path=/preregistration/v1
 
-
-
-## URL
-
-* https://{dns-name}:9094/preregistration/v1/sync/swagger-ui.html
- 
-
-## Roles to Access the URL
-
-* REGISTRATION_OFFICER
-* REGISTRATION_SUPERVISOR
-* REGISTRATION_ ADMIN
-* REGISTRATION_PROCESSOR
-
+## APIs
+API documentation is available [here](https://mosip.github.io/documentation/1.2.0/pre-registration-datasync-service.html).
 
 ## API Dependencies
 
