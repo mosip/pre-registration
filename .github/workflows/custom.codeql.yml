@@ -1,0 +1,49 @@
+name: "CodeQL Analysis"
+
+on:
+  push:
+    branches:
+      - develop  # Adjust to your default or target branches
+  pull_request:
+    branches:
+      - develop  # Adjust to your default or target branches
+  schedule:
+    - cron: "0 2 * * 0"  # Optional: Weekly analysis on Sunday at 2 AM
+
+jobs:
+  analyze:
+    name: Analyze Python Code
+    runs-on: ubuntu-latest
+
+    permissions:
+      actions: read
+      contents: read
+      security-events: write  # Required for CodeQL to upload results
+
+    strategy:
+      fail-fast: false
+      matrix:
+        language: [java]  # Add other languages if needed
+
+    steps:
+    # Step 1: Checkout repository
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    # Step 2: Set up CodeQL
+    - name: Initialize CodeQL
+      uses: github/codeql-action/init@v2
+      with:
+        languages: ${{ matrix.language }}
+        # Optional: Add custom queries or use a specific database
+        # queries: ./codeql-queries
+
+    # Step 3: Build and prepare the code (if needed)
+    - name: Autobuild
+      uses: github/codeql-action/autobuild@v2
+
+    # Step 4: Perform CodeQL analysis
+    - name: Perform CodeQL Analysis
+      uses: github/codeql-action/analyze@v2
+      with:
+        category: security  # This categorizes results in the Security tab
