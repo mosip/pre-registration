@@ -2,7 +2,7 @@ apiVersion: v2
 name: prereg-datasync
 description: A Helm chart for MOSIP Pre-registration Datasync service
 type: application
-version: 1.3.0-beta.1-develop
+version: 1.3.0-beta.1
 appVersion: ""
 dependencies:
   - name: common
