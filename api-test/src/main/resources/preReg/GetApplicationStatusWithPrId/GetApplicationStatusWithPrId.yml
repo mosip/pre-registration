@@ -45,7 +45,7 @@ GetApplicationStatusWithPrId:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_PAM_APP_005"
+      "errorCode": "PRG_CORE_REQ_016"
     }
   ]
 }'
