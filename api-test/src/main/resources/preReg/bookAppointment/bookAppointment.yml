@@ -108,7 +108,7 @@ BookAppointment:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_015"
+      "errorCode": "PRG_CORE_REQ_016"
       
     }
   ]
