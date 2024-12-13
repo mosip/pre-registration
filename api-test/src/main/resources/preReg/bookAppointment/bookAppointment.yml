@@ -2,14 +2,14 @@ BookAppointment:
    Prereg_BookAppointment_All_Valid_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_01
-      description: validate that booking an appointment is successfully processed when all mandatory fields are provided with valid values
+      description: Book an appoinment valid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/bookAppointment/bookAppointmentResult
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -23,7 +23,7 @@ BookAppointment:
    Prereg_BookAppointment_CA_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_02
-      description: validate that a Care Appointment booking is successfully processed when all mandatory fields are provided with valid values
+      description: Book an appointment to cancel the existing appointment
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -44,7 +44,7 @@ BookAppointment:
    Prereg_BookAppointment_CancelApplicationsAppointment_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_03
-      description: Validate that a booked appointment can be successfully canceled when the cancellation request is submitted with valid details
+      description: Book an appointment to cancel applications the existing appointment
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -65,7 +65,7 @@ BookAppointment:
    Prereg_BookAppointment_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_04
-      description: Validate that the appointment booking is not processed when an invalid pre registration ID is provided
+      description: Book an appointment with an invalid preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -90,12 +90,11 @@ BookAppointment:
    Prereg_BookAppointment_blank_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_05
-      description: Validate that the appointment booking is not processed when the pre registration ID is left blank
+      description: Book an appointment with a blank preregistration ID
       role: batch
       restMethod: post
-      checkOnlyStatusCodeInResponse: true
       inputTemplate: preReg/bookAppointment/bookAppointment
-      outputTemplate: preReg/responseCode
+      outputTemplate: preReg/error
       input: '{
   "preRegistrationId":"",   
   "registration_center_id": "$registration_center_id$",
@@ -107,18 +106,23 @@ BookAppointment:
   "requesttime": "$TIMESTAMP$"
 }'
       output: '{
-      "responseCode": "500"
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_016"
+      
+    }
+  ]
 }'
    Prereg_BookAppointment_Invalid_Id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_06
-      description: Validate that the appointment booking is not processed when an invalid ID is provided
+      description: Book an appointment with a invalid preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "moe-registration.booking.book",
   "version": "1.0",
@@ -137,13 +141,13 @@ BookAppointment:
    Prereg_BookAppointment_Blank_Id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_07
-      description: Validate that the appointment booking is not processed when the ID field is left blank
+      description: Book an appointment with a blank ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "",
   "version": "1.0",
@@ -163,13 +167,13 @@ BookAppointment:
    Prereg_BookAppointment_Blank_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_08
-      description: Validate that the appointment booking is not processed when the version field is left blank
+      description: Book an appointment with a blank version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "",
@@ -188,13 +192,13 @@ BookAppointment:
    Prereg_BookAppointment_Missing_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_09
-      description: Validate that the appointment booking is not processed when the version attribute is missing
+      description: Book an appointment with a missing version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "$REMOVE$",
@@ -213,13 +217,13 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_10
-      description: Validate that the appointment booking fails when an invalid version is provided
+      description: Book an appointment with a invalid version
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "snsjd73t33ybyh2334@FDh",
@@ -238,13 +242,13 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_11
-      description: Validate that the appointment booking fails when an invalid registration center ID is provided
+      description: Book an appointment with an invalid registration center ID 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "363wgbsion_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -264,13 +268,13 @@ BookAppointment:
    Prereg_BookAppointment_Missing_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_12
-      description: Validate that the appointment booking fails when the registration center ID is missing
+      description: Book an appointment with a missing registration center ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$REMOVE$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -290,13 +294,13 @@ BookAppointment:
    Prereg_BookAppointment_Blank_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_13
-      description: Validate that the appointment booking fails when the registration center ID is left blank
+      description: Book an appointment with a blank registration center ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -316,13 +320,13 @@ BookAppointment:
    Prereg_BookAppointment_Blank_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_14
-      description: Validate that the appointment booking fails when the appointment date is left blank
+      description: Book an appointment with a blank appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -342,13 +346,13 @@ BookAppointment:
    Prereg_BookAppointment_Missing_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_15
-      description: Validate that the appointment booking fails when the appointment date is missing
+      description: Book an appointment with a missing appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -367,13 +371,13 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_16
-      description: Validate that the appointment booking fails when an invalid appointment date is provided
+      description: Book an appointment with a invalid appointment date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -393,13 +397,13 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_17
-      description: Validate that the appointment booking fails when an invalid time slot to value is provided
+      description: Book an appointment with an invalid time slot
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -418,13 +422,13 @@ BookAppointment:
    Prereg_BookAppointment_Missing_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_18
-      description: Validate that the appointment booking fails when the time slot to value is missing
+      description: Book an appointment with a missing time slot
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -443,13 +447,13 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_19
-      description: Validate that the appointment booking fails when an invalid time slot from value is provided
+      description: Book an appointment with an invalid time slot from
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -468,13 +472,13 @@ BookAppointment:
    Prereg_BookAppointment_Blank_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_20
-      description: Validate that the appointment booking fails when the time slot to field is left blank
+      description: Book an appointment with an Blank time slot form
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -493,13 +497,13 @@ BookAppointment:
    Prereg_BookAppointment_Blank_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_21
-      description: Validate that the appointment booking fails when the time slot from field is left blank
+      description: Book an appointment with an blank time slot
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -518,13 +522,13 @@ BookAppointment:
    Prereg_BookAppointment_missing_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_22
-      description: Validate that the appointment booking fails when the time slot from value is missing
+      description: Book an appointment with an missing time slot from
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -543,13 +547,13 @@ BookAppointment:
    Prereg_BookAppointment_missing_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_23
-      description: Validate that the appointment booking fails when the request time is missing
+      description: Book an appointment with a missing request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -568,13 +572,13 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_24
-      description: Validate that the appointment booking fails when an invalid request time is provided
+      description: Book an appointment with a invalid request time 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -594,13 +598,13 @@ BookAppointment:
    Prereg_BookAppointment_Blank_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_25
-      description: Validate that the appointment booking fails when the request time is left blank
+      description: Book an appointment with a Blank request time
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -619,13 +623,13 @@ BookAppointment:
    Prereg_BookAppointment_previous_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_26
-      description: Validate that the appointment booking fails when a previous date is provided for the appointment
+      description: Book an appointment with a previous date
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -645,13 +649,13 @@ BookAppointment:
    Prereg_BookAppointment_On_holiday:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_27
-      description: Validate that the appointment booking fails when the selected date falls on a holiday 
+      description: Book an appointment on a holiday 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -672,7 +676,7 @@ BookAppointment:
    Prereg_BookAppointment_with_expired_status:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_28
-      description: Validate that the appointment booking fails when the pre-registration status is expired
+      description: Book an appointment with an expired status
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -699,7 +703,7 @@ BookAppointment:
    Prereg_BookAppointment_with_All_InValid_data:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_29
-      description: Validate that the appointment booking fails when all input data provided is invalid
+      description: Book an appointment with an invalid data
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -720,31 +724,6 @@ BookAppointment:
     {
       "errorCode": "PRG_CORE_REQ_015"
       
-    }
-  ]
-}'
-   Prereg_BookAppointment_incompleteApplication_preRegistrationId_Neg:
-      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_BookAppointment_30
-      description: Validate that the appointment booking fails when an incomplete application with an invalid or missing pre registration ID is submitted
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointment/bookAppointment
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_cancell_incomplete_prid_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_036"
     }
   ]
 }'

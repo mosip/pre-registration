@@ -2,13 +2,13 @@ GetApplicationStatusWithPrId:
    Prereg_GetApplicationStatusWithPrId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_01
-      description: Validate that fetching the application status by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
+      description: Retrieve the application status using a valid PRID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
       outputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrIdResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
   "statusCode": "Application_Incomplete"
@@ -16,7 +16,7 @@ GetApplicationStatusWithPrId:
    Prereg_GetApplicationStatusWithPrId_inValid_PRID_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_02
-      description: Validate that fetching the application status by Pre Registration ID fails when an invalid pre registration ID is provided
+      description: Retrieve the application status using an invalid PRID
       role: batch
       restMethod: get
       inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
@@ -34,15 +34,18 @@ GetApplicationStatusWithPrId:
    Prereg_GetApplicationStatusWithPrId_Blank_PRID_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_03
-      description: Validate that fetching the application status by Pre Registration ID fails when the pre registration ID is left blank
+      description: Retrieve the application status using an blank PRID
       role: batch
       restMethod: get
-      checkOnlyStatusCodeInResponse: true
       inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
-      outputTemplate: preReg/responseCode
+      outputTemplate: preReg/error
       input: '{
   "preRegistrationId": ""
 }'
       output: '{
-      "responseCode": "500"
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_016"
+    }
+  ]
 }'
