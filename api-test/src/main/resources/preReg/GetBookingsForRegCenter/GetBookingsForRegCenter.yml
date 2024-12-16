@@ -2,6 +2,7 @@ GetBookingsForRegCenter:
    Prereg_GetBookingsForRegCenter_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/bookings/{regCenterId}?appointmentDate=2020-10-01&appointmentToDate=2034-10-13
       uniqueIdentifier: TC_prereg_GetBookingsForRegCenter_01
+	  checkErrorsOnlyInResponse: true  
       description: Retrieve booking for a valid registration center ID
       role: batch
       restMethod: get
@@ -26,7 +27,7 @@ GetBookingsForRegCenter:
       output: '{
    "errors": [
     {
-      "errorCode": "PRG_CORE_REQ_016"
+      "errorCode": "PRG_APP_013"
     }
   ]
 }'
