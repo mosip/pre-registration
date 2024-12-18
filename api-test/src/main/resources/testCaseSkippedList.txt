@@ -1,2 +1,4 @@
 ##### JIRA number;testcase 
 #MOSIP-12456------Mimoto_AddIdentity_Binding_smoke_Pos
+MOSIP-36009------Prereg_SendNotifications_InValid_id
+MOSIP-36009------Prereg_SendNotifications_InValid_preRegId
