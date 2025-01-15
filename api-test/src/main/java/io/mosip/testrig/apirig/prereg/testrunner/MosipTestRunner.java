@@ -121,7 +121,6 @@ public class MosipTestRunner {
 		}
 
 		BaseTestCase.currentModule = GlobalConstants.PREREG;
-		BaseTestCase.setReportName(GlobalConstants.PREREG);
 		AdminTestUtil.copyPreregTestResource();
 		BaseTestCase.otpListener = new OTPListener();
 		BaseTestCase.otpListener.run();
@@ -156,15 +155,21 @@ public class MosipTestRunner {
 			homeDir = new File(dir.getParent() + "/mosip/testNgXmlFiles");
 			LOGGER.info("ELSE :" + homeDir);
 		}
-		for (File file : homeDir.listFiles()) {
-			if (file.getName().toLowerCase().contains(GlobalConstants.PREREG)) {
-				suitefiles.add(file.getAbsolutePath());
+		File[] files = homeDir.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (file.getName().toLowerCase().contains("mastertestsuite")) {
+					BaseTestCase.setReportName(GlobalConstants.PREREG);
+					suitefiles.add(file.getAbsolutePath());
+					runner.setTestSuites(suitefiles);
+					System.getProperties().setProperty("testng.outpur.dir", "testng-report");
+					runner.setOutputDirectory("testng-report");
+					runner.run();
+				}
 			}
+		} else {
+			LOGGER.error("No files found in directory: " + homeDir);
 		}
-		runner.setTestSuites(suitefiles);
-		System.getProperties().setProperty("testng.outpur.dir", "testng-report");
-		runner.setOutputDirectory("testng-report");
-		runner.run();
 	}
 
 	public static String getGlobalResourcePath() {

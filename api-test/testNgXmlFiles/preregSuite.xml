@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
-<suite name="PreReg Suite">
+<suite name="PreReg API Test">
 	<!-- Passing Group as parameter using "testType" Possible Groups are: smoke 
 		regression smokeAndRegression -->
 	<listeners>
