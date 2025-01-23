@@ -1,5 +1,5 @@
 [![Maven Package upon a push](https://github.com/mosip/pre-registration/actions/workflows/push_trigger.yml/badge.svg?branch=develop)](https://github.com/mosip/pre-registration/actions/workflows/push_trigger.yml)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?branch=develop&project=mosip_pre-registration&metric=alert_status)](https://sonarcloud.io/dashboard?branch=develop&id=mosip_pre-registration)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?branch=develop-java21&project=mosip_pre-registration&metric=alert_status)](https://sonarcloud.io/dashboard?branch=develop-java21&id=mosip_pre-registration)
 
 # Pre-registration 
 This repository contains the source code and design documents for MOSIP Pre-registration server.  For an overview refer [here](https://docs.mosip.io/1.2.0/modules/pre-registration).  The modules exposes API endpoints. For a reference front-end UI implementation refer to [Pre-registration UI github repo](https://github.com/mosip/pre-registration-ui/)
