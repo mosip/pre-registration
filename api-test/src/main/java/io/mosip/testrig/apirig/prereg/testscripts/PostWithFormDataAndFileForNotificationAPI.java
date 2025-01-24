@@ -1,4 +1,4 @@
-package io.mosip.testrig.apirig.testscripts;
+package io.mosip.testrig.apirig.prereg.testscripts;
 
 import java.lang.reflect.Field;
 import java.util.List;
@@ -20,6 +20,8 @@ import org.testng.internal.TestResult;
 
 import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
+import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
+import io.mosip.testrig.apirig.prereg.utils.PreRegUtil;
 import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
@@ -27,15 +29,13 @@ import io.mosip.testrig.apirig.utils.AuthenticationTestException;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
-import io.mosip.testrig.apirig.utils.PreRegConfigManager;
-import io.mosip.testrig.apirig.utils.PreRegUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class PostWithFormPathParamAndFile extends AdminTestUtil implements ITest {
-	private static final Logger logger = Logger.getLogger(PostWithFormPathParamAndFile.class);
+public class PostWithFormDataAndFileForNotificationAPI extends AdminTestUtil implements ITest {
+	private static final Logger logger = Logger.getLogger(PostWithFormDataAndFileForNotificationAPI.class);
 	protected String testCaseName = "";
-	public String idKeyName = null;
+	String idKeyName = null;
 	public Response response = null;
 
 	@BeforeClass
@@ -80,29 +80,27 @@ public class PostWithFormPathParamAndFile extends AdminTestUtil implements ITest
 	public void test(TestCaseDTO testCaseDTO) throws AdminTestException {
 		testCaseName = testCaseDTO.getTestCaseName();
 		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
+		String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
+		testCaseDTO = AdminTestUtil.filterHbs(testCaseDTO);
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
 		}
-		
-		String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
 
-		response = postWithFormPathParamAndFile(ApplnURI + testCaseDTO.getEndPoint(), inputJson, testCaseDTO.getRole(),
-				testCaseDTO.getTestCaseName(), idKeyName);
 
-		Map<String, List<OutputValidationDto>> ouputValid = null;
-		
-			ouputValid = OutputValidationUtil.doJsonOutputValidation(response.asString(),
-					getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()), testCaseDTO,
-					response.getStatusCode());
-		
+		response = postWithMultipartFormDataAndFile(ApplnURI + testCaseDTO.getEndPoint(), inputJson,
+				testCaseDTO.getRole(), testCaseDTO.getTestCaseName(), idKeyName);
 
+		Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
+				response.asString(), getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()),
+				testCaseDTO, response.getStatusCode());
 		Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
 
 		if (!OutputValidationUtil.publishOutputResult(ouputValid))
 			throw new AdminTestException("Failed at output validation");
 
 	}
+
 
 	/**
 	 * The method ser current test name to result
