@@ -1,14 +1,13 @@
-package io.mosip.testrig.apirig.testscripts;
+package io.mosip.testrig.apirig.prereg.testscripts;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.json.JSONObject;
 import org.testng.ITest;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
@@ -21,32 +20,24 @@ import org.testng.annotations.Test;
 import org.testng.internal.BaseTestMethod;
 import org.testng.internal.TestResult;
 
-import io.mosip.testrig.apirig.dbaccess.AuditDBManager;
 import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
+import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
+import io.mosip.testrig.apirig.prereg.utils.PreRegUtil;
 import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.AuthenticationTestException;
+import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
-import io.mosip.testrig.apirig.utils.PreRegConfigManager;
-import io.mosip.testrig.apirig.utils.PreRegUtil;
+import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class PreregAuditValidator extends AdminTestUtil implements ITest {
-	private static final Logger logger = Logger.getLogger(PreregAuditValidator.class);
+public class PutWithPathParam extends AdminTestUtil implements ITest {
+	private static final Logger logger = Logger.getLogger(PutWithPathParam.class);
 	protected String testCaseName = "";
-	public static List<String> templateFields = new ArrayList<>();
 	public Response response = null;
-
-	/**
-	 * get current testcaseName
-	 */
-	@Override
-	public String getTestName() {
-		return testCaseName;
-	}
 
 	@BeforeClass
 	public static void setLogLevel() {
@@ -54,6 +45,14 @@ public class PreregAuditValidator extends AdminTestUtil implements ITest {
 			logger.setLevel(Level.ALL);
 		else
 			logger.setLevel(Level.ERROR);
+	}
+
+	/**
+	 * get current testcaseName
+	 */
+	@Override
+	public String getTestName() {
+		return testCaseName;
 	}
 
 	/**
@@ -68,39 +67,59 @@ public class PreregAuditValidator extends AdminTestUtil implements ITest {
 		return getYmlTestData(ymlFile);
 	}
 
+	/**
+	 * Test method for OTP Generation execution
+	 * 
+	 * @param objTestParameters
+	 * @param testScenario
+	 * @param testcaseName
+	 * @throws AuthenticationTestException
+	 * @throws AdminTestException
+	 */
 	@Test(dataProvider = "testcaselist")
 	public void test(TestCaseDTO testCaseDTO) throws AuthenticationTestException, AdminTestException {
 		testCaseName = testCaseDTO.getTestCaseName();
 		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
+		String[] templateFields = testCaseDTO.getTemplateFields();
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
 		}
-		String[] templateFields = testCaseDTO.getTemplateFields();
-		List<String> queryProp = Arrays.asList(templateFields);
-		logger.info(queryProp);
 
-		String query = "select * from audit.app_audit_log where app_name = 'PREREGISTRATION' && session_user_name = '"
-				+ "robin.hood@mailinator.com" + "'";
 
-		logger.info(query);
-		Map<String, Object> response = AuditDBManager.executeQueryAndGetRecord(testCaseDTO.getRole(), query);
+		if (testCaseDTO.getTemplateFields() != null && templateFields.length > 0) {
+			ArrayList<JSONObject> inputtestCases = AdminTestUtil.getInputTestCase(testCaseDTO);
+			ArrayList<JSONObject> outputtestcase = AdminTestUtil.getOutputTestCase(testCaseDTO);
+			for (int i = 0; i < languageList.size(); i++) {
+				response = putWithPathParamAndCookie(ApplnURI + testCaseDTO.getEndPoint(),
+						getJsonFromTemplate(inputtestCases.get(i).toString(), testCaseDTO.getInputTemplate()),
+						COOKIENAME, testCaseDTO.getRole(), testCaseDTO.getTestCaseName());
 
-		Map<String, List<OutputValidationDto>> objMap = new HashMap<>();
-		List<OutputValidationDto> objList = new ArrayList<>();
-		OutputValidationDto objOpDto = new OutputValidationDto();
-		if (response.size() > 0) {
+				Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
+						response.asString(),
+						getJsonFromTemplate(outputtestcase.get(i).toString(), testCaseDTO.getOutputTemplate()),
+						testCaseDTO, response.getStatusCode());
+				Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
 
-			objOpDto.setStatus("PASS");
-		} else {
-			objOpDto.setStatus(GlobalConstants.FAIL_STRING);
+				if (!OutputValidationUtil.publishOutputResult(ouputValid))
+					throw new AdminTestException("Failed at output validation");
+			}
 		}
 
-		objList.add(objOpDto);
-		objMap.put(GlobalConstants.EXPECTED_VS_ACTUAL, objList);
+		else {
+			response = putWithPathParamAndCookie(ApplnURI + testCaseDTO.getEndPoint(),
+					getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate()), COOKIENAME,
+					testCaseDTO.getRole(), testCaseDTO.getTestCaseName());
 
-		if (!OutputValidationUtil.publishOutputResult(objMap))
-			throw new AdminTestException("Failed at output validation");
+			Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
+					response.asString(), getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()),
+					testCaseDTO, response.getStatusCode());
+			Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
+
+			if (!OutputValidationUtil.publishOutputResult(ouputValid))
+				throw new AdminTestException("Failed at output validation");
+		}
+
 	}
 
 	/**
@@ -110,12 +129,6 @@ public class PreregAuditValidator extends AdminTestUtil implements ITest {
 	 */
 	@AfterMethod(alwaysRun = true)
 	public void setResultTestName(ITestResult result) {
-
-		String deleteQuery = "delete from audit.app_audit_log where app_name = 'PREREGISTRATION' and session_user_name = '"
-				+ "robin.hood@mailinator.com" + "'";
-
-		logger.info(deleteQuery);
-		AuditDBManager.executeQueryAndDeleteRecord("audit", deleteQuery);
 		try {
 			Field method = TestResult.class.getDeclaredField("m_method");
 			method.setAccessible(true);

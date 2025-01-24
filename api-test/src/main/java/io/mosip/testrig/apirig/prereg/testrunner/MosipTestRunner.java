@@ -1,4 +1,4 @@
-package io.mosip.testrig.apirig.testrunner;
+package io.mosip.testrig.apirig.prereg.testrunner;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -22,6 +22,11 @@ import org.testng.TestNG;
 import com.nimbusds.jose.jwk.KeyUse;
 import com.nimbusds.jose.jwk.RSAKey;
 
+import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
+import io.mosip.testrig.apirig.testrunner.BaseTestCase;
+import io.mosip.testrig.apirig.testrunner.ExtractResource;
+import io.mosip.testrig.apirig.testrunner.HealthChecker;
+import io.mosip.testrig.apirig.testrunner.OTPListener;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.AuthTestsUtil;
 import io.mosip.testrig.apirig.utils.CertsUtil;
@@ -33,7 +38,6 @@ import io.mosip.testrig.apirig.utils.KeycloakUserManager;
 import io.mosip.testrig.apirig.utils.MispPartnerAndLicenseKeyGeneration;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.PartnerRegistration;
-import io.mosip.testrig.apirig.utils.PreRegConfigManager;
 import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 /**
@@ -75,6 +79,7 @@ public class MosipTestRunner {
 			suiteSetup(getRunType());
 			SkipTestCaseHandler.loadTestcaseToBeSkippedList("testCaseSkippedList.txt");
 			setLogLevels();
+			AdminTestUtil.getRequiredField();
 
 			// For now we are not doing health check for qa-115.
 			if (BaseTestCase.isTargetEnvLTS()) {
@@ -86,6 +91,8 @@ public class MosipTestRunner {
 			KeycloakUserManager.removeUser();
 			KeycloakUserManager.createUsers();
 			KeycloakUserManager.closeKeycloakInstance();
+
+			// List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
 
 			startTestRunner();
 		} catch (Exception e) {
@@ -114,7 +121,6 @@ public class MosipTestRunner {
 		}
 
 		BaseTestCase.currentModule = GlobalConstants.PREREG;
-		BaseTestCase.setReportName(GlobalConstants.PREREG);
 		AdminTestUtil.copyPreregTestResource();
 		BaseTestCase.otpListener = new OTPListener();
 		BaseTestCase.otpListener.run();
@@ -149,15 +155,21 @@ public class MosipTestRunner {
 			homeDir = new File(dir.getParent() + "/mosip/testNgXmlFiles");
 			LOGGER.info("ELSE :" + homeDir);
 		}
-		for (File file : homeDir.listFiles()) {
-			if (file.getName().toLowerCase().contains(GlobalConstants.PREREG)) {
-				suitefiles.add(file.getAbsolutePath());
+		File[] files = homeDir.listFiles();
+		if (files != null) {
+			for (File file : files) {
+				if (file.getName().toLowerCase().contains("mastertestsuite")) {
+					BaseTestCase.setReportName(GlobalConstants.PREREG);
+					suitefiles.add(file.getAbsolutePath());
+					runner.setTestSuites(suitefiles);
+					System.getProperties().setProperty("testng.outpur.dir", "testng-report");
+					runner.setOutputDirectory("testng-report");
+					runner.run();
+				}
 			}
+		} else {
+			LOGGER.error("No files found in directory: " + homeDir);
 		}
-		runner.setTestSuites(suitefiles);
-		System.getProperties().setProperty("testng.outpur.dir", "testng-report");
-		runner.setOutputDirectory("testng-report");
-		runner.run();
 	}
 
 	public static String getGlobalResourcePath() {
