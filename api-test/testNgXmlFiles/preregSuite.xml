@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
 
-<suite name="PreReg Suite">
+<suite name="PreReg API Test">
 	<!-- Passing Group as parameter using "testType" Possible Groups are: smoke 
 		regression smokeAndRegression -->
 	<listeners>
@@ -14,7 +14,7 @@
 			value="preReg/createPrereg/createPrereg.yml" />
 			<parameter name="idKeyName"	value="preRegistrationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.CreatePreReg" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.CreatePreReg" />
 		</classes>
 	</test>
 	
@@ -25,7 +25,7 @@
 			value="preReg/UpdatePreregistration/UpdatePreregistration.yml" />
 			<parameter name="pathParams"	value="preRegistrationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.UpdatePrereg" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.UpdatePrereg" />
 		</classes>
 	</test>
 	
@@ -34,7 +34,7 @@
 		<parameter name="ymlFile"
 			value="preReg/GetApplicationWithPrId/GetApplicationWithPrId.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	
@@ -42,7 +42,7 @@
 		<parameter name="ymlFile"
 			value="preReg/FetchApplicationByPrid/FetchApplicationByPrid.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	
@@ -50,7 +50,7 @@
 		<parameter name="ymlFile"
 			value="preReg/GetApplicationStatusWithPrId/GetApplicationStatusWithPrId.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test> 
 	<test name="Uploaddocument">
@@ -58,7 +58,7 @@
 			value="preReg/uploadDocument/uploadDocument.yml" />
 			<parameter name="idKeyName"	value="docId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PostWithFormPathParamAndFile" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PostWithFormPathParamAndFile" />
 		</classes>
 	</test>
 	
@@ -66,7 +66,7 @@
 		<parameter name="ymlFile"
 			value="preReg/UpdateDocRefID/UpdateDocRefID.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PutWithPathParam" />
 		</classes>
 	</test> 
 	
@@ -74,7 +74,7 @@
 		<parameter name="ymlFile"
 			value="preReg/CopyDocument/CopyDocument.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PutWithPathParam" />
 		</classes>
 	</test> 
 	
@@ -84,7 +84,7 @@
 			value="preReg/UpdatePreRegStatus/updatePreRegStatus.yml" />
 			<parameter name="pathParams"	value="preRegistrationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PutWithPathParam" />
 		</classes>
 	</test>
 	
@@ -93,21 +93,21 @@
 		<parameter name="ymlFile"
 			value="preReg/GetAllDocForPrId/GetAllDocForPrId.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test> 
 	<test name="GetSpecificDocumentforaPRID">
 		<parameter name="ymlFile"
 			value="preReg/GetSpecificDocumentforaPRID/GetSpecificDocumentforaPRID.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	<test name="GetPRIDByDateRange">
 		<parameter name="ymlFile"
 			value="preReg/GetPRIDByDateRange/GetPRIDByDateRange.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test> 
 	 <test name="BookAppointment">
@@ -115,7 +115,7 @@
 			value="preReg/bookAppointment/bookAppointment.yml" />
 		<parameter name="pathParams" value="preRegistrationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.BookAppoinment" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.BookAppoinment" />
 		</classes>
 	</test>
 	
@@ -125,7 +125,7 @@
 		<parameter name="ymlFile"
 			value="preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test> 
 	
@@ -133,7 +133,7 @@
 		<parameter name="ymlFile"
 			value="preReg/bookAppointmentByPRID/bookAppointmentByPRID.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.BookAppoinmentByPrid" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.BookAppoinmentByPrid" />
 		</classes>
 	</test>
 	
@@ -144,7 +144,7 @@
 			value="preReg/GetAppointmentDetails/GetAppointmentDetails.yml" />
 		<parameter name="idKeyName" value="appointment_date,time_slot_from" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParamForAutoGenId" />  
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParamForAutoGenId" />  
 		</classes>
 	</test> 
 	
@@ -152,7 +152,7 @@
 		<parameter name="ymlFile"
 			value="preReg/CancelAppointment/CancelAppointment.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PutWithPathParam" />
 		</classes>
 	</test>
 	
@@ -161,7 +161,7 @@
 		<parameter name="ymlFile"
 			value="preReg/CancelApplicationsAppointment/CancelApplicationsAppointment.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PutWithPathParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PutWithPathParam" />
 		</classes>
 	</test>
 	
@@ -171,7 +171,7 @@
 		<parameter name="ymlFile"
 			value="preReg/GetAvailableSlotForRegCentreId/GetAvailableSlotForRegCentreId.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	
@@ -179,7 +179,7 @@
 		<parameter name="ymlFile"
 			value="preReg/GetBookingsForRegCenter/GetBookingsForRegCenter.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	
@@ -187,7 +187,7 @@
 		<parameter name="ymlFile"
 			value="preReg/GetPRIDForRegCent/GetPRIDForRegCent.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	
@@ -196,7 +196,7 @@
 		<parameter name="ymlFile"
 			value="preReg/SendNotifications/SendNotifications.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.PostWithFormDataAndFileForNotificationAPI" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PostWithFormDataAndFileForNotificationAPI" />
 		</classes>
 	</test>
 	
@@ -204,7 +204,7 @@
 		<parameter name="ymlFile"
 			value="preReg/DeleteSpecificDocForaPRID/DeleteSpecificDocForaPRID.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
 	
@@ -214,7 +214,7 @@
 		<parameter name="ymlFile"
 			value="preReg/DeleteAllDocForaPRID/DeleteAllDocForaPRID.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
 	
@@ -224,7 +224,7 @@
 		<parameter name="ymlFile"
 			value="preReg/DeleteBooking/DeleteBooking.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
 	
@@ -234,21 +234,21 @@
 		<parameter name="ymlFile"
 			value="preReg/InvalidateToken/InvalidateToken.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test> 
 	<test name="Transliteration">
 		<parameter name="ymlFile"
 			value="preReg/Transliteration/Translate.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test> 
 	<test name="GetAllApplications">
 		<parameter name="ymlFile"
 			value="preReg/GetAllApplications/GetAllApplications.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test> 
 	
@@ -256,14 +256,14 @@
 		<parameter name="ymlFile"
 			value="preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test> 
 	<test name="GetUpdatedDateTimeByPrid">
 		<parameter name="ymlFile"
 			value="preReg/GetUpdatedDateTimeByPrid/GetUpdatedDateTimeByPrid.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test>
 	
@@ -271,14 +271,14 @@
 		<parameter name="ymlFile"
 			value="preReg/AddUpdateRegistration/AddUpdateRegistration.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test>
 	<test name="AddLostUinApplication">
 		<parameter name="ymlFile"
 			value="preReg/AddLostUinApplication/AddLostUinApplication.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test>
 	
@@ -286,7 +286,7 @@
 		<parameter name="ymlFile"
 			value="preReg/DeleteLostUinApplication/DeleteLostUinApplication.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
 	
@@ -296,7 +296,7 @@
 		<parameter name="ymlFile"
 			value="preReg/DeletePreRegistration/DeletePreRegistration.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.DeleteWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
 	
@@ -305,7 +305,7 @@
 		<parameter name="ymlFile"
 			value="preReg/GetPreRegInfoByPrid/GetPreRegInfoByPrid.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	
@@ -313,7 +313,7 @@
 		<parameter name="ymlFile"
 			value="preReg/GetAllPreRegApplications/GetAllPreRegApplications.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	
@@ -322,35 +322,35 @@
 		<parameter name="ymlFile"
 			value="preReg/SendOtp/SendOtp.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test>
 	<test name="ValidateOtp">
 		<parameter name="ymlFile"
 			value="preReg/ValidateOtp/ValidateOtp.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
 		</classes>
 	</test> 
 	<test name="FetchAvailabilityData">
 		<parameter name="ymlFile"
 			value="preReg/FetchAvailabilityData/FetchAvailabilityData.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 		 <test name="GetPreRegDemographicDataByPrid">
 		<parameter name="ymlFile"
 			value="preReg/GetPreRegDemographicDataByPrid/GetPreRegDemographicDataByPrid.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 	 <test name="GetApplicationStatusByApplicationID">
 		<parameter name="ymlFile"
 			value="preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.testscripts.GetWithParam" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
 </suite>

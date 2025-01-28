@@ -1,13 +1,11 @@
-package io.mosip.testrig.apirig.testscripts;
+package io.mosip.testrig.apirig.prereg.testscripts;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
-import org.json.JSONObject;
 import org.testng.ITest;
 import org.testng.ITestContext;
 import org.testng.ITestResult;
@@ -22,22 +20,22 @@ import org.testng.internal.TestResult;
 
 import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
+import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
+import io.mosip.testrig.apirig.prereg.utils.PreRegUtil;
 import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.AuthenticationTestException;
+import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
-import io.mosip.testrig.apirig.utils.PreRegConfigManager;
-import io.mosip.testrig.apirig.utils.PreRegUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class SimplePost extends AdminTestUtil implements ITest {
-	private static final Logger logger = Logger.getLogger(SimplePost.class);
+public class PostWithPathParamsAndBody extends AdminTestUtil implements ITest {
+	private static final Logger logger = Logger.getLogger(PostWithPathParamsAndBody.class);
 	protected String testCaseName = "";
-	public Response response = null;
-	public boolean auditLogCheck = false;
+	public String pathParams = null;
 
 	@BeforeClass
 	public static void setLogLevel() {
@@ -63,6 +61,7 @@ public class SimplePost extends AdminTestUtil implements ITest {
 	@DataProvider(name = "testcaselist")
 	public Object[] getTestCaseList(ITestContext context) {
 		String ymlFile = context.getCurrentXmlTest().getLocalParameters().get("ymlFile");
+		pathParams = context.getCurrentXmlTest().getLocalParameters().get("pathParams");
 		logger.info("Started executing yml: " + ymlFile);
 		return getYmlTestData(ymlFile);
 	}
@@ -78,52 +77,28 @@ public class SimplePost extends AdminTestUtil implements ITest {
 	 */
 	@Test(dataProvider = "testcaselist")
 	public void test(TestCaseDTO testCaseDTO) throws AuthenticationTestException, AdminTestException {
-		testCaseName = testCaseDTO.getTestCaseName();
 		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
-		testCaseName = isTestCaseValidForExecution(testCaseDTO);
-		auditLogCheck = testCaseDTO.isAuditLogCheck();
-		String[] templateFields = testCaseDTO.getTemplateFields();
+		String regCenterId = null;
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
 		}
 
-		String inputJson = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
+		
 
-		if (testCaseDTO.getTemplateFields() != null && templateFields.length > 0) {
-			ArrayList<JSONObject> inputtestCases = AdminTestUtil.getInputTestCase(testCaseDTO);
-			ArrayList<JSONObject> outputtestcase = AdminTestUtil.getOutputTestCase(testCaseDTO);
-			for (int i = 0; i < languageList.size(); i++) {
-				response = postWithBodyAndCookie(ApplnURI + testCaseDTO.getEndPoint(),
-						getJsonFromTemplate(inputtestCases.get(i).toString(), testCaseDTO.getInputTemplate()),
-						COOKIENAME, testCaseDTO.getRole(), testCaseDTO.getTestCaseName());
+		String inputJosn = getJsonFromTemplate(testCaseDTO.getInput(), testCaseDTO.getInputTemplate());
+		
+		Response response = postWithPathParamsBodyAndCookie(ApplnURI + testCaseDTO.getEndPoint(), inputJosn, COOKIENAME,
+				testCaseDTO.getRole(), testCaseDTO.getTestCaseName(), pathParams);
 
-				Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
-						response.asString(),
-						getJsonFromTemplate(outputtestcase.get(i).toString(), testCaseDTO.getOutputTemplate()),
-						testCaseDTO, response.getStatusCode());
-				Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
-
-				if (!OutputValidationUtil.publishOutputResult(ouputValid))
-					throw new AdminTestException("Failed at output validation");
-			}
-		}
-
-		else {
-			response = postWithBodyAndCookie(ApplnURI + testCaseDTO.getEndPoint(), inputJson, auditLogCheck, COOKIENAME,
-					testCaseDTO.getRole(), testCaseDTO.getTestCaseName());
-		}
-		Map<String, List<OutputValidationDto>> ouputValid = null;
-
-		ouputValid = OutputValidationUtil.doJsonOutputValidation(response.asString(),
-				getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()), testCaseDTO,
-				response.getStatusCode());
-
+		Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(
+				response.asString(), getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate()),
+				testCaseDTO, response.getStatusCode());
 		Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
 
-		if (!OutputValidationUtil.publishOutputResult(ouputValid)) {
-			throw new AdminTestException("Failed at otp output validation");
-		}
+		if (!OutputValidationUtil.publishOutputResult(ouputValid))
+			throw new AdminTestException("Failed at output validation");
+
 	}
 
 	/**
@@ -145,4 +120,5 @@ public class SimplePost extends AdminTestUtil implements ITest {
 			Reporter.log("Exception : " + e.getMessage());
 		}
 	}
+
 }
