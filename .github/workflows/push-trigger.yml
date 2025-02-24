@@ -56,15 +56,19 @@ jobs:
           - SERVICE_LOCATION: 'pre-registration/pre-registration-application-service'
             SERVICE_NAME: 'pre-registration-application-service'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
           - SERVICE_LOCATION: 'pre-registration/pre-registration-batchjob'
             SERVICE_NAME: 'pre-registration-batchjob'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
           - SERVICE_LOCATION: 'pre-registration/pre-registration-datasync-service'
             SERVICE_NAME: 'pre-registration-datasync-service'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
           - SERVICE_LOCATION: 'pre-registration/pre-registration-captcha-service'
             SERVICE_NAME: 'pre-registration-captcha-service'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
       fail-fast: false
     name: ${{ matrix.SERVICE_NAME }}
     uses: mosip/kattu/.github/workflows/docker-build.yml@master-java21
@@ -72,6 +76,7 @@ jobs:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
       SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
       BUILD_ARTIFACT: ${{ matrix.BUILD_ARTIFACT }}
+      SQUASH_LAYERS: ${{ matrix.SQUASH_LAYERS }}
     secrets:
       DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
       ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
@@ -153,7 +158,7 @@ jobs:
           find ${{ env.SERVICE_LOCATION }} -path '*/target/*' -exec zip ${{ env.BUILD_ARTIFACT }}.zip {} +
       - name: Upload the springboot jars
         if: ${{ !contains(github.ref, 'master') || !contains(github.ref, 'main') }}
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ${{ env.BUILD_ARTIFACT }}
           path: ${{ env.BUILD_ARTIFACT }}.zip
