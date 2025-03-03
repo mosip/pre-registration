@@ -32,7 +32,7 @@ import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class PostWithFormPathParamAndFile extends AdminTestUtil implements ITest {
+public class PostWithFormPathParamAndFile extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(PostWithFormPathParamAndFile.class);
 	protected String testCaseName = "";
 	public String idKeyName = null;
