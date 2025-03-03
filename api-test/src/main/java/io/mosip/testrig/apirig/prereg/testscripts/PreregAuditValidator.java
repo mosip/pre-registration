@@ -22,6 +22,7 @@ import org.testng.internal.BaseTestMethod;
 import org.testng.internal.TestResult;
 
 import io.mosip.testrig.apirig.dbaccess.AuditDBManager;
+import io.mosip.testrig.apirig.dbaccess.DBManager;
 import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
 import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
@@ -36,7 +37,7 @@ import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.restassured.response.Response;
 
-public class PreregAuditValidator extends AdminTestUtil implements ITest {
+public class PreregAuditValidator extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(PreregAuditValidator.class);
 	protected String testCaseName = "";
 	public static List<String> templateFields = new ArrayList<>();
@@ -86,7 +87,7 @@ public class PreregAuditValidator extends AdminTestUtil implements ITest {
 				+ "robin.hood@mailinator.com" + "'";
 
 		logger.info(query);
-		Map<String, Object> response = AuditDBManager.executeQueryAndGetRecord(testCaseDTO.getRole(), query);
+		Map<String, Object> response = DBManager.executeQueryAndGetRecord(testCaseDTO.getRole(), query);
 
 		Map<String, List<OutputValidationDto>> objMap = new HashMap<>();
 		List<OutputValidationDto> objList = new ArrayList<>();
@@ -117,7 +118,7 @@ public class PreregAuditValidator extends AdminTestUtil implements ITest {
 				+ "robin.hood@mailinator.com" + "'";
 
 		logger.info(deleteQuery);
-		AuditDBManager.executeQueryAndDeleteRecord("audit", deleteQuery);
+		DBManager.executeQueryAndDeleteRecord("audit", deleteQuery);
 		try {
 			Field method = TestResult.class.getDeclaredField("m_method");
 			method.setAccessible(true);
