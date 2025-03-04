@@ -34,7 +34,7 @@ import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class UpdatePrereg extends AdminTestUtil implements ITest {
+public class UpdatePrereg extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(UpdatePrereg.class);
 	protected String testCaseName = "";
 	String pathParams = null;

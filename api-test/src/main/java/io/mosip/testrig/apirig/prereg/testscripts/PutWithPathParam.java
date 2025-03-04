@@ -34,7 +34,7 @@ import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class PutWithPathParam extends AdminTestUtil implements ITest {
+public class PutWithPathParam extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(PutWithPathParam.class);
 	protected String testCaseName = "";
 	public Response response = null;
