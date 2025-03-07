@@ -730,7 +730,7 @@ BookAppointment:
    Prereg_BookAppointment_incompleteApplication_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_30
-      description: Book an appointment with an invalid preregistration ID
+      description: Book an appointment with an incomplete application preregistration ID
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
