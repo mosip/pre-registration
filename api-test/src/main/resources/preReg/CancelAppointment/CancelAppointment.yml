@@ -69,7 +69,7 @@ CancelAppointment:
     }
   ]
 }'
-   Prereg_CancelAppointment_forPendingAppointment_preRegistrationId_sid:
+   Prereg_CancelAppointment_forPendingAppointment_preRegistrationId_Neg:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelAppointment_05
       description: Canceling an appointment with an pending appointment preregistration ID

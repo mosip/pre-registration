@@ -719,7 +719,7 @@ CreatePrereg:
 }'
       output: '{
 }'
-   Prereg_CreatePrereg_without_input_sid:
+   Prereg_CreatePrereg_without_input_Neg:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_30
       description: Creating preregistration without input
