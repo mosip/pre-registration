@@ -83,14 +83,6 @@ public class MosipTestRunner {
 			setLogLevels();
 			AdminTestUtil.getRequiredField();
 
-			// For now we are not doing health check for qa-115.
-//			if (BaseTestCase.isTargetEnvLTS()) {
-//				HealthChecker healthcheck = new HealthChecker();
-//				healthcheck.setCurrentRunningModule(BaseTestCase.currentModule);
-//				Thread trigger = new Thread(healthcheck);
-//				trigger.start();
-//			}
-			
 			HealthChecker healthcheck = new HealthChecker();
 			healthcheck.setCurrentRunningModule(BaseTestCase.currentModule);
 			Thread trigger = new Thread(healthcheck);
@@ -109,9 +101,6 @@ public class MosipTestRunner {
 
 		OTPListener.bTerminate = true;
 
-//		if (BaseTestCase.isTargetEnvLTS())
-//			HealthChecker.bTerminate = true;
-		
 		HealthChecker.bTerminate = true;
 
 		System.exit(0);
