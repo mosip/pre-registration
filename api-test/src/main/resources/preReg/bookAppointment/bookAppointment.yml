@@ -727,3 +727,28 @@ BookAppointment:
     }
   ]
 }'
+   Prereg_BookAppointment_incompleteApplication_preRegistrationId_Neg:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_BookAppointment_30
+      description: Book an appointment with an incomplete application preregistration ID
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$ID:CreatePrereg_cancell_incomplete_prid_sid_preRegistrationId$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_036"
+    }
+  ]
+}'
