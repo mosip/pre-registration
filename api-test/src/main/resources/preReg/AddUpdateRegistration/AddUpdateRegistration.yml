@@ -41,3 +41,47 @@ AddUpdateRegistration:
     }
   ]
 }'
+   Prereg_AddUpdateRegistration_without_input_Neg:
+      endPoint: /preregistration/v1/applications/updateregistration
+      uniqueIdentifier: TC_prereg_AddUpdateRegistration_03
+      description: Add an update to the registration without input data
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+      outputTemplate: preReg/error
+      input: '{
+  "version": "$REMOVE$",
+  "requesttime": "$REMOVE$",
+  "langCode": "$REMOVE$",
+  "id": "$REMOVE$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_003",
+      "message": "Invalid request time"
+    }
+  ]
+}'
+   Prereg_AddUpdateRegistration_missing_langCode_Neg:
+      endPoint: /preregistration/v1/applications/updateregistration
+      uniqueIdentifier: TC_prereg_AddUpdateRegistration_04
+      description: Add an update to the registration with missing lang code
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+      outputTemplate: preReg/error
+      input: '{
+    "version": "1.0",
+    "requesttime": "$TIMESTAMP$",
+    "langCode": "$REMOVE$",
+    "id": "mosip.pre-registration.updateregistration.create"
+  }'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_014",
+      "message": "Lang code is invalid"
+    }
+  ]
+}'
