@@ -139,3 +139,23 @@ UpdatePreRegStatus:
     }
   ]
 }'
+   Prereg_UpdatePreRegStatus_Invalid_preregid_Neg:
+      endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
+      uniqueIdentifier: TC_prereg_UpdatePreRegStatus_10
+      description: Update the application status with invalid preregistration id
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "invalidPreRegID",
+  "statusCode": "Pending_Appointment"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
