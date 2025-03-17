@@ -94,6 +94,7 @@ AddLostUinApplication:
       inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
       outputTemplate: preReg/error
       input: '{
+  "version": "$REMOVE$",		
   "requesttime": "$TIMESTAMP$",
   "langCode": "eng",
   "id": "mosip.pre-registration.lostuin.create"

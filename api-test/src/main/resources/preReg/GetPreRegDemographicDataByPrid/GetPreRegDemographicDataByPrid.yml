@@ -13,7 +13,10 @@ GetPreRegDemographicDataByPrid:
 }'
       output: '{
   "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_preRegistrationId$",
-  "postalCode":"14022"
+  "postalCode":"14022",
+  "dateOfBirth": "1996/01/01",
+  "IDSchemaVersion": "$SCHEMAVERSION$",
+  "phone": "8249742850"
 }'
    Prereg_GetPreRegDemographicDataByPrid_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}

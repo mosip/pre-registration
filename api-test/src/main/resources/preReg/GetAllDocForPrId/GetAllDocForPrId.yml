@@ -12,6 +12,8 @@ GetAllDocForPrId:
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
+		"docCatCode": "POA",
+		 "docTypCode": "RNC"
 }'
    Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
