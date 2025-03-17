@@ -6,23 +6,23 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.3.0-beta.1</version>
+		<version>1.3.0-SNAPSHOT</version>
 	</parent>
 	
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
-	<version>1.3.0-beta.1</version>
+	<version>1.3.0-SNAPSHOT</version>
 
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
 	
 	<properties>
 		<!-- Mosip kernel -->
-		<kernel.keymanager.version>1.3.0-beta.1</kernel.keymanager.version>
-		<kernel.transliteration.icu4j.version>1.3.0-beta.1</kernel.transliteration.icu4j.version>
-		<kernel.idobjectvalidator.version>1.3.0-beta.1</kernel.idobjectvalidator.version>
-		<kernel.bom.version>1.3.0-beta.1</kernel.bom.version>
-		<pre.registration.core.version>1.3.0-beta.1</pre.registration.core.version>
+		<kernel.keymanager.version>1.3.0-SNAPSHOT</kernel.keymanager.version>
+		<kernel.transliteration.icu4j.version>1.3.0-SNAPSHOT</kernel.transliteration.icu4j.version>
+		<kernel.idobjectvalidator.version>1.3.0-SNAPSHOT</kernel.idobjectvalidator.version>
+		<kernel.bom.version>1.3.0-SNAPSHOT</kernel.bom.version>
+		<pre.registration.core.version>1.3.0-SNAPSHOT</pre.registration.core.version>
 		<maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
 		<nexus.staging.maven.plugin.version>1.6.14</nexus.staging.maven.plugin.version>
 	</properties>
