@@ -675,7 +675,7 @@ CreatePrereg:
 }'
       output: '{
 }'
-   Prereg_CreatePrereg_cancell_pending_appoinment_prid_sid:
+   Prereg_CreatePrereg_cancell_pending_appoinment_prid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_28
       description: Creating preregistration and canceling pending appointment using PRID

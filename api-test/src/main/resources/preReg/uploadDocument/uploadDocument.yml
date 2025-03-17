@@ -1096,7 +1096,7 @@ UploadDocument:
     "docTypCode" : "RNC",
     "langCode" : "$1STLANG$",
     "requesttime" : "$TIMESTAMP$",
-    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_sid_preRegistrationId$",
+    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_Smoke_sid_preRegistrationId$",
     "filePath": "preReg/uploadDocument/doc_POA.pdf",
     "fileKeyName": "file"
 }'
@@ -1121,7 +1121,7 @@ UploadDocument:
     "docTypCode" : "CIN",
     "langCode" : "$1STLANG$",
     "requesttime" : "$TIMESTAMP$",
-    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_sid_preRegistrationId$",
+    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_Smoke_sid_preRegistrationId$",
     "filePath": "preReg/uploadDocument/doc_POI.pdf",
     "fileKeyName": "file"
 }'
@@ -1146,7 +1146,7 @@ UploadDocument:
     "docTypCode" : "COB",
     "langCode" : "$1STLANG$",
     "requesttime" : "$TIMESTAMP$",
-    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_sid_preRegistrationId$",
+    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_Smoke_sid_preRegistrationId$",
     "filePath": "preReg/uploadDocument/doc_POB.pdf",
     "fileKeyName": "file"
 }'
@@ -1171,7 +1171,7 @@ UploadDocument:
     "docTypCode" : "CRN",
     "langCode" : "$1STLANG$",
     "requesttime" : "$TIMESTAMP$",
-    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_sid_preRegistrationId$",
+    "preRegistrationId": "$ID:CreatePrereg_cancell_pending_appoinment_prid_Smoke_sid_preRegistrationId$",
     "filePath": "preReg/uploadDocument/doc_POR.pdf",
     "fileKeyName": "file"
 }'
