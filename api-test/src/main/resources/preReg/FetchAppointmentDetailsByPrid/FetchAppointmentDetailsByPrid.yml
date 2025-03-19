@@ -31,3 +31,21 @@ FetchAppointmentDetailsByPrid:
     }
   ]
 }'
+   Prereg_FetchAppointmentDetailsByPrid_forExpiredApplication_Neg:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_FetchAppointmentDetailsByPrid_03
+      description: Fetch appointment details for the expired preregistration ID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchAppointmentDetailsByPrid/fetchAppointmentDetailsByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_for_expiry_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_013"
+    }
+  ]
+}'
