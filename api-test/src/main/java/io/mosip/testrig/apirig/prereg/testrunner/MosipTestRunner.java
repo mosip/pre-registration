@@ -81,7 +81,6 @@ public class MosipTestRunner {
 			SkipTestCaseHandler.loadTestcaseToBeSkippedList("testCaseSkippedList.txt");
 			GlobalMethods.setModuleNameAndReCompilePattern(PreRegConfigManager.getproperty("moduleNamePattern"));
 			setLogLevels();
-			AdminTestUtil.getRequiredField();
 
 			HealthChecker healthcheck = new HealthChecker();
 			healthcheck.setCurrentRunningModule(BaseTestCase.currentModule);
@@ -91,13 +90,15 @@ public class MosipTestRunner {
 			KeycloakUserManager.removeUser();
 			KeycloakUserManager.createUsers();
 			KeycloakUserManager.closeKeycloakInstance();
-
-			// List<String> localDocCatCode =new ArrayList<>(BaseTestCase.getDocCatCode());
+			AdminTestUtil.getRequiredField();
 
 			startTestRunner();
 		} catch (Exception e) {
 			LOGGER.error("Exception " + e.getMessage());
 		}
+		
+		KeycloakUserManager.removeUser();
+		KeycloakUserManager.closeKeycloakInstance();
 
 		OTPListener.bTerminate = true;
 
