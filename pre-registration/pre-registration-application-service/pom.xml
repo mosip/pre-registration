@@ -25,7 +25,7 @@
 		<pre.registration.core.version>1.2.1-SNAPSHOT</pre.registration.core.version>
 		<!-- Others -->
 		<org.hamcrest.version>2.1</org.hamcrest.version>
-		<lombok.version>1.18.30</lombok.version>
+		<lombok.version>1.18.38</lombok.version>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<org.ehcache.version>3.10.8</org.ehcache.version>
 	</properties>
