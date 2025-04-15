@@ -48,7 +48,7 @@
 		<spring.version>5.0.4.RELEASE</spring.version>
 		<spring.boot.version>3.2.5</spring.boot.version>
 		<spring.data.version>2.0.9.RELEASE</spring.data.version>
-		<spring-cloud-config.version>3.1.9</spring-cloud-config.version>
+		<spring-cloud-config.version>4.2.2</spring-cloud-config.version>
 
 		<!-- Miscellaneous -->
 		<javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
