@@ -8,16 +8,12 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import io.mosip.preregistration.core.converter.Base64StringConverter;
+import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.NamedQuery;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -71,10 +67,12 @@ public class DemographicEntity implements Serializable {
 
 	/** The created by. */
 	@Column(name = "cr_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String createdBy;
 
 	/** The created appuser by. */
 	@Column(name = "cr_appuser_id")
+	@Convert(converter = Base64StringConverter.class)
 	private String crAppuserId;
 
 	/** The create date time. */
@@ -83,6 +81,7 @@ public class DemographicEntity implements Serializable {
 
 	/** The updated by. */
 	@Column(name = "upd_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String updatedBy;
 
 	/** The update date time. */

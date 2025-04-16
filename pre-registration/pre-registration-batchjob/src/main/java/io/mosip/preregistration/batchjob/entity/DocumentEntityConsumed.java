@@ -7,10 +7,8 @@ package io.mosip.preregistration.batchjob.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import io.mosip.preregistration.core.converter.Base64StringConverter;
+import jakarta.persistence.*;
 
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -85,6 +83,7 @@ public class DocumentEntityConsumed implements Serializable {
 	 * Created By
 	 */
 	@Column(name = "cr_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String crBy;
 
 	/**
@@ -97,6 +96,7 @@ public class DocumentEntityConsumed implements Serializable {
 	 * Updated By
 	 */
 	@Column(name = "upd_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String updBy;
 
 	/**

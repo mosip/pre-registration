@@ -7,12 +7,10 @@ package io.mosip.preregistration.datasync.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import io.mosip.preregistration.core.converter.Base64StringConverter;
+import jakarta.persistence.*;
 import org.springframework.stereotype.Component;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -60,10 +58,12 @@ public class DemographicEntityConsumed implements Serializable {
 
 	/** The created by. */
 	@Column(name = "cr_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String createdBy;
 
 	/** The created appuser by. */
 	@Column(name = "cr_appuser_id")
+	@Convert(converter = Base64StringConverter.class)
 	private String crAppuserId;
 
 	/** The create date time. */
@@ -72,6 +72,7 @@ public class DemographicEntityConsumed implements Serializable {
 
 	/** The updated by. */
 	@Column(name = "upd_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String updatedBy;
 
 	/** The update date time. */

@@ -7,14 +7,8 @@ package io.mosip.preregistration.core.common.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.NamedQuery;
-import jakarta.persistence.Table;
+import io.mosip.preregistration.core.converter.Base64StringConverter;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -97,6 +91,7 @@ public class DocumentEntity implements Serializable {
 	 * Created By
 	 */
 	@Column(name = "cr_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String crBy;
 
 	/**
@@ -109,6 +104,7 @@ public class DocumentEntity implements Serializable {
 	 * Updated By
 	 */
 	@Column(name = "upd_by")
+	@Convert(converter = Base64StringConverter.class)
 	private String updBy;
 
 	/**
