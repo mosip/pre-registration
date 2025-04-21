@@ -31,13 +31,12 @@ import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.AuthenticationTestException;
-import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.restassured.response.Response;
 
-public class CreatePreReg extends AdminTestUtil implements ITest {
+public class CreatePreReg extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(CreatePreReg.class);
 	protected String testCaseName = "";
 	public String idKeyName = null;

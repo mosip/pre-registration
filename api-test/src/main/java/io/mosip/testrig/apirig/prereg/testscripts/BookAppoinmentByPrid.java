@@ -29,7 +29,6 @@ import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.AuthenticationTestException;
-import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.KernelAuthentication;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
@@ -37,7 +36,7 @@ import io.mosip.testrig.apirig.utils.ReportUtil;
 import io.mosip.testrig.apirig.utils.RestClient;
 import io.restassured.response.Response;
 
-public class BookAppoinmentByPrid extends AdminTestUtil implements ITest {
+public class BookAppoinmentByPrid extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(BookAppoinmentByPrid.class);
 	protected String testCaseName = "";
 	public Response response = null;
