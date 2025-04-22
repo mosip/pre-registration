@@ -69,3 +69,21 @@ CancelAppointment:
     }
   ]
 }'
+   Prereg_CancelAppointment_forPendingAppointment_preRegistrationId_Neg:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_CancelAppointment_05
+      description: Canceling an appointment with an pending appointment preregistration ID
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_013"
+    }
+  ]
+}'
