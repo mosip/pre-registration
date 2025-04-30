@@ -1,14 +1,21 @@
 package io.mosip.preregistration.captcha.serviceimpl.test;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
+import io.mosip.preregistration.captcha.constants.CaptchaErrorCode;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -80,7 +87,7 @@ public class CaptchaServiceImplTest {
 		mainResponse.setId(mosipcaptchaValidateId);
 		mainResponse.setVersion(version);
 
-		Mockito.when(restTemplate.postForObject("https://www.google.com/recaptcha/api/siteverify",
+		when(restTemplate.postForObject("https://www.google.com/recaptcha/api/siteverify",
 				"{secret=[demo], response=[aRsasahksasa]}", GoogleCaptchaDTO.class)).thenReturn(captchaResponse);
 		assertNotNull(captchaServiceImpl.validateCaptcha(captchaRequest));
 	}
@@ -93,6 +100,64 @@ public class CaptchaServiceImplTest {
 		captchaResponse.setSuccess(true);
 		captchaResponse.setChallengeTs("Success");
 		captchaServiceImpl.validateCaptcha(captchaRequest);
+	}
+
+	@Test
+	public void test_successful_captcha_validation() {
+		CaptchaServiceImpl captchaService = new CaptchaServiceImpl();
+		RestTemplate restTemplate = mock(RestTemplate.class);
+		ReflectionTestUtils.setField(captchaService, "restTemplate", restTemplate);
+		ReflectionTestUtils.setField(captchaService, "recaptchaSecret", "test-secret");
+		ReflectionTestUtils.setField(captchaService, "recaptchaVerifyUrl", "https://test-url.com");
+		ReflectionTestUtils.setField(captchaService, "mosipcaptchaValidateId", "mosip.pre-registration.captcha.id.validate");
+		ReflectionTestUtils.setField(captchaService, "version", "1.0");
+
+		CaptchaRequestDTO captchaRequest = new CaptchaRequestDTO();
+		captchaRequest.setCaptchaToken("valid-token");
+
+		GoogleCaptchaDTO googleResponse = new GoogleCaptchaDTO();
+		googleResponse.setSuccess(true);
+		googleResponse.setChallengeTs("2023-01-01T12:00:00Z");
+		googleResponse.setHostname("test-host");
+
+		MultiValueMap<String, String> expectedParams = new LinkedMultiValueMap<>();
+		expectedParams.add("secret", "test-secret");
+		expectedParams.add("response", "valid-token");
+
+		when(restTemplate.postForObject(
+				eq("https://test-url.com"),
+				eq(expectedParams),
+				eq(GoogleCaptchaDTO.class)
+		)).thenReturn(googleResponse);
+
+		MainResponseDTO<CaptchaResposneDTO> response =
+				(MainResponseDTO<CaptchaResposneDTO>) captchaService.validateCaptcha(captchaRequest);
+
+		assertNotNull(response);
+		assertEquals("mosip.pre-registration.captcha.id.validate", response.getId());
+		assertEquals("1.0", response.getVersion());
+		assertEquals("2023-01-01T12:00:00Z", response.getResponsetime());
+		assertNotNull(response.getResponse());
+		assertTrue(response.getResponse().isSuccess());
+		assertNull(response.getErrors());
+	}
+
+	@Test
+	public void test_null_captcha_token_handling() {
+		CaptchaServiceImpl captchaService = new CaptchaServiceImpl();
+		CaptchaRequestDTO captchaRequest = new CaptchaRequestDTO();
+		captchaRequest.setCaptchaToken(null);
+
+		assertThrows(InvalidRequestCaptchaException.class, () -> {
+			captchaService.validateCaptcha(captchaRequest);
+		});
+
+		try {
+			captchaService.validateCaptcha(captchaRequest);
+		} catch (InvalidRequestCaptchaException e) {
+			assertEquals(CaptchaErrorCode.INVALID_CAPTCHA_REQUEST.getErrorCode(), e.getErrorCode());
+			assertEquals(CaptchaErrorCode.INVALID_CAPTCHA_REQUEST.getErrorMessage(), e.getErrorMessage());
+		}
 	}
 
 }
