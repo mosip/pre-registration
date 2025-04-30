@@ -3,6 +3,8 @@ package io.mosip.preregistration.application.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
 
+import io.mosip.kernel.core.exception.BaseUncheckedException;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -36,6 +39,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.ArgumentMatchers;
@@ -1105,6 +1109,115 @@ public class DemographicServiceTest {
 		MainResponseDTO<io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO> response = preRegistrationService
 				.updatePreRegistration(request, preRegistrationId, userId);
 		assertEquals(userId, response.getId());
+	}
+
+    @Test
+    public void test_successful_deserialization() throws Exception {
+        DemographicService demographicService = new DemographicService();
+        ObjectMapper mockObjectMapper = Mockito.mock(ObjectMapper.class);
+        DemographicIdentityRequestDTO expectedDto = new DemographicIdentityRequestDTO();
+
+        ReflectionTestUtils.setField(demographicService, "objectMapper", mockObjectMapper);
+        ReflectionTestUtils.setField(demographicService, "getIdentityJsonString", "{\"identity\":{}}");
+
+        Mockito.when(mockObjectMapper.readValue(Mockito.anyString(), Mockito.eq(DemographicIdentityRequestDTO.class)))
+                .thenReturn(expectedDto);
+
+        DemographicIdentityRequestDTO result = demographicService.getPreregistrationIdentityJson();
+
+        Assertions.assertNotNull(result);
+        Assertions.assertEquals(expectedDto, result);
+        Mockito.verify(mockObjectMapper).readValue(Mockito.anyString(), Mockito.eq(DemographicIdentityRequestDTO.class));
+    }
+
+	@Test
+	public void test_extract_field_names_from_schema_json() {
+		DemographicService demographicService = new DemographicService();
+		ObjectMapper objectMapper = new ObjectMapper();
+		ReflectionTestUtils.setField(demographicService, "objectMapper", objectMapper);
+
+		String schemaJson = "{\n" +
+				"  \"properties\": {\n" +
+				"    \"identity\": {\n" +
+				"      \"properties\": {\n" +
+				"        \"fullName\": {},\n" +
+				"        \"gender\": {},\n" +
+				"        \"dateOfBirth\": {}\n" +
+				"      }\n" +
+				"    }\n" +
+				"  }\n" +
+				"}";
+
+		List<String> result = ReflectionTestUtils.invokeMethod(demographicService, "convertSchemaJsonToArray", schemaJson);
+
+		assertNotNull(result);
+		assertEquals(3, result.size());
+		assertTrue(result.contains("fullName"));
+		assertTrue(result.contains("gender"));
+		assertTrue(result.contains("dateOfBirth"));
+	}
+
+	@Test
+	public void test_successfully_calls_delete_all_by_pre_id() {
+		DocumentServiceIntf documentServiceImpl = Mockito.mock(DocumentServiceIntf.class);
+		DemographicService demographicService = new DemographicService();
+		ReflectionTestUtils.setField(demographicService, "documentServiceImpl", documentServiceImpl);
+		String preregId = "12345678901234";
+
+		ReflectionTestUtils.invokeMethod(demographicService, "getDocumentServiceToDeleteAllByPreId", preregId);
+
+		Mockito.verify(documentServiceImpl, Mockito.times(1)).deleteAllByPreId(preregId);
+	}
+
+	@Test
+	public void test_handles_runtime_exception_with_doc_005_error_code() {
+		DocumentServiceIntf documentServiceImpl = Mockito.mock(DocumentServiceIntf.class);
+		DemographicService demographicService = new DemographicService();
+		ReflectionTestUtils.setField(demographicService, "documentServiceImpl", documentServiceImpl);
+		String preregId = "12345678901234";
+
+		BaseUncheckedException exception = new BaseUncheckedException(DemographicErrorCodes.PRG_PAM_DOC_005.toString(), "Document not found");
+		Mockito.doThrow(exception).when(documentServiceImpl).deleteAllByPreId(preregId);
+
+		Assertions.assertDoesNotThrow(() -> ReflectionTestUtils.invokeMethod(demographicService, "getDocumentServiceToDeleteAllByPreId", preregId));
+
+		Mockito.verify(documentServiceImpl, Mockito.times(1)).deleteAllByPreId(preregId);
+	}
+
+	@Test
+	public void test_returns_true_when_all_mandatory_documents_uploaded() {
+		DemographicService demographicService = new DemographicService();
+		CommonServiceUtil commonServiceUtil = Mockito.mock(CommonServiceUtil.class);
+		ReflectionTestUtils.setField(demographicService, "commonServiceUtil", commonServiceUtil);
+
+		DemographicEntity demographicEntity = new DemographicEntity();
+		List<DocumentEntity> documentEntities = new ArrayList<>();
+		DocumentEntity documentEntity = new DocumentEntity();
+		documentEntity.setDocCatCode("POA");
+		documentEntities.add(documentEntity);
+		demographicEntity.setDocumentEntity(documentEntities);
+
+		Mockito.when(commonServiceUtil.isupdateStausToPendingAppointmentValid(demographicEntity)).thenReturn(true);
+
+		boolean result = demographicService.isupdateStausToPendingAppointmentValid(demographicEntity);
+
+		assertTrue(result);
+		Mockito.verify(commonServiceUtil).isupdateStausToPendingAppointmentValid(demographicEntity);
+	}
+
+	@Test
+	public void test_handles_null_demographic_entity() {
+		DemographicService demographicService = new DemographicService();
+		CommonServiceUtil commonServiceUtil = Mockito.mock(CommonServiceUtil.class);
+		ReflectionTestUtils.setField(demographicService, "commonServiceUtil", commonServiceUtil);
+
+		DemographicEntity demographicEntity = null;
+		Mockito.when(commonServiceUtil.isupdateStausToPendingAppointmentValid(null)).thenReturn(false);
+
+		boolean result = demographicService.isupdateStausToPendingAppointmentValid(demographicEntity);
+
+		assertFalse(result);
+		Mockito.verify(commonServiceUtil).isupdateStausToPendingAppointmentValid(null);
 	}
 
 }

@@ -2,6 +2,7 @@ package io.mosip.preregistration.application.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -19,6 +20,20 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.preregistration.application.code.DocumentStatusMessages;
+import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
+import io.mosip.preregistration.core.code.EventId;
+import io.mosip.preregistration.core.code.EventName;
+import io.mosip.preregistration.core.code.EventType;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentDTO;
+import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
+import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.dto.AuditRequestDto;
+
 import org.apache.commons.io.IOUtils;
 import org.json.JSONException;
 import org.junit.Before;
@@ -28,6 +43,7 @@ import org.junit.runners.JUnit4;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.ArgumentCaptor;
 import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,13 +71,6 @@ import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
 import io.mosip.preregistration.core.code.RequestCodes;
-import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
-import io.mosip.preregistration.core.common.dto.DocumentDTO;
-import io.mosip.preregistration.core.common.dto.DocumentDeleteResponseDTO;
-import io.mosip.preregistration.core.common.dto.DocumentMultipartResponseDTO;
-import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
@@ -574,6 +583,49 @@ public class DocumentServiceTest {
 		Mockito.when(serviceUtil.fileSizeCheck(multipartFile.getSize())).thenReturn(true);
 		Mockito.when(serviceUtil.fileExtensionCheck(Mockito.any())).thenReturn(true);
 		assertNotNull(documentUploadService.uploadDocument(mockMultipartFile, documentId, preRegistrationId));
+	}
+
+	@Test
+	public void test_handle_no_documents_found_for_preregid() {
+		DocumentService documentService = new DocumentService();
+		String preregId = "12345678901234";
+
+		ValidationUtil validationUtil = Mockito.mock(ValidationUtil.class);
+		AuditLogUtil auditLogUtil = Mockito.mock(AuditLogUtil.class);
+
+		ReflectionTestUtils.setField(documentService, "validationUtil", validationUtil);
+		ReflectionTestUtils.setField(documentService, "serviceUtil", serviceUtil);
+		ReflectionTestUtils.setField(documentService, "auditLogUtil", auditLogUtil);
+		ReflectionTestUtils.setField(documentService, "deleteId", "mosip.pre-registration.document.delete");
+		ReflectionTestUtils.setField(documentService, "ver", "1.0");
+
+		Authentication authentication = Mockito.mock(Authentication.class);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		AuthUserDetails userDetails = Mockito.mock(AuthUserDetails.class);
+
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		Mockito.when(authentication.getPrincipal()).thenReturn(userDetails);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(userDetails.getUserId()).thenReturn("testuser");
+		Mockito.when(userDetails.getUsername()).thenReturn("testuser");
+
+		DocumentNotFoundException exception = new DocumentNotFoundException(
+				DocumentErrorCodes.PRG_PAM_DOC_005.toString(),
+				DocumentStatusMessages.DOCUMENT_IS_MISSING.getMessage());
+		Mockito.when(documnetDAO.findBypreregId(preregId)).thenThrow(exception);
+
+		MainResponseDTO<DocumentDeleteResponseDTO> response = documentService.deleteAllByPreId(preregId);
+
+		assertNotNull(response);
+		assertNull(response.getResponse());
+
+		ArgumentCaptor<AuditRequestDto> auditCaptor = ArgumentCaptor.forClass(AuditRequestDto.class);
+		Mockito.verify(auditLogUtil).saveAuditDetails(auditCaptor.capture());
+		AuditRequestDto auditRequest = auditCaptor.getValue();
+		assertEquals(EventId.PRE_403.toString(), auditRequest.getEventId());
+		assertEquals(EventName.DELETE.toString(), auditRequest.getEventName());
+		assertEquals(EventType.BUSINESS.toString(), auditRequest.getEventType());
+		assertEquals("Document successfully deleted from the document table", auditRequest.getDescription());
 	}
 
 	@Test

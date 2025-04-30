@@ -2,6 +2,10 @@ package io.mosip.preregistration.application.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.mock;
 
 import java.time.Instant;
 import java.time.LocalDate;
@@ -10,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -23,6 +28,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.ImportAutoConfiguration;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
@@ -130,7 +137,7 @@ public class AppointmentServiceImplTest {
 
 		response.setResponse(availabilityDto);
 
-		Mockito.when(appointmentUtils.getSlotAvailablityByRegCenterId(Mockito.any())).thenReturn(availabilityDto);
+		when(appointmentUtils.getSlotAvailablityByRegCenterId(Mockito.any())).thenReturn(availabilityDto);
 		MainResponseDTO<AvailabilityDto> obj = appointmentServiceImpl.getSlotAvailablity(regCenterId);
 		Assert.assertEquals(obj.getResponse(), availabilityDto);
 	}
@@ -157,7 +164,7 @@ public class AppointmentServiceImplTest {
 
 		response.setResponse(availabilityDto);
 
-		Mockito.when(appointmentUtils.getSlotAvailablityByRegCenterId(Mockito.any()))
+		when(appointmentUtils.getSlotAvailablityByRegCenterId(Mockito.any()))
 				.thenThrow(new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 						String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), "")));
 		Assert.assertEquals(appointmentServiceImpl.getSlotAvailablity(regCenterId).getErrors().get(0).getErrorCode(),
@@ -182,7 +189,7 @@ public class AppointmentServiceImplTest {
 
 		response.setResponse(bookingResponse);
 
-		Mockito.when(appointmentUtils.fetchAppointmentDetails(prid)).thenReturn(bookingResponse);
+		when(appointmentUtils.fetchAppointmentDetails(prid)).thenReturn(bookingResponse);
 		Assert.assertEquals(appointmentServiceImpl.getAppointmentDetails(prid).getResponse(), bookingResponse);
 	}
 
@@ -204,7 +211,7 @@ public class AppointmentServiceImplTest {
 
 		response.setResponse(bookingResponse);
 
-		Mockito.when(appointmentUtils.fetchAppointmentDetails(prid))
+		when(appointmentUtils.fetchAppointmentDetails(prid))
 				.thenThrow(new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 						String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), "")));
 		Assert.assertEquals(appointmentServiceImpl.getAppointmentDetails(prid).getErrors().get(0).getErrorCode(),
@@ -224,7 +231,7 @@ public class AppointmentServiceImplTest {
 		cancelAppointmentResponse.setResponse(cancelStatus);
 		cancelAppointmentResponse.setVersion(version);
 		cancelAppointmentResponse.setId(appointmentCancelId);
-		Mockito.when(appointmentUtils.cancelAppointment(prid)).thenReturn(cancelStatus);
+		when(appointmentUtils.cancelAppointment(prid)).thenReturn(cancelStatus);
 
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId("98765432101234");
@@ -235,14 +242,14 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingType("NEW_PREREGISTRATION");
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
@@ -268,7 +275,7 @@ public class AppointmentServiceImplTest {
 		cancelAppointmentResponse.setResponse(cancelStatus);
 		cancelAppointmentResponse.setVersion(version);
 		cancelAppointmentResponse.setId(appointmentCancelId);
-		Mockito.when(appointmentUtils.cancelAppointment(prid))
+		when(appointmentUtils.cancelAppointment(prid))
 				.thenThrow(new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 						String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), "")));
 		ApplicationEntity applicationEntity = new ApplicationEntity();
@@ -280,14 +287,14 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingType("NEW_PREREGISTRATION");
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 		assertEquals(appEntity2, applicationEntity);
 		MainResponseDTO<CancelBookingResponseDTO> bookingStatusRes = appointmentServiceImpl.cancelAppointment(prid);
@@ -307,7 +314,7 @@ public class AppointmentServiceImplTest {
 		deleteAppointmentResponse.setResponse(deleteStatus);
 		deleteAppointmentResponse.setId(appointmentDeletelId);
 		deleteAppointmentResponse.setVersion(version);
-		Mockito.when(appointmentUtils.deleteBooking(prid)).thenReturn(deleteStatus);
+		when(appointmentUtils.deleteBooking(prid)).thenReturn(deleteStatus);
 
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId("98765432101234");
@@ -318,15 +325,15 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingType("NEW_PREREGISTRATION");
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
 
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 		assertEquals(appEntity2, applicationEntity);
 		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentServiceImpl.deleteBooking(prid);
@@ -347,7 +354,7 @@ public class AppointmentServiceImplTest {
 		deleteAppointmentResponse.setResponse(deleteStatus);
 		deleteAppointmentResponse.setId(appointmentDeletelId);
 		deleteAppointmentResponse.setVersion(version);
-		Mockito.when(appointmentUtils.deleteBooking(prid)).thenReturn(deleteStatus);
+		when(appointmentUtils.deleteBooking(prid)).thenReturn(deleteStatus);
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId("98765432101234");
 		applicationEntity.setBookingDate(null);
@@ -357,15 +364,15 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingType("NEW_PREREGISTRATION");
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
 
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 		assertEquals(appEntity2, applicationEntity);
 		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentServiceImpl
@@ -388,7 +395,7 @@ public class AppointmentServiceImplTest {
 		deleteAppointmentResponse.setResponse(deleteStatus);
 		deleteAppointmentResponse.setId(appointmentDeletelId);
 		deleteAppointmentResponse.setVersion(version);
-		Mockito.when(appointmentUtils.deleteBooking(prid))
+		when(appointmentUtils.deleteBooking(prid))
 				.thenThrow(new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 						String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), "")));
 
@@ -401,15 +408,15 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingType("NEW_PREREGISTRATION");
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
 
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
@@ -434,7 +441,7 @@ public class AppointmentServiceImplTest {
 		deleteAppointmentResponse.setResponse(deleteStatus);
 		deleteAppointmentResponse.setId(appointmentDeletelId);
 		deleteAppointmentResponse.setVersion(version);
-		Mockito.when(appointmentUtils.deleteBooking(prid))
+		when(appointmentUtils.deleteBooking(prid))
 				.thenThrow(new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 						String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), "")));
 
@@ -447,15 +454,15 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingType("NEW_PREREGISTRATION");
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
 
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
@@ -482,34 +489,34 @@ public class AppointmentServiceImplTest {
 		bookreq.setSlotToTime("10:15:00");
 		bookingDTO.setRequest(bookreq);
 		BookingStatusDTO booked = new BookingStatusDTO();
-		Mockito.when(appointmentUtils.makeAppointment(bookingDTO, preRegistrationId)).thenReturn(booked);
+		when(appointmentUtils.makeAppointment(bookingDTO, preRegistrationId)).thenReturn(booked);
 		Boolean documentExists = true;
-		Mockito.when(documentDAO.existsByPreregId(preRegistrationId)).thenReturn(documentExists);
+		when(documentDAO.existsByPreregId(preRegistrationId)).thenReturn(documentExists);
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId("98765432");
 		applicationEntity.setAppointmentDate(LocalDate.now());
 		applicationEntity.setBookingDate(LocalDate.now());
 		applicationEntity.setBookingType("NEW_PREREGISTRATION");
 		applicationEntity.setBookingStatusCode("PENDING_APPOINTMENT");
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 
 		BookingStatusDTO bookingResponse = appointmentUtils.makeAppointment(bookingDTO, preRegistrationId);
 		bookingResponse.setBookingMessage("Booked");
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationRepostiory.getOne(preRegistrationId)).thenReturn(applicationEntity);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(applicationRepostiory.getOne(preRegistrationId)).thenReturn(applicationEntity);
 		DemographicResponseDTO demographicresponseData = new DemographicResponseDTO();
 		demographicresponseData.setPreRegistrationId(preRegistrationId);
 		demographicresponseData.setStatusCode("PENDING_APPOINTMENT");
 		demographicData.setResponse(demographicresponseData);
-		Mockito.when(demographicService.getDemographicData(Mockito.any())).thenReturn(demographicData);
+		when(demographicService.getDemographicData(Mockito.any())).thenReturn(demographicData);
 		DocumentsMetaData documentsMetaData = new DocumentsMetaData();
 		documentsData.setResponse(documentsMetaData);
-		Mockito.when(documentService.getAllDocumentForPreId(preRegistrationId)).thenReturn(documentsData);
+		when(documentService.getAllDocumentForPreId(preRegistrationId)).thenReturn(documentsData);
 		assertNotNull(appointmentServiceImpl.makeAppointment(bookingDTO, preRegistrationId, userAgent));
 	}
 
@@ -532,12 +539,12 @@ public class AppointmentServiceImplTest {
 		req.setBookingRequest(list);
 		String id = "123";
 		String userAgent = "demo";
-		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
-		Authentication authentication = Mockito.mock(Authentication.class);
-		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
-		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
-		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId("98765432");
@@ -545,8 +552,8 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingDate(LocalDate.now());
 		applicationEntity.setBookingType(BookingTypeCodes.UPDATE_REGISTRATION.toString());
 		applicationEntity.setBookingStatusCode("PENDING_APPOINTMENT");
-		Mockito.when(applicationRepostiory.getOne(Mockito.any())).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
+		when(applicationRepostiory.getOne(Mockito.any())).thenReturn(applicationEntity);
+		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 
 		multiBookingResponse.setResponsetime(LocalDateTime.now().toString());
 		multiBookingResponse.setVersion(version);
@@ -557,8 +564,55 @@ public class AppointmentServiceImplTest {
 		bookingRequest.setRequest(req);
 		BookingStatus bookingStatus = new BookingStatus();
 		bookingStatus.setBookingStatusResponse(bookingStatusResponse);
-		Mockito.when(appointmentUtils.multiAppointmentBooking(bookingRequest)).thenReturn(bookingStatus);
+		when(appointmentUtils.multiAppointmentBooking(bookingRequest)).thenReturn(bookingStatus);
 		assertNotNull(appointmentServiceImpl.makeMultiAppointment(bookingRequest, userAgent));
+	}
+
+	@Test
+	public void test_null_application_id_throws_appointment_exception() {
+		AppointmentServiceImpl appointmentService = new AppointmentServiceImpl();
+		String applicationId = null;
+
+		AppointmentExecption exception = assertThrows(AppointmentExecption.class,
+				() -> ReflectionTestUtils.invokeMethod(appointmentService, "userValidation", applicationId));
+
+		assertEquals(ApplicationErrorCodes.PRG_APP_013.getCode(), exception.getErrorCode());
+		assertEquals("preRegistrationId cannot be empty.", exception.getErrorMessage());
+	}
+
+	@Test
+	public void test_convert_granted_authorities_to_string_list() {
+		AppointmentServiceImpl appointmentService = new AppointmentServiceImpl();
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+		List<String> result = ReflectionTestUtils.invokeMethod(appointmentService, "listAuth", authorities);
+
+		assertEquals(2, result.size());
+		assertEquals("ROLE_ADMIN", result.get(0));
+		assertEquals("ROLE_USER", result.get(1));
+	}
+
+	@Test
+	public void test_handle_null_authority_strings() {
+		AppointmentServiceImpl appointmentService = new AppointmentServiceImpl();
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+		authorities.add(new GrantedAuthority() {
+			@Override
+			public String getAuthority() {
+				return null;
+			}
+		});
+		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+
+		List<String> result = ReflectionTestUtils.invokeMethod(appointmentService, "listAuth", authorities);
+
+		assertEquals(3, result.size());
+		assertEquals("ROLE_ADMIN", result.get(0));
+		assertNull(result.get(1));
+		assertEquals("ROLE_USER", result.get(2));
 	}
 
 }
