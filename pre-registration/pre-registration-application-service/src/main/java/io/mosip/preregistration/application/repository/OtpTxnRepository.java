@@ -29,5 +29,9 @@ public interface OtpTxnRepository extends BaseRepository<OtpTransaction, String>
 	public int countRequestDTime(@Param("otpRequestDTime") LocalDateTime otpRequestDTime,
 			@Param("oneMinuteBeforeTime") LocalDateTime oneMinuteBeforeTime, @Param("refId") String refId);
 
+	@Query("Select count(1) from OtpTransaction  where refId = :refId and " + "statusCode = :statusCode and "
+			+ "expiryDtimes > :currenttime")
+	int checkotpsent(@Param("refId") String userid, @Param("statusCode") String statusCode,
+					 @Param("currenttime") LocalDateTime currenttime);
 	
 }

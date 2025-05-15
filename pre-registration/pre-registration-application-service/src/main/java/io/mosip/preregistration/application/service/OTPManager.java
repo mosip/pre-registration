@@ -50,6 +50,9 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class OTPManager {
 
+	/** The Constant OTP_ALREADY_SENT. */
+	private static final String OTP_ALREADY_SENT = "OTP_ALREADY_SENT";
+
 	/** The Constant OTP_EXPIRED. */
 	private static final String OTP_EXPIRED = "OTP_EXPIRED";
 
@@ -92,6 +95,7 @@ public class OTPManager {
 			throws PreRegLoginException, IOException {
 		logger.info("sessionId", "idType", "id", "In sendOtp method of otpmanager service ");
 		String userId = requestDTO.getRequest().getUserId();
+		String refId = hash(userId);
 
 		String token = "";
 		try {
@@ -103,6 +107,14 @@ public class OTPManager {
 			throw new PreRegLoginException(PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorCode(),
 					PreRegLoginErrorConstants.TOKEN_GENERATION_FAILED.getErrorMessage());
 		}
+
+		if ((otpRepo.checkotpsent(refId, PreRegLoginConstant.ACTIVE_STATUS, DateUtils.getUTCCurrentDateTime()) > 0)) {
+			logger.error(PreRegLoginConstant.SESSION_ID, this.getClass().getSimpleName(),
+					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(), OTP_ALREADY_SENT);
+			throw new PreRegLoginException(PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorCode(),
+					PreRegLoginErrorConstants.OTP_ALREADY_SENT.getErrorMessage());
+		}
+
 		String otp = generateOTP(requestDTO, token);
 		logger.info("sessionId", "idType", "id",
 				"In generateOTP method of otpmanager service OTP generated");
