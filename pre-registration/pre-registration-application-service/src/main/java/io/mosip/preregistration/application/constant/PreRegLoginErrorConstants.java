@@ -7,6 +7,7 @@ public enum PreRegLoginErrorConstants {
 	EXPIRED_OTP("PRE-REG-OTP-402", "OTP has expired - Please regenerate OTP and try again after sometime"),
 	INVALID_OTP("PRE-REG-OTP-403", "OTP is invalid - Please provide correct OTP value"),
 	INVALID_INPUT_PARAMETER("PRE-REG-OTP-404", "Invalid Input Parameter - %s"),
+	OTP_ALREADY_SENT("PRE-REG-OTP-408", "OTP is already sent - Please use the Sent OTP or try again after sometime"),
 
 	DATA_VALIDATION_FAILED("PRE-REG-OTP-406", "Input Data Validation Failed"),
 	TOKEN_GENERATION_FAILED("PRE-REG-OTP-407", "Token generation failed"),
