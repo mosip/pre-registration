@@ -77,6 +77,7 @@ public class PostWithPathParamsAndBody extends PreRegUtil implements ITest {
 	@Test(dataProvider = "testcaselist")
 	public void test(TestCaseDTO testCaseDTO) throws AuthenticationTestException, AdminTestException, SecurityXSSException {
 		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
+//		String regCenterId = null;
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
@@ -106,7 +107,17 @@ public class PostWithPathParamsAndBody extends PreRegUtil implements ITest {
 	 */
 	@AfterMethod(alwaysRun = true)
 	public void setResultTestName(ITestResult result) {
-		result.setAttribute("TestCaseName", testCaseName);
+		try {
+			Field method = TestResult.class.getDeclaredField("m_method");
+			method.setAccessible(true);
+			method.set(result, result.getMethod().clone());
+			BaseTestMethod baseTestMethod = (BaseTestMethod) result.getMethod();
+			Field f = baseTestMethod.getClass().getSuperclass().getDeclaredField("m_methodName");
+			f.setAccessible(true);
+			f.set(baseTestMethod, testCaseName);
+		} catch (Exception e) {
+			Reporter.log("Exception : " + e.getMessage());
+		}
 	}
 
 }
