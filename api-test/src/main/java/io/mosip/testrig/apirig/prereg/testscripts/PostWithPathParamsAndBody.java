@@ -77,7 +77,7 @@ public class PostWithPathParamsAndBody extends PreRegUtil implements ITest {
 	@Test(dataProvider = "testcaselist")
 	public void test(TestCaseDTO testCaseDTO) throws AuthenticationTestException, AdminTestException, SecurityXSSException {
 		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
-		String regCenterId = null;
+//		String regCenterId = null;
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
