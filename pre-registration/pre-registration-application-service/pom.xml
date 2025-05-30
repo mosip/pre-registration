@@ -26,7 +26,7 @@
 		<!-- Others -->
 		<org.hamcrest.version>2.1</org.hamcrest.version>
 		<lombok.version>1.18.30</lombok.version>
-		<spring-cloud.version>2020.0.4</spring-cloud.version>
+		<spring-cloud.version>2025.0.0</spring-cloud.version>
 		<org.ehcache.version>3.10.8</org.ehcache.version>
 	</properties>
 
