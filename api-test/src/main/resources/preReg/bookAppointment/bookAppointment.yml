@@ -93,7 +93,7 @@ BookAppointment:
       description: Book an appointment with a blank preregistration ID
       role: batch
       restMethod: post
-	  checkOnlyStatusCodeInResponse: true
+      checkOnlyStatusCodeInResponse: true
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/responseCode
       input: '{
