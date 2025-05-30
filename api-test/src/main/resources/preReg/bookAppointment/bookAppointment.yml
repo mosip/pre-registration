@@ -87,6 +87,28 @@ BookAppointment:
     }
   ]
 }'
+   Prereg_BookAppointment_blank_preRegistrationId:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_BookAppointment_05
+      description: Book an appointment with a blank preregistration ID
+      role: batch
+      restMethod: post
+	  checkOnlyStatusCodeInResponse: true
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/responseCode
+      input: '{
+  "preRegistrationId":"",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+      "responseCode": "500"
+}'
    Prereg_BookAppointment_Invalid_Id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_06

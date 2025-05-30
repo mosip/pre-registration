@@ -31,3 +31,18 @@ GetApplicationStatusWithPrId:
     }
   ]
 }'
+   Prereg_GetApplicationStatusWithPrId_Blank_PRID_sid:
+      endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_03
+      description: Retrieve the application status using an blank PRID
+      role: batch
+      restMethod: get
+      checkOnlyStatusCodeInResponse: true
+      inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
+      outputTemplate: preReg/responseCode
+      input: '{
+  "preRegistrationId": ""
+}'
+      output: '{
+      "responseCode": "500"
+}'
