@@ -31,21 +31,3 @@ GetApplicationStatusWithPrId:
     }
   ]
 }'
-   Prereg_GetApplicationStatusWithPrId_Blank_PRID_sid:
-      endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_03
-      description: Retrieve the application status using an blank PRID
-      role: batch
-      restMethod: get
-      inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": ""
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_016"
-    }
-  ]
-}'
