@@ -37,15 +37,12 @@ GetApplicationStatusWithPrId:
       description: Retrieve the application status using an blank PRID
       role: batch
       restMethod: get
+      checkOnlyStatusCodeInResponse: true
       inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
-      outputTemplate: preReg/error
+      outputTemplate: preReg/responseCode
       input: '{
   "preRegistrationId": ""
 }'
       output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_016"
-    }
-  ]
+      "responseCode": "500"
 }'
