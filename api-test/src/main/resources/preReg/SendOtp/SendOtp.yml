@@ -1,0 +1,202 @@
+SendOtp:
+   Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_01
+      description: Send OTP with a valid phone number on the phone channel
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/SendOtp/sendotpResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "9090872300",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "status": "success"
+}'
+
+   Prereg_SendOtp_Invalid_Phone_Neg:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_02
+      description: Send OTP by providing an invalid phone number on the phone channel side
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "12",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_LGN_008"
+    }
+  ]
+}'
+
+   Prereg_SendOtp_MISSING_Phone_Neg:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_03
+      description: Sent OTP without a phone number
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "$REMOVE$",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_LGN_008"
+    }
+  ]
+}'
+
+   Prereg_SendOtp_SpacialCharacter_Val_Phone_Neg:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_04
+      description: Sent OTP with special characters through the phone channel
+      role: batch 
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "974$%26",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_LGN_008"
+    }
+  ]
+}'
+
+   Prereg_SendOtp_All_Valid_Smoke_email_sid:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_05
+      description: Send OTP using a valid email address through the email channel
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/SendOtp/sendotpResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "john.doe@mailinator.com",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "status": "success"
+}'
+
+   Prereg_SendOtp_Invalid__email_Neg:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_06
+      description: Send OTP using an invalid email address via the email channel
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "jo32",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_LGN_008"
+    }
+  ]
+}'
+
+   Prereg_SendOtp_Missing_email_Neg:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_07
+      description: Sent OTP without an email address via the email channel
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "$REMOVE$",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_LGN_008"
+    }
+  ]
+}'
+
+   Prereg_SendOtp_SpacialCharacter_email_Neg:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_08
+      description: Sent OTP with special characters through the email channel
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/error
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "$!&",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_LGN_008"
+    }
+  ]
+}'
+   Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_09
+      description: Send OTP with a valid phone number on the phone channel
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/SendOtp/sendotpResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "9090872300",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "status": "success"
+}'
+   Prereg_SendOtp_All_Valid_Smoke_email_sid:
+      endPoint: /preregistration/v1/login/sendOtp/langcode
+      uniqueIdentifier: TC_prereg_SendOtp_10
+      description: Send OTP with a valid phone number on the phone channel
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/SendOtp/sendotp
+      outputTemplate: preReg/SendOtp/sendotpResult
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "userId": "john.doe@mailinator.com",
+  "id": "mosip.pre-registration.login.sendotp"
+}'
+      output: '{
+  "status": "success"
+}'

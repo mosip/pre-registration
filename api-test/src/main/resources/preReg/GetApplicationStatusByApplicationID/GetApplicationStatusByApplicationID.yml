@@ -1,0 +1,34 @@
+GetApplicationStatusByApplicationID:
+   Prereg_GetApplicationStatusByApplicationID_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/status/{applicationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusByApplicationID_01
+      description: Retrieve the application status by application ID
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      inputTemplate: preReg/GetApplicationStatusByApplicationID/getApplicationStatusByApplicationID
+      outputTemplate: preReg/GetApplicationStatusByApplicationID/getApplicationStatusByApplicationIDResult
+      input: '{
+  "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "response": "Cancelled"
+}'
+   Prereg_GetApplicationStatusByApplicationID_InValid_applicationId:
+      endPoint: /preregistration/v1/applications/status/{applicationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusByApplicationID_02
+      description: Retrieve the application status by invalid application ID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetApplicationStatusByApplicationID/getApplicationStatusByApplicationID
+      outputTemplate: preReg/error
+      input: '{   
+   "applicationId": "erwsdhgqw5dcfbz"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
