@@ -1,0 +1,89 @@
+CancelAppointment:
+   Prereg_CancelAppointment_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_CancelAppointment_01
+      description: Cancel appointment for a valid preregistration ID
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/CancelAppointment/cancelAppointmentResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_CancellAppointment_sid_preRegistrationId$"
+}'
+      output: '{
+}'
+   Prereg_CancelAppointment_with_already_cancelled_appoinment:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_CancelAppointment_02
+      description: Canceling an appointment that has already been cancelled
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_CancellAppointment_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_013"
+    }
+  ]
+}'
+   Prereg_CancelAppointment_cancell_incomplete_appoinment:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_CancelAppointment_03
+      description: Canceling an appointment with an incomplete appointment data
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_cancell_incomplete_prid_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_013"
+    }
+  ]
+}'
+   Prereg_CancelAppointment_inValid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_CancelAppointment_04
+      description: Canceling an appointment with an invalid preregistration ID
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "36272yhshsgblAppointment_sid_preRegistrati"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
+   Prereg_CancelAppointment_forPendingAppointment_preRegistrationId_Neg:
+      endPoint: /preregistration/v1/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_CancelAppointment_05
+      description: Canceling an appointment with an pending appointment preregistration ID
+      role: batch
+      restMethod: put
+      inputTemplate: preReg/CancelAppointment/cancelAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_013"
+    }
+  ]
+}'

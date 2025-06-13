@@ -1,0 +1,55 @@
+GetUpdatedDateTimeByPrid:
+   Prereg_GetUpdatedDateTimeByPrid_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg/updatedTime
+      uniqueIdentifier: TC_prereg_GetUpdatedDateTimeByPrid_01
+      description: Retrieve all applications with the application ID using valid data
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPrid
+      outputTemplate: preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPridResult
+      input: '{
+  "id": "mosip.pre-registration.demographic.retrieve.date",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registartion_center_id": "10003",
+  "pre_registration_ids": [
+      {
+         "pre_registration_id":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+      }, 
+      {
+         "pre_registration_id":"$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$"
+      },
+      {
+         "pre_registration_id":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$"
+      }
+   ]
+}'
+      output: '{
+}'
+   Prereg_GetUpdatedDateTimeByPrid_InValid_ID:
+      endPoint: /preregistration/v1/applications/prereg/updatedTime
+      uniqueIdentifier: TC_prereg_GetUpdatedDateTimeByPrid_02
+      description: Retrieve all applications with the application ID using invalid ID
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.demographic.retrieve.date",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "registartion_center_id": "10003",
+  "pre_registration_ids": [
+      {
+         "pre_registration_id":"rtr4243456rsdgfb"
+      }
+   ]
+}'
+      output: '{
+  "errors": [
+        {
+            "errorCode": "PRG_PAM_APP_005"
+        }
+    ]
+}'
