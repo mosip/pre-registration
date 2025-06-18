@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.kernel.core.idvalidator.exception.InvalidIDException;
+import io.mosip.preregistration.application.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -224,6 +226,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 		mainResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		List<ApplicationDetailResponseDTO> responseList = new ArrayList<>();
 		try {
+            this.validateRegistrationCenterId(regCenterId);
 			LocalDate appDate = LocalDate.parse(appointmentDate);
 			List<ApplicationEntity> entity = applicationRepository
 					.findByRegistrationCenterIdAndAppointmentDate(regCenterId, appDate);
@@ -248,6 +251,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_012.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
+		} catch (InvalidIDException ex) {
+			log.error("Illegal Argument exception", ex);
+			throw new InvalidRequestParameterException(
+					ApplicationErrorCodes.PRG_APP_013.getCode(),
+					ApplicationErrorMessages.INVALID_REQUEST_REGISTRATION_CENTER_ID.getMessage(),
+					mainResponse
+			);
 		} catch (RecordNotFoundException ex) {
 			log.error("Record Not Found Exception for the request regCenterId and appointmentDate", regCenterId,
 					appointmentDate);
@@ -266,6 +276,20 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 		return mainResponse;
 	}
+
+	private void validateRegistrationCenterId(String regCenterId) {
+		boolean isInvalid = (
+				(regCenterId == null || regCenterId.trim().isEmpty())
+						|| (!regCenterId.matches("\\d+")) // Must contain only digits
+		);
+		if (isInvalid) {
+			throw new InvalidIDException(
+					ApplicationErrorCodes.PRG_APP_013.getCode(),
+					ApplicationErrorMessages.INVALID_REQUEST_REGISTRATION_CENTER_ID.getMessage()
+			);
+		}
+	}
+
 
 	/**
 	 * This method is used to create the a new application with booking type as
@@ -510,8 +534,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
-		}	
-		
+		}
+
 	}
 
 	/**
