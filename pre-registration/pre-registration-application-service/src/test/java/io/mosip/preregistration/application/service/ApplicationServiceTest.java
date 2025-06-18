@@ -8,6 +8,7 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -416,11 +417,13 @@ public class ApplicationServiceTest {
 
 	@Test(expected = InvalidDateFormatException.class)
 	public void testgetBookingsForRegCenterInvalidDateFormatException() {
-		applicationService.getBookingsForRegCenter(null, "23-08-2021", null);
+		String regCenterId = "10003";
+		applicationService.getBookingsForRegCenter(regCenterId, "23-08-2021", null);
 	}
 
 	@Test
 	public void testgetBookingsForRegCenter() {
+		String regCenterId = "10003";
 		List<ApplicationEntity> entity = new ArrayList<ApplicationEntity>();
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId("");
@@ -432,7 +435,7 @@ public class ApplicationServiceTest {
 		applicationEntity.setContactInfo("");
 		applicationEntity.setCrBy("");
 		applicationEntity.setCrDtime(LocalDateTime.now());
-		applicationEntity.setRegistrationCenterId("");
+		applicationEntity.setRegistrationCenterId(regCenterId);
 		applicationEntity.setSlotFromTime(LocalTime.now());
 		applicationEntity.setSlotToTime(LocalTime.now());
 		applicationEntity.setUpdBy("");
@@ -441,7 +444,7 @@ public class ApplicationServiceTest {
 		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(entity);
 
-		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(null,
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(regCenterId,
 				LocalDate.now().toString(), null);
 		Assert.assertEquals(response.getResponse().get(0).getApplicationId(), applicationEntity.getApplicationId());
 
@@ -449,6 +452,7 @@ public class ApplicationServiceTest {
 	
 	@Test
 	public void getBookingsForRegCenterTest2() {
+		String regCenterId = "10003";
 		String appointmentToDate = LocalDate.now().toString();
 		List<ApplicationEntity> entity = new ArrayList<ApplicationEntity>();
 		ApplicationEntity applicationEntity = new ApplicationEntity();
@@ -456,7 +460,7 @@ public class ApplicationServiceTest {
 		applicationEntity.setAppointmentDate(LocalDate.now());
 		applicationEntity.setBookingDate(LocalDate.now());
 		applicationEntity.setCrDtime(LocalDateTime.now());
-		applicationEntity.setRegistrationCenterId("");
+		applicationEntity.setRegistrationCenterId(regCenterId);
 		applicationEntity.setSlotFromTime(LocalTime.now());
 		applicationEntity.setSlotToTime(LocalTime.now());
 		applicationEntity.setUpdDtime(LocalDateTime.now());
@@ -464,18 +468,65 @@ public class ApplicationServiceTest {
 		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(entity);
 
-		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(null,
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(regCenterId,
 				LocalDate.now().toString(), appointmentToDate);
 		Assert.assertEquals(response.getResponse().get(0).getApplicationId(), applicationEntity.getApplicationId());
 
 	}
 
+	@Test
+	public void testgetBookingsForRegCenter_invalidNullRegCenterId_shouldThrowException() {
+		this.testGetBookingsForRegCenter_invalidRegCenterId(null);
+	}
+
+	@Test
+	public void testgetBookingsForRegCenter_invalidEmptyRegCenterId_shouldThrowException() {
+		this.testGetBookingsForRegCenter_invalidRegCenterId("");
+	}
+
+	@Test
+	public void testgetBookingsForRegCenter_invalidEmptySpaceRegCenterId_shouldThrowException() {
+		this.testGetBookingsForRegCenter_invalidRegCenterId("  ");
+	}
+
+	@Test
+	public void testgetBookingsForRegCenter_invalidCharsRegCenterId_shouldThrowException() {
+		this.testGetBookingsForRegCenter_invalidRegCenterId("10@@#$$003");
+	}
+
+	private void testGetBookingsForRegCenter_invalidRegCenterId(String regCenterId) {
+		List<ApplicationEntity> entity = new ArrayList<ApplicationEntity>();
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("42342342");
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setBookingDate(LocalDate.now());
+		applicationEntity.setCrDtime(LocalDateTime.now());
+		applicationEntity.setRegistrationCenterId(regCenterId);
+		applicationEntity.setSlotFromTime(LocalTime.now());
+		applicationEntity.setSlotToTime(LocalTime.now());
+		applicationEntity.setUpdDtime(LocalDateTime.now());
+		entity.add(applicationEntity);
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
+				.thenReturn(entity);
+
+		InvalidRequestParameterException exception = Assert.assertThrows(
+				InvalidRequestParameterException.class,
+				() -> applicationService.getBookingsForRegCenter(
+						regCenterId,
+						LocalDate.now().toString(),
+						null
+				)
+		);
+		Assert.assertEquals(ApplicationErrorCodes.PRG_APP_013.getCode(), exception.getErrorCode());
+	}
+
 	@Test(expected = RecordNotFoundException.class)
 	public void testgetBookingsForRegCenterRecordNotFoundException() {
+		String regCenterId = "10003";
 		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(null);
 
-		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(null,
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService.getBookingsForRegCenter(regCenterId,
 				LocalDate.now().toString(), null);
 
 	}
