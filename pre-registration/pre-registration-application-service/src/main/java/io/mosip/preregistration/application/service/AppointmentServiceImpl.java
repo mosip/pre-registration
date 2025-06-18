@@ -56,16 +56,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	@Autowired
 	private DemographicService demographicService;
-	
+
 	@Autowired
 	private DocumentService documentService;
-	
+
 	/**
 	 * Autowired reference for {@link #AnonymousProfileUtil}
 	 */
 	@Autowired
 	AnonymousProfileUtil anonymousProfileUtil;
-	
+
 	@Value("${version}")
 	private String version;
 
@@ -128,15 +128,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 			userValidation(preRegistrationId);
 			BookingRegistrationDTO bookingrespose = appointmentUtils.fetchAppointmentDetails(preRegistrationId);
 			appointmentDetailsResponse.setResponse(bookingrespose);
-	
+
 		} catch (AppointmentExecption ex) {
 			log.error("Exception has occurred while fetching appointment details:", ex);
 			appointmentDetailsResponse.setErrors(setErrors(ex));
 		}
 		return appointmentDetailsResponse;
 	}
-	
+
 	private void userValidation(String applicationId) {
+		this.applicationIdValidation(applicationId);
 		String authUserId = authUserDetails().getUserId();
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
@@ -144,7 +145,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 					+ applicationId + " and userID " + authUserId);
 			ApplicationEntity applicationEntity = null;
 			try {
-				applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
+				applicationEntity = applicationRepostiory.findById(applicationId).orElseThrow();
 			} catch (Exception ex) {
 				log.error("Invaid applicationId/Not Record Found for the ID", applicationId);
 				throw new AppointmentExecption(ApplicationErrorCodes.PRG_APP_013.getCode(),
@@ -156,7 +157,16 @@ public class AppointmentServiceImpl implements AppointmentService {
 			}
 		}
 	}
-	
+
+	private void applicationIdValidation(String applicationId) {
+		if (applicationId == null || applicationId.trim().isEmpty()) {
+			throw new AppointmentExecption(
+					ApplicationErrorCodes.PRG_APP_013.getCode(),
+					"preRegistrationId cannot be empty."
+			);
+		}
+	}
+
 	/**
 	 * This method is used to get the list of authorization role
 	 * 
@@ -171,7 +181,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 		return listWORole;
 	}
-	
+
 	@Override
 	public MainResponseDTO<BookingStatusDTO> makeAppointment(MainRequestDTO<BookingRequestDTO> bookingDTO,
 			String preRegistrationId, String userAgent) {
@@ -204,7 +214,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		return bookAppointmentResponse;
 	}
 
-	 
+
 	@Override
 	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegistrationId) {
 		MainResponseDTO<DeleteBookingDTO> deleteResponse = new MainResponseDTO<DeleteBookingDTO>();
@@ -231,7 +241,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 		return deleteResponse;
 	}
-	 
+
 	 @Override
 	public MainResponseDTO<DeleteBookingDTO> deleteBookingAndUpdateApplicationStatus(String preRegistrationId) {
 		MainResponseDTO<DeleteBookingDTO> deleteResponse = new MainResponseDTO<DeleteBookingDTO>();
@@ -249,7 +259,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 						"In appointment deleted successfully for ID:{}, updating the applications and demographic tables",
 						preRegistrationId);
 				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null, StatusCodes.CANCELLED.getCode());
-				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
+				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
 						authUserDetails().getUserId());
 				}
@@ -261,7 +271,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			deleteResponse.setErrors(setErrors(ex));
 		}
 		return deleteResponse;
-	} 
+	}
 
 	@Override
 	public MainResponseDTO<CancelBookingResponseDTO> cancelAppointment(String preRegistrationId) {
@@ -272,13 +282,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			log.info("Cancelling appointment for ID:{}", preRegistrationId);
 			//first check if the applicationId/preRegistrationId belongs to the logged in user or not
-			userValidation(preRegistrationId);	
+			userValidation(preRegistrationId);
 			CancelBookingResponseDTO response = appointmentUtils.cancelAppointment(preRegistrationId);
 			if (response != null && (response.getMessage() != null && response.getTransactionId() != null)) {
 				log.info("In appointment cancelled successfully , updating the applications and demographic tables",
 						preRegistrationId);
 				ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null, StatusCodes.CANCELLED.getCode());
-				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
+				if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 					this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.CANCELLED.getCode(),
 						authUserDetails().getUserId());
 				}
@@ -294,7 +304,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 	}
 
 	@Override
-	public MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest, 
+	public MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest,
 			String userAgent) {
 		MainResponseDTO<BookingStatus> multiBookingResponse = new MainResponseDTO<BookingStatus>();
 		multiBookingResponse.setId(appointmentBookId);
@@ -318,11 +328,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 					bookRequest.setSlotToTime(action.getSlotToTime());
 					bookRequest.setSlotFromTime(action.getSlotFromTime());
 					ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, bookRequest, StatusCodes.BOOKED.getCode());
-					if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {	
+					if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 						createAnonymousProfile(userAgent, preRegistrationId, bookRequest);
 						this.demographicService.updatePreRegistrationStatus(preRegistrationId, StatusCodes.BOOKED.getCode(),
 							authUserDetails().getUserId());
-					}	
+					}
 				});
 			}
 			multiBookingResponse.setResponse(bookingStatus);
