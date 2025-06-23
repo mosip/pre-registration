@@ -1,0 +1,55 @@
+DeleteSpecificDocForaPRID:
+   Prereg_DeleteSpecificDocForaPRID_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_01
+      description: Delete specific document for a valid PRID 
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
+      outputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRIDResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
+}'
+      output: '{
+      
+}'
+   Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_02
+      description: Delete preregistration with an invalid PRID
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "hnyfv_preRegistrationId",
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
+   Prereg_DeletePreRegistration_inValid_documentId_sid:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_03
+      description: Delete preregistration with an invalid document ID 
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "documentId": "53fhv@fgjd_Smoke_sid_docId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_DOC_005"
+    }
+  ]
+}'

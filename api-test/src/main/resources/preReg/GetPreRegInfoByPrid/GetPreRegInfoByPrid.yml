@@ -1,0 +1,37 @@
+GetPreRegInfoByPrid:
+   Prereg_GetPreRegInfoByPrid_Valid_preRegistrationId:
+      endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetPreRegInfoByPrid_01
+      description: Retrieve preregistration information using the preReg Id with a valid preRegistrationId
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid
+      outputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPridResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "postalCode":"14022",
+  "dateOfBirth": "$IGNORE$",
+  "IDSchemaVersion": "$IGNORE$",
+  "phone": "$IGNORE$"
+}'
+
+   Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId:
+      endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetPreRegInfoByPrid_02
+      description: Retrieve preregistration information using the preReg Id with an invalid preRegistrationId
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "123456"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'

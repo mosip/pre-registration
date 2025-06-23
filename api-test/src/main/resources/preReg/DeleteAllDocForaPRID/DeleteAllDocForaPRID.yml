@@ -1,0 +1,33 @@
+DeleteAllDocForaPRID:
+   Prereg_DeletePreRegistration_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_DeleteAllDocForaPRID_01
+      description: Delete preregistration with all valid preregistration ID
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: delete
+      inputTemplate: preReg/DeleteAllDocForaPRID/deleteAllDocForaPRID
+      outputTemplate: preReg/DeleteAllDocForaPRID/deleteAllDocForaPRIDResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_alldel_sid_preRegistrationId$"
+}'
+      output: '{
+}'
+   Prereg_DeletePreRegistration_InValid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_DeleteAllDocForaPRID_02
+      description: Delete preregistration with an invalid preregisteration ID
+      role: batch
+      restMethod: delete
+      inputTemplate: preReg/DeleteAllDocForaPRID/deleteAllDocForaPRID
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$I8765fghsid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'

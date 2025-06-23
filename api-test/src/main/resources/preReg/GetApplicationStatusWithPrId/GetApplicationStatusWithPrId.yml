@@ -1,0 +1,48 @@
+GetApplicationStatusWithPrId:
+   Prereg_GetApplicationStatusWithPrId_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_01
+      description: Retrieve the application status using a valid PRID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
+      outputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrIdResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "statusCode": "Application_Incomplete"
+}'
+   Prereg_GetApplicationStatusWithPrId_inValid_PRID_sid:
+      endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_02
+      description: Retrieve the application status using an invalid PRID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "65125923803sass948"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
+   Prereg_GetApplicationStatusWithPrId_Blank_PRID_sid:
+      endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_GetApplicationStatusWithPrId_03
+      description: Retrieve the application status using an blank PRID
+      role: batch
+      restMethod: get
+      checkOnlyStatusCodeInResponse: true
+      inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
+      outputTemplate: preReg/responseCode
+      input: '{
+  "preRegistrationId": ""
+}'
+      output: '{
+      "responseCode": "500"
+}'
