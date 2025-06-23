@@ -2,3 +2,10 @@
 #MOSIP-12456------Mimoto_AddIdentity_Binding_smoke_Pos
 MOSIP-41819------Prereg_GetAppointmentDetails_empty_space_preRegistrationId
 MOSIP-41819------Prereg_GetBookingsForRegCenter_with_InValid_regcenter
+MOSIP-41821------Prereg_GetApplicationStatusWithPrId_Blank_PRID_sid
+MOSIP-41821------Prereg_BookAppointment_blank_preRegistrationId
+MOSIP-41821------Prereg_ValidateOtp_All_Valid_Smoke_Phone_sid
+MOSIP-41821------Prereg_ValidateOtp_Invalid_Phone_Neg_INVALIDOTP
+MOSIP-41821------Prereg_ValidateOtp_SpacialCharacters_Phone_Neg_INVALIDOTP
+MOSIP-41821------Prereg_ValidateOtp_SpacialCharacters_Email_Neg_INVALIDOTP
+MOSIP-41821------Prereg_ValidateOtp_Invalid_Email_Neg_INVALIDOTP

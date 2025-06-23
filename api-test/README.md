@@ -104,7 +104,7 @@ To execute the tests using Jar, use the following steps:
 
 2. Run the automation test suite JAR file:
    ```
-   java -jar -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-1.3.0-SNAPSHOT-jar-with-dependencies.jar
+   java -jar -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-1.2.1.0-SNAPSHOT-jar-with-dependencies.jar
    ```
    
 # Using Eclipse IDE
@@ -160,7 +160,7 @@ To execute the tests using Eclipse IDE, use the following steps:
 - **env.user**: Replace `<env_name>` with the appropriate environment name (e.g., `dev`, `qa`, etc.).
 - **env.endpoint**: The environment where the application under test is deployed. Replace `<base_env>` with the correct base URL for the environment (e.g., `https://api-internal.<env_name>.mosip.net`).
 - **env.testLevel**: Set this to `smoke` to run only smoke test cases, or `smokeAndRegression` to run both smoke and regression tests.
-- **jar**: Specify the name of the JAR file to execute. The version will change according to the development code version. For example, the current version may look like `apitest-prereg-1.3.0-SNAPSHOT-jar-with-dependencies.jar`.
+- **jar**: Specify the name of the JAR file to execute. The version will change according to the development code version. For example, the current version may look like `apitest-prereg-1.2.1.0-SNAPSHOT-jar-with-dependencies.jar`.
 
 ### Build and Run Info
 
