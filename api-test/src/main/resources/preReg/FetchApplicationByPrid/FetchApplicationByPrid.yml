@@ -1,0 +1,33 @@
+FetchApplicationByPrid:
+   Prereg_FetchApplicationByPrid_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_FetchApplicationByPrid_01
+      description: Fetch demographic details using a valid PRID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPridResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "preRegistrationId": "59286406501581"
+}'
+   Prereg_FetchApplicationByPrid_inValid_preRegistrationId_sid:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_FetchApplicationByPrid_02
+      description: Fetch demographic details using an invalid PRID
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "ggfr3567ugg"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
