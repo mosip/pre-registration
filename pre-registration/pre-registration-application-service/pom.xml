@@ -16,7 +16,7 @@
 	
 	<properties>
 		<!-- Mosip kernel -->
-		<kernel.khazana.version>1.2.1-SNAPSHOT</kernel.khazana.version>
+		<kernel.khazana.version>1.3.0-beta.1</kernel.khazana.version>
 		<kernel.idobjectvalidator.version>1.2.1-SNAPSHOT</kernel.idobjectvalidator.version>
 		<kernel.templatemanager.velocity.version>1.2.1-SNAPSHOT</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.2.1-SNAPSHOT</kernel.qrcodegenerator.zxing.version>
