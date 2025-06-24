@@ -30,6 +30,8 @@ public enum ApplicationErrorMessages {
 	
 	INVALID_REQUEST_APPLICATION_ID("Invalid application Id"),
 
+	INVALID_REQUEST_REGISTRATION_CENTER_ID("Invalid registration center Id"),
+
 	INVALID_APPLICATION_ID_FOR_USER("Requested application id does not belong to the user"),
 	
 	INVALID_BOOKING_TYPE("Invalid booking type");
