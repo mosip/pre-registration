@@ -7,9 +7,9 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.0.1</version>
+		<version>1.2.0.2-SNAPSHOT</version>
 	</parent>
-	<version>1.2.0.1</version>
+	<version>1.2.0.2-SNAPSHOT</version>
 
 
 	<artifactId>pre-registration-core</artifactId>
@@ -143,6 +143,6 @@
 			<artifactId>commons-collections4</artifactId>
 			<version>${commons-collections4.version}</version>
 		</dependency>
-		
+
 	</dependencies>
 </project>
