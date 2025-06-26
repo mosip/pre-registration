@@ -104,7 +104,7 @@ To execute the tests using Jar, use the following steps:
 
 2. Run the automation test suite JAR file:
    ```
-   java -jar -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-1.2.1.0-SNAPSHOT-jar-with-dependencies.jar
+   java -jar -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-1.2.0.2-SNAPSHOT-jar-with-dependencies.jar
    ```
    
 # Using Eclipse IDE
@@ -152,15 +152,33 @@ To execute the tests using Eclipse IDE, use the following steps:
 ## 6. **View Test Results**
 
    - After the tests are executed, you can view the detailed results in the `api-test\testng-report` directory.
+   - The report will have two sections:
+       - One section for pre-requisite APIs test cases.
+       - Another section for core test cases.
 
 ---
+
+## Test Report Column Definitions
+This section describes the meaning of each column in the test report:
+- **Total (T)**
+  The total number of test cases considered in the report.
+- **Passed (P)**
+  Indicates the number of test cases that executed successfully with the expected results.
+- **Failed (F)**
+  Indicates the number of test cases that failed due to issues such as output validation mismatches or unexpected errors during execution.
+- **Skipped (S)**
+  Represents test cases that were not executed due to missing prerequisites or data dependencies.
+- **Ignored (I)**
+  Represents test cases that were intentionally not executed due to limitations such as unsupported features, incompatibilities, or undeployed services.
+- **Known Issues (KI)**
+  Indicates test cases that failed but are already acknowledged as known issues for the current release, typically linked with a bug or defect ID.
  
 ## Details of Arguments Used
 
 - **env.user**: Replace `<env_name>` with the appropriate environment name (e.g., `dev`, `qa`, etc.).
 - **env.endpoint**: The environment where the application under test is deployed. Replace `<base_env>` with the correct base URL for the environment (e.g., `https://api-internal.<env_name>.mosip.net`).
 - **env.testLevel**: Set this to `smoke` to run only smoke test cases, or `smokeAndRegression` to run both smoke and regression tests.
-- **jar**: Specify the name of the JAR file to execute. The version will change according to the development code version. For example, the current version may look like `apitest-prereg-1.2.1.0-SNAPSHOT-jar-with-dependencies.jar`.
+- **jar**: Specify the name of the JAR file to execute. The version will change according to the development code version. For example, the current version may look like `apitest-prereg-1.2.0.2-SNAPSHOT-jar-with-dependencies.jar`.
 
 ### Build and Run Info
 
