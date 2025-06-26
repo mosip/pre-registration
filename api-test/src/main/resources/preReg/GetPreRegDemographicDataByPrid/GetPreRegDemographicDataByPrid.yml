@@ -14,7 +14,7 @@ GetPreRegDemographicDataByPrid:
       output: '{
   "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_preRegistrationId$",
   "postalCode":"14022",
-  "dateOfBirth": "1996/01/01",
+  "dateOfBirth": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_dateOfBirth$",
   "IDSchemaVersion": "$SCHEMAVERSION$",
   "phone": "8249742850"
 }'
