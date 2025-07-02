@@ -13,7 +13,6 @@ GetSpecificDocumentforaPRID:
   "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
 }'
       output: '{
-      "document": "$IGNORE$"
 }'
    Prereg_GetSpecificDocumentforaPRID_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
