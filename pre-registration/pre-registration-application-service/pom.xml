@@ -20,7 +20,6 @@
 		<kernel.idobjectvalidator.version>1.2.0.1</kernel.idobjectvalidator.version>
 		<kernel.templatemanager.velocity.version>1.2.0.1</kernel.templatemanager.velocity.version>
 		<kernel.qrcodegenerator.zxing.version>1.2.0.1</kernel.qrcodegenerator.zxing.version>
-		<pre.registration.core.version>1.2.0.1</pre.registration.core.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
 	</properties>
@@ -221,12 +220,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0.2-SNAPSHOT</version>
+					<version>1.2.0.2</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.0.2-SNAPSHOT</version>
+					<version>1.2.0.2</version>
 				</dependency>
 			</dependencies>
 			<build>

@@ -19,7 +19,6 @@
 		<java.version>11</java.version>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
-		<pre.registration.core.version>1.2.0.1</pre.registration.core.version>
 		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
 	</properties>
 
@@ -129,12 +128,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0.2-SNAPSHOT</version>
+					<version>1.2.0.2</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.0.2-SNAPSHOT</version>
+					<version>1.2.0.2</version>
 				</dependency>
 			</dependencies>
 			<build>
