@@ -220,12 +220,12 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0.2</version>
+					<version>1.2.0.1</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.0.2</version>
+					<version>1.2.0.1</version>
 				</dependency>
 			</dependencies>
 			<build>
