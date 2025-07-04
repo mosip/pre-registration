@@ -18,7 +18,6 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
 		<java.version>11</java.version>
-		<pre.registration.core.version>1.2.0.1</pre.registration.core.version>
 		<kernel.keymanager.version>1.2.0.1</kernel.keymanager.version>
 		<io.micrometer.prometheus.version>1.4.2</io.micrometer.prometheus.version>
 		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
@@ -141,17 +140,17 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-auth-adapter</artifactId>
-					<version>${project.version}</version>
+					<version>1.2.0.1</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-ref-idobjectvalidator</artifactId>
-					<version>1.2.0.2-SNAPSHOT</version>
+					<version>1.2.0.1</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-transliteration-icu4j</artifactId>
-					<version>1.2.0.2-SNAPSHOT</version>
+					<version>1.2.0.1</version>
 				</dependency>
 			</dependencies>
 			<build>
