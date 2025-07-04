@@ -1,0 +1,7 @@
+modules:
+  prereg:
+    enabled: true
+    image:
+      repository: mosipqa/apitest-prereg
+      tag: 1.2.0.x
+      pullPolicy: Always
