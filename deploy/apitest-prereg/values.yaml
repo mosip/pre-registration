@@ -3,5 +3,5 @@ modules:
     enabled: true
     image:
       repository: mosipqa/apitest-prereg
-      tag: develop
+      tag: 1.2.0.x
       pullPolicy: Always
