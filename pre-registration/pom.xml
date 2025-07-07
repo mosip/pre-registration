@@ -84,7 +84,7 @@
 		<jsonsimple.version>1.1.1</jsonsimple.version>
 
 		<!-- Others -->
-		<uuid.fasterxml.version>3.1.4</uuid.fasterxml.version>
+		<uuid.fasterxml.version>5.1.0</uuid.fasterxml.version>
 		<org.json.version>20080701</org.json.version>
 		<modelmapper.version>0.7.4</modelmapper.version>
 		<java.interceptor.version>1.2</java.interceptor.version>
