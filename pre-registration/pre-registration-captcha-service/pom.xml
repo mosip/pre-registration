@@ -6,14 +6,14 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.0.2-SNAPSHOT</version>
+		<version>1.2.0.2</version>
 	</parent>
 	<groupId>io.mosip.preregistration.captcha</groupId>
 	<artifactId>pre-registration-captcha-service</artifactId>
 
 	<name>pre-registration-captcha-service</name>
 	<description>A pre-registration service to generate and validate captcha</description>
-	<version>1.2.0.2-SNAPSHOT</version>
+	<version>1.2.0.2</version>
 
 	<properties>
 		<java.version>11</java.version>
