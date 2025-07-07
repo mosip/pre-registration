@@ -2,7 +2,7 @@ apiVersion: v2
 name: prereg-gateway
 description: A Helm chart for MOSIP Pre-registration Istio Gateway
 type: application
-version: 0.0.1-develop
+version: 12.0.2
 appVersion: ""
 dependencies:
   - name: common
