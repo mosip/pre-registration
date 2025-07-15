@@ -51,7 +51,7 @@ SendNotifications:
       description: Trigger notification with an invalid ID
       role: batch
       restMethod: post
-      inputTemplate: preReg/SendNotifications/sendNotificationsNotify
+      inputTemplate: preReg/SendNotifications/sendNotifications_SINGLE
       outputTemplate: preReg/error
       input: '{ 
     "id":"mosip.pre-registration.notification.notifyasdf",
@@ -79,7 +79,7 @@ SendNotifications:
       description: Trigger notification with an invalid pre-registration ID
       role: batch
       restMethod: post
-      inputTemplate: preReg/SendNotifications/sendNotificationsNotify
+      inputTemplate: preReg/SendNotifications/sendNotifications_SINGLE
       outputTemplate: preReg/error
       input: '{ 
     "id":"mosip.pre-registration.notification.notify",
