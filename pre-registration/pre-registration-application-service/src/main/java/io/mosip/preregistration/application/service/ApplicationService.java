@@ -15,6 +15,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import io.mosip.kernel.core.idvalidator.exception.InvalidIDException;
+import io.mosip.preregistration.application.exception.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -44,11 +46,6 @@ import io.mosip.preregistration.application.dto.DeleteApplicationDTO;
 import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
-import io.mosip.preregistration.application.exception.AuditFailedException;
-import io.mosip.preregistration.application.exception.BookingDeletionFailedException;
-import io.mosip.preregistration.application.exception.DemographicServiceException;
-import io.mosip.preregistration.application.exception.InvalidDateFormatException;
-import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
@@ -229,6 +226,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 		mainResponse.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		List<ApplicationDetailResponseDTO> responseList = new ArrayList<>();
 		try {
+			this.validateRegistrationCenterId(regCenterId);
 			LocalDate appFromDate = LocalDate.parse(appointmentFromDate);
 			LocalDate appToDate = null; 
 			if (appointmentToDate != null && !"".equals(appointmentToDate.trim())) {
@@ -260,6 +258,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_012.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
+		} catch (InvalidIDException ex) {
+			log.error("Illegal Argument exception", ex);
+			throw new InvalidRequestParameterException(
+					ApplicationErrorCodes.PRG_APP_013.getCode(),
+					ApplicationErrorMessages.INVALID_REQUEST_REGISTRATION_CENTER_ID.getMessage(),
+					mainResponse
+			);
 		} catch (RecordNotFoundException ex) {
 			log.error("Record Not Found Exception for the request regCenterId and appointmentDate", regCenterId,
 					appointmentFromDate);
@@ -278,6 +283,20 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 		return mainResponse;
 	}
+
+	private void validateRegistrationCenterId(String regCenterId) {
+		boolean isInvalid = (
+				(regCenterId == null || regCenterId.trim().isEmpty())
+						|| (!regCenterId.matches("\\d+")) // Must contain only digits
+		);
+		if (isInvalid) {
+			throw new InvalidIDException(
+					ApplicationErrorCodes.PRG_APP_013.getCode(),
+					ApplicationErrorMessages.INVALID_REQUEST_REGISTRATION_CENTER_ID.getMessage()
+			);
+		}
+	}
+
 
 	/**
 	 * This method is used to create the a new application with booking type as
