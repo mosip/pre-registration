@@ -103,13 +103,6 @@
 			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
 	</test>
-	<test name="GetPRIDByDateRange">
-		<parameter name="ymlFile"
-			value="preReg/GetPRIDByDateRange/GetPRIDByDateRange.yml" />
-		<classes>
-			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
-		</classes>
-	</test> 
 	 <test name="BookAppointment">
 		<parameter name="ymlFile"
 			value="preReg/bookAppointment/bookAppointment.yml" />
@@ -118,9 +111,13 @@
 			<class name="io.mosip.testrig.apirig.prereg.testscripts.BookAppoinment" />
 		</classes>
 	</test>
-	
-	
-	
+	<test name="GetPRIDByDateRange">
+		<parameter name="ymlFile"
+				   value="preReg/GetPRIDByDateRange/GetPRIDByDateRange.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
+		</classes>
+	</test>
 	<test name="FetchAppointmentDetailsByPrid">
 		<parameter name="ymlFile"
 			value="preReg/FetchAppointmentDetailsByPrid/FetchAppointmentDetailsByPrid.yml" />
