@@ -28,6 +28,7 @@ public class PreRegUtil extends AdminTestUtil {
 	
 	public static String isTestCaseValidForExecution(TestCaseDTO testCaseDTO) {
 		String testCaseName = testCaseDTO.getTestCaseName();
+		currentTestCaseName = testCaseName;
 		
 		int indexof = testCaseName.indexOf("_");
 		String modifiedTestCaseName = testCaseName.substring(indexof + 1);
