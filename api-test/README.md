@@ -27,7 +27,6 @@ Before running the automation tests, ensure the following software is installed 
 - **Maven 3.9.6** (or higher)
 - **Lombok** (Refer to [Lombok Project](https://projectlombok.org/))
 - **setting.xml** ([download here](https://github.com/mosip/mosip-functional-tests/blob/master/settings.xml))
-- **apitest-commons** library should be cloned and the JAR should be built. Refer to ([README](https://github.com/mosip/mosip-functional-tests/blob/release-1.3.0/apitest-commons/README.md))
 
 ### For Windows
 
@@ -60,6 +59,15 @@ You can access the test automation code using either of the following methods:
    ```sh
    git clone https://github.com/mosip/pre-registration
    ```
+
+---
+
+## Update the property file
+1. Navigate to the prereg.properties file located at:
+    ```sh
+    pre-registration\api-test\src\main\resources\config\prereg.properties
+2. Open the file in your preferred editor
+3. Update the client secret values and other required credentials as per your environment
 
 ---
 
@@ -146,6 +154,21 @@ To execute the tests using Eclipse IDE, use the following steps:
    - After the tests are executed, you can view the detailed results in the `api-test\testng-report` directory.
 
 ---
+
+## Test Report Column Definitions
+This section describes the meaning of each column in the test report:
+- **Total (T)**
+  The total number of test cases considered in the report.
+- **Passed (P)**
+  Indicates the number of test cases that executed successfully with the expected results.
+- **Failed (F)**
+  Indicates the number of test cases that failed due to issues such as output validation mismatches or unexpected errors during execution.
+- **Skipped (S)**
+  Represents test cases that were not executed due to missing prerequisites or data dependencies.
+- **Ignored (I)**
+  Represents test cases that were intentionally not executed due to limitations such as unsupported features, incompatibilities, or undeployed services.
+- **Known Issues (KI)**
+  Indicates test cases that failed but are already acknowledged as known issues for the current release, typically linked with a bug or defect ID.
  
 ## Details of Arguments Used
 
