@@ -7,9 +7,9 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.0.2</version>
+		<version>1.2.0.3-SNAPSHOT</version>
 	</parent>
-	<version>1.2.0.2</version>
+	<version>1.2.0.3-SNAPSHOT</version>
 
 
 	<artifactId>pre-registration-core</artifactId>
