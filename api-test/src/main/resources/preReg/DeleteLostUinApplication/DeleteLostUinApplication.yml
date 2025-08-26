@@ -12,7 +12,7 @@ DeleteLostUinApplication:
   "applicationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
-       "deletedBy": "$IGNORE$"
+       "preRegistrationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$"
 }'
    Prereg_DeleteLostUinApplication_after_its_deletion:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
@@ -46,7 +46,7 @@ DeleteLostUinApplication:
   "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$"
 }'
       output: '{
-       "deletedBy": "$IGNORE$"
+       "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid_preRegistrationId$"		
 }'
    Prereg_DeleteLostUinApplication_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
