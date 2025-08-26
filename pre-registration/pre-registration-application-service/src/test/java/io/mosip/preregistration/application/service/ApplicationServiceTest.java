@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.mosip.kernel.core.util.DateUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -136,7 +137,7 @@ public class ApplicationServiceTest {
 	@Test
 	public void testsaveUIEventAuditSuccess() {
 		UIAuditRequest auditRequest = new UIAuditRequest();
-		auditRequest.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")).toString());
+		auditRequest.setActionTimeStamp(String.valueOf(DateUtils.getUTCCurrentDateTime()));
 		auditRequest.setDescription("{\"template\":\"\",\"description\":\"\",\"url\":\"\"}");
 		MainResponseDTO<String> response = applicationService.saveUIEventAudit(auditRequest);
 		Assert.assertEquals("Audit Logged Successfully", response.getResponse());
