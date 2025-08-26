@@ -173,7 +173,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 		auditRequestDto.setSessionUserName(auditRequest.getActionUserId());
 		auditRequestDto.setModuleId(auditRequest.getModuleId());
 		auditRequestDto.setModuleName(auditRequest.getModuleName());
-		auditRequestDto.setActionTimeStamp(DateUtils.getUTCCurrentDateTime());
+		auditRequestDto.setActionTimeStamp(DateUtils.parseUTCToLocalDateTime(auditRequest.getActionTimeStamp()));
 		auditRequestDto.setCreatedBy(AuditLogVariables.SYSTEM.toString());
 		return auditRequestDto;
 	}
