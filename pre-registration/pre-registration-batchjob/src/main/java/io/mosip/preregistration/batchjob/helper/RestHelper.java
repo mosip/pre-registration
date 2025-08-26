@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.TimeZone;
 
+import io.mosip.kernel.core.util.DateUtils;
 import jakarta.annotation.PostConstruct;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -594,7 +595,7 @@ public class RestHelper {
 		auditRequestDto.setSessionUserName(userName);
 		auditRequestDto.setModuleId(moduleId);
 		auditRequestDto.setModuleName(moduleName);
-        auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
+        auditRequestDto.setActionTimeStamp(DateUtils.getUTCCurrentDateTime());
 		auditRequestDto.setApplicationId(AuditLogVariables.MOSIP_1.toString());
 		auditRequestDto.setApplicationName(AuditLogVariables.PREREGISTRATION.toString());
 		auditRequestDto.setHostIp(hostIP);

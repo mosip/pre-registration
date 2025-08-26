@@ -6,10 +6,13 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.mosip.kernel.core.util.DateUtils;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -136,7 +139,11 @@ public class ApplicationServiceTest {
 	@Test
 	public void testsaveUIEventAuditSuccess() {
 		UIAuditRequest auditRequest = new UIAuditRequest();
-		auditRequest.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")).toString());
+		LocalDateTime utcNow = DateUtils.getUTCCurrentDateTime();
+		String formatted = utcNow
+				.truncatedTo(ChronoUnit.MILLIS)  // drop nanos → .SSS
+				.format(DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"));
+		auditRequest.setActionTimeStamp(formatted);
 		auditRequest.setDescription("{\"template\":\"\",\"description\":\"\",\"url\":\"\"}");
 		MainResponseDTO<String> response = applicationService.saveUIEventAudit(auditRequest);
 		Assert.assertEquals("Audit Logged Successfully", response.getResponse());
