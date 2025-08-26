@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 
+import io.mosip.kernel.core.util.DateUtils;
 import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -118,7 +119,7 @@ public class AuditLogUtil {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In saveAuditDetails method of AugitLogUtil service - " + auditRequestDto);
 
-		auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
+		auditRequestDto.setActionTimeStamp(DateUtils.getUTCCurrentDateTime());
 		auditRequestDto.setApplicationId(AuditLogVariables.MOSIP_1.toString());
 		auditRequestDto.setApplicationName(AuditLogVariables.PREREGISTRATION.toString());
 		auditRequestDto.setHostIp(hostIP);
