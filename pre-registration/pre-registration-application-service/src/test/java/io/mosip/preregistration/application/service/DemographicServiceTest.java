@@ -419,7 +419,7 @@ public class DemographicServiceTest {
 		responseCreateDTO.setResponsetime(demographicServiceUtil.getCurrentResponseTime());
 		responseCreateDTO.setErrors(null);
 
-		auditRequestDto.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")));
+		auditRequestDto.setActionTimeStamp(DateUtils.getUTCCurrentDateTime());
 		auditRequestDto.setApplicationId(AuditLogVariables.MOSIP_1.toString());
 		auditRequestDto.setApplicationName(AuditLogVariables.PREREGISTRATION.toString());
 		auditRequestDto.setCreatedBy(AuditLogVariables.SYSTEM.toString());
