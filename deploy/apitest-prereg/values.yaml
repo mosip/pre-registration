@@ -3,5 +3,5 @@ modules:
     enabled: true
     image:
       repository: mosipid/apitest-prereg
-      tag: 1.2.0.2
+      tag: 1.2.0.3
       pullPolicy: Always

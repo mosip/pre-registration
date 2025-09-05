@@ -7,7 +7,7 @@ if [ $# -ge 1 ] ; then
 fi
 
 NS=prereg
-CHART_VERSION=12.0.2-develop
+CHART_VERSION=12.0.3
 COPY_UTIL=../copy_cm_func.sh
 
 echo Create $NS namespace
