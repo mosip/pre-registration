@@ -2,7 +2,7 @@ apiVersion: v2
 name: prereg-batchjob
 description: A Helm chart for MOSIP Pre-registration Batchjob service
 type: application
-version: 12.0.3
+version: 12.0.3-develop
 appVersion: ""
 dependencies:
   - name: common
