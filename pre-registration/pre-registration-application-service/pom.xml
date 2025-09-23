@@ -28,7 +28,7 @@
 		<lombok.version>1.18.30</lombok.version>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 		<org.ehcache.version>3.10.8</org.ehcache.version>
-		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
+		<central.publishing.maven.plugin.version>0.9.0</central.publishing.maven.plugin.version>
 	</properties>
 
 	<dependencyManagement>
