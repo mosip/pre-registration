@@ -99,6 +99,8 @@ public class MosipTestRunner {
 			if (!testCasesToExecuteString.isBlank()) {
 				PreRegUtil.testCasesInRunScope = DependencyResolver.getDependencies(testCasesToExecuteString);
 			}
+			 
+
 			startTestRunner();
 		} catch (Exception e) {
 			LOGGER.error("Exception " + e.getMessage());
@@ -110,6 +112,7 @@ public class MosipTestRunner {
 		OTPListener.bTerminate = true;
 
 		HealthChecker.bTerminate = true;
+		
 		// Used for generating the test case interdependency JSON file
 		//AdminTestUtil.generateTestCaseInterDependencies(getGlobalResourcePath() + "/config/testCaseInterDependency.json");
 

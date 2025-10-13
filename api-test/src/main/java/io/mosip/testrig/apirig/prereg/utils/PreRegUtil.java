@@ -14,6 +14,7 @@ import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 public class PreRegUtil extends AdminTestUtil {
+
 	private static final Logger logger = Logger.getLogger(PreRegUtil.class);
 	
 	public static List<String> testCasesInRunScope = new ArrayList<>();

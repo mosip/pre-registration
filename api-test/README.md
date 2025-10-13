@@ -152,6 +152,9 @@ To execute the tests using Eclipse IDE, use the following steps:
 ## 6. **View Test Results**
 
    - After the tests are executed, you can view the detailed results in the `api-test\testng-report` directory.
+   - The report will have two sections:
+       - One section for pre-requisite APIs test cases.
+       - Another section for core test cases.
 
 ---
 
