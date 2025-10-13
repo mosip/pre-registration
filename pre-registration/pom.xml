@@ -6,7 +6,7 @@
 
 	<groupId>io.mosip.preregistration</groupId>
 	<artifactId>pre-registration-parent</artifactId>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.2.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>pre-registration</name>
@@ -35,20 +35,20 @@
 		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
 		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
 		<spring.boot.maven.plugin.version>3.2.5</spring.boot.maven.plugin.version>
-		<nexus.staging.maven.plugin.version>1.6.14</nexus.staging.maven.plugin.version>
+		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
 		<maven.sonar.plugin.version>3.7.0.1746</maven.sonar.plugin.version>
 		<!-- git -->
 		<git.commit.id.plugin.version>3.0.1</git.commit.id.plugin.version>
 		<springdoc.openapi.maven.plugin>0.2</springdoc.openapi.maven.plugin>
 
 		<!-- Swagger -->
-		<springdoc.openapi.starter.webmvc.ui.version>2.5.0</springdoc.openapi.starter.webmvc.ui.version>
+		<springdoc.openapi.starter.webmvc.ui.version>2.6.0</springdoc.openapi.starter.webmvc.ui.version>
 
 		<!-- Core -->
 		<spring.version>5.0.4.RELEASE</spring.version>
-		<spring.boot.version>3.2.3</spring.boot.version>
+		<spring.boot.version>3.2.5</spring.boot.version>
 		<spring.data.version>2.0.9.RELEASE</spring.data.version>
-		<spring-cloud-config.version>2.0.0.RELEASE</spring-cloud-config.version>
+		<spring-cloud-config.version>3.1.9</spring-cloud-config.version>
 
 		<!-- Miscellaneous -->
 		<javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
@@ -115,9 +115,9 @@
 		<sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
 
 		<!-- Mosip kernel -->
-		<kernel.bom.version>1.3.0-SNAPSHOT</kernel.bom.version>
-		<kernel.core.version>1.3.0-SNAPSHOT</kernel.core.version>
-		<pre.registration.core.version>1.3.0-SNAPSHOT</pre.registration.core.version>
+		<kernel.bom.version>1.2.1-SNAPSHOT</kernel.bom.version>
+		<kernel.core.version>1.2.1-SNAPSHOT</kernel.core.version>
+		<pre.registration.core.version>1.2.1-SNAPSHOT</pre.registration.core.version>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 	</properties>
 	
@@ -307,6 +307,17 @@
 				</configuration>
 			</plugin>
 			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>${central.publishing.maven.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>ossrh</publishingServerId>
+					<autoPublish>false</autoPublish>
+				</configuration>
+			</plugin>
+
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
 				<version>${maven.source.plugin.version}</version>
@@ -463,7 +474,7 @@
 		<repository>
 			<id>ossrh</id>
 			<name>CentralRepository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<url>https://central.sonatype.com/repositories/snapshots</url>
 			<layout>default</layout>
 			<snapshots>
 				<enabled>true</enabled>
@@ -483,11 +494,11 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<url>https://central.sonatype.com/api/v1/publisher</url>
 		</repository>
 	</distributionManagement>
 

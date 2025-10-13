@@ -88,12 +88,13 @@ AddLostUinApplication:
       uniqueIdentifier: TC_prereg_AddLostUinApplication_05
       description: Process the lost UIN application without specifying the version and attribute
       role: batch
+      checkErrorsOnlyInResponse: true
       templateFields: ["langCode"]
       restMethod: post
       inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
       outputTemplate: preReg/error
       input: '{
-  "version": "$IGNORE$",
+  "version": "$REMOVE$",		
   "requesttime": "$TIMESTAMP$",
   "langCode": "eng",
   "id": "mosip.pre-registration.lostuin.create"

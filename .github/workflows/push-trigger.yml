@@ -43,7 +43,7 @@ jobs:
     secrets:
       OSSRH_USER: ${{ secrets.OSSRH_USER }}
       OSSRH_SECRET: ${{ secrets.OSSRH_SECRET }}
-      OSSRH_URL: ${{ secrets.RELEASE_URL }}
+      OSSRH_URL: ${{ secrets.OSSRH_CENTRAL_URL }}
       OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
       GPG_SECRET: ${{ secrets.GPG_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
@@ -56,15 +56,19 @@ jobs:
           - SERVICE_LOCATION: 'pre-registration/pre-registration-application-service'
             SERVICE_NAME: 'pre-registration-application-service'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
           - SERVICE_LOCATION: 'pre-registration/pre-registration-batchjob'
             SERVICE_NAME: 'pre-registration-batchjob'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
           - SERVICE_LOCATION: 'pre-registration/pre-registration-datasync-service'
             SERVICE_NAME: 'pre-registration-datasync-service'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
           - SERVICE_LOCATION: 'pre-registration/pre-registration-captcha-service'
             SERVICE_NAME: 'pre-registration-captcha-service'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '10'
       fail-fast: false
     name: ${{ matrix.SERVICE_NAME }}
     uses: mosip/kattu/.github/workflows/docker-build.yml@master-java21
@@ -72,6 +76,7 @@ jobs:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
       SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
       BUILD_ARTIFACT: ${{ matrix.BUILD_ARTIFACT }}
+      SQUASH_LAYERS: ${{ matrix.SQUASH_LAYERS }}
     secrets:
       DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
       ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
@@ -105,19 +110,19 @@ jobs:
       GPG_SECRET: ${{ secrets.GPG_SECRET }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
-  publish_to_nexus_apitest_prereg:
-    if: "${{ !contains(github.ref, 'master') && github.event_name != 'pull_request' && github.event_name != 'release' && github.event_name != 'prerelease' && github.event_name != 'publish' }}"
-    needs: build-maven-apitest-prereg
-    uses: mosip/kattu/.github/workflows/maven-publish-to-nexus.yml@master-java21
-    with:
-      SERVICE_LOCATION: ./api-test
-    secrets:
-      OSSRH_USER: ${{ secrets.OSSRH_USER }}
-      OSSRH_SECRET: ${{ secrets.OSSRH_SECRET }}
-      OSSRH_URL: ${{ secrets.RELEASE_URL }}
-      OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
-      GPG_SECRET: ${{ secrets.GPG_SECRET }}
-      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+#  publish_to_nexus_apitest_prereg:
+#    if: "${{ !contains(github.ref, 'master') && github.event_name != 'pull_request' && github.event_name != 'release' && github.event_name != 'prerelease' && github.event_name != 'publish' }}"
+#    needs: build-maven-apitest-prereg
+#    uses: mosip/kattu/.github/workflows/maven-publish-to-nexus.yml@master-java21
+#    with:
+#      SERVICE_LOCATION: ./api-test
+#    secrets:
+#      OSSRH_USER: ${{ secrets.OSSRH_USER }}
+#      OSSRH_SECRET: ${{ secrets.OSSRH_SECRET }}
+#      OSSRH_URL: ${{ secrets.OSSRH_SNAPSHOT_URL }}
+#      OSSRH_TOKEN: ${{ secrets.OSSRH_TOKEN }}
+#      GPG_SECRET: ${{ secrets.GPG_SECRET }}
+#      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
 
   build-apitest-prereg-local:
     needs: build-maven-apitest-prereg
@@ -187,3 +192,16 @@ jobs:
       ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
       RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
       SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  jira_dependabot_integration:
+    if: github.actor == 'dependabot[bot]'
+    uses: mosip/kattu/.github/workflows/jira-dependabot-integration.yml@develop
+    with:
+      jira_project: "MOSIP"
+      pr_title: ${{ github.event.pull_request.title }}
+      pr_url: ${{ github.event.pull_request.html_url }}
+      pr_branch: ${{ github.event.pull_request.head.ref }}
+    secrets:
+      JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+      JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+      JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}

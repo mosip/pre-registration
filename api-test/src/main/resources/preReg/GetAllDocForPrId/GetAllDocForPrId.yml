@@ -12,8 +12,6 @@ GetAllDocForPrId:
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
-      "docCatCode": "$IGNORE$",
-       "docTypCode": "$IGNORE$"
 }'
    Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
