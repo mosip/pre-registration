@@ -6,6 +6,7 @@ CancelApplicationsAppointment:
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
+      additionalDependencies: TC_prereg_BookAppointment_03
       inputTemplate: preReg/CancelApplicationsAppointment/cancelApplicationsAppointment
       outputTemplate: preReg/CancelApplicationsAppointment/cancelApplicationsAppointmentResult
       input: '{
