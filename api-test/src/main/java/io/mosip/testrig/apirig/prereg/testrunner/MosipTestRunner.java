@@ -95,10 +95,10 @@ public class MosipTestRunner {
 			
 			String testCasesToExecuteString = PreRegConfigManager.getproperty("testCasesToExecute");
 
-//			DependencyResolver.loadDependencies(getGlobalResourcePath() + "/" + "config/testCaseInterDependency.json");
-//			if (!testCasesToExecuteString.isBlank()) {
-//				PreRegUtil.testCasesInRunScope = DependencyResolver.getDependencies(testCasesToExecuteString);
-//			}
+			DependencyResolver.loadDependencies(getGlobalResourcePath() + "/" + "config/testCaseInterDependency.json");
+			if (!testCasesToExecuteString.isBlank()) {
+				PreRegUtil.testCasesInRunScope = DependencyResolver.getDependencies(testCasesToExecuteString);
+			}
 			 
 
 			startTestRunner();
@@ -114,7 +114,7 @@ public class MosipTestRunner {
 		HealthChecker.bTerminate = true;
 		
 		// Used for generating the test case interdependency JSON file
-		AdminTestUtil.generateTestCaseInterDependencies(getGlobalResourcePath() + "/config/testCaseInterDependency.json");
+		//AdminTestUtil.generateTestCaseInterDependencies(getGlobalResourcePath() + "/config/testCaseInterDependency.json");
 
 		System.exit(0);
 
