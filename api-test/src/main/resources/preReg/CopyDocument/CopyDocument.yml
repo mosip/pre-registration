@@ -9,7 +9,7 @@ CopyDocument:
       outputTemplate: preReg/CopyDocument/copyDocumentResult
       input: '{
     "doc_cat_code" : "POA",
-    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
 "docCatCode":"POA",
@@ -25,7 +25,7 @@ CopyDocument:
       outputTemplate: preReg/error
       input: '{
     "doc_cat_code" : "saxs@34dbjhj",
-    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
    "errors": [
@@ -44,7 +44,7 @@ CopyDocument:
       outputTemplate: preReg/error
       input: '{
     "doc_cat_code" : "",
-    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+    "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
    "errors": [

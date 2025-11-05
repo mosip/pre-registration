@@ -15,7 +15,7 @@ GetUpdatedDateTimeByPrid:
   "registartion_center_id": "10003",
   "pre_registration_ids": [
       {
-         "pre_registration_id":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+         "pre_registration_id":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
       }, 
       {
          "pre_registration_id":"$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$"

@@ -9,7 +9,7 @@ UpdatePreRegStatus:
       inputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatus
       outputTemplate: preReg/UpdatePreRegStatus/updatePreRegStatusResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "statusCode": "Pending_Appointment"
 }'
       output: '{

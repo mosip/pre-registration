@@ -11,7 +11,7 @@ ValidateOtp:
     input: '{
       "version": "1.0",
       "requesttime": "$TIMESTAMP$",
-      "userId": "john.doe@mailinator.com",
+      "userId": "$EMAILVALUE$",
       "otp": "DYNAMICOTP",
       "id": "mosip.pre-registration.login.useridotp"
     }'
@@ -28,7 +28,7 @@ ValidateOtp:
     input: '{
       "version": "1.0",
       "requesttime": "$TIMESTAMP$",
-      "userId": "9090872300",
+      "userId": "$PHONENUMBER$",
       "otp": "DYNAMICOTP",
       "id": "mosip.pre-registration.login.useridotp"
     }'
