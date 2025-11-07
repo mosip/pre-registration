@@ -131,9 +131,8 @@ public class MosipTestRunner {
 		if (!runType.equalsIgnoreCase("JAR")) {
 			AuthTestsUtil.removeOldMosipTempTestResource();
 		}
-
-		BaseTestCase.currentModule = GlobalConstants.PREREG;
 		AdminTestUtil.copyPreregTestResource();
+		BaseTestCase.currentModule = BaseTestCase.runContext + GlobalConstants.PREREG;
 		BaseTestCase.otpListener = new OTPListener();
 		BaseTestCase.otpListener.run();
 	}

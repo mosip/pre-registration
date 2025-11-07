@@ -9,7 +9,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/bookAppointment/bookAppointmentResult
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -118,7 +118,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "moe-registration.booking.book",
   "version": "1.0",
@@ -143,7 +143,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "",
   "version": "1.0",
@@ -169,7 +169,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "",
@@ -194,7 +194,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "$REMOVE$",
@@ -219,7 +219,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "snsjd73t33ybyh2334@FDh",
@@ -244,7 +244,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "363wgbsion_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -270,7 +270,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$REMOVE$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -296,7 +296,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -322,7 +322,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -348,7 +348,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -373,7 +373,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -399,7 +399,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -424,7 +424,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -449,7 +449,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -474,7 +474,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -499,7 +499,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -524,7 +524,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -549,7 +549,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -574,7 +574,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -600,7 +600,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -625,7 +625,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
@@ -651,7 +651,7 @@ BookAppointment:
       inputTemplate: preReg/bookAppointment/bookAppointment
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",   
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",   
   "registration_center_id": "$registration_center_id$",
   "id": "mosip.pre-registration.booking.book",
   "version": "1.0",
