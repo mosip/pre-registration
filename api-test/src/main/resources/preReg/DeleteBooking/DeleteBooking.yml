@@ -5,6 +5,7 @@ DeleteBooking:
       description: Delete bookings for all valid preregistration ID
       role: batch
       restMethod: delete
+      additionalDependencies: TC_prereg_BookAppointment_01
       inputTemplate: preReg/DeleteBooking/deleteBooking
       outputTemplate: preReg/DeleteBooking/deleteBookingResult
       input: '{

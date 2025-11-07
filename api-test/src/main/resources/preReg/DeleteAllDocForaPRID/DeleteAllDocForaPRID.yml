@@ -6,6 +6,7 @@ DeleteAllDocForaPRID:
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
+      additionalDependencies: TC_prereg_UploadDocument_20,TC_prereg_UploadDocument_21,TC_prereg_UploadDocument_18,TC_prereg_UploadDocument_19
       inputTemplate: preReg/DeleteAllDocForaPRID/deleteAllDocForaPRID
       outputTemplate: preReg/DeleteAllDocForaPRID/deleteAllDocForaPRIDResult
       input: '{

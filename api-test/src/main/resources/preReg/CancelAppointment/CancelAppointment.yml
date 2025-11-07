@@ -6,6 +6,7 @@ CancelAppointment:
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
+      additionalDependencies: TC_prereg_BookAppointment_02
       inputTemplate: preReg/CancelAppointment/cancelAppointment
       outputTemplate: preReg/CancelAppointment/cancelAppointmentResult
       input: '{
@@ -20,6 +21,7 @@ CancelAppointment:
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
+      additionalDependencies: TC_prereg_BookAppointment_02
       inputTemplate: preReg/CancelAppointment/cancelAppointment
       outputTemplate: preReg/error
       input: '{
@@ -39,6 +41,7 @@ CancelAppointment:
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
+      additionalDependencies: TC_prereg_BookAppointment_30
       inputTemplate: preReg/CancelAppointment/cancelAppointment
       outputTemplate: preReg/error
       input: '{
@@ -75,6 +78,7 @@ CancelAppointment:
       description: Canceling an appointment with an pending appointment preregistration ID
       role: batch
       restMethod: put
+      additionalDependencies: TC_prereg_UpdatePreRegStatus_04
       inputTemplate: preReg/CancelAppointment/cancelAppointment
       outputTemplate: preReg/error
       input: '{
