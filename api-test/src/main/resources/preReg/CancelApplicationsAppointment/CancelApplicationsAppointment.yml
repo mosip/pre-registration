@@ -1,11 +1,12 @@
 CancelApplicationsAppointment:
    Prereg_CancelApplicationsAppointment_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_CancelAppointment_01
+      uniqueIdentifier: TC_prereg_CancelApplicationsAppointment_01
       description: Canceling appointment for a valid preregistration ID
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
+      additionalDependencies: TC_prereg_BookAppointment_03
       inputTemplate: preReg/CancelApplicationsAppointment/cancelApplicationsAppointment
       outputTemplate: preReg/CancelApplicationsAppointment/cancelApplicationsAppointmentResult
       input: '{
@@ -15,7 +16,7 @@ CancelApplicationsAppointment:
 }'
    Prereg_CancelApplicationsAppointment_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_CancelAppointment_02
+      uniqueIdentifier: TC_prereg_CancelApplicationsAppointment_02
       description: Canceling appointment for an invalid preregistration ID
       role: batch
       restMethod: put

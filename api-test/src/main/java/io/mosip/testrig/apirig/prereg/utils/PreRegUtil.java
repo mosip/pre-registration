@@ -39,6 +39,12 @@ public class PreRegUtil extends AdminTestUtil {
 				&& testCasesInRunScope.contains(testCaseDTO.getUniqueIdentifier()) == false) {
 			throw new SkipException(GlobalConstants.NOT_IN_RUN_SCOPE_MESSAGE);
 		}
+		currentTestCaseName = testCaseName;
+		// Handle extra workflow dependencies
+		if (testCaseDTO != null && testCaseDTO.getAdditionalDependencies() != null
+				&& AdminTestUtil.generateDependency == true) {
+			addAdditionalDependencies(testCaseDTO);
+		}
 
 		if (SkipTestCaseHandler.isTestCaseInSkippedList(testCaseName)) {
 			throw new SkipException(GlobalConstants.KNOWN_ISSUES);

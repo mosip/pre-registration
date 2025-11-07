@@ -23,13 +23,22 @@
     "TC_prereg_UpdatePreregistration_06": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UpdatePreregistration_09": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UpdatePreregistration_08": ["TC_Prereg_CreatePrereg_01"],
-    "TC_prereg_CancelAppointment_05": ["TC_Prereg_CreatePrereg_05"],
+    "TC_prereg_CancelAppointment_05": [
+        "TC_prereg_UpdatePreRegStatus_04",
+        "TC_Prereg_CreatePrereg_05"
+    ],
     "TC_prereg_CancelAppointment_01": [
-        "TC_Prereg_CreatePrereg_08",
+        "TC_prereg_BookAppointment_02",
         "TC_Prereg_CreatePrereg_07"
     ],
-    "TC_prereg_CancelAppointment_02": ["TC_Prereg_CreatePrereg_07"],
-    "TC_prereg_CancelAppointment_03": ["TC_Prereg_CreatePrereg_27"],
+    "TC_prereg_CancelAppointment_02": [
+        "TC_prereg_BookAppointment_02",
+        "TC_Prereg_CreatePrereg_07"
+    ],
+    "TC_prereg_CancelAppointment_03": [
+        "TC_prereg_BookAppointment_30",
+        "TC_Prereg_CreatePrereg_27"
+    ],
     "TC_prereg_GetApplicationStatusWithPrId_01": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_FetchAppointmentDetailsByPrid_03": ["TC_Prereg_CreatePrereg_09"],
     "TC_prereg_UploadDocument_19": ["TC_Prereg_CreatePrereg_06"],
@@ -37,7 +46,10 @@
     "TC_prereg_FetchAppointmentDetailsByPrid_01": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UploadDocument_17": ["TC_Prereg_CreatePrereg_05"],
     "TC_prereg_UploadDocument_16": ["TC_Prereg_CreatePrereg_05"],
-    "TC_prereg_DeleteBooking_01": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_DeleteBooking_01": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
     "TC_prereg_UploadDocument_15": ["TC_Prereg_CreatePrereg_05"],
     "TC_prereg_UploadDocument_14": ["TC_Prereg_CreatePrereg_05"],
     "TC_prereg_UploadDocument_13": ["TC_Prereg_CreatePrereg_04"],
@@ -72,9 +84,18 @@
     "TC_prereg_UploadDocument_40": ["TC_Prereg_CreatePrereg_09"],
     "TC_prereg_BookAppointment_13": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_BookAppointment_12": ["TC_Prereg_CreatePrereg_01"],
-    "TC_prereg_GetAppointmentDetails_01": ["TC_Prereg_CreatePrereg_04"],
-    "TC_prereg_GetAppointmentDetails_03": ["TC_Prereg_CreatePrereg_01"],
-    "TC_prereg_GetAppointmentDetails_02": ["TC_Prereg_CreatePrereg_08"],
+    "TC_prereg_GetAppointmentDetails_01": [
+        "TC_prereg_BookAppointmentByPRID_01",
+        "TC_Prereg_CreatePrereg_04"
+    ],
+    "TC_prereg_GetAppointmentDetails_03": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
+    "TC_prereg_GetAppointmentDetails_02": [
+        "TC_Prereg_CreatePrereg_08",
+        "TC_prereg_BookAppointment_03"
+    ],
     "TC_prereg_BookAppointment_22": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_GetAllApplicationsWithapplicationId_02": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_BookAppointment_21": ["TC_Prereg_CreatePrereg_01"],
@@ -146,7 +167,13 @@
         "TC_Prereg_CreatePrereg_04",
         "TC_prereg_GetAppointmentDetails_01"
     ],
-    "TC_prereg_DeleteAllDocForaPRID_01": ["TC_Prereg_CreatePrereg_06"],
+    "TC_prereg_DeleteAllDocForaPRID_01": [
+        "TC_prereg_UploadDocument_19",
+        "TC_prereg_UploadDocument_18",
+        "TC_prereg_UploadDocument_21",
+        "TC_prereg_UploadDocument_20",
+        "TC_Prereg_CreatePrereg_06"
+    ],
     "TC_prereg_UploadDocument_08": ["TC_Prereg_CreatePrereg_03"],
     "TC_prereg_UploadDocument_07": ["TC_Prereg_CreatePrereg_03"],
     "TC_prereg_UploadDocument_06": ["TC_Prereg_CreatePrereg_03"],
@@ -159,6 +186,10 @@
     "TC_prereg_BookAppointmentByPRID_22": ["TC_Prereg_CreatePrereg_04"],
     "TC_prereg_BookAppointmentByPRID_21": ["TC_Prereg_CreatePrereg_04"],
     "TC_prereg_BookAppointmentByPRID_20": ["TC_Prereg_CreatePrereg_04"],
+    "TC_prereg_CancelApplicationsAppointment_01": [
+        "TC_Prereg_CreatePrereg_08",
+        "TC_prereg_BookAppointment_03"
+    ],
     "TC_prereg_FetchApplicationByPrid_01": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UpdateDocRefID_06": ["TC_Prereg_CreatePrereg_03"],
     "TC_prereg_GetSpecificDocumentforaPRID_03": ["TC_Prereg_CreatePrereg_01"],
