@@ -1,5 +1,5 @@
 UpdatePreregistration:
-   Prereg_UpdatePrereg_All_Valid_Smoke_sid:
+   Prereg_UpdatePrereg_All_Valid_Smoke_sid_pos:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_01
       description: Update demographic data for a new preregistration application
@@ -8,7 +8,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
@@ -54,7 +54,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
@@ -81,7 +81,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@thogwarts.co.in",
@@ -108,7 +108,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
@@ -135,7 +135,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "soh#w@Scdfvg",
@@ -162,7 +162,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "soh#w@Scdfvg",
@@ -189,7 +189,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "soh#w@Scdfvg",
@@ -216,7 +216,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "soh#w@Scdfvg",
@@ -243,7 +243,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "soh#w@Scdfvg",
@@ -270,7 +270,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
@@ -297,7 +297,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
@@ -324,7 +324,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
@@ -351,7 +351,7 @@ UpdatePreregistration:
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
       outputTemplate: preReg/error
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
   "phone": "8249742850",
   "email": "goku@hogwarts.co.in",

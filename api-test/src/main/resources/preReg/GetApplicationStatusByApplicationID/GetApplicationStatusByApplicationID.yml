@@ -9,7 +9,7 @@ GetApplicationStatusByApplicationID:
       inputTemplate: preReg/GetApplicationStatusByApplicationID/getApplicationStatusByApplicationID
       outputTemplate: preReg/GetApplicationStatusByApplicationID/getApplicationStatusByApplicationIDResult
       input: '{
-  "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+  "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
   "response": "Cancelled"

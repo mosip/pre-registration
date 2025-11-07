@@ -8,7 +8,7 @@ GetApplicationStatusWithPrId:
       inputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrId
       outputTemplate: preReg/GetApplicationStatusWithPrId/getApplicationStatusWithPrIdResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
   "statusCode": "Application_Incomplete"
