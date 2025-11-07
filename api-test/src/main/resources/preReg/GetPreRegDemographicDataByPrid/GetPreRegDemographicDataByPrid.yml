@@ -9,14 +9,14 @@ GetPreRegDemographicDataByPrid:
       inputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPrid
       outputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPridResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_pos_preRegistrationId$"
 }'
       output: '{
-  "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_preRegistrationId$",
+  "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_pos_preRegistrationId$",
   "postalCode":"14022",
-  "dateOfBirth": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_dateOfBirth$",
+  "dateOfBirth": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_pos_dateOfBirth$",
   "IDSchemaVersion": "$SCHEMAVERSION$",
-  "phone": "8249742850"
+  "phone": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_pos_PHONE$"
 }'
    Prereg_GetPreRegDemographicDataByPrid_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
