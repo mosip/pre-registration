@@ -1,5 +1,5 @@
 CreatePrereg:
-   Prereg_CreatePrereg_All_Valid_Smoke_sid:
+   Prereg_CreatePrereg_All_Valid_Smoke_sid_pos:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_01
       description: Creating demographic details with valid data
@@ -697,7 +697,7 @@ CreatePrereg:
 }'
       output: '{
 }'
-   Prereg_CreatePrereg_Smoke_PreRegDemographicData_sid:
+   Prereg_CreatePrereg_Smoke_PreRegDemographicData_sid_pos:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_29
       description: Creating preregistration appointment using PRID for demographic data
