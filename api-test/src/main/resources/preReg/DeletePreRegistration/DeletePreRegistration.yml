@@ -11,7 +11,7 @@ DeletePreRegistration:
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$"
 }'
       output: '{
-"deletedBy": "robin.hood@mailinator.com"
+"deletedBy": "$PREREGUSER$"
 }'
    Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}

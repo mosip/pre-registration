@@ -9,10 +9,12 @@ GetPreRegInfoByPrid:
       inputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid
       outputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPridResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
-  "postalCode":"14022"
+  "postalCode":"14022",
+  "phone": "$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_PHONE$",
+  "email":"$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_EMAIL$"
 }'
 
    Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId:

@@ -36,7 +36,7 @@ GetAppointmentDetails:
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails
       outputTemplate: preReg/GetAppointmentDetails/getAppointmentDetailsResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
   "registration_center_id": "10003"

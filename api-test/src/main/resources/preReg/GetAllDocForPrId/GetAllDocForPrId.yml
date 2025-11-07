@@ -9,7 +9,7 @@ GetAllDocForPrId:
       inputTemplate: preReg/GetAllDocForPrId/getAllDocForPrId
       outputTemplate: preReg/GetAllDocForPrId/getAllDocForPrIdResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
 }'

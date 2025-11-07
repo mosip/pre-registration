@@ -8,10 +8,12 @@ FetchApplicationByPrid:
       inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
       outputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPridResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
-  "preRegistrationId": "59286406501581"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "email": "$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_EMAIL$",
+  "phone": "$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_PHONE$"
 }'
    Prereg_FetchApplicationByPrid_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
