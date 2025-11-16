@@ -225,7 +225,7 @@ lifecycleHooks:
         - -c
         - sleep 30
 
-## Termination grace perios : the maximum amount of time (in seconds) Kubernetes will wait for a container to gracefully shut down
+## Termination grace period : the maximum amount of time (in seconds) Kubernetes will wait for a container to gracefully shut down
 terminationGracePeriodSeconds: 60
 
 ## Custom Liveness probes for
