@@ -7,8 +7,8 @@ if [ $# -ge 1 ] ; then
 fi
 
 NS=prereg
-CHART_VERSION=0.0.1-develop
-PREREG_BOOKING_CHART_VERSION=0.0.1-develop
+CHART_VERSION=1.3.0-develop
+PREREG_BOOKING_CHART_VERSION=1.3.0-develop
 
 COPY_UTIL=../copy_cm_func.sh
 
