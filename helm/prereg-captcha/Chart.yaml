@@ -2,7 +2,7 @@ apiVersion: v2
 name: prereg-captcha
 description: A Helm chart for MOSIP Pre-registration Captcha Service
 type: application
-version: 1.3.0-beta.1-develop
+version: 1.3.0-develop
 appVersion: ""
 dependencies:
   - name: common
