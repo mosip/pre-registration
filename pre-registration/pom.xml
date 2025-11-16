@@ -39,7 +39,7 @@
 		<maven.sonar.plugin.version>3.7.0.1746</maven.sonar.plugin.version>
 		<!-- git -->
 		<git.commit.id.plugin.version>3.0.1</git.commit.id.plugin.version>
-		<springdoc.openapi.maven.plugin>0.2</springdoc.openapi.maven.plugin>
+		<springdoc.openapi.maven.plugin>1.5</springdoc.openapi.maven.plugin>
 
 		<!-- Swagger -->
 		<springdoc.openapi.starter.webmvc.ui.version>2.6.0</springdoc.openapi.starter.webmvc.ui.version>
