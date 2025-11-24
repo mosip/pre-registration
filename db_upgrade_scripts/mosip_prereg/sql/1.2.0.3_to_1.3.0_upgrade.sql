@@ -1,4 +1,5 @@
 \c mosip_prereg
+-- Below script required to upgrade from 1.3.0-beta.1 to 1.3.0.
 -- ------------------------------------------------------------------------------------------
 -- Upgrade script for Migrating Spring batch version to 5.0 as part of Java 21 Migration.
 -- References:
