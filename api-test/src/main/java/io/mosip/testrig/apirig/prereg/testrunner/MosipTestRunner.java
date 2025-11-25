@@ -34,7 +34,6 @@ import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.AuthTestsUtil;
 import io.mosip.testrig.apirig.utils.CertsUtil;
 import io.mosip.testrig.apirig.utils.ConfigManager;
-import io.mosip.testrig.apirig.utils.DependencyResolver;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.GlobalMethods;
 import io.mosip.testrig.apirig.utils.JWKKeyUtil;
@@ -48,7 +47,7 @@ import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 /**
  * Class to initiate mosip api test execution
- *
+ * 
  * @author Vignesh
  *
  */
@@ -61,14 +60,14 @@ public class MosipTestRunner {
 
 	/**
 	 * C Main method to start mosip test execution
-	 *
+	 * 
 	 * @param arg
 	 */
 	public static void main(String[] arg) {
 
 		try {
 			LOGGER.info("** ------------- API Test Rig Run Started --------------------------------------------- **");
-
+			
 			BaseTestCase.setRunContext(getRunType(), jarUrl);
 			ExtractResource.removeOldMosipTestTestResource();
 			if (getRunType().equalsIgnoreCase("JAR")) {
@@ -87,25 +86,17 @@ public class MosipTestRunner {
 			healthcheck.setCurrentRunningModule(BaseTestCase.currentModule);
 			Thread trigger = new Thread(healthcheck);
 			trigger.start();
-
+			
 			KeycloakUserManager.removeUser();
 			KeycloakUserManager.createUsers();
 			KeycloakUserManager.closeKeycloakInstance();
 			AdminTestUtil.getRequiredField();
 
-			String testCasesToExecuteString = PreRegConfigManager.getproperty("testCasesToExecute");
-
-			DependencyResolver.loadDependencies(getGlobalResourcePath() + "/" + "config/testCaseInterDependency.json");
-			if (!testCasesToExecuteString.isBlank()) {
-				PreRegUtil.testCasesInRunScope = DependencyResolver.getDependencies(testCasesToExecuteString);
-			}
-
-
 			startTestRunner();
 		} catch (Exception e) {
 			LOGGER.error("Exception " + e.getMessage());
 		}
-
+		
 		KeycloakUserManager.removeUser();
 		KeycloakUserManager.closeKeycloakInstance();
 
@@ -113,13 +104,10 @@ public class MosipTestRunner {
 
 		HealthChecker.bTerminate = true;
 
-		// Used for generating the test case interdependency JSON file
-		//AdminTestUtil.generateTestCaseInterDependencies(getGlobalResourcePath() + "/config/testCaseInterDependency.json");
-
 		System.exit(0);
 
 	}
-
+	
 	public static void suiteSetup(String runType) {
 		if (ConfigManager.IsDebugEnabled())
 			LOGGER.setLevel(Level.ALL);
@@ -156,7 +144,7 @@ public class MosipTestRunner {
 
 	/**
 	 * The method to start mosip testng execution
-	 *
+	 * 
 	 * @throws IOException
 	 */
 	public static void startTestRunner() {
@@ -305,7 +293,7 @@ public class MosipTestRunner {
 	/**
 	 * The method will return mode of application started either from jar or eclipse
 	 * ide
-	 *
+	 * 
 	 * @return
 	 */
 	public static String getRunType() {
