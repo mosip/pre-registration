@@ -4,7 +4,6 @@ GetPreRegInfoByPrid:
       uniqueIdentifier: TC_prereg_GetPreRegInfoByPrid_01
       description: Retrieve preregistration information using the preReg Id with a valid preRegistrationId
       role: batch
-      checkErrorsOnlyInResponse: true
       restMethod: get
       inputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPrid
       outputTemplate: preReg/GetPreRegInfoByPrid/getPreRegInfoByPridResult
@@ -12,7 +11,10 @@ GetPreRegInfoByPrid:
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
 }'
       output: '{
-  "postalCode":"14022"
+  "postalCode":"14022",
+  "dateOfBirth": "$IGNORE$",
+  "IDSchemaVersion": "$IGNORE$",
+  "phone": "$IGNORE$"
 }'
 
    Prereg_GetPreRegInfoByPrid_inValid_preRegistrationId:

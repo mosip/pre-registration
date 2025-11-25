@@ -4,7 +4,6 @@ GetPreRegDemographicDataByPrid:
       uniqueIdentifier: TC_prereg_GetPreRegDemographicDataByPrid_01
       description: Retrieve the PreReg demographic data by PRID
       role: batch
-      checkErrorsOnlyInResponse: true
       restMethod: get
       inputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPrid
       outputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPridResult
@@ -14,9 +13,9 @@ GetPreRegDemographicDataByPrid:
       output: '{
   "preRegistrationId": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_preRegistrationId$",
   "postalCode":"14022",
-  "dateOfBirth": "$ID:CreatePrereg_Smoke_PreRegDemographicData_sid_dateOfBirth$",
-  "IDSchemaVersion": "$SCHEMAVERSION$",
-  "phone": "8249742850"
+  "dateOfBirth": "$IGNORE$",
+  "IDSchemaVersion": "$IGNORE$",
+  "phone": "$IGNORE$"
 }'
    Prereg_GetPreRegDemographicDataByPrid_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
