@@ -1,0 +1,154 @@
+THIRD-PARTY-NOTICES
+
+This project includes third-party packages that are distributed under various open-source licenses. Below is a list of packages and their associated licenses.
+================================================================================
+Package: Spring Boot (Starter Web, Security, JPA, WebFlux, Cache, Batch, Test, Actuator, Devtools)
+Version: 3.x family (from SBOM)
+License: Apache License 2.0
+Homepage: https://spring.io/projects/spring-boot
+================================================================================
+
+================================================================================
+Package: Spring Cloud (Config, Bootstrap, Dependencies 2020.0.4)
+Version: 2020.0.4
+License: Apache License 2.0
+Homepage: https://spring.io/projects/spring-cloud
+================================================================================
+
+================================================================================
+Package: Spring Batch (Core/Test)
+License: Apache License 2.0
+Homepage: https://spring.io/projects/spring-batch
+================================================================================
+
+================================================================================
+Package: SpringDoc OpenAPI (WebMVC UI, Maven Plugin)
+License: Apache License 2.0
+Homepage: https://springdoc.org
+================================================================================
+
+================================================================================
+Package: Jackson (Core, Databind, Annotations, JSR310)
+License: Apache License 2.0
+Homepage: https://github.com/FasterXML/jackson
+================================================================================
+
+================================================================================
+Package: Micrometer (Core, Prometheus Registry)
+License: Apache License 2.0
+Homepage: https://micrometer.io
+================================================================================
+
+================================================================================
+Package: Apache PDFBox
+Version: 3.0.3
+License: Apache License 2.0
+Homepage: https://pdfbox.apache.org
+================================================================================
+
+================================================================================
+Package: Apache Commons Collections4
+License: Apache License 2.0
+Homepage: https://commons.apache.org/proper/commons-collections/
+================================================================================
+
+================================================================================
+Package: Apache HttpClient
+License: Apache License 2.0
+Homepage: https://hc.apache.org/httpcomponents-client-4.5.x/
+================================================================================
+
+================================================================================
+Package: Apache Maven Plugins
+(maven-source-plugin, maven-jar-plugin, maven-war-plugin, maven-compiler-plugin,
+maven-javadoc-plugin, maven-surefire-plugin, maven-shade-plugin, maven-gpg-plugin)
+License: Apache License 2.0
+Homepage: https://maven.apache.org/plugins/
+================================================================================
+
+================================================================================
+Package: JSON Simple (com.googlecode.json-simple)
+License: Apache License 2.0 (Inferred from project's official repository)
+Homepage: https://code.google.com/archive/p/json-simple/
+================================================================================
+
+================================================================================
+Package: org.json (json)
+License: JSON License
+Homepage: https://github.com/stleary/JSON-java
+================================================================================
+
+================================================================================
+Package: Java UUID Generator (com.fasterxml.uuid)
+License: Apache License 2.0
+Homepage: https://github.com/cowtowncoder/java-uuid-generator
+================================================================================
+
+================================================================================
+Package: Ehcache
+License: Apache License 2.0
+Homepage: https://www.ehcache.org/
+================================================================================
+
+================================================================================
+Package: H2 Database
+License: EPL 1.0 or MPL 2.0 (Dual Licensed)
+Homepage: https://www.h2database.com
+================================================================================
+
+================================================================================
+Package: PostgreSQL JDBC Driver
+License: PostgreSQL License
+Homepage: https://jdbc.postgresql.org/
+================================================================================
+
+================================================================================
+Package: Lombok
+Version: 1.18.30
+License: MIT License
+Homepage: https://projectlombok.org
+================================================================================
+
+================================================================================
+Package: JWT (io.jsonwebtoken:jjwt)
+License: Apache License 2.0
+Homepage: https://github.com/jwtk/jjwt
+================================================================================
+
+================================================================================
+Package: JUnit 4 (junit:junit)
+License: EPL 1.0
+Homepage: https://junit.org/junit4/
+================================================================================
+
+================================================================================
+Package: JUnit Vintage Engine
+License: EPL 2.0
+Homepage: https://junit.org
+================================================================================
+
+================================================================================
+Package: Mockito Core
+License: MIT License
+Homepage: https://github.com/mockito/mockito
+================================================================================
+
+================================================================================
+Package: JAXB Runtime + API (javax.xml.bind, org.glassfish.jaxb)
+License: EPL 2.0 (Inferred from project repository)
+Homepage: https://eclipse-ee4j.github.io/jaxb-ri/
+================================================================================
+
+================================================================================
+Package: Activation Framework (javax.activation)
+License: CDDL + GPL (Dual License)
+Homepage: https://github.com/eclipse-ee4j/jaf
+================================================================================
+
+================================================================================
+Package: Central Publishing Maven Plugin (Sonatype)
+Version: 0.7.0
+License: Apache License 2.0
+Homepage: https://github.com/sonatype-nexus-community/central-publishing
+================================================================================
+Full license texts and additional details for each of the above packages are available in the license/ directory of this repository. Please refer to those files or the original source of each package for complete legal terms and conditions.
