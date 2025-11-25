@@ -77,8 +77,36 @@ public class NotificationController {
 	}
 
 	/**
-	 * Api to Trigger notification service.
+	 * Api to Trigger notification service version 1.
 	 * 
+	 * @param jsonbObject the json string.
+	 * @param langCode    the language code.
+	 * @param file        the file to send.
+	 * @return the response entity.
+	 */
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotification())")
+	// @PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
+	@PostMapping(path = "/notification/v1", consumes = { "multipart/form-data" })
+	@Operation(summary = "sendNotificationsV1", description = "Trigger notification", tags = "notification-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
+	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotifications(
+			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
+			@RequestPart(value = "langCode", required = false) String langCode,
+			@RequestPart(value = "attachment", required = false) MultipartFile file, HttpServletRequest res) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In notification controller for send notification with request notification dto  " + jsonbObject);
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, res.getHeader("Cookie"));
+		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, true),
+				HttpStatus.OK);
+	}
+
+	/**
+	 * Api to Trigger notification service Version 1.
+	 *
 	 * @param jsonbObject the json string.
 	 * @param langCode    the language code.
 	 * @param file        the file to send.
@@ -93,14 +121,14 @@ public class NotificationController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
-	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotifications(
+	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotificationsV0(
 			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
 			@RequestPart(value = "langCode", required = false) String langCode,
 			@RequestPart(value = "attachment", required = false) MultipartFile file, HttpServletRequest res) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In notification controller for send notification with request notification dto  " + jsonbObject);
 		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, res.getHeader("Cookie"));
-		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, true),
+		return new ResponseEntity<>(notificationService.sendNotificationV0(jsonbObject, langCode, file, true),
 				HttpStatus.OK);
 	}
 

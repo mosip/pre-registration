@@ -81,6 +81,22 @@ public class NotificationUtil {
 	@Value("${mosip.utc-datetime-pattern}")
 	private String dateTimeFormat;
 
+	public MainResponseDTO<NotificationResponseDTO> notifyV0(String notificationType, NotificationDTO acknowledgementDTO,
+														   MultipartFile file) throws IOException {
+
+		log.info("sessionId", "idType", "id", "In notify method of NotificationUtil service:" + notificationType);
+
+		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
+		if (notificationType.equals(RequestCodes.SMS)) {
+			response = smsNotificationV0(acknowledgementDTO);
+		}
+		if (notificationType.equals(RequestCodes.EMAIL)) {
+			response = emailNotificationV0(acknowledgementDTO, null);
+		}
+
+		return response;
+	}
+
 	public MainResponseDTO<NotificationResponseDTO> notify(String notificationType, NotificationDTO acknowledgementDTO,
 			MultipartFile file, String bookingType) throws IOException {
 
@@ -94,6 +110,79 @@ public class NotificationUtil {
 		if (notificationType.equals(RequestCodes.EMAIL)) {
 			response = emailNotification(bookingType, acknowledgementDTO, null);
 		}
+
+		return response;
+	}
+
+	/**
+	 * This method will send the email notification to the user
+	 *
+	 * @param acknowledgementDTO
+	 * @param file
+	 * @return
+	 * @throws IOException
+	 */
+	public MainResponseDTO<NotificationResponseDTO> emailNotificationV0(NotificationDTO acknowledgementDTO,
+																	  MultipartFile file) throws IOException {
+		log.info("sessionId", "idType", "id", "In emailNotification method of NotificationUtil service");
+		HttpEntity<byte[]> doc = null;
+		String fileText = null;
+		if (file != null) {
+			LinkedMultiValueMap<String, String> pdfHeaderMap = new LinkedMultiValueMap<>();
+			pdfHeaderMap.add("Content-disposition",
+					"form-data; name=attachments; filename=" + file.getOriginalFilename());
+			pdfHeaderMap.add("Content-type", "text/plain");
+			doc = new HttpEntity<>(file.getBytes(), pdfHeaderMap);
+		}
+
+		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
+		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
+		String mergeTemplate = null;
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			if (acknowledgementDTO.getIsBatch()) {
+				fileText = templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment);
+//				fileText.concat(System.lineSeparator() + System.lineSeparator());
+			} else {
+				fileText = templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgement);
+//				fileText.concat(System.lineSeparator() + System.lineSeparator());
+			}
+
+			String languageWiseTemplate = templateUtil.templateMergeV0(fileText, acknowledgementDTO,
+					(String) keyValuePair.getKey());
+			if (mergeTemplate == null) {
+				mergeTemplate = languageWiseTemplate + System.lineSeparator();
+			} else {
+				mergeTemplate += System.lineSeparator() + languageWiseTemplate +System.lineSeparator();
+			}
+		}
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+		MultiValueMap<Object, Object> emailMap = new LinkedMultiValueMap<>();
+		emailMap.add("attachments", doc);
+		emailMap.add("mailContent", mergeTemplate);
+		if (acknowledgementDTO.getIsBatch() && cancelAppointmentEmailSubject != null) {
+			emailMap.add("mailSubject", getCancelAppointmentEmailSubject(acknowledgementDTO));
+		} else {
+			emailMap.add("mailSubject", getEmailSubjectV0(acknowledgementDTO));
+		}
+		emailMap.add("mailTo", acknowledgementDTO.getEmailID());
+		HttpEntity<MultiValueMap<Object, Object>> httpEntity = new HttpEntity<>(emailMap, headers);
+		log.info("sessionId", "idType", "id",
+				"In emailNotification method of NotificationUtil service emailResourseUrl: " + emailResourseUrl);
+		try {
+			resp = restTemplate.exchange(emailResourseUrl, HttpMethod.POST, httpEntity,
+					new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
+					});
+		} catch (RestClientException e) {
+			throw new RestCallException(e.getMessage(), e.getCause());
+		}
+
+		NotificationResponseDTO notifierResponse = new NotificationResponseDTO();
+		notifierResponse.setMessage(resp.getBody().getResponse().getMessage());
+		notifierResponse.setStatus(resp.getBody().getResponse().getStatus());
+		response.setResponse(notifierResponse);
+		response.setResponsetime(getCurrentResponseTime());
 
 		return response;
 	}
@@ -176,6 +265,52 @@ public class NotificationUtil {
 	}
 
 	/**
+	 * This method will give the email subject for Cancel Appointment
+	 *
+	 * @param acknowledgementDTO
+	 * @return
+	 * @throws IOException
+	 */
+	public String getCancelAppointmentEmailSubject(NotificationDTO acknowledgementDTO) throws IOException {
+		log.info("sessionID", "idType", "id", "In getEmailCancelAppointmentSubject of NotificationUtilService");
+		String emailSubjectCancelAppointment = "";
+		int noOfLang = acknowledgementDTO.getFullName().size();
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			emailSubjectCancelAppointment = emailSubjectCancelAppointment + templateUtil.templateMergeV0(
+					templateUtil.getTemplate(keyValuePair.getKey(), cancelAppointmentEmailSubject), acknowledgementDTO,
+					(String) keyValuePair.getKey());
+			if (noOfLang > 1) {
+				noOfLang--;
+				emailSubjectCancelAppointment = emailSubjectCancelAppointment + " / ";
+			}
+		}
+		return emailSubjectCancelAppointment;
+	}
+
+	/**
+	 * This method will give the email subject
+	 *
+	 * @param acknowledgementDTO
+	 * @return
+	 * @throws IOException
+	 */
+	public String getEmailSubjectV0(NotificationDTO acknowledgementDTO) throws IOException {
+		log.info("sessionId", "idType", "id", "In getEmailSubject method of NotificationUtil service");
+		String emailSubject = "";
+		int noOfLang = acknowledgementDTO.getFullName().size();
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			emailSubject = emailSubject + templateUtil.templateMergeV0(
+					templateUtil.getTemplate(keyValuePair.getKey(), emailAcknowledgementSubject), acknowledgementDTO,
+					(String) keyValuePair.getKey());
+			if (noOfLang > 1) {
+				noOfLang--;
+				emailSubject = emailSubject + " / ";
+			}
+		}
+		return emailSubject;
+	}
+
+	/**
 	 * This method will give the email subject
 	 * 
 	 * @param acknowledgementDTO
@@ -198,6 +333,60 @@ public class NotificationUtil {
 			}
 		}
 		return emailSubject;
+	}
+
+	/**
+	 * This method will send the sms notification to the user
+	 *
+	 * @param acknowledgementDTO
+	 * @return
+	 * @throws IOException
+	 */
+	public MainResponseDTO<NotificationResponseDTO> smsNotificationV0(NotificationDTO acknowledgementDTO)
+			throws IOException {
+		log.info("sessionId", "idType", "id", "In smsNotification method of NotificationUtil service");
+		MainResponseDTO<NotificationResponseDTO> response = new MainResponseDTO<>();
+		ResponseEntity<ResponseWrapper<NotificationResponseDTO>> resp = null;
+		String mergeTemplate = null;
+		for (KeyValuePairDto keyValuePair : acknowledgementDTO.getFullName()) {
+			String languageWiseTemplate = null;
+			if (acknowledgementDTO.getIsBatch()) {
+				languageWiseTemplate = templateUtil.templateMergeV0(
+						templateUtil.getTemplate(keyValuePair.getKey(), cancelAppoinment), acknowledgementDTO,
+						(String) keyValuePair.getKey());
+			} else {
+				languageWiseTemplate = templateUtil.templateMergeV0(
+						templateUtil.getTemplate(keyValuePair.getKey(), smsAcknowledgement), acknowledgementDTO,
+						(String) keyValuePair.getKey());
+			}
+			if (mergeTemplate == null) {
+				mergeTemplate = languageWiseTemplate;
+			} else {
+				mergeTemplate += System.lineSeparator() + languageWiseTemplate;
+			}
+		}
+
+		SMSRequestDTO smsRequestDTO = new SMSRequestDTO();
+		smsRequestDTO.setMessage(mergeTemplate);
+		smsRequestDTO.setNumber(acknowledgementDTO.getMobNum());
+		RequestWrapper<SMSRequestDTO> req = new RequestWrapper<>();
+		req.setRequest(smsRequestDTO);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+
+		HttpEntity<RequestWrapper<SMSRequestDTO>> httpEntity = new HttpEntity<>(req, headers);
+		log.info("sessionId", "idType", "id",
+				"In smsNotification method of NotificationUtil service smsResourseUrl: " + smsResourseUrl);
+		resp = restTemplate.exchange(smsResourseUrl, HttpMethod.POST, httpEntity,
+				new ParameterizedTypeReference<ResponseWrapper<NotificationResponseDTO>>() {
+				});
+
+		NotificationResponseDTO notifierResponse = new NotificationResponseDTO();
+		notifierResponse.setMessage(resp.getBody().getResponse().getMessage());
+		notifierResponse.setStatus(resp.getBody().getResponse().getStatus());
+		response.setResponse(notifierResponse);
+		response.setResponsetime(getCurrentResponseTime());
+		return response;
 	}
 
 	/**
