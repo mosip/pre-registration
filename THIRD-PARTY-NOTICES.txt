@@ -1,0 +1,236 @@
+THIRD-PARTY-NOTICES
+
+This project includes third-party packages that are distributed under various open-source licenses. Below is a list of packages and their associated licenses.
+
+================================================================================
+Package: @angular/animations
+Version: Not specified
+License: MIT License (Inferred from project’s official repository)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: @angular/common
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: @angular/compiler
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: @angular/core
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: @angular/forms
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: @angular/platform-browser
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: @angular/platform-browser-dynamic
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: @angular/router
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io
+================================================================================
+
+================================================================================
+Package: rxjs
+Version: Not specified
+License: Apache License 2.0 (Inferred)
+Homepage: https://rxjs.dev
+================================================================================
+
+================================================================================
+Package: tslib
+Version: Not specified
+License: BSD 0-Clause License (Inferred)
+Homepage: https://github.com/microsoft/tslib
+================================================================================
+
+================================================================================
+Package: zone.js
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/angular/zone.js
+================================================================================
+
+================================================================================
+Package: typescript
+Version: Not specified
+License: Apache License 2.0 (Inferred)
+Homepage: https://www.typescriptlang.org
+================================================================================
+
+================================================================================
+Package: jasmine-core
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://jasmine.github.io
+================================================================================
+
+================================================================================
+Package: karma
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://karma-runner.github.io
+================================================================================
+
+================================================================================
+Package: karma-chrome-launcher
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/karma-runner/karma-chrome-launcher
+================================================================================
+
+================================================================================
+Package: karma-jasmine
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/karma-runner/karma-jasmine
+================================================================================
+
+================================================================================
+Package: karma-jasmine-html-reporter
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/dfederm/karma-jasmine-html-reporter
+================================================================================
+
+================================================================================
+Package: webpack
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://webpack.js.org
+================================================================================
+
+================================================================================
+Package: webpack-dev-server
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/webpack/webpack-dev-server
+================================================================================
+
+================================================================================
+Package: protractor
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/angular/protractor
+================================================================================
+
+================================================================================
+Package: browserlist
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/browserslist/browserslist
+================================================================================
+
+================================================================================
+Package: sass
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://sass-lang.com
+================================================================================
+
+================================================================================
+Package: json5
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/json5/json5
+================================================================================
+
+================================================================================
+Package: lodash.tail
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://lodash.com
+================================================================================
+
+================================================================================
+Package: chalk
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/chalk/chalk
+================================================================================
+
+================================================================================
+Package: source-map
+Version: Not specified
+License: BSD-3-Clause License (Inferred)
+Homepage: https://github.com/mozilla/source-map
+================================================================================
+
+================================================================================
+Package: @types/jasmine
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/DefinitelyTyped/DefinitelyTyped
+================================================================================
+
+================================================================================
+Package: @types/node
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/DefinitelyTyped/DefinitelyTyped
+================================================================================
+
+================================================================================
+Package: @webcomponents/custom-elements
+Version: Not specified
+License: BSD 3-Clause License (Inferred)
+Homepage: https://github.com/webcomponents/polyfills
+================================================================================
+
+================================================================================
+Package: @angular-devkit/build-angular
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/angular/angular-cli
+================================================================================
+
+================================================================================
+Package: @angular/cli
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://angular.io/cli
+================================================================================
+
+================================================================================
+Package: karma-coverage-istanbul-reporter
+Version: Not specified
+License: MIT License (Inferred)
+Homepage: https://github.com/mattlewis92/karma-coverage-istanbul-reporter
+================================================================================
+
+================================================================================
+Package: com.github.Rakshithasai123/pre-registration-ui (Main Project)
+Version: release-1.3.x
+License: MPL-2.0
+Homepage: https://github.com/Rakshithasai123/pre-registration-ui
+================================================================================
+
+Full license texts and additional details for each of the above packages are available in the license/ directory of this repository. Please refer to those files or the original source of each package for complete legal terms and conditions.
