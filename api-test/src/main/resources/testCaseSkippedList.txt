@@ -1,2 +1,4 @@
 ##### JIRA number;testcase 
 #MOSIP-12456------Mimoto_AddIdentity_Binding_smoke_Pos
+MOSIP-41819------Prereg_GetAppointmentDetails_empty_space_preRegistrationId
+MOSIP-41819------Prereg_GetBookingsForRegCenter_with_InValid_regcenter
