@@ -97,9 +97,10 @@ Homepage: https://www.h2database.com
 ================================================================================
 
 ================================================================================
-Package: PostgreSQL JDBC Driver
-License: PostgreSQL License
-Homepage: https://jdbc.postgresql.org/
+Package: H2 Database
+Version: 1.4.197
+License: EPL 1.0 or MPL 1.1 (Dual Licensed)
+Homepage: https://www.h2database.com
 ================================================================================
 
 ================================================================================
