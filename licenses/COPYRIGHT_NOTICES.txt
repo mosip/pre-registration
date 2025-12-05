@@ -1,0 +1,89 @@
+THIRD-PARTY COPYRIGHT NOTICES
+================================================================================
+
+This file contains copyright notices for third-party libraries used in this
+project. These notices must be preserved as required by the respective licenses.
+
+================================================================================
+MIT LICENSE COMPONENTS
+================================================================================
+
+Lombok (org.projectlombok:lombok) version 1.18.30
+Copyright (c) 2009-2021 The Project Lombok Authors
+License: MIT License
+
+Mockito Core (org.mockito:mockito-core) version 3.4.3
+Copyright (c) 2007 Mockito contributors
+License: MIT License
+
+================================================================================
+BSD 2-CLAUSE LICENSE COMPONENTS
+================================================================================
+
+PostgreSQL JDBC Driver version 42.2.2
+Copyright (c) 1997, PostgreSQL Global Development Group
+License: BSD 2-Clause License
+
+================================================================================
+APACHE LICENSE 2.0 COMPONENTS
+================================================================================
+
+Spring Boot version 3.2.3
+Copyright (c) 2012-2024 VMware, Inc.
+License: Apache License 2.0
+
+Apache PDFBox version 3.0.3
+Copyright 2002-2024 The Apache Software Foundation
+License: Apache License 2.0
+
+Apache Maven Plugins
+Copyright 2001-2024 The Apache Software Foundation
+(Various plugins - see THIRD-PARTY-NOTICES.txt for details)
+License: Apache License 2.0
+
+Sonatype Central Publishing Maven Plugin version 0.7.0
+Copyright (c) 2022-present Sonatype, Inc.
+License: Apache License 2.0
+
+================================================================================
+ECLIPSE PUBLIC LICENSE COMPONENTS
+================================================================================
+
+JUnit 4 version 4.12
+Copyright (c) 2002-present JUnit contributors
+License: Eclipse Public License 1.0
+
+JUnit Vintage Engine (JUnit 5)
+Copyright (c) 2017-2025 The JUnit Team
+License: Eclipse Public License 2.0
+
+JaCoCo Maven Plugin version 0.8.11
+Copyright (c) 2009, 2023 Mountainminds GmbH & Co. KG and Contributors
+License: Eclipse Public License 2.0
+
+H2 Database version 1.4.197
+Copyright (c) 2004-present Thomas Müller and contributors
+License: Eclipse Public License 1.0 OR Mozilla Public License 2.0 (Dual Licensed)
+
+JAXB Runtime and API
+Copyright (c) 2018-present Eclipse Foundation
+License: Eclipse Public License 2.0
+
+================================================================================
+CDDL LICENSE COMPONENTS
+================================================================================
+
+Activation Framework (javax.activation) version 1.1.1
+Copyright (c) 2004-present Eclipse Foundation / Oracle
+License: Common Development and Distribution License 1.1
+
+================================================================================
+JSON LICENSE COMPONENTS
+================================================================================
+
+org.json (JSON-java) version 20080701
+Copyright (c) 2002 JSON.org
+License: JSON License
+Note: This license includes the clause "The Software shall be used for Good, not Evil."
+
+================================================================================
