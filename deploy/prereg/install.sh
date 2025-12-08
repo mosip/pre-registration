@@ -39,12 +39,6 @@ function installing_prereg() {
   echo Installing prereg-batchjob
   helm -n $NS install prereg-batchjob mosip/prereg-batchjob --version $CHART_VERSION
 
-  echo Installing prereg-ui
-  helm -n $NS install prereg-ui mosip/prereg-ui --set prereg.apiHost=$PREREG_HOST --version $CHART_VERSION
-
-  echo Installing prereg rate-control Envoyfilter
-  kubectl apply -n $NS -f rate-control-envoyfilter.yaml
-
   kubectl -n $NS  get deploy -o name |  xargs -n1 -t  kubectl -n $NS rollout status
 
   echo Installed prereg services
