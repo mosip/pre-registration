@@ -84,6 +84,5 @@ JSON LICENSE COMPONENTS
 org.json (JSON-java) version 20080701
 Copyright (c) 2002 JSON.org
 License: JSON License
-Note: This license includes the clause "The Software shall be used for Good, not Evil."
 
 ================================================================================
