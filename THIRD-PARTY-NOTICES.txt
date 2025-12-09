@@ -2,8 +2,8 @@ THIRD-PARTY-NOTICES
 
 This project includes third-party packages that are distributed under various open-source licenses. Below is a list of packages and their associated licenses.
 ================================================================================
-Package: Spring Boot (Starter Web, Security, JPA, WebFlux, Cache, Batch, Test, Actuator, Devtools)
-Version: 3.x family (from SBOM)
+Package: Spring Boot 
+Version: 3.x family 
 License: Apache License 2.0
 Homepage: https://spring.io/projects/spring-boot
 ================================================================================
@@ -16,32 +16,32 @@ Homepage: https://jdbc.postgresql.org/
 ================================================================================
 
 ================================================================================
-Package: Spring Cloud (Config, Bootstrap, Dependencies 2020.0.4)
+Package: Spring Cloud 
 Version: 2020.0.4
 License: Apache License 2.0
 Homepage: https://spring.io/projects/spring-cloud
 ================================================================================
 
 ================================================================================
-Package: Spring Batch (Core/Test)
+Package: Spring Batch
 License: Apache License 2.0
 Homepage: https://spring.io/projects/spring-batch
 ================================================================================
 
 ================================================================================
-Package: SpringDoc OpenAPI (WebMVC UI, Maven Plugin)
+Package: SpringDoc OpenAPI 
 License: Apache License 2.0
 Homepage: https://springdoc.org
 ================================================================================
 
 ================================================================================
-Package: Jackson (Core, Databind, Annotations, JSR310)
+Package: Jackson 
 License: Apache License 2.0
 Homepage: https://github.com/FasterXML/jackson
 ================================================================================
 
 ================================================================================
-Package: Micrometer (Core, Prometheus Registry)
+Package: Micrometer 
 License: Apache License 2.0
 Homepage: https://micrometer.io
 ================================================================================
@@ -74,19 +74,19 @@ Homepage: https://maven.apache.org/plugins/
 ================================================================================
 
 ================================================================================
-Package: JSON Simple (com.googlecode.json-simple)
+Package: JSON Simple 
 License: Apache License 2.0 (Inferred from project's official repository)
 Homepage: https://code.google.com/archive/p/json-simple/
 ================================================================================
 
 ================================================================================
-Package: org.json (json)
+Package: org.json 
 License: JSON License
 Homepage: https://github.com/stleary/JSON-java
 ================================================================================
 
 ================================================================================
-Package: Java UUID Generator (com.fasterxml.uuid)
+Package: Java UUID Generator
 License: Apache License 2.0
 Homepage: https://github.com/cowtowncoder/java-uuid-generator
 ================================================================================
@@ -111,13 +111,13 @@ Homepage: https://projectlombok.org
 ================================================================================
 
 ================================================================================
-Package: JWT (io.jsonwebtoken:jjwt)
+Package: JWT
 License: Apache License 2.0
 Homepage: https://github.com/jwtk/jjwt
 ================================================================================
 
 ================================================================================
-Package: JUnit 4 (junit:junit)
+Package: JUnit 4
 License: EPL 1.0
 Homepage: https://junit.org/junit4/
 ================================================================================
@@ -135,21 +135,22 @@ Homepage: https://github.com/mockito/mockito
 ================================================================================
 
 ================================================================================
-Package: JAXB Runtime + API (javax.xml.bind, org.glassfish.jaxb)
+Package: JAXB Runtime + API
 License: EPL 2.0 (Inferred from project repository)
 Homepage: https://eclipse-ee4j.github.io/jaxb-ri/
 ================================================================================
 
 ================================================================================
-Package: Activation Framework (javax.activation)
+Package: Activation Framework 
 License: CDDL 1.1 (Chosen from dual license: CDDL 1.1 or GPL-2.0 with Classpath Exception)
 Homepage: https://github.com/eclipse-ee4j/jaf
 ================================================================================
 
 ================================================================================
-Package: Central Publishing Maven Plugin (Sonatype)
+Package: Central Publishing Maven Plugin 
 Version: 0.7.0
 License: Apache License 2.0
 Homepage: https://github.com/sonatype-nexus-community/central-publishing
 ================================================================================
+
 Full license texts and additional details for each of the above packages are available in the license/ directory of this repository. Please refer to those files or the original source of each package for complete legal terms and conditions.
