@@ -146,11 +146,4 @@ License: CDDL 1.1 (Chosen from dual license: CDDL 1.1 or GPL-2.0 with Classpath 
 Homepage: https://github.com/eclipse-ee4j/jaf
 ================================================================================
 
-================================================================================
-Package: Central Publishing Maven Plugin 
-Version: 0.7.0
-License: Apache License 2.0
-Homepage: https://github.com/sonatype-nexus-community/central-publishing
-================================================================================
-
 Full license texts and additional details for each of the above packages are available in the license/ directory of this repository. Please refer to those files or the original source of each package for complete legal terms and conditions.
