@@ -99,7 +99,7 @@ Homepage: https://www.ehcache.org/
 ================================================================================
 Package: H2 Database
 Version: 1.4.197
-License: EPL 1.0 or modified MPL 1.1 (Dual Licensed)
+License: EPL 1.0
 Homepage: https://www.h2database.com
 ================================================================================
 
