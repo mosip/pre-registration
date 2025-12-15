@@ -203,7 +203,7 @@ Automated functional tests are available in the [Functional Tests repository](ap
 
 • If you have questions or encounter issues, visit the [MOSIP Community](https://community.mosip.io/) for support.
 
-• For any GitHub issues: [Report here](https://github.com/mosip/pre-registration-ui/issues)
+• For any GitHub issues: [Report here](https://github.com/mosip/pre-registration/issues)
 
 ## License
 
