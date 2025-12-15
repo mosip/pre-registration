@@ -3,14 +3,10 @@
 
 ## Overview
 
-The **Pre-Registration** provides a secure and configurable system for:
-
-The Pre-Registration module enables a resident to:
+The **Pre-Registration** module enables a resident to:
 
 - Enter demographic data and upload supporting documents.
-- Book an appointment for one or many users by choosing:
-   - A suitable registration center
-   - A convenient time slot
+- Book an appointment for one or many users by choosing a suitable registration center and a convenient time slot
 - Receive appointment notifications.
 - Reschedule and cancel appointments.
 
