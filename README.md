@@ -4,13 +4,14 @@
 ## Overview
 
 The **Pre-Registration** module enables a resident to:
-
-- Enter demographic data and upload supporting documents.
-- Book an appointment for one or many users by choosing a suitable registration center and a convenient time slot
-- Receive appointment notifications.
-- Reschedule and cancel appointments.
-
-Once the resident completes the above process, their data is downloaded at the respective registration centers before their appointment, thus, saving enrollment time. The module supports multiple languages.
+1. Resident can login into PreRegistration with email id / phone number
+2. Resident can create multiple PreRegistration application.
+3. For each PreRegistration application, resident can give demographic data in multiple languages.
+4. For each PreRegistration application, resident can upload various proof documents.
+5. For each PreRegistration application, resident can search for a Registration Center and search for suitable appointment slots.
+6. For each PreRegistration application, resident can book an appointment at suitable Registration Center
+7. For every appointment booking, resident can get the acknowledgement as well as a notification via email id / phone number.
+8. Resident can cancel the appointment or reschedule it as well.
 
 It exposes a set of APIs that enables resident to do Pre-Registration activities efficiently. A reference front-end implementation is available in the [Pre-registration UI](https://github.com/mosip/pre-registration-ui/). 
 
@@ -21,12 +22,12 @@ Pre-registration Developers Guide [here](https://docs.mosip.io/1.2.0/modules/pre
 ## Services
 
 Pre-registration module consists of the following services:
-1. [Application](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-application-service) - To handle all application related operations.
-2. [Batchjob](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-batchjob) - This BatchJob is used to run slot generation tasks on scheduled intervals.
+1. [Application](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-application-service) - This service helps to create a Pre Registration application for a resident and it also uses [Pre Registration Booking service](https://github.com/mosip/mosip-ref-impl/tree/release-1.3.x/pre-registration-booking-service) to book appointment.
+2. [Batchjob](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-batchjob) - This cron job runs as per the schedule and helps is many background tasks like creating appointment slots for registration centres, archiving pre-registration applications once workflow is over etc.
 3. [Captcha](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-captcha-service) - *(Deprecated)* - This service is no longer in use.
    **Captcha functionality is now provided by:** - [MOSIP Captcha Service](https://github.com/mosip/captcha/tree/release-0.1.x)
-4. [Core](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-core) - This Service to handle all core related operations.
-5. [Datasync](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-datasync-service) - Retrieve all pre-registration ids based on registration client id, appointment date and an user type.
+4. [Core](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-core) - This service contains many reusable components across all Pre Registration services
+5. [Datasync](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-datasync-service) - This service syncs Pre Registration application data with Registration Centre. This service also marks Pre Registration application as consumed (reverse sync) from Registration Processor once the workflow is complete.
 
 ## Database
 
@@ -52,6 +53,9 @@ Before you begin, ensure you have the following installed:
 
 ### Runtime Dependencies
 - Add `kernel-auth-adapter.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-auth-adapter~1.3.0-SNAPSHOT~~)
+- Add `kernel-transliteration-icu4j.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-transliteration-icu4j~1.3.0-SNAPSHOT~~)
+- Add `kernel-ref-idobjectvalidator.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-ref-idobjectvalidator~1.3.0-SNAPSHOT~~)
+- Add `kernel-virusscanner-clamav.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-virusscanner-clamav~1.3.0-SNAPSHOT~~)
 
 ### Configuration
 - Pre-Registration module uses the following configuration files that are accessible in this [repository](https://github.com/mosip/mosip-config/tree/master).
