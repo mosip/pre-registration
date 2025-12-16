@@ -23,7 +23,8 @@ Pre-registration Developers Guide [here](https://docs.mosip.io/1.2.0/modules/pre
 Pre-registration module consists of the following services:
 1. [Application](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-application-service) - To handle all application related operations.
 2. [Batchjob](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-batchjob) - This BatchJob is used to run slot generation tasks on scheduled intervals.
-3. [Capthca](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-captcha-service) - Used to validate the Captcha in the Login flow.
+3. [Captcha](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-captcha-service) - *(Deprecated)* - This service is no longer in use.
+   **Captcha functionality is now provided by:** - [MOSIP Captcha Service](https://github.com/mosip/captcha/tree/release-0.1.x)
 4. [Core](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-core) - This Service to handle all core related operations.
 5. [Datasync](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-datasync-service) - Retrieve all pre-registration ids based on registration client id, appointment date and an user type.
 
