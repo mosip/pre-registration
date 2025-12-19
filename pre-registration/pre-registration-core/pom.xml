@@ -18,7 +18,7 @@
 	<properties>
 		<!-- Mosip kernel -->
 		<kernel.templatemanager.velocity.version>1.2.1-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.logger.logback.version>1.2.1-SNAPSHOT</kernel.logger.logback.version>
+		<kernel.logger.logback.version>1.3.0</kernel.logger.logback.version>
 		<kernel.dataaccess.hibernate.version>1.2.1-SNAPSHOT</kernel.dataaccess.hibernate.version>
 		<kernel.bom.version>1.2.1-SNAPSHOT</kernel.bom.version>
 
