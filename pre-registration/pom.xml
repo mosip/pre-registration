@@ -6,7 +6,7 @@
 
 	<groupId>io.mosip.preregistration</groupId>
 	<artifactId>pre-registration-parent</artifactId>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.3.0</version>
 	<packaging>pom</packaging>
 
 	<name>pre-registration</name>
@@ -115,9 +115,9 @@
 		<sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
 
 		<!-- Mosip kernel -->
-		<kernel.bom.version>1.3.0-SNAPSHOT</kernel.bom.version>
-		<kernel.core.version>1.3.0-SNAPSHOT</kernel.core.version>
-		<pre.registration.core.version>1.3.0-SNAPSHOT</pre.registration.core.version>
+		<kernel.bom.version>1.3.0</kernel.bom.version>
+		<kernel.core.version>1.3.0</kernel.core.version>
+		<pre.registration.core.version>1.3.0</pre.registration.core.version>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 	</properties>
 	
