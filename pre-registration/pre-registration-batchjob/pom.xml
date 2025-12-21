@@ -7,12 +7,12 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.3.0-SNAPSHOT</version>
+		<version>1.3.0</version>
 	</parent>
 
 	<artifactId>pre-registration-batchjob</artifactId>
 	<name>pre-registration-batchjob</name>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.3.0</version>
 	<url>http://maven.apache.org</url>
 
 	<properties>
