@@ -7,20 +7,20 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.3.0-SNAPSHOT</version>
+		<version>1.3.0</version>
 	</parent>
 
 	<artifactId>pre-registration-core</artifactId>
-	<version>1.3.0-SNAPSHOT</version>
+	<version>1.3.0</version>
 	<name>pre-registration-core</name>
 	<description>Maven project of MOSIP Pre-Registration Service</description>
 
 	<properties>
 		<!-- Mosip kernel -->
-		<kernel.templatemanager.velocity.version>1.3.0-SNAPSHOT</kernel.templatemanager.velocity.version>
-		<kernel.logger.logback.version>1.3.0-SNAPSHOT</kernel.logger.logback.version>
-		<kernel.dataaccess.hibernate.version>1.3.0-SNAPSHOT</kernel.dataaccess.hibernate.version>
-		<kernel.bom.version>1.3.0-SNAPSHOT</kernel.bom.version>
+		<kernel.templatemanager.velocity.version>1.3.0</kernel.templatemanager.velocity.version>
+		<kernel.logger.logback.version>1.3.0</kernel.logger.logback.version>
+		<kernel.dataaccess.hibernate.version>1.3.0</kernel.dataaccess.hibernate.version>
+		<kernel.bom.version>1.3.0</kernel.bom.version>
 	</properties>
 
 	<dependencyManagement>
