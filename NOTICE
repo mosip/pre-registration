@@ -1,0 +1,83 @@
+MOSIP
+Copyright (c) 2022 Modular Open Source Identity Platform
+
+This product includes software developed at
+The Apache Software Foundation (https://www.apache.org/).
+
+The following third-party components require attribution under their
+respective licenses (Apache License 2.0, JSON License, and CDDL).
+
+
+===============================================================================
+Apache License 2.0 Components
+===============================================================================
+This product includes software licensed under the Apache License 2.0.
+Original NOTICE information and copyright statements from the respective
+projects are retained for the following components:
+
+ • Spring Boot
+   (Starter Web, Security, JPA, WebFlux, Cache, Batch, Test, Actuator, Devtools)
+
+ • Spring Cloud
+   (Config, Bootstrap, Dependencies 2020.0.4)
+
+ • Spring Batch (Core, Test)
+
+ • SpringDoc OpenAPI
+   (WebMVC UI, Maven Plugin)
+
+ • Jackson
+   (Core, Databind, Annotations, JSR310)
+
+ • Micrometer (Core, Prometheus Registry)
+
+ • Apache PDFBox
+
+ • Apache Commons Collections4
+
+ • Apache HttpClient
+
+ • Apache Maven Plugins
+   (maven-source-plugin, maven-jar-plugin, maven-war-plugin,
+    maven-compiler-plugin, maven-javadoc-plugin,
+    maven-surefire-plugin, maven-shade-plugin, maven-gpg-plugin)
+
+ • JSON Simple (com.googlecode.json-simple)
+
+ • Java UUID Generator (com.fasterxml.uuid)
+
+ • Ehcache
+
+ • JWT (io.jsonwebtoken:jjwt)
+
+ • Central Publishing Maven Plugin (Sonatype)
+
+
+===============================================================================
+JSON License Component
+===============================================================================
+The following component is licensed under the JSON License and requires
+attribution as per its terms:
+
+ • org.json (json)
+   Copyright © 2002 JSON.org
+
+
+===============================================================================
+CDDL Licensed Component
+===============================================================================
+The following component includes code licensed under the Common
+Development and Distribution License (CDDL), which requires retaining
+copyright notices:
+
+ • javax.activation (Activation Framework)
+   (Dual licensed under CDDL + GPL with Classpath Exception)
+
+
+===============================================================================
+Notes
+===============================================================================
+All other third-party software components are licensed under permissive
+licenses (MIT, BSD, PostgreSQL License, MPL, EPL, or similar) and do
+not require inclusion in this NOTICE file. Their full license texts are
+available in the LICENSE directory.
