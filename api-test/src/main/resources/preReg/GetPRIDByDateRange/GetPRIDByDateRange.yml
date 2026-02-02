@@ -275,7 +275,7 @@ GetPRIDByDateRange:
    Prereg_GetPRIDByDateRange_missing_registrationCenterId:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_13
-      description:  Validate that fetching Pre Registration IDs by date range fails when the registration center ID field is missing
+      description: Validate that fetching Pre Registration IDs by date range fails when the registration center ID field is missing
       role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange
@@ -367,7 +367,7 @@ GetPRIDByDateRange:
    Prereg_GetPRIDByDateRange_blank_toDate:
       endPoint: /preregistration/v1/sync
       uniqueIdentifier: TC_prereg_GetPRIDByDateRange_17
-      description: Validate that fetching Pre Registration IDs by date range fails when the toDate fild is left blank.
+      description: Validate that fetching Pre Registration IDs by date range fails when the toDate field is left blank
       role: admin
       restMethod: post
       inputTemplate: preReg/GetPRIDByDateRange/getPRIDByDateRange

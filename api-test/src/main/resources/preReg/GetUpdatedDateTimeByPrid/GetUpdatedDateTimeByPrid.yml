@@ -30,7 +30,7 @@ GetUpdatedDateTimeByPrid:
    Prereg_GetUpdatedDateTimeByPrid_InValid_ID:
       endPoint: /preregistration/v1/applications/prereg/updatedTime
       uniqueIdentifier: TC_prereg_GetUpdatedDateTimeByPrid_02
-      description: Validate that fetching the updated date and time by Pre Registration ID fails when an invalid Pre-Registration ID is provided
+      description: Validate that fetching the updated date and time by Pre Registration ID fails when an invalid Pre Registration ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/GetUpdatedDateTimeByPrid/getUpdatedDateTimeByPrid

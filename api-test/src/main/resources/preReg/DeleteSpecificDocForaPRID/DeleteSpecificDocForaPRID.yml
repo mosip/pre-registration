@@ -37,7 +37,7 @@ DeleteSpecificDocForaPRID:
    Prereg_DeletePreRegistration_inValid_documentId_sid:
       endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
       uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_03
-      description: Validate that deleting a pre registration fails when an invalid document ID is provided
+      description: Validate that deleting a specific document for a pre registration ID fails when an invalid document ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID

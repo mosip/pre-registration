@@ -2,7 +2,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_All_Valid_Smoke_POA_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_01
-      description: Validate that transliteration fails when an invalid source language fromFieldLang is provided
+      description: Validate that updating the document reference ID for Proof of Address is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -86,7 +86,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_All_SpatialCharacter_RefNum_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_06
-      description: Validate that updating the document reference ID fails when the reference number contains special characters 
+      description: Validate that updating the document reference ID fails when the document ID contains special characters 
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -108,7 +108,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_07
-      description: Validate that updating the document reference ID fails when the reference number exceeds the allowed character limit
+      description: Validate that updating the document reference ID fails when the document ID exceeds the allowed character limit
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
