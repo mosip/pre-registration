@@ -2,6 +2,7 @@ BookMultipleAppointment:
    Prereg_BookMultipleAppointment_All_Valid_Smoke:
       endPoint: /preregistration/v1/appointment
       role: batch
+	  description: Validate that booking multiple appointments is successfully processed when all mandatory fields are provided with valid values
       checkErrorsOnlyInResponse: true
       restMethod: post
       inputTemplate: preReg/BookMultipleAppointment/bookMultipleAppointment

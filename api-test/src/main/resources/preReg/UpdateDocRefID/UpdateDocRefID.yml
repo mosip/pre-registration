@@ -2,7 +2,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_All_Valid_Smoke_POA_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_01
-      description: Update the document reference ID for the valid Proof of Address (POA)
+      description: Validate that transliteration fails when an invalid source language fromFieldLang is provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -18,7 +18,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_All_Valid_Smoke_POI_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_02
-      description: Update the document reference ID for the valid Proof of Identity (POI)
+      description: Validate that updating the document reference ID for Proof of Identity is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -34,7 +34,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_All_Valid_Smoke_POB_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_03
-      description: Update the document reference ID for the valid Proof of Date of Birth (POB)
+      description: Validate that updating the document reference ID for Proof of Address is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -50,7 +50,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_All_Valid_Smoke_POR_sid:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_04
-      description: Update the document reference ID for the valid Proof of Residence (POR)
+      description: Validate that updating the document reference ID for Proof of Relationship is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -66,8 +66,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_inValid_documentId:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_05
-      description: Update the document reference ID for the invalid document ID
-      role: batch
+      description: Validate that updating the document reference ID fails when an invalid document ID is provided
       restMethod: put
       inputTemplate: preReg/UpdateDocRefID/updateDocRefID
       outputTemplate: preReg/error
@@ -87,7 +86,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_All_SpatialCharacter_RefNum_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_06
-      description: Update the document reference ID with the special character and reference number 
+      description: Validate that updating the document reference ID fails when the reference number contains special characters 
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -109,7 +108,7 @@ UpdateDocRefID:
    Prereg_UpdateDocRefID_Exceeding_Limit_RefNum_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_07
-      description: Update the document reference ID with an exceeding limit and reference number
+      description: Validate that updating the document reference ID fails when the reference number exceeds the allowed character limit
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
