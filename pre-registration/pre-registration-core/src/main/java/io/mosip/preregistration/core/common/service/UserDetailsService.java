@@ -85,7 +85,7 @@ public class UserDetailsService {
     /**
      * Find canonical user by identifier (email/username/whatever) — uses normalized sha256.
      */
-    @Cacheable(value = "user-details-cache", key = "#identifier == null ? null : #identifier.toLowerCase().trim()")
+    @Cacheable(value = "user-details-cache", key = "#identifier.toLowerCase().trim()", condition = "#identifier != null")
     public Optional<UserDetails> findByIdentifier(String identifier) {
         String norm = normalize(identifier);
         if (norm == null) {
@@ -99,7 +99,7 @@ public class UserDetailsService {
      * Find or create a canonical user row for given identifier. This is idempotent.
      */
     @Transactional
-    @CachePut(value = "user-details-cache", key = "#identifier == null ? null : #identifier.toLowerCase().trim()")
+    @CachePut(value = "user-details-cache", key = "#identifier.toLowerCase().trim()", condition = "#identifier != null")
     public UserDetails findOrCreateByIdentifier(String identifier) {
         String norm = normalize(identifier);
         if (norm == null) {
