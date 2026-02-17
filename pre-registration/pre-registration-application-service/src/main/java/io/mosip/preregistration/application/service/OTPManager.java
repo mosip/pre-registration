@@ -142,7 +142,7 @@ public class OTPManager {
 			try {
 				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 				if (mappedUser != null && mappedUser.getUserId() != null) {
-					otpTxn.setUpdBy(mappedUser.getUserId());
+				otpTxn.setUpdBy(mappedUser.getUserId().toString());
 				} else {
 					otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 				}
@@ -163,7 +163,7 @@ public class OTPManager {
 			try {
 				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 				if (mappedUser != null && mappedUser.getUserId() != null) {
-					txn.setCrBy(mappedUser.getUserId());
+				txn.setCrBy(mappedUser.getUserId().toString());
 				} else {
 					txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 				}

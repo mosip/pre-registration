@@ -754,7 +754,7 @@ public class DemographicServiceUtil {
 			try {
 				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
 				if (mappedUser != null && mappedUser.getUserId() != null) {
-					applicationEntity.setUpdBy(mappedUser.getUserId());
+					applicationEntity.setUpdBy(mappedUser.getUserId().toString());
 				}
 			} catch (Exception e) {
 				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for updateApplicationStatus", e);

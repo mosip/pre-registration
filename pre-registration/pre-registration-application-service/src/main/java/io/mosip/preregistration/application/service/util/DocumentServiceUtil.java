@@ -183,8 +183,8 @@ public class DocumentServiceUtil {
 		try {
 			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
 			if (mappedUser != null && mappedUser.getUserId() != null) {
-				documentEntity.setCrBy(mappedUser.getUserId());
-				documentEntity.setUpdBy(mappedUser.getUserId());
+				documentEntity.setCrBy(mappedUser.getUserId().toString());
+				documentEntity.setUpdBy(mappedUser.getUserId().toString());
 			}
 		} catch (Exception e) {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for document dtoToEntity", e);
