@@ -1,6 +1,6 @@
 package io.mosip.preregistration.core.common.entity;
 
-import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -23,11 +23,12 @@ public class UserDetails {
 
     @Id
     @Column(name = "user_id")
-    private String userId; // UUID or business id
+    private UUID userId;
 
     @Column(name = "identifier_hash")
     private String identifierHash; // SHA-256 over normalized identifier
 
     @Column(name = "identifier_encrypted")
     private String identifierEncrypted; // Encrypted value (nullable)
-} 
+
+}

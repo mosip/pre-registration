@@ -111,7 +111,7 @@ public class UserDetailsService {
             return found.get();
         }
         UserDetails u = new UserDetails();
-        u.setUserId(UUID.randomUUID().toString());
+        u.setUserId(UUID.randomUUID());
         u.setIdentifierHash(hash);
         u.setIdentifierEncrypted(encryptIdentifierIfConfigured(identifier));
         return userDetailsRepository.save(u);
