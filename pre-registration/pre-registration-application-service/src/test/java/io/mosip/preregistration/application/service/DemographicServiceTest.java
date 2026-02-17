@@ -435,6 +435,16 @@ public class DemographicServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		java.util.Collection<org.springframework.security.core.GrantedAuthority> authList = new java.util.ArrayList<>();
+		authList.add(new org.springframework.security.core.GrantedAuthority() {
+			@Override
+			public String getAuthority() {
+				return "ROLE_INDIVIDUAL";
+			}
+		});
+		Mockito.<java.util.Collection<? extends org.springframework.security.core.GrantedAuthority>>when(applicationUser.getAuthorities()).thenReturn(authList);
+		Mockito.when(applicationUser.getUserId()).thenReturn("9988905444");
+		Mockito.when(applicationUser.getUsername()).thenReturn("9988905444");
 		spyDemographicService = Mockito.spy(preRegistrationService);
 
 		userId = "9988905444";
@@ -942,6 +952,7 @@ public class DemographicServiceTest {
 		documentEntitys.add(documentEntity);
 		demographicEntity.setDocumentEntity(documentEntitys);
 		demographicEntity.setLangCode("");
+		demographicEntity.setCreatedBy(userId);
 		String status = StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
 		String userId = "987654321";
 		Mockito.when(demographicServiceUtil.isStatusValid(status)).thenReturn(true);
@@ -970,6 +981,7 @@ public class DemographicServiceTest {
 		documentEntitys.add(documentEntity);
 		demographicEntity.setDocumentEntity(documentEntitys);
 		demographicEntity.setLangCode("");
+		demographicEntity.setCreatedBy(userId);
 		String status = StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
 		String userId = "987654321";
 		Mockito.when(demographicServiceUtil.isStatusValid(status)).thenReturn(true);

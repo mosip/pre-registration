@@ -124,13 +124,15 @@ public class CommonServiceUtil {
 			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
-				if (demographicEntity != null) {
+					if (demographicEntity == null) {
+						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
+					}
 					List<String> list = listAuth(authUserDetails().getAuthorities());
 					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 							"In getDemographicData method of pre-registration service with list  " + list.toString());
 					if (list.contains("ROLE_INDIVIDUAL")) {
-						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
-					}
+				userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
 
 					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
 					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
@@ -189,9 +191,9 @@ public class CommonServiceUtil {
 					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
 			createDto.setStatusCode(demographicEntity.getStatusCode());
 			createDto.setLangCode(demographicEntity.getLangCode());
-			createDto.setCreatedBy(demographicEntity.getCreatedBy());
+			createDto.setCreatedBy(demographicEntity.getEffectiveCreatedBy());
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
-			createDto.setUpdatedBy(demographicEntity.getUpdatedBy());
+			createDto.setUpdatedBy(demographicEntity.getEffectiveUpdatedBy());
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
@@ -298,7 +300,7 @@ public class CommonServiceUtil {
 				List<String> list = listAuth(authUserDetails().getAuthorities());
 				if (demographicEntity != null) {
 					if (list.contains("ROLE_INDIVIDUAL")) {
-						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+						userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
 					}
 					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
 
@@ -335,7 +337,7 @@ public class CommonServiceUtil {
 				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
 				List<String> list = listAuth(authUserDetails().getAuthorities());
 				if (list.contains("ROLE_INDIVIDUAL")) {
-					userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+					userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
 				}
 				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 					try {

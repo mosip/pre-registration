@@ -422,7 +422,7 @@ public class DemographicService implements DemographicServiceIntf {
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
 				if (!serviceUtil.isNull(demographicEntity)) {
-					userValidation(userId, demographicEntity.getCreatedBy());
+				userValidation(userId, demographicEntity.getEffectiveCreatedBy());
 					if (!serviceUtil.isDemographicBookedOrExpired(demographicEntity, validationUtil)) {
 						demographicEntity = demographicRepository.update(serviceUtil.prepareDemographicEntityForUpdate(
 								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
@@ -662,7 +662,7 @@ public class DemographicService implements DemographicServiceIntf {
 				if (bookingType.equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 					DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preregId);
 					if (!serviceUtil.isNull(demographicEntity)) {
-						userValidation(userId, demographicEntity.getCreatedBy());
+				userValidation(userId, demographicEntity.getEffectiveCreatedBy());
 						if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
 							getDocumentServiceToDeleteAllByPreId(preregId);
 							if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {

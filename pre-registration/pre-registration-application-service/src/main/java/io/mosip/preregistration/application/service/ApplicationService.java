@@ -332,9 +332,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 			appplicationResponse.setApplicationStatusCode(applicationEntity.getApplicationStatusCode());
 			appplicationResponse.setBookingStatusCode(applicationEntity.getBookingStatusCode());
 			appplicationResponse.setLangCode(applicationRequest.getLangCode());
-			appplicationResponse.setCreatedBy(applicationEntity.getCrBy());
+			appplicationResponse.setCreatedBy(applicationEntity.getEffectiveCrBy());
 			appplicationResponse.setCreatedDateTime(serviceUtil.getLocalDateString(applicationEntity.getCrDtime()));
-			appplicationResponse.setUpdatedBy(applicationEntity.getUpdBy());
+			appplicationResponse.setUpdatedBy(applicationEntity.getEffectiveUpdBy());
 			appplicationResponse.setUpdatedDateTime(serviceUtil.getLocalDateString(applicationEntity.getUpdDtime()));
 			mainResponseDTO.setResponse(appplicationResponse);
 			mainResponseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
@@ -422,7 +422,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 				if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
 						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
 					//userValidation(applicationEntity);
-					if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
+					if (!authUserDetails().getUserId().trim().equals(applicationEntity.getEffectiveCrBy().trim())) {
 						throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 								ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 					}	

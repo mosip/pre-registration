@@ -17,6 +17,8 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.core.common.entity.UserDetails;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -98,6 +100,9 @@ public class DocumentServiceUtil {
 	@Autowired
 	private CommonServiceUtil commonServiceUtil;
 
+	@Autowired
+	private UserDetailsService userDetailsService;
+
 	/**
 	 * Reference for ${demographic.resource.url} from property file
 	 */
@@ -174,6 +179,16 @@ public class DocumentServiceUtil {
 		documentEntity.setCrBy(userId);
 		documentEntity.setUpdBy(userId);
 		documentEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		// populate canonical user ids if service available
+		try {
+			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
+			if (mappedUser != null && mappedUser.getUserId() != null) {
+				documentEntity.setCrBy(mappedUser.getUserId());
+				documentEntity.setUpdBy(mappedUser.getUserId());
+			}
+		} catch (Exception e) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for document dtoToEntity", e);
+		}
 		documentEntity.setRefNumber(dto.getRefNumber());
 		// documentEntity.setEncryptedDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		return documentEntity;
@@ -276,6 +291,9 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setRefNumber(sourceEntity.getRefNumber());
 		copyDocumentEntity.setCrBy(sourceEntity.getCrBy());
 		copyDocumentEntity.setUpdBy(sourceEntity.getUpdBy());
+		// copy canonical user references if present
+		copyDocumentEntity.setCrBy(sourceEntity.getEffectiveCrBy());
+		copyDocumentEntity.setUpdBy(sourceEntity.getEffectiveUpdBy());
 		copyDocumentEntity.setLangCode(sourceEntity.getLangCode());
 		copyDocumentEntity.setEncryptedDateTime(sourceEntity.getEncryptedDateTime());
 		copyDocumentEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
@@ -427,6 +445,6 @@ public class DocumentServiceUtil {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
 		commonServiceUtil.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
-				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getCreatedBy());
+				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getEffectiveCreatedBy());
 	}
 }
