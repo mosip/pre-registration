@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.mosip.preregistration.core.common.entity.UserDetails;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,6 +72,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	 */
 	@Autowired
 	AnonymousProfileUtil anonymousProfileUtil;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	@Value("${version}")
 	private String version;
@@ -447,8 +452,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			return applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
+			// Map to canonical UUID if service available
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserDetails().getUserId());
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					applicationEntity.setUpdBy(mappedUser.getUserId().toString());
+					// attempt save again with canonical id
+					try {
+						return applicationRepostiory.save(applicationEntity);
+					} catch (Exception ex2) {
+						// fall through to logging and throwing below
+					}
+				}
+			} catch (Exception e) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for appointment update", e);
+			}
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to update application for the preregistrationId: " + preRegistrationId);
+					"Failed to update application for the preregistrationId: " + preRegistrationId, ex);
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 					String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), preRegistrationId));
 		}
