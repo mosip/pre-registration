@@ -572,3 +572,53 @@ BookAppointmentByPRID:
     }
   ]
 }'
+   Prereg_BookAppointmentByPRID_With_Invalid_PRID_Neg:
+      endPoint: /preregistration/v1/applications/appointment
+      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_24
+      description: Book an appointment with Invalid PRID
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$INVALID_PRID$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
+   Prereg_BookAppointmentByPRID_With_Valid_PRID_NotIn_DB_Neg:
+      endPoint: /preregistration/v1/applications/appointment
+      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_25
+      description: Book an appointment with Valid PRID but not present in DB
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId":"$VALID_PRID_NOTIN_DB$",   
+  "registration_center_id": "$registration_center_id$",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "$appointment_date$",
+  "time_slot_from": "$time_slot_from$",
+  "time_slot_to": "$time_slot_to$",
+  "requesttime": "$TIMESTAMP$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
