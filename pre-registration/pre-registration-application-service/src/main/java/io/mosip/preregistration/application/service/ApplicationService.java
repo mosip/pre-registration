@@ -499,7 +499,19 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedBy(userId);
+			// Map auth user ID to canonical UUID for query
+			String canonicalUserId = userId;
+			try {
+				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
+					userDetailsService.findOrCreateByIdentifier(userId);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					canonicalUserId = mappedUser.getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Could not map userId to canonical UUID, using raw userId: " + userId);
+			}
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedBy(canonicalUserId);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
@@ -611,7 +623,19 @@ public class ApplicationService implements ApplicationServiceIntf {
 						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
 
 			}
-			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(userId,
+			// Map auth user ID to canonical UUID for query
+			String canonicalUserId = userId;
+			try {
+				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
+					userDetailsService.findOrCreateByIdentifier(userId);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					canonicalUserId = mappedUser.getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Could not map userId to canonical UUID, using raw userId: " + userId);
+			}
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(canonicalUserId,
 					type.toUpperCase());
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: {" + applicationEntities.size() + "} and booking type: {" + type + "}");
 			applicationsListDTO.setAllApplications(applicationEntities);
