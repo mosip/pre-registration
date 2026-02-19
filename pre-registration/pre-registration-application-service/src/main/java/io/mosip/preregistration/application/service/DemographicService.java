@@ -885,8 +885,35 @@ public class DemographicService implements DemographicServiceIntf {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Failed to map auth user to canonical UUID: " + authUserId, ex);
 		}
-		// Compare canonical UUIDs
-		if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(preregUserId.trim())) {
+		
+		// Compare using canonical UUID
+		if (canonicalAuthUserId == null) {
+			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+		}
+		
+		String trimmedPreregUserId = preregUserId != null ? preregUserId.trim() : "";
+		String trimmedCanonicalAuthUserId = canonicalAuthUserId.trim();
+		
+		// Check if preregUserId is already a UUID (new data) or a raw identifier (old data)
+		if (!trimmedPreregUserId.equals(trimmedCanonicalAuthUserId)) {
+			// Try mapping preregUserId to canonical UUID in case it's old data
+			// (if database stores raw identifier in createdBy field)
+			try {
+				io.mosip.preregistration.core.common.entity.UserDetails mappedPreregUser = 
+					userDetailsService.findOrCreateByIdentifier(trimmedPreregUserId);
+				if (mappedPreregUser != null && mappedPreregUser.getUserId() != null) {
+					String canonicalPreregUserId = mappedPreregUser.getUserId().toString();
+					if (canonicalPreregUserId.equals(trimmedCanonicalAuthUserId)) {
+						// Match found after mapping both IDs to canonical UUIDs
+						return;
+					}
+				}
+			} catch (Exception ex) {
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Could not map preregUserId to canonical UUID, might already be a UUID: " + trimmedPreregUserId);
+			}
+			// No match found in either direct comparison or mapping
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
