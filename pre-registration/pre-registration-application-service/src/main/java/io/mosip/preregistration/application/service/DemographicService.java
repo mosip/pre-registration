@@ -97,6 +97,7 @@ import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 /**
  * This class provides the service implementation for Demographic
@@ -142,6 +143,9 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Autowired
 	CommonServiceUtil commonServiceUtil;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
@@ -869,7 +873,20 @@ public class DemographicService implements DemographicServiceIntf {
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDemographicData method of userValidation with priid "
 				+ preregUserId + " and userID " + authUserId);
-		if (!authUserId.trim().equals(preregUserId.trim())) {
+		// Map the auth user to canonical UUID for comparison
+		String canonicalAuthUserId = null;
+		try {
+			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
+				userDetailsService.findOrCreateByIdentifier(authUserId);
+			if (mappedUser != null && mappedUser.getUserId() != null) {
+				canonicalAuthUserId = mappedUser.getUserId().toString();
+			}
+		} catch (Exception ex) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to map auth user to canonical UUID: " + authUserId, ex);
+		}
+		// Compare canonical UUIDs
+		if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(preregUserId.trim())) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}

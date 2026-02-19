@@ -30,8 +30,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.UUID;
 
 import io.mosip.kernel.core.exception.BaseUncheckedException;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -195,6 +197,9 @@ public class DemographicServiceTest {
 	@Mock
 	DocumentsMetaData documentsMetaData;
 
+	@Mock
+	UserDetailsService userDetailsService;
+
 	//
 	// @MockBean
 	// private BookingServiceIntf bookingServiceIntf;
@@ -334,6 +339,12 @@ public class DemographicServiceTest {
 
 		MockitoAnnotations.openMocks(this);
 		MockitoAnnotations.initMocks(this);
+		Mockito.when(userDetailsService.findOrCreateByIdentifier(Mockito.anyString())).thenAnswer(invocation -> {
+			String id = invocation.getArgument(0);
+			io.mosip.preregistration.core.common.entity.UserDetails ud = new io.mosip.preregistration.core.common.entity.UserDetails();
+			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));
+			return ud;
+		});
 		mapper = new ObjectMapper();
 		auditRequestDto = new AuditRequestDto();
 
@@ -366,7 +377,7 @@ public class DemographicServiceTest {
 
 		times = LocalDateTime.now();
 		preRegistrationEntity.setCreateDateTime(times);
-		preRegistrationEntity.setCreatedBy("9988905444");
+		preRegistrationEntity.setCreatedBy(getCanonicalUserIdString("9988905444"));
 		preRegistrationEntity.setStatusCode("Pending_Appointment");
 		preRegistrationEntity.setUpdateDateTime(times);
 		List<DocumentEntity> documentEntity = new ArrayList<>();
@@ -519,7 +530,7 @@ public class DemographicServiceTest {
 		demographicResponseDTO = new DemographicResponseDTO();
 		demographicResponseDTO.setDemographicDetails(jsonObject);
 		demographicResponseDTO.setPreRegistrationId("");
-		demographicResponseDTO.setCreatedBy("9988905444");
+		demographicResponseDTO.setCreatedBy(getCanonicalUserIdString("9988905444"));
 		demographicResponseDTO.setCreatedDateTime(demographicServiceUtil.getLocalDateString(times));
 		demographicResponseDTO.setStatusCode("Pending_Appointment");
 		createPreRegistrationDTO = new DemographicRequestDTO();
@@ -671,7 +682,7 @@ public class DemographicServiceTest {
 	public void deleteIndividualSuccessTest() throws Exception {
 		String preRegId = "98746563542672";
 		preRegistrationEntity.setCreateDateTime(times);
-		preRegistrationEntity.setCreatedBy("9988905444");
+		preRegistrationEntity.setCreatedBy(getCanonicalUserIdString("9988905444"));
 		preRegistrationEntity.setStatusCode("Booked");
 		preRegistrationEntity.setUpdateDateTime(times);
 		preRegistrationEntity.setApplicantDetailJson(jsonTestObject.toJSONString().getBytes());
@@ -724,7 +735,7 @@ public class DemographicServiceTest {
 		String preRegId = "23242242";
 		String userId = "123";
 		preRegistrationEntity.setCreateDateTime(times);
-		preRegistrationEntity.setCreatedBy("9988905444");
+		preRegistrationEntity.setCreatedBy(getCanonicalUserIdString("9988905444"));
 		preRegistrationEntity.setStatusCode("Booked");
 		preRegistrationEntity.setUpdateDateTime(times);
 		preRegistrationEntity.setApplicantDetailJson(jsonTestObject.toJSONString().getBytes());
@@ -892,7 +903,7 @@ public class DemographicServiceTest {
 		errlist.add(err);
 		Mockito.when(demographicRepository.findBypreRegistrationId(preRegId)).thenReturn(preRegistrationEntity);
 		preRegistrationEntity.setCreateDateTime(times);
-		preRegistrationEntity.setCreatedBy("9988905444");
+		preRegistrationEntity.setCreatedBy(getCanonicalUserIdString("9988905444"));
 		preRegistrationEntity.setStatusCode("Booked");
 		preRegistrationEntity.setUpdateDateTime(times);
 		preRegistrationEntity.setApplicantDetailJson(jsonTestObject.toJSONString().getBytes());
@@ -943,6 +954,8 @@ public class DemographicServiceTest {
 
 	@Test
 	public void statusCheckTest() {
+		String testUserId = getCanonicalUserIdString("9988905444");
+		
 		DemographicEntity demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId("987654321");
 		List<DocumentEntity> documentEntitys = new ArrayList<DocumentEntity>();
@@ -952,9 +965,8 @@ public class DemographicServiceTest {
 		documentEntitys.add(documentEntity);
 		demographicEntity.setDocumentEntity(documentEntitys);
 		demographicEntity.setLangCode("");
-		demographicEntity.setCreatedBy(userId);
+		demographicEntity.setCreatedBy(testUserId);
 		String status = StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
-		String userId = "987654321";
 		Mockito.when(demographicServiceUtil.isStatusValid(status)).thenReturn(true);
 		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
 		Collection<DocumentCategoryAndTypeResponseDto> documentCategories = new ArrayList<DocumentCategoryAndTypeResponseDto>();
@@ -967,11 +979,13 @@ public class DemographicServiceTest {
 		applicantValidDocuments.setDocumentCategories(documentCategories);
 		Mockito.when(demographicServiceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
 				.thenReturn(applicantValidDocuments);
-		demographicService.statusCheck(demographicEntity, status, userId);
+		demographicService.statusCheck(demographicEntity, status, testUserId);
 	}
 
 	@Test(expected = RecordFailedToUpdateException.class)
 	public void statusCheckRecordFailedToUpdateExceptionTest() {
+		String testUserId = getCanonicalUserIdString("9988905444");
+		
 		DemographicEntity demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId("987654321");
 		List<DocumentEntity> documentEntitys = new ArrayList<DocumentEntity>();
@@ -981,9 +995,8 @@ public class DemographicServiceTest {
 		documentEntitys.add(documentEntity);
 		demographicEntity.setDocumentEntity(documentEntitys);
 		demographicEntity.setLangCode("");
-		demographicEntity.setCreatedBy(userId);
+		demographicEntity.setCreatedBy(testUserId);
 		String status = StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase();
-		String userId = "987654321";
 		Mockito.when(demographicServiceUtil.isStatusValid(status)).thenReturn(true);
 		ApplicantValidDocumentDto applicantValidDocuments = new ApplicantValidDocumentDto();
 		Collection<DocumentCategoryAndTypeResponseDto> documentCategories = new ArrayList<DocumentCategoryAndTypeResponseDto>();
@@ -996,7 +1009,7 @@ public class DemographicServiceTest {
 		applicantValidDocuments.setDocumentCategories(documentCategories);
 		Mockito.when(demographicServiceUtil.getDocCatAndTypeForApplicantCode(Mockito.any(), Mockito.any()))
 				.thenReturn(applicantValidDocuments);
-		demographicService.statusCheck(demographicEntity, status, userId);
+		demographicService.statusCheck(demographicEntity, status, testUserId);
 	}
 
 	@Test
@@ -1113,7 +1126,7 @@ public class DemographicServiceTest {
 		String t = time.toString();
 		Mockito.when(demographicServiceUtil.getCurrentResponseTime()).thenReturn(t);
 		DemographicEntity demographicEntity = new DemographicEntity();
-		demographicEntity.setCreatedBy("12345");
+		demographicEntity.setCreatedBy(getCanonicalUserIdString("12345"));
 		Mockito.when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(demographicEntity);
 		String json = identityMappingJson;
 		JsonNode node = mapper.readTree(json);
@@ -1231,5 +1244,9 @@ public class DemographicServiceTest {
 		assertFalse(result);
 		Mockito.verify(commonServiceUtil).isupdateStausToPendingAppointmentValid(null);
 	}
+
+		private String getCanonicalUserIdString(String identifier) {
+			return UUID.nameUUIDFromBytes(identifier.getBytes()).toString();
+		}
 
 }
