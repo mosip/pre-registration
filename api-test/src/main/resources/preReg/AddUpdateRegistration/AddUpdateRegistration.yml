@@ -2,7 +2,7 @@ AddUpdateRegistration:
    Prereg_AddUpdateRegistration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/updateregistration
       uniqueIdentifier: TC_prereg_AddUpdateRegistration_01
-      description: add an update to the registration with valid data
+      description: validate that the Update Registration application is successfully processed when all mandatory fields are provided with valid values
       role: batch
       templateFields: ["langCode"]
       restMethod: post
@@ -22,7 +22,7 @@ AddUpdateRegistration:
    Prereg_AddUpdateRegistration_inValid_langcode:
       endPoint: /preregistration/v1/applications/updateregistration
       uniqueIdentifier: TC_prereg_AddUpdateRegistration_02
-      description: add an update to the registration with an invalid data
+      description: Validate that the Update Registration application is not processed when an invalid language code is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
@@ -44,7 +44,7 @@ AddUpdateRegistration:
    Prereg_AddUpdateRegistration_without_input_Neg:
       endPoint: /preregistration/v1/applications/updateregistration
       uniqueIdentifier: TC_prereg_AddUpdateRegistration_03
-      description: Add an update to the registration without input data
+      description: Validate that the Update Registration application is not processed when no input data is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
@@ -66,7 +66,7 @@ AddUpdateRegistration:
    Prereg_AddUpdateRegistration_missing_langCode_Neg:
       endPoint: /preregistration/v1/applications/updateregistration
       uniqueIdentifier: TC_prereg_AddUpdateRegistration_04
-      description: Add an update to the registration with missing lang code
+      description: Validate that the Update Registration application is not processed when the language code is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration

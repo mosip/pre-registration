@@ -2,7 +2,7 @@ BookAppointment:
    Prereg_BookAppointment_All_Valid_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_01
-      description: Book an appoinment valid data
+      description: validate that booking an appointment is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -23,7 +23,7 @@ BookAppointment:
    Prereg_BookAppointment_CA_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_02
-      description: Book an appointment to cancel the existing appointment
+      description: validate that a Care Appointment booking is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -44,7 +44,7 @@ BookAppointment:
    Prereg_BookAppointment_CancelApplicationsAppointment_Smoke:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_03
-      description: Book an appointment to cancel applications the existing appointment
+      description: Validate that a booked appointment can be successfully canceled when the cancellation request is submitted with valid details
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -65,7 +65,7 @@ BookAppointment:
    Prereg_BookAppointment_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_04
-      description: Book an appointment with an invalid preregistration ID
+      description: Validate that the appointment booking is not processed when an invalid pre registration ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -90,7 +90,7 @@ BookAppointment:
    Prereg_BookAppointment_blank_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_05
-      description: Book an appointment with a blank preregistration ID
+      description: Validate that the appointment booking is not processed when the pre registration ID is left blank
       role: batch
       restMethod: post
       checkOnlyStatusCodeInResponse: true
@@ -112,7 +112,7 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_Id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_06
-      description: Book an appointment with a invalid preregistration ID
+      description: Validate that the appointment booking is not processed when an invalid ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -137,7 +137,7 @@ BookAppointment:
    Prereg_BookAppointment_Blank_Id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_07
-      description: Book an appointment with a blank ID
+      description: Validate that the appointment booking is not processed when the ID field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -163,7 +163,7 @@ BookAppointment:
    Prereg_BookAppointment_Blank_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_08
-      description: Book an appointment with a blank version
+      description: Validate that the appointment booking is not processed when the version field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -188,7 +188,7 @@ BookAppointment:
    Prereg_BookAppointment_Missing_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_09
-      description: Book an appointment with a missing version
+      description: Validate that the appointment booking is not processed when the version attribute is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -213,7 +213,7 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_version:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_10
-      description: Book an appointment with a invalid version
+      description: Validate that the appointment booking fails when an invalid version is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -238,7 +238,7 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_11
-      description: Book an appointment with an invalid registration center ID 
+      description: Validate that the appointment booking fails when an invalid registration center ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -264,7 +264,7 @@ BookAppointment:
    Prereg_BookAppointment_Missing_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_12
-      description: Book an appointment with a missing registration center ID
+      description: Validate that the appointment booking fails when the registration center ID is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -290,7 +290,7 @@ BookAppointment:
    Prereg_BookAppointment_Blank_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_13
-      description: Book an appointment with a blank registration center ID
+      description: Validate that the appointment booking fails when the registration center ID is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -316,7 +316,7 @@ BookAppointment:
    Prereg_BookAppointment_Blank_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_14
-      description: Book an appointment with a blank appointment date
+      description: Validate that the appointment booking fails when the appointment date is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -342,7 +342,7 @@ BookAppointment:
    Prereg_BookAppointment_Missing_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_15
-      description: Book an appointment with a missing appointment date
+      description: Validate that the appointment booking fails when the appointment date is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -367,7 +367,7 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_appointment_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_16
-      description: Book an appointment with a invalid appointment date
+      description: Validate that the appointment booking fails when an invalid appointment date is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -393,7 +393,7 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_17
-      description: Book an appointment with an invalid time slot
+      description: Validate that the appointment booking fails when an invalid time slot to value is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -418,7 +418,7 @@ BookAppointment:
    Prereg_BookAppointment_Missing_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_18
-      description: Book an appointment with a missing time slot
+      description: Validate that the appointment booking fails when the time slot to value is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -443,7 +443,7 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_19
-      description: Book an appointment with an invalid time slot from
+      description: Validate that the appointment booking fails when an invalid time slot from value is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -468,7 +468,7 @@ BookAppointment:
    Prereg_BookAppointment_Blank_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_20
-      description: Book an appointment with an Blank time slot form
+      description: Validate that the appointment booking fails when the time slot to field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -493,7 +493,7 @@ BookAppointment:
    Prereg_BookAppointment_Blank_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_21
-      description: Book an appointment with an blank time slot
+      description: Validate that the appointment booking fails when the time slot from field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -518,7 +518,7 @@ BookAppointment:
    Prereg_BookAppointment_missing_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_22
-      description: Book an appointment with an missing time slot from
+      description: Validate that the appointment booking fails when the time slot from value is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -543,7 +543,7 @@ BookAppointment:
    Prereg_BookAppointment_missing_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_23
-      description: Book an appointment with a missing request time
+      description: Validate that the appointment booking fails when the request time is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -568,7 +568,7 @@ BookAppointment:
    Prereg_BookAppointment_Invalid_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_24
-      description: Book an appointment with a invalid request time 
+      description: Validate that the appointment booking fails when an invalid request time is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -594,7 +594,7 @@ BookAppointment:
    Prereg_BookAppointment_Blank_requesttime:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_25
-      description: Book an appointment with a Blank request time
+      description: Validate that the appointment booking fails when the request time is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -619,7 +619,7 @@ BookAppointment:
    Prereg_BookAppointment_previous_date:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_26
-      description: Book an appointment with a previous date
+      description: Validate that the appointment booking fails when a previous date is provided for the appointment
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -645,7 +645,7 @@ BookAppointment:
    Prereg_BookAppointment_On_holiday:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_27
-      description: Book an appointment on a holiday 
+      description: Validate that the appointment booking fails when the selected date falls on a holiday 
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
@@ -672,7 +672,7 @@ BookAppointment:
    Prereg_BookAppointment_with_expired_status:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_28
-      description: Book an appointment with an expired status
+      description: Validate that the appointment booking fails when the pre-registration status is expired
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -699,7 +699,7 @@ BookAppointment:
    Prereg_BookAppointment_with_All_InValid_data:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_29
-      description: Book an appointment with an invalid data
+      description: Validate that the appointment booking fails when all input data provided is invalid
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -726,7 +726,7 @@ BookAppointment:
    Prereg_BookAppointment_incompleteApplication_preRegistrationId_Neg:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_BookAppointment_30
-      description: Book an appointment with an incomplete application preregistration ID
+      description: Validate that the appointment booking fails when an incomplete application with an invalid or missing pre registration ID is submitted
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointment/bookAppointment
