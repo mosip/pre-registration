@@ -479,7 +479,7 @@
 		<repository>
 			<id>ossrh</id>
 			<name>CentralRepository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<url>https://central.sonatype.com/repositories/snapshots</url>
 			<layout>default</layout>
 			<snapshots>
 				<enabled>true</enabled>
@@ -499,11 +499,11 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<url>https://central.sonatype.com/api/v1/publisher</url>
 		</repository>
 	</distributionManagement>
 
@@ -529,4 +529,3 @@
 		</developer>
 	</developers>
 </project>
-
