@@ -2,14 +2,12 @@ package io.mosip.preregistration.core.common.service;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
-import java.security.SecureRandom;
-import java.util.Base64;
+import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
@@ -17,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.repository.UserDetailsRepository;
+import io.mosip.preregistration.core.util.CryptoUtil;
 
 /**
  * Service to manage canonical user registry: hashing identifier, optional encryption, and find-or-create.
@@ -27,12 +26,11 @@ public class UserDetailsService {
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsService.class);
 
     private final UserDetailsRepository userDetailsRepository;
+    private final CryptoUtil cryptoUtil;
 
-    @Value("${prereg.user.encryption.key:}")
-    private String encryptionKey;
-
-    public UserDetailsService(UserDetailsRepository userDetailsRepository) {
+    public UserDetailsService(UserDetailsRepository userDetailsRepository, CryptoUtil cryptoUtil) {
         this.userDetailsRepository = userDetailsRepository;
+        this.cryptoUtil = cryptoUtil;
     }
 
     private String normalize(String identifier) {
@@ -60,25 +58,34 @@ public class UserDetailsService {
     }
 
     private String encryptIdentifierIfConfigured(String plain) {
-        if (plain == null || plain.isBlank() || encryptionKey == null || encryptionKey.isBlank()) {
+        if (plain == null || plain.isBlank()) {
             return null;
         }
         try {
-            // Simple AES-GCM placeholder. Use proper key management in production.
-            // Construct a simple IV + base64 ciphertext encoding to store in DB.
-            javax.crypto.Cipher cipher = javax.crypto.Cipher.getInstance("AES/GCM/NoPadding");
-            byte[] keyBytes = encryptionKey.getBytes(StandardCharsets.UTF_8);
-            javax.crypto.spec.SecretKeySpec keySpec = new javax.crypto.spec.SecretKeySpec(keyBytes, 0, Math.min(32, keyBytes.length), "AES");
-            byte[] iv = new byte[12];
-            new SecureRandom().nextBytes(iv);
-            javax.crypto.spec.GCMParameterSpec gcmSpec = new javax.crypto.spec.GCMParameterSpec(128, iv);
-            cipher.init(javax.crypto.Cipher.ENCRYPT_MODE, keySpec, gcmSpec);
-            byte[] cipherText = cipher.doFinal(plain.getBytes(StandardCharsets.UTF_8));
-            String encoded = Base64.getEncoder().encodeToString(iv) + ":" + Base64.getEncoder().encodeToString(cipherText);
-            return encoded;
+            byte[] encrypted = cryptoUtil.encrypt(plain.getBytes(StandardCharsets.UTF_8), LocalDateTime.now());
+            if (encrypted == null || encrypted.length == 0) {
+                return null;
+            }
+            return new String(encrypted, StandardCharsets.UTF_8);
         } catch (Exception ex) {
             LOGGER.warn("Encryption failed - storing null encrypted value", ex);
             return null;
+        }
+    }
+
+    private Optional<String> decryptIdentifierIfConfigured(String encryptedValue) {
+        if (encryptedValue == null || encryptedValue.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            byte[] plain = cryptoUtil.decrypt(encryptedValue.getBytes(StandardCharsets.UTF_8), LocalDateTime.now());
+            if (plain == null || plain.length == 0) {
+                return Optional.empty();
+            }
+            return Optional.of(new String(plain, StandardCharsets.UTF_8));
+        } catch (Exception ex) {
+            LOGGER.warn("Decryption failed for identifier_encrypted", ex);
+            return Optional.empty();
         }
     }
 
@@ -108,12 +115,34 @@ public class UserDetailsService {
         String hash = sha256Hex(norm);
         Optional<UserDetails> found = userDetailsRepository.findByIdentifierHash(hash);
         if (found.isPresent()) {
-            return found.get();
+            UserDetails existing = found.get();
+            if (existing.getIdentifierEncrypted() == null || existing.getIdentifierEncrypted().isBlank()) {
+                String encrypted = encryptIdentifierIfConfigured(identifier);
+                if (encrypted != null) {
+                    existing.setIdentifierEncrypted(encrypted);
+                    return userDetailsRepository.save(existing);
+                }
+            }
+            return existing;
         }
         UserDetails u = new UserDetails();
         u.setUserId(UUID.randomUUID());
         u.setIdentifierHash(hash);
         u.setIdentifierEncrypted(encryptIdentifierIfConfigured(identifier));
         return userDetailsRepository.save(u);
+    }
+
+    /**
+     * Returns decrypted identifier for a canonical user id when encryption key is configured.
+     */
+    public Optional<String> getDecryptedIdentifier(UUID userId) {
+        if (userId == null) {
+            return Optional.empty();
+        }
+        Optional<UserDetails> user = userDetailsRepository.findById(userId);
+        if (user.isEmpty()) {
+            return Optional.empty();
+        }
+        return decryptIdentifierIfConfigured(user.get().getIdentifierEncrypted());
     }
 }
