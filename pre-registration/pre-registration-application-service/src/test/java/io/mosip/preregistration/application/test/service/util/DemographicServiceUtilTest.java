@@ -3,6 +3,7 @@ package io.mosip.preregistration.application.test.service.util;
 import java.io.File;
 import java.io.FileReader;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -41,7 +42,7 @@ import io.mosip.preregistration.demographic.exception.system.JsonParseException;
  */
 @RunWith(SpringRunner.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
-@SpringBootTest(classes = DemographicServiceUtil.class)
+@SpringBootTest(classes = DemographicServiceUtil.class, properties = "spring.cloud.config.enabled=false")
 public class DemographicServiceUtilTest {
 
 	/**
@@ -77,6 +78,9 @@ public class DemographicServiceUtilTest {
 
 	@MockBean
 	private CryptoUtil cryptoUtil;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * @throws Exception on Any Exception

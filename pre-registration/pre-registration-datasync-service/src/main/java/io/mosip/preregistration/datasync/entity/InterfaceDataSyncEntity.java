@@ -49,6 +49,14 @@ public class InterfaceDataSyncEntity implements Serializable {
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updatedDate;
 
+	public String getEffectiveCreatedBy() {
+		return this.createdBy;
+	}
+
+	public String getEffectiveUpdatedBy() {
+		return this.updatedBy;
+	} 
+
 	@Column(name = "is_deleted")
 	private boolean isDeleted;
 

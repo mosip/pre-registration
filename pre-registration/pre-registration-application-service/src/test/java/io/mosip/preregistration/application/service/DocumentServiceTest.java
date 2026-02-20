@@ -158,10 +158,23 @@ public class DocumentServiceTest {
 		demographicEntity.setUpdateDateTime(LocalDateTime.now());
 		demographicEntity.setPreRegistrationId(preRegistrationId);
 
-		documentEntity = new DocumentEntity(demographicEntity, "1", "Doc.pdf", "POA", "RNC", "PDF",
-				"Pending_Appointment", "eng", "Jagadishwari", DateUtils.parseDateToLocalDateTime(new Date()),
-				"Jagadishwari", DateUtils.parseDateToLocalDateTime(new Date()),
-				DateUtils.parseDateToLocalDateTime(new Date()), "1", new String(HashUtill.hashUtill(cephBytes)), "123");
+documentEntity = new DocumentEntity();
+			documentEntity.setDemographicEntity(demographicEntity);
+			documentEntity.setDocumentId("1");
+			documentEntity.setDocName("Doc.pdf");
+			documentEntity.setDocCatCode("POA");
+			documentEntity.setDocTypeCode("RNC");
+			documentEntity.setDocFileFormat("PDF");
+			documentEntity.setStatusCode("Pending_Appointment");
+			documentEntity.setLangCode("eng");
+			documentEntity.setCrBy("Jagadishwari");
+			documentEntity.setCrDtime(null);
+			documentEntity.setUpdBy("Jagadishwari");
+			documentEntity.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
+			documentEntity.setEncryptedDateTime(null);
+			documentEntity.setDocId("1");
+			documentEntity.setDocHash(new String(HashUtill.hashUtill(cephBytes)));
+			documentEntity.setRefNumber("123");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);

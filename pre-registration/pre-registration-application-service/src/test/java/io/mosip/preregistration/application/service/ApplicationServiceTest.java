@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,6 +87,9 @@ public class ApplicationServiceTest {
 	ValidationUtil validationUtil;
 
 	@Mock
+	UserDetailsService userDetailsService;
+
+	@Mock
 	DemographicServiceIntf demographicService;
 
 	@Mock
@@ -100,6 +104,12 @@ public class ApplicationServiceTest {
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
+		Mockito.when(userDetailsService.findOrCreateByIdentifier(Mockito.anyString())).thenAnswer(invocation -> {
+			String id = invocation.getArgument(0);
+			io.mosip.preregistration.core.common.entity.UserDetails ud = new io.mosip.preregistration.core.common.entity.UserDetails();
+			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));
+			return ud;
+		});
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -108,6 +118,10 @@ public class ApplicationServiceTest {
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 		ReflectionTestUtils.setField(applicationService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(applicationService, "allApplicationsId", "preReg");
+	}
+
+	private String getCanonicalUserIdString(String identifier) {
+		return UUID.nameUUIDFromBytes(identifier.getBytes()).toString();
 	}
 
 	@Test(expected = AuditFailedException.class)
@@ -303,7 +317,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -326,7 +340,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -350,7 +364,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -374,7 +388,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -395,6 +409,24 @@ public class ApplicationServiceTest {
 	@Test
 	public void testDeleteLostOrUpdateApplicationPreRegistrationSuccess() {
 		String applicationId = "12345";
+		String userId = getCanonicalUserIdString("9988905444");
+		
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(applicationId);
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setCrBy(userId);
+		applicationEntity.setRegistrationCenterId("32544");
+		
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		authentication.setAuthenticated(true);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn("9988905444");
+		
+		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString()));

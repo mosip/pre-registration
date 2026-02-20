@@ -200,6 +200,8 @@ public class DataSyncServiceTest {
 		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(applicationUser.getUserId()).thenReturn("testUser");
+		when(applicationUser.getUsername()).thenReturn("testUsername");
 
 		requiredRequestMap.put("version", version);
 
@@ -333,7 +335,7 @@ public class DataSyncServiceTest {
 	@Test
 	public void successStoreConsumedPreRegistrationsTest() throws Exception {
 		when(serviceUtil.validateReverseDataSyncRequest(Mockito.any(), Mockito.any())).thenReturn(true);
-		when(serviceUtil.reverseDateSyncSave(Mockito.any(), Mockito.any(), Mockito.anyString()))
+		when(serviceUtil.reverseDateSyncSave(Mockito.any(), Mockito.any(), Mockito.any()))
 				.thenReturn(reverseDatasyncReponse);
 		Mockito.doNothing().when(spyDataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
 				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
