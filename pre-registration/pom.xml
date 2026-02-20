@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -30,7 +30,6 @@
 		<maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
 		<maven.source.plugin.version>3.3.1</maven.source.plugin.version>
 		<maven.gpg.plugin.version>3.2.3</maven.gpg.plugin.version>
-		<gpg.skip>true</gpg.skip>
 		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
 		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
 		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
@@ -312,6 +311,16 @@
 					<doclint>none</doclint>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.sonatype.central</groupId>
+				<artifactId>central-publishing-maven-plugin</artifactId>
+				<version>${central.publishing.maven.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<publishingServerId>ossrh</publishingServerId>
+					<autoPublish>false</autoPublish>
+				</configuration>
+			</plugin>
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -332,7 +341,7 @@
 				<artifactId>maven-gpg-plugin</artifactId>
 				<version>${maven.gpg.plugin.version}</version>
 				<configuration>
-					<skip>${gpg.skip}</skip>
+					<skip>true</skip>
 				</configuration>
 			</plugin>
 
@@ -458,7 +467,7 @@
 		<repository>
 			<id>ossrh</id>
 			<name>CentralRepository</name>
-			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
+			<url>https://central.sonatype.com/repositories/snapshots</url>
 			<layout>default</layout>
 			<snapshots>
 				<enabled>true</enabled>
@@ -478,11 +487,11 @@
 	<distributionManagement>
 		<snapshotRepository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 		</snapshotRepository>
 		<repository>
 			<id>ossrh</id>
-			<url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+			<url>https://central.sonatype.com/api/v1/publisher</url>
 		</repository>
 	</distributionManagement>
 
@@ -508,5 +517,3 @@
 		</developer>
 	</developers>
 </project>
-
-
