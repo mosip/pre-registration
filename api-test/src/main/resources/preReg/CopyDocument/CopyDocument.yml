@@ -2,7 +2,7 @@ CopyDocument:
    Prereg_CopyDocument_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
       uniqueIdentifier: TC_prereg_CopyDocument_01
-      description: Copy the valid Proof of Address (POA) document
+      description: Validate that copying a document is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: put
       inputTemplate: preReg/CopyDocument/copyDocument
@@ -18,7 +18,7 @@ CopyDocument:
    Prereg_CopyDocument_in_Valid_doc_cat_code_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
       uniqueIdentifier: TC_prereg_CopyDocument_02
-      description: Copy the Proof of Address (POA) document with the invalid document category code
+      description: Validate that copying a document fails when an invalid document category code is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/CopyDocument/copyDocument
@@ -37,7 +37,7 @@ CopyDocument:
    Prereg_CopyDocument_blank_doc_cat_code_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
       uniqueIdentifier: TC_prereg_CopyDocument_03
-      description: Copy the blank document and categorize it with the code
+      description: Validate that copying a document fails when the document category code is left blank
       role: batch
       restMethod: put
       inputTemplate: preReg/CopyDocument/copyDocument
@@ -56,7 +56,7 @@ CopyDocument:
    Prereg_CopyDocument_Invalid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={doc_cat_code}&sourcePreId={preRegistrationId}
       uniqueIdentifier: TC_prereg_CopyDocument_04
-      description: Copy the Proof of Address (POA) document with the invalid preregistration ID
+      description: Validate that copying a document fails when an invalid pre-registration ID is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/CopyDocument/copyDocument

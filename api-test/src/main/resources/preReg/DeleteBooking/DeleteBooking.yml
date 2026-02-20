@@ -2,7 +2,7 @@ DeleteBooking:
    Prereg_DeleteBooking_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment?preRegistrationId={preRegistrationId}
       uniqueIdentifier: TC_prereg_DeleteBooking_01
-      description: Delete bookings for all valid preregistration ID
+      description: Validate that deleting a booking is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: delete
       additionalDependencies: TC_prereg_BookAppointment_01
