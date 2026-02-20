@@ -57,7 +57,7 @@ public class ApplicationEntity {
 	private String contactInfo;
 
 	/**
-	 * Created By
+	 * Created By (legacy plaintext or user identifier)
 	 */
 	@Column(name = "cr_by")
 	private String crBy;
@@ -69,7 +69,7 @@ public class ApplicationEntity {
 	private LocalDateTime crDtime;
 
 	/**
-	 * Updated By
+	 * Updated By (legacy plaintext or user identifier)
 	 */
 	@Column(name = "upd_by")
 	private String updBy;
@@ -79,4 +79,18 @@ public class ApplicationEntity {
 	 */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDtime;
+
+	/**
+	 * Effective createdBy - returns canonical user id if present else legacy value
+	 */
+	public String getEffectiveCrBy() {
+		return this.crBy;
+	}
+
+	/**
+	 * Effective updatedBy - returns canonical user id if present else legacy value
+	 */
+	public String getEffectiveUpdBy() {
+		return this.updBy;
+	}
 }

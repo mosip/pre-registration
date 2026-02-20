@@ -32,6 +32,7 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -67,7 +68,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DocumentServiceUtil.class)
+@SpringBootTest(classes = DocumentServiceUtil.class, properties = "spring.cloud.config.enabled=false")
 public class DocumentServiceUtilTest {
 
 	@MockBean
@@ -83,6 +84,9 @@ public class DocumentServiceUtilTest {
 
 	@MockBean
 	private CommonServiceUtil commonServiceUtil;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private DocumentServiceUtil documentServiceUtil;
