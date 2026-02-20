@@ -2,7 +2,7 @@ CancelApplicationsAppointment:
    Prereg_CancelApplicationsAppointment_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelApplicationsAppointment_01
-      description: Canceling appointment for a valid preregistration ID
+      description: Validate that canceling an appointment is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -17,7 +17,7 @@ CancelApplicationsAppointment:
    Prereg_CancelApplicationsAppointment_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelApplicationsAppointment_02
-      description: Canceling appointment for an invalid preregistration ID
+      description: Validate that canceling an appointment fails when an invalid pre registration ID is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/CancelApplicationsAppointment/cancelApplicationsAppointment

@@ -2,7 +2,7 @@ DeletePreRegistration:
    Prereg_DeletePreRegistration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_DeletePreRegistration_01
-      description: Delete the preregistration with a valid preregistration ID
+      description: Validate that deleting a pre registration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeletePreRegistration/deletePreRegistration
@@ -16,7 +16,7 @@ DeletePreRegistration:
    Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_DeletePreRegistration_02
-      description: Delete the preregistration with an invalid preregistration ID
+      description: Validate that deleting a pre registration fails when an invalid pre registration ID is provided
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeletePreRegistration/deletePreRegistration

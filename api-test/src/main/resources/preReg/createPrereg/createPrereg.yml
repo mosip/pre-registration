@@ -2,7 +2,7 @@ CreatePrereg:
    Prereg_CreatePrereg_All_Valid_Smoke_sid_pos:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_01
-      description: Creating demographic details with valid data
+      description: Validate that creating a pre registration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -24,7 +24,7 @@ CreatePrereg:
    Prereg_CreatePrereg_book_appoinment_without_update_prereg_status_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_02
-      description: Creating preregistration for booking an appointment without updating preregistration status
+      description: Validate that booking an appointment fails when the pre registration status is not updated after creating the pre registration
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -46,7 +46,7 @@ CreatePrereg:
    Prereg_CreatePrereg_All_Valid_Smoke_UpdateDocRefID_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_03
-      description: Creating preregistration with a valid updated document reference ID
+      description: Validate that creating a pre registration is successfully processed and the document reference ID is updated when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -69,7 +69,7 @@ CreatePrereg:
    Prereg_CreatePrereg_All_Valid_Smoke_BookByPRID_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_04
-      description: Creating preregistration for a valid booking using the PRID (Patient Registration ID)
+      description: Validate that creating a pre registration is successfully processed and an appointment can be booked by Pre Registration ID when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -93,7 +93,7 @@ CreatePrereg:
    Prereg_CreatePrereg_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_05
-      description: Creating demographic details with valid data
+      description: Validate that creating a pre registration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -116,7 +116,7 @@ CreatePrereg:
    Prereg_CreatePrereg_Smoke_alldel_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_06
-      description: Creating preregistration to delete data
+      description: Validate that creating a pre registration is successfully processed and all related deletions are handled correctly when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -139,7 +139,7 @@ CreatePrereg:
    Prereg_CreatePrereg_Smoke_CancellAppointment_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_07
-      description: Creating preregistration data to cancel a booked appointment
+      description: Validate that creating a pre registration is successfully processed and the appointment can be canceled when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -162,7 +162,7 @@ CreatePrereg:
    Prereg_CreatePrereg_Smoke_CancelApplicationsAppointment_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_08
-      description: Creating preregistration and cancelling the appointment after booking
+      description: Validate that creating a pre registration is successfully processed and the application appointment can be canceled when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -185,7 +185,7 @@ CreatePrereg:
    Prereg_CreatePrereg_All_Valid_Smoke_for_expiry_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_09
-      description: Creating preregistration, booking an appointment, and checking the expiration status if the user does not reach the center by the scheduled slot time
+      description: Validate that creating a pre registration is successfully processed and the system correctly handles expiry when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -207,7 +207,7 @@ CreatePrereg:
    Prereg_CreatePrereg_in_Valid_id_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_10
-      description: Creating demographic details with an invalid field ID
+      description: Validate that creating a pre registration fails when an invalid ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -234,7 +234,7 @@ CreatePrereg:
    Prereg_CreatePrereg_missing_id_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_11
-      description: Creating preregistration with a missing ID
+      description: Validate that creating a pre registration fails when the ID is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -261,7 +261,7 @@ CreatePrereg:
    Prereg_CreatePrereg_blank_id_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_12
-      description: Creating preregistration with a blank ID
+      description: Validate that creating a pre registration fails when the ID field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -288,7 +288,7 @@ CreatePrereg:
    Prereg_CreatePrereg_missing_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_13
-      description: Creating preregistration without specifying a langcode
+      description: Validate that creating a pre registration fails when the language code is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -315,7 +315,7 @@ CreatePrereg:
    Prereg_CreatePrereg_invalid_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_14
-      description: Creating preregistration with an invalid langcode 
+      description: Validate that creating a pre registration fails when an invalid language code is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -342,7 +342,7 @@ CreatePrereg:
    Prereg_CreatePrereg_invalid_email_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_15
-      description: Creating preregistration with an invalid email address
+      description: Validate that creating a pre registration fails when an invalid email address is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -369,7 +369,7 @@ CreatePrereg:
    Prereg_CreatePrereg_invalid_requesttime_format_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_16
-      description: Creating preregistration with an invalid request-time format
+      description: Validate that creating a pre registration fails when the request time is provided in an invalid format
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -396,7 +396,7 @@ CreatePrereg:
    Prereg_CreatePrereg_missing_requesttime_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_17
-      description: Creating preregistration without specifying a request time
+      description: Validate that creating a pre registration fails when the request time is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -423,7 +423,7 @@ CreatePrereg:
    Prereg_CreatePrereg_previous_date_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_18
-      description: Creating preregistration with a previous date
+      description: Validate that creating a pre registration fails when a previous date is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -450,7 +450,7 @@ CreatePrereg:
    Prereg_CreatePrereg_invalid_version_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_19
-      description: Creating preregistration with an invalid version
+      description: Validate that creating a pre registration fails when an invalid version is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -477,7 +477,7 @@ CreatePrereg:
    Prereg_CreatePrereg_missing_version_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_20
-      description: Creating preregistration without specifying a version
+      description: Validate that creating a pre registration fails when the version attribute is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg
@@ -505,7 +505,7 @@ CreatePrereg:
    Prereg_CreatePrereg_Invalid_PostalCode_Neg:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_21
-      description: Creating preregistration with an invalid postal code
+      description: Validate that creating a pre registration fails when an invalid postal code is provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -534,7 +534,7 @@ CreatePrereg:
    Prereg_CreatePrereg_SpacialCharacter_PostalCode_Neg:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_22
-      description: Creating preregistration with a special character in the postal code
+      description: Validate that creating a pre registration fails when the postal code contains special characters
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -562,7 +562,7 @@ CreatePrereg:
    Prereg_CreatePrereg_Invalid_OTP_Neg_StatusCode:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_23
-      description: Creating preregistration with an invalid OTP
+      description: Validate that creating a pre registration fails with an appropriate status code when an invalid OTP is provided
       role: invalidBatch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -585,7 +585,7 @@ CreatePrereg:
    Prereg_CreatePrereg_All_Valid_Smoke_date_verification_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_24
-      description: Creating a preregistration process with accurate data verification
+      description: Validate that creating a pre registration is successfully processed and the date is verified correctly when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -607,7 +607,7 @@ CreatePrereg:
    Prereg_CreatePrereg_with_special_characters_date:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_25
-      description: Creating preregistration with special characters on the date filed 
+      description: Validate that creating a pre registration fails when the date contains special characters
       role: batch 
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -634,7 +634,7 @@ CreatePrereg:
    Prereg_CreatePrereg_with_future_date:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_26
-      description: Creating preregistration with a future date
+      description: Validate that creating a pre registration fails when a future date is provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -656,7 +656,7 @@ CreatePrereg:
    Prereg_CreatePrereg_cancell_incomplete_prid_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_27
-      description: Creating preregistration and canceling the incomplete PRID
+      description: Validate that canceling a pre registration fails when the pre registration is incomplete
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -678,7 +678,7 @@ CreatePrereg:
    Prereg_CreatePrereg_cancell_pending_appoinment_prid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_28
-      description: Creating preregistration and canceling pending appointment using PRID
+      description: Validate that canceling a pre registration with a pending appointment is successfully processed when all mandatory fields are provided with valid values
       role: batch 
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -700,7 +700,7 @@ CreatePrereg:
    Prereg_CreatePrereg_Smoke_PreRegDemographicData_sid_pos:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_29
-      description: Creating preregistration appointment using PRID for demographic data
+      description: Validate that creating a pre registration is successfully processed and the pre registration demographic data is correctly captured when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -722,7 +722,7 @@ CreatePrereg:
    Prereg_CreatePrereg_without_input_Neg:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_Prereg_CreatePrereg_30
-      description: Creating preregistration without input
+      description: Validate that creating a pre registration fails when no input data is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/createPrereg/createPrereg

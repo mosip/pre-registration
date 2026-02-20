@@ -2,7 +2,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_All_Valid_Smoke:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_01
-      description: Book an appointment with a PRID for validation 
+      description: Validate that booking an appointment by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: post
@@ -23,7 +23,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_02
-      description: Book an appointment with a PRID for an invalid preregistration ID
+      description: Validate that booking an appointment by Pre Registration ID fails when an invalid pre registration ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -48,7 +48,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_blank_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_03
-      description: Book an appointment with a PRID for a blank preregistration ID
+      description: Validate that booking an appointment by Pre Registration ID fails when the pre registration ID is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -73,7 +73,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_missing_preRegistrationId:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_04
-      description: Book an appointment with a PRID for a missing  preregistration ID
+      description: Validate that booking an appointment by Pre Registration ID fails when the pre registration ID is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -98,7 +98,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_inValid_Id:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_05
-      description: Book an appointment with a PRID for a invalid preregistration ID
+      description: Validate that booking an appointment by Pre Registration ID fails when an invalid ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -123,7 +123,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Blank_Id:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_06
-      description: Book an appointment with a PRID for a blank ID
+      description: Validate that booking an appointment by Pre Registration ID fails when the ID field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -148,7 +148,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Blank_version:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_07
-      description: Book an appointment with a PRID for a blank version
+      description: Validate that booking an appointment by Pre Registration ID fails when the version field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -173,7 +173,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Missing_version:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_08
-      description: Book an appointment with a PRID for a missing version
+      description: Validate that booking an appointment by Pre Registration ID fails when the version attribute is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -198,7 +198,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Invalid_version:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_09
-      description: Schedule an appointment with a PRID for a invalid version 
+      description: Validate that booking an appointment by Pre Registration ID fails when an invalid version is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -223,7 +223,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Invalid_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_10
-      description: Book an appointment with a PRID for an invalid registration center ID
+      description: Validate that booking an appointment by Pre Registration ID fails when an invalid registration center ID is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -248,7 +248,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Missing_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_11
-      description: Book an appointment with a PRID for an missing registration center ID
+      description: Validate that booking an appointment by Pre Registration ID fails when the registration center ID is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -273,7 +273,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Blank_registration_center_id:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_12
-      description: Book an appointment with a PRID for an Blank registration center ID
+      description: Validate that booking an appointment by Pre Registration ID fails when the registration center ID is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -298,7 +298,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Blank_appointment_date:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_13
-      description: Book an appointment with a PRID for an Blank appointment date
+      description: Validate that booking an appointment by Pre Registration ID fails when the appointment date is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -323,7 +323,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Missing_appointment_date:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_14
-      description: Book an appointment with a PRID for a missing appointment date
+      description: Validate that booking an appointment by Pre Registration ID fails when the appointment date is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -348,7 +348,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Invalid_appointment_date:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_15
-      description: Book an appointment with a PRID for an invalid appointment date
+      description: Validate that booking an appointment by Pre Registration ID fails when an invalid appointment date is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -374,7 +374,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_blank_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_16
-      description: Book an appointment with a PRID for an Blank time slot to
+      description: Validate that booking an appointment by Pre Registration ID fails when the time slot to field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -399,7 +399,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_blank_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_17
-      description: Book an appointment with a PRID for an Blank time slot from
+      description: Validate that booking an appointment by Pre Registration ID fails when the time slot from field is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -424,7 +424,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Missing_time_slot_to:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_18
-      description: Book an appointment with a PRID for an missing time slot to
+      description: Validate that booking an appointment by Pre Registration ID fails when the time slot to value is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -449,7 +449,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Missing_time_slot_from:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_19
-      description: Book an appointment with a PRID for an missing time slot from
+      description: Validate that booking an appointment by Pre Registration ID fails when the time slot from value is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -474,7 +474,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_missing_requesttime:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_20
-      description: Book an appointment with a PRID for a missing request time
+      description: Validate that booking an appointment by Pre Registration ID fails when the request time is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -499,7 +499,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Invalid_requesttime:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_21
-      description: Book an appointment with a PRID for a invalid request time
+      description: Validate that booking an appointment by Pre Registration ID fails when an invalid request time is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -525,7 +525,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_Blank_requesttime:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_22
-      description: Book an appointment with a PRID for a Blank request time
+      description: Validate that booking an appointment by Pre Registration ID fails when the request time is left blank
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
@@ -550,7 +550,7 @@ BookAppointmentByPRID:
    Prereg_BookAppointmentByPRID_previous_requesttime:
       endPoint: /preregistration/v1/applications/appointment
       uniqueIdentifier: TC_prereg_BookAppointmentByPRID_23
-      description: Book an appointment with a PRID for a previous request time
+      description: Validate that booking an appointment by Pre Registration ID fails when a previous request time is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID

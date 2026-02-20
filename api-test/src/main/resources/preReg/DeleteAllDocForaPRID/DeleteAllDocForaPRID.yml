@@ -2,7 +2,7 @@ DeleteAllDocForaPRID:
    Prereg_DeletePreRegistration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
       uniqueIdentifier: TC_prereg_DeleteAllDocForaPRID_01
-      description: Delete preregistration with all valid preregistration ID
+      description: Validate that deleting a pre registration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -17,7 +17,7 @@ DeleteAllDocForaPRID:
    Prereg_DeletePreRegistration_InValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
       uniqueIdentifier: TC_prereg_DeleteAllDocForaPRID_02
-      description: Delete preregistration with an invalid preregisteration ID
+      description: Validate that deleting a pre registration fails when an invalid pre registration ID is provided
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeleteAllDocForaPRID/deleteAllDocForaPRID

@@ -2,7 +2,7 @@ GetAppointmentDetails:
    Prereg_GetAppointmentDetails_BookByPRID_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetAppointmentDetails_01
-      description: Retrieve appointment details booked by a valid PRID
+      description: Validate that fetching appointment details booked by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: get
       additionalDependencies: TC_prereg_BookAppointmentByPRID_01
@@ -17,7 +17,7 @@ GetAppointmentDetails:
    Prereg_GetAppointmentDetails_with_cancelled_appoinment:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetAppointmentDetails_02
-      description: Retrieve appointment details for a cancelled appointment
+      description: Validate that fetching appointment details fails or returns appropriate status when the appointment has been canceled
       role: batch
       restMethod: get
       additionalDependencies: TC_prereg_BookAppointment_03,TC_prereg_CancelAppointment_01
@@ -32,7 +32,7 @@ GetAppointmentDetails:
    Prereg_GetAppointmentDetails_AllValid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetAppointmentDetails_03
-      description: Retrieve appointment details for a valid preregistrationID
+      description: Validate that fetching appointment details is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: get
       additionalDependencies: TC_prereg_BookAppointment_01
@@ -48,7 +48,7 @@ GetAppointmentDetails:
    Prereg_GetAppointmentDetails_inValid_preRegistrationId:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetAppointmentDetails_04
-      description: Retrieve appointment details for a invalid preregistrationID
+      description: Validate that fetching appointment details fails when an invalid pre registration ID is provided
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails
@@ -66,7 +66,7 @@ GetAppointmentDetails:
    Prereg_GetAppointmentDetails_empty_space_preRegistrationId:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetAppointmentDetails_05
-      description: Retrieve appointment details for an empty space preregistration ID
+      description: Validate that fetching appointment details fails when the pre registration ID contains only empty spaces or whitespace
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAppointmentDetails/getAppointmentDetails

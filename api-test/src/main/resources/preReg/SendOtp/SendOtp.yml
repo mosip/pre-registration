@@ -2,7 +2,7 @@ SendOtp:
    Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_01
-      description: Send OTP with a valid phone number on the phone channel
+      description: Validate that sending OTP to a phone number is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -20,7 +20,7 @@ SendOtp:
    Prereg_SendOtp_Invalid_Phone_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_02
-      description: Send OTP by providing an invalid phone number on the phone channel side
+      description: Validate that sending OTP fails when an invalid phone number is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -42,7 +42,7 @@ SendOtp:
    Prereg_SendOtp_MISSING_Phone_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_03
-      description: Sent OTP without a phone number
+      description: Validate that sending OTP fails when the phone number field is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -64,7 +64,7 @@ SendOtp:
    Prereg_SendOtp_SpacialCharacter_Val_Phone_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_04
-      description: Sent OTP with special characters through the phone channel
+      description: Validate that sending OTP fails when the phone number contains special characters
       role: batch 
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -86,7 +86,7 @@ SendOtp:
    Prereg_SendOtp_All_Valid_Smoke_email_sid:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_05
-      description: Send OTP using a valid email address through the email channel
+      description: Validate that sending OTP to an email address is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -104,7 +104,7 @@ SendOtp:
    Prereg_SendOtp_Invalid__email_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_06
-      description: Send OTP using an invalid email address via the email channel
+      description: Validate that sending OTP fails when an invalid email address is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -126,7 +126,7 @@ SendOtp:
    Prereg_SendOtp_Missing_email_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_07
-      description: Sent OTP without an email address via the email channel
+      description: Validate that sending OTP fails when the email field is missing
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp
@@ -148,7 +148,7 @@ SendOtp:
    Prereg_SendOtp_SpacialCharacter_email_Neg:
       endPoint: /preregistration/v1/login/sendOtp/langcode
       uniqueIdentifier: TC_prereg_SendOtp_08
-      description: Sent OTP with special characters through the email channel
+      description: Validate that sending OTP fails when the email contains special characters in an invalid format
       role: batch
       restMethod: post
       inputTemplate: preReg/SendOtp/sendotp

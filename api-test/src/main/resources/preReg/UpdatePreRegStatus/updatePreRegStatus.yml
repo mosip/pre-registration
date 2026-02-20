@@ -2,7 +2,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_01
-      description: Update the status of an application to 'Pending Appointment' using the prereg ID and status code
+      description: Validate that updating the pre registration status is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -17,7 +17,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_for_expired_testcase_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_02
-      description: Update the status of the expired test case application using the prereg ID and status code
+      description: Validate that updating the pre registration status fails or returns an appropriate error when the pre registration is expired
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -32,7 +32,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_All_Valid_Smoke_BookByPRID_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_03
-      description: Update the status for a valid booking using the PRID (Preregistration ID)    
+      description: Validate that updating the pre registration status for a pre registration booked by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values   
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -47,7 +47,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_04
-      description: Update the application status to 'Pending Appointment' using the prereg ID and status code
+      description: Validate that updating the pre registration status is successfully processed when valid input parameters are provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -62,7 +62,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_CA_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_05
-      description: Update the status of an application to'Pending Appointment'for canceling using the prereg ID and status code
+      description: Validate that updating the pre registration status for a Correction Application is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -77,7 +77,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_Smoke_alldel_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_06
-      description: Update the status of an application to 'pending  Appointment' for deleted the prereg ID and status code
+      description: Validate that updating the pre registration status for a fully deleted pre registration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -92,7 +92,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_Smoke_CancellAppointment_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_07
-      description: Update the status of an application to 'cancell Appointment' using the preregistration ID and status code 
+      description: Validate that updating the pre registration status to cancel an appointment is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -107,7 +107,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_Smoke_CancelApplicationsAppointment_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_08
-      description: Update the status of an application to'cancell application Appointment'using the prereg ID and status code
+      description: Validate that updating the pre registration status to cancel an applications appointment is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -122,7 +122,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_without_update_prereg_status_sid:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_09
-      description: Update the application status without modifying the preregistration status
+      description: Validate that updating the pre registration status fails or has no effect when the pre registration status field is not provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -142,7 +142,7 @@ UpdatePreRegStatus:
    Prereg_UpdatePreRegStatus_Invalid_preregid_Neg:
       endPoint: /preregistration/v1/applications/prereg/status/{preRegistrationId}?statusCode={statusCode}
       uniqueIdentifier: TC_prereg_UpdatePreRegStatus_10
-      description: Update the application status with invalid preregistration id
+      description: Validate that updating the pre registration status fails when an invalid Pre Registration ID is provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
