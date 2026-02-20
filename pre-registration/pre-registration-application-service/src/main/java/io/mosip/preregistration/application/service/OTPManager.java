@@ -16,6 +16,8 @@ import java.util.UUID;
 
 import javax.xml.bind.DatatypeConverter;
 
+import io.mosip.preregistration.core.common.entity.UserDetails;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,6 +101,9 @@ public class OTPManager {
 	@Autowired
 	NotificationServiceUtil notification;
 
+	@Autowired
+	private UserDetailsService userDetailsService;
+
 	/**
 	 * Generate OTP with information of {@link MediaType } and OTP generation
 	 * time-out.
@@ -134,6 +139,16 @@ public class OTPManager {
 			OtpTransaction otpTxn = otpRepo.findTopByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
 			otpTxn.setOtpHash(otpHash);
 			otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+				otpTxn.setUpdBy(mappedUser.getUserId().toString());
+				} else {
+					otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+				}
+			} catch (Exception e) {
+				logger.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for otp update", e);
+			}
 			otpTxn.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
 			otpTxn.setExpiryDtimes(DateUtils.getUTCCurrentDateTime().plusSeconds(
 					environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Long.class)));
@@ -144,8 +159,18 @@ public class OTPManager {
 			txn.setId(UUID.randomUUID().toString());
 			txn.setRefId(hash(userId));
 			txn.setOtpHash(otpHash);
-			txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
-			txn.setCrDtimes(DateUtils.getUTCCurrentDateTime());
+			txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));			// Map the client id to canonical user id, and store canonical id into cr_by
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+				txn.setCrBy(mappedUser.getUserId().toString());
+				} else {
+					txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+				}
+			} catch (Exception e) {
+				logger.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for otp create", e);
+				txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+			}			txn.setCrDtimes(DateUtils.getUTCCurrentDateTime());
 			txn.setGeneratedDtimes(DateUtils.getUTCCurrentDateTime());
 			txn.setExpiryDtimes(DateUtils.getUTCCurrentDateTime().plusSeconds(
 					environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Long.class)));
