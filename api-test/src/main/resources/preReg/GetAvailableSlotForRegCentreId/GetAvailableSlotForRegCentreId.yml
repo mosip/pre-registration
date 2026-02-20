@@ -2,7 +2,7 @@ GetAvailableSlotForRegCentreId:
    Prereg_GetAvailableSlotForRegCentreId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
       uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_01
-      description: Retrieve available slots for a valid registration center ID
+      description: Validate that fetching available slots for a registration center ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
@@ -16,7 +16,7 @@ GetAvailableSlotForRegCentreId:
    Prereg_GetAvailableSlotForRegCentreId_inValid_registrationCenterId_sid:
       endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
       uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_02
-      description: Retrieve available slots for an invalid registration center ID
+      description: Validate that fetching available slots fails when an invalid registration center ID is provided
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
@@ -34,7 +34,7 @@ GetAvailableSlotForRegCentreId:
    Prereg_GetAvailableSlotForRegCentreId_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
       uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_03
-      description: Retrieve available slots for a valid registration center ID
+      description: Validate that fetching available slots for a registration center ID is successfully processed when valid input parameters are provided
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId

@@ -2,7 +2,7 @@ FetchAppointmentDetailsByPrid:
    Prereg_FetchAppointmentDetailsByPrid_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_FetchAppointmentDetailsByPrid_01
-      description: Fetch appointment details for the preregistration ID
+      description: Validate that fetching appointment details by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchAppointmentDetailsByPrid/fetchAppointmentDetailsByPrid
@@ -16,7 +16,7 @@ FetchAppointmentDetailsByPrid:
    Prereg_FetchAppointmentDetailsByPrid_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_FetchAppointmentDetailsByPrid_02
-      description: Fetch appointment details for the invalid preregistration ID
+      description: Validate that fetching appointment details by Pre Registration ID fails when an invalid pre registration ID is provided
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchAppointmentDetailsByPrid/fetchAppointmentDetailsByPrid
@@ -34,7 +34,7 @@ FetchAppointmentDetailsByPrid:
    Prereg_FetchAppointmentDetailsByPrid_forExpiredApplication_Neg:
       endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_FetchAppointmentDetailsByPrid_03
-      description: Fetch appointment details for the expired preregistration ID
+      description: Validate that fetching appointment details by Pre Registration ID fails when the application status is expired
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchAppointmentDetailsByPrid/fetchAppointmentDetailsByPrid

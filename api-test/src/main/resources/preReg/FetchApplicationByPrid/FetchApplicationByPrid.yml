@@ -2,7 +2,7 @@ FetchApplicationByPrid:
    Prereg_FetchApplicationByPrid_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_FetchApplicationByPrid_01
-      description: Fetch demographic details using a valid PRID
+      description: Validate that fetching an application by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
@@ -18,7 +18,7 @@ FetchApplicationByPrid:
    Prereg_FetchApplicationByPrid_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_FetchApplicationByPrid_02
-      description: Fetch demographic details using an invalid PRID
+      description: Validate that fetching an application by Pre Registration ID fails when an invalid pre registration ID is provided
       role: batch
       restMethod: get
       inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid

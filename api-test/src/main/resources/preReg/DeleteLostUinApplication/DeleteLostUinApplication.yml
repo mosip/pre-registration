@@ -2,7 +2,7 @@ DeleteLostUinApplication:
    Prereg_DeleteLostUinApplication_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
       uniqueIdentifier: TC_prereg_DeleteLostUinApplication_01
-      description: Delete the lost UIN application with valid data
+      description: Validate that deleting a lost UIN application is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -17,7 +17,7 @@ DeleteLostUinApplication:
    Prereg_DeleteLostUinApplication_after_its_deletion:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
       uniqueIdentifier: TC_prereg_DeleteLostUinApplication_02
-      description: Delete the lost UIN application after it has been removed
+      description: Validate that deleting a lost UIN application fails if the application has already been deleted
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -36,7 +36,7 @@ DeleteLostUinApplication:
    Prereg_DeleteLostUinApplication_multiple_application_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
       uniqueIdentifier: TC_prereg_DeleteLostUinApplication_03
-      description: Delete the lost UIN application with multiple preregistration IDs for the application
+      description: Validate that deleting multiple lost UIN applications is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: delete
@@ -51,7 +51,7 @@ DeleteLostUinApplication:
    Prereg_DeleteLostUinApplication_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
       uniqueIdentifier: TC_prereg_DeleteLostUinApplication_04
-      description: Delete the lost UIN application with an invalid preregistration ID
+      description: Validate that deleting a lost UIN application fails when an invalid pre registration ID is provided
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeleteLostUinApplication/deleteLostUinApplication
@@ -69,7 +69,7 @@ DeleteLostUinApplication:
    Prereg_DeleteLostUinApplication_random_number_sid:
       endPoint: /preregistration/v1/applications/prereg/{applicationId}
       uniqueIdentifier: TC_prereg_DeleteLostUinApplication_05
-      description: Delete the lost UIN application with a random number preregistration ID
+      description: Validate that deleting a lost UIN application fails when a random or non-existent pre registration ID is provided
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeleteLostUinApplication/deleteLostUinApplication
