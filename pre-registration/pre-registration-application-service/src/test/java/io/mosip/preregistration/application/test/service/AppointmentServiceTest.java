@@ -33,6 +33,7 @@ import io.mosip.preregistration.application.service.AppointmentServiceImpl;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.DateTimeDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -81,6 +82,9 @@ public class AppointmentServiceTest {
 	
 	@MockBean
 	private DocumentDAO documentDAO;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
 	
 	@Before
 	public void setup() {

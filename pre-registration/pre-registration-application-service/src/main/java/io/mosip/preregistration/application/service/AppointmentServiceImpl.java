@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.mosip.preregistration.core.common.entity.UserDetails;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,6 +72,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	 */
 	@Autowired
 	AnonymousProfileUtil anonymousProfileUtil;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	@Value("${version}")
 	private String version;
@@ -163,9 +168,26 @@ public class AppointmentServiceImpl implements AppointmentService {
 				throw new AppointmentExecption(ApplicationErrorCodes.PRG_APP_013.getCode(),
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
-			if (applicationEntity != null && !authUserId.trim().equals(applicationEntity.getCrBy().trim())) {
-				throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
-						AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
+			if (applicationEntity != null) {
+				// Map the auth user to canonical UUID for comparison
+				String canonicalAuthUserId = null;
+				try {
+					io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
+						userDetailsService.findOrCreateByIdentifier(authUserId);
+					if (mappedUser != null && mappedUser.getUserId() != null) {
+						canonicalAuthUserId = mappedUser.getUserId().toString();
+					}
+				} catch (Exception ex) {
+					log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+							"Failed to map auth user to canonical UUID: " + authUserId, ex);
+				}
+				
+				// Compare canonical UUIDs
+				String expectedCrBy = applicationEntity.getCrBy();
+				if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(expectedCrBy.trim())) {
+					throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
+							AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
+				}
 			}
 		}
 	}
@@ -447,8 +469,23 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			return applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
+			// Map to canonical UUID if service available
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserDetails().getUserId());
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					applicationEntity.setUpdBy(mappedUser.getUserId().toString());
+					// attempt save again with canonical id
+					try {
+						return applicationRepostiory.save(applicationEntity);
+					} catch (Exception ex2) {
+						// fall through to logging and throwing below
+					}
+				}
+			} catch (Exception e) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for appointment update", e);
+			}
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to update application for the preregistrationId: " + preRegistrationId);
+					"Failed to update application for the preregistrationId: " + preRegistrationId, ex);
 			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 					String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), preRegistrationId));
 		}

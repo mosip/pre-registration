@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.core.common.entity.UserDetails;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
@@ -149,6 +151,10 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
+
 	/**
 	 * Logger instance
 	 */
@@ -186,9 +192,9 @@ public class DemographicServiceUtil {
 					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
 			createDto.setStatusCode(demographicEntity.getStatusCode());
 			createDto.setLangCode(demographicEntity.getLangCode());
-			createDto.setCreatedBy(demographicEntity.getCreatedBy());
+			createDto.setCreatedBy(demographicEntity.getEffectiveCreatedBy());
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
-			createDto.setUpdatedBy(demographicEntity.getUpdatedBy());
+			createDto.setUpdatedBy(demographicEntity.getEffectiveUpdatedBy());
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
@@ -307,6 +313,20 @@ public class DemographicServiceUtil {
 		demographicEntity.setUpdatedBy(userId);
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
+		
+		// Map to canonical user_id from user_details table
+		try {
+			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
+			if (mappedUser != null && mappedUser.getUserId() != null) {
+				String canonicalUserId = mappedUser.getUserId().toString();
+				demographicEntity.setCrAppuserId(canonicalUserId);
+				demographicEntity.setCreatedBy(canonicalUserId);
+				demographicEntity.setUpdatedBy(canonicalUserId);
+			}
+		} catch (Exception e) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for demographic create, falling back to legacy identifiers", e);
+		}
+		
 		return demographicEntity;
 	}
 
@@ -698,8 +718,18 @@ public class DemographicServiceUtil {
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		applicationEntity.setUpdBy(userId);
 		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
-		applicationEntity.setContactInfo(userId);
+		applicationEntity.setContactInfo(userId);			// populate canonical user ids if service available
 		try {
+			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
+			if (mappedUser != null && mappedUser.getUserId() != null) {
+				String canonicalUserId = mappedUser.getUserId().toString();
+				applicationEntity.setCrBy(canonicalUserId);
+				applicationEntity.setUpdBy(canonicalUserId);
+				applicationEntity.setContactInfo(canonicalUserId);
+			}
+		} catch (Exception e) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed, falling back to legacy identifiers", e);
+		}		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
@@ -720,6 +750,15 @@ public class DemographicServiceUtil {
 			applicationEntity.setBookingStatusCode(status);
 			applicationEntity.setUpdBy(userId);
 			applicationEntity.setUpdDtime(LocalDateTime.now());
+			// populate canonical updated-by user id
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					applicationEntity.setUpdBy(mappedUser.getUserId().toString());
+				}
+			} catch (Exception e) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for updateApplicationStatus", e);
+			}
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
 			}

@@ -136,7 +136,8 @@ public class ApplicationConsumedStatusUpdater {
         demographicEntityConsumed.setApplicantDetailJson(demoEntity.getApplicantDetailJson());
         demographicEntityConsumed.setCrAppuserId(demoEntity.getCrAppuserId());
         demographicEntityConsumed.setCreateDateTime(demoEntity.getCreateDateTime());
-        demographicEntityConsumed.setCreatedBy(demoEntity.getCreatedBy());
+        // store the canonical user id (if present) into the existing cr_by column
+        demographicEntityConsumed.setCreatedBy(demoEntity.getEffectiveCreatedBy());
         demographicEntityConsumed.setDemogDetailHash(demoEntity.getDemogDetailHash());
         demographicEntityConsumed.setEncryptedDateTime(demoEntity.getEncryptedDateTime());
         demographicEntityConsumed.setLangCode(demoEntity.getLangCode());
