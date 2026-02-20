@@ -2,7 +2,7 @@ GetPreRegDemographicDataByPrid:
    Prereg_GetPreRegDemographicDataByPrid_Valid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetPreRegDemographicDataByPrid_01
-      description: Retrieve the PreReg demographic data by PRID
+      description: Validate that fetching pre-registration demographic data by Pre Registration ID is successfully processed when a valid pre registration ID is provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
@@ -21,7 +21,7 @@ GetPreRegDemographicDataByPrid:
    Prereg_GetPreRegDemographicDataByPrid_inValid_preRegistrationId:
       endPoint: /preregistration/v1/applications/prereg/info/{preRegistrationId}
       uniqueIdentifier: TC_prereg_GetPreRegDemographicDataByPrid_02
-      description: Retrieve the PreReg demographic data by invalid PRID
+      description: Validate that fetching pre registration demographic data by Pre Registration ID fails when an invalid pre registration ID is provided
       role: batch
       restMethod: get
       inputTemplate: preReg/GetPreRegDemographicDataByPrid/getPreRegDemographicDataByPrid
