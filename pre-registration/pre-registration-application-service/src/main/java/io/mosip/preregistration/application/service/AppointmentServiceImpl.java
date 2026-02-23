@@ -11,7 +11,10 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
@@ -170,7 +173,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			if (applicationEntity != null) {
 				String canonicalAuthUserId = resolveCanonicalAuthUserId();
 				String expectedCrBy = applicationEntity.getCrBy();
-				if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(expectedCrBy.trim())) {
+				if (!isSameOwner(canonicalAuthUserId, expectedCrBy)) {
 					throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
 							AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
 				}
@@ -206,12 +209,13 @@ public class AppointmentServiceImpl implements AppointmentService {
 		AuthUserDetails authUser = authUserDetails();
 		List<String> identifiers = new ArrayList<>();
 		if (authUser != null) {
-			if (authUser.getUsername() != null && !authUser.getUsername().trim().isEmpty()) {
-				identifiers.add(authUser.getUsername().trim());
-			}
 			if (authUser.getUserId() != null && !authUser.getUserId().trim().isEmpty()
 					&& !identifiers.contains(authUser.getUserId().trim())) {
 				identifiers.add(authUser.getUserId().trim());
+			}
+			if (authUser.getUsername() != null && !authUser.getUsername().trim().isEmpty()
+					&& !identifiers.contains(authUser.getUsername().trim())) {
+				identifiers.add(authUser.getUsername().trim());
 			}
 		}
 		for (String identifier : identifiers) {
@@ -239,6 +243,70 @@ public class AppointmentServiceImpl implements AppointmentService {
 			}
 		}
 		return null;
+	}
+
+	private boolean isSameOwner(String canonicalAuthUserId, String ownerIdValue) {
+		if (ownerIdValue == null || ownerIdValue.trim().isEmpty()) {
+			return false;
+		}
+		Set<String> authCandidates = new HashSet<>();
+		if (canonicalAuthUserId != null && !canonicalAuthUserId.trim().isEmpty()) {
+			authCandidates.add(canonicalAuthUserId.trim());
+		}
+		AuthUserDetails authUser = authUserDetails();
+		if (authUser != null) {
+			addResolvedCanonicalCandidate(authCandidates, authUser.getUserId());
+			addResolvedCanonicalCandidate(authCandidates, authUser.getUsername());
+		}
+
+		Set<String> ownerCandidates = new HashSet<>();
+		addResolvedCanonicalCandidate(ownerCandidates, ownerIdValue);
+		for (String authCandidate : authCandidates) {
+			if (ownerCandidates.contains(authCandidate)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void addResolvedCanonicalCandidate(Set<String> candidates, String identifier) {
+		if (identifier == null || identifier.trim().isEmpty()) {
+			return;
+		}
+		String trimmed = identifier.trim();
+		candidates.add(trimmed);
+		if (looksLikeUuid(trimmed)) {
+			candidates.add(trimmed);
+		}
+		try {
+			java.util.Optional<io.mosip.preregistration.core.common.entity.UserDetails> mapped =
+					userDetailsService.findByIdentifier(trimmed);
+			if (mapped.isPresent() && mapped.get().getUserId() != null) {
+				candidates.add(mapped.get().getUserId().toString());
+			}
+		} catch (Exception ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed lookup by identifier: " + trimmed);
+		}
+		try {
+			io.mosip.preregistration.core.common.entity.UserDetails mapped =
+					userDetailsService.findOrCreateByIdentifier(trimmed);
+			if (mapped != null && mapped.getUserId() != null) {
+				candidates.add(mapped.getUserId().toString());
+			}
+		} catch (Exception ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed canonical mapping for identifier: " + trimmed);
+		}
+	}
+
+	private boolean looksLikeUuid(String value) {
+		try {
+			UUID.fromString(value);
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 
 	@Override
