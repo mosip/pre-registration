@@ -178,18 +178,7 @@ public class CommonServiceUtil {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getDemographicData method of userValidation with priid " + preregUserId + " and userID "
 						+ authUserId);
-		// Map the auth user to canonical UUID for comparison
-		String canonicalAuthUserId = null;
-		try {
-			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-				userDetailsService.findOrCreateByIdentifier(authUserId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				canonicalAuthUserId = mappedUser.getUserId().toString();
-			}
-		} catch (Exception ex) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + authUserId, ex);
-		}
+		String canonicalAuthUserId = resolveCanonicalAuthUserId(authUserId);
 		
 		// Compare using canonical UUID
 		if (canonicalAuthUserId == null) {
@@ -222,6 +211,51 @@ public class CommonServiceUtil {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
+	}
+
+	private String resolveCanonicalAuthUserId(String authUserId) {
+		AuthUserDetails authUser = authUserDetails();
+		List<String> identifiers = new ArrayList<>();
+		String trimmedAuthUserId = authUserId != null ? authUserId.trim() : "";
+		if (!trimmedAuthUserId.isEmpty()) {
+			identifiers.add(trimmedAuthUserId);
+		}
+		if (authUser != null) {
+			String contextUserId = authUser.getUserId() != null ? authUser.getUserId().trim() : "";
+			boolean canUseContextFallback = trimmedAuthUserId.isEmpty() || trimmedAuthUserId.equals(contextUserId);
+			if (canUseContextFallback && authUser.getUsername() != null && !authUser.getUsername().trim().isEmpty()
+					&& !identifiers.contains(authUser.getUsername().trim())) {
+				identifiers.add(authUser.getUsername().trim());
+			}
+			if (canUseContextFallback && !contextUserId.isEmpty() && !identifiers.contains(contextUserId)) {
+				identifiers.add(contextUserId);
+			}
+		}
+		for (String identifier : identifiers) {
+			try {
+				java.util.Optional<io.mosip.preregistration.core.common.entity.UserDetails> existing =
+						userDetailsService.findByIdentifier(identifier);
+				if (existing.isPresent() && existing.get().getUserId() != null) {
+					return existing.get().getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Failed lookup by identifier: " + identifier);
+			}
+		}
+		for (String identifier : identifiers) {
+			try {
+				io.mosip.preregistration.core.common.entity.UserDetails mappedUser =
+						userDetailsService.findOrCreateByIdentifier(identifier);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					return mappedUser.getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Failed to map auth identifier to canonical UUID: " + identifier, ex);
+			}
+		}
+		return null;
 	}
 
 	public DemographicResponseDTO setterForCreateDTO(DemographicEntity demographicEntity) {
