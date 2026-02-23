@@ -11,9 +11,12 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import io.mosip.kernel.core.idvalidator.exception.InvalidIDException;
 import io.mosip.preregistration.application.exception.*;
@@ -426,19 +429,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 				if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
 						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
 					//userValidation(applicationEntity);
-					String authUserId = authUserDetails().getUserId();
-					String canonicalAuthUserId = null;
-					try {
-						io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-							userDetailsService.findOrCreateByIdentifier(authUserId);
-						if (mappedUser != null && mappedUser.getUserId() != null) {
-							canonicalAuthUserId = mappedUser.getUserId().toString();
-						}
-					} catch (Exception ex) {
-						log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-								"Failed to map auth user to canonical UUID: " + authUserId, ex);
-					}
-					if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(applicationEntity.getEffectiveCrBy().trim())) {
+					String canonicalAuthUserId = resolveCanonicalAuthUserId();
+					if (!isSameOwner(canonicalAuthUserId, applicationEntity.getEffectiveCrBy())) {
 						throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 								ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 					}	
@@ -562,25 +554,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 	}
 
 	private void userValidation(ApplicationEntity applicationEntity) {
-		String authUserId = authUserDetails().getUserId();
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
-					+ applicationEntity.getApplicationId() + " and userID " + authUserId);
-			// Map auth user to canonical UUID for comparison
-			String canonicalAuthUserId = null;
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-					userDetailsService.findOrCreateByIdentifier(authUserId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					canonicalAuthUserId = mappedUser.getUserId().toString();
-				}
-			} catch (Exception ex) {
-				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Failed to map auth user to canonical UUID: " + authUserId, ex);
-			}
+					+ applicationEntity.getApplicationId() + " and userID " + authUserDetails().getUserId());
+			String canonicalAuthUserId = resolveCanonicalAuthUserId();
 			// Compare canonical UUIDs
-			if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(applicationEntity.getCrBy().trim())) {
+			if (!isSameOwner(canonicalAuthUserId, applicationEntity.getCrBy())) {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
@@ -624,16 +604,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 			}
 			// Map auth user ID to canonical UUID for query
-			String canonicalUserId = userId;
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-					userDetailsService.findOrCreateByIdentifier(userId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					canonicalUserId = mappedUser.getUserId().toString();
-				}
-			} catch (Exception ex) {
-				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Could not map userId to canonical UUID, using raw userId: " + userId);
+			String canonicalUserId = resolveCanonicalAuthUserId();
+			if (canonicalUserId == null || canonicalUserId.isBlank()) {
+				canonicalUserId = userId;
 			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(canonicalUserId,
 					type.toUpperCase());
@@ -647,5 +620,111 @@ public class ApplicationService implements ApplicationServiceIntf {
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
 		return response;
+	}
+
+	private String resolveCanonicalAuthUserId() {
+		AuthUserDetails authUser = authUserDetails();
+		List<String> identifiers = new ArrayList<>();
+		if (authUser != null) {
+			if (authUser.getUserId() != null && !authUser.getUserId().trim().isEmpty()
+					&& !identifiers.contains(authUser.getUserId().trim())) {
+				identifiers.add(authUser.getUserId().trim());
+			}
+			if (authUser.getUsername() != null && !authUser.getUsername().trim().isEmpty()
+					&& !identifiers.contains(authUser.getUsername().trim())) {
+				identifiers.add(authUser.getUsername().trim());
+			}
+		}
+
+		for (String identifier : identifiers) {
+			try {
+				java.util.Optional<io.mosip.preregistration.core.common.entity.UserDetails> existing =
+						userDetailsService.findByIdentifier(identifier);
+				if (existing.isPresent() && existing.get().getUserId() != null) {
+					return existing.get().getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Failed lookup by identifier: " + identifier);
+			}
+		}
+
+		for (String identifier : identifiers) {
+			try {
+				io.mosip.preregistration.core.common.entity.UserDetails mappedUser =
+						userDetailsService.findOrCreateByIdentifier(identifier);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					return mappedUser.getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Failed to map auth identifier to canonical UUID: " + identifier, ex);
+			}
+		}
+		return null;
+	}
+
+	private boolean isSameOwner(String canonicalAuthUserId, String ownerIdValue) {
+		if (ownerIdValue == null || ownerIdValue.trim().isEmpty()) {
+			return false;
+		}
+		Set<String> authCandidates = new HashSet<>();
+		if (canonicalAuthUserId != null && !canonicalAuthUserId.trim().isEmpty()) {
+			authCandidates.add(canonicalAuthUserId.trim());
+		}
+		AuthUserDetails authUser = authUserDetails();
+		if (authUser != null) {
+			addResolvedCanonicalCandidate(authCandidates, authUser.getUserId());
+			addResolvedCanonicalCandidate(authCandidates, authUser.getUsername());
+		}
+
+		Set<String> ownerCandidates = new HashSet<>();
+		addResolvedCanonicalCandidate(ownerCandidates, ownerIdValue);
+		for (String authCandidate : authCandidates) {
+			if (ownerCandidates.contains(authCandidate)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	private void addResolvedCanonicalCandidate(Set<String> candidates, String identifier) {
+		if (identifier == null || identifier.trim().isEmpty()) {
+			return;
+		}
+		String trimmed = identifier.trim();
+		candidates.add(trimmed);
+		if (looksLikeUuid(trimmed)) {
+			candidates.add(trimmed);
+		}
+		try {
+			java.util.Optional<io.mosip.preregistration.core.common.entity.UserDetails> mapped =
+					userDetailsService.findByIdentifier(trimmed);
+			if (mapped.isPresent() && mapped.get().getUserId() != null) {
+				candidates.add(mapped.get().getUserId().toString());
+			}
+		} catch (Exception ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed lookup by identifier: " + trimmed);
+		}
+		try {
+			io.mosip.preregistration.core.common.entity.UserDetails mapped =
+					userDetailsService.findOrCreateByIdentifier(trimmed);
+			if (mapped != null && mapped.getUserId() != null) {
+				candidates.add(mapped.getUserId().toString());
+			}
+		} catch (Exception ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed canonical mapping for identifier: " + trimmed);
+		}
+	}
+
+	private boolean looksLikeUuid(String value) {
+		try {
+			UUID.fromString(value);
+			return true;
+		} catch (Exception ex) {
+			return false;
+		}
 	}
 }
