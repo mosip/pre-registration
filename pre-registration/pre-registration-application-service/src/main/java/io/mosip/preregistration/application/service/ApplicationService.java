@@ -426,18 +426,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 				if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
 						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
 					//userValidation(applicationEntity);
-					String authUserId = authUserDetails().getUserId();
-					String canonicalAuthUserId = null;
-					try {
-						io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-							userDetailsService.findOrCreateByIdentifier(authUserId);
-						if (mappedUser != null && mappedUser.getUserId() != null) {
-							canonicalAuthUserId = mappedUser.getUserId().toString();
-						}
-					} catch (Exception ex) {
-						log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-								"Failed to map auth user to canonical UUID: " + authUserId, ex);
-					}
+					String canonicalAuthUserId = resolveCanonicalAuthUserId();
 					if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(applicationEntity.getEffectiveCrBy().trim())) {
 						throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 								ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
@@ -562,23 +551,11 @@ public class ApplicationService implements ApplicationServiceIntf {
 	}
 
 	private void userValidation(ApplicationEntity applicationEntity) {
-		String authUserId = authUserDetails().getUserId();
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
-					+ applicationEntity.getApplicationId() + " and userID " + authUserId);
-			// Map auth user to canonical UUID for comparison
-			String canonicalAuthUserId = null;
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-					userDetailsService.findOrCreateByIdentifier(authUserId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					canonicalAuthUserId = mappedUser.getUserId().toString();
-				}
-			} catch (Exception ex) {
-				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Failed to map auth user to canonical UUID: " + authUserId, ex);
-			}
+					+ applicationEntity.getApplicationId() + " and userID " + authUserDetails().getUserId());
+			String canonicalAuthUserId = resolveCanonicalAuthUserId();
 			// Compare canonical UUIDs
 			if (canonicalAuthUserId == null || !canonicalAuthUserId.trim().equals(applicationEntity.getCrBy().trim())) {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
@@ -624,16 +601,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 			}
 			// Map auth user ID to canonical UUID for query
-			String canonicalUserId = userId;
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-					userDetailsService.findOrCreateByIdentifier(userId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					canonicalUserId = mappedUser.getUserId().toString();
-				}
-			} catch (Exception ex) {
-				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Could not map userId to canonical UUID, using raw userId: " + userId);
+			String canonicalUserId = resolveCanonicalAuthUserId();
+			if (canonicalUserId == null || canonicalUserId.isBlank()) {
+				canonicalUserId = userId;
 			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(canonicalUserId,
 					type.toUpperCase());
@@ -647,5 +617,46 @@ public class ApplicationService implements ApplicationServiceIntf {
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
 		return response;
+	}
+
+	private String resolveCanonicalAuthUserId() {
+		AuthUserDetails authUser = authUserDetails();
+		List<String> identifiers = new ArrayList<>();
+		if (authUser != null) {
+			if (authUser.getUsername() != null && !authUser.getUsername().trim().isEmpty()) {
+				identifiers.add(authUser.getUsername().trim());
+			}
+			if (authUser.getUserId() != null && !authUser.getUserId().trim().isEmpty()
+					&& !identifiers.contains(authUser.getUserId().trim())) {
+				identifiers.add(authUser.getUserId().trim());
+			}
+		}
+
+		for (String identifier : identifiers) {
+			try {
+				java.util.Optional<io.mosip.preregistration.core.common.entity.UserDetails> existing =
+						userDetailsService.findByIdentifier(identifier);
+				if (existing.isPresent() && existing.get().getUserId() != null) {
+					return existing.get().getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Failed lookup by identifier: " + identifier);
+			}
+		}
+
+		for (String identifier : identifiers) {
+			try {
+				io.mosip.preregistration.core.common.entity.UserDetails mappedUser =
+						userDetailsService.findOrCreateByIdentifier(identifier);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					return mappedUser.getUserId().toString();
+				}
+			} catch (Exception ex) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Failed to map auth identifier to canonical UUID: " + identifier, ex);
+			}
+		}
+		return null;
 	}
 }
