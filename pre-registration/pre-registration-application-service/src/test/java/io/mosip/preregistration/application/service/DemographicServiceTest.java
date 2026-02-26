@@ -356,6 +356,12 @@ public class DemographicServiceTest {
 		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(preRegistrationService, "commonServiceUtil", commonServiceUtil);
 		ReflectionTestUtils.setField(demographicService, "commonServiceUtil", commonServiceUtil);
+		ReflectionTestUtils.setField(preRegistrationService, "userDetailsService", userDetailsService);
+		ReflectionTestUtils.setField(demographicService, "userDetailsService", userDetailsService);
+		ReflectionTestUtils.setField(preRegistrationService, "useCanonicalUserId", true);
+		ReflectionTestUtils.setField(commonServiceUtil, "useCanonicalUserId", true);
+		ReflectionTestUtils.setField(demographicService, "useCanonicalUserId", true);
+		ReflectionTestUtils.setField(demographicServiceUtil, "useCanonicalUserId", true);
 		
 		preRegistrationEntity = new DemographicEntity();
 		ClassLoader classLoader = getClass().getClassLoader();

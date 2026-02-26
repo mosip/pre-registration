@@ -29,6 +29,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -154,6 +155,9 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+
+	@Value("${mosip.prereg.use.canonical.user_id}")
+	private boolean useCanonicalUserId;
 
 	/**
 	 * Logger instance
@@ -315,16 +319,18 @@ public class DemographicServiceUtil {
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
 		
 		// Map to canonical user_id from user_details table
-		try {
-			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				String canonicalUserId = mappedUser.getUserId().toString();
-				demographicEntity.setCrAppuserId(canonicalUserId);
-				demographicEntity.setCreatedBy(canonicalUserId);
-				demographicEntity.setUpdatedBy(canonicalUserId);
+		if (useCanonicalUserId) {
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					String canonicalUserId = mappedUser.getUserId().toString();
+					demographicEntity.setCrAppuserId(canonicalUserId);
+					demographicEntity.setCreatedBy(canonicalUserId);
+					demographicEntity.setUpdatedBy(canonicalUserId);
+				}
+			} catch (Exception e) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for demographic create, falling back to legacy identifiers", e);
 			}
-		} catch (Exception e) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for demographic create, falling back to legacy identifiers", e);
 		}
 		
 		return demographicEntity;
@@ -719,16 +725,18 @@ public class DemographicServiceUtil {
 		applicationEntity.setUpdBy(userId);
 		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		applicationEntity.setContactInfo(userId);			// populate canonical user ids if service available
-		try {
-			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				String canonicalUserId = mappedUser.getUserId().toString();
-				applicationEntity.setCrBy(canonicalUserId);
-				applicationEntity.setUpdBy(canonicalUserId);
-				applicationEntity.setContactInfo(canonicalUserId);
+		if (useCanonicalUserId) {
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					String canonicalUserId = mappedUser.getUserId().toString();
+					applicationEntity.setCrBy(canonicalUserId);
+					applicationEntity.setUpdBy(canonicalUserId);
+					applicationEntity.setContactInfo(canonicalUserId);
+				}
+			} catch (Exception e) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed, falling back to legacy identifiers", e);
 			}
-		} catch (Exception e) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed, falling back to legacy identifiers", e);
 		}		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
@@ -751,13 +759,15 @@ public class DemographicServiceUtil {
 			applicationEntity.setUpdBy(userId);
 			applicationEntity.setUpdDtime(LocalDateTime.now());
 			// populate canonical updated-by user id
-			try {
-				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					applicationEntity.setUpdBy(mappedUser.getUserId().toString());
+			if (useCanonicalUserId) {
+				try {
+					UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
+					if (mappedUser != null && mappedUser.getUserId() != null) {
+						applicationEntity.setUpdBy(mappedUser.getUserId().toString());
+					}
+				} catch (Exception e) {
+					log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for updateApplicationStatus", e);
 				}
-			} catch (Exception e) {
-				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for updateApplicationStatus", e);
 			}
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());

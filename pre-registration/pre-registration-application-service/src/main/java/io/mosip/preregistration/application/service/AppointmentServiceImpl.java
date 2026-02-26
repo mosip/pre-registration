@@ -97,6 +97,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Value("${mosip.preregistration.booking.delete.id}")
 	private String appointmentDeletelId;
 
+	@Value("${mosip.prereg.use.canonical.user_id}")
+	private boolean useCanonicalUserId;
+
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
 
@@ -169,6 +172,14 @@ public class AppointmentServiceImpl implements AppointmentService {
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
 			if (applicationEntity != null) {
+				if (!useCanonicalUserId) {
+					String expectedCrBy = applicationEntity.getCrBy();
+					if (expectedCrBy == null || !authUserId.trim().equals(expectedCrBy.trim())) {
+						throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
+								AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
+					}
+					return;
+				}
 				// Map the auth user to canonical UUID for comparison
 				String canonicalAuthUserId = null;
 				try {
@@ -469,20 +480,22 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			return applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
-			// Map to canonical UUID if service available
-			try {
-				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserDetails().getUserId());
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					applicationEntity.setUpdBy(mappedUser.getUserId().toString());
-					// attempt save again with canonical id
-					try {
-						return applicationRepostiory.save(applicationEntity);
-					} catch (Exception ex2) {
-						// fall through to logging and throwing below
+			// Map to canonical UUID if enabled and service available
+			if (useCanonicalUserId) {
+				try {
+					UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserDetails().getUserId());
+					if (mappedUser != null && mappedUser.getUserId() != null) {
+						applicationEntity.setUpdBy(mappedUser.getUserId().toString());
+						// attempt save again with canonical id
+						try {
+							return applicationRepostiory.save(applicationEntity);
+						} catch (Exception ex2) {
+							// fall through to logging and throwing below
+						}
 					}
+				} catch (Exception e) {
+					log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for appointment update", e);
 				}
-			} catch (Exception e) {
-				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for appointment update", e);
 			}
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Failed to update application for the preregistrationId: " + preRegistrationId, ex);
