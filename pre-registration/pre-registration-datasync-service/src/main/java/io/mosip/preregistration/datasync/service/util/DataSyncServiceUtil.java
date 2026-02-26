@@ -35,6 +35,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
@@ -308,18 +309,17 @@ public class DataSyncServiceUtil {
 			String regCenterId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetPreIdsRestService method of datasync service util");
 		BookingDataByRegIdDto preRegIdsByRegCenterIdResponseDTO = null;
+		Map<String, String> params = new HashMap<>();
+		params.put("registrationCenterId", regCenterId);
+		HttpHeaders headers = new HttpHeaders();
+		headers.setContentType(MediaType.APPLICATION_JSON);
+		HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
 		try {
-			Map<String, String> params = new HashMap<>();
-			params.put("registrationCenterId", regCenterId);
 			UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder
-					.fromHttpUrl(bookingResourceUrl + "/appointment/registrationCenterId/{registrationCenterId}");
+					.fromHttpUrl(bookingResourceUrl + "/appointment/preRegistrationId/{registrationCenterId}");
 			URI uri = uriComponentsBuilder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri).queryParam("from_date", fromDate)
 					.queryParam("to_date", toDate);
-
-			HttpHeaders headers = new HttpHeaders();
-			headers.setContentType(MediaType.APPLICATION_JSON);
-			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder.build().encode(StandardCharsets.UTF_8).toUriString();
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In callGetPreIdsRestService method URL- " + uriBuilder);
 			ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = selfTokenRestTemplate.exchange(uriBuilder,
@@ -341,6 +341,42 @@ public class DataSyncServiceUtil {
 				}
 			}
 		} catch (HttpStatusCodeException ex) {
+			if (HttpStatus.NOT_FOUND.equals(ex.getStatusCode())) {
+				try {
+					UriComponentsBuilder legacyUriComponentsBuilder = UriComponentsBuilder
+							.fromHttpUrl(bookingResourceUrl + "/appointment/registrationCenterId/{registrationCenterId}");
+					URI legacyUri = legacyUriComponentsBuilder.buildAndExpand(params).toUri();
+					UriComponentsBuilder legacyBuilder = UriComponentsBuilder.fromUri(legacyUri).queryParam("from_date",
+							fromDate).queryParam("to_date", toDate);
+					String legacyUriBuilder = legacyBuilder.build().encode(StandardCharsets.UTF_8).toUriString();
+					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+							"In callGetPreIdsRestService method fallback URL- " + legacyUriBuilder);
+					ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> legacyRespEntity = selfTokenRestTemplate.exchange(
+							legacyUriBuilder, HttpMethod.GET, httpEntity,
+							new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
+							}, params);
+					MainResponseDTO<BookingDataByRegIdDto> legacyBody = legacyRespEntity.getBody();
+					if (legacyBody != null) {
+						if (legacyBody.getErrors() != null && !legacyBody.getErrors().isEmpty()) {
+							for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : legacyBody.getErrors()) {
+								if (exceptionJSONInfoDTO != null) {
+									throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
+											exceptionJSONInfoDTO.getMessage(), null);
+								}
+							}
+						} else {
+							preRegIdsByRegCenterIdResponseDTO = mapper.convertValue(legacyBody.getResponse(),
+									BookingDataByRegIdDto.class);
+							return preRegIdsByRegCenterIdResponseDTO;
+						}
+					}
+				} catch (RestClientException fallbackEx) {
+					log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(fallbackEx));
+					log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+							"In callGetPreIdsRestService fallback method of datasync service util - "
+									+ fallbackEx.getMessage());
+				}
+			}
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetPreIdsRestService method of datasync service util - " + ex.getMessage());
