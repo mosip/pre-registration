@@ -200,6 +200,9 @@ public class DataSyncServiceUtil {
 	@Value("${version:1.0}")
 	private String version;
 
+	@Value("${mosip.prereg.use.canonical.user_id}")
+	private boolean useCanonicalUserId;
+
 	@Value("${mosip.preregistration.sync.sign.appid}")
 	private String signAppId;
 
@@ -888,6 +891,9 @@ public class DataSyncServiceUtil {
 	
 	private String getCanonicalUserId(String userId) {
 		if (userId == null || userId.trim().isEmpty()) {
+			return userId;
+		}
+		if (!useCanonicalUserId) {
 			return userId;
 		}
 		try {

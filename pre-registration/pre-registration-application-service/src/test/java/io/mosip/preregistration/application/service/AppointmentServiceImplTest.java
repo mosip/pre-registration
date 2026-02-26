@@ -113,6 +113,7 @@ public class AppointmentServiceImplTest {
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(appointmentServiceImpl, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		ReflectionTestUtils.setField(appointmentServiceImpl, "useCanonicalUserId", false);
 	}
 
 	@Test
@@ -594,17 +595,22 @@ public class AppointmentServiceImplTest {
 		assertEquals("ROLE_USER", result.get(1));
 	}
 
+	/**
+	 * Static inner class to test handling of null authority strings
+	 */
+	static class NullAuthority implements GrantedAuthority {
+		@Override
+		public String getAuthority() {
+			return null;
+		}
+	}
+
 	@Test
 	public void test_handle_null_authority_strings() {
 		AppointmentServiceImpl appointmentService = new AppointmentServiceImpl();
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
-		authorities.add(new GrantedAuthority() {
-			@Override
-			public String getAuthority() {
-				return null;
-			}
-		});
+		authorities.add(new NullAuthority());
 		authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
 		List<String> result = ReflectionTestUtils.invokeMethod(appointmentService, "listAuth", authorities);
