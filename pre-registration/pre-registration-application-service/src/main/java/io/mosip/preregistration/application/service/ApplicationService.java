@@ -121,6 +121,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	@Value("${mosip.preregistration.applications.all.get}")
 	private String allApplicationsId;
+
+	@Value("${mosip.prereg.use.canonical.user_id}")
+	private boolean useCanonicalUserId;
 	/**
 	 * logger instance
 	 */
@@ -501,15 +504,17 @@ public class ApplicationService implements ApplicationServiceIntf {
 		try {
 			// Map auth user ID to canonical UUID for query
 			String canonicalUserId = userId;
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-					userDetailsService.findOrCreateByIdentifier(userId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					canonicalUserId = mappedUser.getUserId().toString();
+			if (useCanonicalUserId) {
+				try {
+					io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
+						userDetailsService.findOrCreateByIdentifier(userId);
+					if (mappedUser != null && mappedUser.getUserId() != null) {
+						canonicalUserId = mappedUser.getUserId().toString();
+					}
+				} catch (Exception ex) {
+					log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Could not map userId to canonical UUID, using raw userId: " + userId);
 				}
-			} catch (Exception ex) {
-				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Could not map userId to canonical UUID, using raw userId: " + userId);
 			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedBy(canonicalUserId);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
@@ -567,6 +572,13 @@ public class ApplicationService implements ApplicationServiceIntf {
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
 					+ applicationEntity.getApplicationId() + " and userID " + authUserId);
+			if (!useCanonicalUserId) {
+				if (!authUserId.trim().equals(applicationEntity.getCrBy().trim())) {
+					throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
+							ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
+				}
+				return;
+			}
 			// Map auth user to canonical UUID for comparison
 			String canonicalAuthUserId = null;
 			try {
@@ -625,15 +637,17 @@ public class ApplicationService implements ApplicationServiceIntf {
 			}
 			// Map auth user ID to canonical UUID for query
 			String canonicalUserId = userId;
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-					userDetailsService.findOrCreateByIdentifier(userId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					canonicalUserId = mappedUser.getUserId().toString();
+			if (useCanonicalUserId) {
+				try {
+					io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
+						userDetailsService.findOrCreateByIdentifier(userId);
+					if (mappedUser != null && mappedUser.getUserId() != null) {
+						canonicalUserId = mappedUser.getUserId().toString();
+					}
+				} catch (Exception ex) {
+					log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Could not map userId to canonical UUID, using raw userId: " + userId);
 				}
-			} catch (Exception ex) {
-				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Could not map userId to canonical UUID, using raw userId: " + userId);
 			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(canonicalUserId,
 					type.toUpperCase());

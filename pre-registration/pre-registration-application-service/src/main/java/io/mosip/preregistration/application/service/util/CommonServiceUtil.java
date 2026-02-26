@@ -112,6 +112,9 @@ public class CommonServiceUtil {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Value("${mosip.prereg.use.canonical.user_id}")
+	private boolean useCanonicalUserId;
+
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
 	 */
@@ -178,6 +181,15 @@ public class CommonServiceUtil {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getDemographicData method of userValidation with priid " + preregUserId + " and userID "
 						+ authUserId);
+		String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
+		String trimmedPreregUserId = preregUserId == null ? "" : preregUserId.trim();
+		if (!useCanonicalUserId) {
+			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {
+				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+			}
+			return;
+		}
 		// Map the auth user to canonical UUID for comparison
 		String canonicalAuthUserId = null;
 		try {
@@ -191,14 +203,7 @@ public class CommonServiceUtil {
 					"Failed to map auth user to canonical UUID: " + authUserId, ex);
 		}
 		
-		// Compare using canonical UUID
-		if (canonicalAuthUserId == null) {
-			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-		}
-		
-		String trimmedPreregUserId = preregUserId != null ? preregUserId.trim() : "";
-		String trimmedCanonicalAuthUserId = canonicalAuthUserId.trim();
+		String trimmedCanonicalAuthUserId = canonicalAuthUserId == null ? "" : canonicalAuthUserId.trim();
 		
 		// Check if preregUserId is already a UUID (new data) or a raw identifier (old data)
 		if (!trimmedPreregUserId.equals(trimmedCanonicalAuthUserId)) {
@@ -218,9 +223,11 @@ public class CommonServiceUtil {
 				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"Could not map preregUserId to canonical UUID, might already be a UUID: " + trimmedPreregUserId);
 			}
-			// No match found in either direct comparison or mapping
-			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+			// Fallback for legacy data/tests where raw identifiers are still present.
+			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {
+				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+			}
 		}
 	}
 
