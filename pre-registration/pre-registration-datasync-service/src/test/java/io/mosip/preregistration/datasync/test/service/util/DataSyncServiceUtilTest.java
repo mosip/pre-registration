@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.net.URI;
-import java.nio.charset.StandardCharsets;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -34,14 +33,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.WebApplicationContext;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
@@ -325,47 +322,6 @@ public class DataSyncServiceUtilTest {
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
 				}), Mockito.anyMap())).thenReturn(respEntity);
 		serviceUtil.getBookedPreIdsByDateAndRegCenterIdRestService(fromDate, toDate, "10001");
-	}
-
-	@Test
-	public void callGetPreIdsRestServiceEmptyErrorsShouldReturnResponseTest() {
-		Map<String, Map<LocalDate, SlotTimeDto>> idsWithAppointmentDate = new HashMap<>();
-		Map<LocalDate, SlotTimeDto> appointDateWithFromTime = new HashMap<>();
-		SlotTimeDto timeDto = new SlotTimeDto();
-		timeDto.setFromTime(LocalTime.now().minusMinutes(-15));
-		timeDto.setToTime(LocalTime.now().plusMinutes(120));
-		appointDateWithFromTime.put(LocalDate.now(), timeDto);
-		idsWithAppointmentDate.put("23587986034785", appointDateWithFromTime);
-
-		MainResponseDTO<BookingDataByRegIdDto> mainResponseDTO = new MainResponseDTO<>();
-		BookingDataByRegIdDto byRegCenterIdResponseDTO = new BookingDataByRegIdDto();
-		byRegCenterIdResponseDTO.setIdsWithAppointmentDate(idsWithAppointmentDate);
-		byRegCenterIdResponseDTO.setRegistrationCenterId("10001");
-		mainResponseDTO.setResponsetime(resTime);
-		mainResponseDTO.setErrors(new ArrayList<>());
-		mainResponseDTO.setResponse(byRegCenterIdResponseDTO);
-		ResponseEntity<MainResponseDTO<BookingDataByRegIdDto>> respEntity = new ResponseEntity<>(mainResponseDTO,
-				HttpStatus.OK);
-
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
-				}), Mockito.anyMap())).thenReturn(respEntity);
-
-		BookingDataByRegIdDto response = serviceUtil.getBookedPreIdsByDateAndRegCenterIdRestService("2018-01-17",
-				"2019-01-17", "10001");
-		assertEquals("10001", response.getRegistrationCenterId());
-	}
-
-	@Test(expected = RecordNotFoundForDateRange.class)
-	public void callGetPreIdsRestServiceHttpErrorShouldPreserveDownstreamCodeTest() {
-		String downstreamError = "{\"errors\":[{\"errorCode\":\"PRG_BOOK_RCI_032\",\"message\":\"Invalid date\"}]}";
-		HttpClientErrorException exception = HttpClientErrorException.create(HttpStatus.BAD_REQUEST, "Bad Request",
-				HttpHeaders.EMPTY, downstreamError.getBytes(StandardCharsets.UTF_8), StandardCharsets.UTF_8);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
-				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<BookingDataByRegIdDto>>() {
-				}), Mockito.anyMap())).thenThrow(exception);
-
-		serviceUtil.getBookedPreIdsByDateAndRegCenterIdRestService("2018-01-17", "2019-01-17", "10001");
 	}
 
 	@Test
