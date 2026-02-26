@@ -36,6 +36,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -327,7 +328,7 @@ public class DataSyncServiceUtil {
 					}, params);
 			MainResponseDTO<BookingDataByRegIdDto> body = respEntity.getBody();
 			if (body != null) {
-				if (body.getErrors() != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
 					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
 						if (exceptionJSONInfoDTO != null) {
 							throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
@@ -339,6 +340,11 @@ public class DataSyncServiceUtil {
 							BookingDataByRegIdDto.class);
 				}
 			}
+		} catch (HttpStatusCodeException ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In callGetPreIdsRestService method of datasync service util - " + ex.getMessage());
+			throw mapDownstreamBookingError(ex);
 		} catch (RestClientException ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -384,7 +390,7 @@ public class DataSyncServiceUtil {
 							}, params);
 			MainResponseDTO<List<ApplicationDetailResponseDTO>> body = respEntity.getBody();
 			if (body != null) {
-				if (body.getErrors() != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
 					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
 						if (exceptionJSONInfoDTO != null) {
 							throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
@@ -395,6 +401,11 @@ public class DataSyncServiceUtil {
 					applicationDetailResponseList = body.getResponse();
 				}
 			}
+		} catch (HttpStatusCodeException ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In getAllBookedApplicationIds method of datasync service util - " + ex.getMessage());
+			throw mapDownstreamBookingError(ex);
 		} catch (RestClientException ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -404,6 +415,26 @@ public class DataSyncServiceUtil {
 
 		}
 		return applicationDetailResponseList;
+	}
+
+	private RecordNotFoundForDateRange mapDownstreamBookingError(HttpStatusCodeException ex) {
+		try {
+			String responseBody = ex.getResponseBodyAsString();
+			if (responseBody != null && !responseBody.trim().isEmpty()) {
+				MainResponseDTO<?> mainResponseDTO = mapper.readValue(responseBody, MainResponseDTO.class);
+				if (mainResponseDTO.getErrors() != null && !mainResponseDTO.getErrors().isEmpty()) {
+					ExceptionJSONInfoDTO error = mainResponseDTO.getErrors().get(0);
+					if (error != null && error.getErrorCode() != null) {
+						return new RecordNotFoundForDateRange(error.getErrorCode(), error.getMessage(), null);
+					}
+				}
+			}
+		} catch (Exception parseException) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to parse booking service error response for sync call", parseException);
+		}
+		return new RecordNotFoundForDateRange(ErrorCodes.PRG_DATA_SYNC_016.getCode(),
+				ErrorMessages.BOOKING_NOT_FOUND.getMessage(), null);
 	}
 
 	/**
