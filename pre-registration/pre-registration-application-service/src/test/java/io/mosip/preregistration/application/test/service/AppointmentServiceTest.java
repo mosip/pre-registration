@@ -52,7 +52,7 @@ public class AppointmentServiceTest {
 
 	static {
 		// Set the property before Spring tries to inject @Value
-		System.setProperty("mosip.prereg.use.canonical.user_id", "true");
+		System.setProperty("mosip.prereg.pii.backward.compatibility", "false");
 	}
 
 	@MockBean
@@ -94,7 +94,7 @@ public class AppointmentServiceTest {
 	@Before
 	public void setup() {
 		ReflectionTestUtils.setField(appointmentService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		ReflectionTestUtils.setField(appointmentService, "useCanonicalUserId", true);
+		ReflectionTestUtils.setField(appointmentService, "piiBackwardCompatibility", false);
 
 	}
 

@@ -10,6 +10,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -147,8 +148,8 @@ public class DemographicService implements DemographicServiceIntf {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	@Value("${mosip.prereg.use.canonical.user_id}")
-	private boolean useCanonicalUserId;
+	@Value("${mosip.prereg.pii.backward.compatibility:false}")
+	private boolean piiBackwardCompatibility;
 
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
@@ -496,7 +497,8 @@ public class DemographicService implements DemographicServiceIntf {
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details start time : " + DateUtils.getUTCCurrentDateTimeString());
-				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedBy(userId,
+				List<String> lookupIds = getUserLookupIds(userId);
+				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedByInAndStatusCode(lookupIds,
 						StatusCodes.CONSUMED.getCode());
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details end time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -519,7 +521,7 @@ public class DemographicService implements DemographicServiceIntf {
 								"pagination start time : " + DateUtils.getUTCCurrentDateTimeString());
 						@SuppressWarnings("static-access")
 						Page<DemographicEntity> demographicEntityPage = demographicRepository
-								.findByCreatedByOrderByCreateDateTime(userId, StatusCodes.CONSUMED.getCode(),
+								.findByCreatedByInAndStatusCodeOrderByCreateDateTime(lookupIds, StatusCodes.CONSUMED.getCode(),
 										PageRequest.of(serviceUtil.parsePageIndex(pageIdx),
 												serviceUtil.parsePageSize(pageSize)));
 						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -878,14 +880,6 @@ public class DemographicService implements DemographicServiceIntf {
 				+ preregUserId + " and userID " + authUserId);
 		String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
 		String trimmedPreregUserId = preregUserId == null ? "" : preregUserId.trim();
-		if (!useCanonicalUserId) {
-			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {
-				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-			}
-			return;
-		}
-		// Map the auth user to canonical UUID for comparison
 		String canonicalAuthUserId = null;
 		try {
 			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
@@ -899,7 +893,15 @@ public class DemographicService implements DemographicServiceIntf {
 		}
 		
 		String trimmedCanonicalAuthUserId = canonicalAuthUserId == null ? "" : canonicalAuthUserId.trim();
-		
+
+		if (!piiBackwardCompatibility) {
+			if (!trimmedCanonicalAuthUserId.equals(trimmedPreregUserId)) {
+				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+			}
+			return;
+		}
+
 		// Check if preregUserId is already a UUID (new data) or a raw identifier (old data)
 		if (!trimmedPreregUserId.equals(trimmedCanonicalAuthUserId)) {
 			// Try mapping preregUserId to canonical UUID in case it's old data
@@ -924,6 +926,35 @@ public class DemographicService implements DemographicServiceIntf {
 						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 			}
 		}
+	}
+
+	private String resolveCanonicalUserId(String userId) {
+		if (userId == null || userId.trim().isEmpty()) {
+			return "";
+		}
+		try {
+			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = userDetailsService
+					.findOrCreateByIdentifier(userId);
+			if (mappedUser != null && mappedUser.getUserId() != null) {
+				return mappedUser.getUserId().toString().trim();
+			}
+		} catch (Exception ex) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to map auth user to canonical UUID: " + userId, ex);
+		}
+		return "";
+	}
+
+	private List<String> getUserLookupIds(String authUserId) {
+		Set<String> ids = new LinkedHashSet<>();
+		String canonical = resolveCanonicalUserId(authUserId);
+		if (!canonical.isEmpty()) {
+			ids.add(canonical);
+		}
+		if (piiBackwardCompatibility && authUserId != null && !authUserId.trim().isEmpty()) {
+			ids.add(authUserId.trim());
+		}
+		return new ArrayList<>(ids);
 	}
 
 	private JSONObject getDocumentMetadata(DemographicEntity demographicEntity, String poa)
