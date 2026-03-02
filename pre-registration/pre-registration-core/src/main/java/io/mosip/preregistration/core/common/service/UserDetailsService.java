@@ -116,19 +116,33 @@ public class UserDetailsService {
         Optional<UserDetails> found = userDetailsRepository.findByIdentifierHash(hash);
         if (found.isPresent()) {
             UserDetails existing = found.get();
+            boolean needsSave = false;
+            if (existing.getCrDtimes() == null) {
+                existing.setCrDtimes(LocalDateTime.now());
+                needsSave = true;
+            }
             if (existing.getIdentifierEncrypted() == null || existing.getIdentifierEncrypted().isBlank()) {
                 String encrypted = encryptIdentifierIfConfigured(identifier);
                 if (encrypted != null) {
                     existing.setIdentifierEncrypted(encrypted);
-                    return userDetailsRepository.save(existing);
+                    existing.setEncryptedDtimes(LocalDateTime.now());
+                    needsSave = true;
                 }
+            }
+            if (needsSave) {
+                return userDetailsRepository.save(existing);
             }
             return existing;
         }
         UserDetails u = new UserDetails();
         u.setUserId(UUID.randomUUID());
         u.setIdentifierHash(hash);
-        u.setIdentifierEncrypted(encryptIdentifierIfConfigured(identifier));
+        u.setCrDtimes(LocalDateTime.now());
+        String encrypted = encryptIdentifierIfConfigured(identifier);
+        u.setIdentifierEncrypted(encrypted);
+        if (encrypted != null && !encrypted.isBlank()) {
+            u.setEncryptedDtimes(LocalDateTime.now());
+        }
         return userDetailsRepository.save(u);
     }
 
