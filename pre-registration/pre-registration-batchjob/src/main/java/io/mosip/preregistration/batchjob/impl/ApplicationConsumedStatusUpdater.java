@@ -159,7 +159,7 @@ public class ApplicationConsumedStatusUpdater {
 
         applicantDocumentList.forEach(applicantDoc -> {
             DocumentEntityConsumed documentEntityConsumed = new DocumentEntityConsumed();
-            documentEntityConsumed.setCrBy(applicantDoc.getCrBy());
+            documentEntityConsumed.setCrBy(applicantDoc.getEffectiveCrBy());
             documentEntityConsumed.setCrDtime(applicantDoc.getCrDtime());
             documentEntityConsumed.setDocCatCode(applicantDoc.getDocCatCode());
             documentEntityConsumed.setDocFileFormat(applicantDoc.getDocFileFormat());
@@ -187,7 +187,7 @@ public class ApplicationConsumedStatusUpdater {
         RegistrationBookingEntityConsumed regAppointmentConsumed = new RegistrationBookingEntityConsumed();
         regAppointmentConsumed.setBookingDateTime(regAppointmentObj.getBookingDateTime());
         regAppointmentConsumed.setPreregistrationId(regAppointmentObj.getPreregistrationId());
-        regAppointmentConsumed.setCrBy(regAppointmentObj.getCrBy());
+        regAppointmentConsumed.setCrBy(regAppointmentObj.getEffectiveCrBy());
         regAppointmentConsumed.setCrDate(regAppointmentObj.getCrDate());
         regAppointmentConsumed.setId(regAppointmentObj.getId());
         regAppointmentConsumed.setLangCode(regAppointmentObj.getLangCode());
