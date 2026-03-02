@@ -80,8 +80,8 @@ public class OTPManager {
 	@Value("${pre.reg.login.otp.validation-attempt-threshold}")
 	private int otpValidationThreshold;
 
-	@Value("${mosip.prereg.use.canonical.user_id}")
-	private boolean useCanonicalUserId;
+	@Value("${mosip.prereg.pii.backward.compatibility:false}")
+	private boolean piiBackwardCompatibility;
 
 	@Value("${appId}")
 	private String appId;
@@ -141,19 +141,16 @@ public class OTPManager {
 		if (otpRepo.existsByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS)) {
 			OtpTransaction otpTxn = otpRepo.findTopByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
 			otpTxn.setOtpHash(otpHash);
-			// Map to canonical user_id if configured
-			if (useCanonicalUserId) {
-				try {
-					UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
-					if (mappedUser != null && mappedUser.getUserId() != null) {
-						otpTxn.setUpdBy(mappedUser.getUserId().toString());
-					} else {
-						otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
-					}
-				} catch (Exception e) {
-					logger.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for otp update", e);
+			// Always prefer canonical UUID for OTP txn updates.
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					otpTxn.setUpdBy(mappedUser.getUserId().toString());
+				} else {
+					otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 				}
-			} else {
+			} catch (Exception e) {
+				logger.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for otp update", e);
 				otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 			}
 			otpTxn.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
@@ -166,20 +163,16 @@ public class OTPManager {
 			txn.setId(UUID.randomUUID().toString());
 			txn.setRefId(hash(userId));
 			txn.setOtpHash(otpHash);
-			// Map to canonical user_id if configured
-			if (useCanonicalUserId) {
-				try {
-					UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
-					if (mappedUser != null && mappedUser.getUserId() != null) {
-						txn.setCrBy(mappedUser.getUserId().toString());
-					} else {
-						txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
-					}
-				} catch (Exception e) {
-					logger.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for otp create", e);
+			// Always prefer canonical UUID for OTP txn create.
+			try {
+				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+				if (mappedUser != null && mappedUser.getUserId() != null) {
+					txn.setCrBy(mappedUser.getUserId().toString());
+				} else {
 					txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 				}
-			} else {
+			} catch (Exception e) {
+				logger.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for otp create", e);
 				txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
 			}
 			txn.setCrDtimes(DateUtils.getUTCCurrentDateTime());

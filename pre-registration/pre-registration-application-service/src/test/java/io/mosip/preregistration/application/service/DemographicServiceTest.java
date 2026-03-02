@@ -358,10 +358,10 @@ public class DemographicServiceTest {
 		ReflectionTestUtils.setField(demographicService, "commonServiceUtil", commonServiceUtil);
 		ReflectionTestUtils.setField(preRegistrationService, "userDetailsService", userDetailsService);
 		ReflectionTestUtils.setField(demographicService, "userDetailsService", userDetailsService);
-		ReflectionTestUtils.setField(preRegistrationService, "useCanonicalUserId", true);
-		ReflectionTestUtils.setField(commonServiceUtil, "useCanonicalUserId", true);
-		ReflectionTestUtils.setField(demographicService, "useCanonicalUserId", true);
-		ReflectionTestUtils.setField(demographicServiceUtil, "useCanonicalUserId", true);
+		ReflectionTestUtils.setField(preRegistrationService, "piiBackwardCompatibility", true);
+		ReflectionTestUtils.setField(commonServiceUtil, "piiBackwardCompatibility", true);
+		ReflectionTestUtils.setField(demographicService, "piiBackwardCompatibility", true);
+		ReflectionTestUtils.setField(demographicServiceUtil, "piiBackwardCompatibility", true);
 		
 		preRegistrationEntity = new DemographicEntity();
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -586,9 +586,11 @@ public class DemographicServiceTest {
 		Page<DemographicEntity> page = new PageImpl<>(userEntityDetails);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any()))
 				.thenReturn(userEntityDetails.get(0).getApplicantDetailJson());
-		Mockito.when(demographicRepository.findByCreatedBy(userId, "Consumed")).thenReturn(userEntityDetails);
+		Mockito.when(demographicRepository.findByCreatedByInAndStatusCode(Mockito.anyList(), Mockito.eq("Consumed")))
+				.thenReturn(userEntityDetails);
 		Mockito.when(
-				demographicRepository.findByCreatedByOrderByCreateDateTime(Mockito.any(), Mockito.any(), Mockito.any()))
+				demographicRepository.findByCreatedByInAndStatusCodeOrderByCreateDateTime(Mockito.anyList(),
+						Mockito.eq("Consumed"), Mockito.any()))
 				.thenReturn(page);
 
 		MainResponseDTO<BookingRegistrationDTO> dto = new MainResponseDTO<>();
@@ -610,7 +612,7 @@ public class DemographicServiceTest {
 	@Test(expected = SystemIllegalArgumentException.class)
 	public void getApplicationDetailsIndexTest() {
 		String userId = "12345";
-		Mockito.when(demographicRepository.findByCreatedBy(Mockito.anyString(), Mockito.anyString()))
+		Mockito.when(demographicRepository.findByCreatedByInAndStatusCode(Mockito.anyList(), Mockito.anyString()))
 				.thenReturn(userEntityDetails);
 		preRegistrationService.getAllApplicationDetails(userId, "abc");
 
