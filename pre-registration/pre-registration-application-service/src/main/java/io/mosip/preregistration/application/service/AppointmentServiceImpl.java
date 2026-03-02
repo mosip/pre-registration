@@ -174,8 +174,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			if (applicationEntity != null) {
 				String canonicalAuthUserId = null;
 				try {
-					io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-						userDetailsService.findOrCreateByIdentifier(authUserId);
+					UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserId);
 					if (mappedUser != null && mappedUser.getUserId() != null) {
 						canonicalAuthUserId = mappedUser.getUserId().toString();
 					}
