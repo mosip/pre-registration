@@ -1,6 +1,7 @@
 package io.mosip.preregistration.core.common.entity;
 
 import java.util.UUID;
+import java.time.LocalDateTime;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,5 +31,11 @@ public class UserDetails {
 
     @Column(name = "identifier_encrypted")
     private String identifierEncrypted; // Encrypted value (nullable)
+
+    @Column(name = "cr_dtimes")
+    private LocalDateTime crDtimes;
+
+    @Column(name = "encrypted_dtimes")
+    private LocalDateTime encryptedDtimes;
 
 }
