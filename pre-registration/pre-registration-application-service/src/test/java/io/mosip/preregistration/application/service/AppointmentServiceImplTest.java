@@ -113,7 +113,7 @@ public class AppointmentServiceImplTest {
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(appointmentServiceImpl, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		ReflectionTestUtils.setField(appointmentServiceImpl, "useCanonicalUserId", false);
+		ReflectionTestUtils.setField(appointmentServiceImpl, "piiBackwardCompatibility", false);
 	}
 
 	@Test

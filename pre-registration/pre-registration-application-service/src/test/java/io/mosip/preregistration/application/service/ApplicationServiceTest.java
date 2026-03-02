@@ -304,7 +304,7 @@ public class ApplicationServiceTest {
 		applicationEntitie.setApplicationId("1234567890");
 		applicationEntitie.setApplicationStatusCode("Processed");
 		applicationEntities.add(applicationEntitie);
-		Mockito.when(applicationRepository.findByCreatedByBookingType(Mockito.any(), Mockito.any()))
+		Mockito.when(applicationRepository.findByCreatedByInBookingType(Mockito.anyList(), Mockito.any()))
 				.thenReturn(applicationEntities);
 		MainResponseDTO<ApplicationsListDTO> response = applicationService
 				.getAllApplicationsForUserForBookingType(BookingTypeCodes.NEW_PREREGISTRATION.toString());
@@ -581,7 +581,7 @@ public class ApplicationServiceTest {
 
 	@Test(expected = RecordNotFoundException.class)
 	public void testgetAllApplicationsForUserException() {
-		Mockito.when(applicationRepository.findByCreatedBy(Mockito.any())).thenThrow(new RecordNotFoundException(
+		Mockito.when(applicationRepository.findByCreatedByIn(Mockito.anyList())).thenThrow(new RecordNotFoundException(
 				ApplicationErrorCodes.PRG_APP_013.getCode(), ApplicationErrorMessages.NO_RECORD_FOUND.getMessage()));
 		MainResponseDTO<ApplicationsListDTO> response = applicationService.getAllApplicationsForUser();
 	}

@@ -112,8 +112,8 @@ public class CommonServiceUtil {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	@Value("${mosip.prereg.use.canonical.user_id}")
-	private boolean useCanonicalUserId;
+	@Value("${mosip.prereg.pii.backward.compatibility:false}")
+	private boolean piiBackwardCompatibility;
 
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
@@ -183,14 +183,7 @@ public class CommonServiceUtil {
 						+ authUserId);
 		String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
 		String trimmedPreregUserId = preregUserId == null ? "" : preregUserId.trim();
-		if (!useCanonicalUserId) {
-			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {
-				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-			}
-			return;
-		}
-		// Map the auth user to canonical UUID for comparison
+		// UUID-only mode: strict canonical UUID comparison
 		String canonicalAuthUserId = null;
 		try {
 			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
@@ -202,9 +195,16 @@ public class CommonServiceUtil {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Failed to map auth user to canonical UUID: " + authUserId, ex);
 		}
-		
 		String trimmedCanonicalAuthUserId = canonicalAuthUserId == null ? "" : canonicalAuthUserId.trim();
-		
+		if (!piiBackwardCompatibility) {
+			if (!trimmedCanonicalAuthUserId.equals(trimmedPreregUserId)) {
+				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+			}
+			return;
+		}
+
+		// Backward-compat mode: dual-read/validation support (UUID + raw)
 		// Check if preregUserId is already a UUID (new data) or a raw identifier (old data)
 		if (!trimmedPreregUserId.equals(trimmedCanonicalAuthUserId)) {
 			// Try mapping preregUserId to canonical UUID in case it's old data
