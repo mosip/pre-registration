@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -899,10 +900,41 @@ public class DataSyncServiceUtil {
 			}
 		} catch (Exception e) {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"UserDetails mapping failed in reverseDateSyncSave for userId: " + userId, e);
+					"UserDetails mapping failed in reverseDateSyncSave for userId: " + maskIdentifier(userId), e);
 		}
 		return userId;
 	}
+
+	private String maskIdentifier(String value) {
+		if (value == null || value.isBlank()) {
+			return "<empty>";
+		}
+		String trimmed = value.trim();
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+			String local = trimmed.substring(0, atIndex);
+			String domain = trimmed.substring(atIndex);
+			String visibleLocal = local.substring(0, 1);
+			return visibleLocal + "***" + domain;
+		}
+		if (trimmed.matches("\\+?\\d{10,12}")) {
+			boolean hasPlus = trimmed.startsWith("+");
+			String digits = hasPlus ? trimmed.substring(1) : trimmed;
+			if (digits.length() <= 4) {
+				return (hasPlus ? "+" : "") + "****";
+			}
+			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+			return (hasPlus ? "+" : "") + masked;
+		}
+		try {
+			UUID.fromString(trimmed);
+			return "***" + trimmed.substring(trimmed.length() - 6);
+		} catch (Exception ignored) {
+		}
+		int visible = Math.min(4, trimmed.length());
+		return "***" + trimmed.substring(trimmed.length() - visible);
+	}
+
 	public ReverseDatasyncReponseDTO reverseDateSyncSave(Date reqDateTime, ReverseDataSyncRequestDTO request,
 			String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In reverseDateSyncSave method of datasync service util");
