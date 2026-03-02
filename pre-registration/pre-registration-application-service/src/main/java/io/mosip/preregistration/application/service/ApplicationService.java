@@ -16,9 +16,11 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 
 import io.mosip.kernel.core.idvalidator.exception.InvalidIDException;
 import io.mosip.preregistration.application.exception.*;
+import io.mosip.preregistration.core.common.entity.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -502,7 +504,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
-			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Getting the Applications for the userId : " + userId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Getting the Applications for the userId : " + maskIdentifier(userId));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while Getting the Applications for the userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -552,7 +555,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
-					+ applicationEntity.getApplicationId() + " and userID " + authUserId);
+					+ applicationEntity.getApplicationId() + " and userID " + maskIdentifier(authUserId));
 			String canonicalAuthUserId = resolveCanonicalUserId(authUserId);
 			String effectiveCrBy = applicationEntity.getEffectiveCrBy() == null ? "" : applicationEntity.getEffectiveCrBy().trim();
 			if (!effectiveCrBy.equals(canonicalAuthUserId)) {
@@ -607,7 +610,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
-			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Getting the Application Info for userId: " + userId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Getting the Application Info for userId: " + maskIdentifier(userId));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while Getting the Application Info for userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -620,16 +624,46 @@ public class ApplicationService implements ApplicationServiceIntf {
 			return "";
 		}
 		try {
-			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = userDetailsService
+			UserDetails mappedUser = userDetailsService
 					.findOrCreateByIdentifier(userId);
 			if (mappedUser != null && mappedUser.getUserId() != null) {
 				return mappedUser.getUserId().toString().trim();
 			}
 		} catch (Exception ex) {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + userId, ex);
+					"Failed to map auth user to canonical UUID for user: " + maskIdentifier(userId), ex);
 		}
 		return "";
+	}
+
+	private String maskIdentifier(String value) {
+		if (value == null || value.isBlank()) {
+			return "<empty>";
+		}
+		String trimmed = value.trim();
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+			String local = trimmed.substring(0, atIndex);
+			String domain = trimmed.substring(atIndex);
+			String visibleLocal = local.substring(0, 1);
+			return visibleLocal + "***" + domain;
+		}
+		if (trimmed.matches("\\+?\\d{10,12}")) {
+			boolean hasPlus = trimmed.startsWith("+");
+			String digits = hasPlus ? trimmed.substring(1) : trimmed;
+			if (digits.length() <= 4) {
+				return (hasPlus ? "+" : "") + "****";
+			}
+			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+			return (hasPlus ? "+" : "") + masked;
+		}
+		try {
+			UUID.fromString(trimmed);
+			return "***" + trimmed.substring(trimmed.length() - 6);
+		} catch (Exception ignored) {
+		}
+		int visible = Math.min(4, trimmed.length());
+		return "***" + trimmed.substring(trimmed.length() - visible);
 	}
 
 	private List<String> getUserLookupIds(String authUserId) {

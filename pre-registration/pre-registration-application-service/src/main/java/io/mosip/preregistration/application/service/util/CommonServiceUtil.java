@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.core.common.entity.UserDetails;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -186,8 +187,7 @@ public class CommonServiceUtil {
 		// UUID-only mode: strict canonical UUID comparison
 		String canonicalAuthUserId = null;
 		try {
-			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-				userDetailsService.findOrCreateByIdentifier(authUserId);
+			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserId);
 			if (mappedUser != null && mappedUser.getUserId() != null) {
 				canonicalAuthUserId = mappedUser.getUserId().toString();
 			}

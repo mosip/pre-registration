@@ -15,7 +15,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
+import io.mosip.preregistration.core.common.entity.UserDetails;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -877,19 +879,18 @@ public class DemographicService implements DemographicServiceIntf {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDemographicData method of userValidation with priid "
-				+ preregUserId + " and userID " + authUserId);
+				+ maskIdentifier(preregUserId) + " and userID " + maskIdentifier(authUserId));
 		String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
 		String trimmedPreregUserId = preregUserId == null ? "" : preregUserId.trim();
 		String canonicalAuthUserId = null;
 		try {
-			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-				userDetailsService.findOrCreateByIdentifier(authUserId);
+			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserId);
 			if (mappedUser != null && mappedUser.getUserId() != null) {
 				canonicalAuthUserId = mappedUser.getUserId().toString();
 			}
 		} catch (Exception ex) {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + authUserId, ex);
+					"Failed to map auth user to canonical UUID for user: " + maskIdentifier(authUserId), ex);
 		}
 		
 		String trimmedCanonicalAuthUserId = canonicalAuthUserId == null ? "" : canonicalAuthUserId.trim();
@@ -918,7 +919,7 @@ public class DemographicService implements DemographicServiceIntf {
 				}
 			} catch (Exception ex) {
 				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Could not map preregUserId to canonical UUID, might already be a UUID: " + trimmedPreregUserId);
+						"Could not map preregUserId to canonical UUID, value: " + maskIdentifier(trimmedPreregUserId));
 			}
 			// Fallback for legacy data/tests where raw identifiers are still present.
 			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {
@@ -933,16 +934,45 @@ public class DemographicService implements DemographicServiceIntf {
 			return "";
 		}
 		try {
-			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = userDetailsService
-					.findOrCreateByIdentifier(userId);
+			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
 			if (mappedUser != null && mappedUser.getUserId() != null) {
 				return mappedUser.getUserId().toString().trim();
 			}
 		} catch (Exception ex) {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + userId, ex);
+					"Failed to map auth user to canonical UUID for user: " + maskIdentifier(userId), ex);
 		}
 		return "";
+	}
+
+	private String maskIdentifier(String value) {
+		if (value == null || value.isBlank()) {
+			return "<empty>";
+		}
+		String trimmed = value.trim();
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+			String local = trimmed.substring(0, atIndex);
+			String domain = trimmed.substring(atIndex);
+			String visibleLocal = local.substring(0, 1);
+			return visibleLocal + "***" + domain;
+		}
+		if (trimmed.matches("\\+?\\d{10,12}")) {
+			boolean hasPlus = trimmed.startsWith("+");
+			String digits = hasPlus ? trimmed.substring(1) : trimmed;
+			if (digits.length() <= 4) {
+				return (hasPlus ? "+" : "") + "****";
+			}
+			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+			return (hasPlus ? "+" : "") + masked;
+		}
+		try {
+			UUID.fromString(trimmed);
+			return "***" + trimmed.substring(trimmed.length() - 6);
+		} catch (Exception ignored) {
+		}
+		int visible = Math.min(4, trimmed.length());
+		return "***" + trimmed.substring(trimmed.length() - visible);
 	}
 
 	private List<String> getUserLookupIds(String authUserId) {
