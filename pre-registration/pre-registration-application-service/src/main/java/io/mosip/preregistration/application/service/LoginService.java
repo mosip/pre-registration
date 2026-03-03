@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * This class provides different methods for login called by the controller 
@@ -145,7 +146,7 @@ public class LoginService {
 		boolean isSuccess = false;
 
 		log.info("In callsendOtp method of login service  with userID: {} and langCode",
-				userOtpRequest.getRequest().getUserId(), language);
+				maskIdentifier(userOtpRequest.getRequest().getUserId()), language);
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
@@ -198,7 +199,7 @@ public class LoginService {
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
 
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method with userId "
-				+ request.getRequest().getUserId() + "and langCode " + request.getRequest().getUserId());
+				+ maskIdentifier(request.getRequest().getUserId()) + " and langCode " + request.getRequest().getLangCode());
 		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
 				.getMainResponseDto(request);
 
@@ -410,7 +411,7 @@ public class LoginService {
 	}
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
-		log.info("In generateJWTToken method of loginservice:{} {}", userId, issuerUrl);
+		log.info("In generateJWTToken method of loginservice:{} {}", maskIdentifier(userId), issuerUrl);
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("userId", userId);
 		claims.put("scope", jwtScope);
@@ -460,5 +461,35 @@ public class LoginService {
 
 	public String sendOTPSuccessJwtToken(String userId) {
 		return this.loginCommonUtil.sendOtpJwtToken(userId);
+	}
+
+	private String maskIdentifier(String value) {
+		if (value == null || value.isBlank()) {
+			return "<empty>";
+		}
+		String trimmed = value.trim();
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+			String local = trimmed.substring(0, atIndex);
+			String domain = trimmed.substring(atIndex);
+			String visibleLocal = local.substring(0, 1);
+			return visibleLocal + "***" + domain;
+		}
+		if (trimmed.matches("\\+?\\d{10,12}")) {
+			boolean hasPlus = trimmed.startsWith("+");
+			String digits = hasPlus ? trimmed.substring(1) : trimmed;
+			if (digits.length() <= 4) {
+				return (hasPlus ? "+" : "") + "****";
+			}
+			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+			return (hasPlus ? "+" : "") + masked;
+		}
+		try {
+			UUID.fromString(trimmed);
+			return "***" + trimmed.substring(trimmed.length() - 6);
+		} catch (Exception ignored) {
+		}
+		int visible = Math.min(4, trimmed.length());
+		return "***" + trimmed.substring(trimmed.length() - visible);
 	}
 }

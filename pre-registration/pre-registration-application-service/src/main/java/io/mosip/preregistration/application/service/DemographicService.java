@@ -879,7 +879,7 @@ public class DemographicService implements DemographicServiceIntf {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDemographicData method of userValidation with priid "
-				+ maskIdentifier(preregUserId) + " and userID " + maskIdentifier(authUserId));
+				+ preregUserId + " and userID " + maskIdentifier(authUserId));
 		String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
 		String trimmedPreregUserId = preregUserId == null ? "" : preregUserId.trim();
 		String canonicalAuthUserId = null;
@@ -919,7 +919,7 @@ public class DemographicService implements DemographicServiceIntf {
 				}
 			} catch (Exception ex) {
 				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Could not map preregUserId to canonical UUID, value: " + maskIdentifier(trimmedPreregUserId));
+						"Could not map preregUserId to canonical UUID, value: " + trimmedPreregUserId);
 			}
 			// Fallback for legacy data/tests where raw identifiers are still present.
 			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {

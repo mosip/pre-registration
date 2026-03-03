@@ -6,6 +6,7 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -180,7 +181,8 @@ public class LoginController {
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiParam(hidden = true) Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
 
-		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "User ID: "+ userIdOtpRequest.getRequest().getUserId());
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"User ID: " + maskIdentifier(userIdOtpRequest.getRequest().getUserId()));
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		MainResponseDTO<AuthNResponse> responseBody = loginService.validateWithUserIdOtp(userIdOtpRequest);
@@ -262,5 +264,35 @@ public class LoginController {
 			res.addCookie(resCookie);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	private String maskIdentifier(String value) {
+		if (value == null || value.isBlank()) {
+			return "<empty>";
+		}
+		String trimmed = value.trim();
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+			String local = trimmed.substring(0, atIndex);
+			String domain = trimmed.substring(atIndex);
+			String visibleLocal = local.substring(0, 1);
+			return visibleLocal + "***" + domain;
+		}
+		if (trimmed.matches("\\+?\\d{10,12}")) {
+			boolean hasPlus = trimmed.startsWith("+");
+			String digits = hasPlus ? trimmed.substring(1) : trimmed;
+			if (digits.length() <= 4) {
+				return (hasPlus ? "+" : "") + "****";
+			}
+			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+			return (hasPlus ? "+" : "") + masked;
+		}
+		try {
+			UUID.fromString(trimmed);
+			return "***" + trimmed.substring(trimmed.length() - 6);
+		} catch (Exception ignored) {
+		}
+		int visible = Math.min(4, trimmed.length());
+		return "***" + trimmed.substring(trimmed.length() - visible);
 	}
 }
