@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 import io.mosip.preregistration.core.common.entity.UserDetails;
@@ -180,8 +181,8 @@ public class CommonServiceUtil {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"In getDemographicData method of userValidation with priid " + preregUserId + " and userID "
-						+ authUserId);
+				"In getDemographicData method of userValidation with priid " + maskIdentifier(preregUserId)
+						+ " and userID " + maskIdentifier(authUserId));
 		String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
 		String trimmedPreregUserId = preregUserId == null ? "" : preregUserId.trim();
 		// UUID-only mode: strict canonical UUID comparison
@@ -193,7 +194,7 @@ public class CommonServiceUtil {
 			}
 		} catch (Exception ex) {
 			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + authUserId, ex);
+					"Failed to map auth user to canonical UUID: " + maskIdentifier(authUserId), ex);
 		}
 		String trimmedCanonicalAuthUserId = canonicalAuthUserId == null ? "" : canonicalAuthUserId.trim();
 		if (!piiBackwardCompatibility) {
@@ -221,7 +222,8 @@ public class CommonServiceUtil {
 				}
 			} catch (Exception ex) {
 				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Could not map preregUserId to canonical UUID, might already be a UUID: " + trimmedPreregUserId);
+						"Could not map preregUserId to canonical UUID, might already be a UUID: "
+								+ maskIdentifier(trimmedPreregUserId));
 			}
 			// Fallback for legacy data/tests where raw identifiers are still present.
 			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {
@@ -461,5 +463,35 @@ public class CommonServiceUtil {
 				return true;
 			}
 		}
+	}
+
+	private String maskIdentifier(String value) {
+		if (value == null || value.isBlank()) {
+			return "<empty>";
+		}
+		String trimmed = value.trim();
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+			String local = trimmed.substring(0, atIndex);
+			String domain = trimmed.substring(atIndex);
+			String visibleLocal = local.substring(0, 1);
+			return visibleLocal + "***" + domain;
+		}
+		if (trimmed.matches("\\+?\\d{10,12}")) {
+			boolean hasPlus = trimmed.startsWith("+");
+			String digits = hasPlus ? trimmed.substring(1) : trimmed;
+			if (digits.length() <= 4) {
+				return (hasPlus ? "+" : "") + "****";
+			}
+			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+			return (hasPlus ? "+" : "") + masked;
+		}
+		try {
+			UUID.fromString(trimmed);
+			return "***" + trimmed.substring(trimmed.length() - 6);
+		} catch (Exception ignored) {
+		}
+		int visible = Math.min(4, trimmed.length());
+		return "***" + trimmed.substring(trimmed.length() - visible);
 	}
 }
