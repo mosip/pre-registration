@@ -14,7 +14,7 @@
 CREATE TABLE IF NOT EXISTS prereg.user_details (
     user_id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
     identifier_hash VARCHAR(128) NOT NULL UNIQUE,
-    identifier_encrypted TEXT,
+    identifier_encrypted TEXT NOT NULL,
     cr_dtimes TIMESTAMP NOT NULL,
     encrypted_dtimes TIMESTAMP NOT NULL
 );
@@ -22,10 +22,10 @@ CREATE TABLE IF NOT EXISTS prereg.user_details (
 
 -- ========== CREATE INDEXES ==========
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_prereg_user_details_hash
+CREATE INDEX IF NOT EXISTS idx_prereg_user_details_hash
 ON prereg.user_details(identifier_hash);
 
-CREATE INDEX CONCURRENTLY IF NOT EXISTS idx_prereg_user_details_active
+CREATE INDEX IF NOT EXISTS idx_prereg_user_details_active
 ON prereg.user_details(user_id) WHERE identifier_encrypted IS NOT NULL;
 
 CREATE INDEX IF NOT EXISTS idx_user_details_cr_dtimes
