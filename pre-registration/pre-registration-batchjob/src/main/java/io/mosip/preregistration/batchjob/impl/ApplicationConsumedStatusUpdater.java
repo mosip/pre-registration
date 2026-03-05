@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,6 +29,8 @@ import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
+import io.mosip.preregistration.core.common.entity.UserDetails;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
 /**
@@ -51,6 +54,9 @@ public class ApplicationConsumedStatusUpdater {
 
     @Autowired
 	private RestHelper restHelper;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
     
     public void updateConsumedStatus() {
 
@@ -134,16 +140,15 @@ public class ApplicationConsumedStatusUpdater {
     private void addApplicantDemographicConsumed(DemographicEntity demoEntity) {
         DemographicEntityConsumed demographicEntityConsumed = new DemographicEntityConsumed();
         demographicEntityConsumed.setApplicantDetailJson(demoEntity.getApplicantDetailJson());
-        demographicEntityConsumed.setCrAppuserId(demoEntity.getCrAppuserId());
+        demographicEntityConsumed.setCrAppuserId(resolveCanonicalUserId(demoEntity.getCrAppuserId()));
         demographicEntityConsumed.setCreateDateTime(demoEntity.getCreateDateTime());
-        // store the canonical user id (if present) into the existing cr_by column
-        demographicEntityConsumed.setCreatedBy(demoEntity.getEffectiveCreatedBy());
+        demographicEntityConsumed.setCreatedBy(resolveCanonicalUserId(demoEntity.getEffectiveCreatedBy()));
         demographicEntityConsumed.setDemogDetailHash(demoEntity.getDemogDetailHash());
         demographicEntityConsumed.setEncryptedDateTime(demoEntity.getEncryptedDateTime());
         demographicEntityConsumed.setLangCode(demoEntity.getLangCode());
         demographicEntityConsumed.setPreRegistrationId(demoEntity.getPreRegistrationId());
         demographicEntityConsumed.setUpdateDateTime(DateUtils.parseDateToLocalDateTime(new Date()));
-        demographicEntityConsumed.setUpdatedBy(auditUserId);
+        demographicEntityConsumed.setUpdatedBy(resolveCanonicalUserId(auditUserId));
         demographicEntityConsumed.setStatusCode(StatusCodes.CONSUMED.getCode());
         boolean added = batchJpaRepositoryImpl.updateConsumedDemographic(demographicEntityConsumed);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
@@ -159,7 +164,7 @@ public class ApplicationConsumedStatusUpdater {
 
         applicantDocumentList.forEach(applicantDoc -> {
             DocumentEntityConsumed documentEntityConsumed = new DocumentEntityConsumed();
-            documentEntityConsumed.setCrBy(applicantDoc.getEffectiveCrBy());
+            documentEntityConsumed.setCrBy(resolveCanonicalUserId(applicantDoc.getEffectiveCrBy()));
             documentEntityConsumed.setCrDtime(applicantDoc.getCrDtime());
             documentEntityConsumed.setDocCatCode(applicantDoc.getDocCatCode());
             documentEntityConsumed.setDocFileFormat(applicantDoc.getDocFileFormat());
@@ -172,7 +177,7 @@ public class ApplicationConsumedStatusUpdater {
             documentEntityConsumed.setLangCode(applicantDoc.getLangCode());
             documentEntityConsumed.setPreregId(applicantDoc.getDemographicEntity().getPreRegistrationId());
             documentEntityConsumed.setStatusCode(applicantDoc.getStatusCode());
-            documentEntityConsumed.setUpdBy(auditUserId);
+            documentEntityConsumed.setUpdBy(resolveCanonicalUserId(auditUserId));
             documentEntityConsumed.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
             documentEntityConsumed.setDocRefId(applicantDoc.getRefNumber());
             batchJpaRepositoryImpl.updateConsumedDocument(documentEntityConsumed);
@@ -187,7 +192,7 @@ public class ApplicationConsumedStatusUpdater {
         RegistrationBookingEntityConsumed regAppointmentConsumed = new RegistrationBookingEntityConsumed();
         regAppointmentConsumed.setBookingDateTime(regAppointmentObj.getBookingDateTime());
         regAppointmentConsumed.setPreregistrationId(regAppointmentObj.getPreregistrationId());
-        regAppointmentConsumed.setCrBy(regAppointmentObj.getEffectiveCrBy());
+        regAppointmentConsumed.setCrBy(resolveCanonicalUserId(regAppointmentObj.getEffectiveCrBy()));
         regAppointmentConsumed.setCrDate(regAppointmentObj.getCrDate());
         regAppointmentConsumed.setId(regAppointmentObj.getId());
         regAppointmentConsumed.setLangCode(regAppointmentObj.getLangCode());
@@ -195,7 +200,7 @@ public class ApplicationConsumedStatusUpdater {
         regAppointmentConsumed.setRegistrationCenterId(regAppointmentObj.getRegistrationCenterId());
         regAppointmentConsumed.setSlotFromTime(regAppointmentObj.getSlotFromTime());
         regAppointmentConsumed.setSlotToTime(regAppointmentObj.getSlotToTime());
-        regAppointmentConsumed.setUpBy(auditUserId);
+        regAppointmentConsumed.setUpBy(resolveCanonicalUserId(auditUserId));
         regAppointmentConsumed.setUpdDate(DateUtils.parseDateToLocalDateTime(new Date()));
         boolean added = batchJpaRepositoryImpl.updateConsumedBooking(regAppointmentConsumed);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
@@ -216,6 +221,30 @@ public class ApplicationConsumedStatusUpdater {
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
                 "Deleted Applicant Document for pre reg id: " + preRegId + ", documents id: " + applicantDoc.getDocId());
         });
+    }
+
+    private String resolveCanonicalUserId(String userId) {
+        if (Objects.isNull(userId) || userId.trim().isEmpty()) {
+            return userId;
+        }
+        String trimmedUserId = userId.trim();
+        if (isUuid(trimmedUserId)) {
+            return trimmedUserId;
+        }
+        UserDetails userDetails = userDetailsService.findOrCreateByIdentifier(trimmedUserId);
+        if (Objects.nonNull(userDetails) && Objects.nonNull(userDetails.getUserId())) {
+            return userDetails.getUserId().toString();
+        }
+        throw new IllegalStateException("Failed to resolve canonical user id for consumed table write");
+    }
+
+    private boolean isUuid(String value) {
+        try {
+            UUID.fromString(value);
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
     }
     
 }
