@@ -135,7 +135,7 @@ public class NotificationServiceUtil {
 		NotificationDTO notificationDto = null;
 		List<KeyValuePairDto<String, String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String, String>>();
 		if (isLatest) {
-			HashMap<String, String> result = objectMapper.readValue(notificationDtoData.toString(), HashMap.class);
+			LinkedHashMap<String, String> result = objectMapper.readValue(notificationDtoData.toString(), LinkedHashMap.class);
 			KeyValuePairDto langaueNamePair = null;
 			for (Map.Entry<String, String> set : result.entrySet()) {
 				langaueNamePair = new KeyValuePairDto();
