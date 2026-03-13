@@ -146,8 +146,8 @@ public class NotificationServiceUtil {
 			}
 			if (notificationDto != null) {
 				notificationDto.setFullName(langaueNamePairs);
-				if (langauageCode != null) {
-					notificationDto.setLanguageCode(langauageCode);
+				if (langauageCode != null && !langauageCode.trim().isEmpty()) {
+					notificationDto.setLanguageCode(langauageCode.trim());
 				} else if (!langaueNamePairs.isEmpty()) {
 					notificationDto.setLanguageCode(String.valueOf(langaueNamePairs.get(0).getKey()));
 				}
