@@ -280,7 +280,10 @@ public class NotificationService {
 				JsonNode responseNode = objectMapper
 						.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
-				responseNode = responseNode.get(identity);
+			JsonNode identityNode = responseNode.get(identity);
+			if (identityNode != null && !identityNode.isNull()) {
+				responseNode = identityNode;
+			}
 
 				JsonNode arrayNode = responseNode.get(fullName);
 				KeyValuePairDto langaueNamePair = null;
@@ -454,7 +457,10 @@ public class NotificationService {
 		}
 		JsonNode responseNode = objectMapper
 				.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
-		responseNode = responseNode.get(identity);
+		JsonNode identityNode = responseNode.get(identity);
+		if (identityNode != null && !identityNode.isNull()) {
+			responseNode = identityNode;
+		}
 		if (!notificationDto.isAdditionalRecipient()) {
 			if (notificationDto.getMobNum() != null || notificationDto.getEmailID() != null) {
 				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
