@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.json.JSONException;
@@ -135,22 +136,22 @@ public class NotificationServiceUtil {
 		NotificationDTO notificationDto = null;
 		List<KeyValuePairDto<String, String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String, String>>();
 		if (isLatest) {
-			LinkedHashMap<String, String> result = objectMapper.readValue(notificationDtoData.toString(), LinkedHashMap.class);
-			KeyValuePairDto langaueNamePair = null;
-			for (Map.Entry<String, String> set : result.entrySet()) {
-				langaueNamePair = new KeyValuePairDto();
-				notificationDto = objectMapper.convertValue(set.getValue(), NotificationDTO.class);
-				langaueNamePair.setKey(set.getKey());
-				langaueNamePair.setValue(notificationDto.getName());
-				langaueNamePairs.add(langaueNamePair);
+			Map<String, Object> result = objectMapper.readValue(notificationDtoData.toString(),
+					new TypeReference<Map<String, Object>>() {
+					});
+			for (Map.Entry<String, Object> entry : result.entrySet()) {
+				KeyValuePairDto<String, String> pair = new KeyValuePairDto<>();
+				NotificationDTO dto = objectMapper.convertValue(entry.getValue(), NotificationDTO.class);
+
+				pair.setKey(entry.getKey());
+				pair.setValue(dto.getName());
+				langaueNamePairs.add(pair);
+
+				notificationDto = dto;
 			}
 			if (notificationDto != null) {
 				notificationDto.setFullName(langaueNamePairs);
-				if (langauageCode != null && !langauageCode.trim().isEmpty()) {
-					notificationDto.setLanguageCode(langauageCode.trim());
-				} else if (!langaueNamePairs.isEmpty()) {
-					notificationDto.setLanguageCode(String.valueOf(langaueNamePairs.get(0).getKey()));
-				}
+				notificationDto.setLanguageCode(langauageCode);
 			}
 		}
 		if (!isLatest) {
