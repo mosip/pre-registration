@@ -126,6 +126,21 @@ public class NotificationControllerTest {
 	}
 
 	@Test
+	public void sendNotificationsV2Test() throws Exception {
+		String stringjson = mapper.writeValueAsString(notificationDTO);
+		String langCode = "eng";
+		Mockito.when(service.sendNotificationV2(stringjson, "eng", null, true)).thenReturn(responseDTO);
+
+		mockMvc.perform(MockMvcRequestBuilders.multipart("/notification/v2")
+				.file(new MockMultipartFile("NotificationRequestDTO", stringjson, "application/json",
+						stringjson.getBytes(Charset.forName("UTF-8"))))
+				.file(new MockMultipartFile("langCode", langCode, "application/json",
+						langCode.getBytes(Charset.forName("UTF-8")))))
+				.andExpect(status().isOk());
+
+	}
+
+	@Test
 	public void sendNotificationInternalTest() throws Exception {
 		String stringjson = mapper.writeValueAsString(notificationDTO);
 		String langCode = "eng";

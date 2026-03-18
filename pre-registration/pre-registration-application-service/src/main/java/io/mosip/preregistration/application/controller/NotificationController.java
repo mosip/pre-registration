@@ -49,7 +49,7 @@ public class NotificationController {
 	private Logger log = LoggerConfiguration.logConfig(NotificationController.class);
 
 	/**
-	 * Api to Trigger notification service.
+	 * Api to Trigger notification service with legacy demographic-first flow.
 	 * 
 	 * @param jsonbObject the json string.
 	 * @param langCode    the language code.
@@ -87,7 +87,8 @@ public class NotificationController {
 	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotification())")
 	// @PreAuthorize("hasAnyRole('INDIVIDUAL','PRE_REGISTRATION_ADMIN')")
 	@PostMapping(path = "/notification", consumes = { "multipart/form-data" })
-	@Operation(summary = "sendNotifications", description = "Trigger notification", tags = "notification-controller")
+	@Operation(summary = "sendNotifications", description = "Trigger notification with legacy demographic-first flow",
+			tags = "notification-controller")
 	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
 			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
@@ -101,6 +102,33 @@ public class NotificationController {
 				"In notification controller for send notification with request notification dto  " + jsonbObject);
 		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, res.getHeader("Cookie"));
 		return new ResponseEntity<>(notificationService.sendNotification(jsonbObject, langCode, file, true),
+				HttpStatus.OK);
+	}
+
+	/**
+	 * Api to Trigger notification service with application-first flow.
+	 *
+	 * @param jsonbObject the json string.
+	 * @param langCode    the language code.
+	 * @param file        the file to send.
+	 * @return the response entity.
+	 */
+	@PreAuthorize("hasAnyRole(@authorizedRoles.getPostnotification())")
+	@PostMapping(path = "/notification/v2", consumes = { "multipart/form-data" })
+	@Operation(summary = "sendNotificationsV2", description = "Trigger notification with application-first flow", tags = "notification-controller")
+	@ApiResponses(value = { @ApiResponse(responseCode = "200", description = "OK"),
+			@ApiResponse(responseCode = "201", description = "Created", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
+			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
+	public ResponseEntity<MainResponseDTO<NotificationResponseDTO>> sendNotificationsV2(
+			@RequestPart(value = "NotificationRequestDTO", required = true) String jsonbObject,
+			@RequestPart(value = "langCode", required = false) String langCode,
+			@RequestPart(value = "attachment", required = false) MultipartFile file, HttpServletRequest res) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In notification controller for send notification v2 with request notification dto  " + jsonbObject);
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, res.getHeader("Cookie"));
+		return new ResponseEntity<>(notificationService.sendNotificationV2(jsonbObject, langCode, file, true),
 				HttpStatus.OK);
 	}
 
