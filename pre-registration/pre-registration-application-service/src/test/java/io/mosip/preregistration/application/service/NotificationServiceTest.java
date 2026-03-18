@@ -61,6 +61,7 @@ import io.mosip.preregistration.application.exception.DemographicDetailsNotFound
 import io.mosip.preregistration.application.exception.MandatoryFieldException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -837,7 +838,7 @@ public class NotificationServiceTest {
 		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), response.getResponse().getMessage());
 	}
 
-	@Test(expected = RecordNotFoundException.class)
+	@Test
 	public void sendNotificationV2InvalidPridTest() throws java.io.IOException {
 		String langCode = "fra";
 		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
@@ -856,8 +857,16 @@ public class NotificationServiceTest {
 		} catch (com.fasterxml.jackson.core.JsonParseException
 				| com.fasterxml.jackson.databind.JsonMappingException ex) {
 		}
+		String expectedCode = ApplicationErrorCodes.PRG_APP_013.getCode();
+		String expectedMessage = ApplicationErrorMessages.NO_RECORD_FOUND.getMessage();
 		Mockito.when(applicationServiceIntf.getApplicationInfo(Mockito.any()))
-				.thenThrow(new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_013.getCode(), "No record"));
-		notificationService.sendNotificationV2(stringjson, langCode, file, true);
+				.thenThrow(new RecordNotFoundException(expectedCode, expectedMessage));
+		try {
+			notificationService.sendNotificationV2(stringjson, langCode, file, true);
+			Assert.fail("Expected RecordNotFoundException");
+		} catch (RecordNotFoundException ex) {
+			assertEquals(expectedCode, ex.getErrorCode());
+			assertEquals(expectedMessage, ex.getErrorText());
+		}
 	}
 }
