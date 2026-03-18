@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TimeZone;
 
+import io.mosip.preregistration.core.common.dto.*;
 import org.json.JSONException;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -50,15 +51,6 @@ import io.mosip.kernel.core.util.exception.JsonParseException;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
-import io.mosip.preregistration.core.common.dto.AuditRequestDto;
-import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
-import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
-import io.mosip.preregistration.core.common.dto.MainRequestDTO;
-import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.dto.NotificationDTO;
-import io.mosip.preregistration.core.common.dto.NotificationResponseDTO;
-import io.mosip.preregistration.core.common.dto.TemplateResponseDTO;
-import io.mosip.preregistration.core.common.dto.TemplateResponseListDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.NotificationUtil;
@@ -808,7 +800,12 @@ public class NotificationServiceTest {
 				| com.fasterxml.jackson.databind.JsonMappingException ex) {
 		}
 		MainResponseDTO<DemographicResponseDTO> demoError = new MainResponseDTO<>();
-		demoError.setErrors(new ArrayList<>());
+		List<ExceptionJSONInfoDTO> errors = new ArrayList<>();
+		ExceptionJSONInfoDTO err =
+				new ExceptionJSONInfoDTO(
+						"PRG_PAM_APP_005", "No data found for the requested pre-registration id");
+		errors.add(err);
+		demoError.setErrors(errors);
 		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demoError);
 		notificationService.sendNotification(stringjson, langCode, file, true);
 	}
