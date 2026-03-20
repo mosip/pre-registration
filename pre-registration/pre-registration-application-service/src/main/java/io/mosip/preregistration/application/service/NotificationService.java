@@ -378,9 +378,9 @@ public class NotificationService {
 
 			JsonNode responseNode = objectMapper.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
-			responseNode = responseNode.get(identity);
+			responseNode = responseNode.get(identity.trim());
 
-			JsonNode arrayNode = responseNode.get(fullName);
+			JsonNode arrayNode = responseNode.get(fullName.trim());
 			List<KeyValuePairDto<String, String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String, String>>();
 			KeyValuePairDto langaueNamePair = null;
 			if (arrayNode.isArray()) {
@@ -393,20 +393,20 @@ public class NotificationService {
 			}
 
 			notificationDto.setFullName(langaueNamePairs);
-			if (responseNode.get(email) != null) {
-				String emailId = responseNode.get(email).asText();
+			if (responseNode.get(email.trim()) != null) {
+				String emailId = responseNode.get(email.trim()).asText();
 				notificationDto.setEmailID(emailId);
 				notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file,
 						BookingTypeCodes.NEW_PREREGISTRATION.toString());
 			}
-			if (responseNode.get(phone) != null) {
-				String phoneNumber = responseNode.get(phone).asText();
+			if (responseNode.get(phone.trim()) != null) {
+				String phoneNumber = responseNode.get(phone.trim()).asText();
 				notificationDto.setMobNum(phoneNumber);
 				notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
 						BookingTypeCodes.NEW_PREREGISTRATION.toString());
 
 			}
-			if (responseNode.get(email) == null && responseNode.get(phone) == null) {
+			if (responseNode.get(email.trim()) == null && responseNode.get(phone.trim()) == null) {
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"In notification service of sendNotification failed to send Email and sms request ");
 			}
@@ -443,9 +443,9 @@ public class NotificationService {
 				JsonNode responseNode = objectMapper
 						.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
-				responseNode = responseNode.get(identity);
+				responseNode = responseNode.get(identity.trim());
 
-				JsonNode arrayNode = responseNode.get(fullName);
+				JsonNode arrayNode = responseNode.get(fullName.trim());
 				KeyValuePairDto langaueNamePair = null;
 				if (arrayNode.isArray()) {
 					for (JsonNode jsonNode : arrayNode) {
@@ -456,20 +456,20 @@ public class NotificationService {
 					}
 				}
 				notificationDto.setFullName(langaueNamePairs);
-				if (responseNode.get(email) != null) {
-					String emailId = responseNode.get(email).asText();
+				if (responseNode.get(email.trim()) != null) {
+					String emailId = responseNode.get(email.trim()).asText();
 					notificationDto.setEmailID(emailId);
 					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file,
 							appEntity.getResponse().getBookingType());
 				}
-				if (responseNode.get(phone) != null) {
-					String phoneNumber = responseNode.get(phone).asText();
+				if (responseNode.get(phone.trim()) != null) {
+					String phoneNumber = responseNode.get(phone.trim()).asText();
 					notificationDto.setMobNum(phoneNumber);
 					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
 							appEntity.getResponse().getBookingType());
 
 				}
-				if (responseNode.get(email) == null && responseNode.get(phone) == null) {
+				if (responseNode.get(email.trim()) == null && responseNode.get(phone.trim()) == null) {
 					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 							"In notification service of sendNotificationV2 failed to send Email and sms request ");
 				}
@@ -654,7 +654,7 @@ public class NotificationService {
 		}
 		JsonNode responseNode = objectMapper
 				.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
-		responseNode = responseNode.get(identity);
+		responseNode = responseNode.get(identity.trim());
 		if (!notificationDto.isAdditionalRecipient()) {
 			if (notificationDto.getMobNum() != null || notificationDto.getEmailID() != null) {
 				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
