@@ -379,11 +379,15 @@ public class NotificationService {
 			JsonNode responseNode = objectMapper.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
 			responseNode = responseNode.get(identity.trim());
+			if (responseNode == null || responseNode.isNull()) {
+				throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_002.getCode(),
+						NotificationErrorMessages.INCORRECT_MANDATORY_FIELDS.getMessage(), response);
+			}
 
 			JsonNode arrayNode = responseNode.get(fullName.trim());
 			List<KeyValuePairDto<String, String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String, String>>();
 			KeyValuePairDto langaueNamePair = null;
-			if (arrayNode.isArray()) {
+			if (arrayNode != null && arrayNode.isArray()) {
 				for (JsonNode jsonNode : arrayNode) {
 					langaueNamePair = new KeyValuePairDto();
 					langaueNamePair.setKey(jsonNode.get("language").asText().trim());
@@ -393,20 +397,20 @@ public class NotificationService {
 			}
 
 			notificationDto.setFullName(langaueNamePairs);
-			if (responseNode.get(email.trim()) != null) {
+			if (responseNode.hasNonNull(email.trim())) {
 				String emailId = responseNode.get(email.trim()).asText();
 				notificationDto.setEmailID(emailId);
 				notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file,
 						BookingTypeCodes.NEW_PREREGISTRATION.toString());
 			}
-			if (responseNode.get(phone.trim()) != null) {
+			if (responseNode.hasNonNull(phone.trim())) {
 				String phoneNumber = responseNode.get(phone.trim()).asText();
 				notificationDto.setMobNum(phoneNumber);
 				notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
 						BookingTypeCodes.NEW_PREREGISTRATION.toString());
 
 			}
-			if (responseNode.get(email.trim()) == null && responseNode.get(phone.trim()) == null) {
+			if (!responseNode.hasNonNull(email.trim()) && !responseNode.hasNonNull(phone.trim())) {
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"In notification service of sendNotification failed to send Email and sms request ");
 			}
@@ -444,10 +448,14 @@ public class NotificationService {
 						.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 
 				responseNode = responseNode.get(identity.trim());
+				if (responseNode == null || responseNode.isNull()) {
+					throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_002.getCode(),
+							NotificationErrorMessages.INCORRECT_MANDATORY_FIELDS.getMessage(), response);
+				}
 
 				JsonNode arrayNode = responseNode.get(fullName.trim());
 				KeyValuePairDto langaueNamePair = null;
-				if (arrayNode.isArray()) {
+				if (arrayNode != null && arrayNode.isArray()) {
 					for (JsonNode jsonNode : arrayNode) {
 						langaueNamePair = new KeyValuePairDto();
 						langaueNamePair.setKey(jsonNode.get("language").asText().trim());
@@ -456,20 +464,20 @@ public class NotificationService {
 					}
 				}
 				notificationDto.setFullName(langaueNamePairs);
-				if (responseNode.get(email.trim()) != null) {
+				if (responseNode.hasNonNull(email.trim())) {
 					String emailId = responseNode.get(email.trim()).asText();
 					notificationDto.setEmailID(emailId);
 					notificationUtil.notify(NotificationRequestCodes.EMAIL.getCode(), notificationDto, file,
 							appEntity.getResponse().getBookingType());
 				}
-				if (responseNode.get(phone.trim()) != null) {
+				if (responseNode.hasNonNull(phone.trim())) {
 					String phoneNumber = responseNode.get(phone.trim()).asText();
 					notificationDto.setMobNum(phoneNumber);
 					notificationUtil.notify(NotificationRequestCodes.SMS.getCode(), notificationDto, file,
 							appEntity.getResponse().getBookingType());
 
 				}
-				if (responseNode.get(email.trim()) == null && responseNode.get(phone.trim()) == null) {
+				if (!responseNode.hasNonNull(email.trim()) && !responseNode.hasNonNull(phone.trim())) {
 					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 							"In notification service of sendNotificationV2 failed to send Email and sms request ");
 				}
@@ -655,6 +663,10 @@ public class NotificationService {
 		JsonNode responseNode = objectMapper
 				.readTree(responseEntity.getResponse().getDemographicDetails().toJSONString());
 		responseNode = responseNode.get(identity.trim());
+		if (responseNode == null || responseNode.isNull()) {
+			throw new MandatoryFieldException(NotificationErrorCodes.PRG_PAM_ACK_002.getCode(),
+					NotificationErrorMessages.INCORRECT_MANDATORY_FIELDS.getMessage(), response);
+		}
 		if (!notificationDto.isAdditionalRecipient()) {
 			if (notificationDto.getMobNum() != null || notificationDto.getEmailID() != null) {
 				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -667,6 +679,9 @@ public class NotificationService {
 				String[] nameKeys = nameFormat.split(",");
 				for (int i = 0; i < nameKeys.length; i++) {
 					JsonNode arrayNode = responseNode.get(nameKeys[i]);
+					if (arrayNode == null || !arrayNode.isArray()) {
+						continue;
+					}
 					for (JsonNode jsonNode : arrayNode) {
 						if (notificationDto.getName().trim().equals(jsonNode.get("value").asText().trim())) {
 							isNameMatchFound = true;
