@@ -345,6 +345,15 @@ public class DemographicServiceTest {
 			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));
 			return ud;
 		});
+		Mockito.when(userDetailsService.matchesUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean()))
+				.thenAnswer(invocation -> {
+					String authUserId = invocation.getArgument(0);
+					String expectedCrBy = invocation.getArgument(1);
+					Boolean compatibility = invocation.getArgument(2);
+					String canonicalUserId = getCanonicalUserIdString(authUserId);
+					return canonicalUserId.equals(expectedCrBy)
+							|| (Boolean.TRUE.equals(compatibility) && authUserId.equals(expectedCrBy));
+				});
 		mapper = new ObjectMapper();
 		auditRequestDto = new AuditRequestDto();
 
@@ -356,6 +365,11 @@ public class DemographicServiceTest {
 		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(preRegistrationService, "commonServiceUtil", commonServiceUtil);
 		ReflectionTestUtils.setField(demographicService, "commonServiceUtil", commonServiceUtil);
+		ReflectionTestUtils.setField(preRegistrationService, "userDetailsService", userDetailsService);
+		ReflectionTestUtils.setField(demographicService, "userDetailsService", userDetailsService);
+		ReflectionTestUtils.setField(preRegistrationService, "piiBackwardCompatibility", true);
+		ReflectionTestUtils.setField(commonServiceUtil, "piiBackwardCompatibility", true);
+		ReflectionTestUtils.setField(demographicService, "piiBackwardCompatibility", true);
 		
 		preRegistrationEntity = new DemographicEntity();
 		ClassLoader classLoader = getClass().getClassLoader();
@@ -580,9 +594,11 @@ public class DemographicServiceTest {
 		Page<DemographicEntity> page = new PageImpl<>(userEntityDetails);
 		Mockito.when(cryptoUtil.decrypt(Mockito.any(), Mockito.any()))
 				.thenReturn(userEntityDetails.get(0).getApplicantDetailJson());
-		Mockito.when(demographicRepository.findByCreatedBy(userId, "Consumed")).thenReturn(userEntityDetails);
+		Mockito.when(demographicRepository.findByCreatedByInAndStatusCode(Mockito.anyList(), Mockito.eq("Consumed")))
+				.thenReturn(userEntityDetails);
 		Mockito.when(
-				demographicRepository.findByCreatedByOrderByCreateDateTime(Mockito.any(), Mockito.any(), Mockito.any()))
+				demographicRepository.findByCreatedByInAndStatusCodeOrderByCreateDateTime(Mockito.anyList(),
+						Mockito.eq("Consumed"), Mockito.any()))
 				.thenReturn(page);
 
 		MainResponseDTO<BookingRegistrationDTO> dto = new MainResponseDTO<>();
@@ -604,7 +620,7 @@ public class DemographicServiceTest {
 	@Test(expected = SystemIllegalArgumentException.class)
 	public void getApplicationDetailsIndexTest() {
 		String userId = "12345";
-		Mockito.when(demographicRepository.findByCreatedBy(Mockito.anyString(), Mockito.anyString()))
+		Mockito.when(demographicRepository.findByCreatedByInAndStatusCode(Mockito.anyList(), Mockito.anyString()))
 				.thenReturn(userEntityDetails);
 		preRegistrationService.getAllApplicationDetails(userId, "abc");
 

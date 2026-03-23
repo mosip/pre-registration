@@ -110,6 +110,15 @@ public class ApplicationServiceTest {
 			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));
 			return ud;
 		});
+		Mockito.when(userDetailsService.matchesUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean()))
+				.thenAnswer(invocation -> {
+					String authUserId = invocation.getArgument(0);
+					String expectedCrBy = invocation.getArgument(1);
+					Boolean compatibility = invocation.getArgument(2);
+					String canonicalUserId = getCanonicalUserIdString(authUserId);
+					return canonicalUserId.equals(expectedCrBy)
+							|| (Boolean.TRUE.equals(compatibility) && authUserId.equals(expectedCrBy));
+				});
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -304,7 +313,7 @@ public class ApplicationServiceTest {
 		applicationEntitie.setApplicationId("1234567890");
 		applicationEntitie.setApplicationStatusCode("Processed");
 		applicationEntities.add(applicationEntitie);
-		Mockito.when(applicationRepository.findByCreatedByBookingType(Mockito.any(), Mockito.any()))
+		Mockito.when(applicationRepository.findByCreatedByInBookingType(Mockito.anyList(), Mockito.any()))
 				.thenReturn(applicationEntities);
 		MainResponseDTO<ApplicationsListDTO> response = applicationService
 				.getAllApplicationsForUserForBookingType(BookingTypeCodes.NEW_PREREGISTRATION.toString());
@@ -350,8 +359,7 @@ public class ApplicationServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
-
+		Mockito.when(applicationUser.getUserId()).thenReturn(applicationId);
 		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
@@ -374,8 +382,7 @@ public class ApplicationServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
-
+		Mockito.when(applicationUser.getUserId()).thenReturn(applicationId);
 		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
@@ -398,8 +405,6 @@ public class ApplicationServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
-
 		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
@@ -424,8 +429,7 @@ public class ApplicationServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn("9988905444");
-		
+		Mockito.when(applicationUser.getUserId()).thenReturn("9988905444");
 		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
@@ -581,7 +585,7 @@ public class ApplicationServiceTest {
 
 	@Test(expected = RecordNotFoundException.class)
 	public void testgetAllApplicationsForUserException() {
-		Mockito.when(applicationRepository.findByCreatedBy(Mockito.any())).thenThrow(new RecordNotFoundException(
+		Mockito.when(applicationRepository.findByCreatedByIn(Mockito.anyList())).thenThrow(new RecordNotFoundException(
 				ApplicationErrorCodes.PRG_APP_013.getCode(), ApplicationErrorMessages.NO_RECORD_FOUND.getMessage()));
 		MainResponseDTO<ApplicationsListDTO> response = applicationService.getAllApplicationsForUser();
 	}

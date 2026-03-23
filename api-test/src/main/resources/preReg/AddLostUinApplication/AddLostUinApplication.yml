@@ -2,7 +2,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_01
-      description: process the lost UIN application with a valid ID
+      description: validate that the Lost UIN application is successfully processed when a valid ID is provided
       role: batch
       templateFields: ["langCode"]
       restMethod: post
@@ -21,7 +21,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_Invalid_id:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_02
-      description: process the lost UIN application with an invalid ID
+      description: validate that the Lost UIN application is not processed when an invalid ID is provided
       role: batch
       templateFields: ["langCode"]
       restMethod: post
@@ -43,7 +43,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_invalid_lang_code:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_03
-      description: Process the lost UIN application with an invalid language code
+      description: validate that the Lost UIN application is not processed when an invalid language code is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
@@ -64,7 +64,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_without_version:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_04
-      description: Process the lost UIN application without specifying the version
+      description: validate that the Lost UIN application is not processed when the version is not provided
       role: batch
       templateFields: ["langCode"]
       restMethod: post
@@ -86,7 +86,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_without_version_attribute:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_05
-      description: Process the lost UIN application without specifying the version and attribute
+      description: validate that the Lost UIN application is not processed when the version attribute is not provided
       role: batch
       checkErrorsOnlyInResponse: true
       templateFields: ["langCode"]
@@ -109,7 +109,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_with_INVALID_version:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_06
-      description: Process the lost UIN application with an invalid version
+      description: validate that the Lost UIN application is not processed when an invalid version is provided
       role: batch
       templateFields: ["langCode"]
       restMethod: post
@@ -131,7 +131,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_07
-      description: Process the lost UIN application with a valid data
+      description: validate that the Lost UIN application is successfully processed when all mandatory fields are provided with valid values
       role: batch
       templateFields: ["langCode"]
       restMethod: post
@@ -151,7 +151,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_inValid_langcode:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_08
-      description: Process the lost UIN application with an invalid language code
+      description: validate that the Lost UIN application is not processed when an invalid language code is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
@@ -172,7 +172,7 @@ AddLostUinApplication:
    Prereg_AddLostUinApplication_without_any_data:
       endPoint: /preregistration/v1/applications/lostuin
       uniqueIdentifier: TC_prereg_AddLostUinApplication_09
-      description: Process the lost UIN application with no data provided
+      description: validate that the Lost UIN application is not processed when no data is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/AddLostUinApplication/addLostUinApplication

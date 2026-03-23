@@ -2,7 +2,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_All_Valid_Smoke_sid_pos:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_01
-      description: Update demographic data for a new preregistration application
+      description: Validate that updating a pre registration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -25,7 +25,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_All_Valid_Smoke_BookByPRID_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_02
-      description: Update the demographic data for booking an appointment with the new PRID
+      description: Validate that updating a pre registration booked by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -48,7 +48,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_inValid_dateOfBirth_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_03
-      description: Update the demographic data with an invalid date of birth
+      description: Validate that updating a pre registration fails when an invalid date of birth is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -75,7 +75,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_missing_Version_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_04
-      description: Update the demographic data with a missing version number
+      description: Validate that updating a pre registration fails when the version field is missing
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -102,7 +102,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_invalid_Version_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_05
-      description: Update the demographic data with an invalid version 
+      description: Validate that updating a pre registration fails when an invalid version is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -129,7 +129,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_invalid_email_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_06
-      description: Update the demographic data with an invalid email address
+      description: Validate that updating a pre registration fails when an invalid email address is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -156,7 +156,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_missing_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_07
-      description: Update the demographic data with an missing language code 
+      description: Validate that updating a pre registration fails when the language code langCode field is missing
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -183,7 +183,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_INVALID_langCode_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_08
-      description: Update the demographic data with an invalid language code
+      description: Validate that updating a pre registration fails when an invalid language code langCode is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -210,7 +210,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_INVALID_requesttime_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_09
-      description: Update the demographic data with an invalid request time
+      description: Validate that updating a pre registration fails when the request time is provided in an invalid format
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -237,7 +237,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_Missing_requesttime_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_010
-      description: Update the demographic data without a request time
+      description: Validate that updating a pre registration fails when the request time field is missing
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -264,7 +264,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_previous_date_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_011
-      description: Update the demographic data with a past date
+      description: Validate that updating a pre registration fails when a past date is provided in fields where only current or future dates are allowed
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -291,7 +291,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_invalid_id_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_012
-      description: Update the demographic data with an invalid ID
+      description: Validate that updating a pre registration fails when an invalid Pre Registration ID is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -318,7 +318,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_missing_id_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_013
-      description: Update the demographic data with a missing ID
+      description: Validate that updating a pre registration fails when the Pre Registration ID field is missing
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -345,7 +345,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_blank_id_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_014
-      description: Update the demographic data with a blank ID
+      description: Validate that updating a pre registration fails when the Pre Registration ID field is left blank
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration
@@ -372,7 +372,7 @@ UpdatePreregistration:
    Prereg_UpdatePrereg_update_date_without_Status_change_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UpdatePreregistration_015
-      description: Update the demographic data for date of birth without changing the status
+      description: Validate that updating a pre registrations date is successfully processed without changing the application status when all mandatory fields are valid
       role: batch
       restMethod: put
       inputTemplate: preReg/UpdatePreregistration/updatePreregistration

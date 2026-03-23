@@ -50,6 +50,11 @@ public class AppointmentServiceTest {
 	@Autowired
 	private AppointmentServiceImpl appointmentService;
 
+	static {
+		// Set the property before Spring tries to inject @Value
+		System.setProperty("mosip.prereg.pii.backward.compatibility", "false");
+	}
+
 	@MockBean
 	private AppointmentUtil util;
 
@@ -89,7 +94,8 @@ public class AppointmentServiceTest {
 	@Before
 	public void setup() {
 		ReflectionTestUtils.setField(appointmentService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		
+		ReflectionTestUtils.setField(appointmentService, "piiBackwardCompatibility", false);
+
 	}
 
 	@Test

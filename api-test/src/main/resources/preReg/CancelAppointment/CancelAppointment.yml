@@ -2,7 +2,7 @@ CancelAppointment:
    Prereg_CancelAppointment_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelAppointment_01
-      description: Cancel appointment for a valid preregistration ID
+      description: Validate that an appointment cancellation is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -17,7 +17,7 @@ CancelAppointment:
    Prereg_CancelAppointment_with_already_cancelled_appoinment:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelAppointment_02
-      description: Canceling an appointment that has already been cancelled
+      description: Validate that an appointment cancellation fails when the appointment has already been canceled
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -37,7 +37,7 @@ CancelAppointment:
    Prereg_CancelAppointment_cancell_incomplete_appoinment:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelAppointment_03
-      description: Canceling an appointment with an incomplete appointment data
+      description: Validate that an appointment cancellation fails when the appointment is incomplete
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: put
@@ -57,7 +57,7 @@ CancelAppointment:
    Prereg_CancelAppointment_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelAppointment_04
-      description: Canceling an appointment with an invalid preregistration ID
+      description: Validate that an appointment cancellation fails when an invalid pre registration ID is provided
       role: batch
       restMethod: put
       inputTemplate: preReg/CancelAppointment/cancelAppointment
@@ -75,7 +75,7 @@ CancelAppointment:
    Prereg_CancelAppointment_forPendingAppointment_preRegistrationId_Neg:
       endPoint: /preregistration/v1/appointment/{preRegistrationId}
       uniqueIdentifier: TC_prereg_CancelAppointment_05
-      description: Canceling an appointment with an pending appointment preregistration ID
+      description: Validate that an appointment cancellation fails when the pre registration ID corresponds to a pending appointment
       role: batch
       restMethod: put
       additionalDependencies: TC_prereg_UpdatePreRegStatus_04

@@ -147,6 +147,9 @@ public class DemographicService implements DemographicServiceIntf {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
 	 */
@@ -493,7 +496,8 @@ public class DemographicService implements DemographicServiceIntf {
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details start time : " + DateUtils.getUTCCurrentDateTimeString());
-				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedBy(userId,
+				List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedByInAndStatusCode(lookupIds,
 						StatusCodes.CONSUMED.getCode());
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details end time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -516,7 +520,7 @@ public class DemographicService implements DemographicServiceIntf {
 								"pagination start time : " + DateUtils.getUTCCurrentDateTimeString());
 						@SuppressWarnings("static-access")
 						Page<DemographicEntity> demographicEntityPage = demographicRepository
-								.findByCreatedByOrderByCreateDateTime(userId, StatusCodes.CONSUMED.getCode(),
+								.findByCreatedByInAndStatusCodeOrderByCreateDateTime(lookupIds, StatusCodes.CONSUMED.getCode(),
 										PageRequest.of(serviceUtil.parsePageIndex(pageIdx),
 												serviceUtil.parsePageSize(pageSize)));
 						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -872,51 +876,15 @@ public class DemographicService implements DemographicServiceIntf {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDemographicData method of userValidation with priid "
-				+ preregUserId + " and userID " + authUserId);
-		// Map the auth user to canonical UUID for comparison
-		String canonicalAuthUserId = null;
-		try {
-			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-				userDetailsService.findOrCreateByIdentifier(authUserId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				canonicalAuthUserId = mappedUser.getUserId().toString();
-			}
-		} catch (Exception ex) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + authUserId, ex);
-		}
-		
-		// Compare using canonical UUID
-		if (canonicalAuthUserId == null) {
+				+ maskIdentifier(preregUserId) + " and userID " + maskIdentifier(authUserId));
+		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
-		
-		String trimmedPreregUserId = preregUserId != null ? preregUserId.trim() : "";
-		String trimmedCanonicalAuthUserId = canonicalAuthUserId.trim();
-		
-		// Check if preregUserId is already a UUID (new data) or a raw identifier (old data)
-		if (!trimmedPreregUserId.equals(trimmedCanonicalAuthUserId)) {
-			// Try mapping preregUserId to canonical UUID in case it's old data
-			// (if database stores raw identifier in createdBy field)
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedPreregUser = 
-					userDetailsService.findOrCreateByIdentifier(trimmedPreregUserId);
-				if (mappedPreregUser != null && mappedPreregUser.getUserId() != null) {
-					String canonicalPreregUserId = mappedPreregUser.getUserId().toString();
-					if (canonicalPreregUserId.equals(trimmedCanonicalAuthUserId)) {
-						// Match found after mapping both IDs to canonical UUIDs
-						return;
-					}
-				}
-			} catch (Exception ex) {
-				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Could not map preregUserId to canonical UUID, might already be a UUID: " + trimmedPreregUserId);
-			}
-			// No match found in either direct comparison or mapping
-			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-		}
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
 	}
 
 	private JSONObject getDocumentMetadata(DemographicEntity demographicEntity, String poa)

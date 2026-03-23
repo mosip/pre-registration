@@ -59,7 +59,6 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.JWTSignatureRequestDto;
 import io.mosip.kernel.signature.dto.JWTSignatureResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
-import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -312,7 +311,6 @@ public class DataSyncServiceUtil {
 			URI uri = uriComponentsBuilder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri).queryParam("from_date", fromDate)
 					.queryParam("to_date", toDate);
-
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
@@ -887,20 +885,23 @@ public class DataSyncServiceUtil {
 
 	
 	private String getCanonicalUserId(String userId) {
-		if (userId == null || userId.trim().isEmpty()) {
-			return userId;
-		}
-		try {
-			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				return mappedUser.getUserId().toString();
-			}
-		} catch (Exception e) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"UserDetails mapping failed in reverseDateSyncSave for userId: " + userId, e);
-		}
-		return userId;
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for reverse datasync. maskedUserId=" + maskIdentifier(userId)
+						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+		return effectiveUserId;
 	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
+	}
+
+	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
+	}
+
 	public ReverseDatasyncReponseDTO reverseDateSyncSave(Date reqDateTime, ReverseDataSyncRequestDTO request,
 			String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In reverseDateSyncSave method of datasync service util");

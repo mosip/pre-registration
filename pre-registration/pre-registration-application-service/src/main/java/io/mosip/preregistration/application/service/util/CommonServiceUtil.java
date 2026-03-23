@@ -112,6 +112,9 @@ public class CommonServiceUtil {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
 	 */
@@ -176,49 +179,9 @@ public class CommonServiceUtil {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"In getDemographicData method of userValidation with priid " + preregUserId + " and userID "
-						+ authUserId);
-		// Map the auth user to canonical UUID for comparison
-		String canonicalAuthUserId = null;
-		try {
-			io.mosip.preregistration.core.common.entity.UserDetails mappedUser = 
-				userDetailsService.findOrCreateByIdentifier(authUserId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				canonicalAuthUserId = mappedUser.getUserId().toString();
-			}
-		} catch (Exception ex) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + authUserId, ex);
-		}
-		
-		// Compare using canonical UUID
-		if (canonicalAuthUserId == null) {
-			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-		}
-		
-		String trimmedPreregUserId = preregUserId != null ? preregUserId.trim() : "";
-		String trimmedCanonicalAuthUserId = canonicalAuthUserId.trim();
-		
-		// Check if preregUserId is already a UUID (new data) or a raw identifier (old data)
-		if (!trimmedPreregUserId.equals(trimmedCanonicalAuthUserId)) {
-			// Try mapping preregUserId to canonical UUID in case it's old data
-			// (if database stores raw identifier in createdBy field)
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedPreregUser = 
-					userDetailsService.findOrCreateByIdentifier(trimmedPreregUserId);
-				if (mappedPreregUser != null && mappedPreregUser.getUserId() != null) {
-					String canonicalPreregUserId = mappedPreregUser.getUserId().toString();
-					if (canonicalPreregUserId.equals(trimmedCanonicalAuthUserId)) {
-						// Match found after mapping both IDs to canonical UUIDs
-						return;
-					}
-				}
-			} catch (Exception ex) {
-				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Could not map preregUserId to canonical UUID, might already be a UUID: " + trimmedPreregUserId);
-			}
-			// No match found in either direct comparison or mapping
+				"In getDemographicData method of userValidation with priid " + maskIdentifier(preregUserId)
+						+ " and userID " + maskIdentifier(authUserId));
+		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
@@ -446,13 +409,12 @@ public class CommonServiceUtil {
 			List<String> validMandatoryDocForApplicant) {
 		if (validMandatoryDocForApplicant.isEmpty()) {
 			return true;
-		} else {
-			uploadedDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (!validMandatoryDocForApplicant.isEmpty()) {
-				return false;
-			} else {
-				return true;
-			}
 		}
+		uploadedDocs.forEach(validMandatoryDocForApplicant::remove);
+		return validMandatoryDocForApplicant.isEmpty();
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
 	}
 }
