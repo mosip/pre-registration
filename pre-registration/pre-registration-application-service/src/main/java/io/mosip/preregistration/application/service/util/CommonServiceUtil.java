@@ -13,10 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
-import io.mosip.preregistration.core.common.entity.UserDetails;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -114,7 +112,7 @@ public class CommonServiceUtil {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
-	@Value("${mosip.prereg.pii.backward.compatibility:false}")
+	@Value("${mosip.prereg.pii.backward.compatibility}")
 	private boolean piiBackwardCompatibility;
 
 	/**
@@ -183,53 +181,9 @@ public class CommonServiceUtil {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getDemographicData method of userValidation with priid " + maskIdentifier(preregUserId)
 						+ " and userID " + maskIdentifier(authUserId));
-		String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
-		String trimmedPreregUserId = preregUserId == null ? "" : preregUserId.trim();
-		// UUID-only mode: strict canonical UUID comparison
-		String canonicalAuthUserId = null;
-		try {
-			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(authUserId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				canonicalAuthUserId = mappedUser.getUserId().toString();
-			}
-		} catch (Exception ex) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID: " + maskIdentifier(authUserId), ex);
-		}
-		String trimmedCanonicalAuthUserId = canonicalAuthUserId == null ? "" : canonicalAuthUserId.trim();
-		if (!piiBackwardCompatibility) {
-			if (!trimmedCanonicalAuthUserId.equals(trimmedPreregUserId)) {
-				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-			}
-			return;
-		}
-
-		// Backward-compat mode: dual-read/validation support (UUID + raw)
-		// Check if preregUserId is already a UUID (new data) or a raw identifier (old data)
-		if (!trimmedPreregUserId.equals(trimmedCanonicalAuthUserId)) {
-			// Try mapping preregUserId to canonical UUID in case it's old data
-			// (if database stores raw identifier in createdBy field)
-			try {
-				io.mosip.preregistration.core.common.entity.UserDetails mappedPreregUser = 
-					userDetailsService.findOrCreateByIdentifier(trimmedPreregUserId);
-				if (mappedPreregUser != null && mappedPreregUser.getUserId() != null) {
-					String canonicalPreregUserId = mappedPreregUser.getUserId().toString();
-					if (canonicalPreregUserId.equals(trimmedCanonicalAuthUserId)) {
-						// Match found after mapping both IDs to canonical UUIDs
-						return;
-					}
-				}
-			} catch (Exception ex) {
-				log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"Could not map preregUserId to canonical UUID, might already be a UUID: "
-								+ maskIdentifier(trimmedPreregUserId));
-			}
-			// Fallback for legacy data/tests where raw identifiers are still present.
-			if (!trimmedAuthUserId.equals(trimmedPreregUserId)) {
-				throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
-						DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
-			}
+		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
+			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
 	}
 
@@ -455,43 +409,12 @@ public class CommonServiceUtil {
 			List<String> validMandatoryDocForApplicant) {
 		if (validMandatoryDocForApplicant.isEmpty()) {
 			return true;
-		} else {
-			uploadedDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (!validMandatoryDocForApplicant.isEmpty()) {
-				return false;
-			} else {
-				return true;
-			}
 		}
+		uploadedDocs.forEach(validMandatoryDocForApplicant::remove);
+		return validMandatoryDocForApplicant.isEmpty();
 	}
 
 	private String maskIdentifier(String value) {
-		if (value == null || value.isBlank()) {
-			return "<empty>";
-		}
-		String trimmed = value.trim();
-		int atIndex = trimmed.indexOf('@');
-		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
-			String local = trimmed.substring(0, atIndex);
-			String domain = trimmed.substring(atIndex);
-			String visibleLocal = local.substring(0, 1);
-			return visibleLocal + "***" + domain;
-		}
-		if (trimmed.matches("\\+?\\d{10,12}")) {
-			boolean hasPlus = trimmed.startsWith("+");
-			String digits = hasPlus ? trimmed.substring(1) : trimmed;
-			if (digits.length() <= 4) {
-				return (hasPlus ? "+" : "") + "****";
-			}
-			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
-			return (hasPlus ? "+" : "") + masked;
-		}
-		try {
-			UUID.fromString(trimmed);
-			return "***" + trimmed.substring(trimmed.length() - 6);
-		} catch (Exception ignored) {
-		}
-		int visible = Math.min(4, trimmed.length());
-		return "***" + trimmed.substring(trimmed.length() - visible);
+		return userDetailsService.maskIdentifier(value);
 	}
 }

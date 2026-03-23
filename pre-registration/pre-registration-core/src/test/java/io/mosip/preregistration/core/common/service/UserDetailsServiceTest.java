@@ -6,8 +6,12 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -56,6 +60,26 @@ public class UserDetailsServiceTest {
     }
 
     @Test
+    public void testFindOrCreateFailsWhenEncryptedValueIsNullForNewRecord() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
+
+        assertThrows(IllegalStateException.class, () -> userDetailsService.findOrCreateByIdentifier("TestUser"));
+    }
+
+    @Test
+    public void testFindOrCreateFailsWhenEncryptedValueIsNullForExistingRecordRepair() {
+        UserDetails existing = new UserDetails();
+        existing.setUserId(UUID.randomUUID());
+        existing.setIdentifierHash("hash");
+        existing.setIdentifierEncrypted(null);
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(existing));
+        when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
+
+        assertThrows(IllegalStateException.class, () -> userDetailsService.findOrCreateByIdentifier("TestUser"));
+    }
+
+    @Test
     public void testGetDecryptedIdentifierReturnsPlainIdentifier() {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
         when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
@@ -81,5 +105,51 @@ public class UserDetailsServiceTest {
 
         Optional<String> decrypted = userDetailsService.getDecryptedIdentifier(mock.getUserId());
         assertFalse(decrypted.isPresent());
+    }
+
+    @Test
+    public void testResolveCanonicalUserIdReturnsUuidWhenMappingExists() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("enc-value");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        Optional<String> resolved = userDetailsService.resolveCanonicalUserId("TestUser");
+
+        assertTrue(resolved.isPresent());
+        assertEquals(mapped.getUserId().toString(), resolved.get());
+    }
+
+    @Test
+    public void testGetUserLookupIdsReturnsCanonicalAndLegacyInCompatibilityMode() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("enc-value");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        List<String> lookupIds = userDetailsService.getUserLookupIds("TestUser", true);
+
+        assertIterableEquals(List.of(mapped.getUserId().toString(), "TestUser"), lookupIds);
+    }
+
+    @Test
+    public void testMatchesUserSupportsLegacyAndCanonicalInCompatibilityMode() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("enc-value");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        assertTrue(userDetailsService.matchesUser("TestUser", mapped.getUserId().toString(), true));
+        assertTrue(userDetailsService.matchesUser("TestUser", "TestUser", true));
+    }
+
+    @Test
+    public void testMatchesUserReturnsFalseWhenNoCanonicalOrLegacyMatchExists() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+
+        assertFalse(userDetailsService.matchesUser("TestUser", "AnotherUser", true));
     }
 }
