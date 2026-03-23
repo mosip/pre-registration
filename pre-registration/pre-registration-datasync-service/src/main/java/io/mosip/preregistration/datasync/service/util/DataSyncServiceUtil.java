@@ -18,7 +18,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -60,7 +59,6 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.JWTSignatureRequestDto;
 import io.mosip.kernel.signature.dto.JWTSignatureResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
-import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -200,9 +198,6 @@ public class DataSyncServiceUtil {
 
 	@Value("${version:1.0}")
 	private String version;
-
-	@Value("${mosip.prereg.pii.backward.compatibility:false}")
-	private boolean piiBackwardCompatibility;
 
 	@Value("${mosip.preregistration.sync.sign.appid}")
 	private String signAppId;
@@ -890,49 +885,21 @@ public class DataSyncServiceUtil {
 
 	
 	private String getCanonicalUserId(String userId) {
-		if (userId == null || userId.trim().isEmpty()) {
-			return userId;
-		}
-		try {
-			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				return mappedUser.getUserId().toString();
-			}
-		} catch (Exception e) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"UserDetails mapping failed in reverseDateSyncSave for userId: " + maskIdentifier(userId), e);
-		}
-		return userId;
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for reverse datasync. maskedUserId=" + maskIdentifier(userId)
+						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+		return effectiveUserId;
 	}
 
 	private String maskIdentifier(String value) {
-		if (value == null || value.isBlank()) {
-			return "<empty>";
-		}
-		String trimmed = value.trim();
-		int atIndex = trimmed.indexOf('@');
-		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
-			String local = trimmed.substring(0, atIndex);
-			String domain = trimmed.substring(atIndex);
-			String visibleLocal = local.substring(0, 1);
-			return visibleLocal + "***" + domain;
-		}
-		if (trimmed.matches("\\+?\\d{10,12}")) {
-			boolean hasPlus = trimmed.startsWith("+");
-			String digits = hasPlus ? trimmed.substring(1) : trimmed;
-			if (digits.length() <= 4) {
-				return (hasPlus ? "+" : "") + "****";
-			}
-			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
-			return (hasPlus ? "+" : "") + masked;
-		}
-		try {
-			UUID.fromString(trimmed);
-			return "***" + trimmed.substring(trimmed.length() - 6);
-		} catch (Exception ignored) {
-		}
-		int visible = Math.min(4, trimmed.length());
-		return "***" + trimmed.substring(trimmed.length() - visible);
+		return userDetailsService.maskIdentifier(value);
+	}
+
+	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 
 	public ReverseDatasyncReponseDTO reverseDateSyncSave(Date reqDateTime, ReverseDataSyncRequestDTO request,

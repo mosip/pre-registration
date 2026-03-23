@@ -20,7 +20,6 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
@@ -155,9 +154,6 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
-
-	@Value("${mosip.prereg.pii.backward.compatibility:false}")
-	private boolean piiBackwardCompatibility;
 
 	/**
 	 * Logger instance
@@ -318,18 +314,13 @@ public class DemographicServiceUtil {
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
 		
-		// Always prefer canonical UUID identifiers for new writes.
-		try {
-			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				String canonicalUserId = mappedUser.getUserId().toString();
-				demographicEntity.setCrAppuserId(canonicalUserId);
-				demographicEntity.setCreatedBy(canonicalUserId);
-				demographicEntity.setUpdatedBy(canonicalUserId);
-			}
-		} catch (Exception e) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for demographic create, falling back to legacy identifiers", e);
-		}
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for demographic create. maskedUserId=" + maskIdentifier(userId)
+						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+		demographicEntity.setCrAppuserId(effectiveUserId);
+		demographicEntity.setCreatedBy(effectiveUserId);
+		demographicEntity.setUpdatedBy(effectiveUserId);
 		
 		return demographicEntity;
 	}
@@ -438,7 +429,7 @@ public class DemographicServiceUtil {
 		JSONObject identityObj = (JSONObject) jsonObj.get(DemographicRequestCodes.IDENTITY.getCode());
 		if (identityObj.get(value) != null)
 			return identityObj.get(value).toString();
-		return "";
+		return null;
 
 	}
 
@@ -722,18 +713,13 @@ public class DemographicServiceUtil {
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		applicationEntity.setUpdBy(userId);
 		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
-		applicationEntity.setContactInfo(userId);			// populate canonical user ids if service available
-		try {
-			UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				String canonicalUserId = mappedUser.getUserId().toString();
-				applicationEntity.setCrBy(canonicalUserId);
-				applicationEntity.setUpdBy(canonicalUserId);
-				applicationEntity.setContactInfo(canonicalUserId);
-			}
-		} catch (Exception e) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed, falling back to legacy identifiers", e);
-		}
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for applications write. applicationId=" + preId + ", maskedUserId="
+						+ maskIdentifier(userId) + ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+		applicationEntity.setCrBy(effectiveUserId);
+		applicationEntity.setUpdBy(effectiveUserId);
+		applicationEntity.setContactInfo(effectiveUserId);
 		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
@@ -755,15 +741,12 @@ public class DemographicServiceUtil {
 			applicationEntity.setBookingStatusCode(status);
 			applicationEntity.setUpdBy(userId);
 			applicationEntity.setUpdDtime(LocalDateTime.now());
-			// Always prefer canonical UUID for updated-by in new writes.
-			try {
-				UserDetails mappedUser = userDetailsService.findOrCreateByIdentifier(userId);
-				if (mappedUser != null && mappedUser.getUserId() != null) {
-					applicationEntity.setUpdBy(mappedUser.getUserId().toString());
-				}
-			} catch (Exception e) {
-				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "UserDetails mapping failed for updateApplicationStatus", e);
-			}
+			String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Resolved effective user id for application status update. applicationId=" + applicationId
+							+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
+							+ isCanonicalApplied(userId, effectiveUserId));
+			applicationEntity.setUpdBy(effectiveUserId);
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
 			}
@@ -955,5 +938,15 @@ public class DemographicServiceUtil {
 		});
 
 		return mandatoryDocs;
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
+	}
+
+	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 }

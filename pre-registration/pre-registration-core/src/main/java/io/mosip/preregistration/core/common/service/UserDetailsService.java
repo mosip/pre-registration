@@ -3,7 +3,11 @@ package io.mosip.preregistration.core.common.service;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -40,6 +44,18 @@ public class UserDetailsService {
         return identifier.trim().toLowerCase();
     }
 
+    private boolean isUuid(String identifier) {
+        if (identifier == null || identifier.isBlank()) {
+            return false;
+        }
+        try {
+            UUID.fromString(identifier.trim());
+            return true;
+        } catch (IllegalArgumentException ex) {
+            return false;
+        }
+    }
+
     private String sha256Hex(String input) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
@@ -68,9 +84,17 @@ public class UserDetailsService {
             }
             return new String(encrypted, StandardCharsets.UTF_8);
         } catch (Exception ex) {
-            LOGGER.warn("Encryption failed - storing null encrypted value", ex);
+            LOGGER.warn("Encryption failed for user identifier");
             return null;
         }
+    }
+
+    private String encryptIdentifierRequired(String plain) {
+        String encryptedValue = encryptIdentifierIfConfigured(plain);
+        if (encryptedValue == null || encryptedValue.isBlank()) {
+            throw new IllegalStateException("Encrypted identifier is required before persisting user details");
+        }
+        return encryptedValue;
     }
 
     private Optional<String> decryptIdentifierIfConfigured(String encryptedValue) {
@@ -98,8 +122,100 @@ public class UserDetailsService {
         if (norm == null) {
             return Optional.empty();
         }
+        if (isUuid(norm)) {
+            return userDetailsRepository.findById(UUID.fromString(norm));
+        }
         String hash = sha256Hex(norm);
         return userDetailsRepository.findByIdentifierHash(hash);
+    }
+
+    public Optional<String> resolveCanonicalUserId(String identifier) {
+        if (identifier == null || identifier.trim().isEmpty()) {
+            LOGGER.debug("Skipping canonical user id resolution because identifier is blank");
+            return Optional.empty();
+        }
+        String trimmedIdentifier = identifier.trim();
+        if (isUuid(trimmedIdentifier)) {
+            LOGGER.debug("Using identifier as canonical user id because it is already a UUID");
+            return Optional.of(trimmedIdentifier);
+        }
+        try {
+            UserDetails mappedUser = findOrCreateByIdentifier(trimmedIdentifier);
+            if (mappedUser.getUserId() == null) {
+                throw new IllegalStateException("Canonical user id is missing for resolved user details");
+            }
+            LOGGER.debug("Resolved canonical user id for masked identifier {}", maskIdentifier(trimmedIdentifier));
+            return Optional.of(mappedUser.getUserId().toString());
+        } catch (Exception ex) {
+            LOGGER.warn("Failed to resolve canonical user id for masked identifier {}", maskIdentifier(trimmedIdentifier), ex);
+        }
+        return Optional.empty();
+    }
+
+    public String resolveCanonicalUserIdOrIdentifier(String identifier) {
+        return resolveCanonicalUserId(identifier).orElseGet(() -> {
+            String fallbackIdentifier = identifier == null ? "" : identifier.trim();
+            if (!fallbackIdentifier.isEmpty()) {
+                LOGGER.warn("Falling back to non-canonical identifier for masked user {}", maskIdentifier(fallbackIdentifier));
+            }
+            return fallbackIdentifier;
+        });
+    }
+
+    public String maskIdentifier(String value) {
+        if (value == null || value.isBlank()) {
+            return "<empty>";
+        }
+        String trimmed = value.trim();
+        int atIndex = trimmed.indexOf('@');
+        if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+            String local = trimmed.substring(0, atIndex);
+            String domain = trimmed.substring(atIndex);
+            return local.substring(0, 1) + "***" + domain;
+        }
+        if (trimmed.matches("\\+?\\d{10,12}")) {
+            boolean hasPlus = trimmed.startsWith("+");
+            String digits = hasPlus ? trimmed.substring(1) : trimmed;
+            if (digits.length() <= 4) {
+                return (hasPlus ? "+" : "") + "****";
+            }
+            String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+            return (hasPlus ? "+" : "") + masked;
+        }
+        if (isUuid(trimmed)) {
+            return "***" + trimmed.substring(trimmed.length() - 6);
+        }
+        int visible = Math.min(4, trimmed.length());
+        return "***" + trimmed.substring(trimmed.length() - visible);
+    }
+
+    public List<String> getUserLookupIds(String authUserId, boolean piiBackwardCompatibility) {
+        Set<String> ids = new LinkedHashSet<>();
+        Optional<String> canonicalUserId = resolveCanonicalUserId(authUserId);
+        String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
+        canonicalUserId.ifPresent(ids::add);
+        if (piiBackwardCompatibility && !trimmedAuthUserId.isEmpty()) {
+            ids.add(trimmedAuthUserId);
+        }
+        return new ArrayList<>(ids);
+    }
+
+    public boolean matchesUser(String authUserId, String storedUserId, boolean piiBackwardCompatibility) {
+        String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
+        String trimmedStoredUserId = storedUserId == null ? "" : storedUserId.trim();
+        Optional<String> canonicalAuthUserId = resolveCanonicalUserId(authUserId);
+        if (!piiBackwardCompatibility) {
+            return canonicalAuthUserId.filter(trimmedStoredUserId::equals).isPresent();
+        }
+        if (canonicalAuthUserId.filter(trimmedStoredUserId::equals).isPresent()) {
+            return true;
+        }
+        Optional<String> canonicalStoredUserId = resolveCanonicalUserId(trimmedStoredUserId);
+        if (canonicalAuthUserId.isPresent() && canonicalStoredUserId.isPresent()
+                && canonicalAuthUserId.get().equals(canonicalStoredUserId.get())) {
+            return true;
+        }
+        return trimmedAuthUserId.equals(trimmedStoredUserId);
     }
 
     /**
@@ -112,6 +228,8 @@ public class UserDetailsService {
         if (norm == null) {
             throw new IllegalArgumentException("identifier is required");
         }
+        // Hashing the normalized identifier gives us the deterministic lookup key for user_details.
+        // We still do not persist anything unless encryption succeeds, so we avoid hash-only rows.
         String hash = sha256Hex(norm);
         Optional<UserDetails> found = userDetailsRepository.findByIdentifierHash(hash);
         if (found.isPresent()) {
@@ -122,27 +240,23 @@ public class UserDetailsService {
                 needsSave = true;
             }
             if (existing.getIdentifierEncrypted() == null || existing.getIdentifierEncrypted().isBlank()) {
-                String encrypted = encryptIdentifierIfConfigured(identifier);
-                if (encrypted != null) {
-                    existing.setIdentifierEncrypted(encrypted);
-                    existing.setEncryptedDtimes(LocalDateTime.now());
-                    needsSave = true;
-                }
+                String encrypted = encryptIdentifierRequired(norm);
+                existing.setIdentifierEncrypted(encrypted);
+                existing.setEncryptedDtimes(LocalDateTime.now());
+                needsSave = true;
+                LOGGER.info("Repaired missing encrypted identifier for existing canonical user {}", existing.getUserId());
             }
-            if (needsSave) {
-                return userDetailsRepository.save(existing);
-            }
-            return existing;
+            return needsSave ? userDetailsRepository.save(existing) : existing;
         }
         UserDetails u = new UserDetails();
         u.setUserId(UUID.randomUUID());
         u.setIdentifierHash(hash);
         u.setCrDtimes(LocalDateTime.now());
-        String encrypted = encryptIdentifierIfConfigured(identifier);
+        // Encryption is mandatory for both new rows and repair of older incomplete rows.
+        String encrypted = encryptIdentifierRequired(norm);
         u.setIdentifierEncrypted(encrypted);
-        if (encrypted != null && !encrypted.isBlank()) {
-            u.setEncryptedDtimes(LocalDateTime.now());
-        }
+        u.setEncryptedDtimes(LocalDateTime.now());
+        LOGGER.info("Creating new canonical user mapping for masked identifier {}", maskIdentifier(norm));
         return userDetailsRepository.save(u);
     }
 

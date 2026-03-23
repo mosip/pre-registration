@@ -12,15 +12,11 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
 
 import io.mosip.kernel.core.idvalidator.exception.InvalidIDException;
 import io.mosip.preregistration.application.exception.*;
-import io.mosip.preregistration.core.common.entity.UserDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -126,7 +122,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 	@Value("${mosip.preregistration.applications.all.get}")
 	private String allApplicationsId;
 
-	@Value("${mosip.prereg.pii.backward.compatibility:false}")
+	@Value("${mosip.prereg.pii.backward.compatibility}")
 	private boolean piiBackwardCompatibility;
 	/**
 	 * logger instance
@@ -434,13 +430,10 @@ public class ApplicationService implements ApplicationServiceIntf {
 						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
 					//userValidation(applicationEntity);
 			String authUserId = authUserDetails().getUserId();
-			String canonicalAuthUserId = resolveCanonicalUserId(authUserId);
 			String effectiveCrBy = applicationEntity.getEffectiveCrBy() == null ? "" : applicationEntity.getEffectiveCrBy().trim();
-			if (!effectiveCrBy.equals(canonicalAuthUserId)) {
-				if (!(piiBackwardCompatibility && effectiveCrBy.equals(authUserId == null ? "" : authUserId.trim()))) {
+			if (!userDetailsService.matchesUser(authUserId, effectiveCrBy, piiBackwardCompatibility)) {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
-				}
 			}	
 					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
 						MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
@@ -499,7 +492,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByIn(getUserLookupIds(userId));
+			List<ApplicationEntity> applicationEntities = applicationRepository
+					.findByCreatedByIn(userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility));
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
@@ -556,14 +550,10 @@ public class ApplicationService implements ApplicationServiceIntf {
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
 					+ applicationEntity.getApplicationId() + " and userID " + maskIdentifier(authUserId));
-			String canonicalAuthUserId = resolveCanonicalUserId(authUserId);
 			String effectiveCrBy = applicationEntity.getEffectiveCrBy() == null ? "" : applicationEntity.getEffectiveCrBy().trim();
-			if (!effectiveCrBy.equals(canonicalAuthUserId)) {
-				if (piiBackwardCompatibility && authUserId != null && effectiveCrBy.equals(authUserId.trim())) {
-					return;
-				}
-					throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
-							ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
+			if (!userDetailsService.matchesUser(authUserId, effectiveCrBy, piiBackwardCompatibility)) {
+				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
+						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
 		}			
 	}
@@ -604,7 +594,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
 
 			}
-			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByInBookingType(getUserLookupIds(userId),
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByInBookingType(
+					userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility),
 					type.toUpperCase());
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: {" + applicationEntities.size() + "} and booking type: {" + type + "}");
 			applicationsListDTO.setAllApplications(applicationEntities);
@@ -619,62 +610,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 		return response;
 	}
 
-	private String resolveCanonicalUserId(String userId) {
-		if (userId == null || userId.trim().isEmpty()) {
-			return "";
-		}
-		try {
-			UserDetails mappedUser = userDetailsService
-					.findOrCreateByIdentifier(userId);
-			if (mappedUser != null && mappedUser.getUserId() != null) {
-				return mappedUser.getUserId().toString().trim();
-			}
-		} catch (Exception ex) {
-			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Failed to map auth user to canonical UUID for user: " + maskIdentifier(userId), ex);
-		}
-		return "";
-	}
-
 	private String maskIdentifier(String value) {
-		if (value == null || value.isBlank()) {
-			return "<empty>";
-		}
-		String trimmed = value.trim();
-		int atIndex = trimmed.indexOf('@');
-		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
-			String local = trimmed.substring(0, atIndex);
-			String domain = trimmed.substring(atIndex);
-			String visibleLocal = local.substring(0, 1);
-			return visibleLocal + "***" + domain;
-		}
-		if (trimmed.matches("\\+?\\d{10,12}")) {
-			boolean hasPlus = trimmed.startsWith("+");
-			String digits = hasPlus ? trimmed.substring(1) : trimmed;
-			if (digits.length() <= 4) {
-				return (hasPlus ? "+" : "") + "****";
-			}
-			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
-			return (hasPlus ? "+" : "") + masked;
-		}
-		try {
-			UUID.fromString(trimmed);
-			return "***" + trimmed.substring(trimmed.length() - 6);
-		} catch (Exception ignored) {
-		}
-		int visible = Math.min(4, trimmed.length());
-		return "***" + trimmed.substring(trimmed.length() - visible);
+		return userDetailsService.maskIdentifier(value);
 	}
 
-	private List<String> getUserLookupIds(String authUserId) {
-		Set<String> ids = new LinkedHashSet<>();
-		String canonical = resolveCanonicalUserId(authUserId);
-		if (!canonical.isEmpty()) {
-			ids.add(canonical);
-		}
-		if (piiBackwardCompatibility && authUserId != null && !authUserId.trim().isEmpty()) {
-			ids.add(authUserId.trim());
-		}
-		return new ArrayList<>(ids);
-	}
 }

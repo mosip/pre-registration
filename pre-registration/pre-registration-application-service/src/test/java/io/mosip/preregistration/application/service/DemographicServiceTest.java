@@ -345,6 +345,15 @@ public class DemographicServiceTest {
 			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));
 			return ud;
 		});
+		Mockito.when(userDetailsService.matchesUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean()))
+				.thenAnswer(invocation -> {
+					String authUserId = invocation.getArgument(0);
+					String expectedCrBy = invocation.getArgument(1);
+					Boolean compatibility = invocation.getArgument(2);
+					String canonicalUserId = getCanonicalUserIdString(authUserId);
+					return canonicalUserId.equals(expectedCrBy)
+							|| (Boolean.TRUE.equals(compatibility) && authUserId.equals(expectedCrBy));
+				});
 		mapper = new ObjectMapper();
 		auditRequestDto = new AuditRequestDto();
 
@@ -361,7 +370,6 @@ public class DemographicServiceTest {
 		ReflectionTestUtils.setField(preRegistrationService, "piiBackwardCompatibility", true);
 		ReflectionTestUtils.setField(commonServiceUtil, "piiBackwardCompatibility", true);
 		ReflectionTestUtils.setField(demographicService, "piiBackwardCompatibility", true);
-		ReflectionTestUtils.setField(demographicServiceUtil, "piiBackwardCompatibility", true);
 		
 		preRegistrationEntity = new DemographicEntity();
 		ClassLoader classLoader = getClass().getClassLoader();
