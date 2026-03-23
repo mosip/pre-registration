@@ -122,6 +122,20 @@ public class UserDetailsServiceTest {
     }
 
     @Test
+    public void testResolveCanonicalUserIdReturnsExistingUuidWithoutRepairingRecord() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        Optional<String> resolved = userDetailsService.resolveCanonicalUserId("TestUser");
+
+        assertTrue(resolved.isPresent());
+        assertEquals(mapped.getUserId().toString(), resolved.get());
+    }
+
+    @Test
     public void testGetUserLookupIdsReturnsCanonicalAndLegacyInCompatibilityMode() {
         UserDetails mapped = new UserDetails();
         mapped.setUserId(UUID.randomUUID());

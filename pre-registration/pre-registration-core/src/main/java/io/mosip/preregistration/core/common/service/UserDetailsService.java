@@ -140,6 +140,18 @@ public class UserDetailsService {
             return Optional.of(trimmedIdentifier);
         }
         try {
+            // Read paths should be able to resolve an existing canonical UUID without depending on
+            // repair/save logic. If a user_details row already exists, return its UUID directly.
+            Optional<UserDetails> existingUser = findByIdentifier(trimmedIdentifier);
+            if (existingUser.isPresent()) {
+                if (existingUser.get().getUserId() == null) {
+                    throw new IllegalStateException("Canonical user id is missing for resolved user details");
+                }
+                LOGGER.debug("Resolved existing canonical user id for masked identifier {}",
+                        maskIdentifier(trimmedIdentifier));
+                return Optional.of(existingUser.get().getUserId().toString());
+            }
+
             UserDetails mappedUser = findOrCreateByIdentifier(trimmedIdentifier);
             if (mappedUser.getUserId() == null) {
                 throw new IllegalStateException("Canonical user id is missing for resolved user details");
