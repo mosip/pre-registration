@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,7 +28,6 @@ import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
-import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 
@@ -224,27 +222,8 @@ public class ApplicationConsumedStatusUpdater {
     }
 
     private String resolveCanonicalUserId(String userId) {
-        if (Objects.isNull(userId) || userId.trim().isEmpty()) {
-            return userId;
-        }
-        String trimmedUserId = userId.trim();
-        if (isUuid(trimmedUserId)) {
-            return trimmedUserId;
-        }
-        UserDetails userDetails = userDetailsService.findOrCreateByIdentifier(trimmedUserId);
-        if (Objects.nonNull(userDetails) && Objects.nonNull(userDetails.getUserId())) {
-            return userDetails.getUserId().toString();
-        }
-        throw new IllegalStateException("Failed to resolve canonical user id for consumed table write");
-    }
-
-    private boolean isUuid(String value) {
-        try {
-            UUID.fromString(value);
-            return true;
-        } catch (IllegalArgumentException ex) {
-            return false;
-        }
+        return userDetailsService.resolveCanonicalUserId(userId)
+                .orElseThrow(() -> new IllegalStateException("Failed to resolve canonical user id for consumed table write"));
     }
     
 }

@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -58,6 +59,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.application.errorcodes.AppointmentErrorCodes;
 import io.mosip.preregistration.application.exception.AppointmentExecption;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 @RunWith(JUnit4.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
@@ -109,11 +111,15 @@ public class AppointmentServiceImplTest {
 	@Mock
 	private DocumentDAO documentDAO;
 
+	@Mock
+	private UserDetailsService userDetailsService;
+
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(appointmentServiceImpl, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(appointmentServiceImpl, "piiBackwardCompatibility", false);
+		when(userDetailsService.matchesUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean())).thenReturn(true);
 	}
 
 	@Test
@@ -212,6 +218,20 @@ public class AppointmentServiceImplTest {
 
 		response.setResponse(bookingResponse);
 
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(prid);
+		when(applicationRepostiory.findById(prid)).thenReturn(java.util.Optional.of(applicationEntity));
+		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
+		Authentication authentication = mock(Authentication.class);
+		SecurityContext securityContext = mock(SecurityContext.class);
+		when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(applicationUser.getUserId()).thenReturn("test-user");
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"));
+		when(applicationUser.getAuthorities()).thenReturn((Collection) authorities);
+
 		when(appointmentUtils.fetchAppointmentDetails(prid))
 				.thenThrow(new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
 						String.format(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage(), "")));
@@ -245,12 +265,17 @@ public class AppointmentServiceImplTest {
 
 		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.findById(prid)).thenReturn(java.util.Optional.of(applicationEntity));
 		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
 		Authentication authentication = mock(Authentication.class);
 		SecurityContext securityContext = mock(SecurityContext.class);
 		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(applicationUser.getUserId()).thenReturn("test-user");
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"));
+		when(applicationUser.getAuthorities()).thenReturn((Collection) authorities);
 
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
@@ -290,12 +315,17 @@ public class AppointmentServiceImplTest {
 
 		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.findById(prid)).thenReturn(java.util.Optional.of(applicationEntity));
 		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
 		Authentication authentication = mock(Authentication.class);
 		SecurityContext securityContext = mock(SecurityContext.class);
 		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(applicationUser.getUserId()).thenReturn("test-user");
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"));
+		when(applicationUser.getAuthorities()).thenReturn((Collection) authorities);
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 		assertEquals(appEntity2, applicationEntity);
 		MainResponseDTO<CancelBookingResponseDTO> bookingStatusRes = appointmentServiceImpl.cancelAppointment(prid);
@@ -328,6 +358,7 @@ public class AppointmentServiceImplTest {
 
 		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.findById(prid)).thenReturn(java.util.Optional.of(applicationEntity));
 
 		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
 		Authentication authentication = mock(Authentication.class);
@@ -335,6 +366,10 @@ public class AppointmentServiceImplTest {
 		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(applicationUser.getUserId()).thenReturn("test-user");
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"));
+		when(applicationUser.getAuthorities()).thenReturn((Collection) authorities);
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 		assertEquals(appEntity2, applicationEntity);
 		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentServiceImpl.deleteBooking(prid);
@@ -367,6 +402,7 @@ public class AppointmentServiceImplTest {
 
 		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 		when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		when(applicationRepostiory.findById(prid)).thenReturn(java.util.Optional.of(applicationEntity));
 
 		AuthUserDetails applicationUser = mock(AuthUserDetails.class);
 		Authentication authentication = mock(Authentication.class);
@@ -374,6 +410,10 @@ public class AppointmentServiceImplTest {
 		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		when(applicationUser.getUserId()).thenReturn("test-user");
+		List<GrantedAuthority> authorities = new ArrayList<>();
+		authorities.add(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"));
+		when(applicationUser.getAuthorities()).thenReturn((Collection) authorities);
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 		assertEquals(appEntity2, applicationEntity);
 		MainResponseDTO<DeleteBookingDTO> deleteRes = appointmentServiceImpl
