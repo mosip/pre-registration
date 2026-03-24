@@ -96,23 +96,6 @@ public class UserDetailsService {
         }
         return encryptedValue;
     }
-
-    private Optional<String> decryptIdentifierIfConfigured(String encryptedValue) {
-        if (encryptedValue == null || encryptedValue.isBlank()) {
-            return Optional.empty();
-        }
-        try {
-            byte[] plain = cryptoUtil.decrypt(encryptedValue.getBytes(StandardCharsets.UTF_8), LocalDateTime.now());
-            if (plain == null || plain.length == 0) {
-                return Optional.empty();
-            }
-            return Optional.of(new String(plain, StandardCharsets.UTF_8));
-        } catch (Exception ex) {
-            LOGGER.warn("Decryption failed for identifier_encrypted", ex);
-            return Optional.empty();
-        }
-    }
-
     /**
      * Find canonical user by identifier (email/username/whatever) — uses normalized sha256.
      */
@@ -144,18 +127,12 @@ public class UserDetailsService {
             // repair/save logic. If a user_details row already exists, return its UUID directly.
             Optional<UserDetails> existingUser = findByIdentifier(trimmedIdentifier);
             if (existingUser.isPresent()) {
-                if (existingUser.get().getUserId() == null) {
-                    throw new IllegalStateException("Canonical user id is missing for resolved user details");
-                }
                 LOGGER.debug("Resolved existing canonical user id for masked identifier {}",
                         maskIdentifier(trimmedIdentifier));
                 return Optional.of(existingUser.get().getUserId().toString());
             }
 
             UserDetails mappedUser = findOrCreateByIdentifier(trimmedIdentifier);
-            if (mappedUser.getUserId() == null) {
-                throw new IllegalStateException("Canonical user id is missing for resolved user details");
-            }
             LOGGER.debug("Resolved canonical user id for masked identifier {}", maskIdentifier(trimmedIdentifier));
             return Optional.of(mappedUser.getUserId().toString());
         } catch (Exception ex) {
@@ -272,17 +249,5 @@ public class UserDetailsService {
         return userDetailsRepository.save(u);
     }
 
-    /**
-     * Returns decrypted identifier for a canonical user id when encryption key is configured.
-     */
-    public Optional<String> getDecryptedIdentifier(UUID userId) {
-        if (userId == null) {
-            return Optional.empty();
-        }
-        Optional<UserDetails> user = userDetailsRepository.findById(userId);
-        if (user.isEmpty()) {
-            return Optional.empty();
-        }
-        return decryptIdentifierIfConfigured(user.get().getIdentifierEncrypted());
-    }
 }
+
