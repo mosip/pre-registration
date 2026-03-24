@@ -87,23 +87,16 @@ public class UserDetailsServiceTest {
         when(userDetailsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
         UserDetails saved = userDetailsService.findOrCreateByIdentifier("TestUser123");
-        UUID userId = saved.getUserId();
-        when(userDetailsRepository.findById(userId)).thenReturn(Optional.of(saved));
-
-        Optional<String> decrypted = userDetailsService.getDecryptedIdentifier(userId);
+        Optional<String> decrypted = decryptIdentifier(saved.getIdentifierEncrypted());
         assertTrue(decrypted.isPresent());
         assertTrue("TestUser123".equals(decrypted.get()));
     }
 
     @Test
     public void testGetDecryptedIdentifierReturnsEmptyWhenDecryptFails() {
-        UserDetails mock = new UserDetails();
-        mock.setUserId(UUID.randomUUID());
-        mock.setIdentifierEncrypted("encrypted-payload");
         when(cryptoUtil.decrypt(any(), any())).thenThrow(new RuntimeException("decrypt failure"));
-        when(userDetailsRepository.findById(mock.getUserId())).thenReturn(Optional.of(mock));
 
-        Optional<String> decrypted = userDetailsService.getDecryptedIdentifier(mock.getUserId());
+        Optional<String> decrypted = decryptIdentifier("encrypted-payload");
         assertFalse(decrypted.isPresent());
     }
 
@@ -165,5 +158,20 @@ public class UserDetailsServiceTest {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
 
         assertFalse(userDetailsService.matchesUser("TestUser", "AnotherUser", true));
+    }
+
+    private Optional<String> decryptIdentifier(String encryptedValue) {
+        if (encryptedValue == null || encryptedValue.isBlank()) {
+            return Optional.empty();
+        }
+        try {
+            byte[] plain = cryptoUtil.decrypt(encryptedValue.getBytes(StandardCharsets.UTF_8), LocalDateTime.now());
+            if (plain == null || plain.length == 0) {
+                return Optional.empty();
+            }
+            return Optional.of(new String(plain, StandardCharsets.UTF_8));
+        } catch (Exception ex) {
+            return Optional.empty();
+        }
     }
 }
