@@ -21,15 +21,18 @@ import org.springframework.web.client.RestTemplate;
 
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.application.service.UISpecService;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
-import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.exception.system.DateParseException;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
 
@@ -59,6 +62,9 @@ public class DemographicServiceUtilTest {
 
 	@MockBean
 	private ApplicationRepostiory applicationRepostiory;
+
+	@MockBean
+	private DocumentDAO documentDAO;
 
 	@MockBean
 	private RequestValidator requestValidator;
@@ -105,6 +111,8 @@ public class DemographicServiceUtilTest {
 		demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId("35760478648170");
 		demographicEntity.setApplicantDetailJson((jsonObject.toJSONString() + "623744").getBytes());
+		Mockito.when(userDetailsService.resolveCanonicalUserIdOrIdentifier(Mockito.anyString()))
+				.thenReturn("00000000-0000-0000-0000-000000000001");
 	}
 
 	@Test(expected = JsonParseException.class)
@@ -123,6 +131,38 @@ public class DemographicServiceUtilTest {
 	@Test(expected = DateParseException.class)
 	public void getDateFromStringFailureTest() throws Exception {
 		demographicServiceUtil.getDateFromString("abc");
+	}
+
+	@Test
+	public void prepareDemographicEntityForUpdateMigratesDemographicAndDocumentOwnershipToUuid() {
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("35760478648170");
+		applicationEntity.setBookingType("NEW");
+		applicationEntity.setApplicationStatusCode("DRAFT");
+		applicationEntity.setBookingStatusCode(StatusCodes.APPLICATION_INCOMPLETE.getCode());
+		applicationEntity.setCrBy("legacy-user");
+
+		DocumentEntity documentEntity = new DocumentEntity();
+		documentEntity.setCrBy("legacy-user");
+		documentEntity.setUpdBy("legacy-user");
+		demographicEntity.setDocumentEntity(java.util.List.of(documentEntity));
+
+		Mockito.when(applicationRepostiory.findByApplicationId("35760478648170")).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.save(Mockito.any(ApplicationEntity.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn("encrypted".getBytes());
+		Mockito.when(documentDAO.updateDocument(Mockito.any(DocumentEntity.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+
+		DemographicEntity updatedEntity = demographicServiceUtil.prepareDemographicEntityForUpdate(demographicEntity,
+				updateDemographicRequest, StatusCodes.APPLICATION_INCOMPLETE.getCode(), "legacy-user", "35760478648170");
+
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getCrAppuserId());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getCreatedBy());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getUpdatedBy());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", documentEntity.getCrBy());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", documentEntity.getUpdBy());
+		Mockito.verify(documentDAO).updateDocument(documentEntity);
 	}
 
 }

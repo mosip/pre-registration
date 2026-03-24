@@ -73,6 +73,7 @@ import io.mosip.preregistration.application.exception.MasterDataException;
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
+import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.application.service.UISpecService;
@@ -87,6 +88,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.DatabaseOperationException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
@@ -151,6 +153,9 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
+
+	@Autowired
+	private DocumentDAO documentDAO;
 
 	@Autowired
 	private UserDetailsService userDetailsService;
@@ -361,7 +366,31 @@ public class DemographicServiceUtil {
 				"Hashing end time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for demographic update. preRegistrationId=" + preRegistrationId
+						+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
+						+ isCanonicalApplied(userId, effectiveUserId));
+		demographicEntity.setCrAppuserId(effectiveUserId);
+		demographicEntity.setCreatedBy(effectiveUserId);
+		demographicEntity.setUpdatedBy(effectiveUserId);
+		migrateLinkedDocumentsToCanonicalUser(demographicEntity, effectiveUserId, preRegistrationId);
 		return demographicEntity;
+	}
+
+	private void migrateLinkedDocumentsToCanonicalUser(DemographicEntity demographicEntity, String effectiveUserId,
+			String preRegistrationId) {
+		if (demographicEntity.getDocumentEntity() == null || demographicEntity.getDocumentEntity().isEmpty()) {
+			return;
+		}
+		for (DocumentEntity documentEntity : demographicEntity.getDocumentEntity()) {
+			documentEntity.setCrBy(effectiveUserId);
+			documentEntity.setUpdBy(effectiveUserId);
+			documentDAO.updateDocument(documentEntity);
+		}
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Migrated linked documents to canonical user id during demographic update. preRegistrationId="
+						+ preRegistrationId + ", documentsCount=" + demographicEntity.getDocumentEntity().size());
 	}
 
 	/**
