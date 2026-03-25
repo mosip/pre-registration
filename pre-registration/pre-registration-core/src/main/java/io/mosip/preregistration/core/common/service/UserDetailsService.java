@@ -22,8 +22,10 @@ import io.mosip.preregistration.core.common.repository.UserDetailsRepository;
 import io.mosip.preregistration.core.util.CryptoUtil;
 
 /**
- * Service to manage canonical user registry: hashing identifier, optional encryption, and find-or-create.
+ * Service for canonical user identity handling: normalization, UUID resolution, lookup, masking,
+ * and user-details registry management.
  */
+
 @Service
 public class UserDetailsService {
 
@@ -45,6 +47,9 @@ public class UserDetailsService {
     }
 
     private boolean isUuid(String identifier) {
+        // Callers already guarantee identifier is non-null and non-blank before calling this,
+        // but the null/blank guard is kept here since this is also called from maskIdentifier
+        // which is a public utility that accepts arbitrary input.
         if (identifier == null || identifier.isBlank()) {
             return false;
         }
@@ -73,7 +78,12 @@ public class UserDetailsService {
         }
     }
 
-    private String encryptIdentifierIfConfigured(String plain) {
+    /**
+     * Encrypts the given plain identifier. Returns null if input is blank, encryption fails, or produces empty output.
+     * The null/blank guard is kept intentionally at this helper boundary so encryption failure remains controlled (null)
+     * instead of degrading into an accidental NullPointerException if the method is ever reused with unchecked input.
+     */
+    private String encryptIdentifier(String plain) {
         if (plain == null || plain.isBlank()) {
             return null;
         }
@@ -89,13 +99,17 @@ public class UserDetailsService {
         }
     }
 
+    /**
+     * Encrypts and throws if the result is absent; encryption is mandatory before persisting.
+     */
     private String encryptIdentifierRequired(String plain) {
-        String encryptedValue = encryptIdentifierIfConfigured(plain);
+        String encryptedValue = encryptIdentifier(plain);
         if (encryptedValue == null || encryptedValue.isBlank()) {
             throw new IllegalStateException("Encrypted identifier is required before persisting user details");
         }
         return encryptedValue;
     }
+
     /**
      * Find canonical user by identifier (email/username/whatever) — uses normalized sha256.
      */
@@ -113,7 +127,7 @@ public class UserDetailsService {
     }
 
     public Optional<String> resolveCanonicalUserId(String identifier) {
-        if (identifier == null || identifier.trim().isEmpty()) {
+        if (identifier == null || identifier.isBlank()) {
             LOGGER.debug("Skipping canonical user id resolution because identifier is blank");
             return Optional.empty();
         }
@@ -241,7 +255,6 @@ public class UserDetailsService {
         u.setUserId(UUID.randomUUID());
         u.setIdentifierHash(hash);
         u.setCrDtimes(LocalDateTime.now());
-        // Encryption is mandatory for both new rows and repair of older incomplete rows.
         String encrypted = encryptIdentifierRequired(norm);
         u.setIdentifierEncrypted(encrypted);
         u.setEncryptedDtimes(LocalDateTime.now());
