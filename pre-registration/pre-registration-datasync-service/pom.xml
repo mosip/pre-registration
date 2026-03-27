@@ -18,7 +18,7 @@
 		<!-- Mosip kernel -->
 		<kernel.keymanager.version>1.2.1-SNAPSHOT</kernel.keymanager.version>
 		<kernel.ref.idobjectvalidator.version>1.2.1-SNAPSHOT</kernel.ref.idobjectvalidator.version>
-		<kernel.transliteration.icu4j.version>1.2.1-SNAPSHOT</kernel.transliteration.icu4j.version>
+		<kernel.transliteration.icu4j.version>1.3.0</kernel.transliteration.icu4j.version>
 		<kernel.bom.version>1.2.1-SNAPSHOT</kernel.bom.version>
 		<pre.registration.core.version>1.2.1-SNAPSHOT</pre.registration.core.version>
 		<pre.registration.application.service.version>1.2.1-SNAPSHOT</pre.registration.application.service.version>
