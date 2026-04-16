@@ -14,6 +14,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Collections;
 
 import io.mosip.kernel.core.idvalidator.exception.InvalidIDException;
 import io.mosip.preregistration.application.exception.*;
@@ -492,8 +493,22 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			List<ApplicationEntity> applicationEntities = applicationRepository
-					.findByCreatedByIn(userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility));
+			List<String> userIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+			if (userIds == null) {
+				userIds = new ArrayList<>();
+			}
+			if (userIds.isEmpty() && userId != null && !userId.isBlank()) {
+					userIds.add(userId.trim());
+			}
+			if (userIds.isEmpty()) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"No valid userIds found for maskedUserId=" + maskIdentifier(userId));
+
+				applicationsListDTO.setAllApplications(Collections.emptyList());
+				response.setResponse(applicationsListDTO);
+				return response;
+			}
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByIn(userIds);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
@@ -594,9 +609,23 @@ public class ApplicationService implements ApplicationServiceIntf {
 						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
 
 			}
+			List<String> userIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+			if (userIds == null) {
+				userIds = new ArrayList<>();
+			}
+			if (userIds.isEmpty() && userId != null && !userId.trim().isEmpty()) {
+					userIds.add(userId.trim());
+			}
+			if (userIds.isEmpty()) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"No valid userIds found for maskedUserId=" + maskIdentifier(userId));
+
+				applicationsListDTO.setAllApplications(Collections.emptyList());
+				response.setResponse(applicationsListDTO);
+				return response;
+			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByInBookingType(
-					userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility),
-					type.toUpperCase());
+					userIds, type.toUpperCase());
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: {" + applicationEntities.size() + "} and booking type: {" + type + "}");
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);

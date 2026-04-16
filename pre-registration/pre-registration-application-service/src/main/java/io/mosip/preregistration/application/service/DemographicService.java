@@ -497,6 +497,23 @@ public class DemographicService implements DemographicServiceIntf {
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details start time : " + DateUtils.getUTCCurrentDateTimeString());
 				List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+				if (lookupIds == null) {
+					lookupIds = new ArrayList<>();
+				}
+				if (lookupIds.isEmpty()) {
+					if (userId != null && !userId.trim().isEmpty()) {
+						lookupIds.add(userId.trim());
+					} else {
+						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								"No user lookup ids resolved for current user {}", maskIdentifier(userId));
+						demographicMetadataDTO.setBasicDetails(new ArrayList<>());
+						demographicMetadataDTO.setNoOfRecords("0");
+						demographicMetadataDTO.setTotalRecords("0");
+						demographicMetadataDTO.setPageIndex(serviceUtil.isNull(pageIdx) ? "0" : pageIdx);
+						response.setResponse(demographicMetadataDTO);
+						return response;
+					}
+				}
 				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedByInAndStatusCode(lookupIds,
 						StatusCodes.CONSUMED.getCode());
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,

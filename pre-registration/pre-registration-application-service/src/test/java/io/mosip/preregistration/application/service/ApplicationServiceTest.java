@@ -313,6 +313,8 @@ public class ApplicationServiceTest {
 		applicationEntitie.setApplicationId("1234567890");
 		applicationEntitie.setApplicationStatusCode("Processed");
 		applicationEntities.add(applicationEntitie);
+		Mockito.when(userDetailsService.getUserLookupIds(Mockito.any(), Mockito.anyBoolean()))
+				.thenReturn(List.of("test-user"));
 		Mockito.when(applicationRepository.findByCreatedByInBookingType(Mockito.anyList(), Mockito.any()))
 				.thenReturn(applicationEntities);
 		MainResponseDTO<ApplicationsListDTO> response = applicationService
@@ -585,9 +587,11 @@ public class ApplicationServiceTest {
 
 	@Test(expected = RecordNotFoundException.class)
 	public void testgetAllApplicationsForUserException() {
+		Mockito.when(userDetailsService.getUserLookupIds(Mockito.any(), Mockito.anyBoolean()))
+				.thenReturn(List.of("test-user"));
 		Mockito.when(applicationRepository.findByCreatedByIn(Mockito.anyList())).thenThrow(new RecordNotFoundException(
 				ApplicationErrorCodes.PRG_APP_013.getCode(), ApplicationErrorMessages.NO_RECORD_FOUND.getMessage()));
-		MainResponseDTO<ApplicationsListDTO> response = applicationService.getAllApplicationsForUser();
+		applicationService.getAllApplicationsForUser();
 	}
 
 	@Test(expected = InvalidRequestParameterException.class)

@@ -477,8 +477,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		applicationEntity.setUpdBy(authUserDetails().getUserId());
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		try {
-			applicationEntity.setUpdBy(
-					userDetailsService.resolveCanonicalUserIdOrIdentifier(authUserDetails().getUserId()));
+			applicationEntity.setUpdBy(resolveEffectiveUserId(authUserDetails().getUserId()));
 			return applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -490,6 +489,25 @@ public class AppointmentServiceImpl implements AppointmentService {
 
 	private String maskIdentifier(String value) {
 		return userDetailsService.maskIdentifier(value);
+	}
+
+	private String resolveEffectiveUserId(String userId) {
+		if (userId == null) {
+			return null;
+		}
+		if (piiBackwardCompatibility) {
+			return userDetailsService.resolveUserUuidOrIdentifier(userId);
+		}
+		java.util.Optional<String> userUuid = userDetailsService.resolveUserUuid(userId);
+		if (userUuid != null && userUuid.isPresent()) {
+			return userUuid.get();
+		}
+		if (userId != null && !userId.trim().isEmpty()) {
+			return userId.trim();
+		}
+		throw new AppointmentExecption(
+				AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
+				AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
 	}
 
 	private List<ExceptionJSONInfoDTO> setErrors(AppointmentExecption ex) {

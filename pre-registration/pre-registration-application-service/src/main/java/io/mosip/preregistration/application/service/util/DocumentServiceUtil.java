@@ -102,6 +102,9 @@ public class DocumentServiceUtil {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	/**
 	 * Reference for ${demographic.resource.url} from property file
 	 */
@@ -178,7 +181,7 @@ public class DocumentServiceUtil {
 		documentEntity.setCrBy(userId);
 		documentEntity.setUpdBy(userId);
 		documentEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
-		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for document write. preRegistrationId=" + preRegistrationId
 						+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
@@ -447,5 +450,15 @@ public class DocumentServiceUtil {
 		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
 		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
 		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
+	}
+
+	private String resolveEffectiveUserId(String userId) {
+		if (piiBackwardCompatibility) {
+			return userDetailsService.resolveUserUuidOrIdentifier(userId);
+		}
+		return userDetailsService.resolveUserUuid(userId)
+				.orElseThrow(() -> new InvalidRequestException(
+						DocumentErrorCodes.PRG_PAM_DOC_018.toString(),
+						DocumentErrorMessages.INVALID_PRE_ID.getMessage(), null));
 	}
 }

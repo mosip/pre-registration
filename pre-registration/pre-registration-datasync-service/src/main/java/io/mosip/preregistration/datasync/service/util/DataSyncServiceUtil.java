@@ -200,6 +200,9 @@ public class DataSyncServiceUtil {
 	@Value("${version:1.0}")
 	private String version;
 
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	@Value("${mosip.preregistration.sync.sign.appid}")
 	private String signAppId;
 
@@ -915,8 +918,22 @@ public class DataSyncServiceUtil {
 	}
 
 	
-	private String getCanonicalUserId(String userId) {
-		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+	private String getUserUuid(String userId) {
+		String effectiveUserId;
+		if (piiBackwardCompatibility) {
+			effectiveUserId = userDetailsService.resolveUserUuidOrIdentifier(userId);
+		} else {
+			java.util.Optional<String> userUuid = userDetailsService.resolveUserUuid(userId);
+			if (userUuid != null && userUuid.isPresent()) {
+				effectiveUserId = userUuid.get();
+			} else if (userId != null && !userId.trim().isEmpty()) {
+				effectiveUserId = userId.trim();
+			} else {
+				throw new PreRegistrationException(
+						ErrorCodes.PRG_DATA_SYNC_012.getCode(),
+						ErrorMessages.FAILED_TO_STORE_PRE_REGISTRATION_IDS.getMessage());
+			}
+		}
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for reverse datasync. maskedUserId=" + maskIdentifier(userId)
 						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
@@ -939,7 +956,7 @@ public class DataSyncServiceUtil {
 		List<InterfaceDataSyncEntity> entityList = new ArrayList<>();
 		List<ProcessedPreRegEntity> processedEntityList = new ArrayList<>();
 		List<String> preIdLists = request.getPreRegistrationIds();
-		String canonicalUserId = getCanonicalUserId(userId);
+		String userUuid = getUserUuid(userId);
 		PreRegIdsByRegCenterIdDTO preRegIdsDTO = new PreRegIdsByRegCenterIdDTO();
 		preRegIdsDTO.setPreRegistrationIds(preIdLists);
 		Map<String, String> preIdsMap = getPreregistrationUpdatedTime(preRegIdsDTO);
@@ -953,7 +970,7 @@ public class DataSyncServiceUtil {
 				ipprlstPK.setReceivedDtimes(DateUtils.parseDateToLocalDateTime(reqDateTime));
 				interfaceDataSyncEntity.setIpprlst_PK(ipprlstPK);
 				interfaceDataSyncEntity.setLangCode("eng");
-				interfaceDataSyncEntity.setCreatedBy(canonicalUserId);
+				interfaceDataSyncEntity.setCreatedBy(userUuid);
 				interfaceDataSyncEntity.setCreatedDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				interfaceDataSyncEntity.setUpdatedDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				entityList.add(interfaceDataSyncEntity);
@@ -964,7 +981,7 @@ public class DataSyncServiceUtil {
 				processedPreRegEntity.setStatusCode(StatusCodes.CONSUMED.getCode());
 				processedPreRegEntity.setStatusComments("Processed by registration processor");
 				processedPreRegEntity.setLangCode("eng");
-				processedPreRegEntity.setCrBy(canonicalUserId);
+				processedPreRegEntity.setCrBy(userUuid);
 				processedPreRegEntity.setCrDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				processedPreRegEntity.setUpdDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				processedEntityList.add(processedPreRegEntity);

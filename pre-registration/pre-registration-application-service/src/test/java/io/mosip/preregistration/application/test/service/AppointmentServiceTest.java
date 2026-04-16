@@ -22,6 +22,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
@@ -45,15 +46,11 @@ import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 @RunWith(SpringRunner.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
 @ContextConfiguration(classes = { AppointmentServiceImpl.class })
+@TestPropertySource(properties = "mosip.prereg.pii.backward.compatibility=false")
 public class AppointmentServiceTest {
 
 	@Autowired
 	private AppointmentServiceImpl appointmentService;
-
-	static {
-		// Set the property before Spring tries to inject @Value
-		System.setProperty("mosip.prereg.pii.backward.compatibility", "false");
-	}
 
 	@MockBean
 	private AppointmentUtil util;

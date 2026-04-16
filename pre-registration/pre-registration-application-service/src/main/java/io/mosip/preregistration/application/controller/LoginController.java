@@ -185,7 +185,7 @@ public class LoginController {
 			HttpServletResponse res, HttpServletRequest req) {
 
 		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"User ID: " + maskIdentifier(userIdOtpRequest.getRequest().getUserId()));
+				"User ID: " + userDetailsService.maskIdentifier(userIdOtpRequest.getRequest().getUserId()));
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		MainResponseDTO<AuthNResponse> responseBody = loginService.validateWithUserIdOtp(userIdOtpRequest);
@@ -267,9 +267,5 @@ public class LoginController {
 			res.addCookie(resCookie);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
-	}
-
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
 	}
 }

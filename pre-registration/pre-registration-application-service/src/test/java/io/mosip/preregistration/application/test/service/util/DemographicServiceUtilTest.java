@@ -17,6 +17,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
@@ -95,6 +96,7 @@ public class DemographicServiceUtilTest {
 	public void setUp() throws Exception {
 		requestId = "mosip.preregistration";
 		parser = new JSONParser();
+		ReflectionTestUtils.setField(demographicServiceUtil, "piiBackwardCompatibility", true);
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("pre-registration.json").getFile());
@@ -111,7 +113,7 @@ public class DemographicServiceUtilTest {
 		demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId("35760478648170");
 		demographicEntity.setApplicantDetailJson((jsonObject.toJSONString() + "623744").getBytes());
-		Mockito.when(userDetailsService.resolveCanonicalUserIdOrIdentifier(Mockito.anyString()))
+		Mockito.when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
 				.thenReturn("00000000-0000-0000-0000-000000000001");
 	}
 

@@ -47,9 +47,6 @@ public class UserDetailsService {
     }
 
     private boolean isUuid(String identifier) {
-        // Callers already guarantee identifier is non-null and non-blank before calling this,
-        // but the null/blank guard is kept here since this is also called from maskIdentifier
-        // which is a public utility that accepts arbitrary input.
         if (identifier == null || identifier.isBlank()) {
             return false;
         }
@@ -111,7 +108,7 @@ public class UserDetailsService {
     }
 
     /**
-     * Find canonical user by identifier (email/username/whatever) — uses normalized sha256.
+     * Finds a canonical user row by normalized identifier hash.
      */
     @Cacheable(value = "user-details-cache", key = "#identifier.toLowerCase().trim()", condition = "#identifier != null")
     public Optional<UserDetails> findByIdentifier(String identifier) {
@@ -119,47 +116,42 @@ public class UserDetailsService {
         if (norm == null) {
             return Optional.empty();
         }
-        if (isUuid(norm)) {
-            return userDetailsRepository.findById(UUID.fromString(norm));
-        }
         String hash = sha256Hex(norm);
         return userDetailsRepository.findByIdentifierHash(hash);
     }
 
-    public Optional<String> resolveCanonicalUserId(String identifier) {
+    public Optional<String> resolveUserUuid(String identifier) {
         if (identifier == null || identifier.isBlank()) {
-            LOGGER.debug("Skipping canonical user id resolution because identifier is blank");
+            LOGGER.debug("Skipping user UUID resolution because identifier is blank");
             return Optional.empty();
         }
         String trimmedIdentifier = identifier.trim();
         if (isUuid(trimmedIdentifier)) {
-            LOGGER.debug("Using identifier as canonical user id because it is already a UUID");
+            LOGGER.debug("Using identifier as user UUID because it is already a UUID");
             return Optional.of(trimmedIdentifier);
         }
         try {
-            // Read paths should be able to resolve an existing canonical UUID without depending on
-            // repair/save logic. If a user_details row already exists, return its UUID directly.
             Optional<UserDetails> existingUser = findByIdentifier(trimmedIdentifier);
             if (existingUser.isPresent()) {
-                LOGGER.debug("Resolved existing canonical user id for masked identifier {}",
+                LOGGER.debug("Resolved existing user UUID for masked identifier {}",
                         maskIdentifier(trimmedIdentifier));
                 return Optional.of(existingUser.get().getUserId().toString());
             }
 
             UserDetails mappedUser = findOrCreateByIdentifier(trimmedIdentifier);
-            LOGGER.debug("Resolved canonical user id for masked identifier {}", maskIdentifier(trimmedIdentifier));
+            LOGGER.debug("Resolved user UUID for masked identifier {}", maskIdentifier(trimmedIdentifier));
             return Optional.of(mappedUser.getUserId().toString());
         } catch (Exception ex) {
-            LOGGER.warn("Failed to resolve canonical user id for masked identifier {}", maskIdentifier(trimmedIdentifier), ex);
+            LOGGER.warn("Failed to resolve user UUID for masked identifier {}", maskIdentifier(trimmedIdentifier), ex);
         }
         return Optional.empty();
     }
 
-    public String resolveCanonicalUserIdOrIdentifier(String identifier) {
-        return resolveCanonicalUserId(identifier).orElseGet(() -> {
+    public String resolveUserUuidOrIdentifier(String identifier) {
+        return resolveUserUuid(identifier).orElseGet(() -> {
             String fallbackIdentifier = identifier == null ? "" : identifier.trim();
             if (!fallbackIdentifier.isEmpty()) {
-                LOGGER.warn("Falling back to non-canonical identifier for masked user {}", maskIdentifier(fallbackIdentifier));
+                LOGGER.warn("Falling back to non-UUID identifier for masked user {}", maskIdentifier(fallbackIdentifier));
             }
             return fallbackIdentifier;
         });
@@ -194,9 +186,9 @@ public class UserDetailsService {
 
     public List<String> getUserLookupIds(String authUserId, boolean piiBackwardCompatibility) {
         Set<String> ids = new LinkedHashSet<>();
-        Optional<String> canonicalUserId = resolveCanonicalUserId(authUserId);
+        Optional<String> userUuid = resolveUserUuid(authUserId);
         String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
-        canonicalUserId.ifPresent(ids::add);
+        userUuid.ifPresent(ids::add);
         if (piiBackwardCompatibility && !trimmedAuthUserId.isEmpty()) {
             ids.add(trimmedAuthUserId);
         }
@@ -206,16 +198,16 @@ public class UserDetailsService {
     public boolean matchesUser(String authUserId, String storedUserId, boolean piiBackwardCompatibility) {
         String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
         String trimmedStoredUserId = storedUserId == null ? "" : storedUserId.trim();
-        Optional<String> canonicalAuthUserId = resolveCanonicalUserId(authUserId);
+        Optional<String> authUserUuid = resolveUserUuid(authUserId);
         if (!piiBackwardCompatibility) {
-            return canonicalAuthUserId.filter(trimmedStoredUserId::equals).isPresent();
+            return authUserUuid.filter(trimmedStoredUserId::equals).isPresent();
         }
-        if (canonicalAuthUserId.filter(trimmedStoredUserId::equals).isPresent()) {
+        if (authUserUuid.filter(trimmedStoredUserId::equals).isPresent()) {
             return true;
         }
-        Optional<String> canonicalStoredUserId = resolveCanonicalUserId(trimmedStoredUserId);
-        if (canonicalAuthUserId.isPresent() && canonicalStoredUserId.isPresent()
-                && canonicalAuthUserId.get().equals(canonicalStoredUserId.get())) {
+        Optional<String> storedUserUuid = resolveUserUuid(trimmedStoredUserId);
+        if (authUserUuid.isPresent() && storedUserUuid.isPresent()
+                && authUserUuid.get().equals(storedUserUuid.get())) {
             return true;
         }
         return trimmedAuthUserId.equals(trimmedStoredUserId);
@@ -228,7 +220,7 @@ public class UserDetailsService {
     @CachePut(value = "user-details-cache", key = "#identifier.toLowerCase().trim()", condition = "#identifier != null")
     public UserDetails findOrCreateByIdentifier(String identifier) {
         String norm = normalize(identifier);
-        if (norm == null) {
+        if (norm == null || norm.isBlank()) {
             throw new IllegalArgumentException("identifier is required");
         }
         // Hashing the normalized identifier gives us the deterministic lookup key for user_details.

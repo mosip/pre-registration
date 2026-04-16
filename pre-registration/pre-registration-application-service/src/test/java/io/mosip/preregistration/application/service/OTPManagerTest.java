@@ -51,7 +51,8 @@ public class OTPManagerTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);	
 		ReflectionTestUtils.setField(otpManager, "sendOtpResourceUrl", "home");
-		Mockito.when(userDetailsService.resolveCanonicalUserIdOrIdentifier(Mockito.anyString()))
+		ReflectionTestUtils.setField(otpManager, "piiBackwardCompatibility", true);
+		Mockito.when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
 				.thenAnswer(invocation -> invocation.getArgument(0));
 		
 	}
