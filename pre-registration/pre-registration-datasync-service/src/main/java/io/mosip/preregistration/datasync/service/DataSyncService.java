@@ -435,8 +435,18 @@ public class DataSyncService {
 					&& serviceUtil.validateReverseDataSyncRequest(reverseDataSyncRequest.getRequest(), responseDto)) {
 				if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(reverseDataSyncRequest),
 						requiredRequestMap)) {
+					String actorUserId = "user";
+					try {
+						AuthUserDetails user = authUserDetails();
+						if (user != null && user.getUserId() != null) {
+							actorUserId = user.getUserId();
+						}
+					} catch (Exception ex) {
+						log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								"Auth context not available, falling back to default user", ex);
+					}
 					reverseDatasyncReponse = serviceUtil.reverseDateSyncSave(reverseDataSyncRequest.getRequesttime(),
-							reverseDataSyncRequest.getRequest(), authUserDetails().getUserId());
+							reverseDataSyncRequest.getRequest(), actorUserId);
 					responseDto.setResponse(reverseDatasyncReponse);
 					responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 					responseDto.setErrors(null);
