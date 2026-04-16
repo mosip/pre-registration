@@ -55,8 +55,12 @@ public class UserDetailsServiceTest {
     public void testFindByIdentifierDelegatesToRepo() {
         UserDetails mock = new UserDetails();
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mock));
+
         Optional<UserDetails> res = userDetailsService.findByIdentifier("TestUser");
         verify(userDetailsRepository).findByIdentifierHash(any());
+
+        assertTrue(res.isPresent());
+        assertEquals(mock, res.get());
     }
 
     @Test
@@ -108,7 +112,7 @@ public class UserDetailsServiceTest {
         mapped.setIdentifierEncrypted("enc-value");
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
 
-        Optional<String> resolved = userDetailsService.resolveCanonicalUserId("TestUser");
+        Optional<String> resolved = userDetailsService.resolveUserUuid("TestUser");
 
         assertTrue(resolved.isPresent());
         assertEquals(mapped.getUserId().toString(), resolved.get());
@@ -122,7 +126,7 @@ public class UserDetailsServiceTest {
         mapped.setIdentifierEncrypted("");
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
 
-        Optional<String> resolved = userDetailsService.resolveCanonicalUserId("TestUser");
+        Optional<String> resolved = userDetailsService.resolveUserUuid("TestUser");
 
         assertTrue(resolved.isPresent());
         assertEquals(mapped.getUserId().toString(), resolved.get());

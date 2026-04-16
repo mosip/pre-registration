@@ -110,9 +110,10 @@ public class DocumentServiceUtilTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(documentServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		ReflectionTestUtils.setField(documentServiceUtil, "piiBackwardCompatibility", true);
 		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(documentServiceUtil, "commonServiceUtil", commonServiceUtil);
-		when(userDetailsService.resolveCanonicalUserIdOrIdentifier(Mockito.anyString()))
+		when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
 				.thenAnswer(invocation -> invocation.getArgument(0));
 
 		ClassLoader classLoader = getClass().getClassLoader();

@@ -30,7 +30,6 @@ import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -159,6 +158,9 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
 
 	/**
 	 * Logger instance
@@ -319,7 +321,7 @@ public class DemographicServiceUtil {
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
 		
-		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for demographic create. maskedUserId=" + maskIdentifier(userId)
 						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
@@ -366,7 +368,7 @@ public class DemographicServiceUtil {
 				"Hashing end time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
-		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for demographic update. preRegistrationId=" + preRegistrationId
 						+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
@@ -458,7 +460,7 @@ public class DemographicServiceUtil {
 		JSONObject identityObj = (JSONObject) jsonObj.get(DemographicRequestCodes.IDENTITY.getCode());
 		if (identityObj.get(value) != null)
 			return identityObj.get(value).toString();
-		return null;
+		return "";
 
 	}
 
@@ -742,7 +744,7 @@ public class DemographicServiceUtil {
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		applicationEntity.setUpdBy(userId);
 		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
-		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for applications write. applicationId=" + preId + ", maskedUserId="
 						+ maskIdentifier(userId) + ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
@@ -770,7 +772,7 @@ public class DemographicServiceUtil {
 			applicationEntity.setBookingStatusCode(status);
 			applicationEntity.setUpdBy(userId);
 			applicationEntity.setUpdDtime(LocalDateTime.now());
-			String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+			String effectiveUserId = resolveEffectiveUserId(userId);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Resolved effective user id for application status update. applicationId=" + applicationId
 							+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
@@ -977,5 +979,15 @@ public class DemographicServiceUtil {
 		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
 		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
 		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
+	}
+
+	private String resolveEffectiveUserId(String userId) {
+		if (piiBackwardCompatibility) {
+			return userDetailsService.resolveUserUuidOrIdentifier(userId);
+		}
+		return userDetailsService.resolveUserUuid(userId)
+				.orElseThrow(() -> new RecordFailedToUpdateException(
+						ApplicationErrorCodes.PRG_APP_010.getCode(),
+						ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage()));
 	}
 }

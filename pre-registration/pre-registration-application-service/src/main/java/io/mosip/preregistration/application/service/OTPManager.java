@@ -82,6 +82,9 @@ public class OTPManager {
 	@Value("${appId}")
 	private String appId;
 
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	private static final String OTP = "otp";
 
 	@Autowired
@@ -138,7 +141,7 @@ public class OTPManager {
 			OtpTransaction otpTxn = otpRepo.findTopByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
 			otpTxn.setOtpHash(otpHash);
 			String originalClientId = environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID);
-			String effectiveClientId = userDetailsService.resolveCanonicalUserIdOrIdentifier(originalClientId);
+			String effectiveClientId = resolveEffectiveClientId(originalClientId);
 			logger.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Resolved effective user id for OTP update. maskedUserId=" + maskIdentifier(originalClientId)
 							+ ", canonicalApplied=" + isCanonicalApplied(originalClientId, effectiveClientId));
@@ -154,7 +157,7 @@ public class OTPManager {
 			txn.setRefId(hash(userId));
 			txn.setOtpHash(otpHash);
 			String originalClientId = environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID);
-			String effectiveClientId = userDetailsService.resolveCanonicalUserIdOrIdentifier(originalClientId);
+			String effectiveClientId = resolveEffectiveClientId(originalClientId);
 			logger.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Resolved effective user id for OTP create. maskedUserId=" + maskIdentifier(originalClientId)
 							+ ", canonicalApplied=" + isCanonicalApplied(originalClientId, effectiveClientId));
@@ -313,6 +316,15 @@ public class OTPManager {
 		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
 		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
 		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
+	}
+
+	private String resolveEffectiveClientId(String clientIdValue) {
+		if (piiBackwardCompatibility) {
+			return userDetailsService.resolveUserUuidOrIdentifier(clientIdValue);
+		}
+		return userDetailsService.resolveUserUuid(clientIdValue).orElseThrow(
+				() -> new PreRegLoginException(PreRegLoginErrorConstants.UNABLE_TO_PROCESS.getErrorCode(),
+						PreRegLoginErrorConstants.UNABLE_TO_PROCESS.getErrorMessage()));
 	}
 
 }
