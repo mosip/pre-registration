@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.CachePut;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -241,7 +242,14 @@ public class UserDetailsService {
                 needsSave = true;
                 LOGGER.info("Repaired missing encrypted identifier for existing canonical user {}", existing.getUserId());
             }
-            return needsSave ? userDetailsRepository.save(existing) : existing;
+            if (!needsSave) {
+                return existing;
+            }
+            try {
+                return userDetailsRepository.save(existing);
+            } catch (DataIntegrityViolationException ex) {
+                return userDetailsRepository.findByIdentifierHash(hash).orElseThrow(() -> ex);
+            }
         }
         UserDetails u = new UserDetails();
         u.setUserId(UUID.randomUUID());
@@ -251,7 +259,11 @@ public class UserDetailsService {
         u.setIdentifierEncrypted(encrypted);
         u.setEncryptedDtimes(LocalDateTime.now());
         LOGGER.info("Creating new canonical user mapping for masked identifier {}", maskIdentifier(norm));
-        return userDetailsRepository.save(u);
+        try {
+            return userDetailsRepository.save(u);
+        } catch (DataIntegrityViolationException ex) {
+            return userDetailsRepository.findByIdentifierHash(hash).orElseThrow(() -> ex);
+        }
     }
 
 }

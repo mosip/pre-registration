@@ -47,6 +47,9 @@ public class ApplicationConsumedStatusUpdater {
 	@Value("${mosip.batch.token.authmanager.appId}")
 	private String auditUserId;
 
+    @Value("${mosip.prereg.pii.backward.compatibility}")
+    private boolean piiBackwardCompatibility;
+
     @Autowired
 	private BatchJpaRepositoryImpl batchJpaRepositoryImpl;
 
@@ -66,6 +69,7 @@ public class ApplicationConsumedStatusUpdater {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
 		 			"Total Number of Processed Pre Registration applications: " + processedPreRegList.size());
+        final String resolvedAuditUserId = resolveUserUuid(auditUserId);
         
         List<String> errorredPreRegIds = new ArrayList<>();
         processedPreRegList.forEach(processedPreReg -> {
@@ -81,11 +85,11 @@ public class ApplicationConsumedStatusUpdater {
                         "Deleted invalid processed pre reg id: " + processedPreRegId + ", deleted count: " + deleted);
                 } else {
                     //adding processed pre reg details in applicant demographic consumed. 
-                    addApplicantDemographicConsumed(demoEntity);
+                    addApplicantDemographicConsumed(demoEntity, resolvedAuditUserId);
 
                     //adding processed pre reg details in applicant document consumed and purging from applicant document.
                     List<DocumentEntity> applicantDocumentList = demoEntity.getDocumentEntity();
-                    addApplicantDocumentConsumed(applicantDocumentList, processedPreRegId);
+                    addApplicantDocumentConsumed(applicantDocumentList, processedPreRegId, resolvedAuditUserId);
                     // purging from applicant document
                     purgeApplicantDocumentConsumed(applicantDocumentList, processedPreRegId);
 
@@ -93,7 +97,7 @@ public class ApplicationConsumedStatusUpdater {
                     if (demoEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
                         RegistrationBookingEntity regAppointmentObj = batchJpaRepositoryImpl.getRegistrationAppointmentDetails(
                                                         demoEntity.getPreRegistrationId());
-                        addRegistrationAppointmentConsumed(regAppointmentObj, processedPreRegId);
+                        addRegistrationAppointmentConsumed(regAppointmentObj, processedPreRegId, resolvedAuditUserId);
                         batchJpaRepositoryImpl.deleteBooking(regAppointmentObj);
                     }
 
@@ -135,7 +139,7 @@ public class ApplicationConsumedStatusUpdater {
                     AuditLogVariables.BOOKING_SERVICE.toString());
     }
 
-    private void addApplicantDemographicConsumed(DemographicEntity demoEntity) {
+    private void addApplicantDemographicConsumed(DemographicEntity demoEntity, String resolvedAuditUserId) {
         DemographicEntityConsumed demographicEntityConsumed = new DemographicEntityConsumed();
         demographicEntityConsumed.setApplicantDetailJson(demoEntity.getApplicantDetailJson());
         demographicEntityConsumed.setCrAppuserId(resolveUserUuid(demoEntity.getCrAppuserId()));
@@ -146,14 +150,15 @@ public class ApplicationConsumedStatusUpdater {
         demographicEntityConsumed.setLangCode(demoEntity.getLangCode());
         demographicEntityConsumed.setPreRegistrationId(demoEntity.getPreRegistrationId());
         demographicEntityConsumed.setUpdateDateTime(DateUtils.parseDateToLocalDateTime(new Date()));
-        demographicEntityConsumed.setUpdatedBy(resolveUserUuid(auditUserId));
+        demographicEntityConsumed.setUpdatedBy(resolvedAuditUserId);
         demographicEntityConsumed.setStatusCode(StatusCodes.CONSUMED.getCode());
         boolean added = batchJpaRepositoryImpl.updateConsumedDemographic(demographicEntityConsumed);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
                         "Added demographic consumed in table pre reg id: " + demoEntity.getPreRegistrationId() + ", added status: " + added);
     }
 
-    private void addApplicantDocumentConsumed(List<DocumentEntity> applicantDocumentList, String preRegId) {
+    private void addApplicantDocumentConsumed(List<DocumentEntity> applicantDocumentList, String preRegId,
+            String resolvedAuditUserId) {
         if (Objects.isNull(applicantDocumentList)) {
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
                         "No Documents found to add in consumed table for pre reg id: " + preRegId);
@@ -175,7 +180,7 @@ public class ApplicationConsumedStatusUpdater {
             documentEntityConsumed.setLangCode(applicantDoc.getLangCode());
             documentEntityConsumed.setPreregId(applicantDoc.getDemographicEntity().getPreRegistrationId());
             documentEntityConsumed.setStatusCode(applicantDoc.getStatusCode());
-            documentEntityConsumed.setUpdBy(resolveUserUuid(auditUserId));
+            documentEntityConsumed.setUpdBy(resolvedAuditUserId);
             documentEntityConsumed.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
             documentEntityConsumed.setDocRefId(applicantDoc.getRefNumber());
             batchJpaRepositoryImpl.updateConsumedDocument(documentEntityConsumed);
@@ -186,7 +191,8 @@ public class ApplicationConsumedStatusUpdater {
         
     }
 
-    private void addRegistrationAppointmentConsumed(RegistrationBookingEntity regAppointmentObj, String preRegId) {
+    private void addRegistrationAppointmentConsumed(RegistrationBookingEntity regAppointmentObj, String preRegId,
+            String resolvedAuditUserId) {
         RegistrationBookingEntityConsumed regAppointmentConsumed = new RegistrationBookingEntityConsumed();
         regAppointmentConsumed.setBookingDateTime(regAppointmentObj.getBookingDateTime());
         regAppointmentConsumed.setPreregistrationId(regAppointmentObj.getPreregistrationId());
@@ -198,7 +204,7 @@ public class ApplicationConsumedStatusUpdater {
         regAppointmentConsumed.setRegistrationCenterId(regAppointmentObj.getRegistrationCenterId());
         regAppointmentConsumed.setSlotFromTime(regAppointmentObj.getSlotFromTime());
         regAppointmentConsumed.setSlotToTime(regAppointmentObj.getSlotToTime());
-        regAppointmentConsumed.setUpBy(resolveUserUuid(auditUserId));
+        regAppointmentConsumed.setUpBy(resolvedAuditUserId);
         regAppointmentConsumed.setUpdDate(DateUtils.parseDateToLocalDateTime(new Date()));
         boolean added = batchJpaRepositoryImpl.updateConsumedBooking(regAppointmentConsumed);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
@@ -222,7 +228,14 @@ public class ApplicationConsumedStatusUpdater {
     }
 
     private String resolveUserUuid(String userId) {
-        return userDetailsService.resolveUserUuid(userId)
+        if (Objects.isNull(userId) || userId.trim().isEmpty()) {
+            return userId;
+        }
+        String trimmedUserId = userId.trim();
+        if (piiBackwardCompatibility) {
+            return userDetailsService.resolveUserUuidOrIdentifier(trimmedUserId);
+        }
+        return userDetailsService.resolveUserUuid(trimmedUserId)
                 .orElseThrow(() -> new IllegalStateException("Failed to resolve user UUID for consumed table write"));
     }
     
