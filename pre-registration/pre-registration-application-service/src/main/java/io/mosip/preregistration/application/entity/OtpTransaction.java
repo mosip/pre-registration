@@ -56,14 +56,6 @@ public class OtpTransaction {
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDTimes;
 
-	public String getEffectiveCrBy() {
-		return this.crBy;
-	}
-
-	public String getEffectiveUpdBy() {
-		return this.updBy;
-	} 
-
 	@Column(name = "is_deleted")
 	private Boolean isDeleted;
 

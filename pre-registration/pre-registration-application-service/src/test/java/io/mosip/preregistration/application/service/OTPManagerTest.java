@@ -49,12 +49,8 @@ public class OTPManagerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);	
+		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(otpManager, "sendOtpResourceUrl", "home");
-		ReflectionTestUtils.setField(otpManager, "piiBackwardCompatibility", true);
-		Mockito.when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
-				.thenAnswer(invocation -> invocation.getArgument(0));
-		
 	}
 	
 	@Value("${sendOtp.resource.url}")
@@ -84,9 +80,6 @@ public class OTPManagerTest {
 
 	@Mock
 	private OtpTxnRepository otpRepo;
-
-	@Mock
-	private UserDetailsService userDetailsService;
 	
 	@Test(expected = PreRegLoginException.class)
 	public void testsendOtpPreRegLoginException() throws IOException {
