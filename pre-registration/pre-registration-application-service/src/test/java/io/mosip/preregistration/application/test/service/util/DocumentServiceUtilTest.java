@@ -32,6 +32,7 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -67,7 +68,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DocumentServiceUtil.class)
+@SpringBootTest(classes = DocumentServiceUtil.class, properties = "spring.cloud.config.enabled=false")
 public class DocumentServiceUtilTest {
 
 	@MockBean
@@ -83,6 +84,9 @@ public class DocumentServiceUtilTest {
 
 	@MockBean
 	private CommonServiceUtil commonServiceUtil;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private DocumentServiceUtil documentServiceUtil;
@@ -108,6 +112,8 @@ public class DocumentServiceUtilTest {
 		ReflectionTestUtils.setField(documentServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(documentServiceUtil, "commonServiceUtil", commonServiceUtil);
+		when(userDetailsService.resolveCanonicalUserIdOrIdentifier(Mockito.anyString()))
+				.thenAnswer(invocation -> invocation.getArgument(0));
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = new URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020", "%20"));
@@ -223,7 +229,6 @@ public class DocumentServiceUtilTest {
 
 	@Test
 	public void test_dto_to_entity_creates_document_entity_with_correct_values() {
-		DocumentServiceUtil documentServiceUtil = new DocumentServiceUtil();
 		DocumentRequestDTO dto = new DocumentRequestDTO();
 		dto.setDocCatCode("POA");
 		dto.setDocTypCode("Passport");
@@ -261,7 +266,6 @@ public class DocumentServiceUtilTest {
 
 	@Test
 	public void test_dto_to_entity_handles_null_values_in_dto() {
-		DocumentServiceUtil documentServiceUtil = new DocumentServiceUtil();
 		DocumentRequestDTO dto = new DocumentRequestDTO();
 
 		String userId = "testUser";

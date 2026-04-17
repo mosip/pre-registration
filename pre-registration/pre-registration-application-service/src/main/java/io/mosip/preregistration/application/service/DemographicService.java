@@ -97,6 +97,7 @@ import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 /**
  * This class provides the service implementation for Demographic
@@ -142,6 +143,12 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Autowired
 	CommonServiceUtil commonServiceUtil;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
 
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
@@ -422,7 +429,7 @@ public class DemographicService implements DemographicServiceIntf {
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
 				if (!serviceUtil.isNull(demographicEntity)) {
-					userValidation(userId, demographicEntity.getCreatedBy());
+				userValidation(userId, demographicEntity.getEffectiveCreatedBy());
 					if (!serviceUtil.isDemographicBookedOrExpired(demographicEntity, validationUtil)) {
 						demographicEntity = demographicRepository.update(serviceUtil.prepareDemographicEntityForUpdate(
 								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
@@ -489,7 +496,8 @@ public class DemographicService implements DemographicServiceIntf {
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details start time : " + DateUtils.getUTCCurrentDateTimeString());
-				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedBy(userId,
+				List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedByInAndStatusCode(lookupIds,
 						StatusCodes.CONSUMED.getCode());
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details end time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -512,7 +520,7 @@ public class DemographicService implements DemographicServiceIntf {
 								"pagination start time : " + DateUtils.getUTCCurrentDateTimeString());
 						@SuppressWarnings("static-access")
 						Page<DemographicEntity> demographicEntityPage = demographicRepository
-								.findByCreatedByOrderByCreateDateTime(userId, StatusCodes.CONSUMED.getCode(),
+								.findByCreatedByInAndStatusCodeOrderByCreateDateTime(lookupIds, StatusCodes.CONSUMED.getCode(),
 										PageRequest.of(serviceUtil.parsePageIndex(pageIdx),
 												serviceUtil.parsePageSize(pageSize)));
 						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -662,7 +670,7 @@ public class DemographicService implements DemographicServiceIntf {
 				if (bookingType.equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 					DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preregId);
 					if (!serviceUtil.isNull(demographicEntity)) {
-						userValidation(userId, demographicEntity.getCreatedBy());
+				userValidation(userId, demographicEntity.getEffectiveCreatedBy());
 						if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
 							getDocumentServiceToDeleteAllByPreId(preregId);
 							if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
@@ -868,11 +876,15 @@ public class DemographicService implements DemographicServiceIntf {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDemographicData method of userValidation with priid "
-				+ preregUserId + " and userID " + authUserId);
-		if (!authUserId.trim().equals(preregUserId.trim())) {
+				+ maskIdentifier(preregUserId) + " and userID " + maskIdentifier(authUserId));
+		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
 	}
 
 	private JSONObject getDocumentMetadata(DemographicEntity demographicEntity, String poa)

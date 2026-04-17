@@ -49,6 +49,7 @@ import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.OtpUser;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 
 @RunWith(JUnit4.class)
@@ -143,6 +144,9 @@ public class LoginServiceTest {
 	@Mock
 	private Environment env;
 
+	@Mock
+	private UserDetailsService userDetailsService;
+
 	MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request = new MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken>();
 
 	@Before
@@ -163,6 +167,7 @@ public class LoginServiceTest {
 		ReflectionTestUtils.setField(authService, "jwtAudience", "adad");
 		ReflectionTestUtils.setField(authService, "jwtSecret", "Azcds");
 		ReflectionTestUtils.setField(authService, "uiConfigParams", "test1,test2");
+		when(userDetailsService.maskIdentifier(Mockito.anyString())).thenAnswer(invocation -> invocation.getArgument(0));
 
 	}
 

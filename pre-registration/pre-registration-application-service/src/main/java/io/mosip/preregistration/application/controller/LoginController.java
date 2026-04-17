@@ -37,6 +37,7 @@ import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
@@ -82,6 +83,9 @@ public class LoginController {
 
 	@Autowired
 	private RequestValidator loginValidator;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	/** The Constant SENDOTP. */
 	private static final String SENDOTP = "preregistration.login.sendotp";
@@ -180,7 +184,8 @@ public class LoginController {
 			@Validated @RequestBody MainRequestDTO<User> userIdOtpRequest, @ApiParam(hidden = true) Errors errors,
 			HttpServletResponse res, HttpServletRequest req) {
 
-		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "User ID: "+ userIdOtpRequest.getRequest().getUserId());
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"User ID: " + maskIdentifier(userIdOtpRequest.getRequest().getUserId()));
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		MainResponseDTO<AuthNResponse> responseBody = loginService.validateWithUserIdOtp(userIdOtpRequest);
@@ -262,5 +267,9 @@ public class LoginController {
 			res.addCookie(resCookie);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
 	}
 }

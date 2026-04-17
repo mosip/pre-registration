@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import javax.xml.bind.DatatypeConverter;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -99,6 +100,9 @@ public class OTPManager {
 	@Autowired
 	NotificationServiceUtil notification;
 
+	@Autowired
+	private UserDetailsService userDetailsService;
+
 	/**
 	 * Generate OTP with information of {@link MediaType } and OTP generation
 	 * time-out.
@@ -133,7 +137,12 @@ public class OTPManager {
 		if (otpRepo.existsByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS)) {
 			OtpTransaction otpTxn = otpRepo.findTopByOtpHashAndStatusCode(otpHash, PreRegLoginConstant.ACTIVE_STATUS);
 			otpTxn.setOtpHash(otpHash);
-			otpTxn.setUpdBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+			String originalClientId = environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID);
+			String effectiveClientId = userDetailsService.resolveCanonicalUserIdOrIdentifier(originalClientId);
+			logger.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Resolved effective user id for OTP update. maskedUserId=" + maskIdentifier(originalClientId)
+							+ ", canonicalApplied=" + isCanonicalApplied(originalClientId, effectiveClientId));
+			otpTxn.setUpdBy(effectiveClientId);
 			otpTxn.setUpdDTimes(DateUtils.getUTCCurrentDateTime());
 			otpTxn.setExpiryDtimes(DateUtils.getUTCCurrentDateTime().plusSeconds(
 					environment.getProperty(PreRegLoginConstant.MOSIP_KERNEL_OTP_EXPIRY_TIME, Long.class)));
@@ -144,7 +153,12 @@ public class OTPManager {
 			txn.setId(UUID.randomUUID().toString());
 			txn.setRefId(hash(userId));
 			txn.setOtpHash(otpHash);
-			txn.setCrBy(environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID));
+			String originalClientId = environment.getProperty(PreRegLoginConstant.MOSIP_PRE_REG_CLIENTID);
+			String effectiveClientId = userDetailsService.resolveCanonicalUserIdOrIdentifier(originalClientId);
+			logger.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Resolved effective user id for OTP create. maskedUserId=" + maskIdentifier(originalClientId)
+							+ ", canonicalApplied=" + isCanonicalApplied(originalClientId, effectiveClientId));
+			txn.setCrBy(effectiveClientId);
 			txn.setCrDtimes(DateUtils.getUTCCurrentDateTime());
 			txn.setGeneratedDtimes(DateUtils.getUTCCurrentDateTime());
 			txn.setExpiryDtimes(DateUtils.getUTCCurrentDateTime().plusSeconds(
@@ -289,6 +303,16 @@ public class OTPManager {
 			throw new PreRegLoginException(PreRegLoginErrorConstants.UNABLE_TO_PROCESS.getErrorCode(), e.getMessage());
 		}
 		return idHash;
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
+	}
+
+	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 
 }

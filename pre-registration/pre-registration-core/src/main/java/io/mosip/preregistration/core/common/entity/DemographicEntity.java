@@ -69,7 +69,7 @@ public class DemographicEntity implements Serializable {
 	@Column(name = "lang_code", nullable = false)
 	private String langCode;
 
-	/** The created by. */
+	/** The created by. (legacy plaintext or user identifier) */
 	@Column(name = "cr_by")
 	private String createdBy;
 
@@ -81,13 +81,21 @@ public class DemographicEntity implements Serializable {
 	@Column(name = "cr_dtimes")
 	private LocalDateTime createDateTime;
 
-	/** The updated by. */
+	/** The updated by. (legacy plaintext or user identifier) */
 	@Column(name = "upd_by")
 	private String updatedBy;
 
 	/** The update date time. */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updateDateTime;
+
+	public String getEffectiveCreatedBy() {
+		return this.createdBy;
+	}
+
+	public String getEffectiveUpdatedBy() {
+		return this.updatedBy;
+	}
 
 	/**
 	 * Encrypted Date Time

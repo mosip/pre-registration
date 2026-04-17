@@ -37,6 +37,7 @@ import io.mosip.preregistration.application.exception.PreRegLoginException;
 import io.mosip.preregistration.application.repository.OtpTxnRepository;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 @RunWith(JUnit4.class)
 @SpringBootTest
@@ -50,6 +51,8 @@ public class OTPManagerTest {
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);	
 		ReflectionTestUtils.setField(otpManager, "sendOtpResourceUrl", "home");
+		Mockito.when(userDetailsService.resolveCanonicalUserIdOrIdentifier(Mockito.anyString()))
+				.thenAnswer(invocation -> invocation.getArgument(0));
 		
 	}
 	
@@ -80,6 +83,9 @@ public class OTPManagerTest {
 
 	@Mock
 	private OtpTxnRepository otpRepo;
+
+	@Mock
+	private UserDetailsService userDetailsService;
 	
 	@Test(expected = PreRegLoginException.class)
 	public void testsendOtpPreRegLoginException() throws IOException {

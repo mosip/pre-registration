@@ -17,6 +17,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -98,6 +99,9 @@ public class DocumentServiceUtil {
 	@Autowired
 	private CommonServiceUtil commonServiceUtil;
 
+	@Autowired
+	private UserDetailsService userDetailsService;
+
 	/**
 	 * Reference for ${demographic.resource.url} from property file
 	 */
@@ -174,6 +178,13 @@ public class DocumentServiceUtil {
 		documentEntity.setCrBy(userId);
 		documentEntity.setUpdBy(userId);
 		documentEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for document write. preRegistrationId=" + preRegistrationId
+						+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
+						+ isCanonicalApplied(userId, effectiveUserId));
+		documentEntity.setCrBy(effectiveUserId);
+		documentEntity.setUpdBy(effectiveUserId);
 		documentEntity.setRefNumber(dto.getRefNumber());
 		// documentEntity.setEncryptedDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		return documentEntity;
@@ -276,6 +287,9 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setRefNumber(sourceEntity.getRefNumber());
 		copyDocumentEntity.setCrBy(sourceEntity.getCrBy());
 		copyDocumentEntity.setUpdBy(sourceEntity.getUpdBy());
+		// copy canonical user references if present
+		copyDocumentEntity.setCrBy(sourceEntity.getEffectiveCrBy());
+		copyDocumentEntity.setUpdBy(sourceEntity.getEffectiveUpdBy());
 		copyDocumentEntity.setLangCode(sourceEntity.getLangCode());
 		copyDocumentEntity.setEncryptedDateTime(sourceEntity.getEncryptedDateTime());
 		copyDocumentEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
@@ -395,14 +409,9 @@ public class DocumentServiceUtil {
 			List<String> validMandatoryDocForApplicant) {
 		if (validMandatoryDocForApplicant.isEmpty()) {
 			return false;
-		} else {
-			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (!validMandatoryDocForApplicant.isEmpty()) {
-				return true;
-			} else {
-				return false;
-			}
 		}
+		availableDocs.forEach(validMandatoryDocForApplicant::remove);
+		return !validMandatoryDocForApplicant.isEmpty();
 	}
 
 	public boolean isPasswordProtectedFile(MultipartFile file) throws java.io.IOException {
@@ -427,6 +436,16 @@ public class DocumentServiceUtil {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
 		commonServiceUtil.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
-				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getCreatedBy());
+				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getEffectiveCreatedBy());
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
+	}
+
+	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 }

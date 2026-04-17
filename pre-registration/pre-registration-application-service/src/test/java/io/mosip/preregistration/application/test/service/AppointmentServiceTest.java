@@ -33,6 +33,7 @@ import io.mosip.preregistration.application.service.AppointmentServiceImpl;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.DateTimeDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -48,6 +49,11 @@ public class AppointmentServiceTest {
 
 	@Autowired
 	private AppointmentServiceImpl appointmentService;
+
+	static {
+		// Set the property before Spring tries to inject @Value
+		System.setProperty("mosip.prereg.pii.backward.compatibility", "false");
+	}
 
 	@MockBean
 	private AppointmentUtil util;
@@ -81,11 +87,15 @@ public class AppointmentServiceTest {
 	
 	@MockBean
 	private DocumentDAO documentDAO;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
 	
 	@Before
 	public void setup() {
 		ReflectionTestUtils.setField(appointmentService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		
+		ReflectionTestUtils.setField(appointmentService, "piiBackwardCompatibility", false);
+
 	}
 
 	@Test

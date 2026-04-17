@@ -59,6 +59,7 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.JWTSignatureRequestDto;
 import io.mosip.kernel.signature.dto.JWTSignatureResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -126,6 +127,9 @@ public class DataSyncServiceUtil {
 	
 	@Autowired
 	private DemographicConsumedRepository demographicConsumedRepository;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * Autowired reference for {@link #RestTemplate}
@@ -307,7 +311,6 @@ public class DataSyncServiceUtil {
 			URI uri = uriComponentsBuilder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri).queryParam("from_date", fromDate)
 					.queryParam("to_date", toDate);
-
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
@@ -880,12 +883,32 @@ public class DataSyncServiceUtil {
 		return preRegistrationIdsDTO;
 	}
 
+	
+	private String getCanonicalUserId(String userId) {
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for reverse datasync. maskedUserId=" + maskIdentifier(userId)
+						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+		return effectiveUserId;
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
+	}
+
+	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
+	}
+
 	public ReverseDatasyncReponseDTO reverseDateSyncSave(Date reqDateTime, ReverseDataSyncRequestDTO request,
 			String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In reverseDateSyncSave method of datasync service util");
 		List<InterfaceDataSyncEntity> entityList = new ArrayList<>();
 		List<ProcessedPreRegEntity> processedEntityList = new ArrayList<>();
 		List<String> preIdLists = request.getPreRegistrationIds();
+		String canonicalUserId = getCanonicalUserId(userId);
 		PreRegIdsByRegCenterIdDTO preRegIdsDTO = new PreRegIdsByRegCenterIdDTO();
 		preRegIdsDTO.setPreRegistrationIds(preIdLists);
 		Map<String, String> preIdsMap = getPreregistrationUpdatedTime(preRegIdsDTO);
@@ -899,7 +922,7 @@ public class DataSyncServiceUtil {
 				ipprlstPK.setReceivedDtimes(DateUtils.parseDateToLocalDateTime(reqDateTime));
 				interfaceDataSyncEntity.setIpprlst_PK(ipprlstPK);
 				interfaceDataSyncEntity.setLangCode("eng");
-				interfaceDataSyncEntity.setCreatedBy(userId);
+				interfaceDataSyncEntity.setCreatedBy(canonicalUserId);
 				interfaceDataSyncEntity.setCreatedDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				interfaceDataSyncEntity.setUpdatedDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				entityList.add(interfaceDataSyncEntity);
@@ -910,7 +933,7 @@ public class DataSyncServiceUtil {
 				processedPreRegEntity.setStatusCode(StatusCodes.CONSUMED.getCode());
 				processedPreRegEntity.setStatusComments("Processed by registration processor");
 				processedPreRegEntity.setLangCode("eng");
-				processedPreRegEntity.setCrBy(userId);
+				processedPreRegEntity.setCrBy(canonicalUserId);
 				processedPreRegEntity.setCrDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				processedPreRegEntity.setUpdDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				processedEntityList.add(processedPreRegEntity);
@@ -1162,3 +1185,4 @@ public class DataSyncServiceUtil {
 	}
 
 }
+

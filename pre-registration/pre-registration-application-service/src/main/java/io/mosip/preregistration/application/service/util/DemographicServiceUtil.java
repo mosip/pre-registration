@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
@@ -27,6 +28,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
@@ -149,6 +151,10 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
+
 	/**
 	 * Logger instance
 	 */
@@ -186,9 +192,9 @@ public class DemographicServiceUtil {
 					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
 			createDto.setStatusCode(demographicEntity.getStatusCode());
 			createDto.setLangCode(demographicEntity.getLangCode());
-			createDto.setCreatedBy(demographicEntity.getCreatedBy());
+			createDto.setCreatedBy(demographicEntity.getEffectiveCreatedBy());
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
-			createDto.setUpdatedBy(demographicEntity.getUpdatedBy());
+			createDto.setUpdatedBy(demographicEntity.getEffectiveUpdatedBy());
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
@@ -307,6 +313,15 @@ public class DemographicServiceUtil {
 		demographicEntity.setUpdatedBy(userId);
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
+		
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for demographic create. maskedUserId=" + maskIdentifier(userId)
+						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+		demographicEntity.setCrAppuserId(effectiveUserId);
+		demographicEntity.setCreatedBy(effectiveUserId);
+		demographicEntity.setUpdatedBy(effectiveUserId);
+		
 		return demographicEntity;
 	}
 
@@ -414,7 +429,7 @@ public class DemographicServiceUtil {
 		JSONObject identityObj = (JSONObject) jsonObj.get(DemographicRequestCodes.IDENTITY.getCode());
 		if (identityObj.get(value) != null)
 			return identityObj.get(value).toString();
-		return "";
+		return null;
 
 	}
 
@@ -698,7 +713,13 @@ public class DemographicServiceUtil {
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		applicationEntity.setUpdBy(userId);
 		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
-		applicationEntity.setContactInfo(userId);
+		String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for applications write. applicationId=" + preId + ", maskedUserId="
+						+ maskIdentifier(userId) + ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+		applicationEntity.setCrBy(effectiveUserId);
+		applicationEntity.setUpdBy(effectiveUserId);
+		applicationEntity.setContactInfo(effectiveUserId);
 		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
@@ -720,6 +741,12 @@ public class DemographicServiceUtil {
 			applicationEntity.setBookingStatusCode(status);
 			applicationEntity.setUpdBy(userId);
 			applicationEntity.setUpdDtime(LocalDateTime.now());
+			String effectiveUserId = userDetailsService.resolveCanonicalUserIdOrIdentifier(userId);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Resolved effective user id for application status update. applicationId=" + applicationId
+							+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
+							+ isCanonicalApplied(userId, effectiveUserId));
+			applicationEntity.setUpdBy(effectiveUserId);
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
 			}
@@ -911,5 +938,15 @@ public class DemographicServiceUtil {
 		});
 
 		return mandatoryDocs;
+	}
+
+	private String maskIdentifier(String value) {
+		return userDetailsService.maskIdentifier(value);
+	}
+
+	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 }
