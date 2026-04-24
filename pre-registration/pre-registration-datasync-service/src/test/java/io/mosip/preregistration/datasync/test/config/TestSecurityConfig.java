@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -49,7 +48,6 @@ public class TestSecurityConfig {
 	}
 
 	@Bean
-	@Primary
 	public UserDetailsService testUserDetailsService() {
 		List<UserDetails> users = new ArrayList<>();
 		users.add(new User("reg-officer", "admin",

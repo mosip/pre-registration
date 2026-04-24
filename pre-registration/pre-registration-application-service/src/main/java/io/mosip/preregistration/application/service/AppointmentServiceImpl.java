@@ -372,7 +372,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 				userValidation(preRegistrationId);
 			});
 			BookingStatus bookingStatus = appointmentUtils.multiAppointmentBooking(bookingRequest);
-			if (bookingStatus == null || bookingStatus.getBookingStatusResponse().isEmpty()) {
+			if (bookingStatus == null || bookingStatus.getBookingStatusResponse() == null || bookingStatus.getBookingStatusResponse().isEmpty()) {
 				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"Multi-booking response was empty for request size "
 								+ bookingRequest.getRequest().getBookingRequest().size());

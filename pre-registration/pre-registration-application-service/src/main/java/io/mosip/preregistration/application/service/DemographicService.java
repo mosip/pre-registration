@@ -339,8 +339,15 @@ public class DemographicService implements DemographicServiceIntf {
 			DemographicEntity demographicEntity = demographicRepository
 					.save(serviceUtil.prepareDemographicEntityForCreate(demographicRequest,
 							StatusCodes.APPLICATION_INCOMPLETE.getCode(), authUserDetails().getUserId(), preId));
-			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId,
-					demographicEntity.getEffectiveCreatedBy());
+			try {
+				applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId,
+						demographicEntity.getEffectiveCreatedBy());
+			} catch (Exception migrationEx) {
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Best-effort identity migration failed after create for preId: " + preId
+								+ ", effectiveCreatedBy: " + maskIdentifier(demographicEntity.getEffectiveCreatedBy()));
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
+			}
 			DemographicCreateResponseDTO res = serviceUtil.setterForCreatePreRegistration(demographicEntity,
 					demographicRequest.getDemographicDetails());
 
@@ -439,8 +446,17 @@ public class DemographicService implements DemographicServiceIntf {
 						demographicEntity = demographicRepository.update(serviceUtil.prepareDemographicEntityForUpdate(
 								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
 								authUserDetails().getUserId(), preRegistrationId));
-						applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
-								demographicEntity.getEffectiveUpdatedBy());
+						try {
+							applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
+									demographicEntity.getEffectiveUpdatedBy());
+						} catch (Exception migrationEx) {
+							log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+									"Best-effort identity migration failed after update for preId: "
+											+ preRegistrationId + ", effectiveUpdatedBy: "
+											+ maskIdentifier(demographicEntity.getEffectiveUpdatedBy()));
+							log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+									ExceptionUtils.getStackTrace(migrationEx));
+						}
 					} else {
 						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(),
 								DemographicErrorMessages.NOT_POSSIBLE_TO_UPDATE.getMessage());
@@ -508,7 +524,7 @@ public class DemographicService implements DemographicServiceIntf {
 					lookupIds = new ArrayList<>();
 				}
 				if (lookupIds.isEmpty()) {
-					if (userId != null && !userId.trim().isEmpty()) {
+					if (piiBackwardCompatibility && userId != null && !userId.trim().isEmpty()) {
 						lookupIds.add(userId.trim());
 					} else {
 						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,

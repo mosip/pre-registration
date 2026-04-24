@@ -926,8 +926,6 @@ public class DataSyncServiceUtil {
 			java.util.Optional<String> userUuid = userDetailsService.resolveUserUuid(userId);
 			if (userUuid != null && userUuid.isPresent()) {
 				effectiveUserId = userUuid.get();
-			} else if (userId != null && !userId.trim().isEmpty()) {
-				effectiveUserId = userId.trim();
 			} else {
 				throw new PreRegistrationException(
 						ErrorCodes.PRG_DATA_SYNC_012.getCode(),

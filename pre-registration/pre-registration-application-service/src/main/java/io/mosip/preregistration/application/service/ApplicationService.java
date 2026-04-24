@@ -497,9 +497,6 @@ public class ApplicationService implements ApplicationServiceIntf {
 			if (userIds == null) {
 				userIds = new ArrayList<>();
 			}
-			if (userIds.isEmpty() && userId != null && !userId.isBlank()) {
-					userIds.add(userId.trim());
-			}
 			if (userIds.isEmpty()) {
 				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"No valid userIds found for maskedUserId=" + maskIdentifier(userId));
@@ -612,9 +609,6 @@ public class ApplicationService implements ApplicationServiceIntf {
 			List<String> userIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
 			if (userIds == null) {
 				userIds = new ArrayList<>();
-			}
-			if (userIds.isEmpty() && userId != null && !userId.trim().isEmpty()) {
-					userIds.add(userId.trim());
 			}
 			if (userIds.isEmpty()) {
 				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,

@@ -832,9 +832,22 @@ public class DocumentService implements DocumentServiceIntf {
 										.getMessage());
 					}
 					documentEntity.setRefNumber(refNumber);
-					documnetDAO.updateDocument(documentEntity);
-					applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId,
-							applicationIdentityMigrationService.resolveEffectiveUserId(authUserDetails().getUserId()));
+					DocumentEntity updatedDocumentEntity = documnetDAO.updateDocument(documentEntity);
+					String effectiveUserId = updatedDocumentEntity != null ? updatedDocumentEntity.getEffectiveUpdBy() : null;
+					if (serviceUtil.isNull(effectiveUserId)) {
+						AuthUserDetails authUser = authUserDetails();
+						if (authUser != null && authUser.getUserId() != null) {
+							effectiveUserId = applicationIdentityMigrationService
+									.resolveEffectiveUserId(authUser.getUserId());
+						}
+					}
+					if (serviceUtil.isNull(effectiveUserId)) {
+						log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								"Skipping document identity migration because no effective userId could be resolved for preId {} and documentId {}",
+								preId, documentId);
+					} else {
+						applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
+					}
 				} else {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
 							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage());

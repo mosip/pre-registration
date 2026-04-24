@@ -41,6 +41,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -735,6 +736,7 @@ public class DemographicServiceUtil {
 		return constructedJson;
 	}
 
+	@Transactional
 	public ApplicationEntity saveAndUpdateApplicationEntity(String preId, String bookingTypeCode,
 			String applicationStatusCode, String bookingStatusCode, String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -768,6 +770,7 @@ public class DemographicServiceUtil {
 		return applicationEntity;
 	}
 
+	@Transactional
 	public void updateApplicationStatus(String applicationId, String status, String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Updating applications status in applications table with statuscode: {" + status

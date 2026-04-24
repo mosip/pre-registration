@@ -57,6 +57,11 @@ public class ApplicationIdentityMigrationService {
     @Transactional
     public void migrateRawUserToEffectiveUser(String preRegistrationId, String effectiveUserId) {
 
+        if (effectiveUserId == null || effectiveUserId.isBlank()) {
+            log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+                    "migrateRawUserToEffectiveUser skipped: effectiveUserId is blank for preRegistrationId=" + preRegistrationId);
+            return;
+        }
         String trimmedPreRegistrationId = preRegistrationId.trim();
         String trimmedEffectiveUserId = effectiveUserId.trim();
         int migratedRecords = 0;

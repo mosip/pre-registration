@@ -26,11 +26,11 @@ public class UserDetails {
     @Column(name = "user_id")
     private UUID userId;
 
-    @Column(name = "identifier_hash")
+    @Column(name = "identifier_hash", nullable = false)
     private String identifierHash; // SHA-256 over normalized identifier
 
-    @Column(name = "identifier_encrypted")
-    private String identifierEncrypted; // Encrypted value (nullable)
+    @Column(name = "identifier_encrypted", nullable = false)
+    private String identifierEncrypted; // Encrypted identifier (mandatory, used for audit/notification recovery)
 
     @Column(name = "cr_dtimes")
     private LocalDateTime crDtimes;

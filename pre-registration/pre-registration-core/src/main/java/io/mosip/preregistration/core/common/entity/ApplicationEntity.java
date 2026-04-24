@@ -81,14 +81,14 @@ public class ApplicationEntity {
 	private LocalDateTime updDtime;
 
 	/**
-	 * Effective createdBy - returns canonical user id if present else legacy value
+	 * Effective createdBy - returns canonical user id
 	 */
 	public String getEffectiveCrBy() {
 		return this.crBy;
 	}
 
 	/**
-	 * Effective updatedBy - returns canonical user id if present else legacy value
+	 * Effective updatedBy - returns canonical user id
 	 */
 	public String getEffectiveUpdBy() {
 		return this.updBy;

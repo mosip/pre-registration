@@ -148,7 +148,7 @@ public class LoginService {
 		String userid = null;
 		boolean isSuccess = false;
 
-		log.info("In callsendOtp method of login service  with userID: {} and langCode",
+		log.info("In callsendOtp method of login service with userID: {} and langCode: {}",
 				maskIdentifier(userOtpRequest.getRequest().getUserId()), language);
 
 		try {

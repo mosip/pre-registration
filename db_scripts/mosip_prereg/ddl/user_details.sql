@@ -22,9 +22,6 @@ CREATE TABLE IF NOT EXISTS prereg.user_details (
 
 -- ========== CREATE INDEXES ==========
 
-CREATE INDEX IF NOT EXISTS idx_prereg_user_details_active
-ON prereg.user_details(user_id) WHERE identifier_encrypted IS NOT NULL;
-
 CREATE INDEX IF NOT EXISTS idx_user_details_cr_dtimes
   ON prereg.user_details (cr_dtimes);
 

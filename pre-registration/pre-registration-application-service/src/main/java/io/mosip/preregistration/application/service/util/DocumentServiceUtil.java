@@ -292,9 +292,6 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDocCatCode(sourceEntity.getDocCatCode());
 		copyDocumentEntity.setDocFileFormat(sourceEntity.getDocFileFormat());
 		copyDocumentEntity.setRefNumber(sourceEntity.getRefNumber());
-		copyDocumentEntity.setCrBy(sourceEntity.getCrBy());
-		copyDocumentEntity.setUpdBy(sourceEntity.getUpdBy());
-		// copy canonical user references if present
 		copyDocumentEntity.setCrBy(sourceEntity.getEffectiveCrBy());
 		copyDocumentEntity.setUpdBy(sourceEntity.getEffectiveUpdBy());
 		copyDocumentEntity.setLangCode(sourceEntity.getLangCode());
@@ -461,7 +458,7 @@ public class DocumentServiceUtil {
 			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
 		} catch (IllegalStateException ex) {
 			throw new InvalidRequestException(DocumentErrorCodes.PRG_PAM_DOC_018.toString(),
-					DocumentErrorMessages.INVALID_PRE_ID.getMessage(), null);
+					"Failed to resolve effective user identity", null);
 		}
 	}
 }

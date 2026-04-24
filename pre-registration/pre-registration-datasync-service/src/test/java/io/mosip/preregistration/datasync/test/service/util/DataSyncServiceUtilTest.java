@@ -12,13 +12,10 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
@@ -91,6 +88,9 @@ public class DataSyncServiceUtilTest {
 	 */
 	@MockBean
 	private ProcessedDataSyncRepo processedDataSyncRepo;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * Autowired reference for {@link #RestTemplateBuilder}
@@ -641,6 +641,9 @@ public class DataSyncServiceUtilTest {
 		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<Map<String, String>>>() {
 				}))).thenReturn(respEntity);
+
+		Optional<String> userUuidOpt = Optional.of("test-user-uuid-1234");
+		Mockito.when(userDetailsService.resolveUserUuid("9886442073")).thenReturn(userUuidOpt);
 
 		ReverseDatasyncReponseDTO reverseDatasyncReponse = new ReverseDatasyncReponseDTO();
 		reverseDatasyncReponse.setTransactionId("1111");
