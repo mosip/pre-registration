@@ -75,6 +75,9 @@ public class AppointmentServiceImpl implements AppointmentService {
 	@Autowired
 	private UserDetailsService userDetailsService;
 
+	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
 	@Value("${version}")
 	private String version;
 
@@ -478,7 +481,10 @@ public class AppointmentServiceImpl implements AppointmentService {
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		try {
 			applicationEntity.setUpdBy(resolveEffectiveUserId(authUserDetails().getUserId()));
-			return applicationRepostiory.save(applicationEntity);
+			ApplicationEntity savedApplicationEntity = applicationRepostiory.save(applicationEntity);
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
+					savedApplicationEntity.getEffectiveUpdBy());
+			return savedApplicationEntity;
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Failed to update application for the preregistrationId: " + preRegistrationId, ex);
@@ -495,19 +501,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 		if (userId == null) {
 			return null;
 		}
-		if (piiBackwardCompatibility) {
-			return userDetailsService.resolveUserUuidOrIdentifier(userId);
+		try {
+			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
+		} catch (IllegalStateException ex) {
+			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
+					AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
 		}
-		java.util.Optional<String> userUuid = userDetailsService.resolveUserUuid(userId);
-		if (userUuid != null && userUuid.isPresent()) {
-			return userUuid.get();
-		}
-		if (userId != null && !userId.trim().isEmpty()) {
-			return userId.trim();
-		}
-		throw new AppointmentExecption(
-				AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
-				AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
 	}
 
 	private List<ExceptionJSONInfoDTO> setErrors(AppointmentExecption ex) {

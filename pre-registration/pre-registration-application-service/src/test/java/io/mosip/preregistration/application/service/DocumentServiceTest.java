@@ -104,6 +104,9 @@ public class DocumentServiceTest {
 	private CryptoUtil cryptoUtil;
 
 	@Mock
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
+	@Mock
 	private ObjectStoreAdapter objectStore;
 
 	@Value("${mosip.preregistration.document.scan}")
@@ -378,6 +381,8 @@ documentEntity = new DocumentEntity();
 		DocumentResponseDTO responseDto = documentUploadService.createDoc(document, multipartFile, preRegistrationId);
 
 		assertEquals(docResp.getDocName(), responseDto.getDocName());
+		Mockito.verify(applicationIdentityMigrationService).migrateRawUserToEffectiveUser(preRegistrationId,
+				documentEntity.getEffectiveCrBy());
 
 	}
 

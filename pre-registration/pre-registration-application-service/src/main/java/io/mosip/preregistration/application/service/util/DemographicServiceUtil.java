@@ -20,6 +20,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
@@ -158,6 +159,9 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
 
 	@Value("${mosip.prereg.pii.backward.compatibility}")
 	private boolean piiBackwardCompatibility;
@@ -753,6 +757,7 @@ public class DemographicServiceUtil {
 		applicationEntity.setContactInfo(effectiveUserId);
 		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
 		} catch (Exception ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -782,6 +787,7 @@ public class DemographicServiceUtil {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
 			}
 			applicationRepostiory.update(applicationEntity);
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(applicationId, effectiveUserId);
 		} catch (Exception ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -982,12 +988,11 @@ public class DemographicServiceUtil {
 	}
 
 	private String resolveEffectiveUserId(String userId) {
-		if (piiBackwardCompatibility) {
-			return userDetailsService.resolveUserUuidOrIdentifier(userId);
+		try {
+			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
+		} catch (IllegalStateException ex) {
+			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
+					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
 		}
-		return userDetailsService.resolveUserUuid(userId)
-				.orElseThrow(() -> new RecordFailedToUpdateException(
-						ApplicationErrorCodes.PRG_APP_010.getCode(),
-						ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage()));
 	}
 }

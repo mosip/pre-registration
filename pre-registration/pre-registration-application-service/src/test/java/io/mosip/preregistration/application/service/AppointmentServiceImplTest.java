@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.List;
 
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,12 +115,17 @@ public class AppointmentServiceImplTest {
 	@Mock
 	private UserDetailsService userDetailsService;
 
+	@Mock
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
 	@Before
 	public void init() {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(appointmentServiceImpl, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(appointmentServiceImpl, "piiBackwardCompatibility", false);
 		when(userDetailsService.matchesUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean())).thenReturn(true);
+		when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
+				.thenAnswer(invocation -> invocation.getArgument(0));
 	}
 
 	@Test

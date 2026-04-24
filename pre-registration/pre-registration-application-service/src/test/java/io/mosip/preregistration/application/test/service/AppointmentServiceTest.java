@@ -31,6 +31,7 @@ import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.AppointmentServiceImpl;
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
@@ -87,11 +88,16 @@ public class AppointmentServiceTest {
 
 	@MockBean
 	private UserDetailsService userDetailsService;
+
+	@MockBean
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
 	
 	@Before
 	public void setup() {
 		ReflectionTestUtils.setField(appointmentService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(appointmentService, "piiBackwardCompatibility", false);
+		Mockito.when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
+				.thenAnswer(invocation -> invocation.getArgument(0));
 
 	}
 

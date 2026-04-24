@@ -23,6 +23,7 @@ import org.springframework.web.client.RestTemplate;
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DocumentDAO;
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.application.service.UISpecService;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
@@ -89,6 +90,9 @@ public class DemographicServiceUtilTest {
 	@MockBean
 	private UserDetailsService userDetailsService;
 
+	@MockBean
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
 	/**
 	 * @throws Exception on Any Exception
 	 */
@@ -114,6 +118,8 @@ public class DemographicServiceUtilTest {
 		demographicEntity.setPreRegistrationId("35760478648170");
 		demographicEntity.setApplicantDetailJson((jsonObject.toJSONString() + "623744").getBytes());
 		Mockito.when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
+				.thenReturn("00000000-0000-0000-0000-000000000001");
+		Mockito.when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
 				.thenReturn("00000000-0000-0000-0000-000000000001");
 	}
 

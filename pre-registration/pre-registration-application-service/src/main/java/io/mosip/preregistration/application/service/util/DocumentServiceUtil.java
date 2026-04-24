@@ -17,6 +17,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
@@ -101,6 +102,9 @@ public class DocumentServiceUtil {
 
 	@Autowired
 	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
 
 	@Value("${mosip.prereg.pii.backward.compatibility}")
 	private boolean piiBackwardCompatibility;
@@ -453,12 +457,11 @@ public class DocumentServiceUtil {
 	}
 
 	private String resolveEffectiveUserId(String userId) {
-		if (piiBackwardCompatibility) {
-			return userDetailsService.resolveUserUuidOrIdentifier(userId);
+		try {
+			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
+		} catch (IllegalStateException ex) {
+			throw new InvalidRequestException(DocumentErrorCodes.PRG_PAM_DOC_018.toString(),
+					DocumentErrorMessages.INVALID_PRE_ID.getMessage(), null);
 		}
-		return userDetailsService.resolveUserUuid(userId)
-				.orElseThrow(() -> new InvalidRequestException(
-						DocumentErrorCodes.PRG_PAM_DOC_018.toString(),
-						DocumentErrorMessages.INVALID_PRE_ID.getMessage(), null));
 	}
 }

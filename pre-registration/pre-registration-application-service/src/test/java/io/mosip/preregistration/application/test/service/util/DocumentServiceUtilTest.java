@@ -52,6 +52,7 @@ import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.application.dto.DocumentRequestDTO;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.util.CommonServiceUtil;
 import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
@@ -99,6 +100,9 @@ public class DocumentServiceUtilTest {
 	@MockBean
 	private DemographicService demographicServiceIntf;
 
+	@MockBean
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
 	@MockBean(name = "S3Adapter")
 	private ObjectStoreAdapter objectStore;
 
@@ -114,6 +118,8 @@ public class DocumentServiceUtilTest {
 		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(documentServiceUtil, "commonServiceUtil", commonServiceUtil);
 		when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+		when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
 				.thenAnswer(invocation -> invocation.getArgument(0));
 
 		ClassLoader classLoader = getClass().getClassLoader();

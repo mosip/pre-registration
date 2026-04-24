@@ -176,6 +176,9 @@ public class DocumentService implements DocumentServiceIntf {
 	private CryptoUtil cryptoUtil;
 
 	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
+	@Autowired
 	ValidationUtil validationUtil;
 
 	/**
@@ -296,6 +299,8 @@ public class DocumentService implements DocumentServiceIntf {
 			byte[] encryptedDocument = cryptoUtil.encrypt(file.getBytes(), encryptedTimestamp);
 			documentEntity.setDocHash(HashUtill.hashUtill(encryptedDocument));
 			documentEntity = documnetDAO.saveDocument(documentEntity);
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
+					documentEntity.getEffectiveCrBy());
 			String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 
 			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName,
@@ -359,6 +364,8 @@ public class DocumentService implements DocumentServiceIntf {
 
 					DocumentEntity copyDocumentEntity = documnetDAO.saveDocument(
 							serviceUtil.documentEntitySetter(destinationPreId, documentEntity, destEntity));
+					applicationIdentityMigrationService.migrateRawUserToEffectiveUser(destinationPreId,
+							copyDocumentEntity.getEffectiveCrBy());
 					sourceKey = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 					sourceBucketName = documentEntity.getDemographicEntity().getPreRegistrationId();
 					copyFile(copyDocumentEntity, sourceBucketName, sourceKey);
@@ -826,6 +833,8 @@ public class DocumentService implements DocumentServiceIntf {
 					}
 					documentEntity.setRefNumber(refNumber);
 					documnetDAO.updateDocument(documentEntity);
+					applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId,
+							applicationIdentityMigrationService.resolveEffectiveUserId(authUserDetails().getUserId()));
 				} else {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),
 							DocumentErrorMessages.DOCUMENT_TABLE_NOTACCESSIBLE.getMessage());

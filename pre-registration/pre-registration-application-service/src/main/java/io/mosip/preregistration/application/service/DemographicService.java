@@ -159,6 +159,9 @@ public class DemographicService implements DemographicServiceIntf {
 	@Autowired
 	ValidationUtil validationUtil;
 
+	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
 	/**
 	 * Reference for ${document.resource.url} from property file
 	 */
@@ -336,6 +339,8 @@ public class DemographicService implements DemographicServiceIntf {
 			DemographicEntity demographicEntity = demographicRepository
 					.save(serviceUtil.prepareDemographicEntityForCreate(demographicRequest,
 							StatusCodes.APPLICATION_INCOMPLETE.getCode(), authUserDetails().getUserId(), preId));
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId,
+					demographicEntity.getEffectiveCreatedBy());
 			DemographicCreateResponseDTO res = serviceUtil.setterForCreatePreRegistration(demographicEntity,
 					demographicRequest.getDemographicDetails());
 
@@ -434,6 +439,8 @@ public class DemographicService implements DemographicServiceIntf {
 						demographicEntity = demographicRepository.update(serviceUtil.prepareDemographicEntityForUpdate(
 								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
 								authUserDetails().getUserId(), preRegistrationId));
+						applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
+								demographicEntity.getEffectiveUpdatedBy());
 					} else {
 						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(),
 								DemographicErrorMessages.NOT_POSSIBLE_TO_UPDATE.getMessage());
