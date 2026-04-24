@@ -457,8 +457,8 @@ public class DocumentServiceUtil {
 		try {
 			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
 		} catch (IllegalStateException ex) {
-			throw new InvalidRequestException(DocumentErrorCodes.PRG_PAM_DOC_018.toString(),
-					"Failed to resolve effective user identity", null);
+			throw new InvalidRequestException(DocumentErrorCodes.PRG_PAM_DOC_026.toString(),
+					DocumentErrorMessages.IDENTITY_RESOLUTION_FAILED.getMessage(), null);
 		}
 	}
 }
