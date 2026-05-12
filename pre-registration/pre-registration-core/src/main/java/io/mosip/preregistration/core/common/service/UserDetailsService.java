@@ -127,10 +127,6 @@ public class UserDetailsService {
             return Optional.empty();
         }
         String trimmedIdentifier = identifier.trim();
-        if (isUuid(trimmedIdentifier)) {
-            LOGGER.debug("Using identifier as user UUID because it is already a UUID");
-            return Optional.of(trimmedIdentifier);
-        }
         try {
             Optional<UserDetails> existingUser = findByIdentifier(trimmedIdentifier);
             if (existingUser.isPresent()) {
@@ -206,7 +202,9 @@ public class UserDetailsService {
         if (authUserUuid.filter(trimmedStoredUserId::equals).isPresent()) {
             return true;
         }
-        Optional<String> storedUserUuid = resolveUserUuid(trimmedStoredUserId);
+        Optional<String> storedUserUuid = isUuid(trimmedStoredUserId)
+                ? Optional.of(trimmedStoredUserId)
+                : resolveUserUuid(trimmedStoredUserId);
         if (authUserUuid.isPresent() && storedUserUuid.isPresent()
                 && authUserUuid.get().equals(storedUserUuid.get())) {
             return true;
