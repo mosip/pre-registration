@@ -149,7 +149,7 @@ public class LoginService {
 		boolean isSuccess = false;
 
 		log.info("In callsendOtp method of login service with userID: {} and langCode: {}",
-				maskIdentifier(userOtpRequest.getRequest().getUserId()), language);
+				GenericUtil.maskIdentifier(userOtpRequest.getRequest().getUserId()), language);
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
@@ -202,7 +202,7 @@ public class LoginService {
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
 
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method with userId "
-				+ maskIdentifier(request.getRequest().getUserId()) + " and langCode " + request.getRequest().getLangCode());
+				+ GenericUtil.maskIdentifier(request.getRequest().getUserId()) + " and langCode " + request.getRequest().getLangCode());
 		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
 				.getMainResponseDto(request);
 
@@ -414,7 +414,7 @@ public class LoginService {
 	}
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
-		log.info("In generateJWTToken method of loginservice:{} {}", maskIdentifier(userId), issuerUrl);
+		log.info("In generateJWTToken method of loginservice:{} {}", GenericUtil.maskIdentifier(userId), issuerUrl);
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("userId", userId);
 		claims.put("scope", jwtScope);
@@ -466,7 +466,4 @@ public class LoginService {
 		return this.loginCommonUtil.sendOtpJwtToken(userId);
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 }

@@ -14,7 +14,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Collections;
 
 import io.mosip.kernel.core.idvalidator.exception.InvalidIDException;
 import io.mosip.preregistration.application.exception.*;
@@ -67,6 +66,7 @@ import io.mosip.preregistration.core.exception.InvalidPreRegistrationIdException
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 
@@ -493,25 +493,14 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			List<String> userIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
-			if (userIds == null) {
-				userIds = new ArrayList<>();
-			}
-			if (userIds.isEmpty()) {
-				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"No valid userIds found for maskedUserId=" + maskIdentifier(userId));
-
-				applicationsListDTO.setAllApplications(Collections.emptyList());
-				response.setResponse(applicationsListDTO);
-				return response;
-			}
-			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByIn(userIds);
+			List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByIn(lookupIds);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Error while Getting the Applications for the userId : " + maskIdentifier(userId));
+					"Error while Getting the Applications for the userId : " + GenericUtil.maskIdentifier(userId));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while Getting the Applications for the userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -561,7 +550,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
-					+ applicationEntity.getApplicationId() + " and userID " + maskIdentifier(authUserId));
+					+ applicationEntity.getApplicationId() + " and userID " + GenericUtil.maskIdentifier(authUserId));
 			String effectiveCrBy = applicationEntity.getEffectiveCrBy() == null ? "" : applicationEntity.getEffectiveCrBy().trim();
 			if (!userDetailsService.matchesUser(authUserId, effectiveCrBy, piiBackwardCompatibility)) {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
@@ -606,26 +595,15 @@ public class ApplicationService implements ApplicationServiceIntf {
 						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
 
 			}
-			List<String> userIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
-			if (userIds == null) {
-				userIds = new ArrayList<>();
-			}
-			if (userIds.isEmpty()) {
-				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-						"No valid userIds found for maskedUserId=" + maskIdentifier(userId));
-
-				applicationsListDTO.setAllApplications(Collections.emptyList());
-				response.setResponse(applicationsListDTO);
-				return response;
-			}
+			List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByInBookingType(
-					userIds, type.toUpperCase());
+					lookupIds, type.toUpperCase());
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: {" + applicationEntities.size() + "} and booking type: {" + type + "}");
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Error while Getting the Application Info for userId: " + maskIdentifier(userId));
+					"Error while Getting the Application Info for userId: " + GenericUtil.maskIdentifier(userId));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while Getting the Application Info for userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -633,8 +611,5 @@ public class ApplicationService implements ApplicationServiceIntf {
 		return response;
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 
 }

@@ -50,8 +50,7 @@ public class ApplicationIdentityMigrationService {
         if (piiBackwardCompatibility) {
             return userDetailsService.resolveUserUuidOrIdentifier(userId);
         }
-        return userDetailsService.resolveUserUuid(userId)
-                .orElseThrow(() -> new IllegalStateException("Failed to resolve canonical user UUID"));
+        return userDetailsService.resolveUserUuid(userId);
     }
 
     @Transactional

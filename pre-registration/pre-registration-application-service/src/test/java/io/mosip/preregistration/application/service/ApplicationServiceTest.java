@@ -104,7 +104,7 @@ public class ApplicationServiceTest {
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
-		Mockito.when(userDetailsService.findOrCreateByIdentifier(Mockito.anyString())).thenAnswer(invocation -> {
+		Mockito.when(userDetailsService.createByIdentifier(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenAnswer(invocation -> {
 			String id = invocation.getArgument(0);
 			io.mosip.preregistration.core.common.entity.UserDetails ud = new io.mosip.preregistration.core.common.entity.UserDetails();
 			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));

@@ -76,6 +76,7 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.datasync.code.RequestCodes;
@@ -923,9 +924,9 @@ public class DataSyncServiceUtil {
 		if (piiBackwardCompatibility) {
 			effectiveUserId = userDetailsService.resolveUserUuidOrIdentifier(userId);
 		} else {
-			java.util.Optional<String> userUuid = userDetailsService.resolveUserUuid(userId);
-			if (userUuid != null && userUuid.isPresent()) {
-				effectiveUserId = userUuid.get();
+			String userUuid = userDetailsService.resolveUserUuid(userId);
+			if (userUuid != null) {
+				effectiveUserId = userUuid;
 			} else {
 				throw new PreRegistrationException(
 						ErrorCodes.PRG_DATA_SYNC_012.getCode(),
@@ -933,14 +934,11 @@ public class DataSyncServiceUtil {
 			}
 		}
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"Resolved effective user id for reverse datasync. maskedUserId=" + maskIdentifier(userId)
+				"Resolved effective user id for reverse datasync. maskedUserId=" + GenericUtil.maskIdentifier(userId)
 						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
 		return effectiveUserId;
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 
 	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
 		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();

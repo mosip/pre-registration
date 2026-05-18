@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
@@ -45,22 +46,23 @@ public class UserDetailsServiceTest {
         when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
         when(userDetailsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        UserDetails u = userDetailsService.findOrCreateByIdentifier("TestUser");
+        UserDetails u = userDetailsService.createByIdentifier("TestUser", "testuser", "somehash");
 
         verify(userDetailsRepository).save(any());
         assertEquals("enc-value", u.getIdentifierEncrypted());
     }
 
     @Test
-    public void testFindByIdentifierDelegatesToRepo() {
+    public void testResolveUserUuidReturnsExistingUuid() {
         UserDetails mock = new UserDetails();
+        mock.setUserId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mock));
 
-        Optional<UserDetails> res = userDetailsService.findByIdentifier("TestUser");
+        String res = userDetailsService.resolveUserUuid("TestUser");
         verify(userDetailsRepository).findByIdentifierHash(any());
 
-        assertTrue(res.isPresent());
-        assertEquals(mock, res.get());
+        assertNotNull(res);
+        assertEquals("00000000-0000-0000-0000-000000000001", res);
     }
 
     @Test
@@ -68,7 +70,7 @@ public class UserDetailsServiceTest {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
         when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
 
-        assertThrows(IllegalStateException.class, () -> userDetailsService.findOrCreateByIdentifier("TestUser"));
+        assertThrows(IllegalStateException.class, () -> userDetailsService.createByIdentifier("TestUser", "testuser", "somehash"));
     }
 
     @Test
@@ -80,7 +82,7 @@ public class UserDetailsServiceTest {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(existing));
         when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
 
-        assertThrows(IllegalStateException.class, () -> userDetailsService.findOrCreateByIdentifier("TestUser"));
+        assertThrows(IllegalStateException.class, () -> userDetailsService.createByIdentifier("TestUser", "testuser", "somehash"));
     }
 
     @Test
@@ -90,7 +92,7 @@ public class UserDetailsServiceTest {
         when(cryptoUtil.decrypt(any(), any())).thenReturn("TestUser123".getBytes(StandardCharsets.UTF_8));
         when(userDetailsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        UserDetails saved = userDetailsService.findOrCreateByIdentifier("TestUser123");
+        UserDetails saved = userDetailsService.createByIdentifier("TestUser123", "testuser123", "somehash");
         Optional<String> decrypted = decryptIdentifier(saved.getIdentifierEncrypted());
         assertTrue(decrypted.isPresent());
         assertTrue("TestUser123".equals(decrypted.get()));
@@ -112,10 +114,10 @@ public class UserDetailsServiceTest {
         mapped.setIdentifierEncrypted("enc-value");
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
 
-        Optional<String> resolved = userDetailsService.resolveUserUuid("TestUser");
+        String resolved = userDetailsService.resolveUserUuid("TestUser");
 
-        assertTrue(resolved.isPresent());
-        assertEquals(mapped.getUserId().toString(), resolved.get());
+        assertNotNull(resolved);
+        assertEquals(mapped.getUserId().toString(), resolved);
     }
 
     @Test
@@ -126,10 +128,10 @@ public class UserDetailsServiceTest {
         mapped.setIdentifierEncrypted("");
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
 
-        Optional<String> resolved = userDetailsService.resolveUserUuid("TestUser");
+        String resolved = userDetailsService.resolveUserUuid("TestUser");
 
-        assertTrue(resolved.isPresent());
-        assertEquals(mapped.getUserId().toString(), resolved.get());
+        assertNotNull(resolved);
+        assertEquals(mapped.getUserId().toString(), resolved);
     }
 
     @Test

@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
@@ -119,7 +118,7 @@ public class ApplicationIdentityMigrationServiceTest {
     public void resolveEffectiveUserIdUsesCanonicalUuidInStrictMode() {
         String userId = "user@example.com";
         String canonicalUuid = UUID.randomUUID().toString();
-        when(userDetailsService.resolveUserUuid(userId)).thenReturn(Optional.of(canonicalUuid));
+        when(userDetailsService.resolveUserUuid(userId)).thenReturn(canonicalUuid);
 
         String resolvedUserId = applicationIdentityMigrationService.resolveEffectiveUserId(userId);
 

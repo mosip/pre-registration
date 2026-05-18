@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.List;
 
 import io.mosip.preregistration.core.common.service.UserDetailsService;
+import io.mosip.preregistration.core.util.GenericUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -163,7 +164,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In userValidation method of AppointmentService with applicationId " + applicationId
-							+ " and userID " + maskIdentifier(authUserId));
+							+ " and userID " + GenericUtil.maskIdentifier(authUserId));
 			ApplicationEntity applicationEntity = null;
 			try {
 				applicationEntity = applicationRepostiory.findById(applicationId).orElseThrow();
@@ -177,7 +178,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			if (!userDetailsService.matchesUser(authUserId, expectedCrBy, piiBackwardCompatibility)) {
 				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"Appointment ownership validation failed for applicationId " + applicationId
-								+ " and masked user " + maskIdentifier(authUserId));
+								+ " and masked user " + GenericUtil.maskIdentifier(authUserId));
 				throw new AppointmentExecption(AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getCode(),
 						AppointmentErrorCodes.INVALID_APP_ID_FOR_USER.getMessage());
 			}
@@ -493,9 +494,6 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 
 	private String resolveEffectiveUserId(String userId) {
 		if (userId == null) {

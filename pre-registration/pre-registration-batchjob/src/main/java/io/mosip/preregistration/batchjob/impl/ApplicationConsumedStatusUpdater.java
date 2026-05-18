@@ -235,8 +235,7 @@ public class ApplicationConsumedStatusUpdater {
         if (piiBackwardCompatibility) {
             return userDetailsService.resolveUserUuidOrIdentifier(trimmedUserId);
         }
-        return userDetailsService.resolveUserUuid(trimmedUserId)
-                .orElseThrow(() -> new IllegalStateException("Failed to resolve user UUID for consumed table write"));
+        return userDetailsService.resolveUserUuid(trimmedUserId);
     }
     
 }

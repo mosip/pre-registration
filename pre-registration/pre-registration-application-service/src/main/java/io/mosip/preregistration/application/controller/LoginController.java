@@ -40,6 +40,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
 import io.swagger.annotations.ApiParam;
 import io.swagger.v3.oas.annotations.Operation;
@@ -185,7 +186,7 @@ public class LoginController {
 			HttpServletResponse res, HttpServletRequest req) {
 
 		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"User ID: " + userDetailsService.maskIdentifier(userIdOtpRequest.getRequest().getUserId()));
+				"User ID: " + GenericUtil.maskIdentifier(userIdOtpRequest.getRequest().getUserId()));
 		loginValidator.validateId(VALIDATEOTP, userIdOtpRequest.getId(), errors);
 		DataValidationUtil.validate(errors, VALIDATEOTP);
 		MainResponseDTO<AuthNResponse> responseBody = loginService.validateWithUserIdOtp(userIdOtpRequest);

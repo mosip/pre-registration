@@ -167,7 +167,6 @@ public class LoginServiceTest {
 		ReflectionTestUtils.setField(authService, "jwtAudience", "adad");
 		ReflectionTestUtils.setField(authService, "jwtSecret", "Azcds");
 		ReflectionTestUtils.setField(authService, "uiConfigParams", "test1,test2");
-		when(userDetailsService.maskIdentifier(Mockito.anyString())).thenAnswer(invocation -> invocation.getArgument(0));
 
 	}
 

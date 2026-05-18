@@ -59,6 +59,7 @@ import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
@@ -188,7 +189,7 @@ public class DocumentServiceUtil {
 		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for document write. preRegistrationId=" + preRegistrationId
-						+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
+						+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
 						+ isCanonicalApplied(userId, effectiveUserId));
 		documentEntity.setCrBy(effectiveUserId);
 		documentEntity.setUpdBy(effectiveUserId);
@@ -443,9 +444,6 @@ public class DocumentServiceUtil {
 				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getEffectiveCreatedBy());
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 
 	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
 		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();

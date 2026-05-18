@@ -96,6 +96,7 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.DateParseException;
@@ -328,7 +329,7 @@ public class DemographicServiceUtil {
 		
 		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"Resolved effective user id for demographic create. maskedUserId=" + maskIdentifier(userId)
+				"Resolved effective user id for demographic create. maskedUserId=" + GenericUtil.maskIdentifier(userId)
 						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
 		demographicEntity.setCrAppuserId(effectiveUserId);
 		demographicEntity.setCreatedBy(effectiveUserId);
@@ -376,7 +377,7 @@ public class DemographicServiceUtil {
 		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for demographic update. preRegistrationId=" + preRegistrationId
-						+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
+						+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
 						+ isCanonicalApplied(userId, effectiveUserId));
 		demographicEntity.setCrAppuserId(effectiveUserId);
 		demographicEntity.setCreatedBy(effectiveUserId);
@@ -753,7 +754,7 @@ public class DemographicServiceUtil {
 		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for applications write. applicationId=" + preId + ", maskedUserId="
-						+ maskIdentifier(userId) + ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+						+ GenericUtil.maskIdentifier(userId) + ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
 		applicationEntity.setCrBy(effectiveUserId);
 		applicationEntity.setUpdBy(effectiveUserId);
 		applicationEntity.setContactInfo(effectiveUserId);
@@ -783,7 +784,7 @@ public class DemographicServiceUtil {
 			String effectiveUserId = resolveEffectiveUserId(userId);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Resolved effective user id for application status update. applicationId=" + applicationId
-							+ ", maskedUserId=" + maskIdentifier(userId) + ", canonicalApplied="
+							+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
 							+ isCanonicalApplied(userId, effectiveUserId));
 			applicationEntity.setUpdBy(effectiveUserId);
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
@@ -980,9 +981,6 @@ public class DemographicServiceUtil {
 		return mandatoryDocs;
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 
 	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
 		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();

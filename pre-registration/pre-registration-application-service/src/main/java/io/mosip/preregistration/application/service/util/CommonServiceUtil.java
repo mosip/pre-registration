@@ -50,6 +50,7 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
@@ -179,8 +180,8 @@ public class CommonServiceUtil {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"In getDemographicData method of userValidation with priid " + maskIdentifier(preregUserId)
-						+ " and userID " + maskIdentifier(authUserId));
+				"In getDemographicData method of userValidation with priid " + GenericUtil.maskIdentifier(preregUserId)
+						+ " and userID " + GenericUtil.maskIdentifier(authUserId));
 		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
@@ -414,7 +415,4 @@ public class CommonServiceUtil {
 		return validMandatoryDocForApplicant.isEmpty();
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 }

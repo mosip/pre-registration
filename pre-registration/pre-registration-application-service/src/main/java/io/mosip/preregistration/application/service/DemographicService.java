@@ -95,6 +95,7 @@ import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
@@ -345,7 +346,7 @@ public class DemographicService implements DemographicServiceIntf {
 			} catch (Exception migrationEx) {
 				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"Best-effort identity migration failed after create for preId: " + preId
-								+ ", effectiveCreatedBy: " + maskIdentifier(demographicEntity.getEffectiveCreatedBy()));
+								+ ", effectiveCreatedBy: " + GenericUtil.maskIdentifier(demographicEntity.getEffectiveCreatedBy()));
 				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
 			}
 			DemographicCreateResponseDTO res = serviceUtil.setterForCreatePreRegistration(demographicEntity,
@@ -453,7 +454,7 @@ public class DemographicService implements DemographicServiceIntf {
 							log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 									"Best-effort identity migration failed after update for preId: "
 											+ preRegistrationId + ", effectiveUpdatedBy: "
-											+ maskIdentifier(demographicEntity.getEffectiveUpdatedBy()));
+											+ GenericUtil.maskIdentifier(demographicEntity.getEffectiveUpdatedBy()));
 							log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 									ExceptionUtils.getStackTrace(migrationEx));
 						}
@@ -528,7 +529,7 @@ public class DemographicService implements DemographicServiceIntf {
 						lookupIds.add(userId.trim());
 					} else {
 						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-								"No user lookup ids resolved for current user {}", maskIdentifier(userId));
+								"No user lookup ids resolved for current user {}", GenericUtil.maskIdentifier(userId));
 						demographicMetadataDTO.setBasicDetails(new ArrayList<>());
 						demographicMetadataDTO.setNoOfRecords("0");
 						demographicMetadataDTO.setTotalRecords("0");
@@ -916,16 +917,13 @@ public class DemographicService implements DemographicServiceIntf {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDemographicData method of userValidation with priid "
-				+ maskIdentifier(preregUserId) + " and userID " + maskIdentifier(authUserId));
+				+ GenericUtil.maskIdentifier(preregUserId) + " and userID " + GenericUtil.maskIdentifier(authUserId));
 		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
 	}
 
-	private String maskIdentifier(String value) {
-		return userDetailsService.maskIdentifier(value);
-	}
 
 	private JSONObject getDocumentMetadata(DemographicEntity demographicEntity, String poa)
 			throws JsonProcessingException, ParseException {
