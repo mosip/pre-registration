@@ -232,10 +232,12 @@ public class ApplicationConsumedStatusUpdater {
             return userId;
         }
         String trimmedUserId = userId.trim();
-        if (piiBackwardCompatibility) {
-            return userDetailsService.resolveUserUuidOrIdentifier(trimmedUserId);
+        String uuid = userDetailsService.resolveUserUuid(trimmedUserId);
+        if (uuid == null) {
+            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB,
+                    "Failed to resolve UUID for user; leaving field unresolved for this record.");
         }
-        return userDetailsService.resolveUserUuid(trimmedUserId);
+        return uuid;
     }
     
 }

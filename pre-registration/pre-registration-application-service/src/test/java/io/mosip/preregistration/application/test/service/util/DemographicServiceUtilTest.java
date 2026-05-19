@@ -117,8 +117,6 @@ public class DemographicServiceUtilTest {
 		demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId("35760478648170");
 		demographicEntity.setApplicantDetailJson((jsonObject.toJSONString() + "623744").getBytes());
-		Mockito.when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
-				.thenReturn("00000000-0000-0000-0000-000000000001");
 		Mockito.when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
 				.thenReturn("00000000-0000-0000-0000-000000000001");
 	}

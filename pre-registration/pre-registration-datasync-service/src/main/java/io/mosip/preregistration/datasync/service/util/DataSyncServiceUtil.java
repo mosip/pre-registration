@@ -920,23 +920,16 @@ public class DataSyncServiceUtil {
 
 	
 	private String getUserUuid(String userId) {
-		String effectiveUserId;
-		if (piiBackwardCompatibility) {
-			effectiveUserId = userDetailsService.resolveUserUuidOrIdentifier(userId);
-		} else {
-			String userUuid = userDetailsService.resolveUserUuid(userId);
-			if (userUuid != null) {
-				effectiveUserId = userUuid;
-			} else {
-				throw new PreRegistrationException(
-						ErrorCodes.PRG_DATA_SYNC_012.getCode(),
-						ErrorMessages.FAILED_TO_STORE_PRE_REGISTRATION_IDS.getMessage());
-			}
+		String userUuid = userDetailsService.resolveUserUuid(userId);
+		if (userUuid == null) {
+			throw new PreRegistrationException(
+					ErrorCodes.PRG_DATA_SYNC_012.getCode(),
+					ErrorMessages.FAILED_TO_STORE_PRE_REGISTRATION_IDS.getMessage());
 		}
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for reverse datasync. maskedUserId=" + GenericUtil.maskIdentifier(userId)
-						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
-		return effectiveUserId;
+						+ ", canonicalApplied=" + isCanonicalApplied(userId, userUuid));
+		return userUuid;
 	}
 
 

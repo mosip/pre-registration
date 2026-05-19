@@ -1,7 +1,7 @@
 package io.mosip.preregistration.application.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.never;
+import static org.junit.Assert.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -18,8 +18,6 @@ import org.junit.runners.JUnit4;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.test.util.ReflectionTestUtils;
-
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DemographicRepository;
 import io.mosip.preregistration.application.repository.DocumentRepository;
@@ -54,7 +52,6 @@ public class ApplicationIdentityMigrationServiceTest {
     @Before
     public void setUp() {
         MockitoAnnotations.initMocks(this);
-        ReflectionTestUtils.setField(applicationIdentityMigrationService, "piiBackwardCompatibility", false);
     }
 
     @Test
@@ -115,7 +112,7 @@ public class ApplicationIdentityMigrationServiceTest {
     }
 
     @Test
-    public void resolveEffectiveUserIdUsesCanonicalUuidInStrictMode() {
+    public void resolveEffectiveUserIdReturnsUuid() {
         String userId = "user@example.com";
         String canonicalUuid = UUID.randomUUID().toString();
         when(userDetailsService.resolveUserUuid(userId)).thenReturn(canonicalUuid);
@@ -123,6 +120,14 @@ public class ApplicationIdentityMigrationServiceTest {
         String resolvedUserId = applicationIdentityMigrationService.resolveEffectiveUserId(userId);
 
         assertEquals(canonicalUuid, resolvedUserId);
-        verify(userDetailsService, never()).resolveUserUuidOrIdentifier(userId);
+    }
+
+    @Test
+    public void resolveEffectiveUserIdThrowsWhenUuidResolutionFails() {
+        String userId = "user@example.com";
+        when(userDetailsService.resolveUserUuid(userId)).thenReturn(null);
+
+        assertThrows(IllegalStateException.class,
+                () -> applicationIdentityMigrationService.resolveEffectiveUserId(userId));
     }
 }

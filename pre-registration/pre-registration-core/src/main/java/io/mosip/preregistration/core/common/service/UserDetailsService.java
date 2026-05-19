@@ -97,18 +97,6 @@ public class UserDetailsService {
         return null;
     }
 
-    public String resolveUserUuidOrIdentifier(String identifier) {
-        String uuid = resolveUserUuid(identifier);
-        if (uuid != null) {
-            return uuid;
-        }
-        String fallback = identifier == null ? "" : identifier.trim();
-        if (!fallback.isEmpty()) {
-            LOGGER.warn("Falling back to non-UUID identifier for masked user {}", GenericUtil.maskIdentifier(fallback));
-        }
-        return fallback;
-    }
-
     public List<String> getUserLookupIds(String authUserId, boolean piiBackwardCompatibility) {
         List<String> ids = new ArrayList<>();
         String userUuid = resolveUserUuid(authUserId);

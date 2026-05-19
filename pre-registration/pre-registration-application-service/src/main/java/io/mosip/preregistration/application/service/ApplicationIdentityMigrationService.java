@@ -7,7 +7,6 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,12 +21,10 @@ import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.util.GenericUtil;
 
 @Service
 public class ApplicationIdentityMigrationService {
-
-    @Value("${mosip.prereg.pii.backward.compatibility}")
-    private boolean piiBackwardCompatibility;
 
     @Autowired
     private ApplicationRepostiory applicationRepostiory;
@@ -47,10 +44,12 @@ public class ApplicationIdentityMigrationService {
     private final Logger log = LoggerConfiguration.logConfig(ApplicationIdentityMigrationService.class);
 
     public String resolveEffectiveUserId(String userId) {
-        if (piiBackwardCompatibility) {
-            return userDetailsService.resolveUserUuidOrIdentifier(userId);
+        String uuid = userDetailsService.resolveUserUuid(userId);
+        if (uuid == null) {
+            throw new IllegalStateException("Failed to resolve UUID for user during migration, maskedUserId="
+                    + GenericUtil.maskIdentifier(userId));
         }
-        return userDetailsService.resolveUserUuid(userId);
+        return uuid;
     }
 
     @Transactional

@@ -117,8 +117,6 @@ public class DocumentServiceUtilTest {
 		ReflectionTestUtils.setField(documentServiceUtil, "piiBackwardCompatibility", true);
 		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(documentServiceUtil, "commonServiceUtil", commonServiceUtil);
-		when(userDetailsService.resolveUserUuidOrIdentifier(Mockito.anyString()))
-				.thenAnswer(invocation -> invocation.getArgument(0));
 		when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
 				.thenAnswer(invocation -> invocation.getArgument(0));
 
