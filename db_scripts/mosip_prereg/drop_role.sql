@@ -1,1 +1,1 @@
-drop role if exists prereguser; 
+drop role if exists :dbuname;

@@ -1,20 +1,20 @@
 
 -- Foreign Key Constraints Same DB/Schema tables.
 
--- FOREIGN KEY CONSTRAINTS : mosip_prereg database/schema.
+-- FOREIGN KEY CONSTRAINTS : :mosipdbname database/schema.
 
 -- object: fk_appldoc_appldem | type: CONSTRAINT --
 -- ALTER TABLE prereg.applicant_document DROP CONSTRAINT IF EXISTS fk_appldoc_appldem CASCADE;
 ALTER TABLE prereg.applicant_document ADD CONSTRAINT fk_appldoc_appldem FOREIGN KEY (prereg_id)
-REFERENCES prereg.applicant_demographic (prereg_id) MATCH SIMPLE
-ON DELETE NO ACTION ON UPDATE NO ACTION;
+    REFERENCES prereg.applicant_demographic (prereg_id) MATCH SIMPLE
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 -- object: fk_appldocc_appldem | type: CONSTRAINT --
 -- ALTER TABLE prereg.applicant_document_consumed DROP CONSTRAINT IF EXISTS fk_appldocc_appldem CASCADE;
 ALTER TABLE prereg.applicant_document_consumed ADD CONSTRAINT fk_appldocc_appldem FOREIGN KEY (prereg_id)
-REFERENCES prereg.applicant_demographic_consumed (prereg_id) MATCH SIMPLE
-ON DELETE NO ACTION ON UPDATE NO ACTION;
+    REFERENCES prereg.applicant_demographic_consumed (prereg_id) MATCH SIMPLE
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 -- object: fk_rappmnt_id | type: CONSTRAINT --
@@ -27,8 +27,8 @@ ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- object: fk_rappmntc_id | type: CONSTRAINT --
 -- ALTER TABLE prereg.reg_appointment_consumed DROP CONSTRAINT IF EXISTS fk_rappmntc_id CASCADE;
 ALTER TABLE prereg.reg_appointment_consumed ADD CONSTRAINT fk_rappmntc_id FOREIGN KEY (prereg_id)
-REFERENCES prereg.applicant_demographic_consumed (prereg_id) MATCH SIMPLE
-ON DELETE NO ACTION ON UPDATE NO ACTION;
+    REFERENCES prereg.applicant_demographic_consumed (prereg_id) MATCH SIMPLE
+    ON DELETE NO ACTION ON UPDATE NO ACTION;
 -- ddl-end --
 
 
