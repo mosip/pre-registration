@@ -62,9 +62,7 @@ public class SimplePost extends PreRegUtil implements ITest {
 	@DataProvider(name = "testcaselist")
 	public Object[] getTestCaseList(ITestContext context) {
 		String ymlFile = context.getCurrentXmlTest().getLocalParameters().get("ymlFile");
-		if (context.getCurrentXmlTest().getLocalParameters().containsKey("idKeyName")) {
-			idKeyName = context.getCurrentXmlTest().getLocalParameters().get("idKeyName");
-		}
+		idKeyName = context.getCurrentXmlTest().getLocalParameters().get("idKeyName");
 		logger.info("Started executing yml: " + ymlFile);
 		return getYmlTestData(ymlFile);
 	}
