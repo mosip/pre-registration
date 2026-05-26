@@ -49,3 +49,23 @@ FetchAppointmentDetailsByPrid:
     }
   ]
 }'
+   Prereg_FetchAppointmentDetailsByPrid_forPendingApplication_Neg:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_FetchAppointmentDetailsByPrid_04
+      description: Validate that fetching appointment details by Pre Registration ID fails when the application is in Pending Appointment status and booking data does not exist
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_UpdatePreRegStatus_04
+      inputTemplate: preReg/FetchAppointmentDetailsByPrid/fetchAppointmentDetailsByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_BOOK_RCI_013",
+      "message": "Booking data not found"
+    }
+  ]
+}'
