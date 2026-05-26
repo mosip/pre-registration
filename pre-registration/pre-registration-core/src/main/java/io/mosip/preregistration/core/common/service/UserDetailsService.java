@@ -82,7 +82,7 @@ public class UserDetailsService {
         return encryptedValue;
     }
 
-    @Cacheable(value = "user-details-cache", key = "#identifier.toLowerCase().trim()", condition = "#identifier != null")
+    @Cacheable(value = "user-details-cache", key = "#identifier.toLowerCase().trim()", condition = "#identifier != null", unless = "#result == null")
     public String resolveUserUuid(String identifier) {
         try {
             String norm = normalize(identifier);
