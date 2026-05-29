@@ -31,6 +31,7 @@ import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.UserLookupException;
+import io.mosip.preregistration.core.util.GenericUtil;
 
 /**
  * @author Mahammed Taheer
@@ -237,7 +238,7 @@ public class ApplicationConsumedStatusUpdater {
             return userDetailsService.getOrCreateInternalUserId(trimmedUserId);
         } catch (UserLookupException ex) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB,
-                    "Failed to resolve UUID for user; leaving field unresolved for this record.");
+                    "Failed to resolve UUID for masked user " + GenericUtil.maskIdentifier(trimmedUserId) + "; leaving field unresolved for this record.");
             return userId;
         }
     }

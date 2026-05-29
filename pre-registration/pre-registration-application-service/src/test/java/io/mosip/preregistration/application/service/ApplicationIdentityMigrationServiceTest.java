@@ -27,6 +27,7 @@ import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
+import io.mosip.preregistration.core.exception.UserLookupException;
 
 @RunWith(JUnit4.class)
 public class ApplicationIdentityMigrationServiceTest {
@@ -126,6 +127,16 @@ public class ApplicationIdentityMigrationServiceTest {
     public void resolveEffectiveUserIdThrowsWhenUuidResolutionFails() {
         String userId = "user@example.com";
         when(userDetailsService.getOrCreateInternalUserId(userId)).thenReturn(null);
+
+        assertThrows(IllegalStateException.class,
+                () -> applicationIdentityMigrationService.resolveEffectiveUserId(userId));
+    }
+
+    @Test
+    public void resolveEffectiveUserIdThrowsIllegalStateWhenUserLookupExceptionThrown() {
+        String userId = "user@example.com";
+        when(userDetailsService.getOrCreateInternalUserId(userId))
+                .thenThrow(new UserLookupException("PRG_CORE_REQ_024", "Failed to resolve internal user ID"));
 
         assertThrows(IllegalStateException.class,
                 () -> applicationIdentityMigrationService.resolveEffectiveUserId(userId));
