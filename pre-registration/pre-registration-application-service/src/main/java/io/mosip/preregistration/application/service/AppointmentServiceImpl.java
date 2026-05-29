@@ -338,8 +338,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 						AppointmentErrorCodes.CANCEL_APPOINTMENT_FAILED.getMessage());
 			}
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"In appointment cancelled successfully , updating the applications and demographic tables",
-					preRegistrationId);
+					"In appointment cancelled successfully for ID: " + preRegistrationId + ", updating the applications and demographic tables");
 			ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null,
 					StatusCodes.CANCELLED.getCode());
 			if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
@@ -444,14 +443,12 @@ public class AppointmentServiceImpl implements AppointmentService {
 	private ApplicationEntity updateApplicationEntity(String preRegistrationId, BookingRequestDTO bookingInfo,
 			String newStatus) {
 		ApplicationEntity applicationEntity = null;
-		try {
-			applicationEntity = applicationRepostiory.getOne(preRegistrationId);
-		} catch (Exception ex) {
+		applicationEntity = applicationRepostiory.findById(preRegistrationId).orElseThrow(() -> {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Invaid applicationId/Not Record Found for the ID " + preRegistrationId);
-			throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_014.getCode(),
+			return new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_014.getCode(),
 					ApplicationErrorMessages.INVALID_REQUEST_APPLICATION_ID.getMessage());
-		}
+		});
 
 		if (bookingInfo == null) {
 			applicationEntity.setAppointmentDate(null);
@@ -478,8 +475,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 				applicationEntity.setBookingStatusCode(newStatus);
 			}
 		}
-		applicationEntity.setUpdBy(authUserDetails().getUserId());
-		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		try {
 			applicationEntity.setUpdBy(resolveEffectiveUserId(authUserDetails().getUserId()));
 			ApplicationEntity savedApplicationEntity = applicationRepostiory.save(applicationEntity);

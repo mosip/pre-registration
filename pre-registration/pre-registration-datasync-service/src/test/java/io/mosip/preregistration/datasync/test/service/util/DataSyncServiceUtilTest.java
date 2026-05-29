@@ -642,7 +642,7 @@ public class DataSyncServiceUtilTest {
 				Mockito.eq(new ParameterizedTypeReference<MainResponseDTO<Map<String, String>>>() {
 				}))).thenReturn(respEntity);
 
-		Mockito.when(userDetailsService.resolveUserUuid("9886442073")).thenReturn("test-user-uuid-1234");
+		Mockito.when(userDetailsService.getOrCreateInternalUserId("9886442073")).thenReturn("test-user-uuid-1234");
 
 		ReverseDatasyncReponseDTO reverseDatasyncReponse = new ReverseDatasyncReponseDTO();
 		reverseDatasyncReponse.setTransactionId("1111");

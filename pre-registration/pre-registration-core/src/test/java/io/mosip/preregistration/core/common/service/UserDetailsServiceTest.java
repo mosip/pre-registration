@@ -23,6 +23,7 @@ import org.mockito.MockitoAnnotations;
 
 import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.repository.UserDetailsRepository;
+import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 
 public class UserDetailsServiceTest {
@@ -46,7 +47,7 @@ public class UserDetailsServiceTest {
         when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
         when(userDetailsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        UserDetails u = userDetailsService.createByIdentifier("TestUser", "testuser", "somehash");
+        UserDetails u = userDetailsService.createInternalUser("TestUser", "testuser", "somehash");
 
         verify(userDetailsRepository).save(any());
         assertEquals("enc-value", u.getIdentifierEncrypted());
@@ -58,7 +59,7 @@ public class UserDetailsServiceTest {
         mock.setUserId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mock));
 
-        String res = userDetailsService.resolveUserUuid("TestUser");
+        String res = userDetailsService.getOrCreateInternalUserId("TestUser");
         verify(userDetailsRepository).findByIdentifierHash(any());
 
         assertNotNull(res);
@@ -70,7 +71,7 @@ public class UserDetailsServiceTest {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
         when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
 
-        assertThrows(IllegalStateException.class, () -> userDetailsService.createByIdentifier("TestUser", "testuser", "somehash"));
+        assertThrows(IllegalStateException.class, () -> userDetailsService.createInternalUser("TestUser", "testuser", "somehash"));
     }
 
     @Test
@@ -82,7 +83,7 @@ public class UserDetailsServiceTest {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(existing));
         when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
 
-        assertThrows(IllegalStateException.class, () -> userDetailsService.createByIdentifier("TestUser", "testuser", "somehash"));
+        assertThrows(IllegalStateException.class, () -> userDetailsService.createInternalUser("TestUser", "testuser", "somehash"));
     }
 
     @Test
@@ -92,7 +93,7 @@ public class UserDetailsServiceTest {
         when(cryptoUtil.decrypt(any(), any())).thenReturn("TestUser123".getBytes(StandardCharsets.UTF_8));
         when(userDetailsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
 
-        UserDetails saved = userDetailsService.createByIdentifier("TestUser123", "testuser123", "somehash");
+        UserDetails saved = userDetailsService.createInternalUser("TestUser123", "testuser123", "somehash");
         Optional<String> decrypted = decryptIdentifier(saved.getIdentifierEncrypted());
         assertTrue(decrypted.isPresent());
         assertTrue("TestUser123".equals(decrypted.get()));
@@ -114,7 +115,7 @@ public class UserDetailsServiceTest {
         mapped.setIdentifierEncrypted("enc-value");
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
 
-        String resolved = userDetailsService.resolveUserUuid("TestUser");
+        String resolved = userDetailsService.getOrCreateInternalUserId("TestUser");
 
         assertNotNull(resolved);
         assertEquals(mapped.getUserId().toString(), resolved);
@@ -128,10 +129,18 @@ public class UserDetailsServiceTest {
         mapped.setIdentifierEncrypted("");
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
 
-        String resolved = userDetailsService.resolveUserUuid("TestUser");
+        String resolved = userDetailsService.getOrCreateInternalUserId("TestUser");
 
         assertNotNull(resolved);
         assertEquals(mapped.getUserId().toString(), resolved);
+    }
+
+    @Test
+    public void testGetOrCreateInternalUserIdThrowsUserLookupExceptionOnFailure() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenReturn(null); // encryption fails → createInternalUser throws
+
+        assertThrows(UserLookupException.class, () -> userDetailsService.getOrCreateInternalUserId("TestUser"));
     }
 
     @Test

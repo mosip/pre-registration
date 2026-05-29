@@ -339,7 +339,7 @@ public class DemographicServiceTest {
 
 		MockitoAnnotations.openMocks(this);
 		MockitoAnnotations.initMocks(this);
-		Mockito.when(userDetailsService.createByIdentifier(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenAnswer(invocation -> {
+		Mockito.when(userDetailsService.createInternalUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenAnswer(invocation -> {
 			String id = invocation.getArgument(0);
 			io.mosip.preregistration.core.common.entity.UserDetails ud = new io.mosip.preregistration.core.common.entity.UserDetails();
 			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));

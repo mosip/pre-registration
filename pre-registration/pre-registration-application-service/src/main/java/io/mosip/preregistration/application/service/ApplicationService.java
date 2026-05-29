@@ -494,6 +494,11 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
 			List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+			if (lookupIds.isEmpty()) {
+				applicationsListDTO.setAllApplications(new ArrayList<>());
+				response.setResponse(applicationsListDTO);
+				return response;
+			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByIn(lookupIds);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
 			applicationsListDTO.setAllApplications(applicationEntities);
@@ -596,6 +601,11 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 			}
 			List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+			if (lookupIds.isEmpty()) {
+				applicationsListDTO.setAllApplications(new ArrayList<>());
+				response.setResponse(applicationsListDTO);
+				return response;
+			}
 			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByInBookingType(
 					lookupIds, type.toUpperCase());
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: {" + applicationEntities.size() + "} and booking type: {" + type + "}");

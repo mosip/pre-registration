@@ -17,14 +17,16 @@ import org.springframework.transaction.annotation.Transactional;
 import io.mosip.kernel.core.util.HMACUtils2;
 import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.repository.UserDetailsRepository;
+import io.mosip.preregistration.core.errorcodes.ErrorCodes;
+import io.mosip.preregistration.core.errorcodes.ErrorMessages;
+import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
 
 /**
- * Service for canonical user identity handling: normalization, UUID resolution, lookup, masking,
+ * Service for internal user identity handling: normalization, UUID resolution, lookup, masking,
  * and user-details registry management.
  */
-
 @Service
 public class UserDetailsService {
 
@@ -38,112 +40,140 @@ public class UserDetailsService {
         this.cryptoUtil = cryptoUtil;
     }
 
-    private String normalize(String identifier) {
-        return identifier.trim().toLowerCase();
+    private String standardize(String userId) {
+        if (userId == null) {
+            return "";
+        }
+        return userId.trim().toLowerCase();
     }
 
     private String sha256Hex(String input) {
         try {
             return HMACUtils2.digestAsPlainText(input.getBytes());
         } catch (NoSuchAlgorithmException ex) {
-            throw new RuntimeException("Unable to compute SHA-256 hash", ex);
+            throw new IllegalStateException("Unable to compute SHA-256 hash", ex);
         }
     }
 
-    /**
-     * Encrypts the given plain identifier. Returns null if input is blank, encryption fails, or produces empty output.
-     * The null/blank guard is kept intentionally at this helper boundary so encryption failure remains controlled (null)
-     * instead of degrading into an accidental NullPointerException if the method is ever reused with unchecked input.
-     */
-    private String encryptIdentifier(String plain) {
-        if (plain == null || plain.isBlank()) {
+    private String encryptUserId(String userId) {
+        if (userId == null || userId.isBlank()) {
             return null;
         }
         try {
-            byte[] encrypted = cryptoUtil.encrypt(plain.getBytes(StandardCharsets.UTF_8), LocalDateTime.now());
-            if (encrypted == null || encrypted.length == 0) {
+            byte[] encryptedValue = cryptoUtil.encrypt(userId.getBytes(StandardCharsets.UTF_8), LocalDateTime.now());
+            if (encryptedValue == null || encryptedValue.length == 0) {
+                LOGGER.error("Empty encrypted value generated for masked user {}", GenericUtil.maskIdentifier(userId));
                 return null;
             }
-            return new String(encrypted, StandardCharsets.UTF_8);
+            return new String(encryptedValue, StandardCharsets.UTF_8);
         } catch (Exception ex) {
-            LOGGER.warn("Encryption failed for user identifier");
+            LOGGER.error("Failed encrypting userId for masked user {}", GenericUtil.maskIdentifier(userId), ex);
             return null;
         }
     }
 
-    /**
-     * Encrypts and throws if the result is absent; encryption is mandatory before persisting.
-     */
-    private String encryptIdentifierRequired(String plain) {
-        String encryptedValue = encryptIdentifier(plain);
+    private String encryptUserIdRequired(String userId) {
+        String encryptedValue = encryptUserId(userId);
         if (encryptedValue == null || encryptedValue.isBlank()) {
-            throw new IllegalStateException("Encrypted identifier is required before persisting user details");
+            throw new IllegalStateException("Encrypted userId is required before persisting user details");
         }
         return encryptedValue;
     }
 
-    @Cacheable(value = "user-details-cache", key = "#identifier.toLowerCase().trim()", condition = "#identifier != null", unless = "#result == null")
-    public String resolveUserUuid(String identifier) {
-        try {
-            String norm = normalize(identifier);
-            String hash = sha256Hex(norm);
-            UserDetails user = userDetailsRepository.findByIdentifierHash(hash)
-                    .orElseGet(() -> createByIdentifier(identifier, norm, hash));
-            LOGGER.debug("Resolved user UUID for masked identifier {}", GenericUtil.maskIdentifier(identifier));
-            return user.getUserId().toString();
-        } catch (Exception ex) {
-            LOGGER.warn("Failed to resolve user UUID for masked identifier {}", GenericUtil.maskIdentifier(identifier), ex);
+    @Cacheable(value = "user-details-cache", key = "#userId == null ? '' : #userId.toLowerCase().trim()", condition = "#userId != null")
+    public String getOrCreateInternalUserId(String userId) {
+        if (userId == null || userId.isBlank()) {
+            return null;
         }
-        return null;
+        try {
+            String standardizedUserId = standardize(userId);
+            String userHash = sha256Hex(standardizedUserId);
+            UserDetails userDetails = userDetailsRepository.findByIdentifierHash(userHash)
+                    .orElseGet(() -> createInternalUser(userId, standardizedUserId, userHash));
+            LOGGER.debug("Fetched internal user ID for masked user {}", GenericUtil.maskIdentifier(userId));
+            return userDetails.getUserId().toString();
+        } catch (UserLookupException ex) {
+            throw ex;
+        } catch (Exception ex) {
+            LOGGER.error("Failed fetching internal user ID for masked user {}", GenericUtil.maskIdentifier(userId), ex);
+            throw new UserLookupException(ErrorCodes.PRG_CORE_REQ_024.getCode(),
+                    ErrorMessages.USER_LOOKUP_FAILED.getMessage(), ex);
+        }
     }
 
-    public List<String> getUserLookupIds(String authUserId, boolean piiBackwardCompatibility) {
-        List<String> ids = new ArrayList<>();
-        String userUuid = resolveUserUuid(authUserId);
-        if (userUuid != null) {
-            ids.add(userUuid);
+    public List<String> getUserLookupIds(String userId, boolean piiBackwardCompatibility) {
+        List<String> lookupIds = new ArrayList<>();
+        if (userId == null || userId.isBlank()) {
+            return lookupIds;
         }
-        if (piiBackwardCompatibility && !authUserId.isEmpty()) {
-            ids.add(authUserId);
+        String trimmedUserId = userId.trim();
+        try {
+            String internalUserId = getOrCreateInternalUserId(trimmedUserId);
+            if (internalUserId != null && !internalUserId.isBlank()) {
+                lookupIds.add(internalUserId);
+            }
+        } catch (UserLookupException ex) {
+            LOGGER.warn("UUID resolution failed for lookup, piiBackwardCompatibility={}. maskedUser={}",
+                    piiBackwardCompatibility, GenericUtil.maskIdentifier(userId));
         }
-        return ids;
+        if (piiBackwardCompatibility) {
+            lookupIds.add(trimmedUserId);
+        }
+        return lookupIds.stream().distinct().toList();
     }
 
     public boolean matchesUser(String authUserId, String storedUserId, boolean piiBackwardCompatibility) {
-        String trimmedAuthUserId = authUserId == null ? "" : authUserId.trim();
-        String trimmedStoredUserId = storedUserId == null ? "" : storedUserId.trim();
-        String authUserUuid = resolveUserUuid(authUserId);
+        if (authUserId == null || authUserId.isBlank() || storedUserId == null || storedUserId.isBlank()) {
+            return false;
+        }
+        String internalAuthUserId;
+        try {
+            internalAuthUserId = getOrCreateInternalUserId(authUserId);
+        } catch (UserLookupException ex) {
+            LOGGER.warn("UUID resolution failed during user match for masked user {}", GenericUtil.maskIdentifier(authUserId));
+            return false;
+        }
+        if (internalAuthUserId == null) {
+            return false;
+        }
+        // New records store internal UUID — direct compare
+        if (GenericUtil.isUuid(storedUserId)) {
+            return internalAuthUserId.equals(storedUserId.trim());
+        }
+        // Legacy raw userId — only check if backward compat is enabled
         if (!piiBackwardCompatibility) {
-            return trimmedStoredUserId.equals(authUserUuid);
+            return false;
         }
-        if (authUserUuid != null && trimmedStoredUserId.equals(authUserUuid)) {
-            return true;
+        try {
+            String internalStoredUserId = getOrCreateInternalUserId(storedUserId);
+            if (internalStoredUserId != null) {
+                return internalAuthUserId.equals(internalStoredUserId);
+            }
+        } catch (UserLookupException ex) {
+            LOGGER.warn("UUID resolution failed for stored user during match for masked user {}", GenericUtil.maskIdentifier(storedUserId));
+            return false;
         }
-        String storedUserUuid = GenericUtil.isUuid(trimmedStoredUserId) ? trimmedStoredUserId : resolveUserUuid(trimmedStoredUserId);
-        if (authUserUuid != null && storedUserUuid != null && authUserUuid.equals(storedUserUuid)) {
-            return true;
-        }
-        return trimmedAuthUserId.equals(trimmedStoredUserId);
+        return false;
     }
 
     /**
-     * Find or create a canonical user row for given identifier. This is idempotent.
+     * Creates a canonical user row for the given identifier. Idempotent — concurrent inserts
+     * are handled by catching DataIntegrityViolationException and re-fetching.
      */
     @Transactional
-    public UserDetails createByIdentifier(String raw, String norm, String hash) {
-        UserDetails u = new UserDetails();
-        u.setUserId(UUID.randomUUID());
-        u.setIdentifierHash(hash);
-        u.setCrDtimes(LocalDateTime.now());
-        u.setIdentifierEncrypted(encryptIdentifierRequired(raw));
-        u.setEncryptedDtimes(LocalDateTime.now());
-        LOGGER.info("Creating new canonical user mapping for masked identifier {}", GenericUtil.maskIdentifier(norm));
+    public UserDetails createInternalUser(String userId, String standardizedUserId, String userIdHash) {
+        UserDetails userDetails = new UserDetails();
+        userDetails.setUserId(UUID.randomUUID());
+        userDetails.setIdentifierHash(userIdHash);
+        userDetails.setCrDtimes(LocalDateTime.now());
+        userDetails.setIdentifierEncrypted(encryptUserIdRequired(userId));
+        userDetails.setEncryptedDtimes(LocalDateTime.now());
+        LOGGER.info("Creating new internal user mapping for masked identifier {}", GenericUtil.maskIdentifier(standardizedUserId));
         try {
-            return userDetailsRepository.save(u);
+            return userDetailsRepository.save(userDetails);
         } catch (DataIntegrityViolationException ex) {
-            return userDetailsRepository.findByIdentifierHash(hash).orElseThrow(() -> ex);
+            return userDetailsRepository.findByIdentifierHash(userIdHash).orElseThrow(() -> ex);
         }
     }
 
 }
-

@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
@@ -555,7 +556,7 @@ public class AppointmentServiceImplTest {
 		when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		when(applicationRepostiory.getOne(preRegistrationId)).thenReturn(applicationEntity);
+		when(applicationRepostiory.findById(preRegistrationId)).thenReturn(Optional.of(applicationEntity));
 		DemographicResponseDTO demographicresponseData = new DemographicResponseDTO();
 		demographicresponseData.setPreRegistrationId(preRegistrationId);
 		demographicresponseData.setStatusCode("PENDING_APPOINTMENT");
@@ -599,7 +600,7 @@ public class AppointmentServiceImplTest {
 		applicationEntity.setBookingDate(LocalDate.now());
 		applicationEntity.setBookingType(BookingTypeCodes.UPDATE_REGISTRATION.toString());
 		applicationEntity.setBookingStatusCode("PENDING_APPOINTMENT");
-		when(applicationRepostiory.getOne(Mockito.any())).thenReturn(applicationEntity);
+		when(applicationRepostiory.findById(Mockito.any())).thenReturn(Optional.of(applicationEntity));
 		when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
 
 		multiBookingResponse.setResponsetime(LocalDateTime.now().toString());

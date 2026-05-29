@@ -115,7 +115,7 @@ public class ApplicationIdentityMigrationServiceTest {
     public void resolveEffectiveUserIdReturnsUuid() {
         String userId = "user@example.com";
         String canonicalUuid = UUID.randomUUID().toString();
-        when(userDetailsService.resolveUserUuid(userId)).thenReturn(canonicalUuid);
+        when(userDetailsService.getOrCreateInternalUserId(userId)).thenReturn(canonicalUuid);
 
         String resolvedUserId = applicationIdentityMigrationService.resolveEffectiveUserId(userId);
 
@@ -125,7 +125,7 @@ public class ApplicationIdentityMigrationServiceTest {
     @Test
     public void resolveEffectiveUserIdThrowsWhenUuidResolutionFails() {
         String userId = "user@example.com";
-        when(userDetailsService.resolveUserUuid(userId)).thenReturn(null);
+        when(userDetailsService.getOrCreateInternalUserId(userId)).thenReturn(null);
 
         assertThrows(IllegalStateException.class,
                 () -> applicationIdentityMigrationService.resolveEffectiveUserId(userId));

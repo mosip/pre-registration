@@ -21,6 +21,7 @@ import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.util.GenericUtil;
 
 @Service
@@ -44,12 +45,17 @@ public class ApplicationIdentityMigrationService {
     private final Logger log = LoggerConfiguration.logConfig(ApplicationIdentityMigrationService.class);
 
     public String resolveEffectiveUserId(String userId) {
-        String uuid = userDetailsService.resolveUserUuid(userId);
-        if (uuid == null) {
+        try {
+            String uuid = userDetailsService.getOrCreateInternalUserId(userId);
+            if (uuid == null) {
+                throw new IllegalStateException("Failed to resolve UUID for user during migration, maskedUserId="
+                        + GenericUtil.maskIdentifier(userId));
+            }
+            return uuid;
+        } catch (UserLookupException ex) {
             throw new IllegalStateException("Failed to resolve UUID for user during migration, maskedUserId="
-                    + GenericUtil.maskIdentifier(userId));
+                    + GenericUtil.maskIdentifier(userId), ex);
         }
-        return uuid;
     }
 
     @Transactional

@@ -30,6 +30,7 @@ import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.UserLookupException;
 
 /**
  * @author Mahammed Taheer
@@ -232,12 +233,13 @@ public class ApplicationConsumedStatusUpdater {
             return userId;
         }
         String trimmedUserId = userId.trim();
-        String uuid = userDetailsService.resolveUserUuid(trimmedUserId);
-        if (uuid == null) {
+        try {
+            return userDetailsService.getOrCreateInternalUserId(trimmedUserId);
+        } catch (UserLookupException ex) {
             LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB,
                     "Failed to resolve UUID for user; leaving field unresolved for this record.");
+            return userId;
         }
-        return uuid;
     }
     
 }

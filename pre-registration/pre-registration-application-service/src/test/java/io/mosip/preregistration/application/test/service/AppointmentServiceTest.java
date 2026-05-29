@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -183,14 +184,14 @@ public class AppointmentServiceTest {
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.findById("98765432101234")).thenReturn(Optional.of(applicationEntity));
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-	
+
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
 		assertEquals(appEntity2, applicationEntity);
@@ -227,8 +228,8 @@ public class AppointmentServiceTest {
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
-		
+		Mockito.when(applicationRepostiory.findById("98765432101234")).thenReturn(Optional.of(applicationEntity));
+
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
