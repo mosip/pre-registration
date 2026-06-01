@@ -382,6 +382,8 @@ public class LoginServiceTest {
 
 		io.mosip.kernel.core.logger.spi.Logger mockLogger = mock(io.mosip.kernel.core.logger.spi.Logger.class);
 
+		Mockito.when(userDetailsService.getOrCreateInternalUserId(Mockito.anyString())).thenReturn("mock-uuid");
+		ReflectionTestUtils.setField(loginService, "userDetailsService", userDetailsService);
 		ReflectionTestUtils.setField(loginService, "auditLogUtil", mockAuditLogUtil);
 		ReflectionTestUtils.setField(loginService, "log", mockLogger);
 

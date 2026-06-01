@@ -60,6 +60,7 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
+import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
@@ -365,6 +366,8 @@ public class LoginService {
 	 */
 	public void setAuditValues(String eventId, String eventName, String eventType, String description, String idType,
 			String userId, String userName) {
+		String resolvedUserId = resolveAuditUserId(userId);
+		String resolvedUserName = resolveAuditUserId(userName);
 		try {
 			AuditRequestDto auditRequestDto = new AuditRequestDto();
 			auditRequestDto.setEventId(eventId);
@@ -372,8 +375,8 @@ public class LoginService {
 			auditRequestDto.setEventType(eventType);
 			auditRequestDto.setDescription(description);
 			auditRequestDto.setId(idType);
-			auditRequestDto.setSessionUserId(userId);
-			auditRequestDto.setSessionUserName(userName);
+			auditRequestDto.setSessionUserId(resolvedUserId);
+			auditRequestDto.setSessionUserName(resolvedUserName);
 			auditRequestDto.setModuleId(AuditLogVariables.AUTHENTICATION.toString());
 			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
 			auditLogUtil.saveAuditDetails(auditRequestDto);
@@ -381,6 +384,19 @@ public class LoginService {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + StringUtils.join(ex.getValidationErrorList(), ","));
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + ExceptionUtils.getFullStackTrace(ex));
+		}
+	}
+
+	private String resolveAuditUserId(String userId) {
+		if (userId == null || userId.isBlank()) {
+			return userId;
+		}
+		try {
+			return userDetailsService.getOrCreateInternalUserId(userId);
+		} catch (UserLookupException ex) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to resolve UUID for audit user " + GenericUtil.maskIdentifier(userId));
+			return GenericUtil.maskIdentifier(userId);
 		}
 	}
 
