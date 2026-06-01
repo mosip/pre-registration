@@ -1,0 +1,15 @@
+GetAllPreRegDemographicApplications:
+   Prereg_GetAllPreRegDemographicApplications_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      uniqueIdentifier: TC_prereg_GetAllPreRegDemographicApplications_01
+      description: Validate that fetching all pre-registration applications for the logged-in user returns demographic details when a valid pre-registration exists
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: get
+      additionalDependencies: TC_Prereg_CreatePrereg_01
+      inputTemplate: preReg/GetAllPreRegDemographicApplications/getAllPreRegDemographicApplications
+      outputTemplate: preReg/GetAllPreRegDemographicApplications/getAllPreRegDemographicApplicationsResult
+      input: '{
+}'
+      output: '{
+}'

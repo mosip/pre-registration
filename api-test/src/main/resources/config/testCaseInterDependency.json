@@ -41,11 +41,16 @@
     ],
     "TC_prereg_GetApplicationStatusWithPrId_01": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_FetchAppointmentDetailsByPrid_03": ["TC_Prereg_CreatePrereg_09"],
+    "TC_prereg_FetchAppointmentDetailsByPrid_04": [
+        "TC_prereg_UpdatePreRegStatus_04",
+        "TC_Prereg_CreatePrereg_05"
+    ],
     "TC_prereg_UploadDocument_19": ["TC_Prereg_CreatePrereg_06"],
     "TC_prereg_UploadDocument_18": ["TC_Prereg_CreatePrereg_06"],
     "TC_prereg_FetchAppointmentDetailsByPrid_01": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UploadDocument_17": ["TC_Prereg_CreatePrereg_05"],
     "TC_prereg_UploadDocument_16": ["TC_Prereg_CreatePrereg_05"],
+    "TC_prereg_DeleteUpdateRegistration_01": ["TC_prereg_AddUpdateRegistration_01"],
     "TC_prereg_DeleteBooking_01": [
         "TC_Prereg_CreatePrereg_01",
         "TC_prereg_BookAppointment_01"
@@ -191,6 +196,7 @@
         "TC_prereg_BookAppointment_03"
     ],
     "TC_prereg_FetchApplicationByPrid_01": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_GetAllPreRegDemographicApplications_01": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UpdateDocRefID_06": ["TC_Prereg_CreatePrereg_03"],
     "TC_prereg_GetSpecificDocumentforaPRID_03": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UpdateDocRefID_07": ["TC_Prereg_CreatePrereg_03"],
