@@ -269,7 +269,7 @@
 			value="preReg/AddUpdateRegistration/AddUpdateRegistration.yml" />
 		<parameter name="idKeyName" value="applicationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePostForAutoGenId" />
 		</classes>
 	</test>
 	<test name="DeleteUpdateRegistration">
