@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.encryption.InvalidPasswordException;
 import org.json.JSONException;
@@ -411,7 +412,7 @@ public class DocumentServiceUtil {
 		if (supportedExtensions.contains("PDF") && "application/pdf".equals(contentType)) {
 			PDDocument document = null;
 			try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
-				document = PDDocument.load(inputStream.readAllBytes());
+				document = Loader.loadPDF(inputStream.readAllBytes());
 			} catch (InvalidPasswordException e) {
 				log.error("Invalid password for PDF", file.getOriginalFilename(), e);
 				return true;
