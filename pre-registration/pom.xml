@@ -208,7 +208,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-                                <plugin>
+				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
 					<version>${spring.boot.maven.plugin.version}</version>
@@ -481,9 +481,9 @@
 
 	<repositories>
 		<repository>
-			<id>ossrh-central</id>
+			<id>ossrh</id>
 			<name>MavenCentralRepository</name>
-			<url>https://central.sonatype.com/repository/maven-snapshots</url>
+			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
 			<layout>default</layout>
 			<snapshots>
 				<enabled>true</enabled>
