@@ -44,7 +44,7 @@ Run the API test JAR:
 ```bash
 java -Dmodules=prereg -Denv.user=api-internal.<env> \
      -Denv.endpoint=<base_url> -Denv.testLevel=smokeAndRegression \
-     -jar target/apitest-prereg-1.4.0-SNAPSHOT-jar-with-dependencies.jar
+     -jar target/apitest-prereg-1.x.x-SNAPSHOT-jar-with-dependencies.jar
 ```
 Test level options: `smoke` (positive only) or `smokeAndRegression` (positive + negative). Reports land in `api-test/testng-report/`.
 
@@ -62,7 +62,7 @@ Swagger UI (once running): `http://localhost:8080/preregistration/v1/application
 
 ## Module Structure
 
-The Maven parent is `pre-registration/pom.xml` (`groupId: io.mosip.preregistration`, current version: `1.4.0-SNAPSHOT`). It contains five modules:
+The Maven parent is `pre-registration/pom.xml` (`groupId: io.mosip.preregistration`, current version: `1.x.x-SNAPSHOT`). It contains five modules:
 
 | Module | Role |
 |---|---|
