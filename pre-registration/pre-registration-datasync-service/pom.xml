@@ -7,22 +7,24 @@
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.2.1-SNAPSHOT</version>
+		<version>1.4.0-SNAPSHOT</version>
 	</parent>
 
 	<artifactId>pre-registration-datasync-service</artifactId>
-	<version>1.2.1-SNAPSHOT</version>
+	<version>1.4.0-SNAPSHOT</version>
 	<name>pre-registration-datasync-service</name>
 
 	<properties>
 		<!-- Mosip kernel -->
-		<kernel.keymanager.version>1.2.1-SNAPSHOT</kernel.keymanager.version>
-		<kernel.ref.idobjectvalidator.version>1.2.1-SNAPSHOT</kernel.ref.idobjectvalidator.version>
-		<kernel.transliteration.icu4j.version>1.2.1-SNAPSHOT</kernel.transliteration.icu4j.version>
-		<kernel.bom.version>1.2.1-SNAPSHOT</kernel.bom.version>
-		<pre.registration.core.version>1.2.1-SNAPSHOT</pre.registration.core.version>
-		<pre.registration.application.service.version>1.2.1-SNAPSHOT</pre.registration.application.service.version>
-		<pre.application.service.version>1.2.1-SNAPSHOT</pre.application.service.version>
+		<kernel.keymanager.version>1.5.0-SNAPSHOT</kernel.keymanager.version>
+		<kernel.ref.idobjectvalidator.version>1.4.0-SNAPSHOT</kernel.ref.idobjectvalidator.version>
+		<kernel.transliteration.icu4j.version>1.4.0-SNAPSHOT</kernel.transliteration.icu4j.version>
+		<kernel.bom.version>1.4.0-SNAPSHOT</kernel.bom.version>
+		<mosip.openid.bridge.version>1.4.0-SNAPSHOT</mosip.openid.bridge.version>
+		<pre.registration.core.version>1.4.0-SNAPSHOT</pre.registration.core.version>
+		<pre.registration.application.service.version>1.4.0-SNAPSHOT</pre.registration.application.service.version>
+		<pre.application.service.version>1.4.0-SNAPSHOT</pre.application.service.version>
+		<maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
 		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
 	</properties>
 
@@ -140,7 +142,6 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.maven.plugin.version}</version>
 				<configuration>
 					<executable>true</executable>
 					<layout>ZIP</layout>
@@ -166,7 +167,7 @@
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
 					<artifactId>kernel-auth-adapter</artifactId>
-					<version>${project.version}</version>
+					<version>${mosip.openid.bridge.version}</version>
 				</dependency>
 				<dependency>
 					<groupId>io.mosip.kernel</groupId>
@@ -245,6 +246,35 @@
 							<outputFileName>${artifactId}-openapi.json</outputFileName>
 							<outputDir>${project.build.directory}</outputDir>
 							<skip>false</skip>
+						</configuration>
+					</plugin>
+					<plugin>
+						<artifactId>maven-deploy-plugin</artifactId>
+						<version>${maven.deploy.plugin.version}</version>
+						<configuration>
+							<skip>true</skip>
+						</configuration>
+						<executions>
+							<execution>
+								<id>default-deploy</id>
+								<phase>none</phase>
+								<goals>
+									<goal>deploy</goal>
+								</goals>
+								<configuration>
+									<skip>true</skip>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+					<plugin>
+						<groupId>org.sonatype.central</groupId>
+						<artifactId>central-publishing-maven-plugin</artifactId>
+						<version>${central.publishing.maven.plugin.version}</version>
+						<extensions>true</extensions>
+						<configuration>
+							<publishingServerId>ossrh</publishingServerId>
+							<autoPublish>false</autoPublish>
 						</configuration>
 					</plugin>
 				</plugins>

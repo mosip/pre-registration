@@ -46,7 +46,7 @@ service:
   externalTrafficPolicy: Cluster
 image:
   registry: docker.io
-  repository: mosipqa/pre-registration-application-service
+  repository: mosipqa/pre-registration-captcha-service
   tag: develop
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -60,15 +60,15 @@ image:
   # pullSecrets:
   #   - myRegistryKeySecretName
 ## Port on which this particular spring service module is running.
-springServicePort: 9090
+springServicePort: 9089
 ## Configure extra options for liveness and readiness probes
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/configure-liveness-readiness-probes/#configure-probes
 ##
 startupProbe:
   enabled: true
   httpGet:
-    path: /preregistration/v1/actuator/health
-    port: 9090
+    path: /preregistration/v1/captcha/actuator/health
+    port: 9089
   initialDelaySeconds: 0
   periodSeconds: 10
   timeoutSeconds: 5
@@ -77,8 +77,8 @@ startupProbe:
 livenessProbe:
   enabled: true
   httpGet:
-    path: /preregistration/v1/actuator/health
-    port: 9090
+    path: /preregistration/v1/captcha/actuator/health
+    port: 9089
   initialDelaySeconds: 20
   periodSeconds: 10
   timeoutSeconds: 5
@@ -87,8 +87,8 @@ livenessProbe:
 readinessProbe:
   enabled: true
   httpGet:
-    path: /preregistration/v1/actuator/health
-    port: 9090
+    path: /preregistration/v1/captcha/actuator/health
+    port: 9089
   initialDelaySeconds: 0
   periodSeconds: 10
   timeoutSeconds: 5
@@ -113,10 +113,10 @@ resources:
   # resources, such as Minikube. If you do want to specify resources, uncomment the following
   # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
   limits:
-    cpu: 1000m
+    cpu: 500m
     memory: 2500Mi
   requests:
-    cpu: 500m
+    cpu: 250m
     memory: 1500Mi
 additionalResources:
   ## Specify any JAVA_OPTS string here. These typically will be specified in conjunction with above resources
@@ -191,15 +191,7 @@ podAnnotations: {}
 
 ## lifecycleHooks for the  container to automate configuration before or after startup.
 ##
-lifecycleHooks:
-  preStop:
-    exec:
-      command:
-        - sh
-        - -c
-        - sleep 30
-## Termination grace period : the maximum amount of time (in seconds) Kubernetes will wait for a container to gracefully shut down
-terminationGracePeriodSeconds: 60
+lifecycleHooks: {}
 ## Custom Liveness probes for
 ##
 customLivenessProbe: {}
@@ -285,8 +277,8 @@ volumePermissions:
   enabled: false
   image:
     registry: docker.io
-    repository: mosipid/os-shell
-    tag: "12-debian-12-r46"
+    repository: bitnami/bitnami-shell
+    tag: "10"
     pullPolicy: Always
     ## Optionally specify an array of imagePullSecrets.
     ## Secrets must be manually created in the namespace.
@@ -332,7 +324,7 @@ metrics:
   ##
   podAnnotations:
     prometheus.io/scrape: "true"
-  endpointPath: /preregistration/v1/actuator/prometheus
+  endpointPath: /preregistration/v1/captcha/actuator/prometheus
   ## Prometheus Service Monitor
   ## ref: https://github.com/coreos/prometheus-operator
   ##
@@ -381,36 +373,4 @@ istio:
   gateways:
     - istio-system/internal
     - prereg-gateway
-  match:
-    - uri:
-        prefix: /preregistration/v1/login
-    - uri:
-        prefix: /preregistration/v1/proxy
-    - uri:
-        prefix: /preregistration/v1/applications
-    - uri:
-        prefix: /preregistration/v1/documents
-    - uri:
-        prefix: /preregistration/v1/qrCode
-    - uri:
-        prefix: /preregistration/v1/notification
-    - uri:
-        prefix: /preregistration/v1/uispec
-    - uri:
-        prefix: /preregistration/v1/logAudit
-    - uri:
-        prefix: /preregistration/v1/swagger-ui.html
-    - uri:
-        prefix: /preregistration/v1/webjars
-    - uri:
-        prefix: /preregistration/v1/swagger-resources
-    - uri:
-        prefix: /preregistration/v1/v2/api-docs
-    - uri:
-        prefix: /preregistration/v1/csrf
-    - uri:
-        prefix: /preregistration/v1/transliteration
-    - uri:
-        prefix: /preregistration/v1/application-service/swagger-ui
-    - uri:
-        prefix: /preregistration/v1/application-service/v3/api-docs
+  prefix: /preregistration/v1/captcha
