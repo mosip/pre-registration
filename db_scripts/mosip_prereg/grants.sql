@@ -1,17 +1,16 @@
-\c mosip_prereg 
+\c :mosipdbname
 
 GRANT CONNECT
-   ON DATABASE mosip_prereg
-   TO prereguser;
+   ON DATABASE :mosipdbname
+   TO :dbuname;
 
 GRANT USAGE
    ON SCHEMA prereg
-   TO prereguser;
+   TO :dbuname;
 
 GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES
-   ON ALL TABLES IN SCHEMA prereg
-   TO prereguser;
+      ON ALL TABLES IN SCHEMA prereg
+          TO :dbuname;
 
-ALTER DEFAULT PRIVILEGES IN SCHEMA prereg 
-	GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON TABLES TO prereguser;
-
+ALTER DEFAULT PRIVILEGES IN SCHEMA prereg
+	GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON TABLES TO :dbuname;

@@ -1,4 +1,4 @@
-\c mosip_prereg 
+\c :mosipdbname
 
 \ir ddl/applicant_demographic.sql
 \ir ddl/applicant_demographic_consumed.sql

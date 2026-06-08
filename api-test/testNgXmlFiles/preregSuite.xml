@@ -267,8 +267,16 @@
 	<test name="AddUpdateRegistration">
 		<parameter name="ymlFile"
 			value="preReg/AddUpdateRegistration/AddUpdateRegistration.yml" />
+		<parameter name="idKeyName" value="applicationId" />
 		<classes>
-			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePost" />
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.SimplePostForAutoGenId" />
+		</classes>
+	</test>
+	<test name="DeleteUpdateRegistration">
+		<parameter name="ymlFile"
+			value="preReg/DeleteUpdateRegistration/DeleteUpdateRegistration.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.DeleteWithParam" />
 		</classes>
 	</test>
 	<test name="AddLostUinApplication">
@@ -309,6 +317,13 @@
 	<test name="GetAllPreRegApplications">
 		<parameter name="ymlFile"
 			value="preReg/GetAllPreRegApplications/GetAllPreRegApplications.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
+		</classes>
+	</test>
+	<test name="GetAllPreRegDemographicApplications">
+		<parameter name="ymlFile"
+			value="preReg/GetAllPreRegDemographicApplications/GetAllPreRegDemographicApplications.yml" />
 		<classes>
 			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
 		</classes>
