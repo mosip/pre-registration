@@ -49,7 +49,12 @@ public class UserDetailsService {
 
     private String sha256Hex(String input) {
         try {
-            return HMACUtils2.digestAsPlainText(input.getBytes());
+            // Force uppercase hex so the stored/looked-up hash is canonical regardless of the
+            // hex-encoding case emitted by the underlying kernel util. Without this, a code path
+            // producing lowercase hex (older MessageDigest/Integer.toHexString impl) and one
+            // producing uppercase hex (HMACUtils2) create two rows for the same identifier,
+            // because identifier_hash is compared case-sensitively.
+            return HMACUtils2.digestAsPlainText(input.getBytes()).toUpperCase();
         } catch (NoSuchAlgorithmException ex) {
             throw new IllegalStateException("Unable to compute SHA-256 hash", ex);
         }
