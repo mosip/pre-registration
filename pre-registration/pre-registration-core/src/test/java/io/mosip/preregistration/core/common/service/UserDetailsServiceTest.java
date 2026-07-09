@@ -2,6 +2,7 @@ package io.mosip.preregistration.core.common.service;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -133,6 +134,26 @@ public class UserDetailsServiceTest {
 
         assertNotNull(resolved);
         assertEquals(mapped.getUserId().toString(), resolved);
+    }
+
+    @Test
+    public void testGetOrCreateInternalUserIdReturnsCanonicalUuidUnchanged() {
+        String canonicalUuid = UUID.randomUUID().toString();
+
+        String resolved = userDetailsService.getOrCreateInternalUserId(canonicalUuid);
+
+        assertEquals(canonicalUuid, resolved);
+        verifyNoInteractions(userDetailsRepository);
+    }
+
+    @Test
+    public void testGetOrCreateInternalUserIdTrimsCanonicalUuid() {
+        String canonicalUuid = UUID.randomUUID().toString();
+
+        String resolved = userDetailsService.getOrCreateInternalUserId("  " + canonicalUuid + "  ");
+
+        assertEquals(canonicalUuid, resolved);
+        verifyNoInteractions(userDetailsRepository);
     }
 
     @Test

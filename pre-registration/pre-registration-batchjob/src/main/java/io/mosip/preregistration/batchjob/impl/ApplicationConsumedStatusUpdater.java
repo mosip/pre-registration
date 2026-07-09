@@ -49,9 +49,6 @@ public class ApplicationConsumedStatusUpdater {
 	@Value("${mosip.batch.token.authmanager.appId}")
 	private String auditUserId;
 
-    @Value("${mosip.prereg.pii.backward.compatibility}")
-    private boolean piiBackwardCompatibility;
-
     @Autowired
 	private BatchJpaRepositoryImpl batchJpaRepositoryImpl;
 

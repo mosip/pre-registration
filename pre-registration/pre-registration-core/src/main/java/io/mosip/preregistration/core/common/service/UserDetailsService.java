@@ -85,6 +85,11 @@ public class UserDetailsService {
         if (userId == null || userId.isBlank()) {
             return null;
         }
+        // A UUID is already a canonical id; re-registering it would mint a second mapping keyed on
+        // the hash of the UUID itself, orphaning the original identifier.
+        if (GenericUtil.isUuid(userId)) {
+            return userId.trim();
+        }
         try {
             String standardizedUserId = standardize(userId);
             String userHash = sha256Hex(standardizedUserId);
