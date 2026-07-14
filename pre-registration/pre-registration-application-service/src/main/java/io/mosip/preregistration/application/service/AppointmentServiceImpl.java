@@ -479,8 +479,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			applicationEntity.setUpdBy(resolveEffectiveUserId(authUserDetails().getUserId()));
 			ApplicationEntity savedApplicationEntity = applicationRepostiory.save(applicationEntity);
-			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
-					savedApplicationEntity.getEffectiveUpdBy());
+			try {
+				applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
+						savedApplicationEntity.getEffectiveUpdBy());
+			} catch (Exception migrationEx) {
+				// Best-effort aggregate backfill: the authoritative updBy is already persisted above, so a
+				// migration failure must not fail the request once the row is committed. Safe because the
+				// backfill is idempotent and re-runs on the user's next create/update/booking, so a
+				// transiently-missed row self-heals; the failure is logged for ops. See
+				// ApplicationIdentityMigrationService#migrateRawUserToEffectiveUser for the full rationale.
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Best-effort identity migration failed after appointment update for preRegistrationId: "
+								+ preRegistrationId);
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
+			}
 			return savedApplicationEntity;
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,

@@ -37,7 +37,6 @@ import io.mosip.preregistration.application.service.LoginService;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
-import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.DataValidationUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
@@ -84,9 +83,6 @@ public class LoginController {
 
 	@Autowired
 	private RequestValidator loginValidator;
-
-	@Autowired
-	private UserDetailsService userDetailsService;
 
 	/** The Constant SENDOTP. */
 	private static final String SENDOTP = "preregistration.login.sendotp";

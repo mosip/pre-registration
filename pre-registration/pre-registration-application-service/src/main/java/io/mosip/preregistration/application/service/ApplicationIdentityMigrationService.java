@@ -58,6 +58,27 @@ public class ApplicationIdentityMigrationService {
         }
     }
 
+    /**
+     * Aggregate backfill that rewrites the raw creator/updater identifier to the canonical surrogate
+     * UUID across the pre-registration's application, demographic, document and booking rows.
+     *
+     * <p><b>Failure policy — best-effort by design.</b> Every caller invokes this inside a try/catch
+     * that logs and swallows failures rather than failing the user's request, and this is applied
+     * consistently across all flows (create/update/booking). It is intentional and safe because:
+     * <ul>
+     *   <li>The primary record's own identifier is already resolved to a canonical UUID on the
+     *       non-best-effort create/update path <em>before</em> this backfill runs, so authentication
+     *       and ownership checks are never broken by a backfill failure.</li>
+     *   <li>This method is idempotent (only columns that differ are written) and re-runs on the user's
+     *       next create, update or booking, so a transiently-missed record self-heals without any
+     *       operator action.</li>
+     *   <li>Failures are logged with masked identifiers for operational follow-up.</li>
+     * </ul>
+     * A record belonging to a user who never returns is swept up by the nightly identity
+     * reconciliation batch job in {@code pre-registration-batchjob} (detects candidates on
+     * {@code applications.cr_by} and converts each still-raw column), so no raw identifier lingers
+     * indefinitely.
+     */
     @Transactional
     public void migrateRawUserToEffectiveUser(String preRegistrationId, String effectiveUserId) {
 

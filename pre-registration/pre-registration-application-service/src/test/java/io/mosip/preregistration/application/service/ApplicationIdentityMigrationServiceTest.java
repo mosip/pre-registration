@@ -2,6 +2,8 @@ package io.mosip.preregistration.application.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,7 +54,7 @@ public class ApplicationIdentityMigrationServiceTest {
 
     @Before
     public void setUp() {
-        MockitoAnnotations.initMocks(this);
+        MockitoAnnotations.openMocks(this);
     }
 
     @Test
@@ -140,5 +142,85 @@ public class ApplicationIdentityMigrationServiceTest {
 
         assertThrows(IllegalStateException.class,
                 () -> applicationIdentityMigrationService.resolveEffectiveUserId(userId));
+    }
+
+    @Test
+    public void migrateIsNoOpWhenValuesAlreadyMatch() {
+        String preRegistrationId = "12345678901234";
+        String effectiveUserId = UUID.randomUUID().toString();
+
+        ApplicationEntity applicationEntity = new ApplicationEntity();
+        applicationEntity.setApplicationId(preRegistrationId);
+        applicationEntity.setCrBy(effectiveUserId);
+        applicationEntity.setUpdBy(effectiveUserId);
+        applicationEntity.setContactInfo(effectiveUserId);
+
+        DemographicEntity demographicEntity = new DemographicEntity();
+        demographicEntity.setPreRegistrationId(preRegistrationId);
+        demographicEntity.setCreatedBy(effectiveUserId);
+        demographicEntity.setUpdatedBy(effectiveUserId);
+        demographicEntity.setCrAppuserId(effectiveUserId);
+
+        DocumentEntity documentEntity = new DocumentEntity();
+        documentEntity.setDocumentId("doc-1");
+        documentEntity.setCrBy(effectiveUserId);
+        documentEntity.setUpdBy(effectiveUserId);
+        documentEntity.setDemographicEntity(demographicEntity);
+
+        RegistrationBookingEntity registrationBookingEntity = new RegistrationBookingEntity();
+        registrationBookingEntity.setId("booking-1");
+        registrationBookingEntity.setPreregistrationId(preRegistrationId);
+        registrationBookingEntity.setCrBy(effectiveUserId);
+        registrationBookingEntity.setUpBy(effectiveUserId);
+        registrationBookingEntity.setRegDate(LocalDate.now());
+
+        when(applicationRepostiory.findByApplicationId(preRegistrationId)).thenReturn(applicationEntity);
+        when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(demographicEntity);
+        when(documentRepository.findByDemographicEntityPreRegistrationId(preRegistrationId))
+                .thenReturn(List.of(documentEntity));
+        when(regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegistrationId))
+                .thenReturn(registrationBookingEntity);
+
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, effectiveUserId);
+
+        // Every column already holds the canonical UUID — nothing should be re-persisted.
+        verify(applicationRepostiory, never()).save(any());
+        verify(demographicRepository, never()).save(any());
+        verify(documentRepository, never()).save(any());
+        verify(regAppointmentRepository, never()).save(any());
+    }
+
+    @Test
+    public void migrateHandlesMissingLinkedRecords() {
+        String preRegistrationId = "12345678901234";
+        String effectiveUserId = UUID.randomUUID().toString();
+
+        ApplicationEntity applicationEntity = new ApplicationEntity();
+        applicationEntity.setApplicationId(preRegistrationId);
+        applicationEntity.setCrBy("raw-user");
+
+        when(applicationRepostiory.findByApplicationId(preRegistrationId)).thenReturn(applicationEntity);
+        when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(null);
+        when(documentRepository.findByDemographicEntityPreRegistrationId(preRegistrationId)).thenReturn(null);
+        when(regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegistrationId))
+                .thenReturn(null);
+
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, effectiveUserId);
+
+        // Present record is migrated; absent demographic/document/booking must not NPE or save.
+        assertEquals(effectiveUserId, applicationEntity.getCrBy());
+        verify(applicationRepostiory).save(applicationEntity);
+        verify(demographicRepository, never()).save(any());
+        verify(documentRepository, never()).save(any());
+        verify(regAppointmentRepository, never()).save(any());
+    }
+
+    @Test
+    public void migrateSkipsEntirelyWhenEffectiveUserIdBlank() {
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser("12345678901234", "   ");
+
+        // Blank effective id short-circuits before any lookup.
+        verify(applicationRepostiory, never()).findByApplicationId(any());
+        verify(applicationRepostiory, never()).save(any());
     }
 }

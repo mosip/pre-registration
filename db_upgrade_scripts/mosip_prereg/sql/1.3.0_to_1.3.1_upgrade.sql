@@ -4,6 +4,10 @@
 -- Introduces canonical user registry table (prereg.user_details) for PII security.
 -- Eliminates plaintext PII replication across cr_by/upd_by/cr_appuser_id fields by
 -- storing a hash->UUID surrogate mapping with encrypted original for audit/notifications.
+--
+-- NOTE: This is a ONE-WAY migration. Once ownership columns are rewritten to surrogate UUIDs,
+-- prereg.user_details holds the only reverse mapping back to the raw identifier. See
+-- 1.3.0_to_1.3.1_rollback.sql for the constraints on rolling this back safely.
 -- ------------------------------------------------------------------------------------------
 
 CREATE TABLE IF NOT EXISTS prereg.user_details (
