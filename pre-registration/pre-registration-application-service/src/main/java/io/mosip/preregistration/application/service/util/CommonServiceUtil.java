@@ -132,30 +132,27 @@ public class CommonServiceUtil {
 			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
-					if (demographicEntity == null) {
-						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
-							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
-					}
-					List<String> list = listAuth(authUserDetails().getAuthorities());
-					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-							"In getDemographicData method of pre-registration service with list  " + list.toString());
-					if (list.contains("ROLE_INDIVIDUAL")) {
-				userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
-
-					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
-					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
-							hashString.getBytes())) {
-
-						DemographicResponseDTO createDto = setterForCreateDTO(demographicEntity);
-						response.setResponse(createDto);
-					} else {
-						throw new HashingException(
-								io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
-								io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
-					}
-				} else {
+				if (demographicEntity == null) {
 					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
+				}
+				List<String> list = listAuth(authUserDetails().getAuthorities());
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"In getDemographicData method of pre-registration service with list  " + list.toString());
+				if (list.contains("ROLE_INDIVIDUAL")) {
+					userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
+				}
+
+				String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
+				if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
+						hashString.getBytes())) {
+
+					DemographicResponseDTO createDto = setterForCreateDTO(demographicEntity);
+					response.setResponse(createDto);
+				} else {
+					throw new HashingException(
+							io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
+							io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
 				}
 			}
 		} catch (Exception ex) {

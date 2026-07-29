@@ -69,6 +69,7 @@ import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
 
@@ -299,8 +300,15 @@ public class DocumentService implements DocumentServiceIntf {
 			byte[] encryptedDocument = cryptoUtil.encrypt(file.getBytes(), encryptedTimestamp);
 			documentEntity.setDocHash(HashUtill.hashUtill(encryptedDocument));
 			documentEntity = documnetDAO.saveDocument(documentEntity);
-			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
-					documentEntity.getEffectiveCrBy());
+			try {
+				applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
+						documentEntity.getEffectiveCrBy());
+			} catch (Exception migrationEx) {
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Best-effort identity migration failed after document create for preId: " + preRegistrationId
+								+ ", effectiveCrBy: " + GenericUtil.maskIdentifier(documentEntity.getEffectiveCrBy()));
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
+			}
 			String key = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 
 			boolean isStoreSuccess = objectStore.putObject(objectStoreAccountName,
@@ -364,8 +372,17 @@ public class DocumentService implements DocumentServiceIntf {
 
 					DocumentEntity copyDocumentEntity = documnetDAO.saveDocument(
 							serviceUtil.documentEntitySetter(destinationPreId, documentEntity, destEntity));
-					applicationIdentityMigrationService.migrateRawUserToEffectiveUser(destinationPreId,
-							copyDocumentEntity.getEffectiveCrBy());
+					try {
+						applicationIdentityMigrationService.migrateRawUserToEffectiveUser(destinationPreId,
+								copyDocumentEntity.getEffectiveCrBy());
+					} catch (Exception migrationEx) {
+						log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								"Best-effort identity migration failed after document copy for preId: "
+										+ destinationPreId + ", effectiveCrBy: "
+										+ GenericUtil.maskIdentifier(copyDocumentEntity.getEffectiveCrBy()));
+						log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								ExceptionUtils.getStackTrace(migrationEx));
+					}
 					sourceKey = documentEntity.getDocCatCode() + "_" + documentEntity.getDocumentId();
 					sourceBucketName = documentEntity.getDemographicEntity().getPreRegistrationId();
 					copyFile(copyDocumentEntity, sourceBucketName, sourceKey);
@@ -834,19 +851,27 @@ public class DocumentService implements DocumentServiceIntf {
 					documentEntity.setRefNumber(refNumber);
 					DocumentEntity updatedDocumentEntity = documnetDAO.updateDocument(documentEntity);
 					String effectiveUserId = updatedDocumentEntity != null ? updatedDocumentEntity.getEffectiveUpdBy() : null;
-					if (serviceUtil.isNull(effectiveUserId)) {
-						AuthUserDetails authUser = authUserDetails();
-						if (authUser != null && authUser.getUserId() != null) {
-							effectiveUserId = applicationIdentityMigrationService
-									.resolveEffectiveUserId(authUser.getUserId());
+					try {
+						if (serviceUtil.isNull(effectiveUserId)) {
+							AuthUserDetails authUser = authUserDetails();
+							if (authUser != null && authUser.getUserId() != null) {
+								effectiveUserId = applicationIdentityMigrationService
+										.resolveEffectiveUserId(authUser.getUserId());
+							}
 						}
-					}
-					if (serviceUtil.isNull(effectiveUserId)) {
-						log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-								"Skipping document identity migration because no effective userId could be resolved for preId {} and documentId {}",
-								preId, documentId);
-					} else {
-						applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
+						if (serviceUtil.isNull(effectiveUserId)) {
+							log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+									"Skipping document identity migration because no effective userId could be resolved for preId {} and documentId {}",
+									preId, documentId);
+						} else {
+							applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
+						}
+					} catch (Exception migrationEx) {
+						log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								"Best-effort identity migration failed after document update for preId: " + preId
+										+ ", documentId: " + documentId);
+						log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								ExceptionUtils.getStackTrace(migrationEx));
 					}
 				} else {
 					throw new RecordFailedToUpdateException(DocumentErrorCodes.PRG_PAM_DOC_012.toString(),

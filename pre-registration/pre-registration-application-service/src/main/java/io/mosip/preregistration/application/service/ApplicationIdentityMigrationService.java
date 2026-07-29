@@ -75,11 +75,23 @@ public class ApplicationIdentityMigrationService {
      *   <li>Failures are logged with masked identifiers for operational follow-up.</li>
      * </ul>
      * A record belonging to a user who never returns is swept up by the nightly identity
-     * reconciliation batch job in {@code pre-registration-batchjob} (detects candidates on
-     * {@code applications.cr_by} and converts each still-raw column), so no raw identifier lingers
-     * indefinitely.
+     * reconciliation batch job in {@code pre-registration-batchjob} (detects candidates across every
+     * ownership column it converts, so partially migrated rows are picked up too), so no raw
+     * identifier lingers indefinitely.
+     *
+     * <p><b>Why {@code noRollbackFor}.</b> A caller's try/catch alone is not enough to make this
+     * best-effort: this method joins the caller's transaction, so without this flag Spring's
+     * interceptor would mark that transaction rollback-only on the way out and the caller's commit
+     * would fail with {@code UnexpectedRollbackException} — the swallowed exception would still sink
+     * the user's request. {@code noRollbackFor} suppresses that marking while keeping the backfill in
+     * the caller's transaction, which it must stay in: several callers invoke it immediately after
+     * inserting the row being backfilled, and a {@code REQUIRES_NEW} transaction could not see that
+     * uncommitted row. Any partial writes left by a mid-way failure are flushed with the caller's
+     * commit and cleaned up by the reconciliation job. Residual limitation: a failure originating in
+     * the database itself (rather than in user lookup) aborts the underlying transaction regardless
+     * of this flag.
      */
-    @Transactional
+    @Transactional(noRollbackFor = Exception.class)
     public void migrateRawUserToEffectiveUser(String preRegistrationId, String effectiveUserId) {
 
         if (effectiveUserId == null || effectiveUserId.isBlank()) {

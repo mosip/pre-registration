@@ -287,6 +287,59 @@ documentEntity = new DocumentEntity();
 
 	}
 
+	/**
+	 * Identity migration is best-effort: a failure must be logged and swallowed, never allowed to
+	 * abort the document upload it follows. Before this guard a migration hiccup propagated out of
+	 * createDoc into uploadDoucment's catch and turned a successful save into an error response.
+	 */
+	@Test
+	public void createDocSucceedsWhenIdentityMigrationFails() throws Exception {
+		MockMultipartFile docFile = new MockMultipartFile("file", "Doc.pdf", "application/pdf", "test".getBytes());
+
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(documnetDAO.findSingleDocument(Mockito.any(), Mockito.any())).thenReturn(null);
+		Mockito.when(serviceUtil.dtoToEntity(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+				.thenReturn(documentEntity);
+		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn("encrypted".getBytes());
+		Mockito.when(documnetDAO.saveDocument(Mockito.any())).thenReturn(documentEntity);
+		Mockito.when(objectStore.putObject(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(true);
+		Mockito.doThrow(new RuntimeException("identity migration failed")).when(applicationIdentityMigrationService)
+				.migrateRawUserToEffectiveUser(Mockito.any(), Mockito.any());
+
+		DocumentResponseDTO response = documentUploadService.createDoc(documentRequestDTO, docFile, preRegistrationId);
+
+		assertNotNull(response);
+		assertEquals("Doc.pdf", response.getDocName());
+		Mockito.verify(applicationIdentityMigrationService).migrateRawUserToEffectiveUser(Mockito.any(),
+				Mockito.any());
+	}
+
+	/** Same best-effort contract on the copy path. */
+	@Test
+	public void copyDocumentSucceedsWhenIdentityMigrationFails() throws Exception {
+		docResp.setDocName("Doc.pdf");
+
+		Mockito.when(serviceUtil.isValidCatCode(Mockito.any())).thenReturn(true);
+		Mockito.when(documnetDAO.findSingleDocument(Mockito.any(), Mockito.any())).thenReturn(documentEntity);
+		Mockito.when(serviceUtil.getPreRegInfoRestService(Mockito.any())).thenReturn(demographicResponseDTO);
+		Mockito.when(
+				documnetDAO.saveDocument(serviceUtil.documentEntitySetter(Mockito.any(), Mockito.any(), Mockito.any())))
+				.thenReturn(documentEntity);
+		Mockito.when(objectStore.putObject(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(true);
+		Mockito.doThrow(new RuntimeException("identity migration failed")).when(applicationIdentityMigrationService)
+				.migrateRawUserToEffectiveUser(Mockito.any(), Mockito.any());
+
+		MainResponseDTO<DocumentResponseDTO> responseDto = documentUploadService.copyDocument("POA", "987654321",
+				"48690172097499");
+
+		assertNotNull(responseDto.getResponse());
+		assertEquals(docResp.getDocName(), responseDto.getResponse().getDocName());
+		Mockito.verify(applicationIdentityMigrationService).migrateRawUserToEffectiveUser(Mockito.any(),
+				Mockito.any());
+	}
+
 	@Test(expected = InvalidRequestException.class)
 	public void InvalidRequestParameterExceptionTest1() throws Exception {
 		documentUploadService.copyDocument("POA", "", "48690172097499");

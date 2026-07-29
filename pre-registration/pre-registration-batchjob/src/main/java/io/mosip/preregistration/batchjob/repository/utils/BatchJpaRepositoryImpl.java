@@ -555,12 +555,14 @@ public class BatchJpaRepositoryImpl {
 
 	/**
 	 * @param batchSize maximum number of ids to return
-	 * @return a bounded page of pre-registration ids whose applications.cr_by still holds a raw
-	 *         (non-UUID) identifier. Bounded so a large legacy backlog is not loaded all at once.
+	 * @return a bounded page of pre-registration ids that still hold a raw (non-UUID) identifier in any
+	 *         of the columns the reconciliation converts, across applications, applicant_demographic,
+	 *         applicant_document and reg_appointment — so partially migrated records are also picked
+	 *         up. Bounded so a large legacy backlog is not loaded all at once.
 	 */
-	public List<String> getPreRegIdsWithRawCreatedBy(int batchSize) {
+	public List<String> getPreRegIdsWithRawIdentifier(int batchSize) {
 		try {
-			return applicationRepository.findPreRegIdsWithRawCreatedBy(batchSize);
+			return applicationRepository.findPreRegIdsWithRawIdentifier(batchSize);
 		} catch (DataAccessLayerException e) {
 			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_019.getCode(),
 					ErrorMessages.APPLICATIONS_TABLE_NOT_ACCESSIBLE.getMessage());

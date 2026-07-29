@@ -56,7 +56,7 @@ public class ApplicationIdentityReconciliationUpdater {
 		// no progress (all remaining candidates are currently un-resolvable) — guarantees termination.
 		while (true) {
 			List<String> preRegistrationIds = batchJpaRepositoryImpl
-					.getPreRegIdsWithRawCreatedBy(RECONCILIATION_BATCH_SIZE);
+					.getPreRegIdsWithRawIdentifier(RECONCILIATION_BATCH_SIZE);
 			if (Objects.isNull(preRegistrationIds) || preRegistrationIds.isEmpty()) {
 				break;
 			}

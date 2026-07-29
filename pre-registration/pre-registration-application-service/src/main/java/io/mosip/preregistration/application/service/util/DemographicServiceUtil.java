@@ -760,13 +760,22 @@ public class DemographicServiceUtil {
 		applicationEntity.setContactInfo(effectiveUserId);
 		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
-			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
 		} catch (Exception ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while persisting applications entity -" + ex.getMessage());
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_009.getCode(),
 					ApplicationErrorMessages.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
+		}
+		// Best-effort: kept outside the block above so a backfill failure is never reported as — and
+		// never fails — the applications write. See ApplicationIdentityMigrationService.
+		try {
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
+		} catch (Exception migrationEx) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Best-effort identity migration failed after applications create for applicationId: " + preId
+							+ ", maskedUserId: " + GenericUtil.maskIdentifier(userId));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
 		}
 		return applicationEntity;
 	}
@@ -776,12 +785,13 @@ public class DemographicServiceUtil {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Updating applications status in applications table with statuscode: {" + status
 						+ "} for applicationId: {" + applicationId + "}");
+		String effectiveUserId;
 		try {
 			ApplicationEntity applicationEntity = findApplicationById(applicationId);
 			applicationEntity.setBookingStatusCode(status);
 			applicationEntity.setUpdBy(userId);
 			applicationEntity.setUpdDtime(LocalDateTime.now());
-			String effectiveUserId = resolveEffectiveUserId(userId);
+			effectiveUserId = resolveEffectiveUserId(userId);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Resolved effective user id for application status update. applicationId=" + applicationId
 							+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
@@ -791,13 +801,22 @@ public class DemographicServiceUtil {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
 			}
 			applicationRepostiory.update(applicationEntity);
-			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(applicationId, effectiveUserId);
 		} catch (Exception ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while updating status for applications -" + ex.getMessage());
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
 					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
+		}
+		// Best-effort: kept outside the block above so a backfill failure is never reported as — and
+		// never fails — the status update. See ApplicationIdentityMigrationService.
+		try {
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(applicationId, effectiveUserId);
+		} catch (Exception migrationEx) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Best-effort identity migration failed after application status update for applicationId: "
+							+ applicationId + ", maskedUserId: " + GenericUtil.maskIdentifier(userId));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
 		}
 	}
 
