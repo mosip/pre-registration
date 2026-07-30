@@ -171,4 +171,47 @@ public class DemographicServiceUtilTest {
 		Mockito.verify(documentDAO).updateDocument(documentEntity);
 	}
 
+	/**
+	 * One unwritable linked document must not fail the demographic update it is attached to, and must
+	 * not stop the remaining documents from being migrated. Anything skipped is left for the nightly
+	 * reconciliation job.
+	 */
+	@Test
+	public void prepareDemographicEntityForUpdateSurvivesAFailingLinkedDocument() {
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("35760478648170");
+		applicationEntity.setBookingType("NEW");
+		applicationEntity.setApplicationStatusCode("DRAFT");
+		applicationEntity.setBookingStatusCode(StatusCodes.APPLICATION_INCOMPLETE.getCode());
+		applicationEntity.setCrBy("legacy-user");
+
+		DocumentEntity failingDocument = new DocumentEntity();
+		failingDocument.setDocumentId("doc-1");
+		failingDocument.setCrBy("legacy-user");
+		failingDocument.setUpdBy("legacy-user");
+		DocumentEntity healthyDocument = new DocumentEntity();
+		healthyDocument.setDocumentId("doc-2");
+		healthyDocument.setCrBy("legacy-user");
+		healthyDocument.setUpdBy("legacy-user");
+		demographicEntity.setDocumentEntity(java.util.List.of(failingDocument, healthyDocument));
+
+		Mockito.when(applicationRepostiory.findByApplicationId("35760478648170")).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.save(Mockito.any(ApplicationEntity.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn("encrypted".getBytes());
+		Mockito.when(documentDAO.updateDocument(failingDocument))
+				.thenThrow(new RuntimeException("document write failed"));
+		Mockito.when(documentDAO.updateDocument(healthyDocument))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+
+		DemographicEntity updatedEntity = demographicServiceUtil.prepareDemographicEntityForUpdate(demographicEntity,
+				updateDemographicRequest, StatusCodes.APPLICATION_INCOMPLETE.getCode(), "legacy-user", "35760478648170");
+
+		// The demographic update itself still completed ...
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getCreatedBy());
+		// ... and the document queued after the failing one was still migrated.
+		Mockito.verify(documentDAO).updateDocument(healthyDocument);
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", healthyDocument.getCrBy());
+	}
+
 }

@@ -21,6 +21,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataIntegrityViolationException;
 
 import io.mosip.preregistration.core.common.entity.UserDetails;
 import io.mosip.preregistration.core.common.repository.UserDetailsRepository;
@@ -35,6 +36,10 @@ public class UserDetailsServiceTest {
     @Mock
     private CryptoUtil cryptoUtil;
 
+    /** The insert now goes through its own transactional bean — see UserDetailsTxHelper. */
+    @Mock
+    private UserDetailsTxHelper userDetailsTxHelper;
+
     @InjectMocks
     private UserDetailsService userDetailsService;
 
@@ -46,12 +51,44 @@ public class UserDetailsServiceTest {
     public void testFindOrCreateCreatesWhenNotFound() {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
         when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
-        when(userDetailsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(userDetailsTxHelper.saveInNewTransaction(any())).thenAnswer(i -> i.getArgument(0));
 
         UserDetails u = userDetailsService.createInternalUser("TestUser", "testuser", "somehash");
 
-        verify(userDetailsRepository).save(any());
+        verify(userDetailsTxHelper).saveInNewTransaction(any());
         assertEquals("enc-value", u.getIdentifierEncrypted());
+    }
+
+    /**
+     * Losing the insert race must resolve to the winner's row, not propagate. The insert runs in its
+     * own transaction (UserDetailsTxHelper) precisely so this re-read still has a usable one.
+     */
+    @Test
+    public void testCreateInternalUserResolvesToWinnerWhenInsertRaceIsLost() {
+        UserDetails winner = new UserDetails();
+        winner.setUserId(UUID.fromString("00000000-0000-0000-0000-0000000000ff"));
+        winner.setIdentifierHash("somehash");
+        // The only lookup on this path is the re-read inside the catch block.
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(winner));
+        when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
+        when(userDetailsTxHelper.saveInNewTransaction(any()))
+                .thenThrow(new DataIntegrityViolationException("duplicate key value violates unique constraint"));
+
+        UserDetails resolved = userDetailsService.createInternalUser("TestUser", "testuser", "somehash");
+
+        assertEquals(winner.getUserId(), resolved.getUserId());
+    }
+
+    /** If the violation was not a lost race, the original exception must still surface. */
+    @Test
+    public void testCreateInternalUserRethrowsWhenWinnerCannotBeFound() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
+        when(userDetailsTxHelper.saveInNewTransaction(any()))
+                .thenThrow(new DataIntegrityViolationException("some other constraint"));
+
+        assertThrows(DataIntegrityViolationException.class,
+                () -> userDetailsService.createInternalUser("TestUser", "testuser", "somehash"));
     }
 
     @Test
@@ -92,7 +129,7 @@ public class UserDetailsServiceTest {
         when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
         when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
         when(cryptoUtil.decrypt(any(), any())).thenReturn("TestUser123".getBytes(StandardCharsets.UTF_8));
-        when(userDetailsRepository.save(any())).thenAnswer(i -> i.getArgument(0));
+        when(userDetailsTxHelper.saveInNewTransaction(any())).thenAnswer(i -> i.getArgument(0));
 
         UserDetails saved = userDetailsService.createInternalUser("TestUser123", "testuser123", "somehash");
         Optional<String> decrypted = decryptIdentifier(saved.getIdentifierEncrypted());

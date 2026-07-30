@@ -12,7 +12,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import io.mosip.kernel.core.util.HMACUtils2;
 import io.mosip.preregistration.core.common.entity.UserDetails;
@@ -34,10 +33,13 @@ public class UserDetailsService {
 
     private final UserDetailsRepository userDetailsRepository;
     private final CryptoUtil cryptoUtil;
+    private final UserDetailsTxHelper userDetailsTxHelper;
 
-    public UserDetailsService(UserDetailsRepository userDetailsRepository, CryptoUtil cryptoUtil) {
+    public UserDetailsService(UserDetailsRepository userDetailsRepository, CryptoUtil cryptoUtil,
+            UserDetailsTxHelper userDetailsTxHelper) {
         this.userDetailsRepository = userDetailsRepository;
         this.cryptoUtil = cryptoUtil;
+        this.userDetailsTxHelper = userDetailsTxHelper;
     }
 
     private String standardize(String userId) {
@@ -127,6 +129,39 @@ public class UserDetailsService {
         return lookupIds.stream().distinct().toList();
     }
 
+    /**
+     * Compares an authenticated user against the identifier stored on a record.
+     *
+     * <p><b>Not side-effect free.</b> Resolution goes through {@link #getOrCreateInternalUserId},
+     * so calling this can insert a {@code user_details} row for an identifier that has none yet —
+     * for the authenticated user, and (when {@code piiBackwardCompatibility} is enabled) for the
+     * legacy raw identifier held on the record. The row is a hash-to-UUID mapping, not a credential
+     * or an authorisation grant, and the same row would be created by the caller's next write
+     * anyway; this only creates it earlier. Callers should not treat this as a read-only query.
+     *
+     * <p>Resolving rather than merely looking up is deliberate: a lookup-only comparison would
+     * return no match whenever <em>neither</em> side has been registered yet, which is exactly the
+     * legacy case backward compatibility exists to serve — two occurrences of the same raw
+     * identifier must compare equal, and they only do so once both resolve to the same UUID.
+     *
+     * <p>A canonical-looking {@code storedUserId} is compared directly without confirming it exists
+     * in {@code user_details}. When {@code authUserId} is a raw identifier that is sound on its own:
+     * resolution goes through the lookup-or-create branch, so {@code internalAuthUserId} is by
+     * construction a registered UUID, an unregistered stored value cannot equal it, and the
+     * comparison fails closed.
+     *
+     * <p>Note the one case where that reasoning does not hold. {@link #getOrCreateInternalUserId}
+     * returns UUID-shaped input verbatim without consulting {@code user_details}, so if the token
+     * subject is itself UUID-shaped, {@code internalAuthUserId} is unverified and this degrades to
+     * string equality between the token subject and the stored value. That is safe only for as long
+     * as authenticated subjects are never UUID-shaped, which is a property of the identity provider
+     * and is not enforced here.
+     *
+     * @param authUserId              identifier of the authenticated caller
+     * @param storedUserId            identifier persisted on the record being checked
+     * @param piiBackwardCompatibility whether legacy raw stored identifiers may still be matched
+     * @return {@code true} only if both resolve to the same canonical user
+     */
     public boolean matchesUser(String authUserId, String storedUserId, boolean piiBackwardCompatibility) {
         if (authUserId == null || authUserId.isBlank() || storedUserId == null || storedUserId.isBlank()) {
             return false;
@@ -162,10 +197,16 @@ public class UserDetailsService {
     }
 
     /**
-     * Creates a canonical user row for the given identifier. Idempotent — concurrent inserts
-     * are handled by catching DataIntegrityViolationException and re-fetching.
+     * Creates a canonical user row for the given identifier. Idempotent — a concurrent insert that
+     * wins the race on {@code identifier_hash} surfaces as a {@code DataIntegrityViolationException},
+     * which is caught here and resolved by re-reading the winner's row.
+     *
+     * <p>The insert is delegated to {@link UserDetailsTxHelper} rather than performed here, and this
+     * method is deliberately <em>not</em> a transaction boundary itself. Both details are load
+     * bearing: the helper is a separate bean so the Spring proxy actually applies (a same-class call
+     * would bypass it), and its {@code REQUIRES_NEW} propagation confines the constraint violation's
+     * transaction abort to the inner transaction, so the re-read below still runs on a usable one.
      */
-    @Transactional
     public UserDetails createInternalUser(String userId, String standardizedUserId, String userIdHash) {
         UserDetails userDetails = new UserDetails();
         userDetails.setUserId(UUID.randomUUID());
@@ -175,8 +216,9 @@ public class UserDetailsService {
         userDetails.setEncryptedDtimes(LocalDateTime.now());
         LOGGER.info("Creating new internal user mapping for masked identifier {}", GenericUtil.maskIdentifier(standardizedUserId));
         try {
-            return userDetailsRepository.save(userDetails);
+            return userDetailsTxHelper.saveInNewTransaction(userDetails);
         } catch (DataIntegrityViolationException ex) {
+            // Lost the race; the inner transaction rolled back, so this one can still read the winner.
             return userDetailsRepository.findByIdentifierHash(userIdHash).orElseThrow(() -> ex);
         }
     }

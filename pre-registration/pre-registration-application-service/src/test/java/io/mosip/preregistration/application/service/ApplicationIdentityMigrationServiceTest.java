@@ -58,9 +58,11 @@ public class ApplicationIdentityMigrationServiceTest {
     }
 
     @Test
-    public void migrateAggregateToEffectiveUserUpdatesAllLinkedTables() {
+    public void migrateAggregateResolvesEachRawColumnToItsOwnOwnerNotTheCaller() {
         String preRegistrationId = "12345678901234";
-        String effectiveUserId = UUID.randomUUID().toString();
+        // The caller is deliberately NOT the record owner — e.g. an operator acting for an applicant.
+        String callerUserId = UUID.randomUUID().toString();
+        String ownerUuid = UUID.randomUUID().toString();
 
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setApplicationId(preRegistrationId);
@@ -94,24 +96,138 @@ public class ApplicationIdentityMigrationServiceTest {
                 .thenReturn(List.of(documentEntity));
 		when(regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegistrationId))
 				.thenReturn(registrationBookingEntity);
+        // The raw value resolves to the owner's canonical id, which is not the caller's.
+        when(userDetailsService.getOrCreateInternalUserId("raw-user")).thenReturn(ownerUuid);
 
-        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, effectiveUserId);
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, callerUserId);
 
-        assertEquals(effectiveUserId, applicationEntity.getCrBy());
-        assertEquals(effectiveUserId, applicationEntity.getUpdBy());
-        assertEquals(effectiveUserId, applicationEntity.getContactInfo());
-        assertEquals(effectiveUserId, demographicEntity.getCreatedBy());
-        assertEquals(effectiveUserId, demographicEntity.getUpdatedBy());
-        assertEquals(effectiveUserId, demographicEntity.getCrAppuserId());
-        assertEquals(effectiveUserId, documentEntity.getCrBy());
-        assertEquals(effectiveUserId, documentEntity.getUpdBy());
-        assertEquals(effectiveUserId, registrationBookingEntity.getCrBy());
-        assertEquals(effectiveUserId, registrationBookingEntity.getUpBy());
+        assertEquals(ownerUuid, applicationEntity.getCrBy());
+        assertEquals(ownerUuid, applicationEntity.getUpdBy());
+        assertEquals(ownerUuid, applicationEntity.getContactInfo());
+        assertEquals(ownerUuid, demographicEntity.getCreatedBy());
+        assertEquals(ownerUuid, demographicEntity.getUpdatedBy());
+        assertEquals(ownerUuid, demographicEntity.getCrAppuserId());
+        assertEquals(ownerUuid, documentEntity.getCrBy());
+        assertEquals(ownerUuid, documentEntity.getUpdBy());
+        assertEquals(ownerUuid, registrationBookingEntity.getCrBy());
+        assertEquals(ownerUuid, registrationBookingEntity.getUpBy());
 
         verify(applicationRepostiory).save(applicationEntity);
         verify(demographicRepository).save(demographicEntity);
         verify(documentRepository).save(documentEntity);
 		verify(regAppointmentRepository).save(registrationBookingEntity);
+    }
+
+    /**
+     * An operator acting on an applicant's behalf must not take over the applicant's ownership. Every
+     * column already holds the applicant's canonical UUID, so nothing may be written at all.
+     */
+    @Test
+    public void migrateNeverOverwritesOwnershipAlreadyHeldByAnotherCanonicalUser() {
+        String preRegistrationId = "12345678901234";
+        String applicantUuid = UUID.randomUUID().toString();
+        String operatorUuid = UUID.randomUUID().toString();
+
+        ApplicationEntity applicationEntity = new ApplicationEntity();
+        applicationEntity.setApplicationId(preRegistrationId);
+        applicationEntity.setCrBy(applicantUuid);
+        applicationEntity.setUpdBy(applicantUuid);
+        applicationEntity.setContactInfo(applicantUuid);
+
+        DemographicEntity demographicEntity = new DemographicEntity();
+        demographicEntity.setPreRegistrationId(preRegistrationId);
+        demographicEntity.setCreatedBy(applicantUuid);
+        demographicEntity.setUpdatedBy(applicantUuid);
+        demographicEntity.setCrAppuserId(applicantUuid);
+
+        DocumentEntity documentEntity = new DocumentEntity();
+        documentEntity.setDocumentId("doc-1");
+        documentEntity.setCrBy(applicantUuid);
+        documentEntity.setUpdBy(applicantUuid);
+        documentEntity.setDemographicEntity(demographicEntity);
+
+        RegistrationBookingEntity registrationBookingEntity = new RegistrationBookingEntity();
+        registrationBookingEntity.setId("booking-1");
+        registrationBookingEntity.setPreregistrationId(preRegistrationId);
+        registrationBookingEntity.setCrBy(applicantUuid);
+        registrationBookingEntity.setUpBy(applicantUuid);
+
+        when(applicationRepostiory.findByApplicationId(preRegistrationId)).thenReturn(applicationEntity);
+        when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(demographicEntity);
+        when(documentRepository.findByDemographicEntityPreRegistrationId(preRegistrationId))
+                .thenReturn(List.of(documentEntity));
+        when(regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegistrationId))
+                .thenReturn(registrationBookingEntity);
+
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, operatorUuid);
+
+        assertEquals(applicantUuid, applicationEntity.getCrBy());
+        assertEquals(applicantUuid, applicationEntity.getUpdBy());
+        assertEquals(applicantUuid, applicationEntity.getContactInfo());
+        assertEquals(applicantUuid, demographicEntity.getCreatedBy());
+        assertEquals(applicantUuid, demographicEntity.getCrAppuserId());
+        assertEquals(applicantUuid, documentEntity.getCrBy());
+        assertEquals(applicantUuid, registrationBookingEntity.getCrBy());
+
+        verify(applicationRepostiory, never()).save(any(ApplicationEntity.class));
+        verify(demographicRepository, never()).save(any(DemographicEntity.class));
+        verify(documentRepository, never()).save(any(DocumentEntity.class));
+        verify(regAppointmentRepository, never()).save(any(RegistrationBookingEntity.class));
+    }
+
+    /**
+     * The legacy case her fix would not have covered: a raw value must resolve to the identity it
+     * already names, not to whoever is making the request.
+     */
+    @Test
+    public void migrateResolvesRawOwnershipToTheApplicantNotTheCallingOperator() {
+        String preRegistrationId = "12345678901234";
+        String applicantUuid = UUID.randomUUID().toString();
+        String operatorUuid = UUID.randomUUID().toString();
+
+        DemographicEntity demographicEntity = new DemographicEntity();
+        demographicEntity.setPreRegistrationId(preRegistrationId);
+        demographicEntity.setCreatedBy("applicant@example.com");
+        demographicEntity.setUpdatedBy("applicant@example.com");
+        demographicEntity.setCrAppuserId("applicant@example.com");
+
+        when(applicationRepostiory.findByApplicationId(preRegistrationId)).thenReturn(null);
+        when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(demographicEntity);
+        when(documentRepository.findByDemographicEntityPreRegistrationId(preRegistrationId)).thenReturn(List.of());
+        when(regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegistrationId))
+                .thenReturn(null);
+        when(userDetailsService.getOrCreateInternalUserId("applicant@example.com")).thenReturn(applicantUuid);
+
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, operatorUuid);
+
+        assertEquals(applicantUuid, demographicEntity.getCreatedBy());
+        assertEquals(applicantUuid, demographicEntity.getUpdatedBy());
+        assertEquals(applicantUuid, demographicEntity.getCrAppuserId());
+        verify(demographicRepository).save(demographicEntity);
+    }
+
+    /** A raw value that cannot be resolved is left as-is for the reconciliation job, not overwritten. */
+    @Test
+    public void migrateLeavesUnresolvableRawValueUntouched() {
+        String preRegistrationId = "12345678901234";
+        String operatorUuid = UUID.randomUUID().toString();
+
+        DemographicEntity demographicEntity = new DemographicEntity();
+        demographicEntity.setPreRegistrationId(preRegistrationId);
+        demographicEntity.setCreatedBy("unresolvable-user");
+
+        when(applicationRepostiory.findByApplicationId(preRegistrationId)).thenReturn(null);
+        when(demographicRepository.findBypreRegistrationId(preRegistrationId)).thenReturn(demographicEntity);
+        when(documentRepository.findByDemographicEntityPreRegistrationId(preRegistrationId)).thenReturn(List.of());
+        when(regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegistrationId))
+                .thenReturn(null);
+        when(userDetailsService.getOrCreateInternalUserId("unresolvable-user"))
+                .thenThrow(new UserLookupException("PRG_CORE_REQ_001", "lookup failed"));
+
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, operatorUuid);
+
+        assertEquals("unresolvable-user", demographicEntity.getCreatedBy());
+        verify(demographicRepository, never()).save(any(DemographicEntity.class));
     }
 
     @Test
@@ -193,7 +309,8 @@ public class ApplicationIdentityMigrationServiceTest {
     @Test
     public void migrateHandlesMissingLinkedRecords() {
         String preRegistrationId = "12345678901234";
-        String effectiveUserId = UUID.randomUUID().toString();
+        String callerUserId = UUID.randomUUID().toString();
+        String ownerUuid = UUID.randomUUID().toString();
 
         ApplicationEntity applicationEntity = new ApplicationEntity();
         applicationEntity.setApplicationId(preRegistrationId);
@@ -204,11 +321,12 @@ public class ApplicationIdentityMigrationServiceTest {
         when(documentRepository.findByDemographicEntityPreRegistrationId(preRegistrationId)).thenReturn(null);
         when(regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegistrationId))
                 .thenReturn(null);
+        when(userDetailsService.getOrCreateInternalUserId("raw-user")).thenReturn(ownerUuid);
 
-        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, effectiveUserId);
+        applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId, callerUserId);
 
-        // Present record is migrated; absent demographic/document/booking must not NPE or save.
-        assertEquals(effectiveUserId, applicationEntity.getCrBy());
+        // Present record is migrated to its own owner; absent linked records must not NPE or save.
+        assertEquals(ownerUuid, applicationEntity.getCrBy());
         verify(applicationRepostiory).save(applicationEntity);
         verify(demographicRepository, never()).save(any());
         verify(documentRepository, never()).save(any());

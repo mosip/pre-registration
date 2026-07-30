@@ -39,6 +39,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.datasync.dto.ApplicationDTO;
@@ -50,6 +51,7 @@ import io.mosip.preregistration.datasync.dto.PreRegArchiveDTO;
 import io.mosip.preregistration.datasync.dto.PreRegistrationIdsDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDataSyncRequestDTO;
 import io.mosip.preregistration.datasync.dto.ReverseDatasyncReponseDTO;
+import io.mosip.preregistration.datasync.errorcodes.ErrorCodes;
 import io.mosip.preregistration.datasync.exception.util.DataSyncExceptionCatcher;
 import io.mosip.preregistration.datasync.service.util.DataSyncServiceUtil;
 import jakarta.annotation.PostConstruct;
@@ -430,20 +432,34 @@ public class DataSyncService {
 		responseDto.setId(storeId);
 		responseDto.setVersion(version);
 		requiredRequestMap.put("id", storeId);
+
+		// Resolved once, up front, so the audit in the finally block can reuse it rather than calling
+		// authUserDetails() again. A second call there throws when the security context is absent, and
+		// an exception raised in a finally block discards the real failure that was already in flight.
+		String actorUserId = null;
+		String actorUsername = null;
+		try {
+			AuthUserDetails user = authUserDetails();
+			if (user != null) {
+				actorUserId = user.getUserId();
+				actorUsername = user.getUsername();
+			}
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Auth context unavailable while resolving the reverse datasync actor", ex);
+		}
+
 		try {
 			if (validationUtil.requestValidator(reverseDataSyncRequest)
 					&& serviceUtil.validateReverseDataSyncRequest(reverseDataSyncRequest.getRequest(), responseDto)) {
 				if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(reverseDataSyncRequest),
 						requiredRequestMap)) {
-					String actorUserId = "user";
-					try {
-						AuthUserDetails user = authUserDetails();
-						if (user != null && user.getUserId() != null) {
-							actorUserId = user.getUserId();
-						}
-					} catch (Exception ex) {
-						log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-								"Auth context not available, falling back to default user", ex);
+					// Fail closed. This value is persisted as the actor and is resolved to a canonical
+					// UUID, so a placeholder would mint a real user_details row for a non-existent
+					// user and mislabel the audit trail. There is no safe default for "who did this".
+					if (actorUserId == null || actorUserId.isBlank()) {
+						throw new InvalidRequestParameterException(ErrorCodes.PRG_DATA_SYNC_003.getCode(),
+								"Unable to resolve the authenticated user for reverse datasync", responseDto);
 					}
 					reverseDatasyncReponse = serviceUtil.reverseDateSyncSave(reverseDataSyncRequest.getRequesttime(),
 							reverseDataSyncRequest.getRequest(), actorUserId);
@@ -464,12 +480,11 @@ public class DataSyncService {
 				setAuditValues(EventId.PRE_408.toString(), EventName.REVERSESYNC.toString(),
 						EventType.BUSINESS.toString(),
 						"Reverse Data sync & the consumed PreRegistration ids successfully saved in the database",
-						AuditLogVariables.MULTIPLE_ID.toString(), authUserDetails().getUserId(),
-						authUserDetails().getUsername(), null);
+						AuditLogVariables.MULTIPLE_ID.toString(), actorUserId, actorUsername, null);
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
-						"Reverse Data sync failed", AuditLogVariables.NO_ID.toString(), authUserDetails().getUserId(),
-						authUserDetails().getUsername(), null);
+						"Reverse Data sync failed", AuditLogVariables.NO_ID.toString(), actorUserId, actorUsername,
+						null);
 			}
 		}
 		return responseDto;

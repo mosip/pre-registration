@@ -494,6 +494,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
 			}
 			return savedApplicationEntity;
+		} catch (AppointmentExecption ae) {
+			// Identity resolution already reported a specific code (PRG_APP_BCK_09). Letting it fall into
+			// the catch below would rewrite it to FAILED_TO_UPDATE_APPLICATIONS and send operators to the
+			// applications table for what is a user-lookup problem.
+			throw ae;
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Failed to update application for the preregistrationId: " + preRegistrationId, ex);
@@ -510,8 +515,11 @@ public class AppointmentServiceImpl implements AppointmentService {
 		try {
 			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
 		} catch (IllegalStateException ex) {
-			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getCode(),
-					AppointmentErrorCodes.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
+			// Distinct from FAILED_TO_UPDATE_APPLICATIONS: nothing failed to persist here, the user's
+			// canonical identity could not be resolved. Reusing the update code sent operators to the
+			// applications table for what is a user-lookup problem.
+			throw new AppointmentExecption(AppointmentErrorCodes.FAILED_TO_RESOLVE_USER_IDENTITY.getCode(),
+					AppointmentErrorCodes.FAILED_TO_RESOLVE_USER_IDENTITY.getMessage());
 		}
 	}
 

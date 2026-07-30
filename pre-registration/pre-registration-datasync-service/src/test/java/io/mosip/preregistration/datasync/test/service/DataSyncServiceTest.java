@@ -345,6 +345,45 @@ public class DataSyncServiceTest {
 				reverseResponseDTO.getResponse().getPreRegistrationIds().size());
 	}
 
+	/**
+	 * Fail closed: with no resolvable authenticated user the request must be rejected rather than
+	 * attributed to a placeholder, which would be minted into user_details as a real canonical user
+	 * and would mislabel the audit trail.
+	 */
+	@Test(expected = InvalidRequestParameterException.class)
+	public void storeConsumedPreRegistrationsFailsClosedWhenUserIdUnresolvable() throws Exception {
+		AuthUserDetails unresolvableUser = Mockito.mock(AuthUserDetails.class);
+		when(unresolvableUser.getUserId()).thenReturn(null);
+		Authentication noUserAuthentication = Mockito.mock(Authentication.class);
+		SecurityContext noUserContext = Mockito.mock(SecurityContext.class);
+		when(noUserContext.getAuthentication()).thenReturn(noUserAuthentication);
+		when(noUserAuthentication.getPrincipal()).thenReturn(unresolvableUser);
+		SecurityContextHolder.setContext(noUserContext);
+
+		when(serviceUtil.validateReverseDataSyncRequest(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.doNothing().when(spyDataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
+				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+
+		dataSyncService.storeConsumedPreRegistrations(reverseRequestDTO);
+	}
+
+	/**
+	 * With no security context at all, the clean failure must still reach the caller. The audit in the
+	 * finally block reuses the actor resolved up front instead of calling authUserDetails() again —
+	 * a second call would throw there, and an exception raised in a finally block discards the real
+	 * one already in flight.
+	 */
+	@Test(expected = InvalidRequestParameterException.class)
+	public void storeConsumedPreRegistrationsFailsClosedWhenSecurityContextAbsent() throws Exception {
+		SecurityContextHolder.clearContext();
+
+		when(serviceUtil.validateReverseDataSyncRequest(Mockito.any(), Mockito.any())).thenReturn(true);
+		Mockito.doNothing().when(spyDataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
+				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+
+		dataSyncService.storeConsumedPreRegistrations(reverseRequestDTO);
+	}
+
 	@Test
 	public void fetchPreRegistrationDataTest() {
 		mainResponseDTO.setId(fetchId);

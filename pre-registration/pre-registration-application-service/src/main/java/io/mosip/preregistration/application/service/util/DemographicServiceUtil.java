@@ -391,14 +391,28 @@ public class DemographicServiceUtil {
 		if (demographicEntity.getDocumentEntity() == null || demographicEntity.getDocumentEntity().isEmpty()) {
 			return;
 		}
+		int migrated = 0;
+		int failed = 0;
 		for (DocumentEntity documentEntity : demographicEntity.getDocumentEntity()) {
-			documentEntity.setCrBy(effectiveUserId);
-			documentEntity.setUpdBy(effectiveUserId);
-			documentDAO.updateDocument(documentEntity);
+			// Isolated per document: one unwritable document must not fail the demographic update it
+			// is attached to. Anything skipped here is picked up by the nightly reconciliation job.
+			try {
+				documentEntity.setCrBy(effectiveUserId);
+				documentEntity.setUpdBy(effectiveUserId);
+				documentDAO.updateDocument(documentEntity);
+				migrated++;
+			} catch (Exception ex) {
+				failed++;
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Best-effort identity migration failed for a linked document. preRegistrationId="
+								+ preRegistrationId + ", documentId=" + documentEntity.getDocumentId());
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			}
 		}
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Migrated linked documents to canonical user id during demographic update. preRegistrationId="
-						+ preRegistrationId + ", documentsCount=" + demographicEntity.getDocumentEntity().size());
+						+ preRegistrationId + ", documentsCount=" + demographicEntity.getDocumentEntity().size()
+						+ ", migrated=" + migrated + ", failed=" + failed);
 	}
 
 	/**

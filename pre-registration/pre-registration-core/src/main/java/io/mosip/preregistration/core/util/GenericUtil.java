@@ -42,7 +42,12 @@ public class GenericUtil {
 		if (isUuid(trimmed)) {
 			return "***" + trimmed.substring(trimmed.length() - 6);
 		}
-		int visible = Math.min(4, trimmed.length());
+		// Scale the visible suffix to the length of the value: a fixed 4 characters would expose most
+		// of a short identifier (e.g. "admin" -> "***dmin"). Values shorter than 3 are fully masked.
+		int visible = Math.min(4, trimmed.length() / 3);
+		if (visible <= 0) {
+			return "***";
+		}
 		return "***" + trimmed.substring(trimmed.length() - visible);
 	}
 

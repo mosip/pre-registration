@@ -202,9 +202,6 @@ public class DataSyncServiceUtil {
 	@Value("${version:1.0}")
 	private String version;
 
-	@Value("${mosip.prereg.pii.backward.compatibility}")
-	private boolean piiBackwardCompatibility;
-
 	@Value("${mosip.preregistration.sync.sign.appid}")
 	private String signAppId;
 
