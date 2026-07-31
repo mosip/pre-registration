@@ -12,6 +12,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.NamedQuery;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -94,10 +96,12 @@ public class DemographicEntity implements Serializable {
 	 * not reached still yields the raw legacy identifier, so callers placing this on a response or
 	 * comparing it must resolve it themselves.
 	 */
+	@JsonIgnore
 	public String getEffectiveCreatedBy() {
 		return this.createdBy;
 	}
 
+	@JsonIgnore
 	public String getEffectiveUpdatedBy() {
 		return this.updatedBy;
 	}

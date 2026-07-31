@@ -847,6 +847,102 @@ public class NotificationServiceTest {
 		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), response.getResponse().getMessage());
 	}
 
+	/**
+	 * Builds the exact condition the contact_info fallback exists for: a non-NEW booking type whose
+	 * request carries neither an email nor a mobile number, so the only recipient available is
+	 * applications.contact_info.
+	 */
+	private MainRequestDTO<NotificationDTO> contactInfoFallbackRequest() {
+		NotificationDTO fallbackDto = new NotificationDTO();
+		fallbackDto.setName("Test Applicant");
+		fallbackDto.setPreRegistrationId("24346587843");
+		fallbackDto.setAppointmentDate("2026-08-10");
+		fallbackDto.setAppointmentTime("09:00 AM");
+		fallbackDto.setAdditionalRecipient(false);
+		// Batch mode skips the appointment date/time cross-check in notificationDtoValidationV2, which
+		// is unrelated to the contact_info path under test and would otherwise need a booking fixture.
+		fallbackDto.setIsBatch(true);
+		fallbackDto.setLanguageCode("eng");
+		// emailID and mobNum deliberately left null — that is what triggers the fallback.
+		MainRequestDTO<NotificationDTO> fallbackRequest = new MainRequestDTO<>();
+		fallbackRequest.setId("mosip.pre-registration.notification.notify");
+		fallbackRequest.setVersion("1.0");
+		fallbackRequest.setRequesttime(new Timestamp(System.currentTimeMillis()));
+		fallbackRequest.setRequest(fallbackDto);
+		return fallbackRequest;
+	}
+
+	private MainResponseDTO<ApplicationEntity> lostUinApplicationWithContactInfo(String contactInfo) {
+		MainResponseDTO<ApplicationEntity> lostUinEntity = new MainResponseDTO<>();
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("24346587843");
+		applicationEntity.setBookingType(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString());
+		applicationEntity.setContactInfo(contactInfo);
+		lostUinEntity.setResponse(applicationEntity);
+		return lostUinEntity;
+	}
+
+	/**
+	 * Since the PII migration contact_info holds a canonical id, which passes neither validator. It
+	 * must be decrypted back to the real address before the validators run, or the applicant is
+	 * silently never notified.
+	 */
+	@Test
+	public void sendNotificationV2RecoversCanonicalContactInfoBeforeNotifying() throws java.io.IOException {
+		String canonicalContact = "5d59ed4d-cce9-41c9-8397-030f5a36b25c";
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		MainRequestDTO<NotificationDTO> fallbackRequest = contactInfoFallbackRequest();
+
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(Mockito.any(), Mockito.anyString(),
+					Mockito.anyBoolean())).thenReturn(fallbackRequest);
+		} catch (Exception ex) {
+			Assert.fail("unexpected stubbing failure");
+		}
+		Mockito.when(applicationServiceIntf.getApplicationInfoInternal(Mockito.any()))
+				.thenReturn(lostUinApplicationWithContactInfo(canonicalContact));
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
+		Mockito.when(userDetailsService.recoverIdentifier(canonicalContact)).thenReturn("applicant@example.com");
+		Mockito.when(validationUtil.emailValidator("applicant@example.com")).thenReturn(true);
+
+		notificationService.sendNotificationV2(null, "eng", file, true);
+
+		// The recovered address, not the UUID, is what reaches the notifier.
+		Assert.assertEquals("applicant@example.com", fallbackRequest.getRequest().getEmailID());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(), Mockito.anyString());
+	}
+
+	/**
+	 * If the identifier cannot be recovered the request must still complete — the notification is
+	 * dropped and logged rather than failing the caller or falling back to a raw value.
+	 */
+	@Test
+	public void sendNotificationV2DropsNotificationWhenContactInfoCannotBeRecovered() throws java.io.IOException {
+		String canonicalContact = "5d59ed4d-cce9-41c9-8397-030f5a36b25c";
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		MainRequestDTO<NotificationDTO> fallbackRequest = contactInfoFallbackRequest();
+
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(Mockito.any(), Mockito.anyString(),
+					Mockito.anyBoolean())).thenReturn(fallbackRequest);
+		} catch (Exception ex) {
+			Assert.fail("unexpected stubbing failure");
+		}
+		Mockito.when(applicationServiceIntf.getApplicationInfoInternal(Mockito.any()))
+				.thenReturn(lostUinApplicationWithContactInfo(canonicalContact));
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicdto);
+		Mockito.when(userDetailsService.recoverIdentifier(canonicalContact)).thenReturn(null);
+
+		notificationService.sendNotificationV2(null, "eng", file, true);
+
+		Assert.assertNull(fallbackRequest.getRequest().getEmailID());
+		Mockito.verify(notificationUtil, Mockito.never()).notify(Mockito.anyString(),
+				Mockito.any(NotificationDTO.class), Mockito.any(), Mockito.anyString());
+	}
+
 	@Test
 	public void sendNotificationV2InvalidPridTest() throws java.io.IOException {
 		String langCode = "fra";

@@ -7,6 +7,8 @@ package io.mosip.preregistration.core.common.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -122,10 +124,12 @@ public class DocumentEntity implements Serializable {
 	 * not reached still yields the raw legacy identifier, so callers placing this on a response or
 	 * comparing it must resolve it themselves.
 	 */
+	@JsonIgnore
 	public String getEffectiveCrBy() {
 		return this.crBy;
 	}
 
+	@JsonIgnore
 	public String getEffectiveUpdBy() {
 		return this.updBy;
 	}

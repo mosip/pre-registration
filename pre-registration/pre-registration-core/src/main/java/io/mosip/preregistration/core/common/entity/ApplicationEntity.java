@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -86,6 +88,7 @@ public class ApplicationEntity {
 	 * identifier. Callers that put this on a response or compare it must resolve it themselves —
 	 * choosing this accessor over {@link #getCrBy()} changes nothing at runtime.
 	 */
+	@JsonIgnore
 	public String getEffectiveCrBy() {
 		return this.crBy;
 	}
@@ -93,6 +96,7 @@ public class ApplicationEntity {
 	/**
 	 * Returns {@code upd_by} as stored. <b>Does not canonicalise</b> — see {@link #getEffectiveCrBy()}.
 	 */
+	@JsonIgnore
 	public String getEffectiveUpdBy() {
 		return this.updBy;
 	}
