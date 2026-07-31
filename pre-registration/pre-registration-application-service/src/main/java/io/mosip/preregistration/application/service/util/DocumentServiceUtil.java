@@ -191,7 +191,7 @@ public class DocumentServiceUtil {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for document write. preRegistrationId=" + preRegistrationId
 						+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
-						+ isCanonicalApplied(userId, effectiveUserId));
+						+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
 		documentEntity.setCrBy(effectiveUserId);
 		documentEntity.setUpdBy(effectiveUserId);
 		documentEntity.setRefNumber(dto.getRefNumber());
@@ -443,13 +443,6 @@ public class DocumentServiceUtil {
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
 		commonServiceUtil.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
 				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getEffectiveCreatedBy());
-	}
-
-
-	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
-		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
-		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
-		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 
 	private String resolveEffectiveUserId(String userId) {

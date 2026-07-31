@@ -8,6 +8,7 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 
@@ -124,25 +125,50 @@ public class UserDetailsServiceTest {
         assertThrows(IllegalStateException.class, () -> userDetailsService.createInternalUser("TestUser", "testuser", "somehash"));
     }
 
+    private UserDetails storedUser(UUID canonicalId) {
+        UserDetails stored = new UserDetails();
+        stored.setUserId(canonicalId);
+        stored.setIdentifierEncrypted("enc-value");
+        stored.setEncryptedDtimes(LocalDateTime.now());
+        return stored;
+    }
+
+    /**
+     * Recovery is what lets a column that now holds a UUID still yield a real address — without it,
+     * migrating a contact identifier silently destroys the ability to contact that user.
+     */
     @Test
     public void testGetDecryptedIdentifierReturnsPlainIdentifier() {
-        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
-        when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
+        UUID canonicalId = UUID.randomUUID();
+        when(userDetailsRepository.findById(canonicalId)).thenReturn(Optional.of(storedUser(canonicalId)));
         when(cryptoUtil.decrypt(any(), any())).thenReturn("TestUser123".getBytes(StandardCharsets.UTF_8));
-        when(userDetailsTxHelper.saveInNewTransaction(any())).thenAnswer(i -> i.getArgument(0));
 
-        UserDetails saved = userDetailsService.createInternalUser("TestUser123", "testuser123", "somehash");
-        Optional<String> decrypted = decryptIdentifier(saved.getIdentifierEncrypted());
-        assertTrue(decrypted.isPresent());
-        assertTrue("TestUser123".equals(decrypted.get()));
+        assertEquals("TestUser123", userDetailsService.recoverIdentifier(canonicalId.toString()));
     }
 
     @Test
     public void testGetDecryptedIdentifierReturnsEmptyWhenDecryptFails() {
+        UUID canonicalId = UUID.randomUUID();
+        when(userDetailsRepository.findById(canonicalId)).thenReturn(Optional.of(storedUser(canonicalId)));
         when(cryptoUtil.decrypt(any(), any())).thenThrow(new RuntimeException("decrypt failure"));
 
-        Optional<String> decrypted = decryptIdentifier("encrypted-payload");
-        assertFalse(decrypted.isPresent());
+        assertNull(userDetailsService.recoverIdentifier(canonicalId.toString()));
+    }
+
+    /** A legacy row still holding a raw address must not be sent to the registry at all. */
+    @Test
+    public void recoverIdentifierReturnsNullForNonCanonicalInput() {
+        assertNull(userDetailsService.recoverIdentifier("user@example.com"));
+        assertNull(userDetailsService.recoverIdentifier(null));
+        verifyNoInteractions(userDetailsRepository);
+    }
+
+    @Test
+    public void recoverIdentifierReturnsNullWhenMappingIsUnknown() {
+        UUID canonicalId = UUID.randomUUID();
+        when(userDetailsRepository.findById(canonicalId)).thenReturn(Optional.empty());
+
+        assertNull(userDetailsService.recoverIdentifier(canonicalId.toString()));
     }
 
     @Test
@@ -233,18 +259,4 @@ public class UserDetailsServiceTest {
         assertFalse(userDetailsService.matchesUser("TestUser", "AnotherUser", true));
     }
 
-    private Optional<String> decryptIdentifier(String encryptedValue) {
-        if (encryptedValue == null || encryptedValue.isBlank()) {
-            return Optional.empty();
-        }
-        try {
-            byte[] plain = cryptoUtil.decrypt(encryptedValue.getBytes(StandardCharsets.UTF_8), LocalDateTime.now());
-            if (plain == null || plain.length == 0) {
-                return Optional.empty();
-            }
-            return Optional.of(new String(plain, StandardCharsets.UTF_8));
-        } catch (Exception ex) {
-            return Optional.empty();
-        }
-    }
 }

@@ -89,6 +89,11 @@ public class DemographicEntity implements Serializable {
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updateDateTime;
 
+	/**
+	 * Returns {@code cr_by} as stored. <b>Does not canonicalise</b> — a row the identity migration has
+	 * not reached still yields the raw legacy identifier, so callers placing this on a response or
+	 * comparing it must resolve it themselves.
+	 */
 	public String getEffectiveCreatedBy() {
 		return this.createdBy;
 	}

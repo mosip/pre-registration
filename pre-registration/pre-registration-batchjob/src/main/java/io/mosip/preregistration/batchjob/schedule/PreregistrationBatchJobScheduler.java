@@ -86,9 +86,7 @@ public class PreregistrationBatchJobScheduler {
 		}
 	} 
 
-	// Reuses the consumed-status cron so no new schedule property is introduced; the reconciliation
-	// job is idempotent and independent of the consumed job.
-	@Scheduled(cron = "${preregistration.job.schedule.cron.consumedStatusJob}")
+	@Scheduled(cron = "${preregistration.job.schedule.cron.identityReconciliationJob}")
 	public void identityReconciliationScheduler() {
 
 		JobParameters jobParam = new JobParametersBuilder()

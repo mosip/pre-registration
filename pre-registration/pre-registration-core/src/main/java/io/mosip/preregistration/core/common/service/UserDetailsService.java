@@ -108,6 +108,87 @@ public class UserDetailsService {
         }
     }
 
+    /**
+     * Recovers the original identifier behind a canonical user id, by decrypting the copy held in
+     * {@code user_details}.
+     *
+     * <p>This is the reverse of {@link #getOrCreateInternalUserId} and completes the registry's
+     * documented contract: the table stores {@code identifier_encrypted} precisely so an ownership
+     * column that now holds a UUID can still yield a real address when one is needed — see the
+     * {@code user_details} DDL, "Recover: decrypt from user_details for notifications/audit". Without
+     * it, replacing a contact identifier with a UUID silently destroys the ability to contact that
+     * user.
+     *
+     * <p><b>Returns plaintext PII.</b> Call it only at the point of use, never log the result, and do
+     * not place it on a response. Failures return {@code null} rather than throwing, so a caller
+     * degrades to "no address available" instead of failing the operation around it.
+     *
+     * @param canonicalUserId a canonical UUID; anything else returns {@code null}
+     * @return the original identifier, or {@code null} if unknown or not recoverable
+     */
+    public String recoverIdentifier(String canonicalUserId) {
+        if (canonicalUserId == null || !GenericUtil.isUuid(canonicalUserId)) {
+            return null;
+        }
+        try {
+            return userDetailsRepository.findById(UUID.fromString(canonicalUserId.trim()))
+                    .map(this::decryptIdentifier)
+                    .orElse(null);
+        } catch (Exception ex) {
+            LOGGER.error("Failed recovering identifier for canonical user {}",
+                    GenericUtil.maskIdentifier(canonicalUserId), ex);
+            return null;
+        }
+    }
+
+    private String decryptIdentifier(UserDetails userDetails) {
+        byte[] decrypted = cryptoUtil.decrypt(
+                userDetails.getIdentifierEncrypted().getBytes(StandardCharsets.UTF_8),
+                userDetails.getEncryptedDtimes());
+        if (decrypted == null || decrypted.length == 0) {
+            LOGGER.error("Empty decrypted identifier for canonical user {}",
+                    GenericUtil.maskIdentifier(String.valueOf(userDetails.getUserId())));
+            return null;
+        }
+        return new String(decrypted, StandardCharsets.UTF_8);
+    }
+
+    /**
+     * Resolves an identifier to its canonical id <em>without</em> registering one that does not exist.
+     *
+     * <p>The read-only counterpart to {@link #getOrCreateInternalUserId}. That method's create path
+     * encrypts through the crypto service — a blocking remote call — and inserts a row, which is
+     * appropriate on a write path handling one identity, but not on a read path that resolves an
+     * identifier per row of a listing. Use this wherever a stored identifier is being rendered rather
+     * than recorded: an unregistered value yields {@code null} so the caller can omit the field,
+     * instead of minting a registry entry as a side effect of someone running a query.
+     *
+     * <p>Hashing is local, so this costs one indexed lookup and never writes. Failures return
+     * {@code null} rather than throwing, so one unresolvable row cannot fail the request around it.
+     *
+     * @param userId a canonical id (returned as-is) or a raw identifier to look up
+     * @return the canonical id, or {@code null} if the identifier has no registry entry
+     */
+    public String findExistingUserId(String userId) {
+        if (userId == null || userId.isBlank()) {
+            return null;
+        }
+        String trimmedUserId = userId.trim();
+        if (GenericUtil.isUuid(trimmedUserId)) {
+            return trimmedUserId;
+        }
+        try {
+            String userHash = sha256Hex(standardize(trimmedUserId));
+            return userDetailsRepository.findByIdentifierHash(userHash)
+                    .map(userDetails -> userDetails.getUserId().toString())
+                    .orElse(null);
+        } catch (Exception ex) {
+            LOGGER.error("Failed looking up internal user ID for masked user {}",
+                    GenericUtil.maskIdentifier(trimmedUserId), ex);
+            return null;
+        }
+    }
+
     public List<String> getUserLookupIds(String userId, boolean piiBackwardCompatibility) {
         List<String> lookupIds = new ArrayList<>();
         if (userId == null || userId.isBlank()) {

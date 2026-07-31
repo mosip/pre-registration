@@ -278,6 +278,54 @@ public class ApplicationServiceTest {
 		assertNotNull(response.getResponse());
 	}
 
+	/**
+	 * The endpoint serialises the entity itself, so an unmigrated row would otherwise publish the
+	 * applicant's own email in cr_by/upd_by/contact_info. The stored entity must be left untouched —
+	 * it is attached under open-in-view, so mutating it would be flushed as an UPDATE.
+	 */
+	@Test
+	public void getApplicationInfoOmitsRawOwnershipColumnsWithoutMutatingTheStoredEntity() {
+		String applicationId = "9876543210";
+		ApplicationEntity storedEntity = new ApplicationEntity();
+		storedEntity.setApplicationId(applicationId);
+		storedEntity.setAppointmentDate(LocalDate.now());
+		storedEntity.setRegistrationCenterId("23465");
+		storedEntity.setCrBy("applicant@example.com");
+		storedEntity.setUpdBy("applicant@example.com");
+		storedEntity.setContactInfo("applicant@example.com");
+		Mockito.when(applicationRepository.findByApplicationId(applicationId)).thenReturn(storedEntity);
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(null);
+
+		MainResponseDTO<ApplicationEntity> response = applicationService.getApplicationInfo(applicationId);
+
+		Assert.assertNull(response.getResponse().getCrBy());
+		Assert.assertNull(response.getResponse().getUpdBy());
+		Assert.assertNull(response.getResponse().getContactInfo());
+		Assert.assertEquals(applicationId, response.getResponse().getApplicationId());
+		Assert.assertEquals("23465", response.getResponse().getRegistrationCenterId());
+		// The managed entity must be untouched, otherwise open-in-view flushes the blanking to the DB.
+		Assert.assertEquals("applicant@example.com", storedEntity.getCrBy());
+		Assert.assertEquals("applicant@example.com", storedEntity.getContactInfo());
+	}
+
+	/** Notification recovery needs the stored contact_info, so the internal variant must not strip it. */
+	@Test
+	public void getApplicationInfoInternalKeepsStoredOwnershipColumns() {
+		String applicationId = "9876543210";
+		ApplicationEntity storedEntity = new ApplicationEntity();
+		storedEntity.setApplicationId(applicationId);
+		storedEntity.setAppointmentDate(LocalDate.now());
+		storedEntity.setRegistrationCenterId("23465");
+		storedEntity.setCrBy("applicant@example.com");
+		storedEntity.setContactInfo("applicant@example.com");
+		Mockito.when(applicationRepository.findByApplicationId(applicationId)).thenReturn(storedEntity);
+
+		MainResponseDTO<ApplicationEntity> response = applicationService.getApplicationInfoInternal(applicationId);
+
+		Assert.assertEquals("applicant@example.com", response.getResponse().getContactInfo());
+		Assert.assertEquals("applicant@example.com", response.getResponse().getCrBy());
+	}
+
 	@Test(expected = InvalidRequestParameterException.class)
 	public void testgetApplicationInfoInvalidRequestParameterException() {
 		applicationService.getApplicationInfo(null);
@@ -488,6 +536,71 @@ public class ApplicationServiceTest {
 
 	}
 	
+	private List<ApplicationEntity> regCenterEntityWithCreator(String regCenterId, String crBy) {
+		List<ApplicationEntity> entity = new ArrayList<ApplicationEntity>();
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("35760478648170");
+		applicationEntity.setApplicationStatusCode("");
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setBookingStatusCode("");
+		applicationEntity.setBookingType("");
+		applicationEntity.setCrBy(crBy);
+		applicationEntity.setCrDtime(LocalDateTime.now());
+		applicationEntity.setRegistrationCenterId(regCenterId);
+		applicationEntity.setSlotFromTime(LocalTime.now());
+		applicationEntity.setSlotToTime(LocalTime.now());
+		entity.add(applicationEntity);
+		return entity;
+	}
+
+	/**
+	 * A record the migration has not reached still holds the applicant's raw email/phone in cr_by.
+	 * That must never reach registration-centre staff in the response.
+	 */
+	@Test
+	public void getBookingsForRegCenterResolvesRawCreatorToCanonicalId() {
+		String regCenterId = "10003";
+		String canonicalId = "11111111-1111-1111-1111-111111111111";
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(regCenterEntityWithCreator(regCenterId, "applicant@example.com"));
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(canonicalId);
+
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService
+				.getBookingsForRegCenter(regCenterId, LocalDate.now().toString(), null);
+
+		Assert.assertEquals(canonicalId, response.getResponse().get(0).getCrBy());
+	}
+
+	/** If the raw value has no registry entry the field is dropped — never echoed back as-is. */
+	@Test
+	public void getBookingsForRegCenterOmitsCreatorWhenUnresolvable() {
+		String regCenterId = "10003";
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(regCenterEntityWithCreator(regCenterId, "applicant@example.com"));
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(null);
+
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService
+				.getBookingsForRegCenter(regCenterId, LocalDate.now().toString(), null);
+
+		Assert.assertNull(response.getResponse().get(0).getCrBy());
+	}
+
+	/**
+	 * Rendering a listing must not register identities: the create path issues a blocking
+	 * crypto-service call and an insert, which on a legacy dataset would run once per row.
+	 */
+	@Test
+	public void getBookingsForRegCenterNeverRegistersAnIdentity() {
+		String regCenterId = "10003";
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(regCenterEntityWithCreator(regCenterId, "applicant@example.com"));
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(null);
+
+		applicationService.getBookingsForRegCenter(regCenterId, LocalDate.now().toString(), null);
+
+		Mockito.verify(userDetailsService, Mockito.never()).getOrCreateInternalUserId(Mockito.anyString());
+	}
+
 	@Test
 	public void getBookingsForRegCenterTest2() {
 		String regCenterId = "10003";

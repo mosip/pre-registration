@@ -81,14 +81,17 @@ public class ApplicationEntity {
 	private LocalDateTime updDtime;
 
 	/**
-	 * Effective createdBy - returns canonical user id
+	 * Returns {@code cr_by} as stored. <b>Does not canonicalise.</b> The value is a canonical user id
+	 * only once the identity migration has reached this row; until then it is still the raw legacy
+	 * identifier. Callers that put this on a response or compare it must resolve it themselves —
+	 * choosing this accessor over {@link #getCrBy()} changes nothing at runtime.
 	 */
 	public String getEffectiveCrBy() {
 		return this.crBy;
 	}
 
 	/**
-	 * Effective updatedBy - returns canonical user id
+	 * Returns {@code upd_by} as stored. <b>Does not canonicalise</b> — see {@link #getEffectiveCrBy()}.
 	 */
 	public String getEffectiveUpdBy() {
 		return this.updBy;

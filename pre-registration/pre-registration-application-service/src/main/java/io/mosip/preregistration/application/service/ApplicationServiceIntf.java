@@ -20,12 +20,31 @@ public interface ApplicationServiceIntf {
 	MainResponseDTO<String> saveUIEventAudit(UIAuditRequest auditRequest);
 
 	/**
-	 * Gives application details for the given applicationId
-	 * 
+	 * Gives application details for the given applicationId.
+	 *
+	 * <p>The returned entity is sanitised for external consumption: the ownership columns hold a
+	 * canonical id or nothing at all, never the applicant's raw identifier. Callers that need the
+	 * stored value — for example to recover a real contact address — must use
+	 * {@link #getApplicationInfoInternal(String)} instead.
+	 *
 	 * @param applicationId
 	 * @return
 	 */
 	MainResponseDTO<ApplicationEntity> getApplicationInfo(String applicationId);
+
+	/**
+	 * Gives application details with the ownership columns exactly as stored.
+	 *
+	 * <p><b>Never return this from a controller.</b> {@code cr_by}, {@code upd_by} and
+	 * {@code contact_info} may still hold the applicant's raw email or phone on records the identity
+	 * migration has not reached, which is precisely what {@link #getApplicationInfo(String)} strips.
+	 * This exists for internal callers that need the stored value to do their job — notification
+	 * recovery being the one that does.
+	 *
+	 * @param applicationId
+	 * @return
+	 */
+	MainResponseDTO<ApplicationEntity> getApplicationInfoInternal(String applicationId);
 	
 	/**
 	 * This Method is used to fetch status of particular application

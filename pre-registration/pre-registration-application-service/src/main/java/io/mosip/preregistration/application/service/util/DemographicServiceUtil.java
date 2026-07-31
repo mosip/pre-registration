@@ -205,9 +205,11 @@ public class DemographicServiceUtil {
 					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
 			createDto.setStatusCode(demographicEntity.getStatusCode());
 			createDto.setLangCode(demographicEntity.getLangCode());
-			createDto.setCreatedBy(demographicEntity.getEffectiveCreatedBy());
+			// Looked up, not registered: getEffective* returns the column as stored, so an unmigrated
+			// row would otherwise put the applicant's own email or phone on the response.
+			createDto.setCreatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveCreatedBy()));
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
-			createDto.setUpdatedBy(demographicEntity.getEffectiveUpdatedBy());
+			createDto.setUpdatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveUpdatedBy()));
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
@@ -330,7 +332,7 @@ public class DemographicServiceUtil {
 		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for demographic create. maskedUserId=" + GenericUtil.maskIdentifier(userId)
-						+ ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+						+ ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, effectiveUserId));
 		demographicEntity.setCrAppuserId(effectiveUserId);
 		demographicEntity.setCreatedBy(effectiveUserId);
 		demographicEntity.setUpdatedBy(effectiveUserId);
@@ -378,7 +380,7 @@ public class DemographicServiceUtil {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for demographic update. preRegistrationId=" + preRegistrationId
 						+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
-						+ isCanonicalApplied(userId, effectiveUserId));
+						+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
 		demographicEntity.setCrAppuserId(effectiveUserId);
 		demographicEntity.setCreatedBy(effectiveUserId);
 		demographicEntity.setUpdatedBy(effectiveUserId);
@@ -768,7 +770,7 @@ public class DemographicServiceUtil {
 		String effectiveUserId = resolveEffectiveUserId(userId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Resolved effective user id for applications write. applicationId=" + preId + ", maskedUserId="
-						+ GenericUtil.maskIdentifier(userId) + ", canonicalApplied=" + isCanonicalApplied(userId, effectiveUserId));
+						+ GenericUtil.maskIdentifier(userId) + ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, effectiveUserId));
 		applicationEntity.setCrBy(effectiveUserId);
 		applicationEntity.setUpdBy(effectiveUserId);
 		applicationEntity.setContactInfo(effectiveUserId);
@@ -809,7 +811,7 @@ public class DemographicServiceUtil {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Resolved effective user id for application status update. applicationId=" + applicationId
 							+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
-							+ isCanonicalApplied(userId, effectiveUserId));
+							+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
 			applicationEntity.setUpdBy(effectiveUserId);
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
@@ -1012,13 +1014,6 @@ public class DemographicServiceUtil {
 		});
 
 		return mandatoryDocs;
-	}
-
-
-	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
-		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
-		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
-		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 
 	private String resolveEffectiveUserId(String userId) {

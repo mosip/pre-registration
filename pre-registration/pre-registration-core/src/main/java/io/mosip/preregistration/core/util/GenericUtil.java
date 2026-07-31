@@ -63,6 +63,20 @@ public class GenericUtil {
 		}
 	}
 
+	/**
+	 * Whether resolving {@code originalUserId} actually produced a different, non-blank value — i.e.
+	 * whether canonicalisation changed anything for this record.
+	 *
+	 * <p>Diagnostic only: this is what the identity-migration log lines report as
+	 * {@code canonicalApplied}, so an operator can tell a genuine raw-to-canonical conversion from a
+	 * no-op on an already-migrated record. Nothing branches on it.
+	 */
+	public static boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
+	}
+
 	private static String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
 	public static String getCurrentResponseTime() {

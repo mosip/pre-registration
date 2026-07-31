@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
+import io.mosip.preregistration.batchjob.helper.BatchIdentityResolver;
 import io.mosip.preregistration.batchjob.helper.RestHelper;
 import io.mosip.preregistration.batchjob.repository.utils.BatchJpaRepositoryImpl;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -32,7 +33,10 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class ApplicationMismatchDataUpdater {
     
-    private Logger LOGGER = LoggerConfiguration.logConfig(ApplicationExpiredStatusUpdater.class);
+    private Logger LOGGER = LoggerConfiguration.logConfig(ApplicationMismatchDataUpdater.class);
+
+    /** Actor stamped on rows this job corrects. Not a person, but still resolved before writing. */
+    private static final String MISMATCH_JOB_ACTOR = "PRERIGISTRATION_JOB";
 
     @Value("${mosip.batch.token.authmanager.userName}")
 	private String auditUsername;
@@ -45,6 +49,9 @@ public class ApplicationMismatchDataUpdater {
 
     @Autowired
 	private RestHelper restHelper;
+
+    @Autowired
+	private BatchIdentityResolver batchIdentityResolver;
 
     public void updateMismatchData() {
 
@@ -66,6 +73,11 @@ public class ApplicationMismatchDataUpdater {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPOINTMENT_MISMATCH_JOB, 
                     "Total Number of application found to update as Expired: " + regAppointmentDetailsList.size());
+        // Resolved once per run, not per record: the actor is the same for every row this job
+        // corrects, and writing it raw would leave each corrected row as a reconciliation candidate.
+        final String resolvedJobActor = batchIdentityResolver.resolveUserUuid(MISMATCH_JOB_ACTOR,
+                PreRegBatchContants.APPOINTMENT_MISMATCH_JOB);
+
         List<String> errorredPreRegIds = new ArrayList<>();
         regAppointmentDetailsList.forEach(regAppointment -> {
             String preRegId = regAppointment.getPreregistrationId();
@@ -77,7 +89,7 @@ public class ApplicationMismatchDataUpdater {
                 if(dataMismatch) {
                     LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPOINTMENT_MISMATCH_JOB, 
                         "Mismatch data found for Pre Reg Id: " + preRegId);
-                    updateMismatchData(regAppointment, applicationEntity);
+                    updateMismatchData(regAppointment, applicationEntity, resolvedJobActor);
                 }
             } catch(Exception exp) {
                 errorredPreRegIds.add(preRegId);
@@ -119,14 +131,15 @@ public class ApplicationMismatchDataUpdater {
         return false;
     }
 
-    private void updateMismatchData(RegistrationBookingEntity regAppointment, ApplicationEntity application) {
+    private void updateMismatchData(RegistrationBookingEntity regAppointment, ApplicationEntity application,
+            String resolvedJobActor) {
         application.setBookingDate(regAppointment.getUpdDate().toLocalDate());
 		application.setRegistrationCenterId(regAppointment.getRegistrationCenterId());
 		application.setSlotFromTime(regAppointment.getSlotFromTime());
 		application.setSlotToTime(regAppointment.getSlotToTime());
 		application.setAppointmentDate(regAppointment.getRegDate());
 		application.setBookingStatusCode(StatusCodes.BOOKED.getCode());
-		application.setUpdBy("PRERIGISTRATION_JOB");
+		application.setUpdBy(resolvedJobActor);
 		application.setUpdDtime(LocalDateTime.now());
         batchServiceDAO.updateApplicantEntity(application);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPOINTMENT_MISMATCH_JOB, 

@@ -196,9 +196,11 @@ public class CommonServiceUtil {
 					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
 			createDto.setStatusCode(demographicEntity.getStatusCode());
 			createDto.setLangCode(demographicEntity.getLangCode());
-			createDto.setCreatedBy(demographicEntity.getEffectiveCreatedBy());
+			// Looked up, not registered: getEffective* returns the column as stored, so an unmigrated
+			// row would otherwise put the applicant's own email or phone on the response.
+			createDto.setCreatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveCreatedBy()));
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
-			createDto.setUpdatedBy(demographicEntity.getEffectiveUpdatedBy());
+			createDto.setUpdatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveUpdatedBy()));
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));

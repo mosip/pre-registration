@@ -927,20 +927,13 @@ public class DataSyncServiceUtil {
 			}
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Resolved effective user id for reverse datasync. maskedUserId=" + GenericUtil.maskIdentifier(userId)
-							+ ", canonicalApplied=" + isCanonicalApplied(userId, userUuid));
+							+ ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, userUuid));
 			return userUuid;
 		} catch (UserLookupException ex) {
 			throw new PreRegistrationException(
 					ErrorCodes.PRG_DATA_SYNC_012.getCode(),
 					ErrorMessages.FAILED_TO_STORE_PRE_REGISTRATION_IDS.getMessage());
 		}
-	}
-
-
-	private boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
-		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
-		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
-		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 
 	public ReverseDatasyncReponseDTO reverseDateSyncSave(Date reqDateTime, ReverseDataSyncRequestDTO request,

@@ -1,7 +1,9 @@
 package io.mosip.preregistration.batchjob.impl;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -50,6 +52,11 @@ public class ApplicationIdentityReconciliationUpdater {
 
 		int reconciled = 0;
 		int failed = 0;
+		// Records that cannot be resolved stay candidates and fail again on every nightly run, so the
+		// same trace would repeat nightly per record. Keep the first occurrence of each distinct
+		// cause — latching on "any failure" would hide a second, different root cause behind the
+		// first one logged — and report the rest as a count in the completion line.
+		Set<String> tracedFailureCauses = new HashSet<>();
 
 		// Reconciled rows drop out of the raw-identifier predicate, so re-reading the first bounded
 		// batch each iteration advances the window without offset paging. Stop when a full batch makes
@@ -73,8 +80,10 @@ public class ApplicationIdentityReconciliationUpdater {
 					log.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
 							PreRegBatchContants.IDENTITY_RECONCILIATION_JOB,
 							"Identity reconciliation failed for preRegistrationId: " + preRegistrationId);
-					log.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
-							PreRegBatchContants.IDENTITY_RECONCILIATION_JOB, ExceptionUtils.getStackTrace(ex));
+					if (tracedFailureCauses.add(ex.getClass().getName())) {
+						log.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,
+								PreRegBatchContants.IDENTITY_RECONCILIATION_JOB, ExceptionUtils.getStackTrace(ex));
+					}
 				}
 			}
 

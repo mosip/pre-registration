@@ -1,6 +1,7 @@
 package io.mosip.preregistration.core.util.test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -71,6 +72,27 @@ public class GenericUtilTest {
 				GenericUtil.maskIdentifier("00000000-0000-0000-0000-000000000001"));
 		assertEquals("<empty>", GenericUtil.maskIdentifier(null));
 		assertEquals("<empty>", GenericUtil.maskIdentifier("   "));
+	}
+
+	/**
+	 * Collapsed from three byte-identical private copies in DemographicServiceUtil,
+	 * DocumentServiceUtil and DataSyncServiceUtil; behaviour must stay exactly as it was.
+	 */
+	@Test
+	public void isCanonicalAppliedReportsOnlyRealConversions() {
+		// Raw resolved to a different canonical value — a genuine conversion.
+		assertTrue(GenericUtil.isCanonicalApplied("user@example.com",
+				"00000000-0000-0000-0000-000000000001"));
+		// Already canonical, resolution was a no-op.
+		assertFalse(GenericUtil.isCanonicalApplied("00000000-0000-0000-0000-000000000001",
+				"00000000-0000-0000-0000-000000000001"));
+		// Whitespace-only difference is not a conversion.
+		assertFalse(GenericUtil.isCanonicalApplied("  user@example.com  ", "user@example.com"));
+		// Nothing resolved.
+		assertFalse(GenericUtil.isCanonicalApplied("user@example.com", null));
+		assertFalse(GenericUtil.isCanonicalApplied("user@example.com", "   "));
+		// Null original with a resolved value still counts as applied.
+		assertTrue(GenericUtil.isCanonicalApplied(null, "00000000-0000-0000-0000-000000000001"));
 	}
 
 }
