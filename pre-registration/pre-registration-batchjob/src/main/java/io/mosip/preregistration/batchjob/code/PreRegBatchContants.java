@@ -44,6 +44,8 @@ public class PreRegBatchContants {
 
 	public static final String APPLICATION_CONSUMED_JOB = "ApplicationConsumedJob";
 
+	public static final String IDENTITY_RECONCILIATION_JOB = "IdentityReconciliationJob";
+
 	public static final String EXPIRED_STATUS_JOB = "ExpiredStatusJob";
 
 	public static final String APPOINTMENT_MISMATCH_JOB = "AppointmentMismatchJob";

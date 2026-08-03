@@ -3,6 +3,7 @@ package io.mosip.preregistration.core.util;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +17,64 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 public class GenericUtil {
 
 	private GenericUtil() {
+	}
+
+	public static String maskIdentifier(String value) {
+		if (value == null || value.isBlank()) {
+			return "<empty>";
+		}
+		String trimmed = value.trim();
+		int atIndex = trimmed.indexOf('@');
+		if (atIndex > 0 && atIndex < trimmed.length() - 1) {
+			String local = trimmed.substring(0, atIndex);
+			String domain = trimmed.substring(atIndex);
+			return local.charAt(0) + "***" + domain;
+		}
+		if (trimmed.matches("\\+?\\d{10,12}")) {
+			boolean hasPlus = trimmed.startsWith("+");
+			String digits = hasPlus ? trimmed.substring(1) : trimmed;
+			if (digits.length() <= 4) {
+				return (hasPlus ? "+" : "") + "****";
+			}
+			String masked = "*".repeat(digits.length() - 4) + digits.substring(digits.length() - 4);
+			return (hasPlus ? "+" : "") + masked;
+		}
+		if (isUuid(trimmed)) {
+			return "***" + trimmed.substring(trimmed.length() - 6);
+		}
+		// Scale the visible suffix to the length of the value: a fixed 4 characters would expose most
+		// of a short identifier (e.g. "admin" -> "***dmin"). Values shorter than 3 are fully masked.
+		int visible = Math.min(4, trimmed.length() / 3);
+		if (visible <= 0) {
+			return "***";
+		}
+		return "***" + trimmed.substring(trimmed.length() - visible);
+	}
+
+	public static boolean isUuid(String value) {
+		if (value == null || value.isBlank()) {
+			return false;
+		}
+		try {
+			UUID.fromString(value.trim());
+			return true;
+		} catch (IllegalArgumentException ex) {
+			return false;
+		}
+	}
+
+	/**
+	 * Whether resolving {@code originalUserId} actually produced a different, non-blank value — i.e.
+	 * whether canonicalisation changed anything for this record.
+	 *
+	 * <p>Diagnostic only: this is what the identity-migration log lines report as
+	 * {@code canonicalApplied}, so an operator can tell a genuine raw-to-canonical conversion from a
+	 * no-op on an already-migrated record. Nothing branches on it.
+	 */
+	public static boolean isCanonicalApplied(String originalUserId, String effectiveUserId) {
+		String trimmedOriginal = originalUserId == null ? "" : originalUserId.trim();
+		String trimmedEffective = effectiveUserId == null ? "" : effectiveUserId.trim();
+		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 
 	private static String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";

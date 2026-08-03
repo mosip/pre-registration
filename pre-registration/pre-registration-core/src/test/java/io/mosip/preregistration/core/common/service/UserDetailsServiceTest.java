@@ -1,0 +1,262 @@
+package io.mosip.preregistration.core.common.service;
+
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.when;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+
+import java.nio.charset.StandardCharsets;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+import org.springframework.dao.DataIntegrityViolationException;
+
+import io.mosip.preregistration.core.common.entity.UserDetails;
+import io.mosip.preregistration.core.common.repository.UserDetailsRepository;
+import io.mosip.preregistration.core.exception.UserLookupException;
+import io.mosip.preregistration.core.util.CryptoUtil;
+
+public class UserDetailsServiceTest {
+
+    @Mock
+    private UserDetailsRepository userDetailsRepository;
+
+    @Mock
+    private CryptoUtil cryptoUtil;
+
+    /** The insert now goes through its own transactional bean — see UserDetailsTxHelper. */
+    @Mock
+    private UserDetailsTxHelper userDetailsTxHelper;
+
+    @InjectMocks
+    private UserDetailsService userDetailsService;
+
+    public UserDetailsServiceTest() {
+        MockitoAnnotations.openMocks(this);
+    }
+
+    @Test
+    public void testFindOrCreateCreatesWhenNotFound() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
+        when(userDetailsTxHelper.saveInNewTransaction(any())).thenAnswer(i -> i.getArgument(0));
+
+        UserDetails u = userDetailsService.createInternalUser("TestUser", "testuser", "somehash");
+
+        verify(userDetailsTxHelper).saveInNewTransaction(any());
+        assertEquals("enc-value", u.getIdentifierEncrypted());
+    }
+
+    /**
+     * Losing the insert race must resolve to the winner's row, not propagate. The insert runs in its
+     * own transaction (UserDetailsTxHelper) precisely so this re-read still has a usable one.
+     */
+    @Test
+    public void testCreateInternalUserResolvesToWinnerWhenInsertRaceIsLost() {
+        UserDetails winner = new UserDetails();
+        winner.setUserId(UUID.fromString("00000000-0000-0000-0000-0000000000ff"));
+        winner.setIdentifierHash("somehash");
+        // The only lookup on this path is the re-read inside the catch block.
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(winner));
+        when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
+        when(userDetailsTxHelper.saveInNewTransaction(any()))
+                .thenThrow(new DataIntegrityViolationException("duplicate key value violates unique constraint"));
+
+        UserDetails resolved = userDetailsService.createInternalUser("TestUser", "testuser", "somehash");
+
+        assertEquals(winner.getUserId(), resolved.getUserId());
+    }
+
+    /** If the violation was not a lost race, the original exception must still surface. */
+    @Test
+    public void testCreateInternalUserRethrowsWhenWinnerCannotBeFound() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenReturn("enc-value".getBytes(StandardCharsets.UTF_8));
+        when(userDetailsTxHelper.saveInNewTransaction(any()))
+                .thenThrow(new DataIntegrityViolationException("some other constraint"));
+
+        assertThrows(DataIntegrityViolationException.class,
+                () -> userDetailsService.createInternalUser("TestUser", "testuser", "somehash"));
+    }
+
+    @Test
+    public void testResolveUserUuidReturnsExistingUuid() {
+        UserDetails mock = new UserDetails();
+        mock.setUserId(UUID.fromString("00000000-0000-0000-0000-000000000001"));
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mock));
+
+        String res = userDetailsService.getOrCreateInternalUserId("TestUser");
+        verify(userDetailsRepository).findByIdentifierHash(any());
+
+        assertNotNull(res);
+        assertEquals("00000000-0000-0000-0000-000000000001", res);
+    }
+
+    @Test
+    public void testFindOrCreateFailsWhenEncryptedValueIsNullForNewRecord() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
+
+        assertThrows(IllegalStateException.class, () -> userDetailsService.createInternalUser("TestUser", "testuser", "somehash"));
+    }
+
+    @Test
+    public void testFindOrCreateFailsWhenEncryptedValueIsNullForExistingRecordRepair() {
+        UserDetails existing = new UserDetails();
+        existing.setUserId(UUID.randomUUID());
+        existing.setIdentifierHash("hash");
+        existing.setIdentifierEncrypted(null);
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(existing));
+        when(cryptoUtil.encrypt(any(), any())).thenReturn(null);
+
+        assertThrows(IllegalStateException.class, () -> userDetailsService.createInternalUser("TestUser", "testuser", "somehash"));
+    }
+
+    private UserDetails storedUser(UUID canonicalId) {
+        UserDetails stored = new UserDetails();
+        stored.setUserId(canonicalId);
+        stored.setIdentifierEncrypted("enc-value");
+        stored.setEncryptedDtimes(LocalDateTime.now());
+        return stored;
+    }
+
+    /**
+     * Recovery is what lets a column that now holds a UUID still yield a real address — without it,
+     * migrating a contact identifier silently destroys the ability to contact that user.
+     */
+    @Test
+    public void testGetDecryptedIdentifierReturnsPlainIdentifier() {
+        UUID canonicalId = UUID.randomUUID();
+        when(userDetailsRepository.findById(canonicalId)).thenReturn(Optional.of(storedUser(canonicalId)));
+        when(cryptoUtil.decrypt(any(), any())).thenReturn("TestUser123".getBytes(StandardCharsets.UTF_8));
+
+        assertEquals("TestUser123", userDetailsService.recoverIdentifier(canonicalId.toString()));
+    }
+
+    @Test
+    public void testGetDecryptedIdentifierReturnsEmptyWhenDecryptFails() {
+        UUID canonicalId = UUID.randomUUID();
+        when(userDetailsRepository.findById(canonicalId)).thenReturn(Optional.of(storedUser(canonicalId)));
+        when(cryptoUtil.decrypt(any(), any())).thenThrow(new RuntimeException("decrypt failure"));
+
+        assertNull(userDetailsService.recoverIdentifier(canonicalId.toString()));
+    }
+
+    /** A legacy row still holding a raw address must not be sent to the registry at all. */
+    @Test
+    public void recoverIdentifierReturnsNullForNonCanonicalInput() {
+        assertNull(userDetailsService.recoverIdentifier("user@example.com"));
+        assertNull(userDetailsService.recoverIdentifier(null));
+        verifyNoInteractions(userDetailsRepository);
+    }
+
+    @Test
+    public void recoverIdentifierReturnsNullWhenMappingIsUnknown() {
+        UUID canonicalId = UUID.randomUUID();
+        when(userDetailsRepository.findById(canonicalId)).thenReturn(Optional.empty());
+
+        assertNull(userDetailsService.recoverIdentifier(canonicalId.toString()));
+    }
+
+    @Test
+    public void testResolveCanonicalUserIdReturnsUuidWhenMappingExists() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("enc-value");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        String resolved = userDetailsService.getOrCreateInternalUserId("TestUser");
+
+        assertNotNull(resolved);
+        assertEquals(mapped.getUserId().toString(), resolved);
+    }
+
+    @Test
+    public void testResolveCanonicalUserIdReturnsExistingUuidWithoutRepairingRecord() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        String resolved = userDetailsService.getOrCreateInternalUserId("TestUser");
+
+        assertNotNull(resolved);
+        assertEquals(mapped.getUserId().toString(), resolved);
+    }
+
+    @Test
+    public void testGetOrCreateInternalUserIdReturnsCanonicalUuidUnchanged() {
+        String canonicalUuid = UUID.randomUUID().toString();
+
+        String resolved = userDetailsService.getOrCreateInternalUserId(canonicalUuid);
+
+        assertEquals(canonicalUuid, resolved);
+        verifyNoInteractions(userDetailsRepository);
+    }
+
+    @Test
+    public void testGetOrCreateInternalUserIdTrimsCanonicalUuid() {
+        String canonicalUuid = UUID.randomUUID().toString();
+
+        String resolved = userDetailsService.getOrCreateInternalUserId("  " + canonicalUuid + "  ");
+
+        assertEquals(canonicalUuid, resolved);
+        verifyNoInteractions(userDetailsRepository);
+    }
+
+    @Test
+    public void testGetOrCreateInternalUserIdThrowsUserLookupExceptionOnFailure() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenReturn(null); // encryption fails → createInternalUser throws
+
+        assertThrows(UserLookupException.class, () -> userDetailsService.getOrCreateInternalUserId("TestUser"));
+    }
+
+    @Test
+    public void testGetUserLookupIdsReturnsCanonicalAndLegacyInCompatibilityMode() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("enc-value");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        List<String> lookupIds = userDetailsService.getUserLookupIds("TestUser", true);
+
+        assertIterableEquals(List.of(mapped.getUserId().toString(), "TestUser"), lookupIds);
+    }
+
+    @Test
+    public void testMatchesUserSupportsLegacyAndCanonicalInCompatibilityMode() {
+        UserDetails mapped = new UserDetails();
+        mapped.setUserId(UUID.randomUUID());
+        mapped.setCrDtimes(LocalDateTime.now());
+        mapped.setIdentifierEncrypted("enc-value");
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        assertTrue(userDetailsService.matchesUser("TestUser", mapped.getUserId().toString(), true));
+        assertTrue(userDetailsService.matchesUser("TestUser", "TestUser", true));
+    }
+
+    @Test
+    public void testMatchesUserReturnsFalseWhenNoCanonicalOrLegacyMatchExists() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+
+        assertFalse(userDetailsService.matchesUser("TestUser", "AnotherUser", true));
+    }
+
+}

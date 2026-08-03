@@ -17,6 +17,7 @@
 \ir ddl/reg_available_slot.sql
 \ir ddl/otp_transaction.sql
 \ir ddl/applications.sql
+\ir ddl/user_details.sql
 \ir ddl/fk.sql
 \ir ddl/batch-fk.sql
 \ir ddl/anonymous_profile.sql

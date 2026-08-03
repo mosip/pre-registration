@@ -86,6 +86,14 @@ public class ProcessedPreRegEntity implements Serializable {
 	 */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDate;
+
+	public String getEffectiveCrBy() {
+		return this.crBy;
+	}
+
+	public String getEffectiveUpdBy() {
+		return this.upBy;
+	} 
 	
 	/**
 	 * The is deleted.
