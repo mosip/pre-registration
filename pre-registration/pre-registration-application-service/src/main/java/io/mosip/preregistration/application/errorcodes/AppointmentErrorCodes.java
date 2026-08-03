@@ -16,7 +16,9 @@ public enum AppointmentErrorCodes {
 
 	FAILED_TO_UPDATE_APPLICATIONS("PRG_APP_BCK_07","Failed to update Appointment for the %s"),
 	
-	INVALID_APP_ID_FOR_USER("PRG_APP_BCK_08", "Requested application id does not belong to the user");
+	INVALID_APP_ID_FOR_USER("PRG_APP_BCK_08", "Requested application id does not belong to the user"),
+
+	FAILED_TO_RESOLVE_USER_IDENTITY("PRG_APP_BCK_09", "Failed to resolve the canonical user identity");
 
 	private String code;
 	private String message;

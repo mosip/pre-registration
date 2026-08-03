@@ -32,6 +32,7 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -51,6 +52,7 @@ import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.application.dto.DocumentRequestDTO;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.util.CommonServiceUtil;
 import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
@@ -67,7 +69,7 @@ import org.springframework.web.multipart.MultipartFile;
  * @since 1.2.0
  */
 @RunWith(SpringRunner.class)
-@SpringBootTest(classes = DocumentServiceUtil.class)
+@SpringBootTest(classes = DocumentServiceUtil.class, properties = "spring.cloud.config.enabled=false")
 public class DocumentServiceUtilTest {
 
 	@MockBean
@@ -84,6 +86,9 @@ public class DocumentServiceUtilTest {
 	@MockBean
 	private CommonServiceUtil commonServiceUtil;
 
+	@MockBean
+	private UserDetailsService userDetailsService;
+
 	@Autowired
 	private DocumentServiceUtil documentServiceUtil;
 
@@ -94,6 +99,9 @@ public class DocumentServiceUtilTest {
 
 	@MockBean
 	private DemographicService demographicServiceIntf;
+
+	@MockBean
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
 
 	@MockBean(name = "S3Adapter")
 	private ObjectStoreAdapter objectStore;
@@ -106,8 +114,11 @@ public class DocumentServiceUtilTest {
 	public void setUp() throws Exception {
 		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(documentServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
+		ReflectionTestUtils.setField(documentServiceUtil, "piiBackwardCompatibility", true);
 		ReflectionTestUtils.setField(commonServiceUtil, "utcDateTimePattern", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(documentServiceUtil, "commonServiceUtil", commonServiceUtil);
+		when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
+				.thenAnswer(invocation -> invocation.getArgument(0));
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		URI uri = new URI(classLoader.getResource("Doc.pdf").getFile().trim().replaceAll("\\u0020", "%20"));
@@ -223,7 +234,6 @@ public class DocumentServiceUtilTest {
 
 	@Test
 	public void test_dto_to_entity_creates_document_entity_with_correct_values() {
-		DocumentServiceUtil documentServiceUtil = new DocumentServiceUtil();
 		DocumentRequestDTO dto = new DocumentRequestDTO();
 		dto.setDocCatCode("POA");
 		dto.setDocTypCode("Passport");
@@ -261,7 +271,6 @@ public class DocumentServiceUtilTest {
 
 	@Test
 	public void test_dto_to_entity_handles_null_values_in_dto() {
-		DocumentServiceUtil documentServiceUtil = new DocumentServiceUtil();
 		DocumentRequestDTO dto = new DocumentRequestDTO();
 
 		String userId = "testUser";

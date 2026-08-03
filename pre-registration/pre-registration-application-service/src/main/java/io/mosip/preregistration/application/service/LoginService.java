@@ -59,6 +59,8 @@ import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
+import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
@@ -130,6 +132,9 @@ public class LoginService {
 	OTPManager otpmanager;
 
 	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Autowired
 	private Environment env;
 
 	/**
@@ -144,8 +149,8 @@ public class LoginService {
 		String userid = null;
 		boolean isSuccess = false;
 
-		log.info("In callsendOtp method of login service  with userID: {} and langCode",
-				userOtpRequest.getRequest().getUserId(), language);
+		log.info("In callsendOtp method of login service with userID: {} and langCode: {}",
+				GenericUtil.maskIdentifier(userOtpRequest.getRequest().getUserId()), language);
 
 		try {
 			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
@@ -198,7 +203,7 @@ public class LoginService {
 			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
 
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method with userId "
-				+ request.getRequest().getUserId() + "and langCode " + request.getRequest().getUserId());
+				+ GenericUtil.maskIdentifier(request.getRequest().getUserId()) + " and langCode " + request.getRequest().getLangCode());
 		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
 				.getMainResponseDto(request);
 
@@ -361,6 +366,8 @@ public class LoginService {
 	 */
 	public void setAuditValues(String eventId, String eventName, String eventType, String description, String idType,
 			String userId, String userName) {
+		String resolvedUserId = resolveAuditUserId(userId);
+		String resolvedUserName = resolveAuditUserId(userName);
 		try {
 			AuditRequestDto auditRequestDto = new AuditRequestDto();
 			auditRequestDto.setEventId(eventId);
@@ -368,8 +375,8 @@ public class LoginService {
 			auditRequestDto.setEventType(eventType);
 			auditRequestDto.setDescription(description);
 			auditRequestDto.setId(idType);
-			auditRequestDto.setSessionUserId(userId);
-			auditRequestDto.setSessionUserName(userName);
+			auditRequestDto.setSessionUserId(resolvedUserId);
+			auditRequestDto.setSessionUserName(resolvedUserName);
 			auditRequestDto.setModuleId(AuditLogVariables.AUTHENTICATION.toString());
 			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
 			auditLogUtil.saveAuditDetails(auditRequestDto);
@@ -377,6 +384,19 @@ public class LoginService {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + StringUtils.join(ex.getValidationErrorList(), ","));
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + ExceptionUtils.getFullStackTrace(ex));
+		}
+	}
+
+	private String resolveAuditUserId(String userId) {
+		if (userId == null || userId.isBlank()) {
+			return userId;
+		}
+		try {
+			return userDetailsService.getOrCreateInternalUserId(userId);
+		} catch (UserLookupException ex) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to resolve UUID for audit user " + GenericUtil.maskIdentifier(userId));
+			return GenericUtil.maskIdentifier(userId);
 		}
 	}
 
@@ -410,7 +430,7 @@ public class LoginService {
 	}
 
 	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
-		log.info("In generateJWTToken method of loginservice:{} {}", userId, issuerUrl);
+		log.info("In generateJWTToken method of loginservice:{} {}", GenericUtil.maskIdentifier(userId), issuerUrl);
 		Map<String, Object> claims = new HashMap<>();
 		claims.put("userId", userId);
 		claims.put("scope", jwtScope);
@@ -461,4 +481,5 @@ public class LoginService {
 	public String sendOTPSuccessJwtToken(String userId) {
 		return this.loginCommonUtil.sendOtpJwtToken(userId);
 	}
+
 }

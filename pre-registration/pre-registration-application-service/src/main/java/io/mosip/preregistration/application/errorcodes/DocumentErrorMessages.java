@@ -137,7 +137,11 @@ public enum DocumentErrorMessages {
 	/**
 	 * ErrorMessage for Password Protection files
 	 */
-	PASSWORD_PROTECTION_ERROR("Password-protected file is not allowed for upload");
+	PASSWORD_PROTECTION_ERROR("Password-protected file is not allowed for upload"),
+	/**
+	 * ErrorMessage for IDENTITY_RESOLUTION_FAILED
+	 */
+	IDENTITY_RESOLUTION_FAILED ("Failed to resolve effective user identity");
 
 	private DocumentErrorMessages(String message) {
 		this.message = message;

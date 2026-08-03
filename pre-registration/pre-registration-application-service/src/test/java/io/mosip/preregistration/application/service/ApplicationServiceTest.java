@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -86,6 +87,9 @@ public class ApplicationServiceTest {
 	ValidationUtil validationUtil;
 
 	@Mock
+	UserDetailsService userDetailsService;
+
+	@Mock
 	DemographicServiceIntf demographicService;
 
 	@Mock
@@ -100,6 +104,21 @@ public class ApplicationServiceTest {
 	@Before
 	public void setUp() {
 		MockitoAnnotations.initMocks(this);
+		Mockito.when(userDetailsService.createInternalUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenAnswer(invocation -> {
+			String id = invocation.getArgument(0);
+			io.mosip.preregistration.core.common.entity.UserDetails ud = new io.mosip.preregistration.core.common.entity.UserDetails();
+			ud.setUserId(UUID.nameUUIDFromBytes(id.getBytes()));
+			return ud;
+		});
+		Mockito.when(userDetailsService.matchesUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean()))
+				.thenAnswer(invocation -> {
+					String authUserId = invocation.getArgument(0);
+					String expectedCrBy = invocation.getArgument(1);
+					Boolean compatibility = invocation.getArgument(2);
+					String canonicalUserId = getCanonicalUserIdString(authUserId);
+					return canonicalUserId.equals(expectedCrBy)
+							|| (Boolean.TRUE.equals(compatibility) && authUserId.equals(expectedCrBy));
+				});
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
@@ -108,6 +127,10 @@ public class ApplicationServiceTest {
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 		ReflectionTestUtils.setField(applicationService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 		ReflectionTestUtils.setField(applicationService, "allApplicationsId", "preReg");
+	}
+
+	private String getCanonicalUserIdString(String identifier) {
+		return UUID.nameUUIDFromBytes(identifier.getBytes()).toString();
 	}
 
 	@Test(expected = AuditFailedException.class)
@@ -255,6 +278,54 @@ public class ApplicationServiceTest {
 		assertNotNull(response.getResponse());
 	}
 
+	/**
+	 * The endpoint serialises the entity itself, so an unmigrated row would otherwise publish the
+	 * applicant's own email in cr_by/upd_by/contact_info. The stored entity must be left untouched —
+	 * it is attached under open-in-view, so mutating it would be flushed as an UPDATE.
+	 */
+	@Test
+	public void getApplicationInfoOmitsRawOwnershipColumnsWithoutMutatingTheStoredEntity() {
+		String applicationId = "9876543210";
+		ApplicationEntity storedEntity = new ApplicationEntity();
+		storedEntity.setApplicationId(applicationId);
+		storedEntity.setAppointmentDate(LocalDate.now());
+		storedEntity.setRegistrationCenterId("23465");
+		storedEntity.setCrBy("applicant@example.com");
+		storedEntity.setUpdBy("applicant@example.com");
+		storedEntity.setContactInfo("applicant@example.com");
+		Mockito.when(applicationRepository.findByApplicationId(applicationId)).thenReturn(storedEntity);
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(null);
+
+		MainResponseDTO<ApplicationEntity> response = applicationService.getApplicationInfo(applicationId);
+
+		Assert.assertNull(response.getResponse().getCrBy());
+		Assert.assertNull(response.getResponse().getUpdBy());
+		Assert.assertNull(response.getResponse().getContactInfo());
+		Assert.assertEquals(applicationId, response.getResponse().getApplicationId());
+		Assert.assertEquals("23465", response.getResponse().getRegistrationCenterId());
+		// The managed entity must be untouched, otherwise open-in-view flushes the blanking to the DB.
+		Assert.assertEquals("applicant@example.com", storedEntity.getCrBy());
+		Assert.assertEquals("applicant@example.com", storedEntity.getContactInfo());
+	}
+
+	/** Notification recovery needs the stored contact_info, so the internal variant must not strip it. */
+	@Test
+	public void getApplicationInfoInternalKeepsStoredOwnershipColumns() {
+		String applicationId = "9876543210";
+		ApplicationEntity storedEntity = new ApplicationEntity();
+		storedEntity.setApplicationId(applicationId);
+		storedEntity.setAppointmentDate(LocalDate.now());
+		storedEntity.setRegistrationCenterId("23465");
+		storedEntity.setCrBy("applicant@example.com");
+		storedEntity.setContactInfo("applicant@example.com");
+		Mockito.when(applicationRepository.findByApplicationId(applicationId)).thenReturn(storedEntity);
+
+		MainResponseDTO<ApplicationEntity> response = applicationService.getApplicationInfoInternal(applicationId);
+
+		Assert.assertEquals("applicant@example.com", response.getResponse().getContactInfo());
+		Assert.assertEquals("applicant@example.com", response.getResponse().getCrBy());
+	}
+
 	@Test(expected = InvalidRequestParameterException.class)
 	public void testgetApplicationInfoInvalidRequestParameterException() {
 		applicationService.getApplicationInfo(null);
@@ -290,7 +361,9 @@ public class ApplicationServiceTest {
 		applicationEntitie.setApplicationId("1234567890");
 		applicationEntitie.setApplicationStatusCode("Processed");
 		applicationEntities.add(applicationEntitie);
-		Mockito.when(applicationRepository.findByCreatedByBookingType(Mockito.any(), Mockito.any()))
+		Mockito.when(userDetailsService.getUserLookupIds(Mockito.any(), Mockito.anyBoolean()))
+				.thenReturn(List.of("test-user"));
+		Mockito.when(applicationRepository.findByCreatedByInBookingType(Mockito.anyList(), Mockito.any()))
 				.thenReturn(applicationEntities);
 		MainResponseDTO<ApplicationsListDTO> response = applicationService
 				.getAllApplicationsForUserForBookingType(BookingTypeCodes.NEW_PREREGISTRATION.toString());
@@ -303,7 +376,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -326,7 +399,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -336,8 +409,7 @@ public class ApplicationServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
-
+		Mockito.when(applicationUser.getUserId()).thenReturn(applicationId);
 		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
@@ -350,7 +422,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -360,8 +432,7 @@ public class ApplicationServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
-
+		Mockito.when(applicationUser.getUserId()).thenReturn(applicationId);
 		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
@@ -374,7 +445,7 @@ public class ApplicationServiceTest {
 		ApplicationEntity applicationEntity = new ApplicationEntity();
 		applicationEntity.setApplicationId(applicationId);
 		applicationEntity.setAppointmentDate(LocalDate.now());
-		applicationEntity.setCrBy("4665");
+		applicationEntity.setCrBy(getCanonicalUserIdString("4665"));
 		applicationEntity.setRegistrationCenterId("32544");
 
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
@@ -384,8 +455,6 @@ public class ApplicationServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-		Mockito.when(applicationService.authUserDetails().getUserId()).thenReturn(applicationId);
-
 		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
@@ -395,6 +464,23 @@ public class ApplicationServiceTest {
 	@Test
 	public void testDeleteLostOrUpdateApplicationPreRegistrationSuccess() {
 		String applicationId = "12345";
+		String userId = getCanonicalUserIdString("9988905444");
+		
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(applicationId);
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setCrBy(userId);
+		applicationEntity.setRegistrationCenterId("32544");
+		
+		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
+		Authentication authentication = Mockito.mock(Authentication.class);
+		authentication.setAuthenticated(true);
+		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+		SecurityContextHolder.setContext(securityContext);
+		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		Mockito.when(applicationUser.getUserId()).thenReturn("9988905444");
+		Mockito.when(serviceUtil.findApplicationById(Mockito.any())).thenReturn(applicationEntity);
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString()));
@@ -450,6 +536,71 @@ public class ApplicationServiceTest {
 
 	}
 	
+	private List<ApplicationEntity> regCenterEntityWithCreator(String regCenterId, String crBy) {
+		List<ApplicationEntity> entity = new ArrayList<ApplicationEntity>();
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("35760478648170");
+		applicationEntity.setApplicationStatusCode("");
+		applicationEntity.setAppointmentDate(LocalDate.now());
+		applicationEntity.setBookingStatusCode("");
+		applicationEntity.setBookingType("");
+		applicationEntity.setCrBy(crBy);
+		applicationEntity.setCrDtime(LocalDateTime.now());
+		applicationEntity.setRegistrationCenterId(regCenterId);
+		applicationEntity.setSlotFromTime(LocalTime.now());
+		applicationEntity.setSlotToTime(LocalTime.now());
+		entity.add(applicationEntity);
+		return entity;
+	}
+
+	/**
+	 * A record the migration has not reached still holds the applicant's raw email/phone in cr_by.
+	 * That must never reach registration-centre staff in the response.
+	 */
+	@Test
+	public void getBookingsForRegCenterResolvesRawCreatorToCanonicalId() {
+		String regCenterId = "10003";
+		String canonicalId = "11111111-1111-1111-1111-111111111111";
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(regCenterEntityWithCreator(regCenterId, "applicant@example.com"));
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(canonicalId);
+
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService
+				.getBookingsForRegCenter(regCenterId, LocalDate.now().toString(), null);
+
+		Assert.assertEquals(canonicalId, response.getResponse().get(0).getCrBy());
+	}
+
+	/** If the raw value has no registry entry the field is dropped — never echoed back as-is. */
+	@Test
+	public void getBookingsForRegCenterOmitsCreatorWhenUnresolvable() {
+		String regCenterId = "10003";
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(regCenterEntityWithCreator(regCenterId, "applicant@example.com"));
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(null);
+
+		MainResponseDTO<List<ApplicationDetailResponseDTO>> response = applicationService
+				.getBookingsForRegCenter(regCenterId, LocalDate.now().toString(), null);
+
+		Assert.assertNull(response.getResponse().get(0).getCrBy());
+	}
+
+	/**
+	 * Rendering a listing must not register identities: the create path issues a blocking
+	 * crypto-service call and an insert, which on a legacy dataset would run once per row.
+	 */
+	@Test
+	public void getBookingsForRegCenterNeverRegistersAnIdentity() {
+		String regCenterId = "10003";
+		Mockito.when(applicationRepository.findByRegistrationCenterIdAndBetweenDate(Mockito.any(), Mockito.any(),
+				Mockito.any())).thenReturn(regCenterEntityWithCreator(regCenterId, "applicant@example.com"));
+		Mockito.when(userDetailsService.findExistingUserId("applicant@example.com")).thenReturn(null);
+
+		applicationService.getBookingsForRegCenter(regCenterId, LocalDate.now().toString(), null);
+
+		Mockito.verify(userDetailsService, Mockito.never()).getOrCreateInternalUserId(Mockito.anyString());
+	}
+
 	@Test
 	public void getBookingsForRegCenterTest2() {
 		String regCenterId = "10003";
@@ -549,9 +700,11 @@ public class ApplicationServiceTest {
 
 	@Test(expected = RecordNotFoundException.class)
 	public void testgetAllApplicationsForUserException() {
-		Mockito.when(applicationRepository.findByCreatedBy(Mockito.any())).thenThrow(new RecordNotFoundException(
+		Mockito.when(userDetailsService.getUserLookupIds(Mockito.any(), Mockito.anyBoolean()))
+				.thenReturn(List.of("test-user"));
+		Mockito.when(applicationRepository.findByCreatedByIn(Mockito.anyList())).thenThrow(new RecordNotFoundException(
 				ApplicationErrorCodes.PRG_APP_013.getCode(), ApplicationErrorMessages.NO_RECORD_FOUND.getMessage()));
-		MainResponseDTO<ApplicationsListDTO> response = applicationService.getAllApplicationsForUser();
+		applicationService.getAllApplicationsForUser();
 	}
 
 	@Test(expected = InvalidRequestParameterException.class)
