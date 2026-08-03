@@ -49,6 +49,7 @@ import io.mosip.preregistration.application.dto.OtpRequestDTO;
 import io.mosip.preregistration.application.dto.OtpUser;
 import io.mosip.preregistration.application.dto.User;
 import io.mosip.preregistration.application.util.LoginCommonUtil;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 
 @RunWith(JUnit4.class)
@@ -142,6 +143,9 @@ public class LoginServiceTest {
 
 	@Mock
 	private Environment env;
+
+	@Mock
+	private UserDetailsService userDetailsService;
 
 	MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request = new MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken>();
 
@@ -378,6 +382,8 @@ public class LoginServiceTest {
 
 		io.mosip.kernel.core.logger.spi.Logger mockLogger = mock(io.mosip.kernel.core.logger.spi.Logger.class);
 
+		Mockito.when(userDetailsService.getOrCreateInternalUserId(Mockito.anyString())).thenReturn("mock-uuid");
+		ReflectionTestUtils.setField(loginService, "userDetailsService", userDetailsService);
 		ReflectionTestUtils.setField(loginService, "auditLogUtil", mockAuditLogUtil);
 		ReflectionTestUtils.setField(loginService, "log", mockLogger);
 

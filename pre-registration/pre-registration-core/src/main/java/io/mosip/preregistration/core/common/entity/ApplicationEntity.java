@@ -4,6 +4,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -57,7 +59,7 @@ public class ApplicationEntity {
 	private String contactInfo;
 
 	/**
-	 * Created By
+	 * Created By (legacy plaintext or user identifier)
 	 */
 	@Column(name = "cr_by")
 	private String crBy;
@@ -69,7 +71,7 @@ public class ApplicationEntity {
 	private LocalDateTime crDtime;
 
 	/**
-	 * Updated By
+	 * Updated By (legacy plaintext or user identifier)
 	 */
 	@Column(name = "upd_by")
 	private String updBy;
@@ -79,4 +81,23 @@ public class ApplicationEntity {
 	 */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDtime;
+
+	/**
+	 * Returns {@code cr_by} as stored. <b>Does not canonicalise.</b> The value is a canonical user id
+	 * only once the identity migration has reached this row; until then it is still the raw legacy
+	 * identifier. Callers that put this on a response or compare it must resolve it themselves —
+	 * choosing this accessor over {@link #getCrBy()} changes nothing at runtime.
+	 */
+	@JsonIgnore
+	public String getEffectiveCrBy() {
+		return this.crBy;
+	}
+
+	/**
+	 * Returns {@code upd_by} as stored. <b>Does not canonicalise</b> — see {@link #getEffectiveCrBy()}.
+	 */
+	@JsonIgnore
+	public String getEffectiveUpdBy() {
+		return this.updBy;
+	}
 }

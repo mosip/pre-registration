@@ -64,6 +64,7 @@ import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.dto.SMSRequestDTO;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.util.GenericUtil;
 
 /**
  * The util class.
@@ -189,7 +190,7 @@ public class NotificationServiceUtil {
 	public void invokeSmsNotification(Map values, String userId, MainRequestDTO<OtpRequestDTO> requestDTO,
 			String langCode) throws PreRegLoginException, IOException {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"In invokeSmsNotification method of notification service util");
+				"In invokeSmsNotification method of notification service util" + GenericUtil.maskIdentifier(userId));
 		String otpSmsTemplate = environment.getProperty(PreRegLoginConstant.OTP_SMS_TEMPLATE);
 		String smsTemplate = applyTemplate(values, otpSmsTemplate, langCode);
 		sendSmsNotification(userId, smsTemplate, requestDTO);
@@ -211,7 +212,7 @@ public class NotificationServiceUtil {
 	public void invokeEmailNotification(Map values, String userId, MainRequestDTO<OtpRequestDTO> requestDTO,
 			String langCode) throws PreRegLoginException, IOException {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"In invokeEmailNotification method of notification service util");
+				"In invokeEmailNotification method of notification service util" + GenericUtil.maskIdentifier(userId));
 		String otpContentTemaplate = environment.getProperty(PreRegLoginConstant.OTP_CONTENT_TEMPLATE);
 		String otpSubjectTemplate = environment.getProperty(PreRegLoginConstant.OTP_SUBJECT_TEMPLATE);
 		String mailSubject = applyTemplate(values, otpSubjectTemplate, langCode);
@@ -319,8 +320,7 @@ public class NotificationServiceUtil {
 
 	public String applyTemplate(Map mp, String templateName, String langCode) throws PreRegLoginException, IOException {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"In applyTemplate of NotificationServiceUtil for templateName {" + templateName + "} and values {" + mp
-						+ "}");
+				"In applyTemplate of NotificationServiceUtil for templateName " + templateName);
 		Objects.requireNonNull(templateName);
 		Objects.requireNonNull(mp);
 		StringWriter writer = new StringWriter();

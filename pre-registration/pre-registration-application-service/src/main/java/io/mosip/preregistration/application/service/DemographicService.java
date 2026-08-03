@@ -95,8 +95,10 @@ import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 /**
  * This class provides the service implementation for Demographic
@@ -143,6 +145,12 @@ public class DemographicService implements DemographicServiceIntf {
 	@Autowired
 	CommonServiceUtil commonServiceUtil;
 
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	/**
 	 * Autowired reference for {@link #AuditLogUtil}
 	 */
@@ -151,6 +159,9 @@ public class DemographicService implements DemographicServiceIntf {
 
 	@Autowired
 	ValidationUtil validationUtil;
+
+	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
 
 	/**
 	 * Reference for ${document.resource.url} from property file
@@ -329,6 +340,15 @@ public class DemographicService implements DemographicServiceIntf {
 			DemographicEntity demographicEntity = demographicRepository
 					.save(serviceUtil.prepareDemographicEntityForCreate(demographicRequest,
 							StatusCodes.APPLICATION_INCOMPLETE.getCode(), authUserDetails().getUserId(), preId));
+			try {
+				applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId,
+						demographicEntity.getEffectiveCreatedBy());
+			} catch (Exception migrationEx) {
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Best-effort identity migration failed after create for preId: " + preId
+								+ ", effectiveCreatedBy: " + GenericUtil.maskIdentifier(demographicEntity.getEffectiveCreatedBy()));
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
+			}
 			DemographicCreateResponseDTO res = serviceUtil.setterForCreatePreRegistration(demographicEntity,
 					demographicRequest.getDemographicDetails());
 
@@ -422,11 +442,22 @@ public class DemographicService implements DemographicServiceIntf {
 						"JSON validator end time : " + DateUtils.getUTCCurrentDateTimeString());
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegistrationId);
 				if (!serviceUtil.isNull(demographicEntity)) {
-					userValidation(userId, demographicEntity.getCreatedBy());
+				userValidation(userId, demographicEntity.getEffectiveCreatedBy());
 					if (!serviceUtil.isDemographicBookedOrExpired(demographicEntity, validationUtil)) {
 						demographicEntity = demographicRepository.update(serviceUtil.prepareDemographicEntityForUpdate(
 								demographicEntity, demographicRequest, demographicEntity.getStatusCode(),
 								authUserDetails().getUserId(), preRegistrationId));
+						try {
+							applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preRegistrationId,
+									demographicEntity.getEffectiveUpdatedBy());
+						} catch (Exception migrationEx) {
+							log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+									"Best-effort identity migration failed after update for preId: "
+											+ preRegistrationId + ", effectiveUpdatedBy: "
+											+ GenericUtil.maskIdentifier(demographicEntity.getEffectiveUpdatedBy()));
+							log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+									ExceptionUtils.getStackTrace(migrationEx));
+						}
 					} else {
 						throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_022.getCode(),
 								DemographicErrorMessages.NOT_POSSIBLE_TO_UPDATE.getMessage());
@@ -489,7 +520,25 @@ public class DemographicService implements DemographicServiceIntf {
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details start time : " + DateUtils.getUTCCurrentDateTimeString());
-				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedBy(userId,
+				List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+				if (lookupIds == null) {
+					lookupIds = new ArrayList<>();
+				}
+				if (lookupIds.isEmpty()) {
+					if (piiBackwardCompatibility && userId != null && !userId.trim().isEmpty()) {
+						lookupIds.add(userId.trim());
+					} else {
+						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+								"No user lookup ids resolved for current user {}", GenericUtil.maskIdentifier(userId));
+						demographicMetadataDTO.setBasicDetails(new ArrayList<>());
+						demographicMetadataDTO.setNoOfRecords("0");
+						demographicMetadataDTO.setTotalRecords("0");
+						demographicMetadataDTO.setPageIndex(serviceUtil.isNull(pageIdx) ? "0" : pageIdx);
+						response.setResponse(demographicMetadataDTO);
+						return response;
+					}
+				}
+				List<DemographicEntity> demographicEntities = demographicRepository.findByCreatedByInAndStatusCode(lookupIds,
 						StatusCodes.CONSUMED.getCode());
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 						"get demographic details end time : " + DateUtils.getUTCCurrentDateTimeString());
@@ -512,7 +561,7 @@ public class DemographicService implements DemographicServiceIntf {
 								"pagination start time : " + DateUtils.getUTCCurrentDateTimeString());
 						@SuppressWarnings("static-access")
 						Page<DemographicEntity> demographicEntityPage = demographicRepository
-								.findByCreatedByOrderByCreateDateTime(userId, StatusCodes.CONSUMED.getCode(),
+								.findByCreatedByInAndStatusCodeOrderByCreateDateTime(lookupIds, StatusCodes.CONSUMED.getCode(),
 										PageRequest.of(serviceUtil.parsePageIndex(pageIdx),
 												serviceUtil.parsePageSize(pageSize)));
 						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -662,7 +711,7 @@ public class DemographicService implements DemographicServiceIntf {
 				if (bookingType.equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
 					DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preregId);
 					if (!serviceUtil.isNull(demographicEntity)) {
-						userValidation(userId, demographicEntity.getCreatedBy());
+				userValidation(userId, demographicEntity.getEffectiveCreatedBy());
 						if (serviceUtil.checkStatusForDeletion(demographicEntity.getStatusCode())) {
 							getDocumentServiceToDeleteAllByPreId(preregId);
 							if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
@@ -868,12 +917,13 @@ public class DemographicService implements DemographicServiceIntf {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDemographicData method of userValidation with priid "
-				+ preregUserId + " and userID " + authUserId);
-		if (!authUserId.trim().equals(preregUserId.trim())) {
+				+ GenericUtil.maskIdentifier(preregUserId) + " and userID " + GenericUtil.maskIdentifier(authUserId));
+		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
 	}
+
 
 	private JSONObject getDocumentMetadata(DemographicEntity demographicEntity, String poa)
 			throws JsonProcessingException, ParseException {

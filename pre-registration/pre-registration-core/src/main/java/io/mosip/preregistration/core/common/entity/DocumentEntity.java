@@ -7,6 +7,8 @@ package io.mosip.preregistration.core.common.entity;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -94,7 +96,7 @@ public class DocumentEntity implements Serializable {
 	private String langCode;
 
 	/**
-	 * Created By
+	 * Created By (legacy plaintext or user identifier)
 	 */
 	@Column(name = "cr_by")
 	private String crBy;
@@ -106,7 +108,7 @@ public class DocumentEntity implements Serializable {
 	private LocalDateTime crDtime;
 
 	/**
-	 * Updated By
+	 * Updated By (legacy plaintext or user identifier)
 	 */
 	@Column(name = "upd_by")
 	private String updBy;
@@ -116,6 +118,21 @@ public class DocumentEntity implements Serializable {
 	 */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDtime;
+
+	/**
+	 * Returns {@code cr_by} as stored. <b>Does not canonicalise</b> — a row the identity migration has
+	 * not reached still yields the raw legacy identifier, so callers placing this on a response or
+	 * comparing it must resolve it themselves.
+	 */
+	@JsonIgnore
+	public String getEffectiveCrBy() {
+		return this.crBy;
+	}
+
+	@JsonIgnore
+	public String getEffectiveUpdBy() {
+		return this.updBy;
+	}
 
 	/**
 	 * Encrypted Date Time

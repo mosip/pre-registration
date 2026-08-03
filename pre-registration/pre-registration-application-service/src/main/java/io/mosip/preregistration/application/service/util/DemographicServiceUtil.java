@@ -20,6 +20,8 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.assertj.core.util.Arrays;
 import org.json.simple.JSONArray;
@@ -27,8 +29,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.env.Environment;
@@ -39,6 +41,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -71,6 +74,7 @@ import io.mosip.preregistration.application.exception.MasterDataException;
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
+import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.application.service.UISpecService;
@@ -85,12 +89,14 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.DatabaseOperationException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.DateParseException;
@@ -149,6 +155,19 @@ public class DemographicServiceUtil {
 
 	@Autowired
 	private ApplicationRepostiory applicationRepostiory;
+
+	@Autowired
+	private DocumentDAO documentDAO;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	/**
 	 * Logger instance
 	 */
@@ -186,9 +205,11 @@ public class DemographicServiceUtil {
 					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
 			createDto.setStatusCode(demographicEntity.getStatusCode());
 			createDto.setLangCode(demographicEntity.getLangCode());
-			createDto.setCreatedBy(demographicEntity.getCreatedBy());
+			// Looked up, not registered: getEffective* returns the column as stored, so an unmigrated
+			// row would otherwise put the applicant's own email or phone on the response.
+			createDto.setCreatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveCreatedBy()));
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
-			createDto.setUpdatedBy(demographicEntity.getUpdatedBy());
+			createDto.setUpdatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveUpdatedBy()));
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
@@ -307,6 +328,15 @@ public class DemographicServiceUtil {
 		demographicEntity.setUpdatedBy(userId);
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
+		
+		String effectiveUserId = resolveEffectiveUserId(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for demographic create. maskedUserId=" + GenericUtil.maskIdentifier(userId)
+						+ ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+		demographicEntity.setCrAppuserId(effectiveUserId);
+		demographicEntity.setCreatedBy(effectiveUserId);
+		demographicEntity.setUpdatedBy(effectiveUserId);
+		
 		return demographicEntity;
 	}
 
@@ -346,7 +376,45 @@ public class DemographicServiceUtil {
 				"Hashing end time : " + DateUtils.getUTCCurrentDateTimeString());
 		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		demographicEntity.setEncryptedDateTime(encryptionDateTime);
+		String effectiveUserId = resolveEffectiveUserId(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for demographic update. preRegistrationId=" + preRegistrationId
+						+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
+						+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+		demographicEntity.setCrAppuserId(effectiveUserId);
+		demographicEntity.setCreatedBy(effectiveUserId);
+		demographicEntity.setUpdatedBy(effectiveUserId);
+		migrateLinkedDocumentsToCanonicalUser(demographicEntity, effectiveUserId, preRegistrationId);
 		return demographicEntity;
+	}
+
+	private void migrateLinkedDocumentsToCanonicalUser(DemographicEntity demographicEntity, String effectiveUserId,
+			String preRegistrationId) {
+		if (demographicEntity.getDocumentEntity() == null || demographicEntity.getDocumentEntity().isEmpty()) {
+			return;
+		}
+		int migrated = 0;
+		int failed = 0;
+		for (DocumentEntity documentEntity : demographicEntity.getDocumentEntity()) {
+			// Isolated per document: one unwritable document must not fail the demographic update it
+			// is attached to. Anything skipped here is picked up by the nightly reconciliation job.
+			try {
+				documentEntity.setCrBy(effectiveUserId);
+				documentEntity.setUpdBy(effectiveUserId);
+				documentDAO.updateDocument(documentEntity);
+				migrated++;
+			} catch (Exception ex) {
+				failed++;
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Best-effort identity migration failed for a linked document. preRegistrationId="
+								+ preRegistrationId + ", documentId=" + documentEntity.getDocumentId());
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			}
+		}
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Migrated linked documents to canonical user id during demographic update. preRegistrationId="
+						+ preRegistrationId + ", documentsCount=" + demographicEntity.getDocumentEntity().size()
+						+ ", migrated=" + migrated + ", failed=" + failed);
 	}
 
 	/**
@@ -685,6 +753,7 @@ public class DemographicServiceUtil {
 		return constructedJson;
 	}
 
+	@Transactional
 	public ApplicationEntity saveAndUpdateApplicationEntity(String preId, String bookingTypeCode,
 			String applicationStatusCode, String bookingStatusCode, String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -698,7 +767,13 @@ public class DemographicServiceUtil {
 		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
 		applicationEntity.setUpdBy(userId);
 		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
-		applicationEntity.setContactInfo(userId);
+		String effectiveUserId = resolveEffectiveUserId(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for applications write. applicationId=" + preId + ", maskedUserId="
+						+ GenericUtil.maskIdentifier(userId) + ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+		applicationEntity.setCrBy(effectiveUserId);
+		applicationEntity.setUpdBy(effectiveUserId);
+		applicationEntity.setContactInfo(effectiveUserId);
 		try {
 			applicationEntity = applicationRepostiory.save(applicationEntity);
 		} catch (Exception ex) {
@@ -708,18 +783,36 @@ public class DemographicServiceUtil {
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_009.getCode(),
 					ApplicationErrorMessages.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
 		}
+		// Best-effort: kept outside the block above so a backfill failure is never reported as — and
+		// never fails — the applications write. See ApplicationIdentityMigrationService.
+		try {
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
+		} catch (Exception migrationEx) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Best-effort identity migration failed after applications create for applicationId: " + preId
+							+ ", maskedUserId: " + GenericUtil.maskIdentifier(userId));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
+		}
 		return applicationEntity;
 	}
 
+	@Transactional
 	public void updateApplicationStatus(String applicationId, String status, String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"Updating applications status in applications table with statuscode: {" + status
 						+ "} for applicationId: {" + applicationId + "}");
+		String effectiveUserId;
 		try {
 			ApplicationEntity applicationEntity = findApplicationById(applicationId);
 			applicationEntity.setBookingStatusCode(status);
 			applicationEntity.setUpdBy(userId);
 			applicationEntity.setUpdDtime(LocalDateTime.now());
+			effectiveUserId = resolveEffectiveUserId(userId);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Resolved effective user id for application status update. applicationId=" + applicationId
+							+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
+							+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+			applicationEntity.setUpdBy(effectiveUserId);
 			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
 			}
@@ -730,6 +823,16 @@ public class DemographicServiceUtil {
 					"Error while updating status for applications -" + ex.getMessage());
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
 					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
+		}
+		// Best-effort: kept outside the block above so a backfill failure is never reported as — and
+		// never fails — the status update. See ApplicationIdentityMigrationService.
+		try {
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(applicationId, effectiveUserId);
+		} catch (Exception migrationEx) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Best-effort identity migration failed after application status update for applicationId: "
+							+ applicationId + ", maskedUserId: " + GenericUtil.maskIdentifier(userId));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
 		}
 	}
 
@@ -911,5 +1014,14 @@ public class DemographicServiceUtil {
 		});
 
 		return mandatoryDocs;
+	}
+
+	private String resolveEffectiveUserId(String userId) {
+		try {
+			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
+		} catch (IllegalStateException ex) {
+			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
+					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
+		}
 	}
 }

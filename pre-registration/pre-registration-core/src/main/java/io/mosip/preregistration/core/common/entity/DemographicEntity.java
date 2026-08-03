@@ -12,6 +12,8 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.annotations.NamedQuery;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -69,7 +71,7 @@ public class DemographicEntity implements Serializable {
 	@Column(name = "lang_code", nullable = false)
 	private String langCode;
 
-	/** The created by. */
+	/** The created by. (legacy plaintext or user identifier) */
 	@Column(name = "cr_by")
 	private String createdBy;
 
@@ -81,13 +83,28 @@ public class DemographicEntity implements Serializable {
 	@Column(name = "cr_dtimes")
 	private LocalDateTime createDateTime;
 
-	/** The updated by. */
+	/** The updated by. (legacy plaintext or user identifier) */
 	@Column(name = "upd_by")
 	private String updatedBy;
 
 	/** The update date time. */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updateDateTime;
+
+	/**
+	 * Returns {@code cr_by} as stored. <b>Does not canonicalise</b> — a row the identity migration has
+	 * not reached still yields the raw legacy identifier, so callers placing this on a response or
+	 * comparing it must resolve it themselves.
+	 */
+	@JsonIgnore
+	public String getEffectiveCreatedBy() {
+		return this.createdBy;
+	}
+
+	@JsonIgnore
+	public String getEffectiveUpdatedBy() {
+		return this.updatedBy;
+	}
 
 	/**
 	 * Encrypted Date Time

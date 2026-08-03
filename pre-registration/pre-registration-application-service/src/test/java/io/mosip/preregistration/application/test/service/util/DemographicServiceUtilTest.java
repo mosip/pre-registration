@@ -3,6 +3,7 @@ package io.mosip.preregistration.application.test.service.util;
 import java.io.File;
 import java.io.FileReader;
 
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.codec.binary.Base64;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,19 +17,24 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.cloud.autoconfigure.RefreshAutoConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
 
 import io.mosip.preregistration.application.exception.OperationNotAllowedException;
 import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.application.repository.DocumentDAO;
+import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.application.service.UISpecService;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
-import io.mosip.preregistration.demographic.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DemographicRequestDTO;
 import io.mosip.preregistration.demographic.exception.system.DateParseException;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
 
@@ -41,7 +47,7 @@ import io.mosip.preregistration.demographic.exception.system.JsonParseException;
  */
 @RunWith(SpringRunner.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
-@SpringBootTest(classes = DemographicServiceUtil.class)
+@SpringBootTest(classes = DemographicServiceUtil.class, properties = "spring.cloud.config.enabled=false")
 public class DemographicServiceUtilTest {
 
 	/**
@@ -58,6 +64,9 @@ public class DemographicServiceUtilTest {
 
 	@MockBean
 	private ApplicationRepostiory applicationRepostiory;
+
+	@MockBean
+	private DocumentDAO documentDAO;
 
 	@MockBean
 	private RequestValidator requestValidator;
@@ -78,6 +87,12 @@ public class DemographicServiceUtilTest {
 	@MockBean
 	private CryptoUtil cryptoUtil;
 
+	@MockBean
+	private UserDetailsService userDetailsService;
+
+	@MockBean
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
 	/**
 	 * @throws Exception on Any Exception
 	 */
@@ -85,6 +100,7 @@ public class DemographicServiceUtilTest {
 	public void setUp() throws Exception {
 		requestId = "mosip.preregistration";
 		parser = new JSONParser();
+		ReflectionTestUtils.setField(demographicServiceUtil, "piiBackwardCompatibility", true);
 
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("pre-registration.json").getFile());
@@ -101,6 +117,8 @@ public class DemographicServiceUtilTest {
 		demographicEntity = new DemographicEntity();
 		demographicEntity.setPreRegistrationId("35760478648170");
 		demographicEntity.setApplicantDetailJson((jsonObject.toJSONString() + "623744").getBytes());
+		Mockito.when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
+				.thenReturn("00000000-0000-0000-0000-000000000001");
 	}
 
 	@Test(expected = JsonParseException.class)
@@ -119,6 +137,81 @@ public class DemographicServiceUtilTest {
 	@Test(expected = DateParseException.class)
 	public void getDateFromStringFailureTest() throws Exception {
 		demographicServiceUtil.getDateFromString("abc");
+	}
+
+	@Test
+	public void prepareDemographicEntityForUpdateMigratesDemographicAndDocumentOwnershipToUuid() {
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("35760478648170");
+		applicationEntity.setBookingType("NEW");
+		applicationEntity.setApplicationStatusCode("DRAFT");
+		applicationEntity.setBookingStatusCode(StatusCodes.APPLICATION_INCOMPLETE.getCode());
+		applicationEntity.setCrBy("legacy-user");
+
+		DocumentEntity documentEntity = new DocumentEntity();
+		documentEntity.setCrBy("legacy-user");
+		documentEntity.setUpdBy("legacy-user");
+		demographicEntity.setDocumentEntity(java.util.List.of(documentEntity));
+
+		Mockito.when(applicationRepostiory.findByApplicationId("35760478648170")).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.save(Mockito.any(ApplicationEntity.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn("encrypted".getBytes());
+		Mockito.when(documentDAO.updateDocument(Mockito.any(DocumentEntity.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+
+		DemographicEntity updatedEntity = demographicServiceUtil.prepareDemographicEntityForUpdate(demographicEntity,
+				updateDemographicRequest, StatusCodes.APPLICATION_INCOMPLETE.getCode(), "legacy-user", "35760478648170");
+
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getCrAppuserId());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getCreatedBy());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getUpdatedBy());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", documentEntity.getCrBy());
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", documentEntity.getUpdBy());
+		Mockito.verify(documentDAO).updateDocument(documentEntity);
+	}
+
+	/**
+	 * One unwritable linked document must not fail the demographic update it is attached to, and must
+	 * not stop the remaining documents from being migrated. Anything skipped is left for the nightly
+	 * reconciliation job.
+	 */
+	@Test
+	public void prepareDemographicEntityForUpdateSurvivesAFailingLinkedDocument() {
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("35760478648170");
+		applicationEntity.setBookingType("NEW");
+		applicationEntity.setApplicationStatusCode("DRAFT");
+		applicationEntity.setBookingStatusCode(StatusCodes.APPLICATION_INCOMPLETE.getCode());
+		applicationEntity.setCrBy("legacy-user");
+
+		DocumentEntity failingDocument = new DocumentEntity();
+		failingDocument.setDocumentId("doc-1");
+		failingDocument.setCrBy("legacy-user");
+		failingDocument.setUpdBy("legacy-user");
+		DocumentEntity healthyDocument = new DocumentEntity();
+		healthyDocument.setDocumentId("doc-2");
+		healthyDocument.setCrBy("legacy-user");
+		healthyDocument.setUpdBy("legacy-user");
+		demographicEntity.setDocumentEntity(java.util.List.of(failingDocument, healthyDocument));
+
+		Mockito.when(applicationRepostiory.findByApplicationId("35760478648170")).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.save(Mockito.any(ApplicationEntity.class)))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+		Mockito.when(cryptoUtil.encrypt(Mockito.any(), Mockito.any())).thenReturn("encrypted".getBytes());
+		Mockito.when(documentDAO.updateDocument(failingDocument))
+				.thenThrow(new RuntimeException("document write failed"));
+		Mockito.when(documentDAO.updateDocument(healthyDocument))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+
+		DemographicEntity updatedEntity = demographicServiceUtil.prepareDemographicEntityForUpdate(demographicEntity,
+				updateDemographicRequest, StatusCodes.APPLICATION_INCOMPLETE.getCode(), "legacy-user", "35760478648170");
+
+		// The demographic update itself still completed ...
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", updatedEntity.getCreatedBy());
+		// ... and the document queued after the failing one was still migrated.
+		Mockito.verify(documentDAO).updateDocument(healthyDocument);
+		org.junit.Assert.assertEquals("00000000-0000-0000-0000-000000000001", healthyDocument.getCrBy());
 	}
 
 }
