@@ -38,7 +38,7 @@ import io.mosip.preregistration.application.exception.DemographicServiceExceptio
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
-import io.mosip.preregistration.application.repository.DemographicRepository;
+import io.mosip.preregistration.core.common.repository.DemographicRepository;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;

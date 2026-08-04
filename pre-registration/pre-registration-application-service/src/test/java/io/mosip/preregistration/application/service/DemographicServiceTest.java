@@ -98,7 +98,7 @@ import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.RecordNotFoundForPreIdsException;
-import io.mosip.preregistration.application.repository.DemographicRepository;
+import io.mosip.preregistration.core.common.repository.DemographicRepository;
 import io.mosip.preregistration.application.service.util.CommonServiceUtil;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 //import io.mosip.preregistration.booking.service.BookingServiceIntf;
