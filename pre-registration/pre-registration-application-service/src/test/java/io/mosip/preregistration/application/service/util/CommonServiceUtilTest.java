@@ -26,7 +26,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
-import io.mosip.preregistration.application.repository.DemographicRepository;
+import io.mosip.preregistration.core.common.repository.DemographicRepository;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;

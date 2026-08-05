@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.util.GenericUtil;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -32,7 +33,7 @@ import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 import io.mosip.preregistration.application.errorcodes.AppointmentErrorCodes;
 import io.mosip.preregistration.application.exception.AppointmentExecption;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
-import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;

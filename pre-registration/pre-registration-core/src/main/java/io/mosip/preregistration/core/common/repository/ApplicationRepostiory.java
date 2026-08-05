@@ -1,4 +1,4 @@
-package io.mosip.preregistration.application.repository;
+package io.mosip.preregistration.core.common.repository;
 
 import java.time.LocalDate;
 import java.util.List;

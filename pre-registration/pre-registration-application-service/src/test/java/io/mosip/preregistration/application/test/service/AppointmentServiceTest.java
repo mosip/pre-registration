@@ -29,10 +29,10 @@ import org.springframework.test.util.ReflectionTestUtils;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
-import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.AppointmentServiceImpl;
-import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;

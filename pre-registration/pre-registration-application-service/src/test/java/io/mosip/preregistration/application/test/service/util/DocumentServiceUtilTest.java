@@ -52,7 +52,7 @@ import io.mosip.kernel.core.virusscanner.exception.VirusScannerException;
 import io.mosip.kernel.core.virusscanner.spi.VirusScanner;
 import io.mosip.preregistration.application.dto.DocumentRequestDTO;
 import io.mosip.preregistration.application.exception.InvalidDocumentIdExcepion;
-import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.util.CommonServiceUtil;
 import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
