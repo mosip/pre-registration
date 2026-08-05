@@ -1,8 +1,8 @@
-package io.mosip.preregistration.application.service;
+package io.mosip.preregistration.core.common.service;
 
-import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
-import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
-import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
 
 import java.util.List;
 
@@ -11,15 +11,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.preregistration.application.repository.ApplicationRepostiory;
-import io.mosip.preregistration.application.repository.DemographicRepository;
-import io.mosip.preregistration.application.repository.DocumentRepository;
-import io.mosip.preregistration.application.repository.RegAppointmentRepository;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
+import io.mosip.preregistration.core.common.repository.DemographicRepository;
+import io.mosip.preregistration.core.common.repository.DocumentRepository;
+import io.mosip.preregistration.core.common.repository.RegAppointmentRepository;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
-import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.util.GenericUtil;

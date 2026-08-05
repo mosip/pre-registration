@@ -2,7 +2,7 @@
  * Copyright
  * 
  */
-package io.mosip.preregistration.application.repository;
+package io.mosip.preregistration.core.common.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;

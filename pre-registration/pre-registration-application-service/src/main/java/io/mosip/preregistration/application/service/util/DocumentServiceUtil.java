@@ -17,7 +17,7 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;

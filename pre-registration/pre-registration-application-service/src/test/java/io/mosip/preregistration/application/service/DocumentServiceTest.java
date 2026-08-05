@@ -23,6 +23,7 @@ import java.util.Map;
 import io.mosip.preregistration.application.code.DocumentStatusMessages;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
 import io.mosip.preregistration.core.code.EventId;
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.core.code.EventName;
 import io.mosip.preregistration.core.code.EventType;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
