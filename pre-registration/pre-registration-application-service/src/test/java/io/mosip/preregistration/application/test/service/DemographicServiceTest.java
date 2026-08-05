@@ -65,7 +65,7 @@
 //import io.mosip.kernel.core.idobjectvalidator.exception.InvalidIdSchemaException;
 //import io.mosip.kernel.core.idobjectvalidator.spi.IdObjectValidator;
 //import io.mosip.kernel.core.util.DateUtils;
-//import io.mosip.preregistration.application.repository.DemographicRepository;
+//import io.mosip.preregistration.core.common.repository.DemographicRepository;
 ////import io.mosip.preregistration.booking.service.BookingServiceIntf;
 //import io.mosip.preregistration.core.code.AuditLogVariables;
 //import io.mosip.preregistration.core.code.StatusCodes;

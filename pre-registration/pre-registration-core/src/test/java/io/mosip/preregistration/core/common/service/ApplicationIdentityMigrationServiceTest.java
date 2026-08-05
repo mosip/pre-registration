@@ -1,4 +1,4 @@
-package io.mosip.preregistration.application.service;
+package io.mosip.preregistration.core.common.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
@@ -12,7 +12,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
-import io.mosip.preregistration.application.service.ApplicationIdentityMigrationService;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -20,15 +19,14 @@ import org.junit.runners.JUnit4;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import io.mosip.preregistration.application.repository.ApplicationRepostiory;
-import io.mosip.preregistration.application.repository.DemographicRepository;
-import io.mosip.preregistration.application.repository.DocumentRepository;
-import io.mosip.preregistration.application.repository.RegAppointmentRepository;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
+import io.mosip.preregistration.core.common.repository.DemographicRepository;
+import io.mosip.preregistration.core.common.repository.DocumentRepository;
+import io.mosip.preregistration.core.common.repository.RegAppointmentRepository;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
-import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.exception.UserLookupException;
 
 @RunWith(JUnit4.class)

@@ -1,4 +1,4 @@
-package io.mosip.preregistration.application.repository;
+package io.mosip.preregistration.core.common.repository;
 
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
