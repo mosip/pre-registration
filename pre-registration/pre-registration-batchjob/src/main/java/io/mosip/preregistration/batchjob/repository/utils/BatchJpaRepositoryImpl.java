@@ -552,4 +552,83 @@ public class BatchJpaRepositoryImpl {
 		log.info("Flushing Availability...");
 		availabilityRepository.flush();
 	}
+
+	/**
+	 * @param batchSize maximum number of ids to return
+	 * @return a bounded page of pre-registration ids that still hold a raw (non-UUID) identifier in any
+	 *         of the columns the reconciliation converts, across applications, applicant_demographic,
+	 *         applicant_document and reg_appointment — so partially migrated records are also picked
+	 *         up. Bounded so a large legacy backlog is not loaded all at once.
+	 */
+	public List<String> getPreRegIdsWithRawIdentifier(int batchSize) {
+		try {
+			return applicationRepository.findPreRegIdsWithRawIdentifier(batchSize);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_019.getCode(),
+					ErrorMessages.APPLICATIONS_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
+
+	/**
+	 * Null-safe application lookup (unlike {@link #getApplicantEntityDetails}, returns {@code null}
+	 * instead of throwing when the application no longer exists).
+	 *
+	 * @param applicationID
+	 * @return the application, or {@code null} if not found.
+	 */
+	public ApplicationEntity getApplicationObject(String applicationID) {
+		try {
+			return applicationRepository.findByApplicationId(applicationID);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_019.getCode(),
+					ErrorMessages.APPLICATIONS_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
+
+	/**
+	 * @param preRegId
+	 * @return documents linked to the given pre-registration id (may be empty/null).
+	 */
+	public List<DocumentEntity> getApplicantDocuments(String preRegId) {
+		try {
+			return documentRespository.findByDemographicEntityPreRegistrationId(preRegId);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_007.getCode(),
+					ErrorMessages.DOCUMENT_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
+
+	/**
+	 * Null-safe booking lookup (unlike {@link #getRegistrationAppointmentDetails}, does not throw when
+	 * a pre-registration has no booking).
+	 *
+	 * @param preRegId
+	 * @return booking for the pre-registration id, or {@code null} if none.
+	 */
+	public RegistrationBookingEntity getRegistrationAppointmentObject(String preRegId) {
+		try {
+			return regAppointmentRepository.getRegistrationAppointmentByPreRegistrationId(preRegId);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_005.getCode(),
+					ErrorMessages.REG_APPOINTMENT_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
+
+	public DocumentEntity updateApplicantDocument(DocumentEntity documentEntity) {
+		try {
+			return documentRespository.save(documentEntity);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_007.getCode(),
+					ErrorMessages.DOCUMENT_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
+
+	public RegistrationBookingEntity updateBooking(RegistrationBookingEntity bookingEntity) {
+		try {
+			return regAppointmentRepository.save(bookingEntity);
+		} catch (DataAccessLayerException e) {
+			throw new TableNotAccessibleException(ErrorCodes.PRG_PAM_BAT_005.getCode(),
+					ErrorMessages.REG_APPOINTMENT_TABLE_NOT_ACCESSIBLE.getMessage());
+		}
+	}
 }

@@ -36,6 +36,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -59,6 +60,7 @@ import io.mosip.kernel.core.util.exception.JsonProcessingException;
 import io.mosip.kernel.signature.dto.JWTSignatureRequestDto;
 import io.mosip.kernel.signature.dto.JWTSignatureResponseDto;
 import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.common.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
@@ -74,6 +76,8 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
+import io.mosip.preregistration.core.exception.UserLookupException;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.datasync.code.RequestCodes;
@@ -126,6 +130,9 @@ public class DataSyncServiceUtil {
 	
 	@Autowired
 	private DemographicConsumedRepository demographicConsumedRepository;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * Autowired reference for {@link #RestTemplate}
@@ -307,7 +314,6 @@ public class DataSyncServiceUtil {
 			URI uri = uriComponentsBuilder.buildAndExpand(params).toUri();
 			UriComponentsBuilder builder = UriComponentsBuilder.fromUri(uri).queryParam("from_date", fromDate)
 					.queryParam("to_date", toDate);
-
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<MainResponseDTO<PreRegIdsByRegCenterIdResponseDTO>> httpEntity = new HttpEntity<>(headers);
@@ -319,7 +325,7 @@ public class DataSyncServiceUtil {
 					}, params);
 			MainResponseDTO<BookingDataByRegIdDto> body = respEntity.getBody();
 			if (body != null) {
-				if (body.getErrors() != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
 					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
 						if (exceptionJSONInfoDTO != null) {
 							throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
@@ -331,6 +337,11 @@ public class DataSyncServiceUtil {
 							BookingDataByRegIdDto.class);
 				}
 			}
+		} catch (HttpStatusCodeException ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In callGetPreIdsRestService method of datasync service util - " + ex.getMessage());
+			throw mapDownstreamBookingError(ex);
 		} catch (RestClientException ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -376,7 +387,7 @@ public class DataSyncServiceUtil {
 							}, params);
 			MainResponseDTO<List<ApplicationDetailResponseDTO>> body = respEntity.getBody();
 			if (body != null) {
-				if (body.getErrors() != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
 					for (ExceptionJSONInfoDTO exceptionJSONInfoDTO : body.getErrors()) {
 						if (exceptionJSONInfoDTO != null) {
 							throw new RecordNotFoundForDateRange(exceptionJSONInfoDTO.getErrorCode(),
@@ -387,6 +398,11 @@ public class DataSyncServiceUtil {
 					applicationDetailResponseList = body.getResponse();
 				}
 			}
+		} catch (HttpStatusCodeException ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In getAllBookedApplicationIds method of datasync service util - " + ex.getMessage());
+			throw mapDownstreamBookingError(ex);
 		} catch (RestClientException ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -396,6 +412,26 @@ public class DataSyncServiceUtil {
 
 		}
 		return applicationDetailResponseList;
+	}
+
+	private RecordNotFoundForDateRange mapDownstreamBookingError(HttpStatusCodeException ex) {
+		try {
+			String responseBody = ex.getResponseBodyAsString();
+			if (responseBody != null && !responseBody.trim().isEmpty()) {
+				MainResponseDTO<?> mainResponseDTO = mapper.readValue(responseBody, MainResponseDTO.class);
+				if (mainResponseDTO.getErrors() != null && !mainResponseDTO.getErrors().isEmpty()) {
+					ExceptionJSONInfoDTO error = mainResponseDTO.getErrors().get(0);
+					if (error != null && error.getErrorCode() != null) {
+						return new RecordNotFoundForDateRange(error.getErrorCode(), error.getMessage(), null);
+					}
+				}
+			}
+		} catch (Exception parseException) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to parse booking service error response for sync call", parseException);
+		}
+		return new RecordNotFoundForDateRange(ErrorCodes.PRG_DATA_SYNC_016.getCode(),
+				ErrorMessages.BOOKING_NOT_FOUND.getMessage(), null);
 	}
 
 	/**
@@ -880,12 +916,33 @@ public class DataSyncServiceUtil {
 		return preRegistrationIdsDTO;
 	}
 
+	
+	private String getUserUuid(String userId) {
+		try {
+			String userUuid = userDetailsService.getOrCreateInternalUserId(userId);
+			if (userUuid == null) {
+				throw new PreRegistrationException(
+						ErrorCodes.PRG_DATA_SYNC_012.getCode(),
+						ErrorMessages.FAILED_TO_STORE_PRE_REGISTRATION_IDS.getMessage());
+			}
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Resolved effective user id for reverse datasync. maskedUserId=" + GenericUtil.maskIdentifier(userId)
+							+ ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, userUuid));
+			return userUuid;
+		} catch (UserLookupException ex) {
+			throw new PreRegistrationException(
+					ErrorCodes.PRG_DATA_SYNC_012.getCode(),
+					ErrorMessages.FAILED_TO_STORE_PRE_REGISTRATION_IDS.getMessage());
+		}
+	}
+
 	public ReverseDatasyncReponseDTO reverseDateSyncSave(Date reqDateTime, ReverseDataSyncRequestDTO request,
 			String userId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In reverseDateSyncSave method of datasync service util");
 		List<InterfaceDataSyncEntity> entityList = new ArrayList<>();
 		List<ProcessedPreRegEntity> processedEntityList = new ArrayList<>();
 		List<String> preIdLists = request.getPreRegistrationIds();
+		String userUuid = getUserUuid(userId);
 		PreRegIdsByRegCenterIdDTO preRegIdsDTO = new PreRegIdsByRegCenterIdDTO();
 		preRegIdsDTO.setPreRegistrationIds(preIdLists);
 		Map<String, String> preIdsMap = getPreregistrationUpdatedTime(preRegIdsDTO);
@@ -899,7 +956,7 @@ public class DataSyncServiceUtil {
 				ipprlstPK.setReceivedDtimes(DateUtils.parseDateToLocalDateTime(reqDateTime));
 				interfaceDataSyncEntity.setIpprlst_PK(ipprlstPK);
 				interfaceDataSyncEntity.setLangCode("eng");
-				interfaceDataSyncEntity.setCreatedBy(userId);
+				interfaceDataSyncEntity.setCreatedBy(userUuid);
 				interfaceDataSyncEntity.setCreatedDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				interfaceDataSyncEntity.setUpdatedDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				entityList.add(interfaceDataSyncEntity);
@@ -910,7 +967,7 @@ public class DataSyncServiceUtil {
 				processedPreRegEntity.setStatusCode(StatusCodes.CONSUMED.getCode());
 				processedPreRegEntity.setStatusComments("Processed by registration processor");
 				processedPreRegEntity.setLangCode("eng");
-				processedPreRegEntity.setCrBy(userId);
+				processedPreRegEntity.setCrBy(userUuid);
 				processedPreRegEntity.setCrDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				processedPreRegEntity.setUpdDate(DateUtils.parseToLocalDateTime(getCurrentResponseTime()));
 				processedEntityList.add(processedPreRegEntity);
@@ -1162,3 +1219,4 @@ public class DataSyncServiceUtil {
 	}
 
 }
+

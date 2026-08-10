@@ -2,7 +2,7 @@
  * Copyright
  * 
  */
-package io.mosip.preregistration.application.repository;
+package io.mosip.preregistration.core.common.repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -43,6 +43,9 @@ public interface DemographicRepository extends BaseRepository<DemographicEntity,
 	public List<DemographicEntity> findByCreatedBy(@Param("userId") String userId,
 			@Param("statusCode") String statusCode);
 
+	public List<DemographicEntity> findByCreatedByInAndStatusCode(@Param("userIds") List<String> userIds,
+			@Param("statusCode") String statusCode);
+
 	/**
 	 * @param userId
 	 *            pass userId
@@ -54,6 +57,9 @@ public interface DemographicRepository extends BaseRepository<DemographicEntity,
 	 */
 	public Page<DemographicEntity> findByCreatedByOrderByCreateDateTime(@Param("userId") String userId,
 			@Param("statusCode") String statusCode, Pageable pageable);
+
+	public Page<DemographicEntity> findByCreatedByInAndStatusCodeOrderByCreateDateTime(
+			@Param("userIds") List<String> userIds, @Param("statusCode") String statusCode, Pageable pageable);
 
 	/**
 	 * @param preRegId

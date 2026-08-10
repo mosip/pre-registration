@@ -114,6 +114,10 @@ public enum DocumentErrorCodes {
 	/**
 	 * ErrorCode for Password Protection files
 	 */
-	PRG_PAM_DOC_025;
+	PRG_PAM_DOC_025,
+	/**
+	 * ErrorCode for IDENTITY_RESOLUTION_FAILED
+	 */
+	PRG_PAM_DOC_026;
 
 }

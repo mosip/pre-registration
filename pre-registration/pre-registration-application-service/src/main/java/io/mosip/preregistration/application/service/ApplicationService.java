@@ -47,7 +47,7 @@ import io.mosip.preregistration.application.dto.UIAuditRequest;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
 import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
-import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.ApplicationStatusCode;
 import io.mosip.preregistration.core.code.AuditLogVariables;
@@ -66,7 +66,9 @@ import io.mosip.preregistration.core.exception.InvalidPreRegistrationIdException
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 @Service
 public class ApplicationService implements ApplicationServiceIntf {
@@ -82,6 +84,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	@Autowired
 	ValidationUtil validationUtil;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * ObjectMapper global object creation
@@ -117,6 +122,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	@Value("${mosip.preregistration.applications.all.get}")
 	private String allApplicationsId;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
 	/**
 	 * logger instance
 	 */
@@ -178,12 +186,29 @@ public class ApplicationService implements ApplicationServiceIntf {
 	}
 
 	/**
-	 * Gives application details for the given applicationId
-	 * 
+	 * Gives application details for the given applicationId, with ownership columns sanitised for
+	 * external consumption. See {@link ApplicationServiceIntf#getApplicationInfo(String)}.
+	 *
 	 * @param applicationId
 	 * @return
 	 */
 	public MainResponseDTO<ApplicationEntity> getApplicationInfo(String applicationId) {
+		return fetchApplicationInfo(applicationId, true);
+	}
+
+	/**
+	 * Gives application details with ownership columns exactly as stored — internal callers only.
+	 * See {@link ApplicationServiceIntf#getApplicationInfoInternal(String)}.
+	 *
+	 * @param applicationId
+	 * @return
+	 */
+	public MainResponseDTO<ApplicationEntity> getApplicationInfoInternal(String applicationId) {
+		return fetchApplicationInfo(applicationId, false);
+	}
+
+	private MainResponseDTO<ApplicationEntity> fetchApplicationInfo(String applicationId,
+			boolean sanitiseForResponse) {
 		MainResponseDTO<ApplicationEntity> response = new MainResponseDTO<ApplicationEntity>();
 		response.setId(applicationDetailsId);
 		response.setVersion(version);
@@ -200,8 +225,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 						ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
 			}
 			userValidation(applicationEntity);
-			log.info("Application Info: {} for the Application Id: {}", applicationEntity, applicationId);
-			response.setResponse(applicationEntity);
+			log.info("Fetched application info for the Application Id: {}", applicationId);
+			response.setResponse(sanitiseForResponse ? responseSafeCopy(applicationEntity) : applicationEntity);
 		} catch (Exception ex) {
 			log.error("Error while Getting the Application Info for applicationId ", applicationId);
 			log.error("Exception trace", ex);
@@ -247,7 +272,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 					response.setRegistrationCenterId(obj.getRegistrationCenterId());
 					response.setSlotFromTime(obj.getSlotFromTime().toString());
 					response.setSlotToTime(obj.getSlotToTime().toString());
-					response.setCrBy(obj.getCrBy());
+					response.setCrBy(responseSafeUserId(obj.getEffectiveCrBy()));
 					response.setCrDtime(obj.getCrDtime().toString());
 					response.setBookingType(obj.getBookingType());
 					responseList.add(response);
@@ -282,6 +307,69 @@ public class ApplicationService implements ApplicationServiceIntf {
 		}
 
 		return mainResponse;
+	}
+
+	/**
+	 * Copies an application into a detached instance whose ownership columns are safe to serialise.
+	 *
+	 * <p>{@code getApplicationInfo} returns the entity itself, so every column reaches the caller —
+	 * including {@code cr_by}, {@code upd_by} and {@code contact_info}, which hold the applicant's own
+	 * email or phone until the migration reaches that row. Sanitising the fetched entity in place is
+	 * not an option: {@code open-in-view} leaves it attached for the whole request, so clearing a
+	 * field would be flushed as an UPDATE and would destroy the real ownership data. Hence a copy.
+	 *
+	 * <p>Every other column is carried across unchanged, so the response keeps its existing shape and
+	 * only the three identifier fields can differ.
+	 */
+	private ApplicationEntity responseSafeCopy(ApplicationEntity applicationEntity) {
+		ApplicationEntity safeCopy = new ApplicationEntity();
+		safeCopy.setApplicationId(applicationEntity.getApplicationId());
+		safeCopy.setBookingType(applicationEntity.getBookingType());
+		safeCopy.setBookingStatusCode(applicationEntity.getBookingStatusCode());
+		safeCopy.setApplicationStatusCode(applicationEntity.getApplicationStatusCode());
+		safeCopy.setAppointmentDate(applicationEntity.getAppointmentDate());
+		safeCopy.setBookingDate(applicationEntity.getBookingDate());
+		safeCopy.setRegistrationCenterId(applicationEntity.getRegistrationCenterId());
+		safeCopy.setSlotFromTime(applicationEntity.getSlotFromTime());
+		safeCopy.setSlotToTime(applicationEntity.getSlotToTime());
+		safeCopy.setCrDtime(applicationEntity.getCrDtime());
+		safeCopy.setUpdDtime(applicationEntity.getUpdDtime());
+		safeCopy.setCrBy(responseSafeUserId(applicationEntity.getEffectiveCrBy()));
+		safeCopy.setUpdBy(responseSafeUserId(applicationEntity.getEffectiveUpdBy()));
+		safeCopy.setContactInfo(responseSafeUserId(applicationEntity.getContactInfo()));
+		return safeCopy;
+	}
+
+	/**
+	 * Returns an ownership identifier that is safe to place on an API response.
+	 *
+	 * <p>The {@code getEffective*} accessors on the entities do <em>not</em> canonicalise — they
+	 * return the stored column as-is — so for a record the best-effort migration has not reached yet
+	 * they still yield the raw legacy identifier, which is the user's own email or phone. Emitting
+	 * that to a caller republishes exactly the PII this refactor removes from the schema.
+	 *
+	 * <p>Already-canonical values are passed through. A raw value is looked up, never registered:
+	 * rendering a record must not create a registry entry, and the create path would issue a blocking
+	 * crypto-service call per row of a listing. An identifier with no entry yet therefore yields
+	 * {@code null} and the field is omitted — a response missing an id is recoverable, a leaked
+	 * identifier is not, and the reconciliation job registers those records on its own schedule.
+	 */
+	private String responseSafeUserId(String storedUserId) {
+		if (storedUserId == null || storedUserId.isBlank()) {
+			return storedUserId;
+		}
+		String trimmedUserId = storedUserId.trim();
+		if (GenericUtil.isUuid(trimmedUserId)) {
+			return trimmedUserId;
+		}
+		String resolvedUserId = userDetailsService.findExistingUserId(trimmedUserId);
+		if (resolvedUserId == null || !GenericUtil.isUuid(resolvedUserId)) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Omitting unregistered ownership id from response for masked user "
+							+ GenericUtil.maskIdentifier(trimmedUserId));
+			return null;
+		}
+		return resolvedUserId;
 	}
 
 	private void validateRegistrationCenterId(String regCenterId) {
@@ -332,9 +420,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 			appplicationResponse.setApplicationStatusCode(applicationEntity.getApplicationStatusCode());
 			appplicationResponse.setBookingStatusCode(applicationEntity.getBookingStatusCode());
 			appplicationResponse.setLangCode(applicationRequest.getLangCode());
-			appplicationResponse.setCreatedBy(applicationEntity.getCrBy());
+			appplicationResponse.setCreatedBy(responseSafeUserId(applicationEntity.getEffectiveCrBy()));
 			appplicationResponse.setCreatedDateTime(serviceUtil.getLocalDateString(applicationEntity.getCrDtime()));
-			appplicationResponse.setUpdatedBy(applicationEntity.getUpdBy());
+			appplicationResponse.setUpdatedBy(responseSafeUserId(applicationEntity.getEffectiveUpdBy()));
 			appplicationResponse.setUpdatedDateTime(serviceUtil.getLocalDateString(applicationEntity.getUpdDtime()));
 			mainResponseDTO.setResponse(appplicationResponse);
 			mainResponseDTO.setResponsetime(serviceUtil.getCurrentResponseTime());
@@ -422,10 +510,12 @@ public class ApplicationService implements ApplicationServiceIntf {
 				if (bookingType.equals(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString())
 						|| bookingType.equals(BookingTypeCodes.UPDATE_REGISTRATION.toString())) {
 					//userValidation(applicationEntity);
-					if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
-						throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
-								ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
-					}	
+			String authUserId = authUserDetails().getUserId();
+			String effectiveCrBy = applicationEntity.getEffectiveCrBy() == null ? "" : applicationEntity.getEffectiveCrBy().trim();
+			if (!userDetailsService.matchesUser(authUserId, effectiveCrBy, piiBackwardCompatibility)) {
+				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
+						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
+			}	
 					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
 						MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
 						deleteBooking = serviceUtil.deleteBooking(applicationId);
@@ -483,12 +573,19 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		response.setResponsetime(DateTimeFormatter.ofPattern(mosipDateTimeFormat).format(LocalDateTime.now()));
 		try {
-			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedBy(userId);
+			List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+			if (lookupIds.isEmpty()) {
+				applicationsListDTO.setAllApplications(new ArrayList<>());
+				response.setResponse(applicationsListDTO);
+				return response;
+			}
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByIn(lookupIds);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: "+ applicationEntities.size());
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
-			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Getting the Applications for the userId : " + userId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Getting the Applications for the userId : " + GenericUtil.maskIdentifier(userId));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while Getting the Applications for the userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
@@ -538,8 +635,9 @@ public class ApplicationService implements ApplicationServiceIntf {
 		List<String> list = listAuth(authUserDetails().getAuthorities());
 		if (list.contains("ROLE_INDIVIDUAL")) {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In userValidation method of ApplicationService with applicationId "
-					+ applicationEntity.getApplicationId() + " and userID " + authUserId);
-			if (!authUserDetails().getUserId().trim().equals(applicationEntity.getCrBy().trim())) {
+					+ applicationEntity.getApplicationId() + " and userID " + GenericUtil.maskIdentifier(authUserId));
+			String effectiveCrBy = applicationEntity.getEffectiveCrBy() == null ? "" : applicationEntity.getEffectiveCrBy().trim();
+			if (!userDetailsService.matchesUser(authUserId, effectiveCrBy, piiBackwardCompatibility)) {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
@@ -582,17 +680,26 @@ public class ApplicationService implements ApplicationServiceIntf {
 						ApplicationErrorMessages.INVALID_BOOKING_TYPE.getMessage());
 
 			}
-			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByBookingType(userId,
-					type.toUpperCase());
+			List<String> lookupIds = userDetailsService.getUserLookupIds(userId, piiBackwardCompatibility);
+			if (lookupIds.isEmpty()) {
+				applicationsListDTO.setAllApplications(new ArrayList<>());
+				response.setResponse(applicationsListDTO);
+				return response;
+			}
+			List<ApplicationEntity> applicationEntities = applicationRepository.findByCreatedByInBookingType(
+					lookupIds, type.toUpperCase());
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Number of applications found for the current user: {" + applicationEntities.size() + "} and booking type: {" + type + "}");
 			applicationsListDTO.setAllApplications(applicationEntities);
 			response.setResponse(applicationsListDTO);
 		} catch (Exception ex) {
-			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Error while Getting the Application Info for userId: " + userId);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while Getting the Application Info for userId: " + GenericUtil.maskIdentifier(userId));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"Error while Getting the Application Info for userId- " + ExceptionUtils.getStackTrace(ex));
 			new DemographicExceptionCatcher().handle(ex, response);
 		}
 		return response;
 	}
+
+
 }

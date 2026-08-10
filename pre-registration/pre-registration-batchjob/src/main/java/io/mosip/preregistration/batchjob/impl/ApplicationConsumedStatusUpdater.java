@@ -28,7 +28,10 @@ import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.UserLookupException;
+import io.mosip.preregistration.core.util.GenericUtil;
 
 /**
  * @author Mahammed Taheer
@@ -51,6 +54,9 @@ public class ApplicationConsumedStatusUpdater {
 
     @Autowired
 	private RestHelper restHelper;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
     
     public void updateConsumedStatus() {
 
@@ -62,6 +68,7 @@ public class ApplicationConsumedStatusUpdater {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
 		 			"Total Number of Processed Pre Registration applications: " + processedPreRegList.size());
+        final String resolvedAuditUserId = resolveUserUuid(auditUserId);
         
         List<String> errorredPreRegIds = new ArrayList<>();
         processedPreRegList.forEach(processedPreReg -> {
@@ -77,11 +84,11 @@ public class ApplicationConsumedStatusUpdater {
                         "Deleted invalid processed pre reg id: " + processedPreRegId + ", deleted count: " + deleted);
                 } else {
                     //adding processed pre reg details in applicant demographic consumed. 
-                    addApplicantDemographicConsumed(demoEntity);
+                    addApplicantDemographicConsumed(demoEntity, resolvedAuditUserId);
 
                     //adding processed pre reg details in applicant document consumed and purging from applicant document.
                     List<DocumentEntity> applicantDocumentList = demoEntity.getDocumentEntity();
-                    addApplicantDocumentConsumed(applicantDocumentList, processedPreRegId);
+                    addApplicantDocumentConsumed(applicantDocumentList, processedPreRegId, resolvedAuditUserId);
                     // purging from applicant document
                     purgeApplicantDocumentConsumed(applicantDocumentList, processedPreRegId);
 
@@ -89,7 +96,7 @@ public class ApplicationConsumedStatusUpdater {
                     if (demoEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
                         RegistrationBookingEntity regAppointmentObj = batchJpaRepositoryImpl.getRegistrationAppointmentDetails(
                                                         demoEntity.getPreRegistrationId());
-                        addRegistrationAppointmentConsumed(regAppointmentObj, processedPreRegId);
+                        addRegistrationAppointmentConsumed(regAppointmentObj, processedPreRegId, resolvedAuditUserId);
                         batchJpaRepositoryImpl.deleteBooking(regAppointmentObj);
                     }
 
@@ -131,25 +138,26 @@ public class ApplicationConsumedStatusUpdater {
                     AuditLogVariables.BOOKING_SERVICE.toString());
     }
 
-    private void addApplicantDemographicConsumed(DemographicEntity demoEntity) {
+    private void addApplicantDemographicConsumed(DemographicEntity demoEntity, String resolvedAuditUserId) {
         DemographicEntityConsumed demographicEntityConsumed = new DemographicEntityConsumed();
         demographicEntityConsumed.setApplicantDetailJson(demoEntity.getApplicantDetailJson());
-        demographicEntityConsumed.setCrAppuserId(demoEntity.getCrAppuserId());
+        demographicEntityConsumed.setCrAppuserId(resolveUserUuid(demoEntity.getCrAppuserId()));
         demographicEntityConsumed.setCreateDateTime(demoEntity.getCreateDateTime());
-        demographicEntityConsumed.setCreatedBy(demoEntity.getCreatedBy());
+        demographicEntityConsumed.setCreatedBy(resolveUserUuid(demoEntity.getEffectiveCreatedBy()));
         demographicEntityConsumed.setDemogDetailHash(demoEntity.getDemogDetailHash());
         demographicEntityConsumed.setEncryptedDateTime(demoEntity.getEncryptedDateTime());
         demographicEntityConsumed.setLangCode(demoEntity.getLangCode());
         demographicEntityConsumed.setPreRegistrationId(demoEntity.getPreRegistrationId());
         demographicEntityConsumed.setUpdateDateTime(DateUtils.parseDateToLocalDateTime(new Date()));
-        demographicEntityConsumed.setUpdatedBy(auditUserId);
+        demographicEntityConsumed.setUpdatedBy(resolvedAuditUserId);
         demographicEntityConsumed.setStatusCode(StatusCodes.CONSUMED.getCode());
         boolean added = batchJpaRepositoryImpl.updateConsumedDemographic(demographicEntityConsumed);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
                         "Added demographic consumed in table pre reg id: " + demoEntity.getPreRegistrationId() + ", added status: " + added);
     }
 
-    private void addApplicantDocumentConsumed(List<DocumentEntity> applicantDocumentList, String preRegId) {
+    private void addApplicantDocumentConsumed(List<DocumentEntity> applicantDocumentList, String preRegId,
+            String resolvedAuditUserId) {
         if (Objects.isNull(applicantDocumentList)) {
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
                         "No Documents found to add in consumed table for pre reg id: " + preRegId);
@@ -158,7 +166,7 @@ public class ApplicationConsumedStatusUpdater {
 
         applicantDocumentList.forEach(applicantDoc -> {
             DocumentEntityConsumed documentEntityConsumed = new DocumentEntityConsumed();
-            documentEntityConsumed.setCrBy(applicantDoc.getCrBy());
+            documentEntityConsumed.setCrBy(resolveUserUuid(applicantDoc.getEffectiveCrBy()));
             documentEntityConsumed.setCrDtime(applicantDoc.getCrDtime());
             documentEntityConsumed.setDocCatCode(applicantDoc.getDocCatCode());
             documentEntityConsumed.setDocFileFormat(applicantDoc.getDocFileFormat());
@@ -171,7 +179,7 @@ public class ApplicationConsumedStatusUpdater {
             documentEntityConsumed.setLangCode(applicantDoc.getLangCode());
             documentEntityConsumed.setPreregId(applicantDoc.getDemographicEntity().getPreRegistrationId());
             documentEntityConsumed.setStatusCode(applicantDoc.getStatusCode());
-            documentEntityConsumed.setUpdBy(auditUserId);
+            documentEntityConsumed.setUpdBy(resolvedAuditUserId);
             documentEntityConsumed.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
             documentEntityConsumed.setDocRefId(applicantDoc.getRefNumber());
             batchJpaRepositoryImpl.updateConsumedDocument(documentEntityConsumed);
@@ -182,11 +190,12 @@ public class ApplicationConsumedStatusUpdater {
         
     }
 
-    private void addRegistrationAppointmentConsumed(RegistrationBookingEntity regAppointmentObj, String preRegId) {
+    private void addRegistrationAppointmentConsumed(RegistrationBookingEntity regAppointmentObj, String preRegId,
+            String resolvedAuditUserId) {
         RegistrationBookingEntityConsumed regAppointmentConsumed = new RegistrationBookingEntityConsumed();
         regAppointmentConsumed.setBookingDateTime(regAppointmentObj.getBookingDateTime());
         regAppointmentConsumed.setPreregistrationId(regAppointmentObj.getPreregistrationId());
-        regAppointmentConsumed.setCrBy(regAppointmentObj.getCrBy());
+        regAppointmentConsumed.setCrBy(resolveUserUuid(regAppointmentObj.getEffectiveCrBy()));
         regAppointmentConsumed.setCrDate(regAppointmentObj.getCrDate());
         regAppointmentConsumed.setId(regAppointmentObj.getId());
         regAppointmentConsumed.setLangCode(regAppointmentObj.getLangCode());
@@ -194,7 +203,7 @@ public class ApplicationConsumedStatusUpdater {
         regAppointmentConsumed.setRegistrationCenterId(regAppointmentObj.getRegistrationCenterId());
         regAppointmentConsumed.setSlotFromTime(regAppointmentObj.getSlotFromTime());
         regAppointmentConsumed.setSlotToTime(regAppointmentObj.getSlotToTime());
-        regAppointmentConsumed.setUpBy(auditUserId);
+        regAppointmentConsumed.setUpBy(resolvedAuditUserId);
         regAppointmentConsumed.setUpdDate(DateUtils.parseDateToLocalDateTime(new Date()));
         boolean added = batchJpaRepositoryImpl.updateConsumedBooking(regAppointmentConsumed);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
@@ -215,6 +224,20 @@ public class ApplicationConsumedStatusUpdater {
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
                 "Deleted Applicant Document for pre reg id: " + preRegId + ", documents id: " + applicantDoc.getDocId());
         });
+    }
+
+    private String resolveUserUuid(String userId) {
+        if (Objects.isNull(userId) || userId.trim().isEmpty()) {
+            return userId;
+        }
+        String trimmedUserId = userId.trim();
+        try {
+            return userDetailsService.getOrCreateInternalUserId(trimmedUserId);
+        } catch (UserLookupException ex) {
+            LOGGER.error(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB,
+                    "Failed to resolve UUID for masked user " + GenericUtil.maskIdentifier(trimmedUserId) + "; leaving field unresolved for this record.");
+            return userId;
+        }
     }
     
 }
