@@ -37,6 +37,7 @@ import io.mosip.preregistration.application.exception.PreRegLoginException;
 import io.mosip.preregistration.application.repository.OtpTxnRepository;
 import io.mosip.preregistration.application.service.util.NotificationServiceUtil;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 @RunWith(JUnit4.class)
 @SpringBootTest
@@ -48,9 +49,8 @@ public class OTPManagerTest {
 
 	@Before
 	public void setUp() {
-		MockitoAnnotations.initMocks(this);	
+		MockitoAnnotations.initMocks(this);
 		ReflectionTestUtils.setField(otpManager, "sendOtpResourceUrl", "home");
-		
 	}
 	
 	@Value("${sendOtp.resource.url}")

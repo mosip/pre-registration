@@ -71,7 +71,7 @@ public class RegistrationBookingEntityConsumed implements Serializable {
 	@Column(name = "lang_code")
 	private String langCode;
 
-	/** Created by. */
+	/** Created by (legacy plaintext or user identifier) */
 	@Column(name = "cr_by")
 	private String crBy;
 
@@ -86,5 +86,13 @@ public class RegistrationBookingEntityConsumed implements Serializable {
 	/** Updated date time. */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDate;
+
+	public String getEffectiveCrBy() {
+		return this.crBy;
+	}
+
+	public String getEffectiveUpdBy() {
+		return this.upBy;
+	} 
 
 }

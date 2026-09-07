@@ -30,6 +30,7 @@ import io.mosip.preregistration.batchjob.tasklets.ApplicationsBookingCheckTaskle
 import io.mosip.preregistration.batchjob.tasklets.AvailabilitySyncTasklet;
 import io.mosip.preregistration.batchjob.tasklets.ConsumedStatusTasklet;
 import io.mosip.preregistration.batchjob.tasklets.ExpiredStatusTasklet;
+import io.mosip.preregistration.batchjob.tasklets.IdentityReconciliationTasklet;
 import io.mosip.preregistration.batchjob.tasklets.PurgeExpiredRegCentersSlotsTasklet;
 import javax.sql.DataSource;
 
@@ -55,6 +56,9 @@ public class PreRegistrationBatchJobConfig {
 
 	@Autowired
 	private ApplicationsBookingCheckTasklet applicationBookingCheckTasklet;
+
+	@Autowired
+	private IdentityReconciliationTasklet identityReconciliationTasklet;
 
 //  Commeting it as transactionManager is imported from Kernel-Auth-Adapter Jar
 //	@Bean
@@ -97,6 +101,19 @@ public class PreRegistrationBatchJobConfig {
 	public Job consumedStatusJob(JobRepository jobRepository,@Qualifier("consumedStatusStep") Step consumedStatusStep) {
 		return new JobBuilder("consumedStatusJob", jobRepository).incrementer(new RunIdIncrementer())
 				.start(consumedStatusStep).build();
+	}
+
+	@Bean
+	public Step identityReconciliationStep(JobRepository jobRepository, PlatformTransactionManager transactionManager) {
+		return new StepBuilder("identityReconciliationStep", jobRepository)
+				.tasklet(identityReconciliationTasklet, transactionManager).build();
+	}
+
+	@Bean
+	public Job identityReconciliationJob(JobRepository jobRepository,
+			@Qualifier("identityReconciliationStep") Step identityReconciliationStep) {
+		return new JobBuilder("identityReconciliationJob", jobRepository).incrementer(new RunIdIncrementer())
+				.start(identityReconciliationStep).build();
 	}
 
 	@Bean

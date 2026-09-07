@@ -71,7 +71,7 @@ public class AvailibityEntity implements Serializable {
 	@Column(name = "available_kiosks")
 	private int availableKiosks;
 
-	/** Created by. */
+	/** Created by (legacy plaintext or user identifier) */
 	@Column(name = "cr_by")
 	private String crBy;
 
@@ -79,13 +79,21 @@ public class AvailibityEntity implements Serializable {
 	@Column(name = "cr_dtimes")
 	private LocalDateTime crDate;
 
-	/** Updated by. */
+	/** Updated by (legacy plaintext or user identifier) */
 	@Column(name = "upd_by")
 	private String upBy;
 
 	/** Updated date time. */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDate;
+
+	public String getEffectiveCrBy() {
+		return this.crBy;
+	}
+
+	public String getEffectiveUpdBy() {
+		return this.upBy;
+	} 
 
 	/** Is deleted. */
 	@Column(name = "is_deleted")

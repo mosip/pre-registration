@@ -17,6 +17,8 @@ import java.time.ZoneId;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -58,6 +60,7 @@ import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
@@ -98,6 +101,15 @@ public class DocumentServiceUtil {
 
 	@Autowired
 	private CommonServiceUtil commonServiceUtil;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
 
 	/**
 	 * Reference for ${demographic.resource.url} from property file
@@ -175,6 +187,13 @@ public class DocumentServiceUtil {
 		documentEntity.setCrBy(userId);
 		documentEntity.setUpdBy(userId);
 		documentEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		String effectiveUserId = resolveEffectiveUserId(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for document write. preRegistrationId=" + preRegistrationId
+						+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
+						+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+		documentEntity.setCrBy(effectiveUserId);
+		documentEntity.setUpdBy(effectiveUserId);
 		documentEntity.setRefNumber(dto.getRefNumber());
 		// documentEntity.setEncryptedDateTime(LocalDateTime.now(ZoneId.of("UTC")));
 		return documentEntity;
@@ -275,8 +294,8 @@ public class DocumentServiceUtil {
 		copyDocumentEntity.setDocCatCode(sourceEntity.getDocCatCode());
 		copyDocumentEntity.setDocFileFormat(sourceEntity.getDocFileFormat());
 		copyDocumentEntity.setRefNumber(sourceEntity.getRefNumber());
-		copyDocumentEntity.setCrBy(sourceEntity.getCrBy());
-		copyDocumentEntity.setUpdBy(sourceEntity.getUpdBy());
+		copyDocumentEntity.setCrBy(sourceEntity.getEffectiveCrBy());
+		copyDocumentEntity.setUpdBy(sourceEntity.getEffectiveUpdBy());
 		copyDocumentEntity.setLangCode(sourceEntity.getLangCode());
 		copyDocumentEntity.setEncryptedDateTime(sourceEntity.getEncryptedDateTime());
 		copyDocumentEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
@@ -396,14 +415,9 @@ public class DocumentServiceUtil {
 			List<String> validMandatoryDocForApplicant) {
 		if (validMandatoryDocForApplicant.isEmpty()) {
 			return false;
-		} else {
-			availableDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (!validMandatoryDocForApplicant.isEmpty()) {
-				return true;
-			} else {
-				return false;
-			}
 		}
+		availableDocs.forEach(validMandatoryDocForApplicant::remove);
+		return !validMandatoryDocForApplicant.isEmpty();
 	}
 
 	public boolean isPasswordProtectedFile(MultipartFile file) throws java.io.IOException {
@@ -428,6 +442,15 @@ public class DocumentServiceUtil {
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	public void updateApplicationStatusToIncomplete(DemographicEntity demographicEntity) {
 		commonServiceUtil.updatePreRegistrationStatus(demographicEntity.getPreRegistrationId(),
-				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getCreatedBy());
+				StatusCodes.APPLICATION_INCOMPLETE.getCode(), demographicEntity.getEffectiveCreatedBy());
+	}
+
+	private String resolveEffectiveUserId(String userId) {
+		try {
+			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
+		} catch (IllegalStateException ex) {
+			throw new InvalidRequestException(DocumentErrorCodes.PRG_PAM_DOC_026.toString(),
+					DocumentErrorMessages.IDENTITY_RESOLUTION_FAILED.getMessage(), null);
+		}
 	}
 }

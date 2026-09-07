@@ -18,6 +18,7 @@ import io.mosip.preregistration.application.errorcodes.DocumentErrorCodes;
 import io.mosip.preregistration.application.errorcodes.DocumentErrorMessages;
 import io.mosip.preregistration.application.exception.DocumentNotFoundException;
 import io.mosip.preregistration.application.service.util.DocumentServiceUtil;
+import io.mosip.preregistration.core.common.repository.DocumentRepository;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.entity.DocumentEntity;
 import io.mosip.preregistration.core.config.LoggerConfiguration;

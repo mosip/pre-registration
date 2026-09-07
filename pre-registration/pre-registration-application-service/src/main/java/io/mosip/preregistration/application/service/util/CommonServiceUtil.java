@@ -38,7 +38,7 @@ import io.mosip.preregistration.application.exception.DemographicServiceExceptio
 import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
 import io.mosip.preregistration.application.exception.RecordNotFoundException;
 import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
-import io.mosip.preregistration.application.repository.DemographicRepository;
+import io.mosip.preregistration.core.common.repository.DemographicRepository;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
@@ -50,9 +50,11 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import io.mosip.preregistration.demographic.exception.system.JsonParseException;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 
 /**
  * This class provides the common service implementation for DocumentService and
@@ -108,6 +110,12 @@ public class CommonServiceUtil {
 	@Autowired
 	private DemographicServiceUtil demographicServiceUtil;
 
+	@Autowired
+	private UserDetailsService userDetailsService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	private boolean piiBackwardCompatibility;
+
 	/**
 	 * Autowired reference for {@link #RegistrationRepositary}
 	 */
@@ -124,28 +132,27 @@ public class CommonServiceUtil {
 			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
 			if (validationUtil.requstParamValidator(requestParamMap)) {
 				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
-				if (demographicEntity != null) {
-					List<String> list = listAuth(authUserDetails().getAuthorities());
-					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-							"In getDemographicData method of pre-registration service with list  " + list.toString());
-					if (list.contains("ROLE_INDIVIDUAL")) {
-						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
-					}
-
-					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
-					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
-							hashString.getBytes())) {
-
-						DemographicResponseDTO createDto = setterForCreateDTO(demographicEntity);
-						response.setResponse(createDto);
-					} else {
-						throw new HashingException(
-								io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
-								io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
-					}
-				} else {
+				if (demographicEntity == null) {
 					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
 							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
+				}
+				List<String> list = listAuth(authUserDetails().getAuthorities());
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"In getDemographicData method of pre-registration service with list  " + list.toString());
+				if (list.contains("ROLE_INDIVIDUAL")) {
+					userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
+				}
+
+				String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
+				if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
+						hashString.getBytes())) {
+
+					DemographicResponseDTO createDto = setterForCreateDTO(demographicEntity);
+					response.setResponse(createDto);
+				} else {
+					throw new HashingException(
+							io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
+							io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
 				}
 			}
 		} catch (Exception ex) {
@@ -170,9 +177,9 @@ public class CommonServiceUtil {
 
 	public void userValidation(String authUserId, String preregUserId) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"In getDemographicData method of userValidation with priid " + preregUserId + " and userID "
-						+ authUserId);
-		if (!authUserId.trim().equals(preregUserId.trim())) {
+				"In getDemographicData method of userValidation with priid " + GenericUtil.maskIdentifier(preregUserId)
+						+ " and userID " + GenericUtil.maskIdentifier(authUserId));
+		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
 			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
 					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
 		}
@@ -189,9 +196,11 @@ public class CommonServiceUtil {
 					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
 			createDto.setStatusCode(demographicEntity.getStatusCode());
 			createDto.setLangCode(demographicEntity.getLangCode());
-			createDto.setCreatedBy(demographicEntity.getCreatedBy());
+			// Looked up, not registered: getEffective* returns the column as stored, so an unmigrated
+			// row would otherwise put the applicant's own email or phone on the response.
+			createDto.setCreatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveCreatedBy()));
 			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
-			createDto.setUpdatedBy(demographicEntity.getUpdatedBy());
+			createDto.setUpdatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveUpdatedBy()));
 			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
 		} catch (ParseException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
@@ -298,7 +307,7 @@ public class CommonServiceUtil {
 				List<String> list = listAuth(authUserDetails().getAuthorities());
 				if (demographicEntity != null) {
 					if (list.contains("ROLE_INDIVIDUAL")) {
-						userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+						userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
 					}
 					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
 
@@ -335,7 +344,7 @@ public class CommonServiceUtil {
 				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
 				List<String> list = listAuth(authUserDetails().getAuthorities());
 				if (list.contains("ROLE_INDIVIDUAL")) {
-					userValidation(authUserDetails().getUserId(), demographicEntity.getCreatedBy());
+					userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
 				}
 				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
 					try {
@@ -400,13 +409,9 @@ public class CommonServiceUtil {
 			List<String> validMandatoryDocForApplicant) {
 		if (validMandatoryDocForApplicant.isEmpty()) {
 			return true;
-		} else {
-			uploadedDocs.forEach(docCat -> validMandatoryDocForApplicant.remove(docCat));
-			if (!validMandatoryDocForApplicant.isEmpty()) {
-				return false;
-			} else {
-				return true;
-			}
 		}
+		uploadedDocs.forEach(validMandatoryDocForApplicant::remove);
+		return validMandatoryDocForApplicant.isEmpty();
 	}
+
 }
