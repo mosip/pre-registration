@@ -53,6 +53,10 @@ public class PreregistrationBatchJobScheduler {
 	@Autowired
 	private Job consumedStatusJob;
 
+	@Qualifier("identityReconciliationJob")
+	@Autowired
+	private Job identityReconciliationJob;
+
 	@Qualifier("expiredStatusJob")
 	@Autowired
 	private Job expiredStatusJob;
@@ -81,6 +85,24 @@ public class PreregistrationBatchJobScheduler {
 			LOGGER.error(LOGDISPLAY, "Consumed status job failed to read Processed_pre_registration_list", e.getMessage(),null);
 		}
 	} 
+
+	@Scheduled(cron = "${preregistration.job.schedule.cron.identityReconciliationJob}")
+	public void identityReconciliationScheduler() {
+
+		JobParameters jobParam = new JobParametersBuilder()
+				.addLong("identityReconciliationJobTime", System.currentTimeMillis()).toJobParameters();
+		try {
+			JobExecution jobExecution = jobLauncher.run(identityReconciliationJob, jobParam);
+
+			LOGGER.info(LOGDISPLAY, JOB_STATUS, jobExecution.getId().toString(), jobExecution.getStatus().toString());
+
+		} catch (JobExecutionAlreadyRunningException | JobRestartException | JobInstanceAlreadyCompleteException
+				| JobParametersInvalidException e) {
+
+			LOGGER.error(LOGDISPLAY, "Identity reconciliation job failed to reconcile raw identifiers", e.getMessage(),
+					null);
+		}
+	}
 
 	@Scheduled(cron = "${preregistration.job.schedule.cron.slotavailability}")
 	public void availabilitySyncScheduler() {

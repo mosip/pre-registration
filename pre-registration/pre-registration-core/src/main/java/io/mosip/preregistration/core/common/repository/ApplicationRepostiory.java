@@ -1,4 +1,4 @@
-package io.mosip.preregistration.application.repository;
+package io.mosip.preregistration.core.common.repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -37,5 +37,11 @@ public interface ApplicationRepostiory extends BaseRepository<ApplicationEntity,
 	
 	@Query("SELECT e FROM ApplicationEntity e  WHERE e.crBy= ?1 and e.bookingType= ?2 order by e.crDtime desc")
 	public List<ApplicationEntity> findByCreatedByBookingType(String userId, String bookingType);
+
+	@Query("SELECT e FROM ApplicationEntity e WHERE e.crBy IN ?1 order by e.crDtime desc")
+	public List<ApplicationEntity> findByCreatedByIn(List<String> userIds);
+
+	@Query("SELECT e FROM ApplicationEntity e WHERE e.crBy IN ?1 and e.bookingType= ?2 order by e.crDtime desc")
+	public List<ApplicationEntity> findByCreatedByInBookingType(List<String> userIds, String bookingType);
 	
 }

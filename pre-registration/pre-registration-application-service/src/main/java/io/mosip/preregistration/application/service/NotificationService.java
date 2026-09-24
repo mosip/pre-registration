@@ -53,8 +53,10 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.AuditLogUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.NotificationUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
 import jakarta.annotation.PostConstruct;
@@ -89,6 +91,9 @@ public class NotificationService {
 
 	@Autowired
 	private ApplicationServiceIntf applicationServiceIntf;
+
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	/**
 	 * Reference for ${appointmentResourse.url} from property file
@@ -205,7 +210,10 @@ public class NotificationService {
 			NotificationDTO notificationDto = notificationReqDTO.getRequest();
 			if (validationUtil.requestValidator(validationUtil.prepareRequestMap(notificationReqDTO),
 					requiredRequestMap)) {
-				MainResponseDTO<ApplicationEntity> appEntity = applicationServiceIntf.getApplicationInfo(notificationDto.getPreRegistrationId());
+				// Internal variant deliberately: the sanitised response drops an unregistered raw
+				// contact_info, and that raw value is exactly what the fallback needs to notify.
+				MainResponseDTO<ApplicationEntity> appEntity = applicationServiceIntf
+						.getApplicationInfoInternal(notificationDto.getPreRegistrationId());
 				String bookingType = appEntity.getResponse().getBookingType();
 				MainResponseDTO<DemographicResponseDTO> demoDetail = notificationDtoValidationV2(bookingType, notificationDto);
 				if (notificationDto.isAdditionalRecipient()) {
@@ -497,7 +505,8 @@ public class NotificationService {
 				}
 				if (notificationDto.getEmailID() == null && notificationDto.getMobNum() == null) {
 					// in case both email id and mob num are null, send details to contact info
-					String createdById = appEntity.getResponse().getContactInfo();
+					String createdById = resolveContactAddress(appEntity.getResponse().getContactInfo(),
+							appEntity.getResponse().getApplicationId());
 					if (createdById != null) {
 						if (validationUtil.emailValidator(createdById)) {
 							notificationDto.setEmailID(createdById);
@@ -528,8 +537,34 @@ public class NotificationService {
 	}
 
 	/**
+	 * Returns a contact address that can actually be notified.
+	 *
+	 * <p>{@code applications.contact_info} holds the applicant's own email or phone, and is the last
+	 * resort when a record carries neither in its demographic detail. Since the PII migration that
+	 * column stores a canonical user id instead of the address, so it must be resolved back before
+	 * the email/phone validators see it — a UUID passes neither, which would silently drop the
+	 * notification. Legacy rows still holding a raw address are passed through untouched.
+	 *
+	 * <p>The recovered value is personal data: it is handed straight to the notification call and is
+	 * never logged. If it cannot be recovered the caller falls through to its existing "unable to
+	 * notify" branch rather than failing the request.
+	 */
+	private String resolveContactAddress(String contactInfo, String applicationId) {
+		if (contactInfo == null || !GenericUtil.isUuid(contactInfo)) {
+			return contactInfo;
+		}
+		String recoveredAddress = userDetailsService.recoverIdentifier(contactInfo);
+		if (recoveredAddress == null || recoveredAddress.isBlank()) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Could not recover a contact address from contact_info for applicationId: " + applicationId);
+			return null;
+		}
+		return recoveredAddress;
+	}
+
+	/**
 	 * This method is used to audit all the trigger notification events
-	 * 
+	 *
 	 * @param eventId
 	 * @param eventName
 	 * @param eventType

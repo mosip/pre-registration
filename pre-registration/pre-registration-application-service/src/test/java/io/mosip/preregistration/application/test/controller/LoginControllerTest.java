@@ -41,6 +41,7 @@ import io.mosip.preregistration.application.util.LoginCommonUtil;
 import io.mosip.preregistration.core.common.dto.AuthNResponse;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.util.RequestValidator;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -66,6 +67,9 @@ public class LoginControllerTest {
 
 	@MockBean
 	private RequestValidator loginValidator;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
 
 	@Mock
 	private LoginController controller;

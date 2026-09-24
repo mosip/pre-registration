@@ -9,6 +9,8 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -72,7 +74,7 @@ public class RegistrationBookingEntity implements Serializable {
 	@Column(name = "lang_code")
 	private String langCode;
 
-	/** Created by. */
+	/** Created by (legacy plaintext or user identifier) */
 	@Column(name = "cr_by")
 	private String crBy;
 
@@ -80,11 +82,26 @@ public class RegistrationBookingEntity implements Serializable {
 	@Column(name = "cr_dtimes")
 	private LocalDateTime crDate;
 
-	/** Created by. */
+	/** Updated by (legacy plaintext or user identifier) */
 	@Column(name = "upd_by")
 	private String upBy;
 
 	/** Updated date time. */
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDate;
+
+	/**
+	 * Returns {@code cr_by} as stored. <b>Does not canonicalise</b> — a row the identity migration has
+	 * not reached still yields the raw legacy identifier, so callers placing this on a response or
+	 * comparing it must resolve it themselves.
+	 */
+	@JsonIgnore
+	public String getEffectiveCrBy() {
+		return this.crBy;
+	}
+
+	@JsonIgnore
+	public String getEffectiveUpdBy() {
+		return this.upBy;
+	}
 }

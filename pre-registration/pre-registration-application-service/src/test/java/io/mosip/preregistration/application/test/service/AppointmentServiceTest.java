@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.Assert;
 import org.junit.Before;
@@ -22,17 +23,20 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import io.mosip.analytics.event.anonymous.util.AnonymousProfileUtil;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
-import io.mosip.preregistration.application.repository.ApplicationRepostiory;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.repository.DocumentDAO;
 import io.mosip.preregistration.application.service.AppointmentServiceImpl;
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
 import io.mosip.preregistration.application.service.DemographicService;
 import io.mosip.preregistration.application.service.DocumentService;
 import io.mosip.preregistration.application.service.util.AppointmentUtil;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.DateTimeDto;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
@@ -44,6 +48,7 @@ import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 @RunWith(SpringRunner.class)
 @ImportAutoConfiguration(RefreshAutoConfiguration.class)
 @ContextConfiguration(classes = { AppointmentServiceImpl.class })
+@TestPropertySource(properties = "mosip.prereg.pii.backward.compatibility=false")
 public class AppointmentServiceTest {
 
 	@Autowired
@@ -81,11 +86,20 @@ public class AppointmentServiceTest {
 	
 	@MockBean
 	private DocumentDAO documentDAO;
+
+	@MockBean
+	private UserDetailsService userDetailsService;
+
+	@MockBean
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
 	
 	@Before
 	public void setup() {
 		ReflectionTestUtils.setField(appointmentService, "mosipDateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-		
+		ReflectionTestUtils.setField(appointmentService, "piiBackwardCompatibility", false);
+		Mockito.when(applicationIdentityMigrationService.resolveEffectiveUserId(Mockito.anyString()))
+				.thenAnswer(invocation -> invocation.getArgument(0));
+
 	}
 
 	@Test
@@ -170,14 +184,14 @@ public class AppointmentServiceTest {
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
+		Mockito.when(applicationRepostiory.findById("98765432101234")).thenReturn(Optional.of(applicationEntity));
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
-	
+
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 
 		assertEquals(appEntity2, applicationEntity);
@@ -214,8 +228,8 @@ public class AppointmentServiceTest {
 		applicationEntity.setBookingStatusCode("Pending_Appointment");
 
 		Mockito.when(applicationRepostiory.save(applicationEntity)).thenReturn(applicationEntity);
-		Mockito.when(applicationRepostiory.getOne("98765432101234")).thenReturn(applicationEntity);
-		
+		Mockito.when(applicationRepostiory.findById("98765432101234")).thenReturn(Optional.of(applicationEntity));
+
 		AuthUserDetails applicationUser = Mockito.mock(AuthUserDetails.class);
 		Authentication authentication = Mockito.mock(Authentication.class);
 		SecurityContext securityContext = Mockito.mock(SecurityContext.class);
