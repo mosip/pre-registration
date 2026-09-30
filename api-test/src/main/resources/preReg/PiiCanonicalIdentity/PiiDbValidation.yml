@@ -1,0 +1,260 @@
+PiiDbValidation:
+   Prereg_PiiDbValidation_UserDetails_Row_Smoke:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_01
+      description: Validate that the run user has one user_details row with an encrypted identifier and timestamps
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiResponseOwnership_05
+      input: '{
+  "db": "prereg",
+  "query": "SELECT count(*) AS row_count, bool_and(length(identifier_encrypted) > 0) AS encrypted_present, bool_and(position(lower(''$PREREGUSER$'') in lower(identifier_encrypted)) = 0) AS encrypted_not_plaintext, bool_and(cr_dtimes IS NOT NULL AND encrypted_dtimes IS NOT NULL) AS timestamps_present FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))"
+}'
+      output: '{
+  "row_count": "1",
+  "encrypted_present": "true",
+  "encrypted_not_plaintext": "true",
+  "timestamps_present": "true"
+}'
+   Prereg_PiiDbValidation_Applications_OwnerUuid_Smoke:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_02
+      description: Validate that applications cr_by, upd_by and contact_info hold the user UUID
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (a.cr_by = u.uid) AS cr_by_is_user_uuid, (a.upd_by = u.uid) AS upd_by_is_user_uuid, (a.contact_info = u.uid) AS contact_info_is_user_uuid FROM prereg.applications a, (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE a.application_id = ''$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$''"
+}'
+      output: '{
+  "cr_by_is_user_uuid": "true",
+  "upd_by_is_user_uuid": "true",
+  "contact_info_is_user_uuid": "true"
+}'
+   Prereg_PiiDbValidation_Demographic_OwnerUuid_Smoke:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_03
+      description: Validate that applicant_demographic cr_appuser_id, cr_by and upd_by hold the user UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_UpdatePreregistration_01
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (d.cr_appuser_id = u.uid) AS cr_appuser_id_is_user_uuid, (d.cr_by = u.uid) AS cr_by_is_user_uuid, (d.upd_by = u.uid) AS upd_by_is_user_uuid FROM prereg.applicant_demographic d, (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE d.prereg_id = ''$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$''"
+}'
+      output: '{
+  "cr_appuser_id_is_user_uuid": "true",
+  "cr_by_is_user_uuid": "true",
+  "upd_by_is_user_uuid": "true"
+}'
+   Prereg_PiiDbValidation_Document_OwnerUuid:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_04
+      description: Validate that applicant_document cr_by and upd_by hold the user UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_UploadDocument_03
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (count(*) > 0) AS has_documents, count(*) FILTER (WHERE d.cr_by IS DISTINCT FROM u.uid OR d.upd_by IS DISTINCT FROM u.uid) AS non_uuid_owner_rows FROM prereg.applicant_document d, (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE d.prereg_id = ''$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$''"
+}'
+      output: '{
+  "has_documents": "true",
+  "non_uuid_owner_rows": "0"
+}'
+   Prereg_PiiDbValidation_Appointment_OwnerUuid:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_05
+      description: Validate that reg_appointment cr_by and upd_by hold the user UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_BookAppointment_01
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (r.cr_by = u.uid) AS cr_by_is_user_uuid, (r.upd_by IS NULL OR r.upd_by = u.uid) AS upd_by_is_user_uuid_or_null FROM prereg.reg_appointment r, (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE r.prereg_id = ''$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$''"
+}'
+      output: '{
+  "cr_by_is_user_uuid": "true",
+  "upd_by_is_user_uuid_or_null": "true"
+}'
+   Prereg_PiiDbValidation_NoPlaintextOwner_Smoke:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_06
+      description: Validate that no ownership column written in this run stores the run user email
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (SELECT count(*) FROM prereg.applications WHERE (cr_dtimes >= ''$PIIRUNSTART$'' OR upd_dtimes >= ''$PIIRUNSTART$'') AND (lower(cr_by) = lower(''$PREREGUSER$'') OR lower(upd_by) = lower(''$PREREGUSER$'') OR lower(contact_info) = lower(''$PREREGUSER$''))) + (SELECT count(*) FROM prereg.applicant_demographic WHERE (cr_dtimes >= ''$PIIRUNSTART$'' OR upd_dtimes >= ''$PIIRUNSTART$'') AND (lower(cr_by) = lower(''$PREREGUSER$'') OR lower(upd_by) = lower(''$PREREGUSER$'') OR lower(cr_appuser_id) = lower(''$PREREGUSER$''))) + (SELECT count(*) FROM prereg.applicant_document WHERE (cr_dtimes >= ''$PIIRUNSTART$'' OR upd_dtimes >= ''$PIIRUNSTART$'') AND (lower(cr_by) = lower(''$PREREGUSER$'') OR lower(upd_by) = lower(''$PREREGUSER$''))) + (SELECT count(*) FROM prereg.reg_appointment WHERE (cr_dtimes >= ''$PIIRUNSTART$'' OR upd_dtimes >= ''$PIIRUNSTART$'') AND (lower(cr_by) = lower(''$PREREGUSER$'') OR lower(upd_by) = lower(''$PREREGUSER$''))) AS plaintext_owner_rows"
+}'
+      output: '{
+  "plaintext_owner_rows": "0"
+}'
+   Prereg_PiiDbValidation_SameUserSameUuid:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_07
+      description: Validate that two pre registrations of the same user share one UUID
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (a1.cr_by = a2.cr_by) AS same_owner_uuid FROM prereg.applications a1, prereg.applications a2 WHERE a1.application_id = ''$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$'' AND a2.application_id = ''$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "same_owner_uuid": "true"
+}'
+   Prereg_PiiDbValidation_UserDetails_HashUniqueIndex:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_08
+      description: Validate that user_details.identifier_hash has a unique index
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (count(*) > 0) AS unique_hash_index_present FROM pg_indexes WHERE schemaname = ''prereg'' AND tablename = ''user_details'' AND indexdef ILIKE ''%UNIQUE%(identifier_hash)%''"
+}'
+      output: '{
+  "unique_hash_index_present": "true"
+}'
+   Prereg_PiiDbValidation_Applications_CrByIndex:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_09
+      description: Validate that applications.cr_by is indexed
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (count(*) > 0) AS cr_by_index_present FROM pg_indexes WHERE schemaname = ''prereg'' AND tablename = ''applications'' AND indexdef ILIKE ''%(cr_by%''"
+}'
+      output: '{
+  "cr_by_index_present": "true"
+}'
+   Prereg_PiiDbValidation_Demographic_CrByIndex:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_10
+      description: Validate that applicant_demographic.cr_by is indexed
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (count(*) > 0) AS cr_by_index_present FROM pg_indexes WHERE schemaname = ''prereg'' AND tablename = ''applicant_demographic'' AND indexdef ILIKE ''%(cr_by%''"
+}'
+      output: '{
+  "cr_by_index_present": "true"
+}'
+   Prereg_PiiDbValidation_OtpTransaction_NoPlaintext:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_11
+      description: Validate that this run's otp_transaction rows never store the run user email
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT count(*) AS plaintext_rows FROM prereg.otp_transaction WHERE (cr_dtimes >= ''$PIIRUNSTART$'' OR upd_dtimes >= ''$PIIRUNSTART$'') AND (lower(cr_by) = lower(''$PREREGUSER$'') OR lower(upd_by) = lower(''$PREREGUSER$''))"
+}'
+      output: '{
+  "plaintext_rows": "0"
+}'
+   Prereg_PiiDbValidation_LoginAudit_NoPlaintext:
+      endPoint: db:mosip_audit
+      uniqueIdentifier: TC_prereg_PiiDbValidation_12
+      description: Validate that this run's login audit entries store the user UUID, not the email
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "audit",
+  "query": "SELECT count(*) FILTER (WHERE lower(session_user_id) = lower(''$PREREGUSER$'') OR lower(session_user_name) = lower(''$PREREGUSER$'')) AS plaintext_login_audit_rows, (count(*) FILTER (WHERE session_user_id ~ ''^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'') > 0) AS uuid_login_audit_present FROM audit.app_audit_log WHERE app_name = ''PREREGISTRATION'' AND module_name = ''AUTHENTICATION_SERVICE'' AND action_dtimes >= ''$PIIRUNSTART$''"
+}'
+      output: '{
+  "plaintext_login_audit_rows": "0",
+  "uuid_login_audit_present": "true"
+}'
+   Prereg_PiiDbValidation_UserDetails_CreatedAtLogin:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_13
+      description: Validate that a user who has only logged in already has a user_details row
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiCrossUserAccess_01
+      input: '{
+  "db": "prereg",
+  "query": "SELECT count(*) AS row_count FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGOTHERUSER$'')),''UTF8'')),''hex''))"
+}'
+      output: '{
+  "row_count": "1"
+}'
+   Prereg_PiiDbValidation_CrossUser_BookingAndDocumentsUntouched:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_14
+      description: Validate that the rejected cross-user attempts left the owner's booking and documents unchanged
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiCrossUserActions_05,TC_prereg_PiiCrossUserActions_07,TC_prereg_PiiCrossUserActions_08
+      input: '{
+  "db": "prereg",
+  "query": "SELECT d.status_code, (SELECT count(*) FROM prereg.reg_appointment r WHERE r.prereg_id = d.prereg_id) AS appointment_rows, (SELECT count(*) FROM prereg.applicant_document doc, prereg.user_details u WHERE doc.prereg_id = d.prereg_id AND upper(u.identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGOTHERUSER$'')),''UTF8'')),''hex'')) AND (doc.cr_by = u.user_id::text OR doc.upd_by = u.user_id::text)) AS other_user_documents FROM prereg.applicant_demographic d WHERE d.prereg_id = ''$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$''"
+}'
+      output: '{
+  "status_code": "Booked",
+  "appointment_rows": "1",
+  "other_user_documents": "0"
+}'
+   Prereg_PiiDbValidation_UserDetails_Columns:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_15
+      description: Validate the user_details columns, types and NOT NULL constraints
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT count(*) AS column_count, count(*) FILTER (WHERE (column_name, data_type, is_nullable) IN ((''user_id'', ''uuid'', ''NO''), (''identifier_hash'', ''character varying'', ''NO''), (''identifier_encrypted'', ''text'', ''NO''), (''cr_dtimes'', ''timestamp without time zone'', ''NO''), (''encrypted_dtimes'', ''timestamp without time zone'', ''NO''))) AS expected_columns, max(character_maximum_length) FILTER (WHERE column_name = ''identifier_hash'') AS hash_length FROM information_schema.columns WHERE table_schema = ''prereg'' AND table_name = ''user_details''"
+}'
+      output: '{
+  "column_count": "5",
+  "expected_columns": "5",
+  "hash_length": "128"
+}'
+   Prereg_PiiDbValidation_UserDetails_KeysAndIndexes:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_16
+      description: Validate the user_details primary key and timestamp indexes
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (SELECT count(*) FROM information_schema.table_constraints tc JOIN information_schema.key_column_usage k ON k.constraint_name = tc.constraint_name AND k.table_schema = tc.table_schema WHERE tc.table_schema = ''prereg'' AND tc.table_name = ''user_details'' AND tc.constraint_type = ''PRIMARY KEY'' AND k.column_name = ''user_id'') AS user_id_primary_key, (SELECT count(*) FROM pg_indexes WHERE schemaname = ''prereg'' AND tablename = ''user_details'' AND indexname IN (''idx_user_details_cr_dtimes'', ''idx_user_details_encrypted_dtimes'')) AS dtimes_indexes"
+}'
+      output: '{
+  "user_id_primary_key": "1",
+  "dtimes_indexes": "2"
+}'
+   Prereg_PiiDbValidation_UserDetails_Grants:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDbValidation_17
+      description: Validate that prereguser can select, insert and update user_details
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "SELECT has_table_privilege(''prereguser'', ''prereg.user_details'', ''SELECT'') AS can_select, has_table_privilege(''prereguser'', ''prereg.user_details'', ''INSERT'') AS can_insert, has_table_privilege(''prereguser'', ''prereg.user_details'', ''UPDATE'') AS can_update"
+}'
+      output: '{
+  "can_select": "true",
+  "can_insert": "true",
+  "can_update": "true"
+}'
+   Prereg_PiiDbValidation_AllAudit_NoPlaintext:
+      endPoint: db:mosip_audit
+      uniqueIdentifier: TC_prereg_PiiDbValidation_18
+      description: Validate that this run's non-login audit entries never store the run user email
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_UploadDocument_01,TC_prereg_BookAppointment_01
+      input: '{
+  "db": "audit",
+  "query": "SELECT count(*) FILTER (WHERE lower(session_user_id) = lower(''$PREREGUSER$'') OR lower(session_user_name) = lower(''$PREREGUSER$'')) AS plaintext_audit_rows, (count(*) > 0) AS prereg_audit_present FROM audit.app_audit_log WHERE app_name = ''PREREGISTRATION'' AND module_name <> ''AUTHENTICATION_SERVICE'' AND action_dtimes >= ''$PIIRUNSTART$''"
+}'
+      output: '{
+  "plaintext_audit_rows": "0",
+  "prereg_audit_present": "true"
+}'

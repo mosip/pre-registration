@@ -1,0 +1,467 @@
+PiiApiChecks:
+   Prereg_PiiResponseOwnership_GetApplicationInfo_Uuid_Smoke:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      uniqueIdentifier: TC_prereg_PiiResponseOwnership_01
+      description: Validate that the own application returns UUIDs in crBy, updBy and contactInfo
+      role: batch
+      restMethod: get
+      input: '{
+  "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
+}'
+      output: '{
+  "response": {
+    "crBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "updBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "contactInfo": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  }
+}'
+   Prereg_PiiResponseOwnership_GetPreRegData_Uuid_Smoke:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiResponseOwnership_02
+      description: Validate that the own pre registration returns UUIDs in createdBy and updatedBy
+      role: batch
+      restMethod: get
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
+}'
+      output: '{
+  "response": {
+    "createdBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "updatedBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  }
+}'
+   Prereg_PiiResponseOwnership_GetAllApplications_Uuid_Smoke:
+      endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_PiiResponseOwnership_03
+      description: Validate that the application list returns UUIDs in crBy, updBy and contactInfo
+      role: batch
+      restMethod: get
+      input: '{
+  "type": null
+}'
+      output: '{
+  "response": {
+    "allApplications": [
+      {
+        "crBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "updBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "contactInfo": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    ]
+  }
+}'
+   Prereg_PiiResponseOwnership_GetAllApplications_ByType_Uuid:
+      endPoint: /preregistration/v1/applications?type={type}
+      uniqueIdentifier: TC_prereg_PiiResponseOwnership_04
+      description: Validate that the NEW_PREREGISTRATION application list returns UUIDs
+      role: batch
+      restMethod: get
+      input: '{
+  "type": "NEW_PREREGISTRATION"
+}'
+      output: '{
+  "response": {
+    "allApplications": [
+      {
+        "crBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "updBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+        "contactInfo": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+      }
+    ]
+  }
+}'
+   Prereg_PiiResponseOwnership_UpperCaseLogin_GetApplicationInfo:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      uniqueIdentifier: TC_prereg_PiiResponseOwnership_05
+      description: Validate that an upper-case login can fetch the own application
+      role: userDefinedCookie
+      restMethod: get
+      input: '{
+  "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGUSERUPPERCASETOKEN$"
+}'
+      output: '{
+  "response": {
+    "crBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "updBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "contactInfo": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  }
+}'
+   Prereg_PiiResponseOwnership_UpperCaseLogin_GetPreRegData:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiResponseOwnership_06
+      description: Validate that an upper-case login can fetch the own pre registration
+      role: userDefinedCookie
+      restMethod: get
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGUSERUPPERCASETOKEN$"
+}'
+      output: '{
+  "response": {
+    "createdBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "updatedBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  }
+}'
+   Prereg_PiiCrossUserAccess_GetPreRegData_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserAccess_01
+      description: Validate that another user cannot fetch the pre registration
+      role: userDefinedCookie
+      restMethod: get
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserAccess_GetApplicationInfo_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserAccess_02
+      description: Validate that another user cannot fetch the application
+      role: userDefinedCookie
+      restMethod: get
+      outputTemplate: preReg/error
+      input: '{
+  "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_015"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserAccess_GetAppointment_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserAccess_03
+      description: Validate that another user cannot fetch the appointment details
+      role: userDefinedCookie
+      restMethod: get
+      additionalDependencies: TC_prereg_BookAppointment_01
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_BCK_08"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserDelete_DeletePreReg_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserDelete_01
+      description: Validate that another user cannot delete the pre registration
+      role: userDefinedCookie
+      restMethod: delete
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserDelete_DeleteBooking_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/appointment?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserDelete_02
+      description: Validate that another user cannot delete the booked appointment
+      role: userDefinedCookie
+      restMethod: delete
+      additionalDependencies: TC_prereg_BookAppointment_01
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_BCK_08"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_ListApplications_OtherUser_NoLeak:
+      endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_01
+      description: Validate that another user's application list has none of the owner's applications or email
+      role: userDefinedCookie
+      restMethod: get
+      input: '{
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "_mustNotContain": ["$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$", "$ID:CreatePrereg_Valid_Smoke_sid_preRegistrationId$", "$PREREGUSER$", "KER-ATH"]
+}'
+   Prereg_PiiCrossUserActions_ListDocuments_OtherUser_NoLeak:
+      endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_02
+      description: Validate that another user listing the owner's documents gets no document metadata
+      role: userDefinedCookie
+      restMethod: get
+      additionalDependencies: TC_prereg_UploadDocument_01
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "_mustNotContain": ["$ID:UploadDocument_All_Valid_Smoke_sid_docId$", "doc_POA.pdf", "docCatCode", "KER-ATH"]
+}'
+   Prereg_PiiCrossUserActions_ListDocuments_OtherUser_Neg:
+      endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_03
+      description: Validate that another user listing the owner's documents gets the ownership error
+      role: userDefinedCookie
+      restMethod: get
+      additionalDependencies: TC_prereg_UploadDocument_01
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_DownloadDocument_OtherUser_Neg:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_04
+      description: Validate that another user cannot download the owner's document
+      role: userDefinedCookie
+      restMethod: get
+      additionalDependencies: TC_prereg_UploadDocument_01
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_BookAppointment_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_05
+      description: Validate that another user cannot book or re-book the owner's appointment
+      role: userDefinedCookie
+      restMethod: post
+      additionalDependencies: TC_prereg_BookAppointment_01
+      inputTemplate: preReg/bookAppointment/bookAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "registration_center_id": "10001",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "2030-01-15",
+  "time_slot_from": "09:00:00",
+  "time_slot_to": "09:15:00",
+  "requesttime": "$TIMESTAMP$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_BCK_08"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_BookMultiAppointment_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/appointment
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_06
+      description: Validate that another user cannot book the owner's application via multi-booking
+      role: userDefinedCookie
+      restMethod: post
+      additionalDependencies: TC_prereg_BookAppointment_01
+      inputTemplate: preReg/BookMultipleAppointment/bookMultipleAppointment
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "registration_center_id": "10001",
+  "id": "mosip.pre-registration.booking.book",
+  "version": "1.0",
+  "appointment_date": "2030-01-15",
+  "time_slot_from": "09:00:00",
+  "time_slot_to": "09:15:00",
+  "requesttime": "$TIMESTAMP$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_BCK_08"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_CancelAppointment_OtherUser_Neg:
+      endPoint: /preregistration/v1/applications/appointment/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_07
+      description: Validate that another user cannot cancel the owner's appointment
+      role: userDefinedCookie
+      restMethod: put
+      additionalDependencies: TC_prereg_BookAppointment_01
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_BCK_08"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_UploadDocument_OtherUser_Neg:
+      endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_08
+      description: Validate that another user cannot upload a document to the owner's pre registration
+      role: userDefinedCookie
+      restMethod: post
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.document.upload",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "request": {
+    "docCatCode": "POA",
+    "docTypCode": "RNC",
+    "langCode": "$1STLANG$"
+  },
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+  "_multipart": "document",
+  "_filePath": "preReg/uploadDocument/doc_POA.pdf",
+  "_fileKeyName": "file",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_NotificationV2_UnknownId_Neg:
+      endPoint: /preregistration/v1/notification/v2
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_09
+      description: Validate that notification v2 for an unknown pre registration id returns PRG_APP_013
+      role: batch
+      restMethod: post
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.notification.notify",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "request": {
+    "$1STLANG$": {
+      "name": "TEST_FULLNAME",
+      "preRegistrationId": "99999999999999",
+      "additionalRecipient": false,
+      "isBatch": true
+    }
+  },
+  "_multipart": "notification"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_013"
+    }
+  ]
+}'
+   Prereg_PiiCrossUserActions_NotificationV2_OtherUser_Neg:
+      endPoint: /preregistration/v1/notification/v2
+      uniqueIdentifier: TC_prereg_PiiCrossUserActions_10
+      description: Validate that notification v2 by another user for the owner's pre registration returns PRG_APP_015
+      role: userDefinedCookie
+      restMethod: post
+      outputTemplate: preReg/error
+      input: '{
+  "id": "mosip.pre-registration.notification.notify",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "request": {
+    "$1STLANG$": {
+      "name": "TEST_FULLNAME",
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "additionalRecipient": false,
+      "isBatch": true
+    }
+  },
+  "_multipart": "notification",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_015"
+    }
+  ]
+}'
+   Prereg_PiiNotification_CreateLostUin_Smoke_sid:
+      endPoint: /preregistration/v1/applications/lostuin
+      uniqueIdentifier: TC_prereg_PiiNotification_01
+      description: Validate that a lost UIN application is created for the run user
+      role: batch
+      restMethod: post
+      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+      input: '{
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "langCode": "$1STLANG$",
+  "id": "mosip.pre-registration.lostuin.create",
+  "_idKeyName": "applicationId"
+}'
+      output: '{
+  "response": {
+    "bookingType": "LOST_FORGOTTEN_UIN"
+  }
+}'
+   Prereg_PiiNotification_V2_ContactInfoFallback_Smoke:
+      endPoint: /preregistration/v1/notification/v2
+      uniqueIdentifier: TC_prereg_PiiNotification_02
+      description: Validate that notification v2 without email or mobile succeeds for a lost UIN application
+      role: batch
+      restMethod: post
+      additionalDependencies: TC_prereg_PiiNotification_01
+      input: '{
+  "id": "mosip.pre-registration.notification.notify",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "request": {
+    "$1STLANG$": {
+      "name": "TEST_FULLNAME",
+      "preRegistrationId": "$ID:PiiNotification_CreateLostUin_Smoke_sid_applicationId$",
+      "additionalRecipient": false,
+      "isBatch": true
+    }
+  },
+  "_multipart": "notification"
+}'
+      output: '{
+  "id": "mosip.pre-registration.notification.notify",
+  "response": {
+    "message": "Email and sms request successfully submitted"
+  }
+}'
