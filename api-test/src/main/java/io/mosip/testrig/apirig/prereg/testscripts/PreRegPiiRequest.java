@@ -15,6 +15,8 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -64,6 +66,7 @@ import io.restassured.specification.RequestSpecification;
 public class PreRegPiiRequest extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(PreRegPiiRequest.class);
 	private static final Pattern PATH_PARAM = Pattern.compile("\\{([^}]+)\\}");
+	private static final long PARALLEL_REQUEST_TIMEOUT_SECONDS = 120;
 	protected String testCaseName = "";
 	private String idKeyName = null;
 
@@ -221,7 +224,12 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 			startGate.countDown();
 			List<Response> responses = new ArrayList<>();
 			for (Future<Response> future : futures) {
-				responses.add(future.get());
+				try {
+					responses.add(future.get(PARALLEL_REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+				} catch (TimeoutException e) {
+					throw new AdminTestException("Parallel request timed out after " + PARALLEL_REQUEST_TIMEOUT_SECONDS
+							+ " s: " + url);
+				}
 			}
 			return responses;
 		} finally {

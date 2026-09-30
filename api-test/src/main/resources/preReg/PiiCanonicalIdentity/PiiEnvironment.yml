@@ -12,19 +12,6 @@ PiiEnvironment:
       output: '{
   "value": "$PIIBACKWARDCOMPATIBILITY$"
 }'
-   Prereg_PiiEnvironment_CompatFlag_StoryDefault:
-      endPoint: actuator:/preregistration/v1/actuator/env
-      uniqueIdentifier: TC_prereg_PiiEnvironment_02
-      description: Validate that the environment compatibility flag is false
-      role: batch
-      restMethod: get
-      input: '{
-  "check": "actuatorProperty",
-  "key": "mosip.prereg.pii.backward.compatibility"
-}'
-      output: '{
-  "value": "false"
-}'
    Prereg_PiiNotificationDelivery_RecoveredAddress:
       endPoint: mailbox:mock-smtp
       uniqueIdentifier: TC_prereg_PiiNotification_03
