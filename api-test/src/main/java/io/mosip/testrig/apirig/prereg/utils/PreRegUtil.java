@@ -1,5 +1,6 @@
 package io.mosip.testrig.apirig.prereg.utils;
 
+import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
@@ -17,7 +19,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
+
+import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -26,6 +36,10 @@ import org.json.JSONObject;
 import org.testng.Reporter;
 import org.testng.SkipException;
 
+import com.auth0.jwt.JWT;
+import com.auth0.jwt.interfaces.DecodedJWT;
+
+import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
 import io.mosip.testrig.apirig.testrunner.BaseTestCase;
 import io.mosip.testrig.apirig.utils.AdminTestException;
@@ -33,6 +47,7 @@ import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.NotificationListener;
+import io.mosip.testrig.apirig.utils.RestClient;
 import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
@@ -70,6 +85,7 @@ public class PreRegUtil extends AdminTestUtil {
 	// they are reported as Ignored when the DB user cannot create triggers.
 	public static final String PII_FAULT_INJECTION_MARKER = "_PiiFaultInjection_";
 	private static final String DEFAULT_ACTUATOR_ENDPOINT = "/preregistration/v1/actuator/env";
+	private static final long PARALLEL_REQUEST_TIMEOUT_SECONDS = 120;
 	public static final String PII_RUN_ID_KEYWORD = "$PIIRUNID$";
 
 	protected static final String preRegOtherUser = "PreregOther_" + PII_RUN_ID + "@mosip.net";
@@ -439,6 +455,161 @@ public class PreRegUtil extends AdminTestUtil {
 			if (NotificationListener.parseOtp(message).isEmpty())
 				return true;
 		}
+	}
+
+	/**
+	 * Fills $PHONENUMBERFORIDENTITY$ (ID schema phone format) and $EMAILVALUE$ (unique per test case) in an
+	 * identity JSON.
+	 */
+	public static String replaceIdentityContactKeywords(String json, String testCaseName) {
+		if (!json.contains("$PHONENUMBERFORIDENTITY$") && !json.contains("$EMAILVALUE$"))
+			return json;
+		String phoneNumber = "";
+		if (!phoneSchemaRegex.isEmpty()) {
+			try {
+				phoneNumber = genStringAsperRegex(phoneSchemaRegex);
+			} catch (Exception e) {
+				logger.error(e.getMessage());
+			}
+		}
+		json = replaceKeywordWithValue(json, "$PHONENUMBERFORIDENTITY$", phoneNumber);
+		return replaceKeywordWithValue(json, "$EMAILVALUE$", testCaseName + "_" + BaseTestCase.runContext + "@mosip.com");
+	}
+
+	/** User id claim of a JWT (userId, preferred_username or sub), never the token itself; "unknown" if none. */
+	public static String getTokenUserId(String token) {
+		try {
+			DecodedJWT jwt = JWT.decode(token);
+			for (String claim : new String[] { "userId", "preferred_username", "sub" }) {
+				String value = jwt.getClaim(claim).asString();
+				if (value != null)
+					return value;
+			}
+		} catch (Exception e) {
+			// not a JWT or no token
+		}
+		return "unknown";
+	}
+
+	/**
+	 * Sends a request with the auth cookie: multipart "document" (upload) or "notification", otherwise JSON. GET and
+	 * DELETE send no body.
+	 */
+	public static Response sendRequestWithCookie(String method, String url, String body, String token,
+			String multipart, File file, String fileKeyName) {
+		if ("document".equals(multipart)) {
+			Map<String, String> formParams = new HashMap<>();
+			formParams.put("Document request", body);
+			return RestClient.postWithFormPathParamAndFile(url, formParams, new HashMap<>(), file, fileKeyName,
+					MediaType.MULTIPART_FORM_DATA, token);
+		}
+		if ("notification".equals(multipart)) {
+			Map<String, String> formParams = new HashMap<>();
+			formParams.put("NotificationRequestDTO", body.replace("\r\n", ""));
+			// The body carries the first language only; the service looks templates up by this code.
+			formParams.put(GlobalConstants.LANG_CODE, BaseTestCase.languageList.get(0));
+			formParams.put("attachment", "");
+			return RestClient.postWithMultipartFormDataAndFile(url, formParams, MediaType.MULTIPART_FORM_DATA, token);
+		}
+		switch (method) {
+		case "GET":
+			return RestClient.getRequestWithCookie(url, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON,
+					GlobalConstants.AUTHORIZATION, token);
+		case "DELETE":
+			return RestClient.deleteRequestWithCookieAndPathParm(url, new HashMap<>(), MediaType.APPLICATION_JSON,
+					MediaType.APPLICATION_JSON, GlobalConstants.AUTHORIZATION, token);
+		case "PUT":
+			return RestClient.putRequestWithCookie(url, body, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON,
+					GlobalConstants.AUTHORIZATION, token);
+		case "POST":
+			return RestClient.postRequestWithCookie(url, body, MediaType.APPLICATION_JSON, MediaType.APPLICATION_JSON,
+					GlobalConstants.AUTHORIZATION, token);
+		default:
+			throw new IllegalArgumentException("Unsupported method: " + method);
+		}
+	}
+
+	/** Sends the same request from {@code threads} threads released together; each waits at most 120 s. */
+	public static List<Response> sendRequestsInParallel(int threads, String method, String url, String body,
+			String token, String multipart, File file, String fileKeyName) throws Exception {
+		ExecutorService pool = Executors.newFixedThreadPool(threads);
+		CountDownLatch startGate = new CountDownLatch(1);
+		try {
+			List<Future<Response>> futures = new ArrayList<>();
+			for (int i = 0; i < threads; i++) {
+				futures.add(pool.submit(() -> {
+					startGate.await();
+					return sendRequestWithCookie(method, url, body, token, multipart, file, fileKeyName);
+				}));
+			}
+			// Release all requests at once.
+			startGate.countDown();
+			List<Response> responses = new ArrayList<>();
+			for (Future<Response> future : futures) {
+				try {
+					responses.add(future.get(PARALLEL_REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS));
+				} catch (TimeoutException e) {
+					throw new AdminTestException("Parallel request timed out after " + PARALLEL_REQUEST_TIMEOUT_SECONDS
+							+ " s: " + url);
+				}
+			}
+			return responses;
+		} finally {
+			pool.shutdownNow();
+		}
+	}
+
+	/** Flattens a JSON body to field path -> value, e.g. response.allApplications[3].crBy. */
+	public static Map<String, String> flattenJson(String body) {
+		Map<String, String> fields = new LinkedHashMap<>();
+		try {
+			flattenJson(new JSONObject(body), "", fields);
+		} catch (Exception e) {
+			fields.put("response", body); // not JSON: treat the whole body as one value
+		}
+		return fields;
+	}
+
+	private static void flattenJson(Object node, String path, Map<String, String> fields) {
+		if (node instanceof JSONObject) {
+			JSONObject object = (JSONObject) node;
+			for (String key : object.keySet()) {
+				String child = path.isEmpty() ? key : path + "." + key;
+				Object value = object.get(key);
+				if (value instanceof JSONObject || value instanceof JSONArray)
+					fields.put(child, value instanceof JSONArray ? "[...]" : "{...}");
+				flattenJson(value, child, fields);
+			}
+		} else if (node instanceof JSONArray) {
+			JSONArray array = (JSONArray) node;
+			for (int i = 0; i < array.length(); i++)
+				flattenJson(array.get(i), path + "[" + i + "]", fields);
+		} else if (!path.isEmpty()) {
+			fields.put(path, String.valueOf(node));
+		}
+	}
+
+	/** Paths whose value contains the text, or whose field name is the text (case-insensitive). */
+	public static List<String> pathsContaining(Map<String, String> fields, String text) {
+		String wanted = text.toLowerCase(Locale.ROOT);
+		List<String> paths = new ArrayList<>();
+		for (Map.Entry<String, String> field : fields.entrySet()) {
+			String key = field.getKey().replaceAll("\\[\\d+\\]$", "");
+			key = key.substring(key.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
+			if (key.equals(wanted) || field.getValue().toLowerCase(Locale.ROOT).contains(wanted))
+				paths.add(field.getKey());
+		}
+		return paths;
+	}
+
+	/** One row of the report's "Output validation: EXPECTED vs ACTUAL" table. */
+	public static OutputValidationDto outputValidationRow(String field, String expected, String actual, boolean pass) {
+		OutputValidationDto row = new OutputValidationDto();
+		row.setFieldName(field);
+		row.setExpValue(expected);
+		row.setActualValue(actual);
+		row.setStatus(pass ? "PASS" : GlobalConstants.FAIL_STRING);
+		return row;
 	}
 
 }

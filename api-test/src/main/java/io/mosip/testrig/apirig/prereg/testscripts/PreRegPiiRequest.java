@@ -1,26 +1,14 @@
 package io.mosip.testrig.apirig.prereg.testscripts;
 
-import static io.restassured.RestAssured.given;
-
 import java.io.File;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import javax.ws.rs.core.MediaType;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -40,7 +28,6 @@ import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
 import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
 import io.mosip.testrig.apirig.prereg.utils.PreRegUtil;
-import io.mosip.testrig.apirig.testrunner.BaseTestCase;
 import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
@@ -50,9 +37,7 @@ import io.mosip.testrig.apirig.utils.KernelAuthentication;
 import io.mosip.testrig.apirig.utils.NotificationListener;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
 import io.mosip.testrig.apirig.utils.ReportUtil;
-import io.mosip.testrig.apirig.utils.RestClient;
 import io.restassured.response.Response;
-import io.restassured.specification.RequestSpecification;
 
 /**
  * Sends a request as any logged-in user, for every method including multipart (token from input "cookie").
@@ -66,7 +51,6 @@ import io.restassured.specification.RequestSpecification;
 public class PreRegPiiRequest extends PreRegUtil implements ITest {
 	private static final Logger logger = Logger.getLogger(PreRegPiiRequest.class);
 	private static final Pattern PATH_PARAM = Pattern.compile("\\{([^}]+)\\}");
-	private static final long PARALLEL_REQUEST_TIMEOUT_SECONDS = 120;
 	protected String testCaseName = "";
 	private String idKeyName = null;
 
@@ -104,7 +88,7 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 		boolean ownCookie = input.has(GlobalConstants.COOKIE);
 		String token = ownCookie ? input.remove(GlobalConstants.COOKIE).toString()
 				: new KernelAuthentication().getTokenByRole(testCaseDTO.getRole());
-		Reporter.log("<b><u>Token user</u></b><pre>" + tokenUser(token)
+		Reporter.log("<b><u>Token user</u></b><pre>" + getTokenUserId(token)
 				+ (ownCookie ? " (cookie from input)" : " (role " + testCaseDTO.getRole() + ")") + "</pre>");
 		String template = input.has("_template") ? input.remove("_template").toString() : null;
 		String caseIdKeyName = input.has("_idKeyName") ? input.remove("_idKeyName").toString() : idKeyName;
@@ -134,9 +118,10 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 		}
 		List<Response> responses = new ArrayList<>();
 		if (parallel > 1) {
-			responses.addAll(sendInParallel(parallel, method, url, body, token, multipart, file, fileKeyName));
+			responses.addAll(
+					sendRequestsInParallel(parallel, method, url, body, token, multipart, file, fileKeyName));
 		} else {
-			responses.add(send(method, url, body, token, multipart, file, fileKeyName));
+			responses.add(sendRequestWithCookie(method, url, body, token, multipart, file, fileKeyName));
 		}
 		Response first = responses.get(0);
 		GlobalMethods.reportResponse(first.getHeaders().asList().toString(), url, first);
@@ -156,9 +141,8 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 		String body;
 		if ("prereg-create".equals(template) || "prereg-update".equals(template)) {
 			String generated = AdminTestUtil.generateHbsForPrereg("prereg-update".equals(template));
-			body = getJsonFromTemplate(input.toString(), generated, false);
-			body = replaceKeywordWithValue(body, "$PHONENUMBERFORIDENTITY$", identityPhone());
-			body = replaceKeywordWithValue(body, "$EMAILVALUE$", testCaseName + "_" + BaseTestCase.runContext + "@mosip.com");
+			body = replaceIdentityContactKeywords(getJsonFromTemplate(input.toString(), generated, false),
+					testCaseName);
 		} else if (inputTemplate != null && !inputTemplate.isBlank()) {
 			body = getJsonFromTemplate(input.toString(), inputTemplate);
 		} else {
@@ -171,70 +155,6 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 			body = json.toString();
 		}
 		return body;
-	}
-
-	/** Phone number for the identity JSON, matching the ID schema phone format. */
-	private String identityPhone() {
-		try {
-			if (!phoneSchemaRegex.isEmpty())
-				return genStringAsperRegex(phoneSchemaRegex);
-		} catch (Exception e) {
-			logger.error(e.getMessage());
-		}
-		return "";
-	}
-
-	private Response send(String method, String url, String body, String token, String multipart, File file,
-			String fileKeyName) {
-		if ("document".equals(multipart)) {
-			Map<String, String> formParams = new HashMap<>();
-			formParams.put("Document request", body);
-			return RestClient.postWithFormPathParamAndFile(url, formParams, new HashMap<>(), file, fileKeyName,
-					MediaType.MULTIPART_FORM_DATA, token);
-		}
-		if ("notification".equals(multipart)) {
-			Map<String, String> formParams = new HashMap<>();
-			formParams.put("NotificationRequestDTO", body.replace("\r\n", ""));
-			// The body carries the first language only; the service looks templates up by this code.
-			formParams.put(GlobalConstants.LANG_CODE, BaseTestCase.languageList.get(0));
-			formParams.put("attachment", "");
-			return RestClient.postWithMultipartFormDataAndFile(url, formParams, MediaType.MULTIPART_FORM_DATA, token);
-		}
-		RequestSpecification spec = given().relaxedHTTPSValidation().cookie(COOKIENAME, token)
-				.contentType(MediaType.APPLICATION_JSON).accept(MediaType.APPLICATION_JSON);
-		if (!"GET".equals(method) && !"DELETE".equals(method)) {
-			spec = spec.body(body);
-		}
-		return spec.request(method, url).then().extract().response();
-	}
-
-	private List<Response> sendInParallel(int threads, String method, String url, String body, String token,
-			String multipart, File file, String fileKeyName) throws Exception {
-		ExecutorService pool = Executors.newFixedThreadPool(threads);
-		CountDownLatch startGate = new CountDownLatch(1);
-		try {
-			List<Future<Response>> futures = new ArrayList<>();
-			for (int i = 0; i < threads; i++) {
-				futures.add(pool.submit(() -> {
-					startGate.await();
-					return send(method, url, body, token, multipart, file, fileKeyName);
-				}));
-			}
-			// Release all requests at once.
-			startGate.countDown();
-			List<Response> responses = new ArrayList<>();
-			for (Future<Response> future : futures) {
-				try {
-					responses.add(future.get(PARALLEL_REQUEST_TIMEOUT_SECONDS, TimeUnit.SECONDS));
-				} catch (TimeoutException e) {
-					throw new AdminTestException("Parallel request timed out after " + PARALLEL_REQUEST_TIMEOUT_SECONDS
-							+ " s: " + url);
-				}
-			}
-			return responses;
-		} finally {
-			pool.shutdownNow();
-		}
 	}
 
 	private void validate(TestCaseDTO testCaseDTO, List<Response> responses)
@@ -261,25 +181,27 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 			boolean single = responses.size() == 1;
 			String label = single ? "" : "Response " + (i + 1) + ": ";
 			String actual = response.asString();
-			Map<String, String> fields = flattenResponse(actual);
+			Map<String, String> fields = flattenJson(actual);
 			boolean responseOk = true;
 			for (int j = 0; j < mustContain.length(); j++) {
 				String text = mustContain.getString(j);
 				List<String> paths = pathsContaining(fields, text);
 				responseOk &= !paths.isEmpty();
 				if (paths.isEmpty())
-					rows.add(checkRow(label + text + " (anywhere in response)", text, "NOT AVAILABLE", false));
+					rows.add(outputValidationRow(label + text + " (anywhere in response)", text, "NOT AVAILABLE",
+							false));
 				else if (single)
-					rows.add(checkRow(label + paths.get(0), text, fields.get(paths.get(0)), true));
+					rows.add(outputValidationRow(label + paths.get(0), text, fields.get(paths.get(0)), true));
 			}
 			for (int j = 0; j < mustNotContain.length(); j++) {
 				String text = mustNotContain.getString(j);
 				List<String> paths = pathsContaining(fields, text);
 				responseOk &= paths.isEmpty();
 				if (paths.isEmpty() && single)
-					rows.add(checkRow(label + text + " (anywhere in response)", "NOT AVAILABLE", "NOT AVAILABLE", true));
+					rows.add(outputValidationRow(label + text + " (anywhere in response)", "NOT AVAILABLE",
+							"NOT AVAILABLE", true));
 				for (String path : paths)
-					rows.add(checkRow(label + path, "NOT AVAILABLE", fields.get(path), false));
+					rows.add(outputValidationRow(label + path, "NOT AVAILABLE", fields.get(path), false));
 			}
 			if (expectedJson != null) {
 				Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(actual,
@@ -301,7 +223,7 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 				passedResponses++;
 		}
 		if (responses.size() > 1) {
-			rows.add(checkRow("Responses passing every check", String.valueOf(responses.size()),
+			rows.add(outputValidationRow("Responses passing every check", String.valueOf(responses.size()),
 					String.valueOf(passedResponses), passedResponses == responses.size()));
 		}
 
@@ -310,73 +232,6 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 		Reporter.log(ReportUtil.getOutputValidationReport(table));
 		if (failed)
 			throw new AdminTestException("Failed at output validation");
-	}
-
-	/** Flattens the response JSON to field path -> value, e.g. response.allApplications[3].crBy. */
-	private static Map<String, String> flattenResponse(String body) {
-		Map<String, String> fields = new LinkedHashMap<>();
-		try {
-			flatten(new JSONObject(body), "", fields);
-		} catch (Exception e) {
-			fields.put("response", body); // not JSON: treat the whole body as one value
-		}
-		return fields;
-	}
-
-	private static void flatten(Object node, String path, Map<String, String> fields) {
-		if (node instanceof JSONObject) {
-			JSONObject object = (JSONObject) node;
-			for (String key : object.keySet()) {
-				String child = path.isEmpty() ? key : path + "." + key;
-				Object value = object.get(key);
-				if (value instanceof JSONObject || value instanceof JSONArray)
-					fields.put(child, value instanceof JSONArray ? "[...]" : "{...}");
-				flatten(value, child, fields);
-			}
-		} else if (node instanceof JSONArray) {
-			JSONArray array = (JSONArray) node;
-			for (int i = 0; i < array.length(); i++)
-				flatten(array.get(i), path + "[" + i + "]", fields);
-		} else if (!path.isEmpty()) {
-			fields.put(path, String.valueOf(node));
-		}
-	}
-
-	/** Paths whose value contains the text, or whose field name is the text (case-insensitive). */
-	private static List<String> pathsContaining(Map<String, String> fields, String text) {
-		String wanted = text.toLowerCase(Locale.ROOT);
-		List<String> paths = new ArrayList<>();
-		for (Map.Entry<String, String> field : fields.entrySet()) {
-			String key = field.getKey().replaceAll("\\[\\d+\\]$", "");
-			key = key.substring(key.lastIndexOf('.') + 1).toLowerCase(Locale.ROOT);
-			if (key.equals(wanted) || field.getValue().toLowerCase(Locale.ROOT).contains(wanted))
-				paths.add(field.getKey());
-		}
-		return paths;
-	}
-
-	/** The user id inside the JWT (never the token itself), so the report shows who made the call. */
-	private static String tokenUser(String token) {
-		try {
-			String payload = new String(Base64.getUrlDecoder().decode(token.split("\\.")[1]), StandardCharsets.UTF_8);
-			JSONObject claims = new JSONObject(payload);
-			for (String claim : new String[] { "userId", "preferred_username", "sub" }) {
-				if (claims.has(claim))
-					return claims.getString(claim);
-			}
-		} catch (Exception e) {
-			// not a JWT or no token
-		}
-		return "unknown";
-	}
-
-	private static OutputValidationDto checkRow(String field, String expected, String actual, boolean pass) {
-		OutputValidationDto row = new OutputValidationDto();
-		row.setFieldName(field);
-		row.setExpValue(expected);
-		row.setActualValue(actual);
-		row.setStatus(pass ? "PASS" : GlobalConstants.FAIL_STRING);
-		return row;
 	}
 
 	@AfterMethod(alwaysRun = true)
