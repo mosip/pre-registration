@@ -1,0 +1,339 @@
+PiiScenarioRequests:
+   Prereg_PiiLegacyRead_PiiCompatOn_GetPreRegData:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiLegacy_04
+      description: Validate that the owner can fetch a legacy pre registration and sees the UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "response": {
+    "createdBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "updatedBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  }
+}'
+   Prereg_PiiLegacyRead_PiiCompatOn_GetApplicationInfo:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      uniqueIdentifier: TC_prereg_PiiLegacy_05
+      description: Validate that the owner can fetch a legacy application and sees UUIDs
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      input: '{
+  "applicationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "response": {
+    "crBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "updBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "contactInfo": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+  }
+}'
+   Prereg_PiiLegacyRead_PiiCompatOff_GetPreRegData_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiLegacy_06
+      description: Validate that a legacy pre registration is rejected for its owner when compatibility is off
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiLegacyRead_PiiCompatOff_GetApplicationInfo_Neg:
+      endPoint: /preregistration/v1/applications/{applicationId}
+      uniqueIdentifier: TC_prereg_PiiLegacy_07
+      description: Validate that a legacy application is rejected for its owner when compatibility is off
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      outputTemplate: preReg/error
+      input: '{
+  "applicationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_APP_015"
+    }
+  ]
+}'
+   Prereg_PiiLegacyList_PiiCompatOn_NoPlaintext:
+      endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_PiiLegacy_13
+      description: Validate that the application list shows the legacy application without the email
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      input: '{}'
+      output: '{
+  "_mustContain": ["$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"],
+  "_mustNotContain": ["$PREREGUSER$"]
+}'
+   Prereg_PiiLegacyList_PiiCompatOff_LegacyExcluded:
+      endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_PiiLegacy_14
+      description: Validate that the application list excludes the legacy application when compatibility is off
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      input: '{}'
+      output: '{
+  "_mustContain": ["allApplications"],
+  "_mustNotContain": ["$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$", "$PREREGUSER$"]
+}'
+   Prereg_PiiLegacyList_PiiCompatOn_UpperCaseLogin:
+      endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_PiiLegacy_15
+      description: Validate that an upper-case login still lists the legacy application
+      role: userDefinedCookie
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      input: '{
+  "cookie": "$PREREGUSERUPPERCASETOKEN$"
+}'
+      output: '{
+  "_mustContain": ["$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"]
+}'
+   Prereg_PiiLegacyUpdate_PiiCompatOn_UpdatePreReg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiLegacy_08
+      description: Validate that the owner can update a legacy pre registration
+      role: batch
+      restMethod: put
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update",
+  "_template": "prereg-update"
+}'
+      output: '{
+  "langCode": "$1STLANG$"
+}'
+   Prereg_PiiLegacyUpdate_PiiCompatOff_UpdatePreReg_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiLegacy_09
+      description: Validate that updating a legacy pre registration is rejected when compatibility is off
+      role: batch
+      restMethod: put
+      additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$",
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@hogwarts.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.update",
+  "_template": "prereg-update"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiRace_PiiCompatOn_ParallelFirstResolution:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiScenario_08
+      description: Validate that 20 parallel reads all return the ownership error, with no constraint error
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_03,TC_prereg_PiiScenario_04
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_PiiRace_Smoke_sid_preRegistrationId$",
+  "_parallel": 20
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiDatasync_ConsumedPreRegIds_Smoke:
+      endPoint: /preregistration/v1/sync/consumedPreRegIds
+      uniqueIdentifier: TC_prereg_PiiScenario_09
+      description: Validate that the registration processor marks the pre registration as consumed
+      role: regproc
+      restMethod: post
+      additionalDependencies: TC_prereg_PiiScenario_02
+      input: '{
+  "id": "mosip.pre-registration.datasync.store",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "request": {
+    "preRegistrationIds": [
+      "$ID:CreatePrereg_PiiConsumed_Smoke_sid_preRegistrationId$"
+    ]
+  }
+}'
+      output: '{
+  "response": {
+    "countOfStoredPreRegIds": "1",
+    "preRegistrationIds": [
+      "$ID:CreatePrereg_PiiConsumed_Smoke_sid_preRegistrationId$"
+    ]
+  }
+}'
+   Prereg_PiiCollision_CreatePrereg_Neg:
+      endPoint: /preregistration/v1/applications/prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_11
+      description: Validate that a user whose hash matches a different identifier is refused with PRG_CORE_REQ_024 (AF5)
+      role: userDefinedCookie
+      restMethod: post
+      outputTemplate: preReg/error
+      additionalDependencies: TC_prereg_PiiScenario_05
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create",
+  "_template": "prereg-create",
+  "cookie": "$PREREGCOLLISIONUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_024"
+    }
+  ]
+}'
+   Prereg_PiiFaultInjection_CreatePrereg_Neg:
+      endPoint: /preregistration/v1/applications/prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_12
+      description: Validate that create fails with PRG_CORE_REQ_024 when user_details cannot be written (AF4)
+      role: userDefinedCookie
+      restMethod: post
+      outputTemplate: preReg/error
+      additionalDependencies: TC_prereg_PiiScenario_07
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create",
+  "_template": "prereg-create",
+  "cookie": "$PREREGFAULTUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_024"
+    }
+  ]
+}'
+   Prereg_PiiFaultInjection_ListApplications_Neg:
+      endPoint: /preregistration/v1/applications
+      uniqueIdentifier: TC_prereg_PiiScenario_13
+      description: Validate that listing fails with PRG_CORE_REQ_024 when the user id cannot be resolved (AF4)
+      role: userDefinedCookie
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_07
+      outputTemplate: preReg/error
+      input: '{
+  "cookie": "$PREREGFAULTUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_CORE_REQ_024"
+    }
+  ]
+}'
+   Prereg_PiiDocOwner_UpdateDocRefId_OtherUser_Neg:
+      endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
+      uniqueIdentifier: TC_prereg_PiiDocOwnership_02
+      description: Validate that another user cannot change the owner's document reference number
+      role: userDefinedCookie
+      restMethod: put
+      additionalDependencies: TC_prereg_PiiDocOwnership_01
+      outputTemplate: preReg/error
+      input: '{
+  "documentId": "$ID:PiiDocOwner_UploadDocument_Smoke_sid_docId$",
+  "preRegistrationId": "$ID:CreatePrereg_PiiDocOwner_Smoke_sid_preRegistrationId$",
+  "refNumber": "CROSSUSERREFNUMBER",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiDocOwner_CopyDocument_OtherUser_Neg:
+      endPoint: /preregistration/v1/documents/{preRegistrationId}?catCode={catCode}&sourcePreId={sourcePreId}
+      uniqueIdentifier: TC_prereg_PiiDocOwnership_03
+      description: Validate that another user cannot copy documents between the owner's pre registrations
+      role: userDefinedCookie
+      restMethod: put
+      additionalDependencies: TC_prereg_PiiDocOwnership_01
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_PiiDocOwner_Smoke_sid_preRegistrationId$",
+  "catCode": "POA",
+  "sourcePreId": "$ID:CreatePrereg_PiiDocOwner_Smoke_sid_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'
+   Prereg_PiiDocOwner_DeleteDocument_OtherUser_Neg:
+      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiDocOwnership_04
+      description: Validate that another user cannot delete the owner's document
+      role: userDefinedCookie
+      restMethod: delete
+      additionalDependencies: TC_prereg_PiiDocOwnership_01
+      outputTemplate: preReg/error
+      input: '{
+  "documentId": "$ID:PiiDocOwner_UploadDocument_Smoke_sid_docId$",
+  "preRegistrationId": "$ID:CreatePrereg_PiiDocOwner_Smoke_sid_preRegistrationId$",
+  "cookie": "$PREREGOTHERUSERTOKEN$"
+}'
+      output: '{
+  "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_017"
+    }
+  ]
+}'

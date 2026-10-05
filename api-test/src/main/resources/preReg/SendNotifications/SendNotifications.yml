@@ -102,3 +102,27 @@ SendNotifications:
     }
   ]
 }'
+   Prereg_SendNotifications_V2_All_Valid_Smoke:
+      endPoint: /preregistration/v1/notification/v2
+      uniqueIdentifier: TC_prereg_SendNotifications_05
+      description: Validate that notification v2 succeeds for the user's own booked pre registration
+      role: batch
+      checkErrorsOnlyInResponse: true
+      restMethod: post
+      inputTemplate: preReg/SendNotifications/sendNotifications_SINGLE
+      outputTemplate: preReg/SendNotifications/sendNotificationsResult
+      input: '{ 
+    "id":"mosip.pre-registration.notification.notify",
+    "version":"1.0",
+    "requesttime":"$TIMESTAMP$",
+  "name":"TEST_FULLNAME",
+  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+  "appointmentDate":"$ID:GetAppointmentDetails_BookByPRID_All_Valid_Smoke_sid_appointment_date$",
+  "appointmentTime":"$ID:GetAppointmentDetails_BookByPRID_All_Valid_Smoke_sid_time_slot_from$",
+  "mobNum":"9090872300",
+  "emailID":"mosipuser123@mailinator.com",
+  "additionalRecipient":false,
+  "isBatch":false           
+}'
+      output: '{
+}'

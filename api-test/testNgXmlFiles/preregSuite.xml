@@ -111,6 +111,28 @@
 			<class name="io.mosip.testrig.apirig.prereg.testscripts.BookAppoinment" />
 		</classes>
 	</test>
+	<!-- PII: response, cross-user, DB and environment checks (after BookAppointment) -->
+	<test name="PiiApiChecks">
+		<parameter name="ymlFile"
+			value="preReg/PiiCanonicalIdentity/PiiApiChecks.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PreRegPiiRequest" />
+		</classes>
+	</test>
+	<test name="PiiDbValidation">
+		<parameter name="ymlFile"
+			value="preReg/PiiCanonicalIdentity/PiiDbValidation.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PreRegDbValidator" />
+		</classes>
+	</test>
+	<test name="PiiEnvironment">
+		<parameter name="ymlFile"
+			value="preReg/PiiCanonicalIdentity/PiiEnvironment.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PreRegDbValidator" />
+		</classes>
+	</test>
 	<test name="GetPRIDByDateRange">
 		<parameter name="ymlFile"
 				   value="preReg/GetPRIDByDateRange/GetPRIDByDateRange.yml" />
@@ -363,6 +385,35 @@
 			value="preReg/GetApplicationStatusByApplicationID/GetApplicationStatusByApplicationID.yml" />
 		<classes>
 			<class name="io.mosip.testrig.apirig.prereg.testscripts.GetWithParam" />
+		</classes>
+	</test>
+	<!-- PII: legacy records, concurrency, datasync, phone login, hash collision and fault injection -->
+	<test name="PiiScenarioCreate">
+		<parameter name="ymlFile"
+			value="preReg/PiiCanonicalIdentity/PiiScenarioCreate.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PreRegPiiRequest" />
+		</classes>
+	</test>
+	<test name="PiiScenarioSetup">
+		<parameter name="ymlFile"
+			value="preReg/PiiCanonicalIdentity/PiiScenarioSetup.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PreRegDbValidator" />
+		</classes>
+	</test>
+	<test name="PiiScenarioRequests">
+		<parameter name="ymlFile"
+			value="preReg/PiiCanonicalIdentity/PiiScenarioRequests.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PreRegPiiRequest" />
+		</classes>
+	</test>
+	<test name="PiiScenarioVerify">
+		<parameter name="ymlFile"
+			value="preReg/PiiCanonicalIdentity/PiiScenarioVerify.yml" />
+		<classes>
+			<class name="io.mosip.testrig.apirig.prereg.testscripts.PreRegDbValidator" />
 		</classes>
 	</test>
 </suite>

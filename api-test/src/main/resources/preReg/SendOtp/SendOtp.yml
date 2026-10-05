@@ -10,7 +10,7 @@ SendOtp:
       input: '{
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
-  "userId": "$PHONENUMBER$",
+  "userId": "$PREREGPHONEUSER$",
   "id": "mosip.pre-registration.login.sendotp"
 }'
       output: '{
@@ -94,7 +94,7 @@ SendOtp:
       input: '{
   "version": "1.0",
   "requesttime": "$TIMESTAMP$",
-  "userId": "$EMAILVALUE$",
+  "userId": "$PREREGUSER$",
   "id": "mosip.pre-registration.login.sendotp"
 }'
       output: '{

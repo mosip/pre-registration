@@ -1,0 +1,238 @@
+PiiScenarioVerify:
+   Prereg_PiiLegacyVerify_PiiCompatOn_Applications_Converted:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiLegacy_10
+      description: Validate that the update converts the legacy application ownership columns to the UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_08
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (a.cr_by = u.uid) AS cr_by_is_user_uuid, (a.upd_by = u.uid) AS upd_by_is_user_uuid, (a.contact_info = u.uid) AS contact_info_is_user_uuid FROM prereg.applications a, (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE a.application_id = ''$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "cr_by_is_user_uuid": "true",
+  "upd_by_is_user_uuid": "true",
+  "contact_info_is_user_uuid": "true"
+}'
+   Prereg_PiiLegacyVerify_PiiCompatOn_Demographic_Converted:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiLegacy_11
+      description: Validate that the update converts the legacy demographic ownership columns to the UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_08
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (d.cr_appuser_id = u.uid) AS cr_appuser_id_is_user_uuid, (d.cr_by = u.uid) AS cr_by_is_user_uuid, (d.upd_by = u.uid) AS upd_by_is_user_uuid FROM prereg.applicant_demographic d, (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE d.prereg_id = ''$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "cr_appuser_id_is_user_uuid": "true",
+  "cr_by_is_user_uuid": "true",
+  "upd_by_is_user_uuid": "true"
+}'
+   Prereg_PiiLegacyVerify_PiiCompatOff_Unchanged:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiLegacy_12
+      description: Validate that the rejected update leaves the legacy ownership columns unchanged
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_09
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (lower(a.cr_by) = lower(''$PREREGUSER$'') AND lower(a.upd_by) = lower(''$PREREGUSER$'') AND lower(a.contact_info) = lower(''$PREREGUSER$'')) AS applications_still_plaintext, (lower(d.cr_by) = lower(''$PREREGUSER$'') AND lower(d.upd_by) = lower(''$PREREGUSER$'') AND lower(d.cr_appuser_id) = lower(''$PREREGUSER$'')) AS demographic_still_plaintext FROM prereg.applications a JOIN prereg.applicant_demographic d ON d.prereg_id = a.application_id WHERE a.application_id = ''$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "applications_still_plaintext": "true",
+  "demographic_still_plaintext": "true"
+}'
+   Prereg_PiiRace_PiiCompatOn_SingleUserDetailsRow:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_14
+      description: Validate that the parallel reads created exactly one user_details row
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_08
+      input: '{
+  "db": "prereg",
+  "query": "SELECT count(*) AS row_count FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGRACEUSER$'')),''UTF8'')),''hex''))"
+}'
+      output: '{
+  "row_count": "1"
+}'
+   Prereg_PiiDatasync_ProcessedList_CanonicalCrBy:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_15
+      description: Validate that the processed pre registration lists store a UUID in cr_by
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_09
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (SELECT count(*) FROM prereg.processed_prereg_list WHERE prereg_id = ''$ID:CreatePrereg_PiiConsumed_Smoke_sid_preRegistrationId$'') AS processed_rows, (SELECT bool_and(length(cr_by) = 36 AND cr_by ~ ''^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'') FROM prereg.processed_prereg_list WHERE prereg_id = ''$ID:CreatePrereg_PiiConsumed_Smoke_sid_preRegistrationId$'') AS processed_cr_by_is_uuid, (SELECT bool_and(length(cr_by) = 36 AND cr_by ~ ''^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'') FROM prereg.intf_processed_prereg_list WHERE prereg_id = ''$ID:CreatePrereg_PiiConsumed_Smoke_sid_preRegistrationId$'') AS interface_cr_by_is_uuid, (SELECT bool_and(upd_by IS NULL OR upd_by ~ ''^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'') FROM prereg.processed_prereg_list WHERE prereg_id = ''$ID:CreatePrereg_PiiConsumed_Smoke_sid_preRegistrationId$'') AS processed_upd_by_uuid_or_null"
+}'
+      output: '{
+  "processed_rows": "1",
+  "processed_cr_by_is_uuid": "true",
+  "interface_cr_by_is_uuid": "true",
+  "processed_upd_by_uuid_or_null": "true"
+}'
+   Prereg_PiiPhone_UserDetails_Row:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_16
+      description: Validate that the phone number used for send OTP has one user_details row without the plaintext number
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_SendOtp_01
+      input: '{
+  "db": "prereg",
+  "query": "SELECT count(*) AS row_count, bool_and(position(''$PREREGPHONEUSER$'' in identifier_encrypted) = 0) AS encrypted_not_plaintext FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGPHONEUSER$'')),''UTF8'')),''hex''))"
+}'
+      output: '{
+  "row_count": "1",
+  "encrypted_not_plaintext": "true"
+}'
+   Prereg_PiiPhone_Audit_NoPlaintext:
+      endPoint: db:mosip_audit
+      uniqueIdentifier: TC_prereg_PiiScenario_18
+      description: Validate that the send-OTP audit entries for the phone number store the user UUID, not the number
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_SendOtp_01
+      input: '{
+  "db": "audit",
+  "query": "SELECT count(*) FILTER (WHERE session_user_id = ''$PREREGPHONEUSER$'' OR session_user_name = ''$PREREGPHONEUSER$'') AS plaintext_phone_audit_rows, (count(*) FILTER (WHERE session_user_id ~ ''^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}'') > 0) AS uuid_audit_present FROM audit.app_audit_log WHERE app_name = ''PREREGISTRATION'' AND module_name = ''AUTHENTICATION_SERVICE'' AND action_dtimes >= ''$PIIRUNSTART$''"
+}'
+      output: '{
+  "plaintext_phone_audit_rows": "0",
+  "uuid_audit_present": "true"
+}'
+   Prereg_PiiCollision_PlantedUuid_NotReused:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_19
+      description: Validate that the planted UUID is not reused for any record (AF5)
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_11
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (SELECT count(*) FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGCOLLISIONUSER$'')),''UTF8'')),''hex''))) AS rows_for_hash, (SELECT count(*) FROM prereg.applications a JOIN prereg.user_details u ON a.cr_by = u.user_id::text WHERE upper(u.identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGCOLLISIONUSER$'')),''UTF8'')),''hex''))) + (SELECT count(*) FROM prereg.applicant_demographic d JOIN prereg.user_details u ON d.cr_appuser_id = u.user_id::text WHERE upper(u.identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGCOLLISIONUSER$'')),''UTF8'')),''hex''))) AS rows_owned_by_planted_uuid"
+}'
+      output: '{
+  "rows_for_hash": "1",
+  "rows_owned_by_planted_uuid": "0"
+}'
+   Prereg_PiiFaultInjection_NothingWritten:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_20
+      description: Validate that nothing is written for the fault user
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_12
+      input: '{
+  "db": "prereg",
+  "query": "SELECT (SELECT count(*) FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGFAULTUSER$'')),''UTF8'')),''hex''))) AS user_details_rows, (SELECT count(*) FROM prereg.applications WHERE lower(''$PREREGFAULTUSER$'') IN (lower(cr_by), lower(upd_by), lower(contact_info))) + (SELECT count(*) FROM prereg.applicant_demographic WHERE lower(''$PREREGFAULTUSER$'') IN (lower(cr_by), lower(upd_by), lower(cr_appuser_id))) AS plaintext_owner_rows"
+}'
+      output: '{
+  "user_details_rows": "0",
+  "plaintext_owner_rows": "0"
+}'
+   Prereg_PiiDocOwner_DocumentUntouched:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiDocOwnership_05
+      description: Validate that the owner's document is unchanged after the rejected cross-user calls
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiDocOwnership_02,TC_prereg_PiiDocOwnership_04
+      input: '{
+  "db": "prereg",
+  "query": "SELECT count(*) AS document_rows, bool_and(d.doc_ref_id IS DISTINCT FROM ''CROSSUSERREFNUMBER'') AS ref_number_unchanged, bool_and(d.cr_by = u.uid) AS owner_is_run_user FROM prereg.applicant_document d, (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE d.id = ''$ID:PiiDocOwner_UploadDocument_Smoke_sid_docId$''"
+}'
+      output: '{
+  "document_rows": "1",
+  "ref_number_unchanged": "true",
+  "owner_is_run_user": "true"
+}'
+   Prereg_PiiCleanup_CollisionRow:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_23
+      description: Validate that the planted collision row is removed
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_19
+      input: '{
+  "db": "prereg",
+  "query": "DELETE FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGCOLLISIONUSER$'')),''UTF8'')),''hex'')) AND identifier_encrypted LIKE ''PII test collision%''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiCleanup_PiiCompatOn_RaceOwner_Applications:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_24
+      description: Validate that the race application is returned to the run user UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_14
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applications SET cr_by = u.uid, upd_by = u.uid, contact_info = u.uid FROM (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE application_id = ''$ID:CreatePrereg_PiiRace_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiCleanup_PiiCompatOn_RaceOwner_Demographic:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_25
+      description: Validate that the race demographic row is returned to the run user UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_14
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applicant_demographic SET cr_appuser_id = u.uid, cr_by = u.uid, upd_by = u.uid FROM (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE prereg_id = ''$ID:CreatePrereg_PiiRace_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiCleanup_LegacyOwner_Applications:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_26
+      description: Validate that the legacy application is returned to the run user UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_02
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applications SET cr_by = u.uid, upd_by = u.uid, contact_info = u.uid FROM (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE application_id = ''$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiCleanup_LegacyOwner_Demographic:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_27
+      description: Validate that the legacy demographic row is returned to the run user UUID
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiLegacy_03
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applicant_demographic SET cr_appuser_id = u.uid, cr_by = u.uid, upd_by = u.uid FROM (SELECT user_id::text AS uid FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''$PREREGUSER$'')),''UTF8'')),''hex''))) u WHERE prereg_id = ''$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiFaultInjection_Teardown:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_21
+      description: Validate that the fault-injection trigger and function are removed
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "DROP TRIGGER IF EXISTS pii_fault_trg_$PIIRUNID$ ON prereg.user_details; DROP FUNCTION IF EXISTS prereg.pii_fault_fn_$PIIRUNID$()"
+}'
+      output: '{
+  "updated_rows": "0"
+}'

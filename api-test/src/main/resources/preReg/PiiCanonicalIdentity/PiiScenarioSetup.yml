@@ -1,0 +1,95 @@
+PiiScenarioSetup:
+   Prereg_PiiLegacySimulate_Applications_PlaintextOwner:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiLegacy_02
+      description: Validate that the application ownership columns are set to the plaintext email
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applications SET cr_by = ''$PREREGUSER$'', upd_by = ''$PREREGUSER$'', contact_info = ''$PREREGUSER$'' WHERE application_id = ''$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiLegacySimulate_Demographic_PlaintextOwner:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiLegacy_03
+      description: Validate that the demographic ownership columns are set to the plaintext email
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applicant_demographic SET cr_appuser_id = ''$PREREGUSER$'', cr_by = ''$PREREGUSER$'', upd_by = ''$PREREGUSER$'' WHERE prereg_id = ''$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiRace_PiiCompatOn_Applications_UnregisteredOwner:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_03
+      description: Validate that the race application is owned by a never-logged-in email
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_01
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applications SET cr_by = ''$PREREGRACEUSER$'', upd_by = ''$PREREGRACEUSER$'', contact_info = ''$PREREGRACEUSER$'' WHERE application_id = ''$ID:CreatePrereg_PiiRace_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiRace_PiiCompatOn_Demographic_UnregisteredOwner:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_04
+      description: Validate that the race demographic row is owned by a never-logged-in email
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_01
+      input: '{
+  "db": "prereg",
+  "query": "UPDATE prereg.applicant_demographic SET cr_appuser_id = ''$PREREGRACEUSER$'', cr_by = ''$PREREGRACEUSER$'', upd_by = ''$PREREGRACEUSER$'' WHERE prereg_id = ''$ID:CreatePrereg_PiiRace_Smoke_sid_preRegistrationId$''"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiCollision_PlantForeignHashRow:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_05
+      description: Validate that a user_details row with a colliding hash and a different identifier is planted (AF5)
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "INSERT INTO prereg.user_details (user_id, identifier_hash, identifier_encrypted, cr_dtimes, encrypted_dtimes) VALUES (md5(random()::text || clock_timestamp()::text)::uuid, upper(encode(sha256(convert_to(lower(trim(''$PREREGCOLLISIONUSER$'')),''UTF8'')),''hex'')), ''PII test collision - foreign identifier'', now(), now())"
+}'
+      output: '{
+  "updated_rows": "1"
+}'
+   Prereg_PiiFaultInjection_InstallFunction:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_06
+      description: Validate that this run's fault-injection function is installed for its fault user only
+      role: batch
+      restMethod: get
+      input: '{
+  "db": "prereg",
+  "query": "CREATE OR REPLACE FUNCTION prereg.pii_fault_fn_$PIIRUNID$() RETURNS trigger LANGUAGE plpgsql AS ''BEGIN IF upper(NEW.identifier_hash) = upper(encode(sha256(convert_to(lower(trim(''''$PREREGFAULTUSER$'''')),''''UTF8'''')),''''hex'''')) THEN RAISE EXCEPTION ''''PII test fault injection by apitest-prereg run $PIIRUNID$ (TC_prereg_PiiScenario_06/_07) for $PREREGFAULTUSER$''''; END IF; RETURN NEW; END''; COMMENT ON FUNCTION prereg.pii_fault_fn_$PIIRUNID$() IS ''apitest-prereg run $PIIRUNID$ (started about $PIIRUNSTART$ UTC): created by TC_prereg_PiiScenario_06, fails user_details inserts for $PREREGFAULTUSER$ only; dropped by TC_prereg_PiiScenario_21''"
+}'
+      output: '{
+  "updated_rows": "0"
+}'
+   Prereg_PiiFaultInjection_InstallTrigger:
+      endPoint: db:mosip_prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_07
+      description: Validate that the fault-injection trigger is attached to user_details
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiScenario_06
+      input: '{
+  "db": "prereg",
+  "query": "DROP TRIGGER IF EXISTS pii_fault_trg_$PIIRUNID$ ON prereg.user_details; CREATE TRIGGER pii_fault_trg_$PIIRUNID$ BEFORE INSERT ON prereg.user_details FOR EACH ROW EXECUTE PROCEDURE prereg.pii_fault_fn_$PIIRUNID$(); COMMENT ON TRIGGER pii_fault_trg_$PIIRUNID$ ON prereg.user_details IS ''apitest-prereg run $PIIRUNID$ (started about $PIIRUNSTART$ UTC): created by TC_prereg_PiiScenario_07 for fault user $PREREGFAULTUSER$; used by TC_prereg_PiiScenario_12, _13, _20; dropped by TC_prereg_PiiScenario_21''"
+}'
+      output: '{
+  "updated_rows": "0"
+}'

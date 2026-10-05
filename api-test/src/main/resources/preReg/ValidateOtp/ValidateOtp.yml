@@ -11,16 +11,16 @@ ValidateOtp:
     input: '{
       "version": "1.0",
       "requesttime": "$TIMESTAMP$",
-      "userId": "$EMAILVALUE$",
+      "userId": "$PREREGUSER$",
       "otp": "DYNAMICOTP",
       "id": "mosip.pre-registration.login.useridotp"
     }'
     output: '{}'
 
-  Prereg_ValidateOtp_All_Valid_Smoke_Phone_sid:
+  Prereg_ValidateOtp_Phone_Without_SendOtp_Neg_INVALIDOTP:
     endPoint: /preregistration/v1/login/validateOtp
     uniqueIdentifier: TC_prereg_ValidateOtp_02
-    description: Validate that entering a valid OTP for phone is successfully processed when all other mandatory fields are valid
+    description: Validate that validating an OTP for a phone number with no generated OTP fails with KER-OTV-005
     role: batch
     restMethod: post
     inputTemplate: preReg/ValidateOtp/validateOtp
