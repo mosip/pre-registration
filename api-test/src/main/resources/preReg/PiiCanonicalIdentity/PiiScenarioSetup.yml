@@ -53,7 +53,7 @@ PiiScenarioSetup:
       output: '{
   "updated_rows": "1"
 }'
-   Prereg_PiiCollision_PlantForeignHashRow:
+   Prereg_PiiCollision_FutureScope_PlantForeignHashRow:
       endPoint: db:mosip_prereg
       uniqueIdentifier: TC_prereg_PiiScenario_05
       description: Validate that a user_details row with a colliding hash and a different identifier is planted (AF5)

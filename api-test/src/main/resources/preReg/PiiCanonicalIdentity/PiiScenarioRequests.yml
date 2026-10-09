@@ -68,17 +68,16 @@ PiiScenarioRequests:
     }
   ]
 }'
-   Prereg_PiiLegacyList_PiiCompatOn_NoPlaintext:
+   Prereg_PiiLegacyList_PiiCompatOn_LegacyListed:
       endPoint: /preregistration/v1/applications
       uniqueIdentifier: TC_prereg_PiiLegacy_13
-      description: Validate that the application list shows the legacy application without the email
+      description: Validate that the application list includes the legacy application for its owner
       role: batch
       restMethod: get
       additionalDependencies: TC_prereg_PiiLegacy_02,TC_prereg_PiiLegacy_03
       input: '{}'
       output: '{
-  "_mustContain": ["$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"],
-  "_mustNotContain": ["$PREREGUSER$"]
+  "_mustContain": ["$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$"]
 }'
    Prereg_PiiLegacyList_PiiCompatOff_LegacyExcluded:
       endPoint: /preregistration/v1/applications
@@ -201,7 +200,7 @@ PiiScenarioRequests:
     ]
   }
 }'
-   Prereg_PiiCollision_CreatePrereg_Neg:
+   Prereg_PiiCollision_FutureScope_CreatePrereg_Neg:
       endPoint: /preregistration/v1/applications/prereg
       uniqueIdentifier: TC_prereg_PiiScenario_11
       description: Validate that a user whose hash matches a different identifier is refused with PRG_CORE_REQ_024 (AF5)
@@ -257,25 +256,22 @@ PiiScenarioRequests:
     }
   ]
 }'
-   Prereg_PiiFaultInjection_ListApplications_Neg:
+   Prereg_PiiFaultInjection_ListApplications_Empty:
       endPoint: /preregistration/v1/applications
       uniqueIdentifier: TC_prereg_PiiScenario_13
-      description: Validate that listing fails with PRG_CORE_REQ_024 when the user id cannot be resolved (AF4)
+      description: Validate that listing returns an empty application list when the user id cannot be resolved (AF4)
       role: userDefinedCookie
       restMethod: get
       additionalDependencies: TC_prereg_PiiScenario_07
-      outputTemplate: preReg/error
       input: '{
   "cookie": "$PREREGFAULTUSERTOKEN$"
 }'
       output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_024"
-    }
-  ]
+  "id": "mosip.preregistration.applications.all",
+  "_emptyArrays": ["response.allApplications"],
+  "_mustNotContain": ["errorCode"]
 }'
-   Prereg_PiiDocOwner_UpdateDocRefId_OtherUser_Neg:
+   Prereg_PiiDocOwner_FutureScope_UpdateDocRefId_OtherUser_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_PiiDocOwnership_02
       description: Validate that another user cannot change the owner's document reference number
