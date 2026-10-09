@@ -99,7 +99,8 @@
     ],
     "TC_prereg_GetAppointmentDetails_02": [
         "TC_Prereg_CreatePrereg_08",
-        "TC_prereg_BookAppointment_03"
+        "TC_prereg_BookAppointment_03",
+        "TC_prereg_CancelAppointment_01"
     ],
     "TC_prereg_BookAppointment_22": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_GetAllApplicationsWithapplicationId_02": ["TC_Prereg_CreatePrereg_01"],
@@ -130,7 +131,10 @@
     "TC_prereg_BookAppointment_24": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_BookAppointment_23": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_GetAllApplicationsWithapplicationId_01": ["TC_Prereg_CreatePrereg_01"],
-    "TC_prereg_GetPreRegInfoByPrid_01": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_GetPreRegInfoByPrid_01": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UpdatePreregistration_01"
+    ],
     "TC_prereg_BookAppointment_30": ["TC_Prereg_CreatePrereg_27"],
     "TC_prereg_UpdatePreRegStatus_05": ["TC_Prereg_CreatePrereg_07"],
     "TC_prereg_UpdatePreRegStatus_06": ["TC_Prereg_CreatePrereg_06"],
@@ -195,7 +199,10 @@
         "TC_Prereg_CreatePrereg_08",
         "TC_prereg_BookAppointment_03"
     ],
-    "TC_prereg_FetchApplicationByPrid_01": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_FetchApplicationByPrid_01": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UpdatePreregistration_01"
+    ],
     "TC_prereg_GetAllPreRegDemographicApplications_01": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_UpdateDocRefID_06": ["TC_Prereg_CreatePrereg_03"],
     "TC_prereg_GetSpecificDocumentforaPRID_03": ["TC_Prereg_CreatePrereg_01"],
@@ -230,5 +237,203 @@
     ],
     "TC_prereg_UpdateDocRefID_05": ["TC_Prereg_CreatePrereg_03"],
     "TC_prereg_GetSpecificDocumentforaPRID_02": ["TC_prereg_UploadDocument_01"],
-    "TC_prereg_SendNotifications_04": ["TC_prereg_GetAppointmentDetails_01"]
+    "TC_prereg_SendNotifications_04": ["TC_prereg_GetAppointmentDetails_01"],
+    "TC_prereg_PiiCrossUserAccess_01": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiCrossUserAccess_02": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiCrossUserAccess_03": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
+    "TC_prereg_PiiCrossUserActions_01": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_Prereg_CreatePrereg_05"
+    ],
+    "TC_prereg_PiiCrossUserActions_02": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UploadDocument_01"
+    ],
+    "TC_prereg_PiiCrossUserActions_03": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UploadDocument_01"
+    ],
+    "TC_prereg_PiiCrossUserActions_04": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UploadDocument_01"
+    ],
+    "TC_prereg_PiiCrossUserActions_05": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
+    "TC_prereg_PiiCrossUserActions_06": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
+    "TC_prereg_PiiCrossUserActions_07": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
+    "TC_prereg_PiiCrossUserActions_08": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiCrossUserActions_10": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiCrossUserDelete_01": ["TC_Prereg_CreatePrereg_05"],
+    "TC_prereg_PiiCrossUserDelete_02": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
+    "TC_prereg_PiiDbValidation_01": ["TC_prereg_PiiResponseOwnership_05"],
+    "TC_prereg_PiiDbValidation_02": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiDbValidation_03": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UpdatePreregistration_01"
+    ],
+    "TC_prereg_PiiDbValidation_04": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UploadDocument_03"
+    ],
+    "TC_prereg_PiiDbValidation_05": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_BookAppointment_01"
+    ],
+    "TC_prereg_PiiDbValidation_07": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_Prereg_CreatePrereg_05"
+    ],
+    "TC_prereg_PiiDbValidation_13": ["TC_prereg_PiiCrossUserAccess_01"],
+    "TC_prereg_PiiDbValidation_14": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_PiiCrossUserActions_05",
+        "TC_prereg_PiiCrossUserActions_07",
+        "TC_prereg_PiiCrossUserActions_08"
+    ],
+    "TC_prereg_PiiDbValidation_18": [
+        "TC_prereg_BookAppointment_01",
+        "TC_prereg_UploadDocument_01"
+    ],
+    "TC_prereg_PiiDocOwnership_01": ["TC_prereg_PiiScenario_22"],
+    "TC_prereg_PiiDocOwnership_02": [
+        "TC_prereg_PiiDocOwnership_01",
+        "TC_prereg_PiiScenario_22"
+    ],
+    "TC_prereg_PiiDocOwnership_03": [
+        "TC_prereg_PiiDocOwnership_01",
+        "TC_prereg_PiiScenario_22"
+    ],
+    "TC_prereg_PiiDocOwnership_04": [
+        "TC_prereg_PiiDocOwnership_01",
+        "TC_prereg_PiiScenario_22"
+    ],
+    "TC_prereg_PiiDocOwnership_05": [
+        "TC_prereg_PiiDocOwnership_01",
+        "TC_prereg_PiiDocOwnership_02",
+        "TC_prereg_PiiDocOwnership_04"
+    ],
+    "TC_prereg_PiiLegacy_02": ["TC_prereg_PiiLegacy_01"],
+    "TC_prereg_PiiLegacy_03": ["TC_prereg_PiiLegacy_01"],
+    "TC_prereg_PiiLegacy_04": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_05": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_06": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_07": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_08": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_09": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_10": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_08"
+    ],
+    "TC_prereg_PiiLegacy_11": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_08"
+    ],
+    "TC_prereg_PiiLegacy_12": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_09"
+    ],
+    "TC_prereg_PiiLegacy_13": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_14": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiLegacy_15": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_PiiNotification_02": ["TC_prereg_PiiNotification_01"],
+    "TC_prereg_PiiNotification_03": [
+        "TC_prereg_PiiNotification_01",
+        "TC_prereg_PiiNotification_02"
+    ],
+    "TC_prereg_PiiResponseOwnership_01": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiResponseOwnership_02": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiResponseOwnership_05": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiResponseOwnership_06": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_PiiScenario_03": ["TC_prereg_PiiScenario_01"],
+    "TC_prereg_PiiScenario_04": ["TC_prereg_PiiScenario_01"],
+    "TC_prereg_PiiScenario_07": ["TC_prereg_PiiScenario_06"],
+    "TC_prereg_PiiScenario_08": [
+        "TC_prereg_PiiScenario_01",
+        "TC_prereg_PiiScenario_03",
+        "TC_prereg_PiiScenario_04"
+    ],
+    "TC_prereg_PiiScenario_09": ["TC_prereg_PiiScenario_02"],
+    "TC_prereg_PiiScenario_11": ["TC_prereg_PiiScenario_05"],
+    "TC_prereg_PiiScenario_12": ["TC_prereg_PiiScenario_07"],
+    "TC_prereg_PiiScenario_13": ["TC_prereg_PiiScenario_07"],
+    "TC_prereg_PiiScenario_14": ["TC_prereg_PiiScenario_08"],
+    "TC_prereg_PiiScenario_15": [
+        "TC_prereg_PiiScenario_02",
+        "TC_prereg_PiiScenario_09"
+    ],
+    "TC_prereg_PiiScenario_16": ["TC_prereg_SendOtp_01"],
+    "TC_prereg_PiiScenario_18": ["TC_prereg_SendOtp_01"],
+    "TC_prereg_PiiScenario_19": ["TC_prereg_PiiScenario_11"],
+    "TC_prereg_PiiScenario_20": ["TC_prereg_PiiScenario_12"],
+    "TC_prereg_PiiScenario_23": ["TC_prereg_PiiScenario_19"],
+    "TC_prereg_PiiScenario_24": [
+        "TC_prereg_PiiScenario_01",
+        "TC_prereg_PiiScenario_14"
+    ],
+    "TC_prereg_PiiScenario_25": [
+        "TC_prereg_PiiScenario_01",
+        "TC_prereg_PiiScenario_14"
+    ],
+    "TC_prereg_PiiScenario_26": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_02"
+    ],
+    "TC_prereg_PiiScenario_27": [
+        "TC_prereg_PiiLegacy_01",
+        "TC_prereg_PiiLegacy_03"
+    ],
+    "TC_prereg_SendNotifications_05": [
+        "TC_Prereg_CreatePrereg_04",
+        "TC_prereg_GetAppointmentDetails_01"
+    ]
 }

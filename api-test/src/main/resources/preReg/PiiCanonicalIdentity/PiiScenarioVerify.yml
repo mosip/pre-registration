@@ -107,7 +107,7 @@ PiiScenarioVerify:
   "plaintext_phone_audit_rows": "0",
   "uuid_audit_present": "true"
 }'
-   Prereg_PiiCollision_PlantedUuid_NotReused:
+   Prereg_PiiCollision_FutureScope_PlantedUuid_NotReused:
       endPoint: db:mosip_prereg
       uniqueIdentifier: TC_prereg_PiiScenario_19
       description: Validate that the planted UUID is not reused for any record (AF5)
@@ -137,7 +137,7 @@ PiiScenarioVerify:
   "user_details_rows": "0",
   "plaintext_owner_rows": "0"
 }'
-   Prereg_PiiDocOwner_DocumentUntouched:
+   Prereg_PiiDocOwner_FutureScope_DocumentUntouched:
       endPoint: db:mosip_prereg
       uniqueIdentifier: TC_prereg_PiiDocOwnership_05
       description: Validate that the owner's document is unchanged after the rejected cross-user calls
@@ -153,7 +153,7 @@ PiiScenarioVerify:
   "ref_number_unchanged": "true",
   "owner_is_run_user": "true"
 }'
-   Prereg_PiiCleanup_CollisionRow:
+   Prereg_PiiCollision_FutureScope_CleanupCollisionRow:
       endPoint: db:mosip_prereg
       uniqueIdentifier: TC_prereg_PiiScenario_23
       description: Validate that the planted collision row is removed
