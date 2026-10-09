@@ -268,7 +268,8 @@ PiiScenarioRequests:
 }'
       output: '{
   "id": "mosip.preregistration.applications.all",
-  "_mustNotContain": ["applicationId", "errorCode"]
+  "_emptyArrays": ["response.allApplications"],
+  "_mustNotContain": ["errorCode"]
 }'
    Prereg_PiiDocOwner_FutureScope_UpdateDocRefId_OtherUser_Neg:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}

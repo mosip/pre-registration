@@ -590,7 +590,7 @@ public class PreRegUtil extends AdminTestUtil {
 				String child = path.isEmpty() ? key : path + "." + key;
 				Object value = object.get(key);
 				if (value instanceof JSONObject || value instanceof JSONArray)
-					fields.put(child, value instanceof JSONArray ? "[...]" : "{...}");
+					fields.put(child, value instanceof JSONArray ? (((JSONArray) value).isEmpty() ? "[]" : "[...]") : "{...}");
 				flattenJson(value, child, fields);
 			}
 		} else if (node instanceof JSONArray) {
