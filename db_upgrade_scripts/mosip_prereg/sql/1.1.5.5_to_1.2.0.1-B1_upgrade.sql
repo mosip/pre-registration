@@ -1,12 +1,12 @@
-\c mosip_prereg
+\c :mosipdbname
 
 REASSIGN OWNED BY sysadmin TO postgres;
 
-REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg FROM prereguser;
+REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg FROM :dbuname;
 
 REVOKE ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg FROM sysadmin;
 
-GRANT SELECT, INSERT, TRUNCATE, REFERENCES, UPDATE, DELETE ON ALL TABLES IN SCHEMA prereg TO prereguser;
+GRANT SELECT, INSERT, TRUNCATE, REFERENCES, UPDATE, DELETE ON ALL TABLES IN SCHEMA prereg TO :dbuname;
 
 GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA prereg TO postgres;
 
@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS prereg.applications(
 	CONSTRAINT appid_pk PRIMARY KEY (application_id)
 );
 
-GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.applications TO prereguser;
+GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.applications TO :dbuname;
 
 CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
 (
@@ -43,7 +43,7 @@ CREATE TABLE IF NOT EXISTS prereg.anonymous_profile
     CONSTRAINT anonymous_profile_pkey PRIMARY KEY (id)
 );
 
-GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.anonymous_profile TO prereguser;
+GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON prereg.anonymous_profile TO :dbuname;
 
 ALTER TABLE prereg.reg_appointment DROP CONSTRAINT IF EXISTS fk_rappmnt_id CASCADE;
 
