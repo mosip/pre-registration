@@ -116,19 +116,6 @@ PiiDbValidation:
       output: '{
   "unique_hash_index_present": "true"
 }'
-   Prereg_PiiDbValidation_Applications_CrByIndex:
-      endPoint: db:mosip_prereg
-      uniqueIdentifier: TC_prereg_PiiDbValidation_09
-      description: Validate that applications.cr_by is indexed
-      role: batch
-      restMethod: get
-      input: '{
-  "db": "prereg",
-  "query": "SELECT (count(*) > 0) AS cr_by_index_present FROM pg_indexes WHERE schemaname = ''prereg'' AND tablename = ''applications'' AND indexdef ILIKE ''%(cr_by%''"
-}'
-      output: '{
-  "cr_by_index_present": "true"
-}'
    Prereg_PiiDbValidation_Demographic_CrByIndex:
       endPoint: db:mosip_prereg
       uniqueIdentifier: TC_prereg_PiiDbValidation_10

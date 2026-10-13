@@ -45,7 +45,8 @@ import io.restassured.response.Response;
  * <p>Input keys: {@code cookie}, {@code _template: "prereg-create" | "prereg-update"}, {@code _idKeyName},
  * {@code _multipart: "document" | "notification"} (with {@code _filePath}, {@code _fileKeyName}),
  * {@code _parallel: n}.
- * Output keys: {@code _mustContain}, {@code _mustNotContain} (only for what the standard validation cannot express);
+ * Output keys: {@code _mustContain}, {@code _mustNotContain}, {@code _emptyArrays} (field paths that must be
+ * an empty array) - only for what the standard validation cannot express;
  * other keys use the standard output validation. {@code {name}} endpoint placeholders are filled from the input.
  */
 public class PreRegPiiRequest extends PreRegUtil implements ITest {
@@ -164,6 +165,8 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 				: new JSONArray();
 		JSONArray mustNotContain = expected.has("_mustNotContain") ? (JSONArray) expected.remove("_mustNotContain")
 				: new JSONArray();
+		JSONArray emptyArrays = expected.has("_emptyArrays") ? (JSONArray) expected.remove("_emptyArrays")
+				: new JSONArray();
 		String expectedJson = null;
 		if (!expected.isEmpty()) {
 			expectedJson = testCaseDTO.getOutputTemplate() == null ? expected.toString()
@@ -202,6 +205,13 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 							"NOT AVAILABLE", true));
 				for (String path : paths)
 					rows.add(outputValidationRow(label + path, "NOT AVAILABLE", fields.get(path), false));
+			}
+			for (int j = 0; j < emptyArrays.length(); j++) {
+				String path = emptyArrays.getString(j);
+				String value = fields.getOrDefault(path, "NOT AVAILABLE");
+				boolean empty = "[]".equals(value);
+				responseOk &= empty;
+				rows.add(outputValidationRow(label + path, "[]", value, empty));
 			}
 			if (expectedJson != null) {
 				Map<String, List<OutputValidationDto>> ouputValid = OutputValidationUtil.doJsonOutputValidation(actual,

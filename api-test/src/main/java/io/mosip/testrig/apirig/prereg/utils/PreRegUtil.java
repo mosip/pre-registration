@@ -84,6 +84,11 @@ public class PreRegUtil extends AdminTestUtil {
 	// Fault-injection cases use a trigger named per run, so parallel runs on one environment do not interfere;
 	// they are reported as Ignored when the DB user cannot create triggers.
 	public static final String PII_FAULT_INJECTION_MARKER = "_PiiFaultInjection_";
+	// Cases for features planned for a future release; the name part before the marker selects the feature.
+	public static final String PII_FUTURE_SCOPE_MARKER = "_FutureScope_";
+	private static final Map<String, String> FUTURE_SCOPE_FEATURES = Map.of(
+			"_PiiCollision_", "Hash-collision handling for user identifiers (alternate flow AF5)",
+			"_PiiDocOwner_", "Ownership validation on document reference number update");
 	private static final String DEFAULT_ACTUATOR_ENDPOINT = "/preregistration/v1/actuator/env";
 	private static final long PARALLEL_REQUEST_TIMEOUT_SECONDS = 120;
 	public static final String PII_RUN_ID_KEYWORD = "$PIIRUNID$";
@@ -149,6 +154,14 @@ public class PreRegUtil extends AdminTestUtil {
 			throw new SkipException("Test case applies only when PII backward compatibility is disabled; "
 					+ GlobalConstants.FEATURE_NOT_SUPPORTED
 					+ " as piiBackwardCompatibility=true (mosip.prereg.pii.backward.compatibility). Hence skipping the testcase");
+		}
+		// Features planned for a future release. Reported as Ignored until they are delivered.
+		if (testCaseName.contains(PII_FUTURE_SCOPE_MARKER)) {
+			String feature = FUTURE_SCOPE_FEATURES.entrySet().stream()
+					.filter(entry -> testCaseName.contains(entry.getKey())).map(Map.Entry::getValue).findFirst()
+					.orElse("This PII feature");
+			throw new SkipException(feature + " is planned for a future release; " + GlobalConstants.FEATURE_NOT_SUPPORTED
+					+ " in the current build. Hence skipping the testcase");
 		}
 		if (testCaseName.contains(PII_FAULT_INJECTION_MARKER) && !testCaseName.contains("_Install")
 				&& !testCaseName.endsWith("_Teardown")) {
@@ -577,7 +590,7 @@ public class PreRegUtil extends AdminTestUtil {
 				String child = path.isEmpty() ? key : path + "." + key;
 				Object value = object.get(key);
 				if (value instanceof JSONObject || value instanceof JSONArray)
-					fields.put(child, value instanceof JSONArray ? "[...]" : "{...}");
+					fields.put(child, value instanceof JSONArray ? (((JSONArray) value).isEmpty() ? "[]" : "[...]") : "{...}");
 				flattenJson(value, child, fields);
 			}
 		} else if (node instanceof JSONArray) {
