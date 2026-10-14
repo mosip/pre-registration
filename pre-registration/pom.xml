@@ -120,7 +120,7 @@
 		<pre.registration.core.version>1.3.1-SNAPSHOT</pre.registration.core.version>
 		<spring-cloud.version>2020.0.4</spring-cloud.version>
 	</properties>
-	
+
 	<modules>
 		<module>pre-registration-core</module>
 		<module>pre-registration-application-service</module>
@@ -128,7 +128,7 @@
 		<module>pre-registration-batchjob</module>
 		<module>pre-registration-captcha-service</module>
 	</modules>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
@@ -145,12 +145,12 @@
 				<scope>provided</scope>
 			</dependency>
 			<dependency>
-      			<groupId>org.springframework.cloud</groupId>
-      		    <artifactId>spring-cloud-dependencies</artifactId>
-     		    <version>${spring-cloud.version}</version>
-      		    <type>pom</type>
-      		    <scope>import</scope>
-     	 	</dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
@@ -208,7 +208,7 @@
 	<build>
 		<pluginManagement>
 			<plugins>
-                                <plugin>
+				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
 					<version>${spring.boot.maven.plugin.version}</version>
@@ -316,38 +316,10 @@
 				<artifactId>central-publishing-maven-plugin</artifactId>
 				<version>${central.publishing.maven.plugin.version}</version>
 				<extensions>true</extensions>
-				<executions>
-					<execution>
-						<id>default-publish</id>
-						<phase>none</phase>
-						<goals>
-							<goal>publish</goal>
-						</goals>
-					</execution>
-				</executions>
 				<configuration>
 					<publishingServerId>ossrh</publishingServerId>
 					<autoPublish>false</autoPublish>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>${maven.deploy.plugin.version}</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-				<executions>
-					<execution>
-						<id>default-deploy</id>
-						<phase>none</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -488,7 +460,7 @@
 						<configuration>
 							<generateGitPropertiesFile>true</generateGitPropertiesFile>
 							<generateGitPropertiesFilename>
-							${project.build.outputDirectory}/service-git.properties</generateGitPropertiesFilename>
+								${project.build.outputDirectory}/service-git.properties</generateGitPropertiesFilename>
 							<includeOnlyProperties>
 								<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
 								<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
