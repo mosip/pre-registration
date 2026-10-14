@@ -2,6 +2,7 @@ addContact:
    Prereg_AddContact_All_Valid_Smoke:
       endPoint: SELECT module_name,cr_by FROM audit.app_audit_log where module_name LIKE '%prereg%' order by action_dtimes desc LIMIT 5
       role: audit
+	  description: Validate that adding a contact is successfully processed when all mandatory fields are provided with valid values
       templateFields: ["preregQuery","prereg service"]
       restMethod: post
       inputTemplate: prereg/AuditLog/auditlog

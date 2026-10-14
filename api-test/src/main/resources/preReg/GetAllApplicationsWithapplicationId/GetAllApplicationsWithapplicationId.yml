@@ -2,35 +2,35 @@ GetAllApplicationsWithapplicationId:
    Prereg_GetAllApplicationsWithapplicationId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/{applicationId}
       uniqueIdentifier: TC_prereg_GetAllApplicationsWithapplicationId_01
-      description: Retrieve all applications with the application ID
+      description: Validate that fetching all applications with a specific application ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
       inputTemplate: preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId
       outputTemplate: preReg/GetAllApplicationsWithapplicationId/getAllApplicationsResult
       input: '{
-   "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+   "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
 }'
    Prereg_GetAllApplicationsWithapplicationId_with_expired:
       endPoint: /preregistration/v1/applications/{applicationId}
       uniqueIdentifier: TC_prereg_GetAllApplicationsWithapplicationId_02
-      description: Retrieve all applications with the expired application ID
+      description: Validate that fetching all applications with a specific application ID fails when the application status is expired
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
       inputTemplate: preReg/GetAllApplicationsWithapplicationId/GetAllApplicationsWithapplicationId
       outputTemplate: preReg/GetAllApplicationsWithapplicationId/getAllApplicationsResult
       input: '{
-   "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+   "applicationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
 }'
    Prereg_GetAllApplicationsWithapplicationId_with_invalid_applicationId:
       endPoint: /preregistration/v1/applications/{applicationId}
       uniqueIdentifier: TC_prereg_GetAllApplicationsWithapplicationId_03
-      description: Retrieve all applications with an invalid application ID
+      description: Validate that fetching all applications with a specific application ID fails when an invalid application ID is provided
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get

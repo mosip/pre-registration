@@ -2,7 +2,7 @@ DeletePreRegistration:
    Prereg_DeletePreRegistration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_DeletePreRegistration_01
-      description: Delete the preregistration with a valid preregistration ID
+      description: Validate that deleting a pre registration succeeds and deletedBy is the user UUID
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeletePreRegistration/deletePreRegistration
@@ -11,12 +11,12 @@ DeletePreRegistration:
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$"
 }'
       output: '{
-"deletedBy": "robin.hood@mailinator.com"
+"deletedBy": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
 }'
    Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
       uniqueIdentifier: TC_prereg_DeletePreRegistration_02
-      description: Delete the preregistration with an invalid preregistration ID
+      description: Validate that deleting a pre registration fails when an invalid pre registration ID is provided
       role: batch
       restMethod: delete
       inputTemplate: preReg/DeletePreRegistration/deletePreRegistration

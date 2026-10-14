@@ -2,7 +2,7 @@ Transliteration:
    Prereg_Transliteration_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/transliteration/transliterate
       uniqueIdentifier: TC_prereg_Transliteration_01
-      description: Retrieve the preregistration data using valid transliteration
+      description: Validate that transliteration is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: post
       inputTemplate: preReg/Transliteration/translate
@@ -25,7 +25,7 @@ Transliteration:
    Prereg_Transliteration_inValid_tofieldlang:
       endPoint: /preregistration/v1/transliteration/transliterate
       uniqueIdentifier: TC_prereg_Transliteration_02
-      description: Retrieve the transliteration data for an invalid to-field language
+      description: Validate that transliteration fails when an invalid target language toFieldLang is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/Transliteration/translate
@@ -49,7 +49,7 @@ Transliteration:
    Prereg_Transliteration_inValid_fromfieldlang:
       endPoint: /preregistration/v1/transliteration/transliterate
       uniqueIdentifier: TC_prereg_Transliteration_03
-      description: Retrieve the Transliteration data for an invalid 'to-field' language
+      description: Validate that transliteration fails when an invalid source language fromFieldLang is provided
       role: batch
       restMethod: post
       inputTemplate: preReg/Transliteration/translate
