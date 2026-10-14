@@ -3,6 +3,7 @@ package io.mosip.testrig.apirig.prereg.utils;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
@@ -181,12 +182,12 @@ public class PreRegUtil extends AdminTestUtil {
 	 * user has no user_details row yet; otherwise the case would run without the fault in place.
 	 */
 	private static void checkFaultInjectionActive(boolean requireNoRow) {
-		String sql = "SELECT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = '" + faultTriggerName() + "' AND NOT tgisinternal)"
+		String sql = "SELECT EXISTS (SELECT 1 FROM pg_trigger WHERE tgname = ?::name AND NOT tgisinternal)"
 				+ " AS trigger_installed, (SELECT count(*) FROM prereg.user_details WHERE upper(identifier_hash) = upper(encode("
-				+ "sha256(convert_to(lower(trim('" + preRegFaultUser + "')),'UTF8')),'hex'))) AS fault_user_rows";
+				+ "sha256(convert_to(lower(trim(?::text)),'UTF8')),'hex'))) AS fault_user_rows";
 		Map<String, String> row;
 		try {
-			row = executeDbStatement("prereg", sql);
+			row = executeDbStatement("prereg", sql, faultTriggerName(), preRegFaultUser);
 		} catch (SQLException e) {
 			throw new SkipException("DB fault injection " + GlobalConstants.FEATURE_NOT_SUPPORTED_MESSAGE
 					+ ". The fault-injection trigger cannot be checked: " + e.getMessage());
@@ -377,25 +378,43 @@ public class PreRegUtil extends AdminTestUtil {
 		return value == null || value.isBlank() ? defaultValue : value.trim();
 	}
 
-	/** Runs SQL on mosip_&lt;db&gt;: a query returns its first row, any other statement {"updated_rows": n}. */
-	public static Map<String, String> executeDbStatement(String db, String sql) throws SQLException {
+	/**
+	 * Runs SQL on mosip_&lt;db&gt;: a query returns its first row, any other statement {"updated_rows": n}. With
+	 * {@code params}, the SQL is a PreparedStatement and they bind its ? placeholders in order; without them it runs
+	 * as a plain Statement, so SQL from a yml can contain ? or several statements.
+	 */
+	public static Map<String, String> executeDbStatement(String db, String sql, Object... params) throws SQLException {
 		String url = "jdbc:postgresql://" + ConfigManager.getDbServer() + ":" + ConfigManager.getDbPort() + "/mosip_"
 				+ db;
-		Map<String, String> row = new LinkedHashMap<>();
 		try (Connection connection = DriverManager.getConnection(url, ConfigManager.getAuditDbUser(),
-				ConfigManager.getAuditDbPass()); Statement statement = connection.createStatement()) {
-			if (statement.execute(sql)) {
-				try (ResultSet rs = statement.getResultSet()) {
-					ResultSetMetaData md = rs.getMetaData();
-					if (rs.next()) {
-						for (int i = 1; i <= md.getColumnCount(); i++) {
-							row.put(md.getColumnLabel(i), String.valueOf(rs.getObject(i)));
-						}
+				ConfigManager.getAuditDbPass())) {
+			if (params.length == 0) {
+				try (Statement statement = connection.createStatement()) {
+					return readDbResult(statement, statement.execute(sql));
+				}
+			}
+			try (PreparedStatement statement = connection.prepareStatement(sql)) {
+				for (int i = 0; i < params.length; i++) {
+					statement.setObject(i + 1, params[i]);
+				}
+				return readDbResult(statement, statement.execute());
+			}
+		}
+	}
+
+	private static Map<String, String> readDbResult(Statement statement, boolean hasResultSet) throws SQLException {
+		Map<String, String> row = new LinkedHashMap<>();
+		if (hasResultSet) {
+			try (ResultSet rs = statement.getResultSet()) {
+				ResultSetMetaData md = rs.getMetaData();
+				if (rs.next()) {
+					for (int i = 1; i <= md.getColumnCount(); i++) {
+						row.put(md.getColumnLabel(i), String.valueOf(rs.getObject(i)));
 					}
 				}
-			} else {
-				row.put("updated_rows", String.valueOf(statement.getUpdateCount()));
 			}
+		} else {
+			row.put("updated_rows", String.valueOf(statement.getUpdateCount()));
 		}
 		return row;
 	}
@@ -470,13 +489,26 @@ public class PreRegUtil extends AdminTestUtil {
 		}
 	}
 
+	/** An identity JSON with its contact keywords filled, and the email and phone used (null if it had none). */
+	public static final class IdentityContact {
+		public final String json;
+		public final String email;
+		public final String phone;
+
+		private IdentityContact(String json, String email, String phone) {
+			this.json = json;
+			this.email = email;
+			this.phone = phone;
+		}
+	}
+
 	/**
 	 * Fills $PHONENUMBERFORIDENTITY$ (ID schema phone format) and $EMAILVALUE$ (unique per test case) in an
 	 * identity JSON.
 	 */
-	public static String replaceIdentityContactKeywords(String json, String testCaseName) {
+	public static IdentityContact fillIdentityContactKeywords(String json, String testCaseName) {
 		if (!json.contains("$PHONENUMBERFORIDENTITY$") && !json.contains("$EMAILVALUE$"))
-			return json;
+			return new IdentityContact(json, null, null);
 		String phoneNumber = "";
 		if (!phoneSchemaRegex.isEmpty()) {
 			try {
@@ -485,8 +517,21 @@ public class PreRegUtil extends AdminTestUtil {
 				logger.error(e.getMessage());
 			}
 		}
+		String email = testCaseName + "_" + BaseTestCase.runContext + "@mosip.com";
 		json = replaceKeywordWithValue(json, "$PHONENUMBERFORIDENTITY$", phoneNumber);
-		return replaceKeywordWithValue(json, "$EMAILVALUE$", testCaseName + "_" + BaseTestCase.runContext + "@mosip.com");
+		return new IdentityContact(replaceKeywordWithValue(json, "$EMAILVALUE$", email), email, phoneNumber);
+	}
+
+	public static String replaceIdentityContactKeywords(String json, String testCaseName) {
+		return fillIdentityContactKeywords(json, testCaseName).json;
+	}
+
+	/** Saves the email and phone a _pos case sent as its EMAIL and PHONE auto-generated ids, if it sent any. */
+	protected void writeIdentityContactIds(String testCaseName, IdentityContact contact) {
+		if (contact.email == null || !testCaseName.toLowerCase().contains("_pos"))
+			return;
+		writeAutoGeneratedId(testCaseName, "EMAIL", contact.email);
+		writeAutoGeneratedId(testCaseName, "PHONE", contact.phone);
 	}
 
 	/** User id claim of a JWT (userId, preferred_username or sub), never the token itself; "unknown" if none. */
