@@ -1,6 +1,5 @@
 package io.mosip.testrig.apirig.prereg.testscripts;
 
-import java.lang.reflect.Field;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,8 +18,6 @@ import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
-import org.testng.internal.BaseTestMethod;
-import org.testng.internal.TestResult;
 
 import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
@@ -95,7 +92,15 @@ public class CreatePreReg extends PreRegUtil implements ITest {
 		String[] templateFields = testCaseDTO.getTemplateFields();
 
 		String jsonInput = testCaseDTO.getInput();
-		String inputJson = getJsonFromTemplate(jsonInput, testCaseDTO.getInputTemplate(), false);
+        String inputJson = getJsonFromTemplate(jsonInput, testCaseDTO.getInputTemplate(), false);
+
+        if (testCaseName.contains("_invalid_email")) {
+            inputJson = replaceKeywordWithValue(inputJson, "$EMAILVALUE$", "@#$DDFFGG");
+        }
+
+        IdentityContact contact = fillIdentityContactKeywords(inputJson, testCaseName);
+        inputJson = contact.json;
+
 		String outputJson = getJsonFromTemplate(testCaseDTO.getOutput(), testCaseDTO.getOutputTemplate());
 		if (testCaseDTO.getTemplateFields() != null && templateFields.length > 0) {
 			ArrayList<JSONObject> inputtestCases = AdminTestUtil.getInputTestCase(testCaseDTO);
@@ -135,6 +140,8 @@ public class CreatePreReg extends PreRegUtil implements ITest {
 			Reporter.log(ReportUtil.getOutputValidationReport(ouputValid));
 			if (!OutputValidationUtil.publishOutputResult(ouputValid))
 				throw new AdminTestException("Failed at output validation");
+
+			writeIdentityContactIds(testCaseDTO.getTestCaseName(), contact);
 		}
 
 	}
@@ -146,16 +153,6 @@ public class CreatePreReg extends PreRegUtil implements ITest {
 	 */
 	@AfterMethod(alwaysRun = true)
 	public void setResultTestName(ITestResult result) {
-		try {
-			Field method = TestResult.class.getDeclaredField("m_method");
-			method.setAccessible(true);
-			method.set(result, result.getMethod().clone());
-			BaseTestMethod baseTestMethod = (BaseTestMethod) result.getMethod();
-			Field f = baseTestMethod.getClass().getSuperclass().getDeclaredField("m_methodName");
-			f.setAccessible(true);
-			f.set(baseTestMethod, testCaseName);
-		} catch (Exception e) {
-			Reporter.log("Exception : " + e.getMessage());
-		}
+		result.setAttribute("TestCaseName", testCaseName);
 	}
 }

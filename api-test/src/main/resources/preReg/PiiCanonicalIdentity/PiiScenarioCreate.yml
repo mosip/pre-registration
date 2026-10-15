@@ -1,0 +1,141 @@
+PiiScenarioCreate:
+   Prereg_CreatePrereg_PiiLegacy_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      uniqueIdentifier: TC_prereg_PiiLegacy_01
+      description: Validate that a pre registration is created for the legacy-record cases
+      role: batch
+      restMethod: post
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create",
+  "_template": "prereg-create",
+  "_idKeyName": "preRegistrationId"
+}'
+      output: '{
+  "id": "mosip.pre-registration.demographic.create",
+  "response": {
+    "preRegistrationId": "$REGEXP:[0-9]+",
+    "statusCode": "Application_Incomplete",
+    "langCode": "$1STLANG$"
+  }
+}'
+   Prereg_CreatePrereg_PiiRace_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_01
+      description: Validate that a pre registration is created for the concurrency case
+      role: batch
+      restMethod: post
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create",
+  "_template": "prereg-create",
+  "_idKeyName": "preRegistrationId"
+}'
+      output: '{
+  "id": "mosip.pre-registration.demographic.create",
+  "response": {
+    "preRegistrationId": "$REGEXP:[0-9]+",
+    "statusCode": "Application_Incomplete",
+    "langCode": "$1STLANG$"
+  }
+}'
+   Prereg_CreatePrereg_PiiConsumed_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_02
+      description: Validate that a pre registration is created for the datasync case
+      role: batch
+      restMethod: post
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create",
+  "_template": "prereg-create",
+  "_idKeyName": "preRegistrationId"
+}'
+      output: '{
+  "id": "mosip.pre-registration.demographic.create",
+  "response": {
+    "preRegistrationId": "$REGEXP:[0-9]+",
+    "statusCode": "Application_Incomplete",
+    "langCode": "$1STLANG$"
+  }
+}'
+   Prereg_CreatePrereg_PiiDocOwner_Smoke_sid:
+      endPoint: /preregistration/v1/applications/prereg
+      uniqueIdentifier: TC_prereg_PiiScenario_22
+      description: Validate that a never-booked pre registration is created for the document cases
+      role: batch
+      restMethod: post
+      input: '{
+  "postalCode": "14022",
+  "phone": "8249742850",
+  "email": "goku@technoforte.co.in",
+  "IDSchemaVersion": $SCHEMAVERSION$,
+  "dateOfBirth": "1996/01/01",
+  "version": "1.0",
+  "langCode": "$1STLANG$",
+  "requesttime": "$TIMESTAMP$",
+  "id": "mosip.pre-registration.demographic.create",
+  "_template": "prereg-create",
+  "_idKeyName": "preRegistrationId"
+}'
+      output: '{
+  "id": "mosip.pre-registration.demographic.create",
+  "response": {
+    "preRegistrationId": "$REGEXP:[0-9]+",
+    "statusCode": "Application_Incomplete",
+    "langCode": "$1STLANG$"
+  }
+}'
+   Prereg_PiiDocOwner_UploadDocument_Smoke_sid:
+      endPoint: /preregistration/v1/documents/{preRegistrationId}
+      uniqueIdentifier: TC_prereg_PiiDocOwnership_01
+      description: Validate that the owner uploads a document to a never-booked pre registration
+      role: batch
+      restMethod: post
+      additionalDependencies: TC_prereg_PiiScenario_22
+      input: '{
+  "id": "mosip.pre-registration.document.upload",
+  "version": "1.0",
+  "requesttime": "$TIMESTAMP$",
+  "request": {
+    "docCatCode": "POA",
+    "docTypCode": "RNC",
+    "langCode": "$1STLANG$"
+  },
+  "preRegistrationId": "$ID:CreatePrereg_PiiDocOwner_Smoke_sid_preRegistrationId$",
+  "_multipart": "document",
+  "_filePath": "preReg/uploadDocument/doc_POA.pdf",
+  "_fileKeyName": "file",
+  "_idKeyName": "docId"
+}'
+      output: '{
+  "id": "mosip.pre-registration.document.upload",
+  "response": {
+    "docId": "$REGEXP:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    "docName": "doc_POA.pdf",
+    "docCatCode": "POA",
+    "docTypCode": "RNC",
+    "docFileFormat": "pdf"
+  }
+}'

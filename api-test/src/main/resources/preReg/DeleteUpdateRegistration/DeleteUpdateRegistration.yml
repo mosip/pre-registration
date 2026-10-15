@@ -1,0 +1,16 @@
+DeleteUpdateRegistration:
+   Prereg_DeleteUpdateRegistration_All_Valid_Smoke_sid:
+      endPoint: /preregistration/v1/applications/updateregistration/{applicationId}
+      uniqueIdentifier: TC_prereg_DeleteUpdateRegistration_01
+      description: Validate that deleting an Update Registration application is successfully processed when a valid application ID created via POST updateregistration is provided
+      role: batch
+      restMethod: delete
+      additionalDependencies: TC_prereg_AddUpdateRegistration_01
+      inputTemplate: preReg/DeleteUpdateRegistration/deleteUpdateRegistration
+      outputTemplate: preReg/DeleteUpdateRegistration/deleteUpdateRegistrationResult
+      input: '{
+  "applicationId": "$ID:AddUpdateRegistration_All_Valid_Smoke_sid_applicationId$"
+}'
+      output: '{
+  "applicationId": "$ID:AddUpdateRegistration_All_Valid_Smoke_sid_applicationId$"
+}'

@@ -1,0 +1,29 @@
+PiiEnvironment:
+   Prereg_PiiEnvironment_CompatFlag_MatchesTestrig:
+      endPoint: actuator:/preregistration/v1/actuator/env
+      uniqueIdentifier: TC_prereg_PiiEnvironment_01
+      description: Validate that the environment compatibility flag matches piiBackwardCompatibility
+      role: batch
+      restMethod: get
+      input: '{
+  "check": "actuatorProperty",
+  "key": "mosip.prereg.pii.backward.compatibility"
+}'
+      output: '{
+  "value": "$PIIBACKWARDCOMPATIBILITY$"
+}'
+   Prereg_PiiNotificationDelivery_RecoveredAddress:
+      endPoint: mailbox:mock-smtp
+      uniqueIdentifier: TC_prereg_PiiNotification_03
+      description: Validate that the notification v2 email for the lost UIN application reaches the run user's address
+      role: batch
+      restMethod: get
+      additionalDependencies: TC_prereg_PiiNotification_02
+      input: '{
+  "check": "mailbox",
+  "recipient": "$PREREGUSER$",
+  "contains": "$ID:PiiNotification_CreateLostUin_Smoke_sid_applicationId$"
+}'
+      output: '{
+  "received": "true"
+}'

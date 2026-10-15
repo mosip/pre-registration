@@ -2,23 +2,21 @@ GetAllDocForPrId:
    Prereg_GetAllDocForPrId_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UploadDocument_01
-      description: Retrieve all documents associated with the valid Pre-Registration ID
+      description: Validate that fetching all documents for a Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
       role: batch
       checkErrorsOnlyInResponse: true
       restMethod: get
       inputTemplate: preReg/GetAllDocForPrId/getAllDocForPrId
       outputTemplate: preReg/GetAllDocForPrId/getAllDocForPrIdResult
       input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_preRegistrationId$"
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
 }'
       output: '{
-      "docCatCode": "$IGNORE$",
-       "docTypCode": "$IGNORE$"
 }'
    Prereg_GetAllDocForPrId_inValid_preRegistrationId_sid:
       endPoint: /preregistration/v1/documents/preregistration/{preRegistrationId}
       uniqueIdentifier: TC_prereg_UploadDocument_02
-      description: Retrieve all documents associated with the invalid Pre-Registration ID
+      description: Validate that fetching all documents for a Pre Registration ID fails when an invalid pre registration ID is provided
       role: batch
       restMethod: get
       inputTemplate: preReg/GetAllDocForPrId/getAllDocForPrId

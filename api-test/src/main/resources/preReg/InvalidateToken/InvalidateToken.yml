@@ -2,7 +2,7 @@ InvalidateToken:
    Prereg_InvalidateToken_All_Valid_Smoke_sid:
       endPoint: /preregistration/v1/login/invalidateToken
       uniqueIdentifier: TC_prereg_InvalidateToken_01
-      description: Invalidate token using valid data
+      description: Validate that invalidating a token is successfully processed when all mandatory fields are provided with valid values
       role: batch
       restMethod: post
       inputTemplate: preReg/InvalidateToken/invalidatetoken

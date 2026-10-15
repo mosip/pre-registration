@@ -103,8 +103,15 @@ To execute the tests using Jar, use the following steps:
    ```
 
 2. Run the automation test suite JAR file:
+
+   bash / Git Bash:
+   ```sh
+   java -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-*-jar-with-dependencies.jar
    ```
-   java -jar -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar apitest-prereg-1.3.0-jar-with-dependencies.jar
+
+   PowerShell:
+   ```powershell
+   java -Dmodules=prereg -Denv.user=api-internal.<env_name> -Denv.endpoint=<base_env> -Denv.testLevel=smokeAndRegression -jar (Get-Item apitest-prereg-*-jar-with-dependencies.jar).Name
    ```
    
 # Using Eclipse IDE
@@ -178,7 +185,7 @@ This section describes the meaning of each column in the test report:
 - **env.user**: Replace `<env_name>` with the appropriate environment name (e.g., `dev`, `qa`, etc.).
 - **env.endpoint**: The environment where the application under test is deployed. Replace `<base_env>` with the correct base URL for the environment (e.g., `https://api-internal.<env_name>.mosip.net`).
 - **env.testLevel**: Set this to `smoke` to run only smoke test cases, or `smokeAndRegression` to run both smoke and regression tests.
-- **jar**: Specify the name of the JAR file to execute. The version will change according to the development code version. For example, the current version may look like `apitest-prereg-1.3.0-jar-with-dependencies.jar`.
+- **jar**: The JAR file to execute, named `apitest-prereg-<version>-jar-with-dependencies.jar`, where `<version>` is the `<version>` in `pom.xml`. The commands above match it with a wildcard, so they don't need updating when the version changes.
 
 ### Build and Run Info
 
