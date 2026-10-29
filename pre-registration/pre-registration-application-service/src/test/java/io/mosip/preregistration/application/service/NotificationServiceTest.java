@@ -974,4 +974,234 @@ public class NotificationServiceTest {
 			assertEquals(expectedMessage, ex.getErrorText());
 		}
 	}
+
+	/**
+	 * MOSIP-38854: the identity a notification is built from may lack a configured name field (an
+	 * optional middle name, or a schema without fullName). Builds a demographic response whose identity
+	 * carries only the given name fields, plus email and phone.
+	 */
+	@SuppressWarnings("unchecked")
+	private MainResponseDTO<DemographicResponseDTO> demographicWithNameFields(String... nameFields) {
+		JSONObject identityJson = new JSONObject();
+		for (String nameField : nameFields) {
+			JSONObject nameValue = new JSONObject();
+			nameValue.put("language", "eng");
+			nameValue.put("value", "Sanober");
+			org.json.simple.JSONArray names = new org.json.simple.JSONArray();
+			names.add(nameValue);
+			identityJson.put(nameField, names);
+		}
+		identityJson.put("email", "sanober@gmail.com");
+		identityJson.put("phone", "9480548558");
+		JSONObject demographicDetails = new JSONObject();
+		demographicDetails.put("identity", identityJson);
+		DemographicResponseDTO demo = new DemographicResponseDTO();
+		demo.setPreRegistrationId("20180396713560");
+		demo.setDemographicDetails(demographicDetails);
+		MainResponseDTO<DemographicResponseDTO> demoResponse = new MainResponseDTO<>();
+		demoResponse.setResponse(demo);
+		return demoResponse;
+	}
+
+	private NotificationDTO nameCheckedNotification() {
+		NotificationDTO dto = new NotificationDTO();
+		dto.setName("Sanober");
+		dto.setPreRegistrationId("20180396713560");
+		dto.setAdditionalRecipient(false);
+		dto.setIsBatch(false);
+		dto.setLanguageCode("eng");
+		return dto;
+	}
+
+	private void stubNotificationRequest() {
+		Mockito.when(validationUtil.requestValidator(Mockito.any(), Mockito.any())).thenReturn(true);
+		try {
+			Mockito.when(notificationServiceUtil.createNotificationDetails(Mockito.any(), Mockito.any(),
+					Mockito.anyBoolean())).thenReturn(mainReqDto);
+		} catch (Exception ex) {
+			Assert.fail("unexpected stubbing failure");
+		}
+	}
+
+	/** AC-1: a configured name field the identity does not carry is skipped, not dereferenced. */
+	@Test
+	public void getDemographicDetailsSkipsNameFieldMissingFromIdentity() throws Exception {
+		ReflectionTestUtils.setField(notificationService, "nameFormat", "firstName,fullName");
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
+				.thenReturn(demographicWithNameFields("fullName"));
+
+		MainResponseDTO<DemographicResponseDTO> result = notificationService
+				.getDemographicDetails(nameCheckedNotification());
+
+		assertEquals("20180396713560", result.getResponse().getPreRegistrationId());
+	}
+
+	/** AC-2: no configured name field present -> the existing full-name validation error, never an NPE. */
+	@Test
+	public void getDemographicDetailsWithNoConfiguredNameFieldThrowsFullNameValidation() throws Exception {
+		ReflectionTestUtils.setField(notificationService, "nameFormat", "firstName,middleName");
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any()))
+				.thenReturn(demographicWithNameFields("fullName"));
+		try {
+			notificationService.getDemographicDetails(nameCheckedNotification());
+			Assert.fail("Expected MandatoryFieldException");
+		} catch (MandatoryFieldException ex) {
+			assertEquals(io.mosip.preregistration.application.errorcodes.NotificationErrorCodes.PRG_PAM_ACK_008.getCode(), ex.getErrorCode());
+		}
+	}
+
+	/** AC-3: legacy flow still notifies, with a fallback name entry, when the identity has no name field. */
+	@Test
+	public void sendNotificationStillNotifiesWhenIdentityHasNoNameField() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		stubNotificationRequest();
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotification(null, "eng", file, false);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		// no name field: one fallback entry in the request language carrying the requested name
+		assertEquals(1, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("sanober Noor", notificationDTO.getFullName().get(0).getValue());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.SMS.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+	}
+
+	/** AC-4: v2 NEW_PREREGISTRATION flow still notifies, with a fallback name entry, when the identity has no name field. */
+	@Test
+	public void sendNotificationV2StillNotifiesWhenIdentityHasNoNameField() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		stubNotificationRequest();
+		Mockito.when(applicationServiceIntf.getApplicationInfoInternal(Mockito.any())).thenReturn(appEntity);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotificationV2(null, "eng", file, true);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		// no name field: one fallback entry in the request language carrying the requested name
+		assertEquals(1, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("sanober Noor", notificationDTO.getFullName().get(0).getValue());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.SMS.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+	}
+
+	/**
+	 * AC-4: when the identity has no name field but the request already carries per-language names,
+	 * those names are kept rather than collapsed into a single fallback entry.
+	 */
+	@Test
+	public void sendNotificationV2KeepsRequestNamesWhenIdentityHasNoNameField() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		List<KeyValuePairDto<String, String>> requestNames = new ArrayList<>();
+		for (String lang : new String[] { "eng", "ara" }) {
+			KeyValuePairDto<String, String> requestName = new KeyValuePairDto<>();
+			requestName.setKey(lang);
+			requestName.setValue("sanober Noor " + lang);
+			requestNames.add(requestName);
+		}
+		notificationDTO.setFullName(requestNames);
+		stubNotificationRequest();
+		Mockito.when(applicationServiceIntf.getApplicationInfoInternal(Mockito.any())).thenReturn(appEntity);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotificationV2(null, null, file, true);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		assertEquals(2, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("sanober Noor eng", notificationDTO.getFullName().get(0).getValue());
+		assertEquals("ara", notificationDTO.getFullName().get(1).getKey());
+		assertEquals("sanober Noor ara", notificationDTO.getFullName().get(1).getValue());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+	}
+
+	/**
+	 * AC-3: with no name field in the identity and no requested name, the request's name entry (as
+	 * createNotificationDetails builds it) is named by the pre-registration id so the templates still render.
+	 */
+	@Test
+	public void sendNotificationFallsBackToPreRegistrationIdWhenNoNameIsAvailable() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		notificationDTO.setName(null);
+		notificationDTO.setFullName(namePairs("eng", null));
+		stubNotificationRequest();
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotification(null, "eng", file, false);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		assertEquals(1, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("20180396713560", notificationDTO.getFullName().get(0).getValue());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+	}
+
+	/** AC-3: a DTO without request names or a requested name gets one entry named by the pre-registration id. */
+	@Test
+	public void sendNotificationNamesByPreRegistrationIdWhenDtoCarriesNoNames() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		notificationDTO.setName(null);
+		stubNotificationRequest();
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotification(null, "eng", file, false);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		assertEquals(1, notificationDTO.getFullName().size());
+		assertEquals("eng", notificationDTO.getFullName().get(0).getKey());
+		assertEquals("20180396713560", notificationDTO.getFullName().get(0).getValue());
+		Mockito.verify(notificationUtil).notify(Mockito.eq(NotificationRequestCodes.EMAIL.getCode()),
+				Mockito.any(NotificationDTO.class), Mockito.any(),
+				Mockito.eq(BookingTypeCodes.NEW_PREREGISTRATION.toString()));
+	}
+
+	/** AC-4: per-language names - a language the request left blank is named by the pre-registration id. */
+	@Test
+	public void sendNotificationV2NamesBlankRequestLanguageByPreRegistrationId() throws Exception {
+		MultipartFile file = new MockMultipartFile("test.txt", "test.txt", null, new byte[1100]);
+		notificationDTO.setFullName(namePairs("eng", "sanober Noor eng", "ara", " "));
+		stubNotificationRequest();
+		Mockito.when(applicationServiceIntf.getApplicationInfoInternal(Mockito.any())).thenReturn(appEntity);
+		Mockito.when(demographicServiceIntf.getDemographicData(Mockito.any())).thenReturn(demographicWithNameFields());
+
+		MainResponseDTO<io.mosip.preregistration.application.dto.NotificationResponseDTO> result = notificationService
+				.sendNotificationV2(null, null, file, true);
+
+		assertEquals(NotificationRequestCodes.MESSAGE.getCode(), result.getResponse().getMessage());
+		assertEquals(2, notificationDTO.getFullName().size());
+		assertEquals("sanober Noor eng", notificationDTO.getFullName().get(0).getValue());
+		assertEquals("ara", notificationDTO.getFullName().get(1).getKey());
+		assertEquals("20180396713560", notificationDTO.getFullName().get(1).getValue());
+	}
+
+	/** Builds request name entries from alternating language / name arguments. */
+	private List<KeyValuePairDto<String, String>> namePairs(String... languageAndName) {
+		List<KeyValuePairDto<String, String>> names = new ArrayList<>();
+		for (int i = 0; i < languageAndName.length; i += 2) {
+			KeyValuePairDto<String, String> name = new KeyValuePairDto<>();
+			name.setKey(languageAndName[i]);
+			name.setValue(languageAndName[i + 1]);
+			names.add(name);
+		}
+		return names;
+	}
 }

@@ -391,7 +391,7 @@ public class NotificationService {
 			JsonNode arrayNode = responseNode.get(fullName);
 			List<KeyValuePairDto<String, String>> langaueNamePairs = new ArrayList<KeyValuePairDto<String, String>>();
 			KeyValuePairDto langaueNamePair = null;
-			if (arrayNode.isArray()) {
+			if (arrayNode != null && arrayNode.isArray()) {
 				for (JsonNode jsonNode : arrayNode) {
 					langaueNamePair = new KeyValuePairDto();
 					langaueNamePair.setKey(jsonNode.get("language").asText().trim());
@@ -400,6 +400,10 @@ public class NotificationService {
 				}
 			}
 
+			if (langaueNamePairs.isEmpty()) {
+				// no name field in the identity: fall back so the templates still render
+				langaueNamePairs = fallbackNamePairs(notificationDto, langCode);
+			}
 			notificationDto.setFullName(langaueNamePairs);
 			if (responseNode.get(email) != null) {
 				String emailId = responseNode.get(email).asText();
@@ -455,13 +459,17 @@ public class NotificationService {
 
 				JsonNode arrayNode = responseNode.get(fullName);
 				KeyValuePairDto langaueNamePair = null;
-				if (arrayNode.isArray()) {
+				if (arrayNode != null && arrayNode.isArray()) {
 					for (JsonNode jsonNode : arrayNode) {
 						langaueNamePair = new KeyValuePairDto();
 						langaueNamePair.setKey(jsonNode.get("language").asText().trim());
 						langaueNamePair.setValue(jsonNode.get("value").asText().trim());
 						langaueNamePairs.add(langaueNamePair);
 					}
+				}
+				if (langaueNamePairs.isEmpty()) {
+					// no name field in the identity: fall back so the templates still render
+					langaueNamePairs = fallbackNamePairs(notificationDto, langCode);
 				}
 				notificationDto.setFullName(langaueNamePairs);
 				if (responseNode.get(email) != null) {
@@ -534,6 +542,35 @@ public class NotificationService {
 			throw new RestCallException(NotificationErrorCodes.PRG_PAM_ACK_011.getCode(),
 					NotificationErrorMessages.DEMOGRAPHIC_CALL_FAILED.getMessage());
 		}
+	}
+
+	/**
+	 * Names used when the identity carries no name field (MOSIP-38854): the per-language names the
+	 * request already carried, else one entry in the request language with the requested name, or the
+	 * pre-registration id when none was given. A request entry without a name keeps its language and
+	 * is named by the pre-registration id.
+	 */
+	private List<KeyValuePairDto<String, String>> fallbackNamePairs(NotificationDTO notificationDto,
+			String langCode) {
+		List<KeyValuePairDto<String, String>> requestNames = notificationDto.getFullName();
+		if (requestNames != null && !requestNames.isEmpty()) {
+			List<KeyValuePairDto<String, String>> namePairs = new ArrayList<>();
+			for (KeyValuePairDto<String, String> requestName : requestNames) {
+				String name = requestName.getValue();
+				KeyValuePairDto<String, String> namePair = new KeyValuePairDto<>();
+				namePair.setKey(requestName.getKey());
+				namePair.setValue(name != null && !name.trim().isEmpty() ? name : notificationDto.getPreRegistrationId());
+				namePairs.add(namePair);
+			}
+			return namePairs;
+		}
+		KeyValuePairDto<String, String> namePair = new KeyValuePairDto<>();
+		namePair.setKey(langCode);
+		namePair.setValue(notificationDto.getName() != null ? notificationDto.getName()
+				: notificationDto.getPreRegistrationId());
+		List<KeyValuePairDto<String, String>> namePairs = new ArrayList<>();
+		namePairs.add(namePair);
+		return namePairs;
 	}
 
 	/**
@@ -702,6 +739,10 @@ public class NotificationService {
 				String[] nameKeys = nameFormat.split(",");
 				for (int i = 0; i < nameKeys.length; i++) {
 					JsonNode arrayNode = responseNode.get(nameKeys[i]);
+					if (arrayNode == null) {
+						// an optional name field (e.g. middleName) may be absent from the identity
+						continue;
+					}
 					for (JsonNode jsonNode : arrayNode) {
 						if (notificationDto.getName().trim().equals(jsonNode.get("value").asText().trim())) {
 							isNameMatchFound = true;
