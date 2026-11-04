@@ -95,7 +95,6 @@ Lists of 382 third-party dependencies.
      (MPL 2.0) common auth adapter (io.mosip.kernel:kernel-auth-adapter:1.4.1-20261014.143034-10 - https://github.com/mosip/commons)
      (MPL 2.0) Kernel Core (io.mosip.kernel:kernel-core:1.4.1-20261014.143034-10 - https://github.com/mosip/commons)
      (MPL 2.0) Data access layer (io.mosip.kernel:kernel-dataaccess-hibernate:1.3.0 - https://github.com/mosip/commons)
-     (MPL 2.0) prid generator (io.mosip.kernel:kernel-idgenerator-prid:1.3.0 - https://github.com/mosip/commons)
      (MPL 2.0) kernel-idvalidator-prid (io.mosip.kernel:kernel-idvalidator-prid:1.3.0 - https://github.com/mosip/commons)
      (MPL 2.0) kernel-keymanager-service (io.mosip.kernel:kernel-keymanager-service:1.4.1-rc.1 - https://github.com/mosip/keymanager)
      (MPL 2.0) kernel-pdfgenerator (io.mosip.kernel:kernel-pdfgenerator:1.3.1-rc.1 - https://github.com/mosip/commons)
