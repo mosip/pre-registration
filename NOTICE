@@ -7,67 +7,73 @@ The Apache Software Foundation (http://www.apache.org/).
 
 This project also includes third-party software components licensed under
 various open-source licenses. Attribution for these components is provided
-below. Full license texts are available in the licenses/ directory or from
-the corresponding upstream sources.
+below. The full Maven inventory is THIRD-PARTY-NOTICES.txt (generated
+2026-11-04). License texts are in licenses/.
 
 ---
 
-Third-party attributions:
+Third-party attributions (resolved tree):
 
-• Spring Boot 4.1.1 & Spring Security
+• Spring Boot 4.1.1, Spring Framework 7.0.9, Spring Security 7.1.1
   Licensed under the Apache License 2.0.
 
-• Spring Cloud 2025.1.3
+• Spring Cloud 2025.1.3 (config 5.0.5, commons 5.0.3)
   Licensed under the Apache License 2.0.
 
-• Spring Batch 6
+• Spring Batch 6.0.5
   Licensed under the Apache License 2.0.
 
 • SpringDoc OpenAPI 3.1.1
   Licensed under the Apache License 2.0.
 
-• Apache Maven Plugins
+• Tomcat Embed 11.0.24, Hibernate ORM 7.4.5.Final, Netty 4.2.17.Final
   Licensed under the Apache License 2.0.
 
-• PostgreSQL JDBC Driver
+• Vert.x 3.9.16
+  Licensed under the Eclipse Public License 1.0 / 2.0 and Apache License 2.0.
+
+• Jackson 2.21.x (spring-boot-jackson2) and Jackson 3.1.5
+  Licensed under the Apache License 2.0.
+
+• PostgreSQL JDBC Driver 42.7.5
   Licensed under the BSD-2-Clause License.
 
-• Jackson 2 (via spring-boot-jackson2; Boot 4 defaults to Jackson 3)
+• H2 Database 2.3.232
+  Licensed under the Eclipse Public License 1.0 and MPL 2.0.
+
+• SLF4J 2.0.18 (MIT). Logback 1.5.38 (EPL-2.0 / LGPL-2.1).
+
+• Lombok 1.18.38, Mockito 5.23.0
+  Licensed under the MIT License.
+
+• JUnit 6.0.3 / JUnit Vintage 6.0.3 (EPL-2.0). JUnit 4.13.2 (EPL-1.0).
+
+• Bouncy Castle 1.85
+  Licensed under the Bouncy Castle Licence.
+
+• ICU4J 78.3
+  Licensed under Unicode License v3.
+
+• Apache PDFBox 3.0.3
   Licensed under the Apache License 2.0.
 
-• SLF4J API & Bridges
-  Licensed under the MIT License.
+• JSON-java 20240303
+  Public Domain / JSON License.
 
-• H2 Database
-  Licensed under the Eclipse Public License 1.0.
-
-• JSON Simple / org.json
-  Licensed under the Apache License 2.0 / JSON License.
-
-• Git Commit ID Maven Plugin
-  Licensed under the Apache License 2.0.
-
-• JUnit
-  Licensed under the Eclipse Public License 1.0 / 2.0.
-
-• Mockito
-  Licensed under the MIT License.
-
-• Lombok
-  Licensed under the MIT License.
-
-• MOSIP kernel-core and kernel adapters 1.4.1-SNAPSHOT
+• MOSIP kernel-core, kernel-auth-adapter, khazana 1.4.1-SNAPSHOT; kernel-idgenerator-prid 1.3.0
   Licensed under the Mozilla Public License 2.0.
+
+• Loader-path SPIs: kernel-ref-idobjectvalidator, kernel-virusscanner-clamav
+  (mosip-ref-impl issue-1633). Licensed under the Mozilla Public License 2.0.
 
 • Pre-Registration UI (Angular 7 SPA, imported from mosip/pre-registration-ui)
   Angular, Angular Material, ngx-translate, html2pdf.js, ng2-pdf-viewer, ng-recaptcha,
-  Hammer.js, core-js, zone.js: MIT License.
+  Hammer.js, core-js, zone.js, Moment.js: MIT License.
   RxJS: Apache License 2.0.
   OpenLayers (ol): BSD-2-Clause.
   Copyright notices: licenses/NOTICE.
 
 ---
 
-All other included third-party components are licensed under permissive,
-compatible open-source licenses. Their license texts are available in the
-licenses/ directory.
+All other included third-party components are listed in THIRD-PARTY-NOTICES.txt.
+Their license texts are in the licenses/ directory.
