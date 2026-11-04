@@ -33,10 +33,18 @@ public enum ErrorCodes {
 	PRG_CORE_REQ_024("PRG_CORE_REQ_024");
 	
 
+	/**
+	 * Creates a error codes.
+	 *
+	 * @param code code supplied to this constructor
+	 */
 	private ErrorCodes(String code) {
 		this.code = code;
 	}
 
+	/**
+	 * code used by this Pre-Registration type.
+	 */
 	private final String code;
 
 	/**

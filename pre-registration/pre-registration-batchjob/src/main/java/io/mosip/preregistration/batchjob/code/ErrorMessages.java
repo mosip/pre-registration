@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.code;
 
 /**
@@ -40,6 +36,9 @@ public enum ErrorMessages {
 		this.message = message;
 	}
 
+	/**
+	 * message used by this Pre-Registration type.
+	 */
 	private final String message;
 
 	/**

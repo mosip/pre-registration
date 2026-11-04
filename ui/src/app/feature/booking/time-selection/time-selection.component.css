@@ -1,0 +1,391 @@
+.spinner {
+  flex-direction: column;
+  align-items: center;
+  margin-top: 18vw;
+  display: flex;
+}
+
+.time-selection__title-card {
+  color: #ff4081;
+  padding: 0px;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  /* margin: 0px 2vw; */
+  border-bottom: 1px solid #ff4081;
+  border-radius: 0px !important;
+  /* z-index:  -1; */
+  position: relative;
+}
+.time-selection__note-text{
+  color: #ff4081;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  padding: 5px;
+  border-radius: 0px !important;
+  font-size: 14px;
+}
+
+/* .time-selection__title-card-text { */
+  /* margin: -15px 0 0 -25px; */
+/* } */
+
+.disable_add {
+  opacity: 0.6 !important;
+  cursor: not-allowed !important;
+}
+
+.time-selection__arrow-text {
+  margin: auto;
+  cursor: pointer;
+  color: #ff4081;
+}
+
+.time-selection__date-card {
+  margin: 0px 2vw;
+  border-radius: 0px;
+  padding: 20px 2rem;
+  /* z-index:  -1; */
+  position: relative;
+}
+
+.time-selection__tile-date {
+  margin: 10px 0 10px 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.time-selection__tile-date-text {
+  margin: 10px 0 10px 0;
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.time-selection__tile-availability-text {
+  margin: 15px 0 15px 0;
+  font-size: 0.8rem;
+  font-weight: 400;
+}
+
+.time-selection__slots-div {
+  display: flex;
+  margin: 0 2vw;
+  padding-bottom: 80px;
+  position: relative;
+  z-index: 1;
+}
+
+.time-seelection__slot-groups-div {
+  display: flex;
+  margin: 20px 2vw 0px 2vw;
+  padding: 0px 2rem;
+}
+
+.time-seelection__slot-groups-div a {
+  margin: 0 40px 5px 0px;
+  font-weight: 500;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.time-seelection__slot-groups-div-selected {
+  color: blue !important;
+}
+
+.time-selection__time-slots-container {
+  border-top: 1px solid #ff4081;
+  margin-right: 20px;
+  padding: 0;
+  border-radius: 0px;
+}
+
+.time-selection__names-container {
+  min-width: 24.5%;
+  padding: 0;
+  position: relative;
+}
+
+.time-selection__time-slots-container div {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 100%;
+}
+
+.time-selection__name-list-header {
+  min-height: 50px;
+  width: 100%;
+  background-color: #3973ac;
+  padding: 5px 2rem;
+  word-wrap: break-word;
+  color: white;
+}
+
+.time-selection__names-header-date-text {
+  font-size: 0.9rem;
+}
+
+.time-selection__names-header-time-text {
+  font-size: 0.9rem;
+  margin-top: 10px;
+}
+
+.time-selection__names-header-day-text {
+  font-size: 0.9rem;
+}
+
+.time-selection__name-list {
+  padding: 0px 2rem;
+  list-style: none;
+  width: 100%;
+  word-wrap: break-word;
+  word-break: normal;
+  white-space: pre-wrap;
+}
+
+.time-selection__name-list-item {
+  padding: 15px 0 15px 10px;
+  min-height: 50px;
+  width: 100%;
+  font-size: 0.8rem;
+}
+.selected-name-list-item {
+  padding: 10px;
+  min-height: 30px;
+  border-bottom: 1px solid #ff4081;
+  width: 100%;
+  font-size: 0.8rem;
+}
+
+.name-delete-button {
+  font-size: 1rem;
+  cursor: pointer;
+  float: right;
+  text-align: center;
+  transform: translateY(0.2rem);
+}
+
+
+.button-placer {
+  margin-left: 50%;
+}
+
+.button-right {
+  float: right;
+}
+
+.card {
+  display: flex;
+  flex-wrap: wrap;
+  height: 110px;
+  width: 295px;
+  margin: 0;
+  border: 1px solid #eee;
+  box-shadow: none;
+  cursor: pointer;
+  border-radius: 0;
+}
+
+.card-content {
+  padding: 15px 2rem;
+}
+
+.card-time-text {
+  font-size: 20px;
+  font-weight: 100;
+  margin-bottom: 2rem;
+}
+
+.card-slot-text {
+  font-size: 11px;
+  font-weight: 500;
+  color: blue;
+}
+
+.card-slot-text-span-number {
+  font-size: 0.6rem !important;
+  color:rgb(0, 0, 0);
+}
+
+.card-slot-text-selected {
+  font-size: 11px;
+  font-weight: 500;
+  color: white;
+}
+
+.sizing {
+  height: 130px;
+  display: inline-block;
+  margin: 0 15px 0 15px;
+  text-align: left;
+  cursor: pointer;
+  background-color: #eee;
+  padding: 2px 20px 2px 20px;
+  border: 1px solid #eee;
+}
+
+.sizing:nth-child(1) {
+  margin-left: 0px;
+}
+
+.middle {
+  float: left;
+  overflow: hidden;
+  width: 67.5%;
+  white-space: nowrap;
+  margin: 0 15px;
+}
+
+.container {
+  display: flex;
+  text-align: center;
+}
+
+.left-button {
+  margin: auto;
+  float: left;
+  cursor: pointer;
+}
+
+.right-button {
+  margin: auto;
+  float: right;
+  cursor: pointer;
+}
+
+.disabled {
+  color: #aaa;
+  border: 1px solid #aaa;
+  cursor: initial;
+}
+
+.selected {
+  border: 1px solid #ff4081;
+}
+
+.selected-card {
+  background-color: #ff4081 !important;
+  color: white !important;
+}
+
+.time-selection__button-container {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap; 
+  justify-content: space-between;
+  margin-top: 1rem;
+  bottom: 0;
+  position: fixed;
+  background: #ffffff;
+  box-shadow: 10px 10px 10px 3px #808080;
+  z-index: 22;
+  padding: 0 2vw;
+}
+.spacer {
+  flex: 1 1 auto;
+}
+
+.time-selection__date {
+  margin: 0.35rem 0 10px 5px;
+  text-align: center;
+}
+
+@media (max-width: 500px) {
+  .container {
+    margin: 0 -20px 0 -20px;
+  }
+  .middle {
+    margin: 0;
+    width: 100%;
+    overflow: scroll;
+  }
+  div::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+  }
+  .sizing {
+    margin: 0 5px 0 5px;
+  }
+
+  .time-selection__name-list-header {
+    min-height: 50px;
+    padding: 5px;
+    width: 100%;
+  }
+
+  .time-selection__name-list-item {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  .time-selection__time-slots-container {
+    width: 100%;
+  }
+
+  /* .time-selection__slots-div {
+    flex-wrap: wrap;
+  } */
+
+  .time-selection__names-container {
+    display: flex;
+    flex-wrap: wrap;
+    width: 94%;
+    margin-top: 24px;
+  }
+
+  .user-back-btn,
+  .user-book_later-btn,
+  .user-continue-btn {
+    font-size: 10px;
+    padding: 0px 2px;
+    margin-right: 20px;
+  }
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  width: 100%;
+}
+
+.column {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  flex-basis: 100%;
+  flex-wrap: wrap;
+}
+
+.circleBase {
+  border-radius: 50%;
+    width: 100px;
+    height: 100px;
+    background: rgb(216, 216, 216);
+    border: 1px solid rgb(0, 0, 0);
+    padding: 8px;
+}
+.flexview{
+  display: inline-flex;
+  flex-wrap: nowrap;
+  align-content: space-between;
+}
+
+@media screen and (min-width: 767px) and (max-width: 991px) {
+  .container {
+    margin: 0 0 0 15px;
+  }
+  .sizing {
+    margin: 0 10px 0 10px;
+  }
+  .middle {
+    margin: 0;
+    width: 75%;
+  }
+}
+
+@media (min-width: 1040px) {
+  .middle {
+    width: 85%;
+  }
+}

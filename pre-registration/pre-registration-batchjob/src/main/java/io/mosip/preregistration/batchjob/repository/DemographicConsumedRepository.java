@@ -6,6 +6,9 @@ import io.mosip.kernel.core.dataaccess.spi.repository.BaseRepository;
 import io.mosip.preregistration.batchjob.entity.DemographicEntityConsumed;
 
 @Repository("demographicConsumedRepository")
+/**
+ * Spring Data repository for demographic consumed repository persistence.
+ */
 public interface DemographicConsumedRepository extends BaseRepository<DemographicEntityConsumed, String>{
 
 }

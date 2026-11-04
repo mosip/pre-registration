@@ -15,6 +15,9 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "anonymous_profile", schema = "prereg")
+/**
+ * JPA entity mapping anonymous profile in the mosip_prereg schema.
+ */
 public class AnonymousProfileEntity implements Serializable {
 
 	
@@ -49,9 +52,15 @@ public class AnonymousProfileEntity implements Serializable {
 	private LocalDateTime updateDateTime;
 
 	@Column(name = "is_deleted")
+	/**
+	 * is deleted used by this Pre-Registration type.
+	 */
 	private Boolean isDeleted;
 
 	@Column(name = "del_dtimes")
+	/**
+	 * del dtimes used by this Pre-Registration type.
+	 */
 	private LocalDateTime delDtimes;
 
 }

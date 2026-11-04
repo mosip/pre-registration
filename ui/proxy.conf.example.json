@@ -1,0 +1,11 @@
+{
+  "/proxyapi": {
+    "target": "http://localhost:9090",
+    "secure": false,
+    "changeOrigin": true,
+    "logLevel": "info",
+    "pathRewrite": {
+      "^/proxyapi": ""
+    }
+  }
+}

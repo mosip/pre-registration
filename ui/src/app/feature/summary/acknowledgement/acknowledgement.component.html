@@ -1,0 +1,121 @@
+<div class="spinner" *ngIf="showSpinner">
+  <mat-spinner></mat-spinner>
+</div>
+<div *ngIf="!showSpinner" class="wrapper">
+  <div class="spacer"></div>
+  <div id="print-section">
+  <div class="ack-container" *ngFor="let ackData of ackDataArr; index as i">
+    <div id="{{'pdf-section-' + ackData.preRegId}}">
+      <div class="print-section-inner-div" >
+        <div [id]="message-container" class="ack__message-container">
+          <p *ngFor="let ackMessage of ackData.messages">
+            <img style="vertical-align: middle;" src="assets/img/done.png" alt="Done" />&nbsp;&nbsp;{{ackMessage.preRegId}} :
+            {{ackMessage.message}}
+          </p>
+        </div>
+        <div class="ack__header-container" [dir]="ackData.appLangCodeDir">
+          <table>
+            <caption>{{'quick_guide.Acknowledgement.tablename' | translate}}</caption>
+            <thead>
+              <tr style="display: none">
+                <th>label</th>
+                <th>value</th>
+              </tr>
+            </thead>
+            <tr>
+              <td>{{ ackData.preRegIdLabels}} : </td>
+              <td><strong>{{ ackData.preRegId}}</strong></td>
+            </tr>
+            <tr>
+              <td>{{ ackData.appDateLabels }} : </td>
+              <td
+                *ngIf="ackData.bookingTimePrimary && ackData.bookingTimePrimary.length > 0 && ackData.bookingTimePrimary[0].langAvailable">
+                <span *ngFor="let bookingTime of ackData.bookingTimePrimary; index as i;">
+                  
+                  <strong *ngIf="bookingTime.langCode == langCode">
+                    <span [dir]="ackData.appLangCodeDir">
+                      {{ ackData.bookingDataPrimary[i].date }}, {{ bookingTime.time }}
+                    </span>
+                  </strong>
+                </span>
+              </td>
+              <td
+                *ngIf="ackData.bookingTimePrimary && ackData.bookingTimePrimary.length > 0 && !ackData.bookingTimePrimary[0].langAvailable">
+                <strong>
+                  <span [dir]="ackData.appLangCodeDir">
+                    {{ ackData.bookingDataPrimary[0].date }}, {{ ackData.bookingTimePrimary[0].time}}
+                  </span>
+                </strong>
+              </td>
+            </tr>
+            <tr>
+              <td>{{ ackData.contactPhoneLabels }} : </td>
+              <td><strong>{{ ackData.contactPhone }}</strong></td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <div *ngIf="ackData.qrCodeBlob" id="qr-code-container" class="ack__qr-code">
+                  <img id="qr-code" src="data:image/png;base64,{{ ackData.qrCodeBlob }}" alt="acknowledgement-qr-code"/>
+                </div>
+              </td>
+            </tr>
+          </table>
+        </div>
+        <div [dir]="ackData.appLangCodeDir">
+          <div id="body-container" *ngIf="ackData.regCntrNames" class="ack__body-container">
+            <table id="table-container" aria-describedby="acknowledgement-data" role="presentation">
+              <tr *ngIf="ackData.nameValues.trim() != ''">
+                <td>{{ ackData.labelNames }} : </td>
+                <td><strong>{{ ackData.nameValues }}</strong></td>
+              </tr>
+              <tr>
+                <td>{{ ackData.labelRegCntrs }} : </td>
+                <td><strong>{{ ackData.regCntrNames }}</strong></td>
+              </tr>
+            </table>
+          </div>
+        </div>
+        <div id="guidelines-container" class="ack__guidelines-container" [dir]="ackData.appLangCodeDir">
+          <span *ngFor="let langCode of ackData.appLangCode">
+            <div class="spacer"></div>
+            <table *ngIf="guidelines.length !== 0" class="ack__guidelines" aria-describedby="acknowledgement-guideline" role="presentation">
+              <tr *ngFor="let guideline of ackData[langCode]">
+                <td class="inner-guideline-content">{{ guideline }}</td>
+              </tr>
+            </table>
+            <p></p>
+          </span>
+          <p></p>
+        </div>
+        <!-- <div class="endOfAck" *ngIf="i + 1 !== ackDataArr.length"></div>
+        <div class="lastAck" *ngIf="i + 1 == ackDataArr.length"></div> -->
+      </div>
+    </div>
+  </div>
+  </div>
+</div>
+<div *ngIf="!showSpinner">
+  <div class="ack__button-container">
+    <!-- <button mat-button (click)="navigateBack()" class="user-back-btn">{{'preview.action_back'| translate}}</button> -->
+    <!-- <span class="spacer"></span> -->
+    <button *ngIf=" notificationTypes && notificationTypes.length > 0 && notificationTypes[0] !== ''"
+      matTooltip="{{ 'helpText.send_email/sms' | translate }}" mat-button (click)="sendAcknowledgement()"
+      class="ack-book_later-btn">
+      {{ 'acknowledgement.action_send' | translate }}
+    </button>
+    <span class="spacer"></span>
+    <button mat-button (click)="download()" class="ack-book_later-btn">
+      {{ 'acknowledgement.action_download' | translate }}
+    </button>
+    <button mat-button [printStyle]="{
+        '#message-container': { display: 'none' },
+        '#body-container': { display: 'flex', 'flex-wrap': 'wrap', width: '100%' },
+        '#table-container table tr td': { padding: '10px' },
+        '#print-section': { 'page-break-after': 'always' },
+        '.print-section-inner-div': { 'page-break-after': 'always' }
+      }" printSectionId="print-section" ngxPrint class="ack-continue-btn">
+      {{ 'acknowledgement.action_print' | translate }}
+    </button>
+  </div>
+</div>

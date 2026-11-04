@@ -18,9 +18,15 @@ import lombok.Setter;
 @Getter
 @Setter
 @Table(name = "applications", schema = "prereg")
+/**
+ * JPA entity mapping application in the mosip_prereg schema.
+ */
 public class ApplicationEntity {
 	@Id
 	@Column(name = "application_id")
+	/**
+	 * application id used by this Pre-Registration type.
+	 */
 	private String applicationId;
 
 	/** Booking Type. **/
@@ -56,6 +62,9 @@ public class ApplicationEntity {
 	private LocalTime slotToTime;
 
 	@Column(name = "contact_info")
+	/**
+	 * contact info used by this Pre-Registration type.
+	 */
 	private String contactInfo;
 
 	/**

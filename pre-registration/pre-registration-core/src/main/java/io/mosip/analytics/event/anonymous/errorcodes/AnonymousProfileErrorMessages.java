@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.analytics.event.anonymous.errorcodes;
 
 /**
@@ -29,10 +25,18 @@ public enum AnonymousProfileErrorMessages {
 	 */
 	SERVER_ERROR("Error while calling config server");
 
+	/**
+	 * Creates a anonymous profile error messages.
+	 *
+	 * @param message message supplied to this constructor
+	 */
 	private AnonymousProfileErrorMessages(String message) {
 		this.message = message;
 	}
 
+	/**
+	 * message used by this Pre-Registration type.
+	 */
 	private final String message;
 
 	/**

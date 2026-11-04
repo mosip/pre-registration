@@ -10,6 +10,9 @@ import lombok.ToString;
 
 @Data
 @ToString
+/**
+ * Data transfer object carrying booking registration across Pre-Registration APIs.
+ */
 public class BookingRegistrationDTO implements Serializable {
 	/**
 	 * 

@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.document.dto;
 
 import java.io.Serializable;
@@ -47,5 +43,8 @@ public class DocumentRequestDTO implements Serializable {
 	private String langCode;
 
 	@JsonProperty("docReferenceNo")
+	/**
+	 * doc reference no used by this Pre-Registration type.
+	 */
 	private String docReferenceNo;
 }

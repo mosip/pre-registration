@@ -9,7 +9,13 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
+/**
+ * Data transfer object carrying availability req across Pre-Registration APIs.
+ */
 public class AvailabilityReqDto {
+ /**
+  * registration center id used by this Pre-Registration type.
+  */
  private String registrationCenterId;
 
 }

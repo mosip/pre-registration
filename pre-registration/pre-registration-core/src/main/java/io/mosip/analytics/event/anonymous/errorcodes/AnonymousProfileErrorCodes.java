@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.analytics.event.anonymous.errorcodes;
 
 /**
@@ -23,10 +19,18 @@ public enum AnonymousProfileErrorCodes {
 	/* ErrorCode for SERVER_ERROR */
 	PRG_ANO_003("PRG_ANO_003");
 
+	/**
+	 * Creates a anonymous profile error codes.
+	 *
+	 * @param code code supplied to this constructor
+	 */
 	private AnonymousProfileErrorCodes(String code) {
 		this.code = code;
 	}
 
+	/**
+	 * code used by this Pre-Registration type.
+	 */
 	private final String code;
 
 	/**

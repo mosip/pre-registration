@@ -4,209 +4,123 @@
 ## Overview
 
 The **Pre-Registration** module enables a resident to:
-1. Resident can login into PreRegistration with email id / phone number
-2. Resident can create multiple PreRegistration application.
-3. For each PreRegistration application, resident can give demographic data in multiple languages.
-4. For each PreRegistration application, resident can upload various proof documents.
-5. For each PreRegistration application, resident can search for a Registration Center and search for suitable appointment slots.
-6. For each PreRegistration application, resident can book an appointment at suitable Registration Center
-7. For every appointment booking, resident can get the acknowledgement as well as a notification via email id / phone number.
-8. Resident can cancel the appointment or reschedule it as well.
+1. Log in with email id / phone number
+2. Create one or more Pre-Registration applications
+3. Capture demographic data in multiple languages
+4. Upload proof documents
+5. Search a registration centre and book an appointment slot
+6. Receive acknowledgement and notification, and cancel or reschedule
 
-It exposes a set of APIs that enables resident to do Pre-Registration activities efficiently. A reference front-end implementation is available in the [Pre-registration UI](https://github.com/mosip/pre-registration-ui/). 
+The reference front-end lives in [`ui/`](ui/) (imported from [mosip/pre-registration-ui](https://github.com/mosip/pre-registration-ui/) `develop`). Helm: `helm/prereg-ui`. Cluster scripts: `deploy/prereg-ui`. Functional overview: [docs.mosip.io](https://docs.mosip.io/1.2.0/modules/pre-registration). Design of this layout: [docs/design/service-consolidation.md](docs/design/service-consolidation.md).
 
-For a complete functional overview and capabilities, refer to the [official documentation](https://docs.mosip.io/1.2.0/modules/pre-registration).
+## Artifacts
 
-Pre-registration Developers Guide [here](https://docs.mosip.io/1.2.0/modules/pre-registration/pre-registration-developer-setup)
+| Artifact | Role | Port / packaging |
+|---|---|---|
+| `pre-registration-core` | Published library of shared DTOs, entities, utilities | jar (not a deployable) |
+| `pre-registration-service` | One HTTP JVM: application + datasync + captcha + booking | **9090**, `/preregistration/v1` |
+| `pre-registration-batchjob` | Scheduled Job: slots, expiry, archival | **9097** |
+| `pridgenerator-service` | PRID pool (separate Vert.x JVM) | **8100**, `/v1/pridgenerator` |
+| `ui/` (`pre-registration-ui` image) | Angular SPA | **8080**, `/pre-registration-ui/` |
 
-## Services
+Captcha and datasync are **not** separate deployables. Their code runs in-process in `pre-registration-service` so public URLs stay:
 
-Pre-registration module consists of the following services:
-1. [Application](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-application-service) - This service helps to create a Pre Registration application for a resident and it also uses [Pre Registration Booking service](https://github.com/mosip/mosip-ref-impl/tree/release-1.3.x/pre-registration-booking-service) to book appointment.
-2. [Batchjob](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-batchjob) - This cron job runs as per the schedule and helps is many background tasks like creating appointment slots for registration centres, archiving pre-registration applications once workflow is over etc.
-3. [Captcha](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-captcha-service) - *(Deprecated)* - This service is no longer in use.
-   **Captcha functionality is now provided by:** - [MOSIP Captcha Service](https://github.com/mosip/captcha/tree/release-0.1.x)
-4. [Core](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-core) - This service contains many reusable components across all Pre Registration services
-5. [Datasync](https://github.com/mosip/pre-registration/tree/release-1.3.x/pre-registration/pre-registration-datasync-service) - This service syncs Pre Registration application data with Registration Centre. This service also marks Pre Registration application as consumed (reverse sync) from Registration Processor once the workflow is complete.
+- `/preregistration/v1/applications`, `/documents`, `/login`, `/notification`, `/proxy`, …
+- `/preregistration/v1/appointment/**` (booking-native) and `/preregistration/v1/applications/appointment/**` (application proxy)
+- `/preregistration/v1/sync`, `/syncV2`, `/sync/{id}`, `/sync/consumedPreRegIds`
+- `POST /preregistration/v1/captcha/validatecaptcha`
+- health: `/preregistration/v1/actuator/health`
+
+PRID generation stays a **separate** deployable (`pridgenerator-service`). Callers keep `GET /v1/pridgenerator/prid`. The HTTP service still calls `mosip.io.prid.url`.
+
+Booking (`io.mosip.preregistration.booking`) was imported from [mosip-ref-impl issue-1633](https://github.com/mosip/mosip-ref-impl/tree/issue-1633/pre-registration-booking-service) into `pre-registration-service`. Git history of that subdirectory is the `booking-hist` remote (`issue-1633`, git-filter-repo). Callers keep `/preregistration/v1/appointment/**`.
+
+Version **1.4.1-SNAPSHOT**. Parent: `org.springframework.boot:spring-boot-starter-parent:4.1.1`. Java 21. No `kernel-bom`.
 
 ## Database
 
-Before starting the local setup, execute the required SQL scripts to initialize the database.
+PostgreSQL 10.2+. Application tables: [db_scripts/mosip_prereg](db_scripts/mosip_prereg). PRID pool (`kernel.prid` in `mosip_kernel`): [db_scripts/mosip_kernel](db_scripts/mosip_kernel) — that folder is PRID-only; other kernel tables stay in [mosip/commons](https://github.com/mosip/commons). Upgrades: [db_upgrade_scripts](db_upgrade_scripts).
 
-All database SQL scripts are available in the [db_scripts](https://github.com/mosip/pre-registration/tree/release-1.3.x/db_scripts) directory.
+## Local setup
 
-## Local Setup
-The project can be set up in two ways:
+### Laptop stack (recommended)
 
-1. [Local Setup (for Development or Contribution)](#local-setup-for-development-or-contribution)
-2. [Local Setup with Docker (Easy Setup for Demos)](#local-setup-with-docker-easy-setup-for-demos)
-
-### Prerequisites
-
-Before you begin, ensure you have the following installed:
-
-- **JDK**: 21.0.3
-- **Maven**: 3.9.6
-- **Docker**: Latest stable version
-- **PostgreSQL**: 10.2
-- **Keycloak**: [Check here](https://github.com/mosip/keycloak)
-
-### Runtime Dependencies
-- Add `kernel-auth-adapter.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-auth-adapter~1.3.0-SNAPSHOT~~)
-- Add `kernel-transliteration-icu4j.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-transliteration-icu4j~1.3.0-SNAPSHOT~~)
-- Add `kernel-ref-idobjectvalidator.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-ref-idobjectvalidator~1.3.0-SNAPSHOT~~)
-- Add `kernel-virusscanner-clamav.jar` to the classpath, or include it as a Maven dependency — [Download](https://oss.sonatype.org/#nexus-search;gav~~kernel-virusscanner-clamav~1.3.0-SNAPSHOT~~)
-
-### Configuration
-- Pre-Registration module uses the following configuration files that are accessible in this [repository](https://github.com/mosip/mosip-config/tree/master).
-  Please refer to the required released tagged version for configuration.
-  [Configuration-PreReg](https://github.com/mosip/mosip-config/blob/master/pre-registration-default.properties) and
-  [Configuration-Application](https://github.com/mosip/mosip-config/blob/master/application-default.properties) are defined here. You need to run the config-server along with the files mentioned above.
-- For generating clients, refer to MOSIP’s documentation here: [Client Generation Guide](https://docs.mosip.io/1.2.0/interoperability/integrations/mosip-crvs/approach/technical-details#id-1.-create-client-id-role-for-the-crvs)
-- To authenticate a client, use the Auth Manager API as described here: [Auth API Documentation](https://docs.mosip.io/1.2.0/interoperability/integrations/mosip-crvs/approach/technical-details#id-2.-fetch-access-token-to-call-the-apis)
-
-#### Required Configuration Properties
-
-The following properties must be configured with your environment-specific values before deployment:
-
-**Database Configuration:**
-- `mosip.prereg.database.hostname` - Database hostname (default: postgres-postgresql.postgres)
-- `mosip.prereg.database.port` - Database port (default: 5432)
-- `db.dbuser.password` - Database user password (passed as environment variable)
-
-**IAM/Keycloak Configuration:**
-- `keycloak.internal.url` - Internal Keycloak URL (passed as environment variable)
-- `keycloak.external.url` - External Keycloak URL (passed as environment variable)
-- `mosip.prereg.client.secret` - PreReg client secret for Keycloak (passed as environment variable)
-
-**Service URLs:**
-- `mosip.kernel.authmanager.url` - Auth manager service URL
-- `mosip.kernel.prereg-application.url` - PreReg Application service URL
-- `mosip.kernel.prereg-datasync.url` - PreReg DataSync service URL
-- `mosip.api.internal.url` - Internal API base URL
-
-**Security Configuration:**
-- `mosip.security.origins` - Allowed CORS origins (default: localhost:8080)
-- `mosip.security.secure-cookie` - Enable secure cookies (default: false)
-- `mosip.pre-registration-services.cookie.security` - Cookie security flag (default: true)
-
-**Note**:
-- **If using config-server**: Properties marked as environment variables (e.g., `db.dbuser.password`, `keycloak.internal.url`, `keycloak.external.url`, `mosip.prereg.client.secret`) must be passed through the config-server's 'overrides' environment variables and should NOT be defined in property files. Refer to the config-server helm chart for more details.
-- **If using application properties directly**: Update these properties directly in your `application.properties` or `pre-registration-default.properties` file with your environment-specific values.
-
-## Installation
-
-### Local Setup (for Development or Contribution)
-
-1. Make sure the config server is running. For detailed instructions on setting up and running the config server, refer to the [MOSIP Config Server Setup Guide](https://docs.mosip.io/1.2.0/modules/registration-processor/registration-processor-developers-guide#environment-setup).
-
-**Note**: Refer to the MOSIP Config Server Setup Guide for setup, and ensure the properties mentioned above in the configuration section are taken care of. Replace the properties with your own configurations (e.g., DB credentials, IAM credentials, URL).
-
-2. Clone the repository:
+From `pre-registration/local-dev-setup/`:
 
 ```text
-git clone <repo-url>
-cd pre-registration
+./run-local-stack.sh up
+./run-prereg-local.sh run
 ```
-3. Build the project:
+
+Windows cmd: `run-prereg-local.bat run`. Details: [LOCAL-DEV-SETUP.md](pre-registration/local-dev-setup/LOCAL-DEV-SETUP.md).
+
+### Module runners
+
+```text
+cd pre-registration/pre-registration-service
+./run-local.sh init | start | smoke | stop | test | all | docker
+# Windows: run-local.bat …
+
+cd ../pre-registration-batchjob
+./run-local.sh init | start | smoke | stop
+
+cd ../pridgenerator-service
+./run-local.sh init | start | smoke | stop
+# CONTEXT=/v1/pridgenerator  port 8100
+
+cd ../../ui
+./run-local.sh              # ng serve (HTTP) + proxy to host :9090
+# Windows: run-local.bat
+```
+
+PID and logs live under `.local/` (gitignored). Service wait string: `Started PreRegistrationBootApplication`.
+
+### Maven
+
+From `pre-registration/` (the Maven parent), not the repo root:
 
 ```text
 mvn clean install -Dmaven.javadoc.skip=true -Dgpg.skip=true
+java -jar pre-registration-service/target/pre-registration-service-1.4.1-SNAPSHOT.jar
 ```
 
-4. Start the application:
-    - Click the Run button in your IDE, or
-    - Run via command: `java -jar target/specific-service:<$version>.jar`
+Swagger: http://localhost:9090/preregistration/v1/swagger-ui/index.html
 
-5. Verify Swagger is accessible at: `http://localhost:8080/preregistration/v1/application-service/swagger-ui/index.html`
+**Authorize:** click Authorize and put the bearer token in header `Authorization` (API key scheme). Grouped docs exist for application, datasync (`/sync/**`), and captcha (`/captcha/**`).
 
-### Local Setup with Docker (Easy Setup for Demos)
-
-#### Option 1: Pull from Docker Hub
-
-Recommended for users who want a quick, ready-to-use setup — testers, students, and external users.
-
-Pull the latest pre-built images from Docker Hub using the following commands:
-```text
-docker pull mosipid/pre-registration-application-service:1.3.0-beta.2
-docker pull mosipid/pre-registration-datasync-service:1.3.0-beta.2
-docker pull mosipid/pre-registration-batchjob:1.3.0-beta.2
-docker pull mosipid/pre-registration-booking-service:1.3.0-beta.2
-```
-#### Option 2: Build Docker Images Locally
-
-Recommended for contributors or developers who want to modify or build the services from source.
-
-1. Clone and build the project:
+### Docker Hub
 
 ```text
-git clone <repo-url>
-cd pre-registration
-mvn clean install -Dmaven.javadoc.skip=true -Dgpg.skip=true
+docker pull mosipid/pre-registration-service:1.4.1-SNAPSHOT
+docker pull mosipid/pre-registration-batchjob:1.4.1-SNAPSHOT
+docker pull mosipid/pridgenerator-service:1.4.1-SNAPSHOT
+docker pull mosipid/pre-registration-ui:1.4.1-SNAPSHOT
 ```
 
-2. Navigate to each service directory and build the Docker image:
+Booking is part of `pre-registration-service`; there is no separate booking image.
 
-```text
-cd pre-registration/<service-directory>
-docker build -t <service-name> .
-```
+## Configuration
 
-#### Running the Services
+Spring Cloud Config. Documents: `application`, `pre-registration` (`spring.cloud.config.name=application,pre-registration`). Files live in [mosip/mosip-config](https://github.com/mosip/mosip-config).
 
-Start each service using Docker:
+Required:
 
-```text
-docker run -d -p <port>:<port> --name <service-name> <service-name>
-```
+- `mosip.prereg.database.hostname` / `mosip.prereg.database.port`
+- `db.dbuser.password` (env)
+- `keycloak.internal.url` / `keycloak.external.url` (env)
+- `mosip.prereg.client.secret` (env)
+- `mosip.kernel.authmanager.url` / `mosip.kernel.prereg-application.url`
 
-#### Verify Installation
+A key that used to differ per JVM now has **one** value in this process.
 
-Check that all containers are running:
+## Helm / deploy
 
-```text
-docker ps
-```
-
-Access the services at `http://localhost:<port>` using the port mappings listed above.
-
-## Deployment
-
-### Kubernetes
-
-To deploy Pre-Registration services on a Kubernetes cluster, refer to the [Sandbox Deployment Guide](https://docs.mosip.io/1.2.0/deploymentnew/v3-installation).
-
-## Usage
-
-### Pre-Registration UI
-
-For the complete Pre-Registration UI implementation and usage instructions, refer to the [Pre-Registration UI GitHub repository](https://github.com/mosip/pre-registration-ui/).
-
-## Documentation
-
-For more detailed documents for repositories, you can [check here](https://github.com/mosip/documentation/tree/1.2.0/docs).
-
-### API Documentation
-
-API endpoints, base URL, and mock server details are available via Stoplight and Swagger documentation: [MOSIP Pre-Registration Service API Documentation](https://mosip.github.io/documentation/1.2.0/pre-registration-booking-service.html).
-
-### Product Documentation
-
-To learn more about Pre-Registration services from a functional perspective and use case scenarios, refer to our main documentation: [Click here](https://docs.mosip.io/1.2.0/id-lifecycle-management/identity-issuance/pre-registration).
+Charts: `helm/prereg-application` (HTTP, Istio prefixes include `/appointment`, `/sync`, and `/captcha`), `helm/prereg-batchjob`, `helm/pridgenerator` (Istio prefix `/v1/pridgenerator`, Service `kernel-pridgenerator-service`), and `helm/prereg-ui`. `deploy/prereg/install.sh` installs application + batchjob + pridgenerator + UI.
 
 ## Testing
 
-Automated functional tests are available in the [Functional Tests repository](api-test).
-
-## Contribution & Community
-
-• To learn how you can contribute code to this application, [click here](https://docs.mosip.io/1.2.0/community/code-contributions).
-
-• If you have questions or encounter issues, visit the [MOSIP Community](https://community.mosip.io/) for support.
-
-• For any GitHub issues: [Report here](https://github.com/mosip/pre-registration/issues)
+Unit tests: `mvn test` from the parent. API automation: `api-test/` (endpoint paths unchanged). Local laptop run: `api-test/run-local-smoke.bat` / `./run-local-smoke.sh` against host `:9090` and WireMock `:8082`.
 
 ## License
 
-This project is licensed under the [Mozilla Public License 2.0](LICENSE).
-
+[Mozilla Public License 2.0](LICENSE). Third-party notices: [NOTICE](NOTICE), [THIRD-PARTY-NOTICES.txt](THIRD-PARTY-NOTICES.txt), [licenses/](licenses/).

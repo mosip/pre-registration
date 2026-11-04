@@ -9,6 +9,9 @@ import org.springframework.stereotype.Repository;
 import io.mosip.preregistration.core.common.entity.UserDetails;
 
 @Repository
+/**
+ * Spring Data repository for user details repository persistence.
+ */
 public interface UserDetailsRepository extends JpaRepository<UserDetails, UUID> {
     Optional<UserDetails> findByIdentifierHash(String identifierHash);
 }

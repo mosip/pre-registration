@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.dto.identity;
 
 import java.io.Serializable;

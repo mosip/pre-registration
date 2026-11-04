@@ -1,87 +1,89 @@
 AddUpdateRegistration:
-   Prereg_AddUpdateRegistration_All_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/applications/updateregistration
-      uniqueIdentifier: TC_prereg_AddUpdateRegistration_01
-      description: validate that the Update Registration application is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      templateFields: ["langCode"]
-      restMethod: post
-      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
-      outputTemplate: preReg/AddUpdateRegistration/addUpdateRegistrationResult
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "eng",
-  "id": "mosip.pre-registration.updateregistration.create"
-}'
-      output: '{
-  "bookingType": "UPDATE_REGISTRATION",
-  "applicationStatusCode": "SUBMITTED"
-}'
+  Prereg_AddUpdateRegistration_All_Valid_Smoke_sid:
+    endPoint: /preregistration/v1/applications/updateregistration
+    uniqueIdentifier: TC_prereg_AddUpdateRegistration_01
+    description: validate that the Update Registration application is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    templateFields: [langCode]
+    restMethod: post
+    inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+    outputTemplate: preReg/AddUpdateRegistration/addUpdateRegistrationResult
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "eng",
+      "id": "mosip.pre-registration.updateregistration.create"
+    }'
+    output: '{
+      "bookingType": "UPDATE_REGISTRATION",
+      "applicationStatusCode": "SUBMITTED"
+    }'
 
-   Prereg_AddUpdateRegistration_inValid_langcode:
-      endPoint: /preregistration/v1/applications/updateregistration
-      uniqueIdentifier: TC_prereg_AddUpdateRegistration_02
-      description: Validate that the Update Registration application is not processed when an invalid language code is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "xyz",
-  "id": "mosip.pre-registration.updateregistration.create"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_014",
-      "message": "Lang code is invalid"
-    }
-  ]
-}'
-   Prereg_AddUpdateRegistration_without_input_Neg:
-      endPoint: /preregistration/v1/applications/updateregistration
-      uniqueIdentifier: TC_prereg_AddUpdateRegistration_03
-      description: Validate that the Update Registration application is not processed when no input data is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
-      outputTemplate: preReg/error
-      input: '{
-  "version": "$REMOVE$",
-  "requesttime": "$REMOVE$",
-  "langCode": "$REMOVE$",
-  "id": "$REMOVE$"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_003",
-      "message": "Invalid request time"
-    }
-  ]
-}'
-   Prereg_AddUpdateRegistration_missing_langCode_Neg:
-      endPoint: /preregistration/v1/applications/updateregistration
-      uniqueIdentifier: TC_prereg_AddUpdateRegistration_04
-      description: Validate that the Update Registration application is not processed when the language code is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
-      outputTemplate: preReg/error
-      input: '{
-    "version": "1.0",
-    "requesttime": "$TIMESTAMP$",
-    "langCode": "$REMOVE$",
-    "id": "mosip.pre-registration.updateregistration.create"
-  }'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_014",
-      "message": "Lang code is invalid"
-    }
-  ]
-}'
+  Prereg_AddUpdateRegistration_inValid_langcode:
+    endPoint: /preregistration/v1/applications/updateregistration
+    uniqueIdentifier: TC_prereg_AddUpdateRegistration_02
+    description: Validate that the Update Registration application is not processed when an invalid language code is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "xyz",
+      "id": "mosip.pre-registration.updateregistration.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_014",
+          "message": "Lang code is invalid"
+        }
+      ]
+    }'
+
+  Prereg_AddUpdateRegistration_without_input_Neg:
+    endPoint: /preregistration/v1/applications/updateregistration
+    uniqueIdentifier: TC_prereg_AddUpdateRegistration_03
+    description: Validate that the Update Registration application is not processed when no input data is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+    outputTemplate: preReg/error
+    input: '{
+      "version": "$REMOVE$",
+      "requesttime": "$REMOVE$",
+      "langCode": "$REMOVE$",
+      "id": "$REMOVE$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_003",
+          "message": "Invalid request time"
+        }
+      ]
+    }'
+
+  Prereg_AddUpdateRegistration_missing_langCode_Neg:
+    endPoint: /preregistration/v1/applications/updateregistration
+    uniqueIdentifier: TC_prereg_AddUpdateRegistration_04
+    description: Validate that the Update Registration application is not processed when the language code is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/AddUpdateRegistration/addUpdateRegistration
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "$REMOVE$",
+      "id": "mosip.pre-registration.updateregistration.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_014",
+          "message": "Lang code is invalid"
+        }
+      ]
+    }'

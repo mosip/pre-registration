@@ -1,0 +1,20 @@
+apiVersion: v2
+name: pridgenerator
+description: Helm chart for MOSIP PRID generator (lives in pre-registration; separate JVM from the HTTP service)
+type: application
+version: 0.0.1-develop
+appVersion: ""
+dependencies:
+  - name: common
+    repository: https://charts.bitnami.com/bitnami
+    tags:
+      - bitnami-common
+    version: 1.x.x
+home: https://mosip.io
+keywords:
+  - mosip
+  - pridgenerator
+  - prereg
+maintainers:
+  - email: info@mosip.io
+    name: MOSIP

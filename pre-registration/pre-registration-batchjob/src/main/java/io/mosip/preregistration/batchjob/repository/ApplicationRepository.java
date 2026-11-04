@@ -10,11 +10,27 @@ import org.springframework.stereotype.Repository;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 
 @Repository("applicationRepository")
+/**
+ * Spring Data repository for application repository persistence.
+ */
 public interface ApplicationRepository extends JpaRepository<ApplicationEntity, String> {
 
 	@Query("SELECT e FROM ApplicationEntity e WHERE e.applicationId = ?1")
+	/**
+	 * Performs find by application id for MOSIP Pre-Registration.
+	 *
+	 * @param applicationId application id used by find by application id
+	 * @return find by application id result
+	 */
 	public ApplicationEntity findByApplicationId(String applicationId);
 	
+	/**
+	 * Performs find by application id and booking status code for MOSIP Pre-Registration.
+	 *
+	 * @param applicationId application id used by find by application id and booking status code
+	 * @param bookingStatusCode booking status code used by find by application id and booking status code
+	 * @return find by application id and booking status code result
+	 */
 	public ApplicationEntity findByApplicationIdAndBookingStatusCode(String applicationId, String bookingStatusCode);
 
 	/** Canonical UUID shape, repeated per column by the candidate query below. */
@@ -61,5 +77,11 @@ public interface ApplicationRepository extends JpaRepository<ApplicationEntity, 
 			+ "(r.cr_by <> '' AND r.cr_by !~* '" + UUID_REGEX + "') OR "
 			+ "(r.upd_by <> '' AND r.upd_by !~* '" + UUID_REGEX + "') "
 			+ ") c LIMIT :batchSize", nativeQuery = true)
+	/**
+	 * Performs find pre reg ids with raw identifier for MOSIP Pre-Registration.
+	 *
+	 * @param batchSize batch size used by find pre reg ids with raw identifier
+	 * @return find pre reg ids with raw identifier result
+	 */
 	public List<String> findPreRegIdsWithRawIdentifier(@Param("batchSize") int batchSize);
 }

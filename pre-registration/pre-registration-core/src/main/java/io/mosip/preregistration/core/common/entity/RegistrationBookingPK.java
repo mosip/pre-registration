@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.entity;
 
 import java.io.Serializable;

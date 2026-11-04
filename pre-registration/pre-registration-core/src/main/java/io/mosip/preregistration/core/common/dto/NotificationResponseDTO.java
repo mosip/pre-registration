@@ -8,7 +8,13 @@ import lombok.Data;
  */
 @Data
 public class NotificationResponseDTO {
+	/**
+	 * status used by this Pre-Registration type.
+	 */
 	private String status;
 
+	/**
+	 * message used by this Pre-Registration type.
+	 */
 	private String message;
 }

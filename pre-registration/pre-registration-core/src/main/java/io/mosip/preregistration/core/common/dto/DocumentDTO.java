@@ -22,10 +22,20 @@ public class DocumentDTO implements Serializable {
 	 */
 	private byte[] document;
 
+	/**
+	 * Returns document.
+	 *
+	 * @return get document result
+	 */
 	public byte[] getDocument() {
 		return document != null ? document.clone() : null;
 	}
 
+	/**
+	 * Sets document.
+	 *
+	 * @param document document used by set document
+	 */
 	public void setDocument(byte[] document) {
 		this.document = document != null ? document.clone() : null;
 	}

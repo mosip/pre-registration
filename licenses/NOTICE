@@ -86,3 +86,55 @@ Copyright (c) 2002 JSON.org
 License: JSON License
 
 ================================================================================
+PRE-REGISTRATION UI (Angular SPA, imported from mosip/pre-registration-ui)
+================================================================================
+
+Angular Framework 7.2
+Copyright (c) 2010-2018 Google, Inc.
+License: MIT License
+
+Angular Material / CDK
+Copyright (c) Google, Inc.
+License: MIT License
+
+ngx-translate
+Copyright (c) 2016 Olivier Combe
+License: MIT License
+
+RxJS
+Copyright (c) 2015-2018 Google, Inc., Netflix, Inc., Microsoft Corp. and contributors
+License: Apache License 2.0
+
+Moment.js
+Copyright (c) JS Foundation and other contributors
+License: MIT License
+
+html2pdf.js
+Copyright (c) 2017 Erik Koopmans
+License: MIT License
+
+ng2-pdf-viewer
+Copyright (c) 2016 Vadym Yatsyuk
+License: MIT License
+
+ng-recaptcha
+Copyright (c) 2016 Dmitriy Shekhovtsov
+License: MIT License
+
+OpenLayers (ol)
+Copyright (c) OpenLayers contributors
+License: BSD-2-Clause License
+
+core-js
+Copyright (c) 2014-2018 Denis Pushkarev
+License: MIT License
+
+zone.js
+Copyright (c) 2016 Google Inc.
+License: MIT License
+
+Hammer.js
+Copyright (c) 2014 Jorik Tangelder
+License: MIT License
+
+================================================================================

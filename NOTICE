@@ -1,84 +1,73 @@
-MOSIP
-Copyright (c) 2022 Modular Open Source Identity Platform
+MOSIP Pre-Registration
+Copyright (c) 2019-2026 MOSIP
+Modular Open Source Identity Platform (MOSIP)
 
 This product includes software developed at
-The Apache Software Foundation (https://www.apache.org/).
+The Apache Software Foundation (http://www.apache.org/).
 
-The following third-party components require attribution under their
-respective licenses (Apache License 2.0, JSON License, and CDDL).
+This project also includes third-party software components licensed under
+various open-source licenses. Attribution for these components is provided
+below. Full license texts are available in the licenses/ directory or from
+the corresponding upstream sources.
 
+---
 
-===============================================================================
-Apache License 2.0 Components
-===============================================================================
-This product includes software licensed under the Apache License 2.0.
-Original NOTICE information and copyright statements from the respective
-projects are retained for the following components:
+Third-party attributions:
 
- • Spring Boot
-   (Starter Web, Security, JPA, WebFlux, Cache, Batch, Test, Actuator, Devtools)
+• Spring Boot 4.1.1 & Spring Security
+  Licensed under the Apache License 2.0.
 
- • Spring Cloud
-   (Config, Bootstrap, Dependencies 2020.0.4)
+• Spring Cloud 2025.1.3
+  Licensed under the Apache License 2.0.
 
- • Spring Batch (Core, Test)
+• Spring Batch 6
+  Licensed under the Apache License 2.0.
 
- • SpringDoc OpenAPI
-   (WebMVC UI, Maven Plugin)
+• SpringDoc OpenAPI 3.1.1
+  Licensed under the Apache License 2.0.
 
- • Jackson
-   (Core, Databind, Annotations, JSR310)
+• Apache Maven Plugins
+  Licensed under the Apache License 2.0.
 
- • Micrometer (Core, Prometheus Registry)
+• PostgreSQL JDBC Driver
+  Licensed under the BSD-2-Clause License.
 
- • Apache PDFBox
+• Jackson 2 (via spring-boot-jackson2; Boot 4 defaults to Jackson 3)
+  Licensed under the Apache License 2.0.
 
- • Apache Commons Collections4
+• SLF4J API & Bridges
+  Licensed under the MIT License.
 
- • Apache HttpClient
+• H2 Database
+  Licensed under the Eclipse Public License 1.0.
 
- • Apache Maven Plugins
-   (maven-source-plugin, maven-jar-plugin, maven-war-plugin,
-    maven-compiler-plugin, maven-javadoc-plugin,
-    maven-surefire-plugin, maven-shade-plugin, maven-gpg-plugin)
+• JSON Simple / org.json
+  Licensed under the Apache License 2.0 / JSON License.
 
- • JSON Simple (com.googlecode.json-simple)
+• Git Commit ID Maven Plugin
+  Licensed under the Apache License 2.0.
 
- • Java UUID Generator (com.fasterxml.uuid)
+• JUnit
+  Licensed under the Eclipse Public License 1.0 / 2.0.
 
- • Ehcache
+• Mockito
+  Licensed under the MIT License.
 
- • JWT (io.jsonwebtoken:jjwt)
+• Lombok
+  Licensed under the MIT License.
 
- • Central Publishing Maven Plugin (Sonatype)
+• MOSIP kernel-core and kernel adapters 1.4.1-SNAPSHOT
+  Licensed under the Mozilla Public License 2.0.
 
+• Pre-Registration UI (Angular 7 SPA, imported from mosip/pre-registration-ui)
+  Angular, Angular Material, ngx-translate, html2pdf.js, ng2-pdf-viewer, ng-recaptcha,
+  Hammer.js, core-js, zone.js: MIT License.
+  RxJS: Apache License 2.0.
+  OpenLayers (ol): BSD-2-Clause.
+  Copyright notices: licenses/NOTICE.
 
-===============================================================================
-JSON License Component
-===============================================================================
-The following component is licensed under the JSON License and requires
-attribution as per its terms:
+---
 
- • org.json (json)
-   Copyright © 2002 JSON.org
-
-
-===============================================================================
-CDDL Licensed Component
-===============================================================================
-The following component includes code licensed under the Common
-Development and Distribution License (CDDL), which requires retaining
-copyright notices:
-
- • javax.activation (Activation Framework)
-   (Dual licensed under CDDL + GPL with Classpath Exception)
-
-
-===============================================================================
-Notes
-===============================================================================
-All other third-party software components are licensed under permissive
-licenses (MIT, BSD, PostgreSQL License, MPL, EPL, or similar) and do
-not require inclusion in this NOTICE file. Their full license texts are
-available in the LICENSE directory.
-
+All other included third-party components are licensed under permissive,
+compatible open-source licenses. Their license texts are available in the
+licenses/ directory.

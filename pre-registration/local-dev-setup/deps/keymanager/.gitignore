@@ -1,0 +1,2 @@
+# Optional fallback only when KM_STATIC_SEED=false
+keys-generator.jar

@@ -30,9 +30,17 @@ import io.mosip.preregistration.core.util.GenericUtil;
 @Component
 public class BatchIdentityResolver {
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger LOGGER = LoggerConfiguration.logConfig(BatchIdentityResolver.class);
 
 	@Autowired
+	/**
+	 * user details service used by this Pre-Registration type.
+	 */
 	private UserDetailsService userDetailsService;
 
 	/**

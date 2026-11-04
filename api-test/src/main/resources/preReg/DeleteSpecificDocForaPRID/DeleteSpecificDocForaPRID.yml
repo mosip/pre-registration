@@ -1,55 +1,55 @@
 DeleteSpecificDocForaPRID:
-   Prereg_DeleteSpecificDocForaPRID_All_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
-      uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_01
-      description: Validate that deleting a specific document for a pre registration ID is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      checkErrorsOnlyInResponse: true
-      restMethod: post
-      inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
-      outputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRIDResult
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
-}'
-      output: '{
-      
-}'
-   Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
-      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
-      uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_02
-      description: Validate that deleting a pre registration fails when an invalid pre registration ID is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "hnyfv_preRegistrationId",
-  "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_APP_005"
-    }
-  ]
-}'
-   Prereg_DeletePreRegistration_inValid_documentId_sid:
-      endPoint: /preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}
-      uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_03
-      description: Validate that deleting a specific document for a pre registration ID fails when an invalid document ID is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "documentId": "53fhv@fgjd_Smoke_sid_docId$"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_DOC_005"
-    }
-  ]
-}'
+  Prereg_DeleteSpecificDocForaPRID_All_Valid_Smoke_sid:
+    endPoint: '/preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}'
+    uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_01
+    description: Validate that deleting a specific document for a pre registration ID is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    checkErrorsOnlyInResponse: true
+    restMethod: post
+    inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
+    outputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRIDResult
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
+    }'
+    output: '{}'
+
+  Prereg_DeletePreRegistration_inValid_preRegistrationId_sid:
+    endPoint: '/preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}'
+    uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_02
+    description: Validate that deleting a pre registration fails when an invalid pre registration ID is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "hnyfv_preRegistrationId",
+      "documentId": "$ID:UploadDocument_All_Valid_Smoke_sid_docId$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_APP_005"
+        }
+      ]
+    }'
+
+  Prereg_DeletePreRegistration_inValid_documentId_sid:
+    endPoint: '/preregistration/v1/documents/{documentId}?preRegistrationId={preRegistrationId}'
+    uniqueIdentifier: TC_prereg_DeleteSpecificDocForaPRID_03
+    description: Validate that deleting a specific document for a pre registration ID fails when an invalid document ID is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/DeleteSpecificDocForaPRID/deleteSpecificDocForaPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "documentId": "53fhv@fgjd_Smoke_sid_docId$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_DOC_005"
+        }
+      ]
+    }'

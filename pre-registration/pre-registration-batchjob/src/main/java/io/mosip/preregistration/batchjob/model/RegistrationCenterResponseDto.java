@@ -12,6 +12,12 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
+/**
+ * Data transfer object carrying registration center response across Pre-Registration APIs.
+ */
 public class RegistrationCenterResponseDto {
+	/**
+	 * registration centers used by this Pre-Registration type.
+	 */
 	private List<RegistrationCenterDto> registrationCenters;
 }

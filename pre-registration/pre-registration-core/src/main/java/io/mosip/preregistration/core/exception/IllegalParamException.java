@@ -15,6 +15,9 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import lombok.Getter;
 
 @Getter
+/**
+ * Unchecked exception raised when illegal param fails in Pre-Registration.
+ */
 public class IllegalParamException extends BaseUncheckedException {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 1L;

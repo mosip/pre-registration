@@ -1,168 +1,168 @@
 SendOtp:
-   Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_01
-      description: Validate that sending OTP to a phone number is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/SendOtp/sendotpResult
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "$PREREGPHONEUSER$",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-  "status": "success"
-}'
+  Prereg_SendOtp_All_Valid_Smoke_Phone_sid:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_01
+    description: Validate that sending OTP to a phone number is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/SendOtp/sendotpResult
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "9090872300",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "status": "success"
+    }'
 
-   Prereg_SendOtp_Invalid_Phone_Neg:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_02
-      description: Validate that sending OTP fails when an invalid phone number is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "12",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_PAM_LGN_008"
-    }
-  ]
-}'
+  Prereg_SendOtp_Invalid_Phone_Neg:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_02
+    description: Validate that sending OTP fails when an invalid phone number is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "12",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_LGN_008"
+        }
+      ]
+    }'
 
-   Prereg_SendOtp_MISSING_Phone_Neg:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_03
-      description: Validate that sending OTP fails when the phone number field is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "$REMOVE$",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_PAM_LGN_008"
-    }
-  ]
-}'
+  Prereg_SendOtp_MISSING_Phone_Neg:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_03
+    description: Validate that sending OTP fails when the phone number field is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "$REMOVE$",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_LGN_008"
+        }
+      ]
+    }'
 
-   Prereg_SendOtp_SpacialCharacter_Val_Phone_Neg:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_04
-      description: Validate that sending OTP fails when the phone number contains special characters
-      role: batch 
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "974$%26",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_PAM_LGN_008"
-    }
-  ]
-}'
+  Prereg_SendOtp_SpacialCharacter_Val_Phone_Neg:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_04
+    description: Validate that sending OTP fails when the phone number contains special characters
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "974$%26",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_LGN_008"
+        }
+      ]
+    }'
 
-   Prereg_SendOtp_All_Valid_Smoke_email_sid:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_05
-      description: Validate that sending OTP to an email address is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/SendOtp/sendotpResult
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "$PREREGUSER$",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-  "status": "success"
-}'
+  Prereg_SendOtp_All_Valid_Smoke_email_sid:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_05
+    description: Validate that sending OTP to an email address is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/SendOtp/sendotpResult
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "$PREREGUSER$",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "status": "success"
+    }'
 
-   Prereg_SendOtp_Invalid__email_Neg:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_06
-      description: Validate that sending OTP fails when an invalid email address is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "jo32",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_LGN_008"
-    }
-  ]
-}'
+  Prereg_SendOtp_Invalid__email_Neg:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_06
+    description: Validate that sending OTP fails when an invalid email address is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "jo32",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_LGN_008"
+        }
+      ]
+    }'
 
-   Prereg_SendOtp_Missing_email_Neg:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_07
-      description: Validate that sending OTP fails when the email field is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "$REMOVE$",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_LGN_008"
-    }
-  ]
-}'
+  Prereg_SendOtp_Missing_email_Neg:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_07
+    description: Validate that sending OTP fails when the email field is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "$REMOVE$",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_LGN_008"
+        }
+      ]
+    }'
 
-   Prereg_SendOtp_SpacialCharacter_email_Neg:
-      endPoint: /preregistration/v1/login/sendOtp/langcode
-      uniqueIdentifier: TC_prereg_SendOtp_08
-      description: Validate that sending OTP fails when the email contains special characters in an invalid format
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/SendOtp/sendotp
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "userId": "$!&",
-  "id": "mosip.pre-registration.login.sendotp"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_LGN_008"
-    }
-  ]
-}'
+  Prereg_SendOtp_SpacialCharacter_email_Neg:
+    endPoint: /preregistration/v1/login/sendOtp/langcode
+    uniqueIdentifier: TC_prereg_SendOtp_08
+    description: Validate that sending OTP fails when the email contains special characters in an invalid format
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/SendOtp/sendotp
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "userId": "$!&",
+      "id": "mosip.pre-registration.login.sendotp"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_LGN_008"
+        }
+      ]
+    }'

@@ -24,25 +24,54 @@ import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.util.GenericUtil;
 
 @Service
+/**
+ * Business service for application identity migration service in MOSIP Pre-Registration.
+ */
 public class ApplicationIdentityMigrationService {
 
     @Autowired
+    /**
+     * application repostiory used by this Pre-Registration type.
+     */
     private ApplicationRepostiory applicationRepostiory;
 
     @Autowired
+    /**
+     * demographic repository used by this Pre-Registration type.
+     */
     private DemographicRepository demographicRepository;
 
     @Autowired
+    /**
+     * document repository used by this Pre-Registration type.
+     */
     private DocumentRepository documentRepository;
 
     @Autowired
+	/**
+	 * reg appointment repository used by this Pre-Registration type.
+	 */
 	private RegAppointmentRepository regAppointmentRepository;
 
     @Autowired
+    /**
+     * user details service used by this Pre-Registration type.
+     */
     private UserDetailsService userDetailsService;
 
+    /**
+     * Performs log config for MOSIP Pre-Registration.
+     *
+     * @return log config result
+     */
     private final Logger log = LoggerConfiguration.logConfig(ApplicationIdentityMigrationService.class);
 
+    /**
+     * Performs resolve effective user id for MOSIP Pre-Registration.
+     *
+     * @param userId user id used by resolve effective user id
+     * @return resolve effective user id result
+     */
     public String resolveEffectiveUserId(String userId) {
         try {
             String uuid = userDetailsService.getOrCreateInternalUserId(userId);

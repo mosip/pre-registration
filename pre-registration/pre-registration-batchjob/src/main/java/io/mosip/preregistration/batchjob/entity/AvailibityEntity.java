@@ -1,8 +1,3 @@
-
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.entity;
 
 import java.io.Serializable;
@@ -87,10 +82,20 @@ public class AvailibityEntity implements Serializable {
 	@Column(name = "upd_dtimes")
 	private LocalDateTime updDate;
 
+	/**
+	 * Returns effective cr by.
+	 *
+	 * @return get effective cr by result
+	 */
 	public String getEffectiveCrBy() {
 		return this.crBy;
 	}
 
+	/**
+	 * Returns effective upd by.
+	 *
+	 * @return get effective upd by result
+	 */
 	public String getEffectiveUpdBy() {
 		return this.upBy;
 	} 

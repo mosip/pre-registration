@@ -2,8 +2,9 @@ package io.mosip.testrig.apirig.prereg.testrunner;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.StringWriter;
+import java.net.URLDecoder;
+import java.nio.charset.StandardCharsets;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.NoSuchAlgorithmException;
@@ -15,6 +16,7 @@ import java.util.Properties;
 
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
 import org.bouncycastle.openssl.jcajce.JcaPEMWriter;
 import org.testng.TestNG;
 
@@ -46,12 +48,33 @@ import io.mosip.testrig.apirig.utils.PartnerRegistration;
 import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
 
 /**
- * Class to initiate mosip api test execution
- * 
- * @author Vignesh
+ * Entry point of the Pre-Registration API test rig ({@code apitest-prereg}).
+ * <p>
+ * {@link #main(String[])} prepares the environment and then runs every TestNG suite file whose
+ * name contains {@code mastertestsuite}. Steps, in order:
+ * <ol>
+ * <li>Extracts the common and prereg test resources (from the jar or the IDE classpath) into
+ * {@code MosipTestResource/MosipTemporaryTestResource}.</li>
+ * <li>Initialises configuration ({@code AdminTestUtil}, {@link PreRegConfigManager}), cleans leftover
+ * {@code mosip_prereg} rows from the previous run, loads the known-issue skip list and starts the
+ * health checker and OTP listener.</li>
+ * <li>Against a real environment: creates Keycloak users. Locally (endpoint on
+ * {@code localhost}/{@code 127.0.0.1}, or {@code -Dprereg.skipPartnerSetup=true}) that step is
+ * skipped, because WireMock has no Keycloak Admin API.</li>
+ * <li>Restricts the run to {@code testCasesToExecute} plus their dependencies, when that property
+ * is set.</li>
+ * <li>Always: removes Keycloak users (when they were created), then exits. Test data is left in
+ * the DB after the run for inspection; the next run's setup deletes it.</li>
+ * </ol>
+ * Logs are written to {@code api-test/.local/logs}, or to {@code -Dapi.test.log.dir}.
  *
+ * @author Vignesh
  */
 public class MosipTestRunner {
+	static {
+		configureApiTestLogDir();
+	}
+
 	private static final Logger LOGGER = Logger.getLogger(MosipTestRunner.class);
 	private static String cachedPath = null;
 
@@ -59,9 +82,11 @@ public class MosipTestRunner {
 	public static List<String> languageList = new ArrayList<>();
 
 	/**
-	 * C Main method to start mosip test execution
-	 * 
-	 * @param arg
+	 * Runs the whole API test rig: setup (including DB cleanup), every master TestNG suite, then
+	 * {@code System.exit(0)}. Test data is left in the DB after the run for inspection; the next
+	 * run's setup deletes it.
+	 *
+	 * @param arg not used; configuration comes from system properties and the prereg properties
 	 */
 	public static void main(String[] arg) {
 
@@ -86,10 +111,16 @@ public class MosipTestRunner {
 			healthcheck.setCurrentRunningModule(GlobalConstants.PREREG);
 			Thread trigger = new Thread(healthcheck);
 			trigger.start();
-			
-			KeycloakUserManager.removeUser();
-			KeycloakUserManager.createUsers();
-			KeycloakUserManager.closeKeycloakInstance();
+
+			boolean skipPartnerSetup = shouldSkipPartnerSetup();
+			if (skipPartnerSetup) {
+				LOGGER.warn("Skipping KeycloakUserManager user create/remove "
+						+ "(local IAM on WireMock has no Keycloak Admin API).");
+			} else {
+				KeycloakUserManager.removeUser();
+				KeycloakUserManager.createUsers();
+				KeycloakUserManager.closeKeycloakInstance();
+			}
 			AdminTestUtil.getRequiredField();
 			
 			String testCasesToExecuteString = PreRegConfigManager.getproperty("testCasesToExecute");
@@ -105,8 +136,10 @@ public class MosipTestRunner {
 			LOGGER.error("Exception " + e.getMessage());
 		}
 		
-		KeycloakUserManager.removeUser();
-		KeycloakUserManager.closeKeycloakInstance();
+		if (!shouldSkipPartnerSetup()) {
+			KeycloakUserManager.removeUser();
+			KeycloakUserManager.closeKeycloakInstance();
+		}
 
 		OTPListener.bTerminate = true;
 
@@ -125,13 +158,17 @@ public class MosipTestRunner {
 		else
 			LOGGER.info("Test Framework for Mosip api Initialized");
 		BaseTestCase.initialize();
+		configureApiTestLogDir();
+		removeCommonsSrcLogs();
 		LOGGER.info("Done with BeforeSuite and test case setup! su TEST EXECUTION!\n\n");
 
 		if (!runType.equalsIgnoreCase("JAR")) {
 			AuthTestsUtil.removeOldMosipTempTestResource();
 		}
-		AdminTestUtil.copyPreregTestResource();
 		BaseTestCase.currentModule = BaseTestCase.runContext + GlobalConstants.PREREG;
+		PreRegUtil.dbCleanUp();
+
+		AdminTestUtil.copyPreregTestResource();
 		BaseTestCase.otpListener = new OTPListener();
 		BaseTestCase.otpListener.run();
 	}
@@ -301,10 +338,107 @@ public class MosipTestRunner {
 	}
 
 	/**
-	 * The method will return mode of application started either from jar or eclipse
-	 * ide
-	 * 
-	 * @return
+	 * Whether to skip Keycloak user management. Local WireMock IAM has no Admin API.
+	 *
+	 * @return the value of {@code -Dprereg.skipPartnerSetup} when set, otherwise
+	 *         {@link #isLocalEndpoint()}
+	 */
+	static boolean shouldSkipPartnerSetup() {
+		String flag = System.getProperty("prereg.skipPartnerSetup");
+		if (flag != null && !flag.isBlank()) {
+			return Boolean.parseBoolean(flag);
+		}
+		return isLocalEndpoint();
+	}
+
+	/** @return true when {@code -Denv.endpoint} points to {@code localhost} or {@code 127.0.0.1} */
+	static boolean isLocalEndpoint() {
+		String endpoint = System.getProperty("env.endpoint", "");
+		return endpoint.contains("localhost") || endpoint.contains("127.0.0.1");
+	}
+
+	/**
+	 * Point Log4j at {@code api-test/.local/logs} before the first logger is created.
+	 * Relative {@code logs/} or {@code src/logs/} follows {@code user.dir}, which is
+	 * the repo root when launching from the IDE.
+	 */
+	private static void configureApiTestLogDir() {
+		File moduleDir = resolveApiTestModuleDir();
+		File logDir;
+		String override = System.getProperty("api.test.log.dir");
+		if (override != null && !override.isBlank()) {
+			logDir = new File(override);
+		} else {
+			logDir = new File(moduleDir, ".local/logs");
+		}
+		if (!logDir.exists()) {
+			logDir.mkdirs();
+		}
+		System.setProperty("api.test.log.dir", logDir.getAbsolutePath().replace('\\', '/'));
+		File log4j = new File(moduleDir, "src/main/resources/log4j.properties");
+		if (log4j.isFile()) {
+			PropertyConfigurator.configure(log4j.getAbsolutePath());
+		}
+	}
+
+	/**
+	 * Deletes the {@code src/logs} file and folder that {@code BaseTestCase.initialize()} creates
+	 * under {@code user.dir}. Call only after {@link #configureApiTestLogDir()} has closed that appender.
+	 */
+	private static void removeCommonsSrcLogs() {
+		File srcLogDir = new File(System.getProperty("user.dir"), "src/logs");
+		File srcLog = new File(srcLogDir, "mosip-api-test.log");
+		if (srcLog.isFile() && !srcLog.delete()) {
+			LOGGER.warn("Could not delete " + srcLog.getAbsolutePath());
+		}
+		String[] remaining = srcLogDir.list();
+		if (remaining != null && remaining.length == 0) {
+			srcLogDir.delete();
+		}
+	}
+
+	/**
+	 * Locates the {@code api-test} module folder. It is derived from the code source
+	 * ({@code target/classes} or {@code target/*.jar}, then two levels up). Otherwise
+	 * {@code user.dir} is used when it is the module, or {@code user.dir/api-test} when launched from
+	 * the repository root, with plain {@code user.dir} as the last resort.
+	 */
+	private static File resolveApiTestModuleDir() {
+		try {
+			java.net.URL location = MosipTestRunner.class.getProtectionDomain().getCodeSource().getLocation();
+			if (location != null) {
+				File locFile;
+				try {
+					locFile = new File(location.toURI());
+				} catch (Exception uriEx) {
+					String decoded = URLDecoder.decode(location.getPath(), StandardCharsets.UTF_8);
+					locFile = new File(decoded);
+				}
+				File dir = locFile.isFile() ? locFile.getParentFile() : locFile;
+				if (dir != null && "classes".equalsIgnoreCase(dir.getName())) {
+					dir = dir.getParentFile();
+				}
+				if (dir != null && "target".equalsIgnoreCase(dir.getName()) && dir.getParentFile() != null) {
+					return dir.getParentFile();
+				}
+			}
+		} catch (Exception ignored) {
+		}
+		File cwd = new File(System.getProperty("user.dir", "."));
+		if (new File(cwd, "src/main/resources/log4j.properties").isFile()) {
+			return cwd;
+		}
+		File nested = new File(cwd, "api-test");
+		if (new File(nested, "pom.xml").isFile()) {
+			return nested;
+		}
+		return cwd;
+	}
+
+	/**
+	 * Detects how the rig was launched.
+	 *
+	 * @return {@code JAR} when this class was loaded from a jar, otherwise {@code IDE}
 	 */
 	public static String getRunType() {
 		if (MosipTestRunner.class.getResource("MosipTestRunner.class").getPath().contains(".jar"))

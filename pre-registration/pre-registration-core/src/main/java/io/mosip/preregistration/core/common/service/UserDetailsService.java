@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -29,12 +30,33 @@ import io.mosip.preregistration.core.util.GenericUtil;
 @Service
 public class UserDetailsService {
 
+    /**
+     * Returns logger.
+     *
+     * @return get logger result
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(UserDetailsService.class);
 
+    /**
+     * user details repository used by this Pre-Registration type.
+     */
     private final UserDetailsRepository userDetailsRepository;
+    /**
+     * crypto util used by this Pre-Registration type.
+     */
     private final CryptoUtil cryptoUtil;
+    /**
+     * user details tx helper used by this Pre-Registration type.
+     */
     private final UserDetailsTxHelper userDetailsTxHelper;
 
+    /**
+     * Creates a user details service.
+     *
+     * @param userDetailsRepository user details repository supplied to this constructor
+     * @param cryptoUtil crypto util supplied to this constructor
+     * @param userDetailsTxHelper user details tx helper supplied to this constructor
+     */
     public UserDetailsService(UserDetailsRepository userDetailsRepository, CryptoUtil cryptoUtil,
             UserDetailsTxHelper userDetailsTxHelper) {
         this.userDetailsRepository = userDetailsRepository;
@@ -42,6 +64,12 @@ public class UserDetailsService {
         this.userDetailsTxHelper = userDetailsTxHelper;
     }
 
+    /**
+     * Performs standardize for MOSIP Pre-Registration.
+     *
+     * @param userId user id used by standardize
+     * @return standardize result
+     */
     private String standardize(String userId) {
         if (userId == null) {
             return "";
@@ -49,6 +77,12 @@ public class UserDetailsService {
         return userId.trim().toLowerCase();
     }
 
+    /**
+     * Performs sha256 hex for MOSIP Pre-Registration.
+     *
+     * @param input input used by sha256 hex
+     * @return sha256 hex result
+     */
     private String sha256Hex(String input) {
         try {
             return HMACUtils2.digestAsPlainText(input.getBytes());
@@ -57,6 +91,12 @@ public class UserDetailsService {
         }
     }
 
+    /**
+     * Performs encrypt user id for MOSIP Pre-Registration.
+     *
+     * @param userId user id used by encrypt user id
+     * @return encrypt user id result
+     */
     private String encryptUserId(String userId) {
         if (userId == null || userId.isBlank()) {
             return null;
@@ -74,6 +114,12 @@ public class UserDetailsService {
         }
     }
 
+    /**
+     * Performs encrypt user id required for MOSIP Pre-Registration.
+     *
+     * @param userId user id used by encrypt user id required
+     * @return encrypt user id required result
+     */
     private String encryptUserIdRequired(String userId) {
         String encryptedValue = encryptUserId(userId);
         if (encryptedValue == null || encryptedValue.isBlank()) {
@@ -83,6 +129,12 @@ public class UserDetailsService {
     }
 
     @Cacheable(value = "user-details-cache", key = "#userId == null ? '' : #userId.toLowerCase().trim()", condition = "#userId != null")
+    /**
+     * Returns or create internal user id.
+     *
+     * @param userId user id used by get or create internal user id
+     * @return get or create internal user id result
+     */
     public String getOrCreateInternalUserId(String userId) {
         if (userId == null || userId.isBlank()) {
             return null;
@@ -141,6 +193,12 @@ public class UserDetailsService {
         }
     }
 
+    /**
+     * Performs decrypt identifier for MOSIP Pre-Registration.
+     *
+     * @param userDetails user details used by decrypt identifier
+     * @return decrypt identifier result
+     */
     private String decryptIdentifier(UserDetails userDetails) {
         byte[] decrypted = cryptoUtil.decrypt(
                 userDetails.getIdentifierEncrypted().getBytes(StandardCharsets.UTF_8),
@@ -189,6 +247,13 @@ public class UserDetailsService {
         }
     }
 
+    /**
+     * Returns user lookup ids.
+     *
+     * @param userId user id used by get user lookup ids
+     * @param piiBackwardCompatibility pii backward compatibility used by get user lookup ids
+     * @return get user lookup ids result
+     */
     public List<String> getUserLookupIds(String userId, boolean piiBackwardCompatibility) {
         List<String> lookupIds = new ArrayList<>();
         if (userId == null || userId.isBlank()) {
@@ -205,7 +270,8 @@ public class UserDetailsService {
                     piiBackwardCompatibility, GenericUtil.maskIdentifier(userId));
         }
         if (piiBackwardCompatibility) {
-            lookupIds.add(trimmedUserId);
+            // Lower-cased: the lookup queries compare lower(cr_by), so legacy rows match any login casing.
+            lookupIds.add(trimmedUserId.toLowerCase(Locale.ROOT));
         }
         return lookupIds.stream().distinct().toList();
     }

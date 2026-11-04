@@ -14,12 +14,15 @@ hs_err_pid*
 bin/
 tmp/
 
+.local/
 logs/
+src/logs/
 *.tmp
 *.bak
 *.swp
 *~.nib
 local.properties
+.env.local
 .loadpath
 .DS_Store
 test.txt
@@ -31,7 +34,6 @@ test.txt
 
 **/*.iml
 *.log
-src/logs/mosip-api-test.log
 /target/
 target/
 test-output/

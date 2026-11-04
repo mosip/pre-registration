@@ -1,10 +1,12 @@
 # pre-registration-batchjob
 
-This BatchJob is used to run few tasks on scheduled intervals. The tasks supported are:
+Scheduled Job on port **9097**. Stays its own JVM after consolidation (not folded into `pre-registration-service`). Chart: `helm/prereg-batchjob`.
+
+Tasks:
+
 * Generating slots for booking appointments in registration centres
 * Moving the applications to Expired status once the appointment date is passed
 * Moving the applications to Consumed status once the application is processed by MOSIP.
-* Keeping the applications and appointments data in sync. 
+* Keeping the applications and appointments data in sync.
 
-## Design
-[Design](https://github.com/mosip/pre-registration/blob/master/design/pre-registration/pre-registration-batch-job.md)
+Layout: [docs/design/service-consolidation.md](../../docs/design/service-consolidation.md). Local: `./run-local.sh init | start | smoke | stop`.

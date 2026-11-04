@@ -27,6 +27,10 @@ jobs:
     with:
       SERVICE_LOCATION: ./pre-registration
       BUILD_ARTIFACT: pre-registration
+      # Boot 4 removed fully-executable JARs (no Unix +x bit). Kattu's default zip
+      # step only packs -executable JARs; list deployable fat JARs here so the
+      # pre-registration artifact is uploaded for docker-build.
+      MAVEN_NON_EXEC_ARTIFACTS: pre-registration-service.jar,pre-registration-batchjob.jar,pridgenerator-service.jar
     secrets:
       OSSRH_USER: ${{ secrets.OSSRH_USER }}
       OSSRH_SECRET: ${{ secrets.OSSRH_SECRET }}
@@ -53,24 +57,56 @@ jobs:
     strategy:
       matrix:
         include:
-          - SERVICE_LOCATION: 'pre-registration/pre-registration-application-service'
-            SERVICE_NAME: 'pre-registration-application-service'
+          - SERVICE_LOCATION: 'pre-registration/pre-registration-service'
+            SERVICE_NAME: 'pre-registration-service'
             BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '12'
           - SERVICE_LOCATION: 'pre-registration/pre-registration-batchjob'
             SERVICE_NAME: 'pre-registration-batchjob'
             BUILD_ARTIFACT: 'pre-registration'
-          - SERVICE_LOCATION: 'pre-registration/pre-registration-datasync-service'
-            SERVICE_NAME: 'pre-registration-datasync-service'
+            SQUASH_LAYERS: '12'
+          - SERVICE_LOCATION: 'pre-registration/pridgenerator-service'
+            SERVICE_NAME: 'pridgenerator-service'
             BUILD_ARTIFACT: 'pre-registration'
-          - SERVICE_LOCATION: 'pre-registration/pre-registration-captcha-service'
-            SERVICE_NAME: 'pre-registration-captcha-service'
-            BUILD_ARTIFACT: 'pre-registration'
+            SQUASH_LAYERS: '12'
       fail-fast: false
     name: ${{ matrix.SERVICE_NAME }}
     uses: mosip/kattu/.github/workflows/docker-build.yml@master-java21
     with:
       SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
       SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
+      BUILD_ARTIFACT: ${{ matrix.BUILD_ARTIFACT }}
+      SQUASH_LAYERS: ${{ matrix.SQUASH_LAYERS }}
+    secrets:
+      DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
+      ACTOR_DOCKER_HUB: ${{ secrets.ACTOR_DOCKER_HUB }}
+      RELEASE_DOCKER_HUB: ${{ secrets.RELEASE_DOCKER_HUB }}
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  build-pre-registration-ui:
+    uses: mosip/kattu/.github/workflows/npm-build.yml@develop
+    with:
+      SERVICE_LOCATION: ui
+      BUILD_ARTIFACT: pre-registration-ui
+    secrets:
+      SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK }}
+
+  build-docker-pre-registration-ui:
+    needs: build-pre-registration-ui
+    strategy:
+      matrix:
+        include:
+          - SERVICE_LOCATION: 'ui'
+            SERVICE_NAME: 'pre-registration-ui'
+            NPM_BUILD: true
+            BUILD_ARTIFACT: 'pre-registration-ui'
+      fail-fast: false
+    name: ${{ matrix.SERVICE_NAME }}
+    uses: mosip/kattu/.github/workflows/docker-build.yml@master
+    with:
+      SERVICE_LOCATION: ${{ matrix.SERVICE_LOCATION }}
+      SERVICE_NAME: ${{ matrix.SERVICE_NAME }}
+      NPM_BUILD: ${{ matrix.NPM_BUILD }}
       BUILD_ARTIFACT: ${{ matrix.BUILD_ARTIFACT }}
     secrets:
       DEV_NAMESPACE_DOCKER_HUB: ${{ secrets.DEV_NAMESPACE_DOCKER_HUB }}
@@ -128,9 +164,9 @@ jobs:
       SERVICE_LOCATION: api-test
       BUILD_ARTIFACT: apitest-prereg-local
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Set up JDK 21
-        uses: actions/setup-java@v3
+        uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: 21

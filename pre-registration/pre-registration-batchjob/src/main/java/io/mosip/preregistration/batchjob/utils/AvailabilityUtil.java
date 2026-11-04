@@ -37,7 +37,7 @@ import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.exception.ServiceError;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.kernel.core.util.DateUtils2;
 import io.mosip.preregistration.batchjob.code.ErrorCodes;
 import io.mosip.preregistration.batchjob.code.ErrorMessages;
 import io.mosip.preregistration.batchjob.entity.AvailibityEntity;
@@ -95,18 +95,33 @@ public class AvailabilityUtil {
 	String idUrlSync;
 
 	@Value("${mosip.mandatory-languages}")
+	/**
+	 * mandatory lang codes used by this Pre-Registration type.
+	 */
 	private String mandatoryLangCodes;
 
 	@Value("${mosip.optional-languages}")
+	/**
+	 * optional lang codes used by this Pre-Registration type.
+	 */
 	private String optionalLangCodes;
 
 	@Value("${notification.url}")
+	/**
+	 * notification resourseurl used by this Pre-Registration type.
+	 */
 	private String notificationResourseurl;
 
 	@Value("${mosip.batch.token.authmanager.userName}")
+	/**
+	 * audit username used by this Pre-Registration type.
+	 */
 	private String auditUsername;
 
 	@Value("${mosip.batch.token.authmanager.appId}")
+	/**
+	 * audit user id used by this Pre-Registration type.
+	 */
 	private String auditUserId;
 
 	/**
@@ -128,6 +143,9 @@ public class AvailabilityUtil {
 	String workingDayListUrl;
 
 	@Value("${mosip.utc-datetime-pattern}")
+	/**
+	 * utc date time pattern used by this Pre-Registration type.
+	 */
 	private String utcDateTimePattern;
 
 	/**
@@ -146,6 +164,9 @@ public class AvailabilityUtil {
 	private BatchJpaRepositoryImpl batchServiceDAO;
 
 	@Autowired
+	/**
+	 * audit log util used by this Pre-Registration type.
+	 */
 	private AuditLogUtil auditLogUtil;
 
 	/**
@@ -154,6 +175,9 @@ public class AvailabilityUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
+	/**
+	 * lang code used by this Pre-Registration type.
+	 */
 	private String langCode;
 
 	/**
@@ -162,6 +186,9 @@ public class AvailabilityUtil {
 	private ObjectMapper mapper;
 
 	@PostConstruct
+	/**
+	 * Sets up.
+	 */
 	private void setup() {
 		langCode = mandatoryLangCodes.split(",").length > 0 ? mandatoryLangCodes.split(",")[0]
 				: optionalLangCodes.split(",")[0];
@@ -170,8 +197,19 @@ public class AvailabilityUtil {
 
 	}
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(AvailabilityUtil.class);
 
+	/**
+	 * Performs add availability for MOSIP Pre-Registration.
+	 *
+	 * @param headers headers used by add availability
+	 * @return add availability result
+	 */
 	public MainResponseDTO<String> addAvailability(HttpHeaders headers) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In addAvailability method of AvailabilityUtil");
 		MainResponseDTO<String> response = new MainResponseDTO<>();
@@ -420,6 +458,14 @@ public class AvailabilityUtil {
 		return response;
 	}
 
+	/**
+	 * Performs cancel booking for MOSIP Pre-Registration.
+	 *
+	 * @param preRegistrationId pre registration id used by cancel booking
+	 * @param headers headers used by cancel booking
+	 * @param cancelFailedList cancel failed list used by cancel booking
+	 * @return cancel booking result
+	 */
 	private boolean cancelBooking(String preRegistrationId, HttpHeaders headers, List<String> cancelFailedList) {
 
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -427,7 +473,7 @@ public class AvailabilityUtil {
 		try {
 			Map<String, Object> params = new HashMap<>();
 			params.put("preRegistrationId", preRegistrationId);
-			UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(cancelResourceUrl);
+			UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(cancelResourceUrl);
 			String uriBuilder = builder.buildAndExpand(params).encode().toUriString();
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In cancelBooking method of Availability Util URL- " + uriBuilder);
@@ -465,7 +511,7 @@ public class AvailabilityUtil {
 				"In callRegCenterDateRestService method of AvailabilityUtil");
 		List<RegistrationCenterDto> regCenter = null;
 		try {
-			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromHttpUrl(regCenterUrl);
+			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromUriString(regCenterUrl);
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -513,7 +559,7 @@ public class AvailabilityUtil {
 
 			String holidayUrl = holidayListUrl + regDto.getLangCode() + "/" + regDto.getId() + "/"
 					+ LocalDate.now().getYear();
-			UriComponentsBuilder builder1 = UriComponentsBuilder.fromHttpUrl(holidayUrl);
+			UriComponentsBuilder builder1 = UriComponentsBuilder.fromUriString(holidayUrl);
 			HttpEntity<RequestWrapper<RegistrationCenterHolidayDto>> httpHolidayEntity = new HttpEntity<>(headers);
 			String uriBuilder = builder1.build().encode().toUriString();
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -540,7 +586,7 @@ public class AvailabilityUtil {
 
 			/** Rest call to master for exceptional holidays. */
 			String exceptionalHolidayUrl = exceptionalHolidayListUrl + regDto.getId() + "/" + regDto.getLangCode();
-			UriComponentsBuilder builder2 = UriComponentsBuilder.fromHttpUrl(exceptionalHolidayUrl);
+			UriComponentsBuilder builder2 = UriComponentsBuilder.fromUriString(exceptionalHolidayUrl);
 			HttpEntity<RequestWrapper<RegistrationCenterHolidayDto>> httpExceptionalHolidayEntity = new HttpEntity<>(
 					headers);
 			String uriBuilder2 = builder2.build().encode().toUriString();
@@ -565,7 +611,7 @@ public class AvailabilityUtil {
 
 			/** Rest call to master for working holidays. */
 			String workingDayUrl = workingDayListUrl + regDto.getId() + "/" + regDto.getLangCode();
-			UriComponentsBuilder builder3 = UriComponentsBuilder.fromHttpUrl(workingDayUrl);
+			UriComponentsBuilder builder3 = UriComponentsBuilder.fromUriString(workingDayUrl);
 			HttpEntity<RequestWrapper<WorkingDaysResponseDto>> httpWorkingDayEntity = new HttpEntity<>(headers);
 			String uriBuilder3 = builder3.build().encode().toUriString();
 
@@ -687,6 +733,14 @@ public class AvailabilityUtil {
 		}
 	}
 
+	/**
+	 * Performs working hours calculator for MOSIP Pre-Registration.
+	 *
+	 * @param fromTime from time used by working hours calculator
+	 * @param toTime to time used by working hours calculator
+	 * @param regDto reg dto used by working hours calculator
+	 * @param forDate for date used by working hours calculator
+	 */
 	private void workingHoursCalculator(LocalTime fromTime, LocalTime toTime, RegistrationCenterDto regDto,
 			LocalDate forDate) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In workingHoursCalculator method of Availability Util");
@@ -709,6 +763,14 @@ public class AvailabilityUtil {
 		}
 	}
 
+	/**
+	 * Performs save availability for MOSIP Pre-Registration.
+	 *
+	 * @param regDto reg dto used by save availability
+	 * @param date date used by save availability
+	 * @param currentTime current time used by save availability
+	 * @param toTime to time used by save availability
+	 */
 	private void saveAvailability(RegistrationCenterDto regDto, LocalDate date, LocalTime currentTime,
 			LocalTime toTime) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In saveAvailability method of Availability Util");
@@ -718,7 +780,7 @@ public class AvailabilityUtil {
 		avaEntity.setFromTime(currentTime);
 		avaEntity.setToTime(toTime);
 		avaEntity.setCrBy(auditUsername);
-		avaEntity.setCrDate(DateUtils.parseDateToLocalDateTime(new Date()));
+		avaEntity.setCrDate(DateUtils2.parseDateToLocalDateTime(new Date()));
 		if (isNull(regDto.getContactPerson())) {
 			avaEntity.setCrBy(auditUsername);
 		} else {
@@ -828,9 +890,14 @@ public class AvailabilityUtil {
 		}
 	}
 
+	/**
+	 * Returns current response time.
+	 *
+	 * @return get current response time result
+	 */
 	public String getCurrentResponseTime() {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getCurrentResponseTime method of AvailabilityUtil");
-		return DateUtils.formatDate(new Date(System.currentTimeMillis()), utcDateTimePattern);
+		return DateUtils2.formatDate(new Date(System.currentTimeMillis()), utcDateTimePattern);
 	}
 
 	/**

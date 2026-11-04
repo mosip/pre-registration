@@ -1,0 +1,166 @@
+.spinner {
+  flex-direction: column;
+  align-items: center;
+  margin-top: 18vw;
+  display: flex;
+}
+.wrapper {
+  box-shadow: 1px 1px 10px 4px #eeeeee;
+  background-color: #f4f4f4;
+  margin: 5px 2vw;
+  padding-top: 0;
+  padding-bottom: 0;
+  color: #666666;
+}
+.ack-container {
+  width: 100%;
+  padding: 20px;
+  background-color: white !important;
+  position: relative;
+}
+.ack__message-container {
+  padding: 1px 1rem;
+  background-color: #eafaea;
+  color: green;
+  margin: 0;
+  border-bottom: 1px solid #ff4081;
+}
+.ack__header-container {
+  padding: 1px 1rem;
+  border-bottom: 1px solid #ff4081;
+  background-color: white !important;
+  position: relative;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+.ack__body-container {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+  padding: 10px 1rem;
+  border-bottom: 1px solid #ff4081;
+  background-color: white !important;
+  position: relative;
+}
+
+.ack__guidelines li:last-child {
+  display: none;
+}
+
+.bottom-margin {
+  margin-bottom: 10px;
+}
+
+.ack__guidelines {
+  text-align: justify;
+}
+.inner-guideline-content {
+  padding: 2px !important;
+}
+.endOfAck {
+  border-bottom: 1px solid #ff4081;
+  page-break-after: always;
+}
+.lastAck {
+  border-bottom: 1px solid #ff4081;
+  page-break-after: avoid;
+}
+.ack__guidelines li {
+  list-style-type: none;
+}
+
+.ack-book_later-btn {
+  background-color: #fff;
+  border: 1px solid #ff4081;
+  color: #ff4081;
+  padding: 0px 2rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  margin: 4px 0 4px 0.8rem;
+  cursor: pointer;
+  border-radius: 0;
+}
+.ack-continue-btn {
+  background-color: #ff4081;
+  border: none;
+  border-radius: 0;
+  color: #fff;
+  padding: 0px 2rem;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 0.8rem;
+  margin: 4px 2rem 4px 1.2rem !important;
+  cursor: pointer;
+}
+
+table tr td {
+  padding: 10px 5px 10px 0px;
+}
+
+.ack__qr-code {
+  width: 150px;
+  height: 150px;
+}
+
+.ack__qr-code img {
+  width: 100%;
+  height: auto;
+}
+
+.ack__guidelines-container {
+  padding: 10px 1rem;
+  background-color: white !important;
+  /* z-index: -1 !important; */
+  position: relative;
+  height: 100%;
+}
+.ack__button-container {
+  width: 100%;
+  position: fixed;
+  bottom: -1px;
+  left: -2px;
+  display: flex;
+  justify-content: flex-end;
+  /* margin-top: 0.2rem; */
+  background-color: white;
+  border-top: 5px solid #f4f4f4;
+  padding: 0 2vw;
+}
+
+@media (max-width: 500px) {
+  .ack-container {
+    margin: 5px;
+  }
+  .ack-book_later-btn {
+    font-size: 8px;
+    padding: 5px;
+  }
+
+  .ack__header {
+    white-space: nowrap;
+    margin-left: -31px !important;
+  }
+
+  .ack__header-container hr {
+    margin-top: 36.5px;
+  }
+
+  .ack__message-container {
+    padding-left: 0;
+  }
+
+  .ack-book_later-btn,
+  .ack-continue-btn {
+    font-size: 10px;
+    padding: 0px 2px;
+    margin-right: 20px;
+  }
+}
+table {
+  width: 100%;
+  background-color: #fff;
+}

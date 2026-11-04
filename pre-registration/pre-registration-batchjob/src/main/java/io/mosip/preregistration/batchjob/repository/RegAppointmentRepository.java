@@ -1,7 +1,3 @@
-/* 
-  * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.repository;
 
 import java.time.LocalDate;
@@ -23,6 +19,9 @@ import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
 @Repository("regAppointmentRepository")
 public interface RegAppointmentRepository extends BaseRepository<RegistrationBookingEntity, String> {
 
+	/**
+	 * pre id query used by this Pre-Registration type.
+	 */
 	public static final String preIdQuery = "SELECT u FROM RegistrationBookingEntity u WHERE u.preregistrationId = ?1";
 
 	/**
@@ -33,10 +32,24 @@ public interface RegAppointmentRepository extends BaseRepository<RegistrationBoo
 	List<RegistrationBookingEntity> findByRegDateBetween(@Param("statusCode") String statusCode,
 			@Param("currentDate") LocalDate currentDate);
 
+	/**
+	 * Performs find by registration center id and reg date for MOSIP Pre-Registration.
+	 *
+	 * @param registrationCenterId registration center id used by find by registration center id and reg date
+	 * @param regDate reg date used by find by registration center id and reg date
+	 * @return find by registration center id and reg date result
+	 */
 	public List<RegistrationBookingEntity> findByRegistrationCenterIdAndRegDate(String registrationCenterId,
 			LocalDate regDate);
 
 	@Query("SELECT e FROM RegistrationBookingEntity e  WHERE e.registrationCenterId= ?1 and e.regDate>=?2")
+	/**
+	 * Performs find by reg id for MOSIP Pre-Registration.
+	 *
+	 * @param registrationCenterId registration center id used by find by reg id
+	 * @param regDate reg date used by find by reg id
+	 * @return find by reg id result
+	 */
 	public List<RegistrationBookingEntity> findByRegId(String registrationCenterId, LocalDate regDate);
 
 	/**

@@ -51,36 +51,81 @@ import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
 
 @Component
+/**
+ * Helper used by Pre-Registration for validation util.
+ */
 public class ValidationUtil {
 
 	@Value("${mosip.id.validation.identity.email}")
+	/**
+	 * email regex used by this Pre-Registration type.
+	 */
 	private String emailRegex;
 
 	@Value("${mosip.id.validation.identity.phone}")
+	/**
+	 * phone regex used by this Pre-Registration type.
+	 */
 	private String phoneRegex;
 
 	@Value("${mosip.mandatory-languages}")
+	/**
+	 * mandatory lang codes used by this Pre-Registration type.
+	 */
 	private String mandatoryLangCodes;
 
 	@Value("${mosip.optional-languages}")
+	/**
+	 * optional lang codes used by this Pre-Registration type.
+	 */
 	private String optionalLangCodes;
 
 	@Value("${mosip.kernel.idobjectvalidator.masterdata.documenttypes.rest.uri}")
+	/**
+	 * document type uri used by this Pre-Registration type.
+	 */
 	private String documentTypeUri;
 
 	@Value("${mosip.kernel.masterdata.validdoc.rest.uri}")
+	/**
+	 * masterdata uri used by this Pre-Registration type.
+	 */
 	private String masterdataUri;
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private static Logger log = LoggerConfiguration.logConfig(ValidationUtil.class);
 
+	/**
+	 * Performs email validator for MOSIP Pre-Registration.
+	 *
+	 * @param email email used by email validator
+	 * @return email validator result
+	 */
 	public boolean emailValidator(String email) {
 		return email.matches(emailRegex);
 	}
 
+	/**
+	 * Performs phone validator for MOSIP Pre-Registration.
+	 *
+	 * @param phone phone used by phone validator
+	 * @return phone validator result
+	 */
 	public boolean phoneValidator(String phone) {
 		return phone.matches(phoneRegex);
 	}
 
+	/**
+	 * Performs id validation for MOSIP Pre-Registration.
+	 *
+	 * @param value value used by id validation
+	 * @param regex regex used by id validation
+	 * @return id validation result
+	 */
 	public boolean idValidation(String value, String regex) {
 		if (!isNull(value)) {
 			return value.matches(regex);
@@ -95,14 +140,32 @@ public class ValidationUtil {
 	@Autowired
 	RestTemplate restTemplate;
 
+	/**
+	 * documents used by this Pre-Registration type.
+	 */
 	private static final String DOCUMENTS = "documents";
 
+	/**
+	 * is active used by this Pre-Registration type.
+	 */
 	private static final String IS_ACTIVE = "isActive";
 
+	/**
+	 * code used by this Pre-Registration type.
+	 */
 	private static final String CODE = "code";
 
+	/**
+	 * name used by this Pre-Registration type.
+	 */
 	private static final String NAME = "name";
 
+	/**
+	 * Performs request validator for MOSIP Pre-Registration.
+	 *
+	 * @param mainRequest main request used by request validator
+	 * @return request validator result
+	 */
 	public boolean requestValidator(MainRequestDTO<?> mainRequest) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In requestValidator method of pre-registration core with mainRequest " + mainRequest);
@@ -122,6 +185,13 @@ public class ValidationUtil {
 		return true;
 	}
 
+	/**
+	 * Performs request validator for MOSIP Pre-Registration.
+	 *
+	 * @param requestMap request map used by request validator
+	 * @param requiredRequestMap required request map used by request validator
+	 * @return request validator result
+	 */
 	public boolean requestValidator(Map<String, String> requestMap, Map<String, String> requiredRequestMap) {
 
 		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In requestValidator");
@@ -164,6 +234,12 @@ public class ValidationUtil {
 
 	}
 
+	/**
+	 * Performs requst param validator for MOSIP Pre-Registration.
+	 *
+	 * @param requestMap request map used by requst param validator
+	 * @return requst param validator result
+	 */
 	public boolean requstParamValidator(Map<String, String> requestMap) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In requstParamValidator method of pre-registration core with requestMap " + requestMap);
@@ -237,6 +313,12 @@ public class ValidationUtil {
 
 	}
 
+	/**
+	 * Performs langvalidation for MOSIP Pre-Registration.
+	 *
+	 * @param langCode lang code used by langvalidation
+	 * @return langvalidation result
+	 */
 	public boolean langvalidation(String langCode) {
 		Set<String> reqParams = new HashSet<>();
 		for (String optionalLang : optionalLangCodes.split(",")) {
@@ -256,6 +338,15 @@ public class ValidationUtil {
 
 	@SuppressWarnings("unchecked")
 	@Lock(LockModeType.READ)
+	/**
+	 * Performs validate documents for MOSIP Pre-Registration.
+	 *
+	 * @param langCode lang code used by validate documents
+	 * @param catCode cat code used by validate documents
+	 * @param typeCode type code used by validate documents
+	 * @param preRegistrationId pre registration id used by validate documents
+	 * @return validate documents result
+	 */
 	public boolean validateDocuments(String langCode, String catCode, String typeCode, String preRegistrationId) {
 		log.debug("In validateDocuments method with docCatMap:{} preRegistrationId: {} ", validDocsMap,
 				preRegistrationId);
@@ -285,6 +376,13 @@ public class ValidationUtil {
 
 	}
 
+	/**
+	 * Returns document type name by type code.
+	 *
+	 * @param langCode lang code used by get document type name by type code
+	 * @param catCode cat code used by get document type name by type code
+	 * @return get document type name by type code result
+	 */
 	public Map<String, String> getDocumentTypeNameByTypeCode(String langCode, String catCode) {
 		Map<String, String> documentTypeMap = new HashMap<>();
 		String uri = UriComponentsBuilder.fromUriString(documentTypeUri).buildAndExpand(catCode, langCode)
@@ -305,6 +403,13 @@ public class ValidationUtil {
 		return documentTypeMap;
 	}
 
+	/**
+	 * Performs parse date for MOSIP Pre-Registration.
+	 *
+	 * @param reqDate req date used by parse date
+	 * @param format format used by parse date
+	 * @return parse date result
+	 */
 	public static boolean parseDate(String reqDate, String format) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In parseDate method of core validation util");
 		try {
@@ -321,6 +426,9 @@ public class ValidationUtil {
 	}
 
 	@SuppressWarnings("unchecked")
+	/**
+	 * Returns all doc categories and types.
+	 */
 	public void getAllDocCategoriesAndTypes() {
 		try {
 			log.debug("In getAllDocCategoriesAndTypes");
@@ -364,6 +472,12 @@ public class ValidationUtil {
 		}
 	}
 
+	/**
+	 * Performs prepare request map for MOSIP Pre-Registration.
+	 *
+	 * @param requestDto request dto used by prepare request map
+	 * @return prepare request map result
+	 */
 	public Map<String, String> prepareRequestMap(MainRequestDTO<?> requestDto) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In prepareRequestMap method of Login Service Util");
 		Map<String, String> requestMap = new HashMap<>();
@@ -379,10 +493,21 @@ public class ValidationUtil {
 		return requestMap;
 	}
 
+	/**
+	 * Returns current response time.
+	 *
+	 * @return get current response time result
+	 */
 	public String getCurrentResponseTime() {
 		return LocalDateTime.now(ZoneId.of("UTC")).toString();
 	}
 
+	/**
+	 * Indicates whether status booked or expired.
+	 *
+	 * @param status status used by is status booked or expired
+	 * @return is status booked or expired result
+	 */
 	public boolean isStatusBookedOrExpired(String status) {
 		boolean isStatusBookedOrExpired = false;
 		if (StatusCodes.BOOKED.getCode().equals(status)) {

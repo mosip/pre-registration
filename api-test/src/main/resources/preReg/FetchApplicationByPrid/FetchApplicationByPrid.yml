@@ -1,35 +1,36 @@
 FetchApplicationByPrid:
-   Prereg_FetchApplicationByPrid_All_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_FetchApplicationByPrid_01
-      description: Validate that fetching an application by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      restMethod: get
-      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
-      outputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPridResult
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
-}'
-      output: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "email": "$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_EMAIL$",
-  "phone": "$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_PHONE$"
-}'
-   Prereg_FetchApplicationByPrid_inValid_preRegistrationId_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_FetchApplicationByPrid_02
-      description: Validate that fetching an application by Pre Registration ID fails when an invalid pre registration ID is provided
-      role: batch
-      restMethod: get
-      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "ggfr3567ugg"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_APP_005"
-    }
-  ]
-}'
+  Prereg_FetchApplicationByPrid_All_Valid_Smoke_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_FetchApplicationByPrid_01
+    description: Validate that fetching an application by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    restMethod: get
+    inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+    outputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPridResult
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
+    }'
+    output: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "email": "$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_EMAIL$",
+      "phone": "$ID:UpdatePrereg_All_Valid_Smoke_sid_pos_PHONE$"
+    }'
+
+  Prereg_FetchApplicationByPrid_inValid_preRegistrationId_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_FetchApplicationByPrid_02
+    description: Validate that fetching an application by Pre Registration ID fails when an invalid pre registration ID is provided
+    role: batch
+    restMethod: get
+    inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "ggfr3567ugg"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_APP_005"
+        }
+      ]
+    }'

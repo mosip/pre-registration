@@ -21,11 +21,14 @@ import io.mosip.analytics.event.anonymous.repository.AnonymousProfileRepostiory;
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.kernel.core.util.DateUtils2;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
 
 @Service
+/**
+ * Business service for anonymous profile service in MOSIP Pre-Registration.
+ */
 public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 
 	/**
@@ -34,9 +37,15 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 	private Logger log = LoggerConfiguration.logConfig(AnonymousProfileService.class);
 
 	@Value("${mosip.utc-datetime-pattern}")
+	/**
+	 * utc date time pattern used by this Pre-Registration type.
+	 */
 	private String utcDateTimePattern;
 	
     @Value("${mosip.preregistration.anonymous-profile-username}")
+    /**
+     * anonymous profile username used by this Pre-Registration type.
+     */
     private String anonymousProfileUsername;
 
 	/**
@@ -68,7 +77,7 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 	public AnonymousProfileResponseDTO saveAnonymousProfile(AnonymousProfileRequestDTO requestDto) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In saveAnonymousProfile() method of AnonymousProfileService");
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-				"Pre Registration start time : " + DateUtils.getUTCCurrentDateTimeString());
+				"Pre Registration start time : " + DateUtils2.getUTCCurrentDateTimeString());
 		AnonymousProfileResponseDTO responseDto = new AnonymousProfileResponseDTO();
 		try {
 			LocalDateTime currentDateTime = LocalDateTime.now(ZoneId.of("UTC"));
@@ -88,7 +97,7 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 			responseDto.setUpdatedBy(responseEntity.getUpdatedBy());
 			responseDto.setUpdatedDateTime(getLocalDateString(responseEntity.getUpdateDateTime()));
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Pre Registration end time : " + DateUtils.getUTCCurrentDateTimeString());
+					"Pre Registration end time : " + DateUtils2.getUTCCurrentDateTimeString());
 		} catch (Exception exception) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(exception));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -97,6 +106,12 @@ public class AnonymousProfileService implements AnonymousProfileServiceIntf {
 		return responseDto;
 	}
 
+	/**
+	 * Returns local date string.
+	 *
+	 * @param date date used by get local date string
+	 * @return get local date string result
+	 */
 	public String getLocalDateString(LocalDateTime date) {
 		if (Objects.isNull(date))
 			date = LocalDateTime.now();

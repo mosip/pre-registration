@@ -1,0 +1,180 @@
+<div *ngIf="input.case === 'SEND_ACKNOWLEDGEMENT'" [dir]="input.textDir? input.textDir: textDir">
+  <h2 mat-dialog-title>{{ "dialog.content_applicant" | translate }}</h2>
+  <mat-dialog-content>
+    <span *ngIf="input.notificationTypes.includes('EMAIL')">
+      <mat-form-field appearance="legacy">
+        <mat-label>
+          {{ 'dialog.text_email' | translate }}
+        </mat-label>
+        <input #email matInput (keyup)="validateEmail()" type="text" [(ngModel)]="applicantEmail"
+          (focusout)="validateEmail();enableButton(email, mobile)" />
+        <em class="material-icons" matSuffix>email</em>
+      </mat-form-field>
+      <mat-error class="primary-errors" *ngIf="invalidApplicantEmail">
+        {{ "dialog.invalidApplicantEmailId" | translate }}
+      </mat-error>
+    </span>
+    <span *ngIf="input.notificationTypes.includes('SMS')">
+      <mat-form-field appearance="legacy">
+        <mat-label>
+          {{ 'dialog.text_mobile' | translate }}
+        </mat-label>
+        <input #mobile matInput (keyup)="validateMobile()" type="text" [(ngModel)]="applicantNumber"
+          (focusout)="validateMobile();enableButton(email, mobile)" />
+        <em class="material-icons" matSuffix>chat</em>
+      </mat-form-field>
+      <mat-error class="primary-errors" *ngIf="invalidApplicantNumber">
+        {{ "dialog.invalidApplicantNumber" | translate }}
+      </mat-error>
+    </span>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()" class="btn-cancel">
+      {{ "dialog.action_close" | translate }}
+    </button>
+    <span class="spacer"></span>
+    <button [disabled]="disableSend" mat-button [mat-dialog-close]="inputList" cdkFocusInitial
+    [ngClass]="disableSend ? 'btn-submit-disabled' : 'btn-submit'" >
+      {{ "dialog.action_submit" | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="input.case === 'DISCARD_APPLICATION'" [dir]="input.textDir">
+  <h2 mat-dialog-title>{{ "dialog.title_discard" | translate }}</h2>
+  <mat-dialog-content>
+    <mat-radio-group [(ngModel)]="selectedOption">
+      <mat-radio-button [disabled]="input.disabled.radioButton1" value="1">{{
+        "dialog.action_discard_app" | translate
+        }}</mat-radio-button>
+      <p></p>
+      <mat-radio-button [disabled]="input.disabled.radioButton2" value="2">{{
+        "dialog.action_cancel" | translate
+        }}</mat-radio-button>
+    </mat-radio-group>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick()" class="btn-cancel">
+      {{ "dialog.action_close" | translate }}
+    </button>
+    <span class="spacer"></span>
+    <button mat-button [ngClass]="selectedOption === null ? 'btn-submit-disabled' : 'btn-submit'"
+      [disabled]="selectedOption === null" (click)="applicationCancelAndDiscardSubmit(selectedOption)">
+      {{ "dialog.action_submit" | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="input.case === 'MESSAGE'" [dir]="input.textDir? input.textDir: textDir">
+  <h2 mat-dialog-title *ngIf="input.title">{{ input.title }}</h2>
+  <mat-dialog-content style="white-space: pre-line;">{{ input.message }}</mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button mat-button (click)="onNoClick(true)" cdkFocusInitial class="btn-submit">
+      {{ "dialog.action_dismiss" | translate }}
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="input.case === 'CONFIRMATION'" [dir]="input.textDir? input.textDir: textDir">
+  <h2 mat-dialog-title *ngIf="input.title">{{ input.title }}</h2>
+  <mat-dialog-content style="white-space: pre-line;">{{ input.message }}</mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick(input.noButtonText)" class="btn-cancel">
+      {{ input.noButtonText }}
+    </button>
+    <span class="spacer"></span>
+    <button mat-button [mat-dialog-close]="confirm" cdkFocusInitial class="btn-submit">
+      {{ input.yesButtonText }}
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="input.case === 'CONSENTPOPUP'">
+  <h2 [dir]="input.textDirectionArr[0]">{{ input.title }}</h2>
+  <mat-dialog-content>
+    <mat-accordion multi>
+      <mat-expansion-panel *ngFor="let item of input.data; index as i; let isFirst = first;" [expanded]="isFirst">
+        <mat-expansion-panel-header [dir]="input.textDirectionArr[i]">
+          <mat-panel-title>
+            <span class="consent-popup-title">{{
+              item.labels.consent.title
+              }}</span>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+        <div [dir]="input.textDirectionArr[i]">
+          <h3 class="consent-popup-subtitle">
+            {{ item.labels.consent.subtitle }}
+          </h3>
+          <div>
+            <div *ngFor="let message of item.fileText">
+              <div>{{ message }}</div>
+            </div>
+          </div>
+        </div>
+      </mat-expansion-panel>
+    </mat-accordion>
+  </mat-dialog-content>
+  <mat-dialog-actions [dir]="input.textDirectionArr[0]">
+    <mat-checkbox (change)="onSelectCheckbox()"></mat-checkbox>
+      <span class="content-display-iniline-block" *ngFor="let item of input.data; let last = last">{{ item.labels.consent.checkCondition }}
+        <span *ngIf="!last">&nbsp;/&nbsp;</span>
+      </span>
+  </mat-dialog-actions>
+  <p></p>
+  <mat-dialog-actions align="end" [dir]="input.textDirectionArr[0]">
+    <button mat-button class="btn-cancel" mat-dialog-close
+      (click)="onNoClick(); cancelConsent(input.data); userRedirection(input.textDirectionArr[0])">{{
+      input.cancelBtn }}</button>
+    <span class="spacer"></span>
+    <div *ngFor="let item of input.data">
+      <div *ngIf="item.langCode === input.userPrefferedlangCode">
+        <button [ngClass]="isChecked ? 'btn-submit-disabled' : 'btn-submit'" [disabled]="isChecked" mat-button
+          (click)="onNoClick(item.labels.consent.acceptButton)" cdkFocusInitial>
+          {{ item.labels.consent.acceptButton }}
+        </button>
+      </div>
+    </div>
+  </mat-dialog-actions>
+</div>
+<div class="logout-pre-message" *ngIf="input.case === 'POPUP'"  [dir]="input.textDir? input.textDir: textDir">
+  <mat-dialog-content>
+    <p>{{ input.content }}</p>
+  </mat-dialog-content>
+</div>
+<div class="logout-post-message" *ngIf="input.case === 'POSTLOGOUT'"  [dir]="input.textDir? input.textDir: textDir">
+  <mat-dialog-content>
+    <p>{{ input.contentLogout }}</p>
+  </mat-dialog-content>
+</div>
+<div *ngIf="input.case === 'ERROR'"  [dir]="input.textDir? input.textDir: textDir">
+  <h2 mat-dialog-title *ngIf="input.title">{{ input.title }}</h2>
+  <mat-dialog-content style="white-space: pre-line;">{{ input.message }}</mat-dialog-content>
+  <mat-dialog-actions align="end">
+    <button (click)="onNoClick(input.yesButtonText)" mat-button [mat-dialog-close]="confirm" cdkFocusInitial
+      class="btn-submit">
+      {{ input.yesButtonText }}
+    </button>
+  </mat-dialog-actions>
+</div>
+<div *ngIf="input.case === 'LANGUAGE_CAPTURE'" [dir]="input.dir">
+  <h2 mat-dialog-title>{{ input.title }}</h2>
+  <mat-dialog-content>
+    {{ input.message }}<p></p>
+    <mat-error class="error" *ngIf="selectedLanguage.length > input.maxLanguage">
+      {{ input.errorText }}
+    </mat-error>
+    <span *ngFor="let lang of input.languages">
+      <section>
+        <mat-checkbox (change)="onSelectLanguage(lang.code, $event)"
+          [checked]="input.mandatoryLanguages.includes(lang.code) || lang.code == input.userPrefLanguage"
+          [disabled]="input.mandatoryLanguages.includes(lang.code)">{{ lang.value }}</mat-checkbox>
+      </section>
+    </span>
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button (click)="onNoClick(undefined)" class="btn-cancel">
+      {{ input.cancelButtonText }}
+    </button>
+    <span class="spacer"></span>
+    <button [ngClass]="disablelanguageSubmitBtn? 'btn-submit-disabled' : 'btn-submit'"
+      (click)="collectDataCaptureLanguage()" [disabled]="disablelanguageSubmitBtn" mat-button>
+      {{ input.submitButtonText }}
+    </button>
+  </mat-dialog-actions>
+</div>

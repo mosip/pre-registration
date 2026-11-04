@@ -8,6 +8,9 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 @Data
+/**
+ * Data transfer object carrying cancel booking across Pre-Registration APIs.
+ */
 public class CancelBookingDTO implements Serializable {
 	/**
 	 * 

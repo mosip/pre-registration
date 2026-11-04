@@ -47,6 +47,8 @@ RUN apt-get -y update \
 # select container user for all tasks
 USER ${container_user_uid}:${container_user_gid}
 
+WORKDIR ${work_dir}
+
 EXPOSE 8083
 
 ENV MODULES=

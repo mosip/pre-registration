@@ -1,192 +1,199 @@
 AddLostUinApplication:
-   Prereg_AddLostUinApplication_All_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_01
-      description: validate that the Lost UIN application is successfully processed when a valid ID is provided
-      role: batch
-      templateFields: ["langCode"]
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/AddLostUinApplication/addLostUinApplicationResult
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "eng",
-  "id": "mosip.pre-registration.lostuin.create"
-}'
-      output: '{
-  "bookingType": "LOST_FORGOTTEN_UIN",
-  "applicationStatusCode": "SUBMITTED"
-}'
-   Prereg_AddLostUinApplication_Invalid_id:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_02
-      description: validate that the Lost UIN application is not processed when an invalid ID is provided
-      role: batch
-      templateFields: ["langCode"]
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "eng",
-  "id": "n.create"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_CORE_001"
-    }
-  ]
-}'
-   Prereg_AddLostUinApplication_invalid_lang_code:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_03
-      description: validate that the Lost UIN application is not processed when an invalid language code is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "e@@dd",
-  "id": "mosip.pre-registration.lostuin.create"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_014"
-    }
-  ]
-}'
-   Prereg_AddLostUinApplication_without_version:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_04
-      description: validate that the Lost UIN application is not processed when the version is not provided
-      role: batch
-      templateFields: ["langCode"]
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/error
-      input: '{
-  "version": "",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "eng",
-  "id": "mosip.pre-registration.lostuin.create"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_AddLostUinApplication_without_version_attribute:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_05
-      description: validate that the Lost UIN application is not processed when the version attribute is not provided
-      role: batch
-      checkErrorsOnlyInResponse: true
-      templateFields: ["langCode"]
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/error
-      input: '{
-  "version": "$REMOVE$",		
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "eng",
-  "id": "mosip.pre-registration.lostuin.create"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_AddLostUinApplication_with_INVALID_version:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_06
-      description: validate that the Lost UIN application is not processed when an invalid version is provided
-      role: batch
-      templateFields: ["langCode"]
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/error
-      input: '{
-  "version": "$353F@GGWYS",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "eng",
-  "id": "mosip.pre-registration.lostuin.create"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_AddLostUinApplication_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_07
-      description: validate that the Lost UIN application is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      templateFields: ["langCode"]
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/AddLostUinApplication/addLostUinApplicationResult
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "eng",
-  "id": "mosip.pre-registration.lostuin.create"
-}'
-      output: '{
-  "bookingType": "LOST_FORGOTTEN_UIN",
-  "applicationStatusCode": "SUBMITTED"
-}'
+  Prereg_AddLostUinApplication_All_Valid_Smoke_sid:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_01
+    description: validate that the Lost UIN application is successfully processed when a valid ID is provided
+    role: batch
+    templateFields: [langCode]
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/AddLostUinApplication/addLostUinApplicationResult
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "eng",
+      "id": "mosip.pre-registration.lostuin.create"
+    }'
+    output: '{
+      "bookingType": "LOST_FORGOTTEN_UIN",
+      "applicationStatusCode": "SUBMITTED"
+    }'
 
-   Prereg_AddLostUinApplication_inValid_langcode:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_08
-      description: validate that the Lost UIN application is not processed when an invalid language code is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/error
-      input: '{
-  "version": "1.0",
-  "requesttime": "$TIMESTAMP$",
-  "langCode": "xyz",
-  "id": "mosip.pre-registration.lostuin.create"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_014"
-    }
-  ]
-}'
-   Prereg_AddLostUinApplication_without_any_data:
-      endPoint: /preregistration/v1/applications/lostuin
-      uniqueIdentifier: TC_prereg_AddLostUinApplication_09
-      description: validate that the Lost UIN application is not processed when no data is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
-      outputTemplate: preReg/error
-      input: '{
-  "version": "",
-  "requesttime": "",
-  "langCode": "",
-  "id": ""
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_003"
-    }
-  ]
-}'
+  Prereg_AddLostUinApplication_Invalid_id:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_02
+    description: validate that the Lost UIN application is not processed when an invalid ID is provided
+    role: batch
+    templateFields: [langCode]
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "eng",
+      "id": "n.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_CORE_001"
+        }
+      ]
+    }'
+
+  Prereg_AddLostUinApplication_invalid_lang_code:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_03
+    description: validate that the Lost UIN application is not processed when an invalid language code is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "e@@dd",
+      "id": "mosip.pre-registration.lostuin.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_014"
+        }
+      ]
+    }'
+
+  Prereg_AddLostUinApplication_without_version:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_04
+    description: validate that the Lost UIN application is not processed when the version is not provided
+    role: batch
+    templateFields: [langCode]
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/error
+    input: '{
+      "version": "",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "eng",
+      "id": "mosip.pre-registration.lostuin.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_AddLostUinApplication_without_version_attribute:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_05
+    description: validate that the Lost UIN application is not processed when the version attribute is not provided
+    role: batch
+    checkErrorsOnlyInResponse: true
+    templateFields: [langCode]
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/error
+    input: '{
+      "version": "$REMOVE$",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "eng",
+      "id": "mosip.pre-registration.lostuin.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_AddLostUinApplication_with_INVALID_version:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_06
+    description: validate that the Lost UIN application is not processed when an invalid version is provided
+    role: batch
+    templateFields: [langCode]
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/error
+    input: '{
+      "version": "$353F@GGWYS",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "eng",
+      "id": "mosip.pre-registration.lostuin.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_AddLostUinApplication_Valid_Smoke_sid:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_07
+    description: validate that the Lost UIN application is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    templateFields: [langCode]
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/AddLostUinApplication/addLostUinApplicationResult
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "eng",
+      "id": "mosip.pre-registration.lostuin.create"
+    }'
+    output: '{
+      "bookingType": "LOST_FORGOTTEN_UIN",
+      "applicationStatusCode": "SUBMITTED"
+    }'
+
+  Prereg_AddLostUinApplication_inValid_langcode:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_08
+    description: validate that the Lost UIN application is not processed when an invalid language code is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/error
+    input: '{
+      "version": "1.0",
+      "requesttime": "$TIMESTAMP$",
+      "langCode": "xyz",
+      "id": "mosip.pre-registration.lostuin.create"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_014"
+        }
+      ]
+    }'
+
+  Prereg_AddLostUinApplication_without_any_data:
+    endPoint: /preregistration/v1/applications/lostuin
+    uniqueIdentifier: TC_prereg_AddLostUinApplication_09
+    description: validate that the Lost UIN application is not processed when no data is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/AddLostUinApplication/addLostUinApplication
+    outputTemplate: preReg/error
+    input: '{
+      "version": "",
+      "requesttime": "",
+      "langCode": "",
+      "id": ""
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_003"
+        }
+      ]
+    }'

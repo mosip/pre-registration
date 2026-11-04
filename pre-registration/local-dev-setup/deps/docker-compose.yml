@@ -1,0 +1,203 @@
+# Compose project name (shown by `docker compose ls`) — not the parent folder name.
+name: prereg-local
+
+services:
+
+  postgres:
+    image: 'postgres:bookworm'
+    container_name: prereg_local_postgres
+    ports:
+      - 5455:5432
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=mosip123
+    volumes:
+      # Single init.sql (+ DDL mounts), same layout as id-repository local-dev.
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+      - ./keymanager:/keymanager:ro
+      - ./audit:/audit:ro
+      - ../../../db_scripts:/db_scripts:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+
+  config-server:
+    image: mosipid/config-server:latest
+    container_name: prereg_local_config_server
+    ports:
+      - "51100:51000"
+    volumes:
+      - ./mosip-config:/mosip-config:ro
+    environment:
+      - SPRING_PROFILES_ACTIVE=native
+      - SPRING_CLOUD_CONFIG_SERVER_NATIVE_SEARCH_LOCATIONS=file:/mosip-config
+      - SPRING_CLOUD_CONFIG_SERVER_ACCEPT_EMPTY=true
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_FORCE_PULL=false
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_CLONEONSTART=false
+      - SPRING_CLOUD_CONFIG_SERVER_GIT_REFRESHRATE=0
+      - SERVER_PORT=51000
+      - MANAGEMENT_ENDPOINTS_WEB_EXPOSURE_INCLUDE=*
+      - MANAGEMENT_ENDPOINT_HEALTH_SHOW_DETAILS=always
+      - MANAGEMENT_SECURITY_ENABLED=false
+      - SPRING_SECURITY_ENABLED=false
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:51000/config/application/default || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 12
+      start_period: 20s
+
+  mock-service:
+    build:
+      context: ./wiremock
+      dockerfile: Dockerfile
+    image: prereg-local-wiremock:3.13.2-jre21
+    container_name: prereg_local_wiremock
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./wiremock/mappings:/home/wiremock/mappings
+      - ./wiremock/__files:/home/wiremock/__files
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    environment:
+      - JAVA_OPTS=-Xms128m -Xmx512m
+    command:
+      - --verbose
+      - --port
+      - "8082"
+      - --local-response-templating
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8082/__admin/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 15s
+
+  # Document object store (S3Adapter). Boot does not need MinIO; upload/download does.
+  # Credentials match s3.accesskey / s3.secretkey in local mosip-config.
+  minio:
+    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
+    container_name: prereg_local_minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    command: server /data --console-address ":9001"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/minio/health/live"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  minio-init:
+    image: minio/mc:latest
+    container_name: prereg_local_minio_init
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin &&
+      mc mb --ignore-existing local/prereg &&
+      exit 0
+      "
+
+  # Encrypt/decrypt for demographics and documents. PKCS12 in ../keys, seed inlined in init.sql.
+  # Bootstrap verifies PRE_REGISTRATION and creates the INDIVIDUAL reference key via getCertificate.
+  keymanager-service:
+    image: mosipid/kernel-keymanager-service:1.3.0
+    container_name: prereg_local_keymanager
+    ports:
+      - "8088:8088"
+    volumes:
+      - ../keys:/home/mosip/config:rw
+      - ./keymanager:/bootstrap:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+      config-server:
+        condition: service_healthy
+      mock-service:
+        condition: service_healthy
+    environment:
+      SPRING_CLOUD_CONFIG_LABEL: develop
+      KM_CONFIG_DIR: /home/mosip/config
+      KM_URL: http://127.0.0.1:8088
+      KM_STATIC_SEED: "true"
+    entrypoint: ["/bin/bash", "/bootstrap/bootstrap.sh"]
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "test -f /home/mosip/config/.km-local-ready && curl -f http://localhost:8088/v1/keymanager/actuator/health || exit 1",
+        ]
+      interval: 15s
+      timeout: 5s
+      retries: 40
+      start_period: 300s
+
+  # Mock SMTP + SMS ([mosip/mock-smtp-sms](https://github.com/mosip/mock-smtp-sms/tree/develop)).
+  # UI :8080, websocket :8081, SMTP :8025. GET /sendsms on :8080.
+  mock-smtp:
+    image: mosipid/mock-smtp:1.0.0
+    container_name: prereg_local_mock_smtp
+    ports:
+      - "8025:8025"
+      - "8080:8080"
+      - "8081:8081"
+    environment:
+      SERVER_HOST: "0.0.0.0"
+      SMTP_SERVER_PORT: "8025"
+      SERVER_PORT: "8080"
+      WS_SERVER_PORT: "8081"
+      WS_EX_PROTOCOL: "ws"
+      WS_EX_SERVER_PORT: "8081"
+      WS_EX_BASE_PATH: ""
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://127.0.0.1:8080/',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 15s
+
+  # Forwards kernel notifier HTTP to mock-smtp (SMTP :8025 / GET /sendsms).
+  notifier:
+    build:
+      context: ./notifier
+      dockerfile: Dockerfile
+    image: prereg-local-notifier:local
+    container_name: prereg_local_notifier
+    ports:
+      - "8083:8083"
+    environment:
+      SERVER_PORT: "8083"
+      SMTP_HOST: mock-smtp
+      SMTP_PORT: "8025"
+      SMS_URL: http://mock-smtp:8080/sendsms
+    depends_on:
+      mock-smtp:
+        condition: service_healthy
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "node -e \"require('http').get('http://127.0.0.1:8083/',r=>process.exit(r.statusCode<500?0:1)).on('error',()=>process.exit(1))\"",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 8
+      start_period: 10s

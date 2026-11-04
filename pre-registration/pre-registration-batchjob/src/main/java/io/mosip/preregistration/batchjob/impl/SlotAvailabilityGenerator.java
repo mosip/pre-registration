@@ -42,27 +42,50 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class SlotAvailabilityGenerator {
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger LOGGER = LoggerConfiguration.logConfig(SlotAvailabilityGenerator.class);
 
 	@Value("${preregistration.availability.sync}")
 	int noOfDaysToSync;
 
 	@Value("${mosip.mandatory-languages}")
+	/**
+	 * mandatory lang codes used by this Pre-Registration type.
+	 */
 	private String mandatoryLangCodes;
 
 	@Value("${mosip.optional-languages}")
+	/**
+	 * optional lang codes used by this Pre-Registration type.
+	 */
 	private String optionalLangCodes;
 
 	@Value("${notification.url}")
+	/**
+	 * notification url used by this Pre-Registration type.
+	 */
 	private String notificationURL;
 
 	@Value("${mosip.batch.token.authmanager.userName}")
+	/**
+	 * audit username used by this Pre-Registration type.
+	 */
 	private String auditUsername;
 
 	@Value("${mosip.batch.token.authmanager.appId}")
+	/**
+	 * audit user id used by this Pre-Registration type.
+	 */
 	private String auditUserId;
 
 	@Autowired
+	/**
+	 * rest helper used by this Pre-Registration type.
+	 */
 	private RestHelper restHelper;
 
 	/**
@@ -72,12 +95,24 @@ public class SlotAvailabilityGenerator {
 	private BatchJpaRepositoryImpl batchServiceDAO;
 
 	@Autowired
+	/**
+	 * batch db helper used by this Pre-Registration type.
+	 */
 	private PreRegBatchDBHelper batchDBHelper;
 
 	@Autowired
+	/**
+	 * cancel and notify helper used by this Pre-Registration type.
+	 */
 	private CancelAndNotifyHelper cancelAndNotifyHelper;
 
 
+    /**
+     * Performs generate registration availability slots for MOSIP Pre-Registration.
+     *
+     * @param partName part name used by generate registration availability slots
+     * @param regCenterIdsPartList reg center ids part list used by generate registration availability slots
+     */
     public void generateRegistrationAvailabilitySlots(String partName, List<String> regCenterIdsPartList) {
 
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
@@ -175,6 +210,16 @@ public class SlotAvailabilityGenerator {
 						AuditLogVariables.BOOKING_SERVICE.toString());
     }
 
+	/**
+	 * Performs check and save empty slot for MOSIP Pre-Registration.
+	 *
+	 * @param regCenterDetails reg center details used by check and save empty slot
+	 * @param slotsAvailableList slots available list used by check and save empty slot
+	 * @param slotGenCurrentDay slot gen current day used by check and save empty slot
+	 * @param logIdentifier log identifier used by check and save empty slot
+	 * @param cancelledTracker cancelled tracker used by check and save empty slot
+	 * @param notifierTracker notifier tracker used by check and save empty slot
+	 */
 	private void checkAndSaveEmptySlot(RegistrationCenterDto regCenterDetails, List<AvailibityEntity> slotsAvailableList, 
 				LocalDate slotGenCurrentDay, String logIdentifier, Map<String, Boolean> cancelledTracker,
 				Map<String, Boolean> notifierTracker) {
@@ -230,6 +275,13 @@ public class SlotAvailabilityGenerator {
 
 	
 
+	/**
+	 * Performs calculate full day slots and save for MOSIP Pre-Registration.
+	 *
+	 * @param regCenterDetails reg center details used by calculate full day slots and save
+	 * @param slotGenCurrentDay slot gen current day used by calculate full day slots and save
+	 * @param logIdentifier log identifier used by calculate full day slots and save
+	 */
 	private void calculateFullDaySlotsAndSave(RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, 
 					String logIdentifier) {
 		
@@ -274,6 +326,17 @@ public class SlotAvailabilityGenerator {
 				"Total Number of slots added (full day including lunch): " + totalSlotAdded + ", Processing Day: " + slotGenCurrentDay);
 	}
 
+	/**
+	 * Performs calculate and save slot for MOSIP Pre-Registration.
+	 *
+	 * @param startTime start time used by calculate and save slot
+	 * @param endTime end time used by calculate and save slot
+	 * @param perKioskProcessTime per kiosk process time used by calculate and save slot
+	 * @param regCenterDetails reg center details used by calculate and save slot
+	 * @param slotGenCurrentDay slot gen current day used by calculate and save slot
+	 * @param logIdentifier log identifier used by calculate and save slot
+	 * @return calculate and save slot result
+	 */
 	private int calculateAndSaveSlot(LocalTime startTime, LocalTime endTime, LocalTime perKioskProcessTime, 
 				RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, String logIdentifier) {
 		LocalTime slotStartTime = startTime;
@@ -299,6 +362,14 @@ public class SlotAvailabilityGenerator {
 		return slotsCnt;
 	}
 
+	/**
+	 * Performs purge and calculate full day slots then save for MOSIP Pre-Registration.
+	 *
+	 * @param regCenterDetails reg center details used by purge and calculate full day slots then save
+	 * @param slotGenCurrentDay slot gen current day used by purge and calculate full day slots then save
+	 * @param logIdentifier log identifier used by purge and calculate full day slots then save
+	 * @param slotsAvailableList slots available list used by purge and calculate full day slots then save
+	 */
 	private void purgeAndCalculateFullDaySlotsThenSave(RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, 
 				String logIdentifier, List<AvailibityEntity> slotsAvailableList) {
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, logIdentifier, 
@@ -322,6 +393,16 @@ public class SlotAvailabilityGenerator {
 
 	}
 
+	/**
+	 * Performs check and re calculate full day slots then save for MOSIP Pre-Registration.
+	 *
+	 * @param regCenterDetails reg center details used by check and re calculate full day slots then save
+	 * @param slotGenCurrentDay slot gen current day used by check and re calculate full day slots then save
+	 * @param logIdentifier log identifier used by check and re calculate full day slots then save
+	 * @param slotsAvailableList slots available list used by check and re calculate full day slots then save
+	 * @param cancelledTracker cancelled tracker used by check and re calculate full day slots then save
+	 * @param notifierTracker notifier tracker used by check and re calculate full day slots then save
+	 */
 	private void checkAndReCalculateFullDaySlotsThenSave(RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, 
 					String logIdentifier, List<AvailibityEntity> slotsAvailableList, Map<String, Boolean> cancelledTracker,
 					Map<String, Boolean> notifierTracker) {
@@ -513,6 +594,15 @@ public class SlotAvailabilityGenerator {
 		}
 	}
 
+	/**
+	 * Performs cancel and notify slots for MOSIP Pre-Registration.
+	 *
+	 * @param regCenterDetails reg center details used by cancel and notify slots
+	 * @param slotGenCurrentDay slot gen current day used by cancel and notify slots
+	 * @param logIdentifier log identifier used by cancel and notify slots
+	 * @param cancelledTracker cancelled tracker used by cancel and notify slots
+	 * @param notifierTracker notifier tracker used by cancel and notify slots
+	 */
 	private void cancelAndNotifySlots(RegistrationCenterDto regCenterDetails, LocalDate slotGenCurrentDay, String logIdentifier, 
 									 Map<String, Boolean> cancelledTracker, Map<String, Boolean> notifierTracker) {
 
@@ -525,6 +615,17 @@ public class SlotAvailabilityGenerator {
 		});
 	}
 
+	/**
+	 * Performs recalculate slots for MOSIP Pre-Registration.
+	 *
+	 * @param centerConfiguredTime center configured time used by recalculate slots
+	 * @param slotCalculatedTime slot calculated time used by recalculate slots
+	 * @param regCenterDetails reg center details used by recalculate slots
+	 * @param slotGenCurrentDay slot gen current day used by recalculate slots
+	 * @param logIdentifier log identifier used by recalculate slots
+	 * @param cancelledTracker cancelled tracker used by recalculate slots
+	 * @param notifierTracker notifier tracker used by recalculate slots
+	 */
 	private void recalculateSlots(LocalTime centerConfiguredTime, LocalTime slotCalculatedTime, RegistrationCenterDto regCenterDetails, 
 					LocalDate slotGenCurrentDay, String logIdentifier, Map<String, Boolean> cancelledTracker,
 					Map<String, Boolean> notifierTracker) {
@@ -556,6 +657,12 @@ public class SlotAvailabilityGenerator {
 											"Total Number of new bookings slots added between hours: " + totalSlotAdded);
 	}
 
+	/**
+	 * Performs find lunch times for MOSIP Pre-Registration.
+	 *
+	 * @param slotsAvailableList slots available list used by find lunch times
+	 * @return find lunch times result
+	 */
 	private Object[] findLunchTimes(List<AvailibityEntity> slotsAvailableList) {
 		int listSize = slotsAvailableList.size();
 		LocalTime lunchSlotStartTime = null;
@@ -574,6 +681,12 @@ public class SlotAvailabilityGenerator {
 		return new Object[] {lunchSlotStartTime, lunchSlotEndTime};
 	}
 
+	/**
+	 * Performs print cancel notify status for MOSIP Pre-Registration.
+	 *
+	 * @param tracker tracker used by print cancel notify status
+	 * @param trackerLog tracker log used by print cancel notify status
+	 */
 	private void printCancelNotifyStatus(Map<String, Boolean> tracker, String trackerLog) {
 
 		tracker.entrySet().stream().forEach(trackerKey -> {

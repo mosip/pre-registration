@@ -1,6 +1,15 @@
 package io.mosip.testrig.apirig.prereg.utils;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
@@ -39,6 +48,7 @@ import org.testng.SkipException;
 import com.auth0.jwt.JWT;
 import com.auth0.jwt.interfaces.DecodedJWT;
 
+import io.mosip.testrig.apirig.dbaccess.DBManager;
 import io.mosip.testrig.apirig.dto.OutputValidationDto;
 import io.mosip.testrig.apirig.dto.TestCaseDTO;
 import io.mosip.testrig.apirig.testrunner.BaseTestCase;
@@ -46,6 +56,7 @@ import io.mosip.testrig.apirig.utils.AdminTestException;
 import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
+import io.mosip.testrig.apirig.utils.GlobalMethods;
 import io.mosip.testrig.apirig.utils.NotificationListener;
 import io.mosip.testrig.apirig.utils.RestClient;
 import io.mosip.testrig.apirig.utils.SkipTestCaseHandler;
@@ -92,6 +103,15 @@ public class PreRegUtil extends AdminTestUtil {
 	private static final String DEFAULT_ACTUATOR_ENDPOINT = "/preregistration/v1/actuator/env";
 	private static final long PARALLEL_REQUEST_TIMEOUT_SECONDS = 120;
 	public static final String PII_RUN_ID_KEYWORD = "$PIIRUNID$";
+
+	/** Property naming the OTP login id whose rows {@link #dbCleanUp()} deletes in {@code loginUser} scope. */
+	private static final String TEST_DATA_CREATOR_PROPERTY = "testDataCreator";
+	/** Placeholder in {@code config/preregDeleteQueries.txt}. */
+	private static final String TEST_USER_PLACEHOLDER = "${testUserId}";
+	/** {@code allTransactional} (local dedicated DB) or {@code loginUser} (shared/QA). */
+	private static final String DB_CLEANUP_SCOPE_PROPERTY = "dbCleanupScope";
+	private static final String SCOPE_ALL_TRANSACTIONAL = "allTransactional";
+	private static final String SCOPE_LOGIN_USER = "loginUser";
 
 	protected static final String preRegOtherUser = "PreregOther_" + PII_RUN_ID + "@mosip.net";
 	protected static final String preRegFaultUser = "PreregFault_" + PII_RUN_ID + "@mosip.net";
@@ -342,13 +362,25 @@ public class PreRegUtil extends AdminTestUtil {
 		// No OTP is sent when send-OTP is rejected (e.g. phone login disabled), so do not wait for one.
 		JSONArray sendOtpErrors = new JSONObject(sendOtp.asString()).optJSONArray("errors");
 		if (sendOtpErrors != null && !sendOtpErrors.isEmpty()) {
-			logger.error("Send OTP rejected for a PII test user: " + sendOtpErrors);
-			return null;
+			boolean otpAlreadySent = false;
+			for (int i = 0; i < sendOtpErrors.length(); i++) {
+				if ("PRE-REG-OTP-408".equals(sendOtpErrors.getJSONObject(i).optString("errorCode"))) {
+					otpAlreadySent = true;
+					break;
+				}
+			}
+			if (!otpAlreadySent) {
+				logger.error("Send OTP rejected for a PII test user " + userId + ": " + sendOtp.asString());
+				return null;
+			}
 		}
 
 		String otp;
-		if (ConfigManager.getUsePreConfiguredOtp().equalsIgnoreCase("yes")) {
-			otp = "111111";
+		if (usePreConfiguredOtp()) {
+			otp = ConfigManager.getPreConfiguredOtp();
+			if (otp == null || otp.isBlank()) {
+				otp = "111111";
+			}
 		} else {
 			otp = NotificationListener.getOtp(userId);
 			// The mail relay may deliver an upper-case login's OTP to the lower-case address.
@@ -360,6 +392,11 @@ public class PreRegUtil extends AdminTestUtil {
 				otp = NotificationListener.getOtp(preRegUser);
 			}
 		}
+		if (otp == null || otp.isBlank()) {
+			logger.error("No OTP for PII test user " + userId
+					+ " (usePreConfiguredOtp=" + ConfigManager.getUsePreConfiguredOtp() + ")");
+			return null;
+		}
 
 		JSONObject validateOtpRequest = new JSONObject();
 		validateOtpRequest.put("id", "mosip.pre-registration.login.useridotp");
@@ -369,7 +406,36 @@ public class PreRegUtil extends AdminTestUtil {
 		Response otpValidate = AdminTestUtil.postWithJson(
 				getPropertyOrDefault("preregValidateOtp", "/preregistration/v1/login/validateOtp"),
 				validateOtpRequest.toString());
-		return otpValidate.getCookie(GlobalConstants.AUTHORIZATION);
+		String token = otpValidate.getCookie(GlobalConstants.AUTHORIZATION);
+		if (token == null || token.isEmpty()) {
+			token = authorizationCookie(otpValidate);
+		}
+		if (token == null || token.isEmpty()) {
+			logger.error("Validate OTP returned no Authorization cookie for " + userId + ": "
+					+ otpValidate.asString());
+		}
+		return token;
+	}
+
+	/** Login sets a Secure cookie; RestAssured may drop it on http://localhost. Read Set-Cookie. */
+	private static String authorizationCookie(Response response) {
+		String header = response.getHeader("Set-Cookie");
+		if (header == null || header.isBlank()) {
+			return "";
+		}
+		for (String part : header.split(";")) {
+			String trimmed = part.trim();
+			if (trimmed.regionMatches(true, 0, "Authorization=", 0, "Authorization=".length())) {
+				return trimmed.substring("Authorization=".length());
+			}
+		}
+		return "";
+	}
+
+	/** Commons getOtp checks "true"; this module also accepted "yes". */
+	public static boolean usePreConfiguredOtp() {
+		String value = ConfigManager.getUsePreConfiguredOtp();
+		return "true".equalsIgnoreCase(value) || "yes".equalsIgnoreCase(value);
 	}
 
 	private static String getPropertyOrDefault(String key, String defaultValue) {
@@ -427,10 +493,136 @@ public class PreRegUtil extends AdminTestUtil {
 		}
 	}
 
-	/** application-service actuator env URL (preregActuatorEndpoint in prereg.properties). */
+	/**
+	 * Deletes leftover test data from {@code mosip_prereg}, using the SQL files under {@code config/}.
+	 * Runs once during suite setup, before any test case. Rows from this run are left in the DB for
+	 * inspection; the next run's setup deletes them.
+	 * <p>
+	 * {@code dbCleanupScope=allTransactional} (local default) removes applications, documents,
+	 * bookings, OTP, consumed/processed lists, anonymous profiles and {@code user_details}. Slot seed
+	 * ({@code reg_available_slot}) and batch tables are not touched. {@code loginUser} (server default)
+	 * deletes only rows for {@link #getTestUserId()}.
+	 * </p>
+	 */
+	public static void dbCleanUp() {
+		dropLeftoverFaultInjectionObjects();
+		String scope = getDbCleanupScope();
+		logger.info("DB cleanup scope: " + scope);
+		if (SCOPE_ALL_TRANSACTIONAL.equalsIgnoreCase(scope)) {
+			runCleanup("prereg", () -> DBManager.executeDBQueries(getPreregDbUrl(), ConfigManager.getAuditDbUser(),
+					ConfigManager.getAuditDbPass(), "prereg",
+					getGlobalResourcePath() + "/" + "config/preregDeleteAllTransactionalQueries.txt"));
+			return;
+		}
+		String testUserId;
+		try {
+			testUserId = getTestUserId();
+		} catch (IllegalStateException e) {
+			logger.error("DB cleanup skipped for prereg: " + e.getMessage());
+			return;
+		}
+		logger.info("DB cleanup deletes prereg rows for login user: " + testUserId);
+		runCleanup("prereg",
+				() -> executeUserQueries("config/preregDeleteQueries.txt", testUserId));
+	}
+
+	/**
+	 * Login id whose leftover rows {@code loginUser} cleanup deletes: property {@code testDataCreator},
+	 * or the commons {@code preRegUser} when it is not set.
+	 */
+	static String getTestUserId() {
+		String creator = null;
+		try {
+			creator = PreRegConfigManager.getproperty(TEST_DATA_CREATOR_PROPERTY);
+		} catch (Exception e) {
+			logger.warn("Property " + TEST_DATA_CREATOR_PROPERTY + " not readable: " + e.getMessage());
+		}
+		if (creator == null || creator.isBlank()) {
+			creator = preRegUser;
+		}
+		if (creator == null || creator.isBlank()) {
+			throw new IllegalStateException("No " + TEST_DATA_CREATOR_PROPERTY + " or preRegUser for DB cleanup");
+		}
+		creator = creator.trim();
+		if (!creator.matches("[A-Za-z0-9._@+-]+")) {
+			throw new IllegalStateException("Invalid " + TEST_DATA_CREATOR_PROPERTY + ": " + creator);
+		}
+		return creator;
+	}
+
+	static String getDbCleanupScope() {
+		String scope = null;
+		try {
+			scope = PreRegConfigManager.getproperty(DB_CLEANUP_SCOPE_PROPERTY);
+		} catch (Exception e) {
+			logger.warn("Property " + DB_CLEANUP_SCOPE_PROPERTY + " not readable: " + e.getMessage());
+		}
+		if (scope != null && !scope.isBlank()) {
+			return scope.trim();
+		}
+		String endpoint = System.getProperty("env.endpoint", "");
+		if (endpoint.contains("localhost") || endpoint.contains("127.0.0.1")) {
+			return SCOPE_ALL_TRANSACTIONAL;
+		}
+		return SCOPE_LOGIN_USER;
+	}
+
+	private static String getPreregDbUrl() {
+		return "jdbc:postgresql://" + ConfigManager.getDbServer() + ":" + ConfigManager.getDbPort() + "/mosip_prereg";
+	}
+
+	private static void executeUserQueries(String relativePath, String testUserId) {
+		Path resolved = null;
+		try {
+			String template = Files.readString(Paths.get(getGlobalResourcePath(), relativePath),
+					StandardCharsets.UTF_8);
+			resolved = Files.createTempFile("prereg-cleanup-", ".txt");
+			Files.writeString(resolved, template.replace(TEST_USER_PLACEHOLDER, testUserId), StandardCharsets.UTF_8);
+			DBManager.executeDBQueries(getPreregDbUrl(), ConfigManager.getAuditDbUser(),
+					ConfigManager.getAuditDbPass(), "prereg", resolved.toString());
+		} catch (IOException e) {
+			throw new UncheckedIOException(e);
+		} finally {
+			if (resolved != null) {
+				try {
+					Files.deleteIfExists(resolved);
+				} catch (IOException e) {
+					logger.warn("Could not delete " + resolved + ": " + e.getMessage());
+				}
+			}
+		}
+	}
+
+	private static void dropLeftoverFaultInjectionObjects() {
+		try {
+			executeDbStatement("prereg",
+					"DO $$ DECLARE r record; BEGIN FOR r IN SELECT tgname FROM pg_trigger WHERE NOT tgisinternal AND tgname LIKE 'pii_fault_trg_%' LOOP EXECUTE format('DROP TRIGGER IF EXISTS %I ON prereg.user_details', r.tgname); END LOOP; END $$");
+			executeDbStatement("prereg",
+					"DO $$ DECLARE r record; BEGIN FOR r IN SELECT p.proname FROM pg_proc p JOIN pg_namespace n ON n.oid = p.pronamespace WHERE n.nspname = 'prereg' AND p.proname LIKE 'pii_fault_fn_%' LOOP EXECUTE format('DROP FUNCTION IF EXISTS prereg.%I()', r.proname); END LOOP; END $$");
+		} catch (SQLException e) {
+			logger.info("Leftover PII fault-injection objects not dropped: " + e.getMessage());
+		}
+	}
+
+	/** Runs one cleanup step and logs, rather than propagates, any exception. */
+	private static void runCleanup(String schema, Runnable cleanup) {
+		try {
+			cleanup.run();
+		} catch (Exception e) {
+			logger.error("DB cleanup skipped for " + schema + ": " + e.getClass().getSimpleName() + " - "
+					+ e.getMessage());
+		}
+	}
+
+	/**
+	 * application-service actuator env URL ({@code preregActuatorEndpoint} in prereg.properties).
+	 * Local runs set {@code env.endpoint} to WireMock; rewrite with the same
+	 * {@code mosip_components_base_urls} host map as the HTTP tests so this hits :9090, not :8082.
+	 */
 	public static String getActuatorEnvUrl() {
 		String endpoint = PreRegConfigManager.getproperty("preregActuatorEndpoint");
-		return ApplnURI + (endpoint == null || endpoint.isBlank() ? DEFAULT_ACTUATOR_ENDPOINT : endpoint.trim());
+		String url = ApplnURI + (endpoint == null || endpoint.isBlank() ? DEFAULT_ACTUATOR_ENDPOINT : endpoint.trim());
+		return GlobalMethods.getUpdatedEndPointURL(url);
 	}
 
 	/**
@@ -471,12 +663,31 @@ public class PreRegUtil extends AdminTestUtil {
 	}
 
 	/**
-	 * Fills $PHONENUMBERFORIDENTITY$ (ID schema phone format) and $EMAILVALUE$ (unique per test case) in an
-	 * identity JSON.
+	 * Phone value actually placed in the identity request. The generated
+	 * {@code $PHONENUMBERFORIDENTITY$} stand-in is not this value when the pre-registration
+	 * template copies {@code phone} from the test input.
+	 */
+	protected static String submittedIdentityPhone(String json) {
+		java.util.regex.Matcher matcher = java.util.regex.Pattern.compile("\"phone\"\\s*:\\s*\"([^\"]*)\"")
+				.matcher(json);
+		if (matcher.find() && !matcher.group(1).contains("$")) {
+			return matcher.group(1);
+		}
+		return "";
+	}
+
+	/**
+	 * Fills {@code $PHONENUMBERFORIDENTITY$} and {@code $EMAILVALUE$} the same way id-repository
+	 * {@code AddIdentity} does. Email is {@code <testCaseName>_<runContext><yyyyMMddHHmmss>@mosip.net}.
+	 * Phone follows the ID-schema regex, or the last six timestamp digits plus four random digits.
+	 * A value already substituted for {@code $EMAILVALUE$} is left as-is.
 	 */
 	public static String replaceIdentityContactKeywords(String json, String testCaseName) {
 		if (!json.contains("$PHONENUMBERFORIDENTITY$") && !json.contains("$EMAILVALUE$"))
 			return json;
+		DateFormat dateFormatter = new SimpleDateFormat("yyyyMMddHHmmss");
+		String timestampValue = dateFormatter.format(Calendar.getInstance().getTime());
+		String email = testCaseName + "_" + BaseTestCase.runContext + timestampValue + "@mosip.net";
 		String phoneNumber = "";
 		if (!phoneSchemaRegex.isEmpty()) {
 			try {
@@ -485,8 +696,13 @@ public class PreRegUtil extends AdminTestUtil {
 				logger.error(e.getMessage());
 			}
 		}
+		if (phoneNumber.isEmpty()) {
+			phoneNumber = timestampValue.substring(timestampValue.length() - 6) + generateRandomNumberString(4);
+		}
 		json = replaceKeywordWithValue(json, "$PHONENUMBERFORIDENTITY$", phoneNumber);
-		return replaceKeywordWithValue(json, "$EMAILVALUE$", testCaseName + "_" + BaseTestCase.runContext + "@mosip.com");
+		if (json.contains("$EMAILVALUE$"))
+			json = replaceKeywordWithValue(json, "$EMAILVALUE$", email);
+		return json;
 	}
 
 	/** User id claim of a JWT (userId, preferred_username or sub), never the token itself; "unknown" if none. */

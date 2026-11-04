@@ -16,4 +16,4 @@
 ./restart.sh
 ```
 
-#### NOTE: To proceed with installing the Pre-Registration UI from this [repository/source](https://github.com/mosip/pre-registration-ui/tree/develop/deploy).
+#### NOTE: Pre-Registration UI is in this repo. Chart: `helm/prereg-ui`. Cluster scripts: `deploy/prereg-ui`. `./install.sh` also installs the UI.

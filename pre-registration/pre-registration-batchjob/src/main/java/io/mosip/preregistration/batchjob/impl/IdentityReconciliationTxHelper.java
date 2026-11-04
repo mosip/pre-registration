@@ -37,12 +37,23 @@ import io.mosip.preregistration.core.util.GenericUtil;
 @Component
 public class IdentityReconciliationTxHelper {
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(IdentityReconciliationTxHelper.class);
 
 	@Autowired
+	/**
+	 * batch jpa repository impl used by this Pre-Registration type.
+	 */
 	private BatchJpaRepositoryImpl batchJpaRepositoryImpl;
 
 	@Autowired
+	/**
+	 * user details service used by this Pre-Registration type.
+	 */
 	private UserDetailsService userDetailsService;
 
 	/**
@@ -134,6 +145,12 @@ public class IdentityReconciliationTxHelper {
 		return true;
 	}
 
+	/**
+	 * Performs resolve user uuid for MOSIP Pre-Registration.
+	 *
+	 * @param userId user id used by resolve user uuid
+	 * @return resolve user uuid result
+	 */
 	private String resolveUserUuid(String userId) {
 		try {
 			return userDetailsService.getOrCreateInternalUserId(userId);

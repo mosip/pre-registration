@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.entity;
 
 import java.io.Serializable;

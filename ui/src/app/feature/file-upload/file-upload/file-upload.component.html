@@ -1,0 +1,171 @@
+<img src="assets/ajax-loader.gif" alt="Loader" *ngIf="" class="loader" />
+<div class="spinner" *ngIf="!dataLoaded">
+  <mat-spinner></mat-spinner>
+</div>
+<!-- <div class="spinner" *ngIf="!users[0] && LOD.length > 0 && !dataLoaded">
+  <mat-spinner></mat-spinner>
+</div> -->
+<div class="file-upload" *ngIf="users[0] && dataLoaded">
+  <div class="user">
+    <header>{{ documentLabels.title_document}}
+      <span>
+        (
+        <span *ngFor="let dataCaptureLang of dataCaptureLanguagesLabels;index as labelsIndex">
+          <span [dir]="userPrefLanguageDir">&nbsp;{{dataCaptureLang}}&nbsp;</span>
+        </span>
+        )
+      </span>
+    </header>
+    <p></p>
+    <span class="readOnly" *ngIf="readOnlyMode && applicationStatus != 'Prefetched'">
+      ( {{ demographicLabels.read_only_message }} )
+    </span>
+    <span class="readOnly" *ngIf="readOnlyMode && applicationStatus == 'Prefetched'">
+      ( {{ demographicLabels.read_only_message_prefetched }} )
+    </span>
+    <hr />
+  </div>
+  <div class="file-upload__message">
+    <strong>
+      {{ documentLabels.text_filetype }} : {{ allowedFilesHtml }} &nbsp;{{ documentLabels.text_filesize }} : {{
+      allowedFileSize }}
+    </strong>
+  </div>
+  <div class="file-upload__body" *ngIf="users[0] && LOD.length > 0 && dataLoaded">
+    <div class="file-upload__body__1">
+      <form [formGroup]="userForm" class="user__form">
+        <div class="file-upload__body__document-type" *ngFor="let document of LOD; let i = index">
+          <div class="fieldContainer" [ngStyle]="document.containerStyle">
+            <div class="fieldHeader" [ngStyle]="document.headerStyle">
+              <!-- Create container header with label in user's login lang -->
+              <mat-label>{{document.labelName[userPrefLanguage]}} : </mat-label>
+              <span *ngIf="document.required" class="required-annotation">*</span>
+            </div>
+            <div class="fieldContent" [ngStyle]="document.containerStyle">
+              <div>
+                <mat-form-field *ngIf="displayHidden">
+                  <input matInput [formControlName]="document.id" />
+                </mat-form-field>
+                <mat-form-field class="file-upload__input">
+                  <mat-label>{{document.labelName[userPrefLanguage]}}</mat-label>
+                  <mat-select #ref (selectionChange)="changeStatus(ref, i)" [(value)]="document.selectedDocName"
+                    disableOptionCentering placeholder="{{ document.code }}" (selectionChange)="selectChange($event, i)"
+                    [disabled]="disableNavigation ||  readOnlyMode || (document.code === 'POA' && sameAsselected ? true : false)">
+                    <!-- (openedChange)="openedChange(i, $event)" -->
+                    <mat-option *ngFor="let ValidDocument of document.documentTypes" value="{{ ValidDocument.code }}">
+                      {{ ValidDocument.name }}
+                    </mat-option>
+                  </mat-select>
+                </mat-form-field>
+                <mat-form-field class="file-upload__docrefid">
+                  <mat-label>{{ documentLabels.text_docrefid }}</mat-label>
+                  <input matInput value="{{document.selectedRefNumber}}" (focusout)="handleDocRefInput($event, document.code)"
+                    (input)="changeRefNumber($event, i)" placeholder=""
+                    (change)="handleDocRefInput($event, document.code)" [disabled]="readOnlyMode || disableNavigation"
+                    #keyboardRef #input />
+                </mat-form-field>
+                <span class="file-upload__button">
+                  <input #fileUpload type="file" id="file_{{ i }}" (click)="fileUpload.value = null" value=""
+                    (change)="handleFileInput($event, document.selectedDocName, document.code, document.selectedRefNumber)"
+                    style="display: none;" />
+                  <input class="browseInput" value="{{ documentLabels.action_browse }}" type="button"
+                    (click)="clickOnButton(i)" [disabled]="disableNavigation || readOnlyMode || ((document.code === 'POA' && sameAsselected) ||
+                  !document.selectedDocName ||
+                  document.selectedDocName === '')" />
+                </span>
+                <span *ngIf="document.code === 'POA' && allApplicants">
+                  <span *ngIf="allApplicants.length >= 1">   
+                    <div style="text-align:center"> {{ documentLabels.OR }} </div>
+                  </span>
+                  <span *ngIf="allApplicants.length >= 1">
+                    <mat-form-field class="file-upload__or">
+                      <mat-select placeholder="{{ documentLabels.sameAs }}"
+                        [disabled]="disableNavigation ||  readOnlyMode"
+                        (selectionChange)="sameAsChange($event, users[0].files.documentsMetaData)" [(value)]="sameAs">
+                        <mat-option value="">
+                          {{ documentLabels.sameAsNone }}
+                        </mat-option>
+                        <mat-option *ngFor="let applicant of allApplicants" value="{{applicant.preRegistrationId}}">
+                          <div *ngIf="applicant.applicantName">
+                            {{applicant.applicantName}}
+                          </div>
+                        </mat-option>
+                      </mat-select>
+                    </mat-form-field>
+                    <mat-icon class="icon" matTooltip="{{ helpText.same_as }}" [inline]="true">
+                      help_outline
+                    </mat-icon>
+                  </span>
+                </span>
+              </div>
+              <p></p>
+              <div class="file-upload__body__document-name">
+                <span *ngFor="let file of users[0].files.documentsMetaData; let j = index">
+                  <span *ngIf="file.docCatCode == document.code">
+                    <span>{{file.docName}}</span>
+                    <span class="spacer"></span>
+                    <a role="button"  *ngIf="!readOnlyMode" class="file-uplaoad__body__document-name__delete"
+                      (click)="deleteUploadedFile(file)"
+                      (keydown.enter)="deleteUploadedFile(file)"
+                      (keydown.space)="deleteUploadedFile(file)"
+                      tabindex="0">
+                      <img src="assets\delete.png" alt="Delete" class="delete-img" />
+                    </a>
+                    <a role="button" class="file-uplaoad__body__document-name__view"
+                       (click)="viewFile(file)"
+                       (keydown.enter)="viewFile(file)"
+                       (keydown.space)="viewFile(file)"
+                       tabindex="0">
+                      <img src="assets\view.png" alt="View" class="view-img" />
+                    </a>
+                  </span>
+                </span>
+              </div>
+              <mat-error class="primary-errors" *ngIf="
+                !readOnlyMode && userForm.get(document.id) &&
+                userForm.get(document.id).hasError('required') && userForm.get(document.id).touched">
+                {{document.labelName[userPrefLanguage]}}
+                {{demographicLabels.validation.requiredMessage}}
+              </mat-error>
+            </div>
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="file-upload__body__2" *ngIf="this.users[0].files && fileIndex >= 0">
+      <p>{{ fileName }}</p>
+      <div *ngIf="!flag">
+        <pdf-viewer class="file-uplaoad__body__2__preview pdf-viewer"
+          *ngIf="fileUrl && fileExtension.toLowerCase() == 'pdf'" [src]="fileUrl" [zoom]="zoom">
+        </pdf-viewer>
+      </div>
+      <div *ngIf="flag">
+        <img *ngIf="fileUrl && fileExtension.toLowerCase() !== 'pdf'" class="file-uplaoad__body__2__preview"
+          [src]="fileUrl" alt="file-upload"/>
+      </div>
+      <div class="file-buttons" *ngIf="fileIndex >= 0">
+        <button class="previousFile" [disabled]="fileIndex <= 0 ? true : false" (click)="previousFile(fileIndex)">
+          <img src="assets/left.png" alt="Left"/>
+        </button>
+        <p *ngIf="fileIndex >= 0">{{ fileIndex + 1 }} - {{ users[0].files.documentsMetaData.length }}</p>
+        <button class="nextFile" [disabled]="fileIndex == users[0].files.documentsMetaData.length - 1 ? true : false"
+          (click)="nextFile(fileIndex)">
+          <img src="assets/right.png" alt="Right"/>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="file-upload__button-container" *ngIf="users[0] && dataLoaded">
+  <button class="user__btn user__btn-back" type="button" (click)="onBack()" [disabled]="disableNavigation"
+    *ngIf="isModify == 'false'">
+    {{ documentLabels.action_back }}
+  </button>
+  <span class="spacer"></span>
+  <button *ngIf="isModify == 'false'" class="user__btn" type="button" (click)="onNext()" [disabled]="disableNavigation">
+    {{ documentLabels.action_continue }}
+  </button>
+  <button [disabled]="disableNavigation" *ngIf="isModify == 'true'" class="user__btn" type="button" (click)="onNext()">
+    {{ demographicLabels.action_preview }}
+  </button>
+</div>

@@ -40,6 +40,9 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.TableNotAccessibleException;
 
 @Component
+/**
+ * Class supporting batch jpa repository impl in MOSIP Pre-Registration (io.mosip.preregistration.batchjob.repository.utils).
+ */
 public class BatchJpaRepositoryImpl {
 
 	/** The Constant LOGGER. */
@@ -54,6 +57,9 @@ public class BatchJpaRepositoryImpl {
 
 	@Autowired
 	@Qualifier("applicationRepository")
+	/**
+	 * application repository used by this Pre-Registration type.
+	 */
 	private ApplicationRepository applicationRepository;
 
 	/** Autowired reference for {@link #bookingRepository}. */
@@ -124,6 +130,12 @@ public class BatchJpaRepositoryImpl {
 		return entity;
 	}
 
+	/**
+	 * Returns applicant demographic object.
+	 *
+	 * @param preRegId pre reg id used by get applicant demographic object
+	 * @return get applicant demographic object result
+	 */
 	public DemographicEntity getApplicantDemographicObject(String preRegId) {
 		try {
 			DemographicEntity entity = demographicRepository.findBypreRegistrationId(preRegId);
@@ -134,6 +146,12 @@ public class BatchJpaRepositoryImpl {
 		}
 	}
 
+	/**
+	 * Performs delete invalid processed pre reg for MOSIP Pre-Registration.
+	 *
+	 * @param preRegId pre reg id used by delete invalid processed pre reg
+	 * @return delete invalid processed pre reg result
+	 */
 	public int deleteInvalidProcessedPreReg(String preRegId) {
 		try {
 			return processedPreIdRepository.deleteBypreRegistrationId(preRegId);
@@ -143,6 +161,12 @@ public class BatchJpaRepositoryImpl {
 		}
 	}
 
+	/**
+	 * Returns applicant entity details.
+	 *
+	 * @param applicationID application id used by get applicant entity details
+	 * @return get applicant entity details result
+	 */
 	public ApplicationEntity getApplicantEntityDetails(String applicationID) {
 
 		ApplicationEntity entity = null;
@@ -161,6 +185,12 @@ public class BatchJpaRepositoryImpl {
 		return entity;
 	}
 
+	/**
+	 * Returns booked applicant entity details.
+	 *
+	 * @param applicationID application id used by get booked applicant entity details
+	 * @return get booked applicant entity details result
+	 */
 	public ApplicationEntity getBookedApplicantEntityDetails(String applicationID) {
 
 		ApplicationEntity entity = null;
@@ -174,6 +204,12 @@ public class BatchJpaRepositoryImpl {
 		return entity;
 	}
 
+	/**
+	 * Returns registration appointment details.
+	 *
+	 * @param applicationID application id used by get registration appointment details
+	 * @return get registration appointment details result
+	 */
 	public RegistrationBookingEntity getRegistrationAppointmentDetails(String applicationID) {
 
 		RegistrationBookingEntity entity = null;
@@ -192,6 +228,12 @@ public class BatchJpaRepositoryImpl {
 		return entity;
 	}
 
+	/**
+	 * Returns all registration appointment details.
+	 *
+	 * @param bookingDate booking date used by get all registration appointment details
+	 * @return get all registration appointment details result
+	 */
 	public List<RegistrationBookingEntity> getAllRegistrationAppointmentDetails(LocalDate bookingDate) {
 		try {
 			List<RegistrationBookingEntity> entity = regAppointmentRepository.findByBookingPKBookingDate(bookingDate);
@@ -249,6 +291,12 @@ public class BatchJpaRepositoryImpl {
 
 	}
 
+	/**
+	 * Performs update applicant entity for MOSIP Pre-Registration.
+	 *
+	 * @param applicantEntity applicant entity used by update applicant entity
+	 * @return update applicant entity result
+	 */
 	public ApplicationEntity updateApplicantEntity(ApplicationEntity applicantEntity) {
 		return applicationRepository.save(applicantEntity);
 	}
@@ -290,6 +338,11 @@ public class BatchJpaRepositoryImpl {
 
 	}
 
+	/**
+	 * Performs delete applicant document for MOSIP Pre-Registration.
+	 *
+	 * @param documentEntity document entity used by delete applicant document
+	 */
 	public void deleteApplicantDocument(DocumentEntity documentEntity) {
 		try {
 			documentRespository.delete(documentEntity);
@@ -509,6 +562,15 @@ public class BatchJpaRepositoryImpl {
 		return registrationBookingEntityList;
 	}
 
+	/**
+	 * Performs find all pre ids bydate and between hours for MOSIP Pre-Registration.
+	 *
+	 * @param regCenterId reg center id used by find all pre ids bydate and between hours
+	 * @param date date used by find all pre ids bydate and between hours
+	 * @param fromTime from time used by find all pre ids bydate and between hours
+	 * @param toTime to time used by find all pre ids bydate and between hours
+	 * @return find all pre ids bydate and between hours result
+	 */
 	public List<RegistrationBookingEntity> findAllPreIdsBydateAndBetweenHours(String regCenterId, LocalDate date,
 			LocalTime fromTime, LocalTime toTime) {
 		List<RegistrationBookingEntity> entityList = null;
@@ -548,6 +610,9 @@ public class BatchJpaRepositoryImpl {
 		return availabilityRepository.save(entity);
 	}
 
+	/**
+	 * Performs flush availability for MOSIP Pre-Registration.
+	 */
 	public void flushAvailability() {
 		log.info("Flushing Availability...");
 		availabilityRepository.flush();
@@ -614,6 +679,12 @@ public class BatchJpaRepositoryImpl {
 		}
 	}
 
+	/**
+	 * Performs update applicant document for MOSIP Pre-Registration.
+	 *
+	 * @param documentEntity document entity used by update applicant document
+	 * @return update applicant document result
+	 */
 	public DocumentEntity updateApplicantDocument(DocumentEntity documentEntity) {
 		try {
 			return documentRespository.save(documentEntity);
@@ -623,6 +694,12 @@ public class BatchJpaRepositoryImpl {
 		}
 	}
 
+	/**
+	 * Performs update booking for MOSIP Pre-Registration.
+	 *
+	 * @param bookingEntity booking entity used by update booking
+	 * @return update booking result
+	 */
 	public RegistrationBookingEntity updateBooking(RegistrationBookingEntity bookingEntity) {
 		try {
 			return regAppointmentRepository.save(bookingEntity);

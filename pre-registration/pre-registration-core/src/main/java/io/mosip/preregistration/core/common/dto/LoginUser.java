@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.dto;
 
 import lombok.Data;
@@ -14,9 +10,18 @@ import lombok.Data;
  */
 @Data
 public class LoginUser {
+	/**
+	 * client id used by this Pre-Registration type.
+	 */
 	private String clientId;
 
+	/**
+	 * secret key used by this Pre-Registration type.
+	 */
 	private String secretKey;
 
+	/**
+	 * app id used by this Pre-Registration type.
+	 */
 	private String appId;
 }

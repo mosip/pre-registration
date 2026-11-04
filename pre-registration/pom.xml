@@ -1,95 +1,109 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
+	<!--
+		MOSIP Pre-Registration parent. Aligns with bio-utils / id-repository engineering:
+		Spring Boot 4.1.1 is the BOM; kernel-bom is banned. Pin MOSIP artifacts explicitly.
+		Do NOT parent io.mosip.biometrics:biometrics — that reactor is biometric libraries only.
+	-->
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>4.1.1</version>
+		<relativePath />
+	</parent>
+
 	<groupId>io.mosip.preregistration</groupId>
 	<artifactId>pre-registration-parent</artifactId>
-	<version>1.4.0-SNAPSHOT</version>
+	<version>1.4.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<name>pre-registration</name>
-	<description>Parent project of MOSIP Pre-Registration</description>
+	<description>
+		Parent reactor for MOSIP Pre-Registration. Builds four artifacts:
+		pre-registration-core (published library of shared DTOs, entities, and utilities),
+		pre-registration-service (one HTTP JVM hosting application, datasync, captcha, and
+		booking APIs on port 9090 under /preregistration/v1), pre-registration-batchjob
+		(scheduled Job for appointment slots and archival), and pridgenerator-service
+		(separate Vert.x JVM on port 8100 under /v1/pridgenerator). Java 21, Spring Boot
+		4.1.1, no kernel-bom. Callers keep the same public URLs as before.
+	</description>
 	<url>https://github.com/mosip/pre-registration</url>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<java.version>21</java.version>
+	<modules>
+		<module>pre-registration-core</module>
+		<module>pre-registration-service</module>
+		<module>pre-registration-batchjob</module>
+		<module>pridgenerator-service</module>
+	</modules>
 
-		<!-- maven -->
+	<properties>
+		<!-- ── Java ─────────────────────────────────────────────────────────── -->
+		<java.version>21</java.version>
 		<maven.compiler.source>${java.version}</maven.compiler.source>
 		<maven.compiler.target>${java.version}</maven.compiler.target>
-		<maven.compiler.version>3.11.0</maven.compiler.version>
-		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
-		<maven.javadoc.plugin.version>3.2.0</maven.javadoc.plugin.version>
-		<maven.shade.plugin.version>2.3</maven.shade.plugin.version>
-		<jacoco.maven.plugin.version>0.8.11</jacoco.maven.plugin.version>
-		<maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
-		<maven.source.plugin.version>3.3.1</maven.source.plugin.version>
-		<maven.gpg.plugin.version>3.2.3</maven.gpg.plugin.version>
-		<maven.jar.plugin.version>3.0.2</maven.jar.plugin.version>
-		<maven.war.plugin.version>3.1.0</maven.war.plugin.version>
-		<maven.assembly.plugin.version>3.3.0</maven.assembly.plugin.version>
-		<maven.surefire.plugin.version>3.1.2</maven.surefire.plugin.version>
-		<spring.boot.maven.plugin.version>3.2.3</spring.boot.maven.plugin.version>
-		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
-		<maven.sonar.plugin.version>3.7.0.1746</maven.sonar.plugin.version>
-		<!-- git -->
-		<git.commit.id.plugin.version>3.0.1</git.commit.id.plugin.version>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+		<argLine />
+		<skipTests>false</skipTests>
+
+		<!-- ── Spring (Boot parent is 4.1.1; Cloud + docs pinned here) ─────── -->
+		<spring-cloud.version>2025.1.3</spring-cloud.version>
+		<springdoc.openapi.starter.webmvc.ui.version>3.1.1</springdoc.openapi.starter.webmvc.ui.version>
 		<springdoc.openapi.maven.plugin>0.2</springdoc.openapi.maven.plugin>
 
-		<!-- Swagger -->
-		<springdoc.openapi.starter.webmvc.ui.version>2.5.0</springdoc.openapi.starter.webmvc.ui.version>
+		<!-- ── Maven plugins ────────────────────────────────────────────────── -->
+		<maven.compiler.version>3.16.0</maven.compiler.version>
+		<maven.jar.plugin.version>3.5.1</maven.jar.plugin.version>
+		<maven.war.plugin.version>3.5.1</maven.war.plugin.version>
+		<maven.surefire.plugin.version>3.6.0</maven.surefire.plugin.version>
+		<jacoco.maven.plugin.version>0.8.15</jacoco.maven.plugin.version>
+		<maven.sonar.plugin.version>5.8.0.7211</maven.sonar.plugin.version>
+		<maven.javadoc.plugin.version>3.12.0</maven.javadoc.plugin.version>
+		<maven.deploy.plugin.version>3.1.4</maven.deploy.plugin.version>
+		<maven.source.plugin.version>3.4.0</maven.source.plugin.version>
+		<maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
+		<git.commit.id.plugin.version>4.9.10</git.commit.id.plugin.version>
+		<central.publishing.maven.plugin.version>0.11.0</central.publishing.maven.plugin.version>
+		<license.maven.plugin.version>2.4.0</license.maven.plugin.version>
+		<nexus.staging.maven.plugin.version>1.7.0</nexus.staging.maven.plugin.version>
 
-		<!-- Core -->
-		<spring.version>5.0.4.RELEASE</spring.version>
-		<spring.boot.version>3.2.3</spring.boot.version>
-		<spring.data.version>2.0.9.RELEASE</spring.data.version>
-		<spring-cloud-config.version>2.0.0.RELEASE</spring-cloud-config.version>
-
-		<!-- Miscellaneous -->
-		<javax.validation-api.version>2.0.1.Final</javax.validation-api.version>
-		<jackson.version>2.9.5</jackson.version>
-
-		<!-- Data Access -->
-		<eclipselink.version>2.5.0</eclipselink.version>
-		<mysql.connector.version>5.1.46</mysql.connector.version>
-		<h2.version>1.4.197</h2.version>
-		<postgresql.version>42.2.2</postgresql.version>
-
-		<!-- For Cache -->
-		<ignite.version>2.3.0</ignite.version>
-		<apache.httpclient.version>4.5.6</apache.httpclient.version>
-
-		<!-- Support tools & utilities -->
-		<commons-math3>3.6.1</commons-math3>
-		<commons-lang3>3.7</commons-lang3>
-		<commons.beanutils.version>1.9.2</commons.beanutils.version>
-		<commons.configuration2.version>2.2</commons.configuration2.version>
-		<commons-collections4.version>4.3</commons-collections4.version>
-
-		<!-- Test & Logging -->
-		<junit.version>4.12</junit.version>
-		<logback.version>1.1.6</logback.version>
-		<slf4j.version>1.7.19</slf4j.version>
-		<mockito-version>3.4.3</mockito-version>
-
-		<!-- Lombok -->
-		<lombok.version>1.18.30</lombok.version>
-
-		<!-- Json Simple -->
+		<!-- ── Third-party (Maven Central) ──────────────────────────────────── -->
+		<lombok.version>1.18.38</lombok.version>
+		<postgresql.version>42.7.5</postgresql.version>
+		<h2.version>2.3.232</h2.version>
 		<jsonsimple.version>1.1.1</jsonsimple.version>
+		<org.json.version>20240303</org.json.version>
+		<uuid.fasterxml.version>5.1.0</uuid.fasterxml.version>
+		<commons-lang3>3.17.0</commons-lang3>
+		<commons-collections4.version>4.5.0</commons-collections4.version>
+		<apache.httpclient.version>4.5.14</apache.httpclient.version>
+		<pdfbox.version>3.0.3</pdfbox.version>
+		<org.ehcache.version>3.10.8</org.ehcache.version>
+		<jaxb.runtime.version>2.3.9</jaxb.runtime.version>
+		<jaxb-api-version>2.3.1</jaxb-api-version>
+		<jackson.annotations.version>2.21</jackson.annotations.version>
+		<jackson.databind.version>2.21.4</jackson.databind.version>
+		<org.hamcrest.version>2.2</org.hamcrest.version>
 
-		<!-- Others -->
-		<uuid.fasterxml.version>3.1.4</uuid.fasterxml.version>
-		<org.json.version>20080701</org.json.version>
-		<modelmapper.version>0.7.4</modelmapper.version>
-		<java.interceptor.version>1.2</java.interceptor.version>
-		<icu.version>63.1</icu.version>
+		<!-- ── MOSIP artifacts — no kernel-bom ──────────────────────────────── -->
+		<!-- Logger, Hibernate, Velocity, QR, ICU transliteration, and PDF are folded
+		     into kernel-core (commons issue-1842). Do not re-pin those libraries here.
+		     kernel-ref-idobjectvalidator and kernel-virusscanner-clamav are loader.path
+		     SPIs, not Maven dependencies. -->
+		<pre.registration.core.version>${project.version}</pre.registration.core.version>
+		<kernel.core.version>1.4.1-SNAPSHOT</kernel.core.version>
+		<kernel.auth.adapter.version>1.4.1-SNAPSHOT</kernel.auth.adapter.version>
+		<kernel.khazana.version>1.4.1-SNAPSHOT</kernel.khazana.version>
+		<!-- PridGeneratorImpl library (commons). The Vert.x service is this reactor's
+		     pridgenerator-service. 1.4.1-SNAPSHOT of the library is not on Central
+		     and is not folded into kernel-core. -->
+		<kernel.prid.generator.version>1.3.0</kernel.prid.generator.version>
 
+		<!-- Decision 2A: keep dto/entity/config/exception/repository/util exclusions -->
 		<sonar.coverage.exclusions>
 			**/code/**,
 			**/config/**,
@@ -103,183 +117,212 @@
 			**/repository/**,
 			**/*Config.java,
 			**/*Application.java,
+			**/*BootApplication.java,
 			**/batchjob/**,
 			**/util/**,
 			**/stateUtil/**,
 			**/preregistration/application/dto/*.java,
-			**/preregistration/application/dto/ApplicantTypeCodeDTO.java,
-			**/preregistration/application/dto/ApplicantTypeKeyValueDTO.java,
 			**/preregistration/datasync/dto/*.java,
-			**/preregistration/booking/dto/*.java
+			**/preregistration/booking/dto/*.java,
+			**/preregistration/captcha/dto/*.java,
+			**/constant/**,
+			**/verticle/**
 		</sonar.coverage.exclusions>
 		<sonar.cpd.exclusions>**/dto/**,**/entity/**,**/config/**</sonar.cpd.exclusions>
-
-		<!-- Mosip kernel -->
-		<kernel.bom.version>1.3.1-rc.1</kernel.bom.version>
-		<kernel.core.version>1.3.1-rc.1</kernel.core.version>
-		<pre.registration.core.version>1.4.0-SNAPSHOT</pre.registration.core.version>
-		<spring-cloud.version>2020.0.4</spring-cloud.version>
 	</properties>
-	
-	<modules>
-		<module>pre-registration-core</module>
-		<module>pre-registration-application-service</module>
-		<module>pre-registration-datasync-service</module>
-		<module>pre-registration-batchjob</module>
-		<module>pre-registration-captcha-service</module>
-	</modules>
-	
+
 	<dependencyManagement>
 		<dependencies>
 			<dependency>
-				<groupId>io.mosip.kernel</groupId>
-				<artifactId>kernel-bom</artifactId>
-				<version>${kernel.bom.version}</version>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
+			</dependency>
+
+			<!-- Jackson 2.x: Boot 4 defaults to Jackson 3; MOSIP/kernel still use Jackson 2 -->
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-annotations</artifactId>
+				<version>${jackson.annotations.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.jackson.core</groupId>
+				<artifactId>jackson-databind</artifactId>
+				<version>${jackson.databind.version}</version>
+			</dependency>
+
+			<!-- MOSIP kernel — pinned here, never via kernel-bom -->
+			<dependency>
+				<groupId>io.mosip.kernel</groupId>
+				<artifactId>kernel-core</artifactId>
+				<version>${kernel.core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.mosip.kernel</groupId>
+				<artifactId>kernel-auth-adapter</artifactId>
+				<version>${kernel.auth.adapter.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.mosip.commons</groupId>
+				<artifactId>khazana</artifactId>
+				<version>${kernel.khazana.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.mosip.preregistration</groupId>
+				<artifactId>pre-registration-core</artifactId>
+				<version>${pre.registration.core.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>io.mosip.kernel</groupId>
+				<artifactId>kernel-idgenerator-prid</artifactId>
+				<version>${kernel.prid.generator.version}</version>
+			</dependency>
+
+			<dependency>
+				<groupId>org.springdoc</groupId>
+				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+				<version>${springdoc.openapi.starter.webmvc.ui.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
 				<version>${lombok.version}</version>
-				<scope>provided</scope>
 			</dependency>
 			<dependency>
-      			<groupId>org.springframework.cloud</groupId>
-      		    <artifactId>spring-cloud-dependencies</artifactId>
-     		    <version>${spring-cloud.version}</version>
-      		    <type>pom</type>
-      		    <scope>import</scope>
-     	 	</dependency>
+				<groupId>com.googlecode.json-simple</groupId>
+				<artifactId>json-simple</artifactId>
+				<version>${jsonsimple.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.json</groupId>
+				<artifactId>json</artifactId>
+				<version>${org.json.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>com.fasterxml.uuid</groupId>
+				<artifactId>java-uuid-generator</artifactId>
+				<version>${uuid.fasterxml.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>${commons-collections4.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.httpcomponents</groupId>
+				<artifactId>httpclient</artifactId>
+				<version>${apache.httpclient.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.pdfbox</groupId>
+				<artifactId>pdfbox</artifactId>
+				<version>${pdfbox.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.ehcache</groupId>
+				<artifactId>ehcache</artifactId>
+				<version>${org.ehcache.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>org.glassfish.jaxb</groupId>
+				<artifactId>jaxb-runtime</artifactId>
+				<version>${jaxb.runtime.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.xml.bind</groupId>
+				<artifactId>jaxb-api</artifactId>
+				<version>${jaxb-api-version}</version>
+			</dependency>
+			<dependency>
+				<groupId>javax.activation</groupId>
+				<artifactId>activation</artifactId>
+				<version>1.1.1</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
+
 	<dependencies>
 		<dependency>
-			<groupId>javax.xml.bind</groupId>
-			<artifactId>jaxb-api</artifactId>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
 		</dependency>
 		<dependency>
-			<groupId>javax.activation</groupId>
-			<artifactId>activation</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.glassfish.jaxb</groupId>
-			<artifactId>jaxb-runtime</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.mockito</groupId>
-			<artifactId>mockito-core</artifactId>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>org.javassist</groupId>
-			<artifactId>javassist</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-databind</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.core</groupId>
-			<artifactId>jackson-core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>com.fasterxml.jackson.datatype</groupId>
-			<artifactId>jackson-datatype-jsr310</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.junit.vintage</groupId>
 			<artifactId>junit-vintage-engine</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-starter-data-jpa</artifactId>
-		</dependency>
 	</dependencies>
+
 	<build>
 		<pluginManagement>
 			<plugins>
 				<plugin>
 					<groupId>org.springframework.boot</groupId>
 					<artifactId>spring-boot-maven-plugin</artifactId>
-					<version>${spring.boot.maven.plugin.version}</version>
 				</plugin>
 				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-compiler-plugin</artifactId>
-					<version>${maven.compiler.version}</version>
-					<configuration>
-						<source>${maven.compiler.source}</source>
-						<target>${maven.compiler.target}</target>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-jar-plugin</artifactId>
-					<version>${maven.jar.plugin.version}</version>
-					<configuration>
-						<archive>
-							<manifest>
-								<addClasspath>true</addClasspath>
-								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							</manifest>
-							<manifestEntries>
-								<Project-Name>${project.name}</Project-Name>
-								<Project-Version>${project.version}</Project-Version>
-							</manifestEntries>
-						</archive>
-					</configuration>
-				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-war-plugin</artifactId>
-					<version>${maven.war.plugin.version}</version>
-					<configuration>
-						<archive>
-							<manifest>
-								<addClasspath>true</addClasspath>
-								<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-							</manifest>
-							<manifestEntries>
-								<Project-Name>${project.name}</Project-Name>
-								<Project-Version>${project.version}</Project-Version>
-							</manifestEntries>
-						</archive>
-					</configuration>
+					<groupId>org.sonarsource.scanner.maven</groupId>
+					<artifactId>sonar-maven-plugin</artifactId>
+					<version>${maven.sonar.plugin.version}</version>
 				</plugin>
 			</plugins>
 		</pluginManagement>
 		<plugins>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${maven.compiler.version}</version>
+				<configuration>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+					<parameters>true</parameters>
+					<annotationProcessorPaths>
+						<path>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+							<version>${lombok.version}</version>
+						</path>
+					</annotationProcessorPaths>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>${maven.surefire.plugin.version}</version>
 				<configuration>
 					<skipTests>${skipTests}</skipTests>
-					<skip>false</skip>
-					<argLine>
-						${argLine}
-						--add-opens java.xml/jdk.xml.internal=ALL-UNNAMED
-						--add-opens java.base/java.lang=ALL-UNNAMED
-						--add-opens java.base/java.io=ALL-UNNAMED
-						--illegal-access=debug
-						--enable-preview
-					</argLine>
+					<argLine>@{argLine} --add-opens java.xml/jdk.xml.internal=ALL-UNNAMED --add-opens java.base/java.lang=ALL-UNNAMED --add-opens java.base/java.io=ALL-UNNAMED</argLine>
 				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>${jacoco.maven.plugin.version}</version>
+				<configuration>
+					<excludes>
+						<exclude>**/dto/**</exclude>
+						<exclude>**/entity/**</exclude>
+						<exclude>**/config/**</exclude>
+						<exclude>**/exception/**</exclude>
+						<exclude>**/errorcodes/**</exclude>
+						<exclude>**/repository/**</exclude>
+						<exclude>**/code/**</exclude>
+						<exclude>**/*Config.class</exclude>
+						<exclude>**/*Application.class</exclude>
+						<exclude>**/*BootApplication.class</exclude>
+						<exclude>**/util/**</exclude>
+						<exclude>**/verticle/**</exclude>
+						<exclude>**/constant/**</exclude>
+					</excludes>
+				</configuration>
 				<executions>
 					<execution>
 						<goals>
@@ -294,6 +337,23 @@
 						</goals>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>${maven.jar.plugin.version}</version>
+				<configuration>
+					<archive>
+						<manifest>
+							<addClasspath>true</addClasspath>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+						</manifest>
+						<manifestEntries>
+							<Project-Name>${project.name}</Project-Name>
+							<Project-Version>${project.version}</Project-Version>
+						</manifestEntries>
+					</archive>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -334,7 +394,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-gpg-plugin</artifactId>
@@ -355,68 +414,63 @@
 					</execution>
 				</executions>
 			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-jar-plugin</artifactId>
-				<version>${maven.jar.plugin.version}</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Project-Name>${project.name}</Project-Name>
-							<Project-Version>${project.version}</Project-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-war-plugin</artifactId>
-				<version>${maven.war.plugin.version}</version>
-				<configuration>
-					<archive>
-						<manifest>
-							<addClasspath>true</addClasspath>
-							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-						</manifest>
-						<manifestEntries>
-							<Project-Name>${project.name}</Project-Name>
-							<Project-Version>${project.version}</Project-Version>
-						</manifestEntries>
-					</archive>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>pl.project13.maven</groupId>
 				<artifactId>git-commit-id-plugin</artifactId>
 				<version>${git.commit.id.plugin.version}</version>
 				<executions>
 					<execution>
-						<id>get-the-git-infos</id>
+						<id>git-properties</id>
 						<goals>
 							<goal>revision</goal>
 						</goals>
 						<phase>validate</phase>
+						<configuration>
+							<generateGitPropertiesFile>true</generateGitPropertiesFile>
+							<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+							<includeOnlyProperties>
+								<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+								<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
+							</includeOnlyProperties>
+							<commitIdGenerationMode>full</commitIdGenerationMode>
+							<dotGitDirectory>${maven.multiModuleProjectDirectory}/../.git</dotGitDirectory>
+						</configuration>
+					</execution>
+					<execution>
+						<id>service-git-properties</id>
+						<goals>
+							<goal>revision</goal>
+						</goals>
+						<phase>validate</phase>
+						<configuration>
+							<generateGitPropertiesFile>true</generateGitPropertiesFile>
+							<generateGitPropertiesFilename>${project.build.outputDirectory}/service-git.properties</generateGitPropertiesFilename>
+							<includeOnlyProperties>
+								<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
+								<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
+							</includeOnlyProperties>
+							<commitIdGenerationMode>full</commitIdGenerationMode>
+							<dotGitDirectory>${maven.multiModuleProjectDirectory}/../.git</dotGitDirectory>
+						</configuration>
 					</execution>
 				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>license-maven-plugin</artifactId>
+				<version>${license.maven.plugin.version}</version>
 				<configuration>
-					<generateGitPropertiesFile>true</generateGitPropertiesFile>
-					<generateGitPropertiesFilename>
-						${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
-					<includeOnlyProperties>
-						<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
-						<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
-					</includeOnlyProperties>
-					<commitIdGenerationMode>full</commitIdGenerationMode>
-					<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
+					<outputDirectory>${project.build.directory}/generated-resources</outputDirectory>
+					<thirdPartyFilename>THIRD-PARTY.txt</thirdPartyFilename>
+					<useMissingFile>false</useMissingFile>
+					<includedLicenses>
+						<includedLicense>.*</includedLicense>
+					</includedLicenses>
 				</configuration>
 			</plugin>
 		</plugins>
 	</build>
+
 	<profiles>
 		<profile>
 			<id>sonar</id>
@@ -434,7 +488,6 @@
 					<plugin>
 						<groupId>org.sonarsource.scanner.maven</groupId>
 						<artifactId>sonar-maven-plugin</artifactId>
-						<version>${maven.sonar.plugin.version}</version>
 						<executions>
 							<execution>
 								<phase>verify</phase>
@@ -443,31 +496,6 @@
 								</goals>
 							</execution>
 						</executions>
-					</plugin>
-					<plugin>
-						<groupId>pl.project13.maven</groupId>
-						<artifactId>git-commit-id-plugin</artifactId>
-						<version>${git.commit.id.plugin.version}</version>
-						<executions>
-							<execution>
-								<id>get-the-git-infos</id>
-								<goals>
-									<goal>revision</goal>
-								</goals>
-								<phase>validate</phase>
-							</execution>
-						</executions>
-						<configuration>
-							<generateGitPropertiesFile>true</generateGitPropertiesFile>
-							<generateGitPropertiesFilename>
-							${project.build.outputDirectory}/service-git.properties</generateGitPropertiesFilename>
-							<includeOnlyProperties>
-								<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
-								<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
-							</includeOnlyProperties>
-							<commitIdGenerationMode>full</commitIdGenerationMode>
-							<dotGitDirectory>${project.basedir}/.git</dotGitDirectory>
-						</configuration>
 					</plugin>
 				</plugins>
 			</build>
@@ -510,6 +538,7 @@
 		<license>
 			<name>MPL 2.0</name>
 			<url>https://www.mozilla.org/en-US/MPL/2.0/</url>
+			<distribution>repo</distribution>
 		</license>
 	</licenses>
 	<scm>
@@ -518,10 +547,9 @@
 		<url>https://github.com/mosip/pre-registration</url>
 		<tag>HEAD</tag>
 	</scm>
-
 	<developers>
 		<developer>
-			<name>Mosip</name>
+			<name>MOSIP</name>
 			<email>mosip.emailnotifier@gmail.com</email>
 			<organization>io.mosip</organization>
 			<organizationUrl>https://github.com/mosip/pre-registration</organizationUrl>

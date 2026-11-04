@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob;
 
 import org.springframework.boot.SpringApplication;
@@ -21,7 +17,8 @@ import io.mosip.kernel.dataaccess.hibernate.config.HibernateDaoConfig;
 
 @SpringBootApplication
 @ComponentScan(basePackages = "io.mosip.*", excludeFilters = {
-        @ComponentScan.Filter(type = FilterType.REGEX, pattern = { "io\\.mosip\\.kernel\\.zkcryptoservice\\..*",
+        @ComponentScan.Filter(type = FilterType.REGEX, pattern = { "io\\.mosip\\.kernel\\.core\\.logger\\.config\\..*",
+                "io\\.mosip\\.kernel\\.zkcryptoservice\\..*",
                 "io\\.mosip\\.kernel\\.tokenidgenerator\\..*",
                 "io\\.mosip\\.kernel\\.signature\\..*",
                 "io\\.mosip\\.kernel\\.partnercertservice\\..*",
@@ -36,6 +33,9 @@ import io.mosip.kernel.dataaccess.hibernate.config.HibernateDaoConfig;
         }),
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = { HibernateDaoConfig.class })
 })
+/**
+ * Class supporting pre registration batch job in MOSIP Pre-Registration (io.mosip.preregistration.batchjob).
+ */
 public class PreRegistrationBatchJob {
 	/**
 	 * @param args

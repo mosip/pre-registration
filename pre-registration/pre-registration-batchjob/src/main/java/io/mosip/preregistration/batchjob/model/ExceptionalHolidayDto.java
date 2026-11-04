@@ -22,6 +22,9 @@ public class ExceptionalHolidayDto implements Serializable {
 	private static final long serialVersionUID = 6447129753515705510L;
 
 	@NotNull
+	/**
+	 * holiday date used by this Pre-Registration type.
+	 */
 	private LocalDate holidayDate;
 
 	/**
@@ -33,24 +36,45 @@ public class ExceptionalHolidayDto implements Serializable {
 	 * Holiday month is month of the year as integer value.
 	 */
 	private String holidayMonth;
+	/**
+	 * holiday year used by this Pre-Registration type.
+	 */
 	private String holidayYear;
 
 	@NotBlank
 	@Size(min = 1, max = 64)
+	/**
+	 * holiday name used by this Pre-Registration type.
+	 */
 	private String holidayName;
 
 	@Size(min = 0, max = 128)
+	/**
+	 * holiday reason used by this Pre-Registration type.
+	 */
 	private String holidayReason;
 
+	/**
+	 * registration center id used by this Pre-Registration type.
+	 */
 	private String registrationCenterID;
 
 	@NotNull
+	/**
+	 * is deleted used by this Pre-Registration type.
+	 */
 	private Boolean isDeleted;
 
 	@NotNull
+	/**
+	 * lang code used by this Pre-Registration type.
+	 */
 	private String langCode;
 
 	@NotNull
+	/**
+	 * is active used by this Pre-Registration type.
+	 */
 	private Boolean isActive;
 
 }

@@ -1,31 +1,50 @@
-## Pre-Registration:
-Pre-Registration module enables Individuals to book for an appointment in a Registration Centre, by providing basic demographic details.
-Pre-Registration details are consumed by Registration module while registering an Individual.
+# pre-registration (Maven parent)
 
-Pre-Registration has a UI component and a set of REST Services that back the UI. The UI component can be found at https://github.com/mosip/mosip-ref-impl/tree/master/pre-registration-ui.
+Parent reactor for MOSIP Pre-Registration. Spring Boot **4.1.1**, Java **21**, no `kernel-bom`. How-to for the whole git repo: [root README](../README.md). Layout: [docs/design/service-consolidation.md](../docs/design/service-consolidation.md).
 
-Pre-Registration API specs are at https://github.com/mosip/mosip-docs/wiki/Pre-Registration-Services
+```text
+pre-registration/
+├─ pre-registration-core/         published library (DTOs, entities, utils)
+├─ pre-registration-service/      HTTP :9090 — application + datasync + captcha + booking
+├─ pre-registration-batchjob/     scheduled Job :9097
+├─ pridgenerator-service/         PRID pool :8100, /v1/pridgenerator
+└─ local-dev-setup/               Docker deps + host-run scripts
+```
 
-**Configuration**
-Configurations used for ID Repo are available in [mosip-config](https://github.com/mosip/mosip-config)
+The Angular SPA is [`ui/`](../ui/) at the git root (not a Maven module).
 
-### Build
-Below command should be run in the parent project **authentication**
-`mvn clean install`
+## Frozen public URLs
 
-### Deploy
-Below command should be executed to run any service locally in specific profile and local configurations - 
-`java -Dspring.profiles.active=<profile> -jar <jar-name>.jar`
+Servlet context `/preregistration/v1` on port **9090**:
 
-Below command should be executed to run any service locally in specific profile and `remote` configurations - 
-`java -Dspring.profiles.active=<profile> -Dspring.cloud.config.uri=<config-url> -Dspring.cloud.config.label=<config-label> -jar <jar-name>.jar`
+- application: `/preregistration/v1/applications`, `/documents`, `/login`, `/notification`, `/proxy`, …
+- booking: `/preregistration/v1/appointment/**` (native) and `/preregistration/v1/applications/appointment/**` (application proxy)
+- datasync: `/preregistration/v1/sync`, `/syncV2`, `/sync/{id}`, `/sync/consumedPreRegIds`
+- captcha: `POST /preregistration/v1/captcha/validatecaptcha`
+- health: `/preregistration/v1/actuator/health`
 
-Below command should be executed to run a docker image - 
-`docker run -it -p <host-port>:<container-port> -e active_profile_env={profile} -e spring_config_label_env= {branch} -e spring_config_url_env={config_server_url} <docker-registry-IP:docker-registry-port/<docker-image>`
+PRID stays a **separate** Vert.x JVM (port **8100**): `GET /v1/pridgenerator/prid`.
 
+## Build
 
+From this directory (`pre-registration/`), not the git root:
 
+```text
+mvn clean install -Dmaven.javadoc.skip=true -Dgpg.skip=true
+mvn clean install -pl pre-registration-service -am -Dmaven.javadoc.skip=true -Dgpg.skip=true
+mvn clean install -pl pridgenerator-service -am -Dmaven.javadoc.skip=true -Dgpg.skip=true
+```
 
+Run the HTTP jar (after local-dev deps are up):
 
+```text
+java -jar pre-registration-service/target/pre-registration-service-*.jar
+```
 
+Or from `local-dev-setup/`: `./run-prereg-local.sh run` (Windows: `run-prereg-local.bat run`).
 
+Swagger: http://localhost:9090/preregistration/v1/swagger-ui/index.html — Authorize uses header `Authorization`.
+
+## Configuration
+
+Spring Cloud Config documents `application` and `pre-registration` (`spring.cloud.config.name=application,pre-registration`). Cluster files: [mosip-config](https://github.com/mosip/mosip-config). Local overlay: `local-dev-setup/deps/mosip-config/` plus `pre-registration-service/src/main/resources/application-local.properties`.

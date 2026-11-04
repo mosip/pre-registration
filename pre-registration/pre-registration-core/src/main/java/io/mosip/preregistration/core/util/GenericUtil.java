@@ -9,16 +9,28 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import io.mosip.kernel.core.exception.BaseUncheckedException;
-import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.kernel.core.util.DateUtils2;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 
+/**
+ * Helper used by Pre-Registration for generic util.
+ */
 public class GenericUtil {
 
+	/**
+	 * Creates a generic util.
+	 */
 	private GenericUtil() {
 	}
 
+	/**
+	 * Performs mask identifier for MOSIP Pre-Registration.
+	 *
+	 * @param value value used by mask identifier
+	 * @return mask identifier result
+	 */
 	public static String maskIdentifier(String value) {
 		if (value == null || value.isBlank()) {
 			return "<empty>";
@@ -51,6 +63,12 @@ public class GenericUtil {
 		return "***" + trimmed.substring(trimmed.length() - visible);
 	}
 
+	/**
+	 * Indicates whether uuid.
+	 *
+	 * @param value value used by is uuid
+	 * @return is uuid result
+	 */
 	public static boolean isUuid(String value) {
 		if (value == null || value.isBlank()) {
 			return false;
@@ -77,10 +95,18 @@ public class GenericUtil {
 		return !trimmedEffective.isEmpty() && !trimmedEffective.equals(trimmedOriginal);
 	}
 
+	/**
+	 * date time format used by this Pre-Registration type.
+	 */
 	private static String dateTimeFormat = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
 
+	/**
+	 * Returns current response time.
+	 *
+	 * @return get current response time result
+	 */
 	public static String getCurrentResponseTime() {
-		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
+		return DateUtils2.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
 	}
 
 	/**
@@ -97,10 +123,17 @@ public class GenericUtil {
 		return response;
 	}
 
+	/**
+	 * Performs error response for MOSIP Pre-Registration.
+	 *
+	 * @param e e used by error response
+	 * @param response response used by error response
+	 * @return error response result
+	 */
 	public static <T extends BaseUncheckedException> ResponseEntity<MainResponseDTO<?>> errorResponse(final T e,
 			MainResponseDTO<?> response) {
 		ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(e.getErrorCode(), e.getErrorText());
-		MainResponseDTO<?> errorRes = response;
+		MainResponseDTO<?> errorRes = response == null ? new MainResponseDTO<>() : response;
 		List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
 		errorList.add(errorDetails);
 		errorRes.setErrors(errorList);

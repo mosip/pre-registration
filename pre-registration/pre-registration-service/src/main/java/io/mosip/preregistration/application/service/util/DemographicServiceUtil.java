@@ -1,0 +1,1228 @@
+package io.mosip.preregistration.application.service.util;
+
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import io.mosip.preregistration.core.common.service.ApplicationIdentityMigrationService;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import java.util.Arrays;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.env.Environment;
+import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriComponentsBuilder;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import tools.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.json.JsonMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import com.fasterxml.jackson.module.afterburner.AfterburnerModule;
+
+import io.mosip.kernel.core.http.ResponseWrapper;
+import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.kernel.core.util.DateUtils2;
+import io.mosip.preregistration.application.code.DemographicRequestCodes;
+import io.mosip.preregistration.application.dto.ApplicantTypeKeyValueDTO;
+import io.mosip.preregistration.application.dto.ApplicantTypeRequestDTO;
+import io.mosip.preregistration.application.dto.ApplicantTypeResponseDTO;
+import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
+import io.mosip.preregistration.application.dto.DemographicCreateResponseDTO;
+import io.mosip.preregistration.application.dto.DemographicRequestDTO;
+import io.mosip.preregistration.application.dto.DemographicUpdateResponseDTO;
+import io.mosip.preregistration.application.dto.IdSchemaDto;
+import io.mosip.preregistration.application.dto.LanguageValueDto;
+import io.mosip.preregistration.application.dto.PridFetchResponseDto;
+import io.mosip.preregistration.application.dto.UISpecMetaDataDTO;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
+import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
+import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
+import io.mosip.preregistration.application.exception.DemographicServiceException;
+import io.mosip.preregistration.application.exception.MasterDataException;
+import io.mosip.preregistration.application.exception.OperationNotAllowedException;
+import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
+import io.mosip.preregistration.application.exception.RecordNotFoundException;
+import io.mosip.preregistration.application.repository.DocumentDAO;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
+import io.mosip.preregistration.application.service.AppointmentService;
+import io.mosip.preregistration.application.service.UISpecService;
+import io.mosip.preregistration.booking.dto.RegistrationCenterResponseDto;
+import io.mosip.preregistration.core.code.ApplicationStatusCode;
+import io.mosip.preregistration.core.code.BookingTypeCodes;
+import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.dto.RequestWrapper;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
+import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.common.entity.DocumentEntity;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.DatabaseOperationException;
+import io.mosip.preregistration.core.exception.EncryptionFailedException;
+import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
+import io.mosip.preregistration.core.exception.RestCallException;
+import io.mosip.preregistration.core.exception.UserLookupException;
+import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
+import io.mosip.preregistration.core.util.HashUtill;
+import io.mosip.preregistration.core.util.ValidationUtil;
+import io.mosip.preregistration.demographic.exception.system.DateParseException;
+import io.mosip.preregistration.demographic.exception.system.JsonParseException;
+import io.mosip.preregistration.demographic.exception.system.SystemFileIOException;
+import io.mosip.preregistration.demographic.exception.system.SystemIllegalArgumentException;
+import jakarta.annotation.PostConstruct;
+
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
+/**
+ * This class provides the utility methods for DemographicService
+ * 
+ * @author Ravi C Balaji
+ * @author Sanober Noor
+ * @since 1.0.0
+ * @author Aiham Hasan
+ * @since 1.2.0
+ */
+@Component
+@RefreshScope
+public class DemographicServiceUtil {
+
+	@Value("${mosip.utc-datetime-pattern}")
+	/**
+	 * utc date time pattern used by this Pre-Registration type.
+	 */
+	private String utcDateTimePattern;
+
+	/**
+	 * Environment instance
+	 */
+	@Autowired
+	private Environment env;
+
+	@Autowired
+	/**
+	 * rest template used by this Pre-Registration type.
+	 */
+	private RestTemplate restTemplate;
+
+	@Qualifier("selfTokenRestTemplate")
+	@Autowired
+	RestTemplate selfTokenrestTemplate;
+
+	@Value("${mosip.io.prid.url}")
+	/**
+	 * prid u rl used by this Pre-Registration type.
+	 */
+	private String pridURl;
+
+	@Value("${mosip.preregistration.id-schema}")
+	/**
+	 * id schema config used by this Pre-Registration type.
+	 */
+	private String idSchemaConfig;
+
+	@Value("${masterdata.resource.url}")
+	/**
+	 * masterdata resourse url used by this Pre-Registration type.
+	 */
+	private String masterdataResourseUrl;
+
+	@Autowired
+	/**
+	 * appointment service used by this Pre-Registration type.
+	 */
+	private AppointmentService appointmentService;
+
+	@Autowired
+	/**
+	 * ui spec service used by this Pre-Registration type.
+	 */
+	private UISpecService uiSpecService;
+
+	@Autowired
+	/**
+	 * application repostiory used by this Pre-Registration type.
+	 */
+	private ApplicationRepostiory applicationRepostiory;
+
+	@Autowired
+	/**
+	 * document dao used by this Pre-Registration type.
+	 */
+	private DocumentDAO documentDAO;
+
+	@Autowired
+	/**
+	 * user details service used by this Pre-Registration type.
+	 */
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	/**
+	 * application identity migration service used by this Pre-Registration type.
+	 */
+	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	/**
+	 * pii backward compatibility used by this Pre-Registration type.
+	 */
+	private boolean piiBackwardCompatibility;
+
+	/**
+	 * Logger instance
+	 */
+	private Logger log = LoggerConfiguration.logConfig(DemographicServiceUtil.class);
+
+	@Autowired
+	CryptoUtil cryptoUtil;
+
+	/**
+	 * ObjectMapper global object creation
+	 */
+	private ObjectMapper mapper;
+
+	@PostConstruct
+	/**
+	 * Performs init for MOSIP Pre-Registration.
+	 */
+	public void init() {
+		mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+		mapper.registerModule(new JavaTimeModule());
+	}
+
+	/**
+	 * This setter method is used to assign the initial demographic entity values to
+	 * the createDTO
+	 * 
+	 * @param demographicEntity pass the demographicEntity
+	 * @return createDTO with the values
+	 */
+	public DemographicResponseDTO setterForCreateDTO(DemographicEntity demographicEntity) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In setterForCreateDTO method of pre-registration service util");
+		JSONParser jsonParser = new JSONParser();
+		DemographicResponseDTO createDto = new DemographicResponseDTO();
+		try {
+			createDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
+			createDto.setDemographicDetails((JSONObject) jsonParser.parse(new String(cryptoUtil
+					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
+			createDto.setStatusCode(demographicEntity.getStatusCode());
+			createDto.setLangCode(demographicEntity.getLangCode());
+			// Looked up, not registered: getEffective* returns the column as stored, so an unmigrated
+			// row would otherwise put the applicant's own email or phone on the response.
+			createDto.setCreatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveCreatedBy()));
+			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
+			createDto.setUpdatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveUpdatedBy()));
+			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
+		} catch (ParseException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
+			throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
+					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage(), ex.getCause());
+		} catch (EncryptionFailedException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
+			throw ex;
+		}
+		return createDto;
+	}
+
+	/**
+	 * This setter method is used to assign the initial demographic entity values to
+	 * the createDTO
+	 * 
+	 * @param demographicEntity pass the demographicEntity
+	 * @return createDTO with the values
+	 */
+	public DemographicCreateResponseDTO setterForCreatePreRegistration(DemographicEntity demographicEntity,
+			JSONObject requestJson) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In setterForCreateDTO method of pre-registration service util");
+		DemographicCreateResponseDTO createDto = new DemographicCreateResponseDTO();
+		try {
+			createDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
+			createDto.setDemographicDetails(requestJson);
+			createDto.setStatusCode(demographicEntity.getStatusCode());
+			createDto.setLangCode(demographicEntity.getLangCode());
+			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
+		} catch (EncryptionFailedException ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
+			throw ex;
+		}
+		return createDto;
+	}
+
+	/**
+	 * This setter method is used to assign the initial demographic entity values to
+	 * the createDTO
+	 * 
+	 * @param demographicEntity pass the demographicEntity
+	 * @return createDTO with the values
+	 */
+	public DemographicUpdateResponseDTO setterForUpdatePreRegistration(DemographicEntity demographicEntity) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In setterForCreateDTO method of pre-registration service util");
+		JSONParser jsonParser = new JSONParser();
+		DemographicUpdateResponseDTO createDto = new DemographicUpdateResponseDTO();
+		try {
+			createDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
+			createDto.setDemographicDetails((JSONObject) jsonParser.parse(new String(cryptoUtil
+					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
+			createDto.setStatusCode(demographicEntity.getStatusCode());
+			createDto.setLangCode(demographicEntity.getLangCode());
+			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
+		} catch (ParseException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
+			throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
+					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage(), ex.getCause());
+		} catch (EncryptionFailedException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
+			throw ex;
+		}
+		return createDto;
+	}
+
+	/**
+	 * This method is used to set the values from the request to the
+	 * demographicEntity entity fields.
+	 * 
+	 * @param demographicRequest pass demographicRequest
+	 * @param requestId          pass requestId
+	 * @param entityType         pass entityType
+	 * @return demographic entity with values
+	 */
+
+	public DemographicEntity prepareDemographicEntityForCreate(DemographicRequestDTO demographicRequest,
+			String statuscode, String userId, String preRegistrationId) {
+
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In prepareDemographicEntity method of pre-registration service util");
+		DemographicEntity demographicEntity = new DemographicEntity();
+		saveAndUpdateApplicationEntity(preRegistrationId, BookingTypeCodes.NEW_PREREGISTRATION.getBookingTypeCode(),
+				ApplicationStatusCode.DRAFT.getApplicationStatusCode(), StatusCodes.APPLICATION_INCOMPLETE.getCode(),
+				userId);
+		demographicEntity.setPreRegistrationId(preRegistrationId);
+		LocalDateTime encryptionDateTime = DateUtils2.getUTCCurrentDateTime();
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption start time : " + DateUtils2.getUTCCurrentDateTimeString());
+		byte[] encryptedDemographicDetails = cryptoUtil
+				.encrypt(demographicRequest.getDemographicDetails().toJSONString().getBytes(), encryptionDateTime);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption end time : " + DateUtils2.getUTCCurrentDateTimeString());
+		demographicEntity.setApplicantDetailJson(encryptedDemographicDetails);
+		demographicEntity.setLangCode(demographicRequest.getLangCode());
+		demographicEntity.setCrAppuserId(userId);
+		demographicEntity.setCreatedBy(userId);
+		demographicEntity.setCreateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
+		demographicEntity.setStatusCode(statuscode);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing start time : " + DateUtils2.getUTCCurrentDateTimeString());
+		demographicEntity.setDemogDetailHash(HashUtill.hashUtill(demographicEntity.getApplicantDetailJson()));
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing end time : " + DateUtils2.getUTCCurrentDateTimeString());
+		demographicEntity.setUpdatedBy(userId);
+		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
+		demographicEntity.setEncryptedDateTime(encryptionDateTime);
+		
+		String effectiveUserId = resolveEffectiveUserId(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for demographic create. maskedUserId=" + GenericUtil.maskIdentifier(userId)
+						+ ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+		demographicEntity.setCrAppuserId(effectiveUserId);
+		demographicEntity.setCreatedBy(effectiveUserId);
+		demographicEntity.setUpdatedBy(effectiveUserId);
+		
+		return demographicEntity;
+	}
+
+	/**
+	 * This method is used to set the values from the request to the
+	 * demographicEntity entity fields.
+	 * 
+	 * @param demographicRequest pass demographicRequest
+	 * @param requestId          pass requestId
+	 * @param entityType         pass entityType
+	 * @return demographic entity with values
+	 */
+	public DemographicEntity prepareDemographicEntityForUpdate(DemographicEntity demographicEntity,
+			DemographicRequestDTO demographicRequest, String statuscode, String userId, String preRegistrationId)
+			throws EncryptionFailedException {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In prepareDemographicEntity method of pre-registration service util");
+		ApplicationEntity applicationEntity = findApplicationById(preRegistrationId);
+		saveAndUpdateApplicationEntity(preRegistrationId, applicationEntity.getBookingType(),
+				applicationEntity.getApplicationStatusCode(), applicationEntity.getBookingStatusCode(),
+				applicationEntity.getCrBy());
+		demographicEntity.setPreRegistrationId(preRegistrationId);
+		LocalDateTime encryptionDateTime = DateUtils2.getUTCCurrentDateTime();
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption start time : " + DateUtils2.getUTCCurrentDateTimeString());
+		byte[] encryptedDemographicDetails = cryptoUtil
+				.encrypt(demographicRequest.getDemographicDetails().toJSONString().getBytes(), encryptionDateTime);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Encryption end time : " + DateUtils2.getUTCCurrentDateTimeString());
+		demographicEntity.setApplicantDetailJson(encryptedDemographicDetails);
+		demographicEntity.setLangCode(demographicRequest.getLangCode());
+		demographicEntity.setStatusCode(statuscode);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing start time : " + DateUtils2.getUTCCurrentDateTimeString());
+		demographicEntity.setDemogDetailHash(HashUtill.hashUtill(demographicEntity.getApplicantDetailJson()));
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Hashing end time : " + DateUtils2.getUTCCurrentDateTimeString());
+		demographicEntity.setUpdateDateTime(LocalDateTime.now(ZoneId.of("UTC")));
+		demographicEntity.setEncryptedDateTime(encryptionDateTime);
+		String effectiveUserId = resolveEffectiveUserId(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for demographic update. preRegistrationId=" + preRegistrationId
+						+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
+						+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+		demographicEntity.setCrAppuserId(effectiveUserId);
+		demographicEntity.setCreatedBy(effectiveUserId);
+		demographicEntity.setUpdatedBy(effectiveUserId);
+		migrateLinkedDocumentsToCanonicalUser(demographicEntity, effectiveUserId, preRegistrationId);
+		return demographicEntity;
+	}
+
+	/**
+	 * Performs migrate linked documents to canonical user for MOSIP Pre-Registration.
+	 *
+	 * @param demographicEntity demographic entity used by migrate linked documents to canonical user
+	 * @param effectiveUserId effective user id used by migrate linked documents to canonical user
+	 * @param preRegistrationId pre registration id used by migrate linked documents to canonical user
+	 */
+	private void migrateLinkedDocumentsToCanonicalUser(DemographicEntity demographicEntity, String effectiveUserId,
+			String preRegistrationId) {
+		if (demographicEntity.getDocumentEntity() == null || demographicEntity.getDocumentEntity().isEmpty()) {
+			return;
+		}
+		int migrated = 0;
+		int failed = 0;
+		for (DocumentEntity documentEntity : demographicEntity.getDocumentEntity()) {
+			// Isolated per document: one unwritable document must not fail the demographic update it
+			// is attached to. Anything skipped here is picked up by the nightly reconciliation job.
+			try {
+				documentEntity.setCrBy(effectiveUserId);
+				documentEntity.setUpdBy(effectiveUserId);
+				documentDAO.updateDocument(documentEntity);
+				migrated++;
+			} catch (Exception ex) {
+				failed++;
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Best-effort identity migration failed for a linked document. preRegistrationId="
+								+ preRegistrationId + ", documentId=" + documentEntity.getDocumentId());
+				log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			}
+		}
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Migrated linked documents to canonical user id during demographic update. preRegistrationId="
+						+ preRegistrationId + ", documentsCount=" + demographicEntity.getDocumentEntity().size()
+						+ ", migrated=" + migrated + ", failed=" + failed);
+	}
+
+	/**
+	 * This method is used to add the initial request values into a map for input
+	 * validations.
+	 *
+	 * @param demographicRequestDTO pass demographicRequestDTO
+	 * @return a map for request input validation
+	 */
+
+	public Map<String, String> prepareRequestMap(MainRequestDTO<?> requestDto) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In prepareRequestMap method of Login Service Util");
+		Map<String, String> requestMap = new HashMap<>();
+		requestMap.put("id", requestDto.getId());
+		requestMap.put("version", requestDto.getVersion());
+		if (!(requestDto.getRequesttime() == null || requestDto.getRequesttime().toString().isEmpty())) {
+			LocalDate date = requestDto.getRequesttime().toInstant().atZone(ZoneId.of("UTC")).toLocalDate();
+			requestMap.put("requesttime", date.toString());
+		} else {
+			requestMap.put("requesttime", null);
+		}
+		requestMap.put("request", requestDto.getRequest().toString());
+		return requestMap;
+	}
+
+	/**
+	 * This method is used to set the JSON values to RequestCodes constants.
+	 * 
+	 * @param demographicData pass demographicData
+	 * @param identityKey     pass identityKey
+	 * @return values from JSON based on key
+	 * 
+	 * @throws ParseException                        On json Parsing Failed
+	 * @throws org.json.simple.parser.ParseException
+	 * 
+	 */
+	public JSONArray getValueFromIdentity(byte[] demographicData, String identityKey)
+			throws ParseException, org.json.simple.parser.ParseException {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getValueFromIdentity method of pre-registration service util ");
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObj = (JSONObject) jsonParser.parse(new String(demographicData));
+		JSONObject identityObj = (JSONObject) jsonObj.get(DemographicRequestCodes.IDENTITY.getCode());
+		return (JSONArray) identityObj.get(identityKey);
+	}
+
+	/**
+	 * This method is used to set the JSON values to RequestCodes constants.
+	 * 
+	 * @param demographicData pass demographicData
+	 * @param identityKey     pass postalcode
+	 * @return values from JSON
+	 * 
+	 * @throws ParseException                        On json Parsing Failed
+	 * @throws org.json.simple.parser.ParseException
+	 * 
+	 */
+
+	public String getIdJSONValue(String demographicData, String value) throws ParseException {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getValueFromIdentity method of pe-registration service util to get getIdJSONValue ");
+
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObj = (JSONObject) jsonParser.parse(demographicData);
+		JSONObject identityObj = (JSONObject) jsonObj.get(DemographicRequestCodes.IDENTITY.getCode());
+		if (identityObj.get(value) != null)
+			return identityObj.get(value).toString();
+		return "";
+
+	}
+
+	/**
+	 * This method is used as Null checker for different input keys.
+	 *
+	 * @param key pass the key
+	 * @return true if key not null and return false if key is null.
+	 */
+	public boolean isNull(Object key) {
+		if (key instanceof String) {
+			if (key.equals(""))
+				return true;
+		} else if (key instanceof List<?>) {
+			if (((List<?>) key).isEmpty())
+				return true;
+		} else {
+			if (key == null)
+				return true;
+		}
+		return false;
+
+	}
+
+	/**
+	 * This method is used to validate Pending_Appointment and Booked status codes.
+	 * 
+	 * @param statusCode pass statusCode
+	 * @return true or false
+	 */
+	public boolean checkStatusForDeletion(String statusCode) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In checkStatusForDeletion method of pre-registration service util ");
+
+		if (!statusCode.equals(StatusCodes.EXPIRED.getCode())) {
+			return true;
+		} else {
+			throw new OperationNotAllowedException(DemographicErrorCodes.PRG_PAM_APP_003.getCode(),
+					DemographicErrorMessages.DELETE_OPERATION_NOT_ALLOWED.getMessage());
+		}
+	}
+
+	/**
+	 * Returns current response time.
+	 *
+	 * @return get current response time result
+	 */
+	public String getCurrentResponseTime() {
+		return DateUtils2.formatDate(new Date(System.currentTimeMillis()), utcDateTimePattern);
+	}
+
+	/**
+	 * Returns date from string.
+	 *
+	 * @param date date used by get date from string
+	 * @return get date from string result
+	 */
+	public Date getDateFromString(String date) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getDateFromString method of pre-registration service util ");
+		try {
+			return new SimpleDateFormat(utcDateTimePattern).parse(date);
+		} catch (java.text.ParseException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In getDateFromString method of pre-registration service- " + ex.getCause());
+			throw new DateParseException(DemographicErrorCodes.PRG_PAM_APP_011.getCode(),
+					DemographicErrorMessages.UNSUPPORTED_DATE_FORMAT.getMessage(), ex.getCause());
+		}
+	}
+
+	/**
+	 * Returns local date string.
+	 *
+	 * @param date date used by get local date string
+	 * @return get local date string result
+	 */
+	public String getLocalDateString(LocalDateTime date) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(utcDateTimePattern);
+		return date.format(dateTimeFormatter);
+	}
+
+	/**
+	 * Indicates whether status valid.
+	 *
+	 * @param status status used by is status valid
+	 * @return is status valid result
+	 */
+	public boolean isStatusValid(String status) {
+		for (StatusCodes choice : StatusCodes.values())
+			if (choice.getCode().equals(status))
+				return true;
+		return false;
+	}
+
+	/**
+	 * This method will return the MainResponseDTO with id and version
+	 * 
+	 * @param mainRequestDto
+	 * @return MainResponseDTO<?>
+	 */
+	public MainResponseDTO<?> getMainResponseDto(MainRequestDTO<?> mainRequestDto) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getMainResponseDTO method of Login Common Util");
+		MainResponseDTO<?> response = new MainResponseDTO<>();
+		response.setId(mainRequestDto.getId());
+		response.setVersion(mainRequestDto.getVersion());
+
+		return response;
+	}
+
+	/**
+	 * Performs parse page index for MOSIP Pre-Registration.
+	 *
+	 * @param text text used by parse page index
+	 * @return parse page index result
+	 */
+	public static Integer parsePageIndex(String text) {
+		try {
+			return Integer.parseInt(text);
+		} catch (NumberFormatException e) {
+			throw new SystemIllegalArgumentException(DemographicErrorCodes.PRG_PAM_APP_019.getCode(),
+					DemographicErrorMessages.INVALID_PAGE_INDEX_VALUE.getMessage());
+		}
+	}
+
+	/**
+	 * Performs parse page size for MOSIP Pre-Registration.
+	 *
+	 * @param text text used by parse page size
+	 * @return parse page size result
+	 */
+	public static Integer parsePageSize(String text) {
+		try {
+			return Integer.parseInt(text);
+		} catch (IllegalArgumentException e) {
+			throw new SystemIllegalArgumentException(DemographicErrorCodes.PRG_PAM_APP_015.getCode(),
+					DemographicErrorMessages.PAGE_SIZE_MUST_BE_GREATER_THAN_ZERO.getMessage());
+		}
+	}
+
+	/**
+	 * This method is used for config rest call
+	 * 
+	 * @param filname
+	 * @return
+	 */
+	public String getJson(String filename) {
+		try {
+			String configServerUri = env.getProperty("spring.cloud.config.uri");
+			String configLabel = env.getProperty("spring.cloud.config.label");
+			String configProfile = env.getProperty("spring.profiles.active");
+			String configAppName = env.getProperty("spring.cloud.config.name");
+			StringBuilder uriBuilder = new StringBuilder();
+			uriBuilder.append(configServerUri + "/").append(configAppName + "/").append(configProfile + "/")
+					.append(configLabel + "/").append(filename);
+			// uriBuilder.append(
+			// "http://104.211.212.28:51000/preregistration/dev/master/PreRegistrationIdentitiyMapping.json");
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					" URL in demographic service util of getJson " + uriBuilder);
+			return restTemplate.getForObject(uriBuilder.toString(), String.class);
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
+			throw new SystemFileIOException(DemographicErrorCodes.PRG_PAM_APP_018.getCode(),
+					DemographicErrorMessages.UBALE_TO_READ_IDENTITY_JSON.getMessage(), null);
+		}
+	}
+
+	/**
+	 * Performs generate id for MOSIP Pre-Registration.
+	 *
+	 * @return generate id result
+	 */
+	public String generateId() {
+		String prid = null;
+		try {
+			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromUriString(pridURl);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
+			String uriBuilder = regbuilder.build().encode().toUriString();
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In callRegCenterDateRestService method of Booking Service URL- " + uriBuilder);
+			ResponseEntity<ResponseWrapper<PridFetchResponseDto>> responseEntity = selfTokenrestTemplate.exchange(
+					uriBuilder, HttpMethod.GET, entity,
+					new ParameterizedTypeReference<ResponseWrapper<PridFetchResponseDto>>() {
+					});
+			ResponseWrapper<PridFetchResponseDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				if (body.getResponse() != null) {
+					prid = body.getResponse().getPrid();
+				}
+			}
+			if (prid == null || prid.isEmpty()) {
+				throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+						DemographicErrorMessages.PRID_RESTCALL_FAIL.getMessage());
+			}
+
+		} catch (RestClientException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In callRegCenterDateRestService method of Booking Service Util for HttpClientErrorException- "
+							+ ex.getMessage());
+			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+					DemographicErrorMessages.PRID_RESTCALL_FAIL.getMessage());
+		}
+		return prid;
+
+	}
+
+	/**
+	 * Returns schema.
+	 *
+	 * @return get schema result
+	 */
+	public IdSchemaDto getSchema() {
+		IdSchemaDto response = null;
+		try {
+			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromUriString(idSchemaConfig);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
+			String uriBuilder = regbuilder.build().encode().toUriString();
+
+			ResponseEntity<ResponseWrapper<IdSchemaDto>> responseEntity = selfTokenrestTemplate.exchange(uriBuilder,
+					HttpMethod.GET, entity, new ParameterizedTypeReference<ResponseWrapper<IdSchemaDto>>() {
+					});
+			ResponseWrapper<IdSchemaDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new RestCallException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				response = body.getResponse();
+			}
+
+			if (response == null) {
+				throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+						DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
+			}
+
+		} catch (RestClientException ex) {
+
+			throw new RestCallException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+					DemographicErrorMessages.ID_SCHEMA_FETCH_FAILED.getMessage());
+		}
+		return response;
+
+	}
+
+	/**
+	 * Performs call auth service for MOSIP Pre-Registration.
+	 *
+	 * @param url url used by call auth service
+	 * @param httpMethodType http method type used by call auth service
+	 * @param mediaType media type used by call auth service
+	 * @param body body used by call auth service
+	 * @param headersMap headers map used by call auth service
+	 * @param responseClass response class used by call auth service
+	 * @return call auth service result
+	 */
+	public ResponseEntity<?> callAuthService(String url, HttpMethod httpMethodType, MediaType mediaType, Object body,
+			Map<String, String> headersMap, Class<?> responseClass) {
+		ResponseEntity<?> response = null;
+		try {
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getResponseEntity method of Login Common Util");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(mediaType);
+			HttpEntity<?> request = null;
+			if (headersMap != null) {
+				headersMap.forEach((k, v) -> headers.add(k, v));
+			}
+			if (body != null) {
+				request = new HttpEntity<>(body, headers);
+			} else {
+				request = new HttpEntity<>(headers);
+			}
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In call to kernel rest service :" + url);
+			response = restTemplate.exchange(url, httpMethodType, request, responseClass);
+		} catch (RestClientException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Kernel rest call exception " + ExceptionUtils.getStackTrace(ex));
+			throw new RestClientException("rest call failed");
+		}
+		return response;
+
+	}
+
+	/**
+	 * Performs delete booking for MOSIP Pre-Registration.
+	 *
+	 * @param preRegId pre reg id used by delete booking
+	 * @return delete booking result
+	 * @throws Exception when the operation cannot complete
+	 */
+	public MainResponseDTO<DeleteBookingDTO> deleteBooking(String preRegId) throws Exception {
+		return appointmentService.deleteBooking(preRegId);
+	}
+
+	/**
+	 * Indicates whether demographic booked or expired.
+	 *
+	 * @param demographicEntity demographic entity used by is demographic booked or expired
+	 * @param validationUtil validation util used by is demographic booked or expired
+	 * @return is demographic booked or expired result
+	 */
+	public boolean isDemographicBookedOrExpired(DemographicEntity demographicEntity, ValidationUtil validationUtil) {
+		return validationUtil.isStatusBookedOrExpired(demographicEntity.getStatusCode());
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	/**
+	 * Performs construct new demographic request for MOSIP Pre-Registration.
+	 *
+	 * @param identityKeys identity keys used by construct new demographic request
+	 * @param demographicDetails demographic details used by construct new demographic request
+	 * @return construct new demographic request result
+	 * @throws ParseException when the operation cannot complete
+	 */
+	public JSONObject constructNewDemographicRequest(List<String> identityKeys, JSONObject demographicDetails)
+			throws ParseException {
+
+		List<Object> demographicKeys = Arrays.asList(
+				((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
+
+		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "IdentitySchemakeys: {" + identityKeys.toString()
+				+ "} and PreRegIdentitykeys: {" + demographicKeys.toString() + "}");
+
+		JSONObject demographicJson = new JSONObject();
+
+		for (String key : identityKeys) {
+			if (demographicKeys.contains(key)) {
+				demographicJson.put(key,
+						((HashMap) demographicDetails.get(DemographicRequestCodes.IDENTITY.getCode())).get(key));
+			}
+		}
+
+		JSONObject constructedJson = new JSONObject();
+		constructedJson.put(DemographicRequestCodes.IDENTITY.getCode(), demographicJson);
+
+		return constructedJson;
+	}
+
+	@Transactional
+	/**
+	 * Performs save and update application entity for MOSIP Pre-Registration.
+	 *
+	 * @param preId pre id used by save and update application entity
+	 * @param bookingTypeCode booking type code used by save and update application entity
+	 * @param applicationStatusCode application status code used by save and update application entity
+	 * @param bookingStatusCode booking status code used by save and update application entity
+	 * @param userId user id used by save and update application entity
+	 * @return save and update application entity result
+	 */
+	public ApplicationEntity saveAndUpdateApplicationEntity(String preId, String bookingTypeCode,
+			String applicationStatusCode, String bookingStatusCode, String userId) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Creating/Updating an applications in applications table with ID: " + preId);
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId(preId);
+		applicationEntity.setApplicationStatusCode(applicationStatusCode);
+		applicationEntity.setBookingType(bookingTypeCode);
+		applicationEntity.setBookingStatusCode(bookingStatusCode);
+		applicationEntity.setCrBy(userId);
+		applicationEntity.setCrDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		applicationEntity.setUpdBy(userId);
+		applicationEntity.setUpdDtime(LocalDateTime.now(ZoneId.of("UTC")));
+		String effectiveUserId = resolveEffectiveUserId(userId);
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Resolved effective user id for applications write. applicationId=" + preId + ", maskedUserId="
+						+ GenericUtil.maskIdentifier(userId) + ", canonicalApplied=" + GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+		applicationEntity.setCrBy(effectiveUserId);
+		applicationEntity.setUpdBy(effectiveUserId);
+		applicationEntity.setContactInfo(effectiveUserId);
+		try {
+			applicationEntity = applicationRepostiory.save(applicationEntity);
+		} catch (Exception ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while persisting applications entity -" + ex.getMessage());
+			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_009.getCode(),
+					ApplicationErrorMessages.FAILED_TO_UPDATE_APPLICATIONS.getMessage());
+		}
+		// Best-effort: kept outside the block above so a backfill failure is never reported as — and
+		// never fails — the applications write. See ApplicationIdentityMigrationService.
+		try {
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(preId, effectiveUserId);
+		} catch (Exception migrationEx) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Best-effort identity migration failed after applications create for applicationId: " + preId
+							+ ", maskedUserId: " + GenericUtil.maskIdentifier(userId));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
+		}
+		return applicationEntity;
+	}
+
+	@Transactional
+	/**
+	 * Performs update application status for MOSIP Pre-Registration.
+	 *
+	 * @param applicationId application id used by update application status
+	 * @param status status used by update application status
+	 * @param userId user id used by update application status
+	 */
+	public void updateApplicationStatus(String applicationId, String status, String userId) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"Updating applications status in applications table with statuscode: {" + status
+						+ "} for applicationId: {" + applicationId + "}");
+		String effectiveUserId;
+		try {
+			ApplicationEntity applicationEntity = findApplicationById(applicationId);
+			applicationEntity.setBookingStatusCode(status);
+			applicationEntity.setUpdBy(userId);
+			applicationEntity.setUpdDtime(LocalDateTime.now());
+			effectiveUserId = resolveEffectiveUserId(userId);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Resolved effective user id for application status update. applicationId=" + applicationId
+							+ ", maskedUserId=" + GenericUtil.maskIdentifier(userId) + ", canonicalApplied="
+							+ GenericUtil.isCanonicalApplied(userId, effectiveUserId));
+			applicationEntity.setUpdBy(effectiveUserId);
+			if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
+				applicationEntity.setApplicationStatusCode(ApplicationStatusCode.SUBMITTED.getApplicationStatusCode());
+			}
+			applicationRepostiory.update(applicationEntity);
+		} catch (Exception ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error while updating status for applications -" + ex.getMessage());
+			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
+					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
+		}
+		// Best-effort: kept outside the block above so a backfill failure is never reported as — and
+		// never fails — the status update. See ApplicationIdentityMigrationService.
+		try {
+			applicationIdentityMigrationService.migrateRawUserToEffectiveUser(applicationId, effectiveUserId);
+		} catch (Exception migrationEx) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Best-effort identity migration failed after application status update for applicationId: "
+							+ applicationId + ", maskedUserId: " + GenericUtil.maskIdentifier(userId));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(migrationEx));
+		}
+	}
+
+	/**
+	 * Performs find application by id for MOSIP Pre-Registration.
+	 *
+	 * @param applicationId application id used by find application by id
+	 * @return find application by id result
+	 */
+	public ApplicationEntity findApplicationById(String applicationId) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"Fetching applications entry for applicationID: "+ applicationId);
+		ApplicationEntity applicationEntity = null;
+		try {
+			applicationEntity = applicationRepostiory.findByApplicationId(applicationId);
+			if (Objects.isNull(applicationEntity)) {
+				throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+						DemographicErrorMessages.NO_RECORD_FOUND_FOR_USER_ID.getMessage());
+			}
+		} catch (DataAccessException ex) {
+			throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+					DemographicErrorMessages.NO_RECORD_FOUND_FOR_USER_ID.getMessage());
+		}
+		return applicationEntity;
+	}
+
+	/**
+	 * Performs delete application from applications for MOSIP Pre-Registration.
+	 *
+	 * @param applicationId application id used by delete application from applications
+	 */
+	public void deleteApplicationFromApplications(String applicationId) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"Deleting applications entry for applicationID: "+ applicationId);
+		try {
+			applicationRepostiory.deleteById(applicationId);
+		} catch (DatabaseOperationException e) {
+			throw new RecordFailedToDeleteException(ApplicationErrorCodes.PRG_APP_011.getCode(),
+					ApplicationErrorMessages.DELETE_FAILED_FOR_APPLICATION.getMessage());
+		}
+	}
+
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	/**
+	 * Returns data capture laanguage.
+	 *
+	 * @param jsonObject json object used by get data capture laanguage
+	 * @return get data capture laanguage result
+	 */
+	public Set<String> getDataCaptureLaanguage(JSONObject jsonObject) {
+
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDataCaputureLanguage method");
+
+		Set<String> dataCaptureLang = null;
+
+		List<Object> demographicKeys = Arrays
+				.asList(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
+
+		for (Object key : demographicKeys) {
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"key--->"+ key);
+
+			Object demograhicObject = ((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).get(key);
+
+			if (demograhicObject instanceof List) {
+				JSONArray arr = ((JSONArray) demograhicObject);
+
+				dataCaptureLang = (Set<String>) arr.stream().map(data -> {
+					String language = null;
+					try {
+						language = mapper.readValue(data.toString(), LanguageValueDto.class).getLanguage();
+					} catch (IOException e) {
+						throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
+								DemographicErrorMessages.JSON_IO_EXCEPTION.getMessage());
+					}
+					return language;
+				}).collect(Collectors.toSet());
+
+				break;
+			}
+		}
+		return dataCaptureLang;
+	}
+
+	@SuppressWarnings("rawtypes")
+	/**
+	 * Performs create applicant type request for MOSIP Pre-Registration.
+	 *
+	 * @param demographicEntity demographic entity used by create applicant type request
+	 * @return create applicant type request result
+	 * @throws ParseException when the operation cannot complete
+	 */
+	public ApplicantTypeRequestDTO createApplicantTypeRequest(DemographicEntity demographicEntity)
+			throws ParseException {
+		JSONParser jsonParser = new JSONParser();
+		JSONObject jsonObject = (JSONObject) jsonParser.parse(new String(cryptoUtil
+				.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime())));
+
+		List<Object> demographicKeys = Arrays
+				.asList(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).keySet().toArray());
+
+		ApplicantTypeRequestDTO attributes = new ApplicantTypeRequestDTO();
+		List<ApplicantTypeKeyValueDTO<String, Object>> attributeList = new ArrayList<>();
+
+		for (Object key : demographicKeys) {
+			ApplicantTypeKeyValueDTO<String, Object> attribute = new ApplicantTypeKeyValueDTO<>();
+			attribute.setAttribute((String) key);
+			attribute.setValue(((HashMap) jsonObject.get(DemographicRequestCodes.IDENTITY.getCode())).get(key));
+			attributeList.add(attribute);
+		}
+
+		attributes.setAttributes(attributeList);
+
+		return attributes;
+
+	}
+
+	/**
+	 * Returns applicantype code.
+	 *
+	 * @param applicantTypeRequest applicant type request used by get applicantype code
+	 * @return get applicantype code result
+	 */
+	public String getApplicantypeCode(ApplicantTypeRequestDTO applicantTypeRequest) {
+
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"In getApplicantypeCode method ");
+		String applicantTypeCode = null;
+		try {
+			UriComponentsBuilder regbuilder = UriComponentsBuilder
+					.fromUriString(masterdataResourseUrl + "/getApplicantType");
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			RequestWrapper<ApplicantTypeRequestDTO> request = new RequestWrapper<>();
+			request.setRequest(applicantTypeRequest);
+			HttpEntity<RequestWrapper<ApplicantTypeRequestDTO>> entity = new HttpEntity<>(request, headers);
+			String uriBuilder = regbuilder.build().encode().toUriString();
+
+			ResponseEntity<ResponseWrapper<ApplicantTypeResponseDTO>> responseEntity = selfTokenrestTemplate.exchange(
+					uriBuilder, HttpMethod.POST, entity,
+					new ParameterizedTypeReference<ResponseWrapper<ApplicantTypeResponseDTO>>() {
+					});
+
+			ResponseWrapper<ApplicantTypeResponseDTO> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new MasterDataException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				ApplicantTypeResponseDTO applicantTypeResponseDTO = body.getResponse();
+				if (applicantTypeResponseDTO != null && applicantTypeResponseDTO.getApplicantType() != null) {
+					applicantTypeCode = applicantTypeResponseDTO.getApplicantType().getApplicantTypeCode();
+				}
+			}
+
+		} catch (RestClientException ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"restcall failed to get applicanttype -" + ex.getMessage());
+			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+					DemographicErrorMessages.MASTERDATA_RESTCALL_FAIL.getMessage());
+		}
+		return applicantTypeCode;
+	}
+
+	@SuppressWarnings({ "rawtypes" })
+	/**
+	 * Returns doc cat and type for applicant code.
+	 *
+	 * @param applicantTypeCode applicant type code used by get doc cat and type for applicant code
+	 * @param langCode lang code used by get doc cat and type for applicant code
+	 * @return get doc cat and type for applicant code result
+	 */
+	public ApplicantValidDocumentDto getDocCatAndTypeForApplicantCode(String applicantTypeCode, String langCode) {
+		ResponseWrapper<ApplicantValidDocumentDto> response = new ResponseWrapper<>();
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getDocCatAndTypeForApplicantCode method ");
+		ResponseEntity<ResponseWrapper<ApplicantValidDocumentDto>> responseEntity = null;
+		try {
+			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromUriString(
+					masterdataResourseUrl + "/applicanttype/" + applicantTypeCode + "/languages?languages=" + langCode);
+
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_JSON);
+			HttpEntity entity = new HttpEntity<>(headers);
+
+			String uriBuilder = regbuilder.build().encode().toUriString();
+
+			responseEntity = selfTokenrestTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
+					new ParameterizedTypeReference<ResponseWrapper<ApplicantValidDocumentDto>>() {
+					});
+
+			ResponseWrapper<ApplicantValidDocumentDto> body = responseEntity.getBody();
+			if (body != null) {
+				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
+					throw new MasterDataException(body.getErrors().get(0).getErrorCode(),
+							body.getErrors().get(0).getMessage());
+				}
+				response.setResponse(body.getResponse());
+			}
+
+		} catch (RestClientException ex) {
+			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"restcall failed to get documentcategories for applicanttype code -" + ex.getMessage());
+			throw new MasterDataException(DemographicErrorCodes.PRG_PAM_APP_020.getCode(),
+					DemographicErrorMessages.MASTERDATA_RESTCALL_FAIL.getMessage());
+		}
+		return response.getResponse();
+	}
+
+	/**
+	 * Returns mandatory doc catogery.
+	 *
+	 * @return get mandatory doc catogery result
+	 */
+	public Set<String> getMandatoryDocCatogery() {
+		log.info("In mandatoryDocsCategory method ");
+		Set<String> mandatoryDocs = new HashSet<>();
+		MainResponseDTO<UISpecMetaDataDTO> uiSpec = uiSpecService.getLatestUISpec(0.0, 0.0);
+		if (uiSpec.getResponse() == null || uiSpec.getResponse().getJsonSpec() == null) {
+			throw new DemographicServiceException(ApplicationErrorCodes.PRG_APP_003.getCode(),
+					ApplicationErrorMessages.UNABLE_TO_FETCH_THE_UI_SPEC.getMessage());
+		}
+		JsonNode identityFields = uiSpec.getResponse().getJsonSpec().path("identity").path("identity");
+		if (!identityFields.isArray()) {
+			return mandatoryDocs;
+		}
+		identityFields.forEach(field -> {
+			if ("fileupload".equals(field.path("controlType").asText()) && field.path("required").asBoolean(false)) {
+				String subType = field.path("subType").asText();
+				if (subType != null && !subType.isEmpty()) {
+					mandatoryDocs.add(subType);
+				}
+			}
+		});
+
+		return mandatoryDocs;
+	}
+
+	/**
+	 * Performs resolve effective user id for MOSIP Pre-Registration.
+	 *
+	 * @param userId user id used by resolve effective user id
+	 * @return resolve effective user id result
+	 */
+	private String resolveEffectiveUserId(String userId) {
+		try {
+			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
+		} catch (IllegalStateException ex) {
+			if (ex.getCause() instanceof UserLookupException userLookupException) {
+				throw userLookupException;
+			}
+			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
+					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
+		}
+	}
+}

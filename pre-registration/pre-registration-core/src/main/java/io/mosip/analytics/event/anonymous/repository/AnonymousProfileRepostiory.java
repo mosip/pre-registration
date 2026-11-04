@@ -9,6 +9,9 @@ import io.mosip.kernel.core.dataaccess.spi.repository.BaseRepository;
 
 @Repository
 @Transactional
+/**
+ * Contract for anonymous profile repostiory in MOSIP Pre-Registration.
+ */
 public interface AnonymousProfileRepostiory extends BaseRepository<AnonymousProfileEntity, String> {
 	
 	

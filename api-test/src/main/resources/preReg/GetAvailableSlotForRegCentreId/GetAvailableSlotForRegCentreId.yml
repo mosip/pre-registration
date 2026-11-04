@@ -1,47 +1,49 @@
 GetAvailableSlotForRegCentreId:
-   Prereg_GetAvailableSlotForRegCentreId_All_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
-      uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_01
-      description: Validate that fetching available slots for a registration center ID is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      restMethod: get
-      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
-      outputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreIdResult
-      input: '{
-  "registrationCenterId": "10003"
-}'
-      output: '{
-  "regCenterId": "10003"
-}'
-   Prereg_GetAvailableSlotForRegCentreId_inValid_registrationCenterId_sid:
-      endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
-      uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_02
-      description: Validate that fetching available slots fails when an invalid registration center ID is provided
-      role: batch
-      restMethod: get
-      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
-      outputTemplate: preReg/error
-      input: '{
-  "registrationCenterId": "1shsbsb@@@GB3"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "KER-MSD-215"
-    }
-  ]
-}'
-   Prereg_GetAvailableSlotForRegCentreId_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/appointment/availability/{registrationCenterId}
-      uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_03
-      description: Validate that fetching available slots for a registration center ID is successfully processed when valid input parameters are provided
-      role: batch
-      restMethod: get
-      inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
-      outputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreIdResult
-      input: '{
-  "registrationCenterId": "10003"
-}'
-      output: '{
-  "regCenterId": "10003"
-}'
+  Prereg_GetAvailableSlotForRegCentreId_All_Valid_Smoke_sid:
+    endPoint: '/preregistration/v1/appointment/availability/{registrationCenterId}'
+    uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_01
+    description: Validate that fetching available slots for a registration center ID is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    restMethod: get
+    inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+    outputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreIdResult
+    input: '{
+      "registrationCenterId": "10003"
+    }'
+    output: '{
+      "regCenterId": "10003"
+    }'
+
+  Prereg_GetAvailableSlotForRegCentreId_inValid_registrationCenterId_sid:
+    endPoint: '/preregistration/v1/appointment/availability/{registrationCenterId}'
+    uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_02
+    description: Validate that fetching available slots fails when an invalid registration center ID is provided
+    role: batch
+    restMethod: get
+    inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+    outputTemplate: preReg/error
+    input: '{
+      "registrationCenterId": "1shsbsb@@@GB3"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "KER-MSD-215"
+        }
+      ]
+    }'
+
+  Prereg_GetAvailableSlotForRegCentreId_Valid_Smoke_sid:
+    endPoint: '/preregistration/v1/appointment/availability/{registrationCenterId}'
+    uniqueIdentifier: TC_prereg_GetAvailableSlotForRegCentreId_03
+    description: Validate that fetching available slots for a registration center ID is successfully processed when valid input parameters are provided
+    role: batch
+    restMethod: get
+    inputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreId
+    outputTemplate: preReg/GetAvailableSlotForRegCentreId/getAvailableSlotForRegCentreIdResult
+    input: '{
+      "registrationCenterId": "10003"
+    }'
+    output: '{
+      "regCenterId": "10003"
+    }'

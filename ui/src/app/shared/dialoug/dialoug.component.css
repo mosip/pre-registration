@@ -1,0 +1,91 @@
+::ng-deep.mat-dialog-container {
+  display: block;
+  font-family: 'Roboto', sans-serif;
+  border-radius: 2px;
+  border-color: 1px solid #fd518c;
+  box-sizing: border-box;
+  outline: 0;
+  min-width: 100%;
+  height: 100%;
+}
+::ng-deep.mat-dialog-content {
+  padding: 5px 1.5rem 1.5rem 1.7rem;
+  min-width: 100%;
+  font-size: 0.9rem;
+  height: 100%;
+  overflow: auto;
+}
+
+.discardBody {
+  height: 100px;
+}
+mat-form-field {
+  width: 100%;
+}
+.table-container td {
+  padding-right: 10px;
+}
+.consent-popup-title {
+  font-size: 1rem;
+  margin: 0px;
+  color: #fd518c;
+}
+.consent-popup-subtitle {
+  font-size: 0.8rem;
+  margin: 0px;
+  font-weight: 600;
+}
+.checkbox-accept {
+  font-size: 0.8rem;
+  padding: 10px;
+}
+
+/* consent story desgin css  */
+
+.error-dialog {
+  margin-bottom: 15px;
+}
+::ng-deep .mat-form-field-invalid .mat-input-element {
+  caret-color: #ff0000;
+  color: #ff0000;
+}
+
+.mat-input-element {
+  padding: 5px !important;
+}
+.div-bottom-spacing {
+  padding-bottom: 20px;
+}
+.content-display-iniline-block {
+  display: flex;
+  font-size: 0.8rem;
+  padding: 10px;
+}
+.mat-dialog-title {
+  color: #fd518c;
+  font-size: 16px;
+  text-transform: uppercase;
+  border-bottom: 1px solid #fd518c;
+}
+.btn-cancel {
+  cursor: pointer;
+  border-radius: 2px;
+  border: 1px solid #ff4081;
+  color: #ff4081;
+  background-color: white;
+}
+.btn-submit {
+  cursor: pointer;
+  border-radius: 2px;
+  background-color: #ff4081;
+  border: none;
+  color: white;
+}
+.btn-submit-disabled {
+  border-radius: 2px;
+  color: white;
+  background-color: gray;
+}
+.spacer {
+  flex: 1 1 auto;
+}

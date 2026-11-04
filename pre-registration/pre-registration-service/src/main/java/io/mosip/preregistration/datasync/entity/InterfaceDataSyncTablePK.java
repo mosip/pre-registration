@@ -1,0 +1,41 @@
+package io.mosip.preregistration.datasync.entity;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Embeddable;
+
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+
+/**
+ * To define the composite primary key
+ * 
+ * @author M1046129
+ * 
+ */
+@Embeddable
+@Getter
+@Setter
+@NoArgsConstructor
+public class InterfaceDataSyncTablePK implements Serializable{
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = -2690916920321347697L;
+	
+	@Column(name="prereg_id")
+	/**
+	 * prereg id used by this Pre-Registration type.
+	 */
+	protected String preregId;
+	
+	@Column(name="received_dtimes")
+	/**
+	 * received dtimes used by this Pre-Registration type.
+	 */
+	protected LocalDateTime receivedDtimes;
+
+}

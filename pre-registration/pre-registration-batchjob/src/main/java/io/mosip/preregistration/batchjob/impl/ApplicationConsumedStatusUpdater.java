@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.kernel.core.util.DateUtils2;
 import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
 import io.mosip.preregistration.batchjob.entity.DemographicEntityConsumed;
 import io.mosip.preregistration.batchjob.entity.DocumentEntityConsumed;
@@ -41,23 +41,46 @@ import io.mosip.preregistration.core.util.GenericUtil;
 @Component
 public class ApplicationConsumedStatusUpdater {
     
+    /**
+     * Performs log config for MOSIP Pre-Registration.
+     *
+     * @return log config result
+     */
     private Logger LOGGER = LoggerConfiguration.logConfig(ApplicationConsumedStatusUpdater.class);
 
     @Value("${mosip.batch.token.authmanager.userName}")
+	/**
+	 * audit username used by this Pre-Registration type.
+	 */
 	private String auditUsername;
 
 	@Value("${mosip.batch.token.authmanager.appId}")
+	/**
+	 * audit user id used by this Pre-Registration type.
+	 */
 	private String auditUserId;
 
     @Autowired
+	/**
+	 * batch jpa repository impl used by this Pre-Registration type.
+	 */
 	private BatchJpaRepositoryImpl batchJpaRepositoryImpl;
 
     @Autowired
+	/**
+	 * rest helper used by this Pre-Registration type.
+	 */
 	private RestHelper restHelper;
 
     @Autowired
+    /**
+     * user details service used by this Pre-Registration type.
+     */
     private UserDetailsService userDetailsService;
     
+    /**
+     * Performs update consumed status for MOSIP Pre-Registration.
+     */
     public void updateConsumedStatus() {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
@@ -68,6 +91,11 @@ public class ApplicationConsumedStatusUpdater {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
 		 			"Total Number of Processed Pre Registration applications: " + processedPreRegList.size());
+        /**
+         * Performs resolve user uuid for MOSIP Pre-Registration.
+         *
+         * @return resolve user uuid result
+         */
         final String resolvedAuditUserId = resolveUserUuid(auditUserId);
         
         List<String> errorredPreRegIds = new ArrayList<>();
@@ -138,6 +166,12 @@ public class ApplicationConsumedStatusUpdater {
                     AuditLogVariables.BOOKING_SERVICE.toString());
     }
 
+    /**
+     * Performs add applicant demographic consumed for MOSIP Pre-Registration.
+     *
+     * @param demoEntity demo entity used by add applicant demographic consumed
+     * @param resolvedAuditUserId resolved audit user id used by add applicant demographic consumed
+     */
     private void addApplicantDemographicConsumed(DemographicEntity demoEntity, String resolvedAuditUserId) {
         DemographicEntityConsumed demographicEntityConsumed = new DemographicEntityConsumed();
         demographicEntityConsumed.setApplicantDetailJson(demoEntity.getApplicantDetailJson());
@@ -148,7 +182,7 @@ public class ApplicationConsumedStatusUpdater {
         demographicEntityConsumed.setEncryptedDateTime(demoEntity.getEncryptedDateTime());
         demographicEntityConsumed.setLangCode(demoEntity.getLangCode());
         demographicEntityConsumed.setPreRegistrationId(demoEntity.getPreRegistrationId());
-        demographicEntityConsumed.setUpdateDateTime(DateUtils.parseDateToLocalDateTime(new Date()));
+        demographicEntityConsumed.setUpdateDateTime(DateUtils2.parseDateToLocalDateTime(new Date()));
         demographicEntityConsumed.setUpdatedBy(resolvedAuditUserId);
         demographicEntityConsumed.setStatusCode(StatusCodes.CONSUMED.getCode());
         boolean added = batchJpaRepositoryImpl.updateConsumedDemographic(demographicEntityConsumed);
@@ -156,6 +190,13 @@ public class ApplicationConsumedStatusUpdater {
                         "Added demographic consumed in table pre reg id: " + demoEntity.getPreRegistrationId() + ", added status: " + added);
     }
 
+    /**
+     * Performs add applicant document consumed for MOSIP Pre-Registration.
+     *
+     * @param applicantDocumentList applicant document list used by add applicant document consumed
+     * @param preRegId pre reg id used by add applicant document consumed
+     * @param resolvedAuditUserId resolved audit user id used by add applicant document consumed
+     */
     private void addApplicantDocumentConsumed(List<DocumentEntity> applicantDocumentList, String preRegId,
             String resolvedAuditUserId) {
         if (Objects.isNull(applicantDocumentList)) {
@@ -180,7 +221,7 @@ public class ApplicationConsumedStatusUpdater {
             documentEntityConsumed.setPreregId(applicantDoc.getDemographicEntity().getPreRegistrationId());
             documentEntityConsumed.setStatusCode(applicantDoc.getStatusCode());
             documentEntityConsumed.setUpdBy(resolvedAuditUserId);
-            documentEntityConsumed.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
+            documentEntityConsumed.setUpdDtime(DateUtils2.parseDateToLocalDateTime(new Date()));
             documentEntityConsumed.setDocRefId(applicantDoc.getRefNumber());
             batchJpaRepositoryImpl.updateConsumedDocument(documentEntityConsumed);
         });
@@ -190,6 +231,13 @@ public class ApplicationConsumedStatusUpdater {
         
     }
 
+    /**
+     * Performs add registration appointment consumed for MOSIP Pre-Registration.
+     *
+     * @param regAppointmentObj reg appointment obj used by add registration appointment consumed
+     * @param preRegId pre reg id used by add registration appointment consumed
+     * @param resolvedAuditUserId resolved audit user id used by add registration appointment consumed
+     */
     private void addRegistrationAppointmentConsumed(RegistrationBookingEntity regAppointmentObj, String preRegId,
             String resolvedAuditUserId) {
         RegistrationBookingEntityConsumed regAppointmentConsumed = new RegistrationBookingEntityConsumed();
@@ -204,7 +252,7 @@ public class ApplicationConsumedStatusUpdater {
         regAppointmentConsumed.setSlotFromTime(regAppointmentObj.getSlotFromTime());
         regAppointmentConsumed.setSlotToTime(regAppointmentObj.getSlotToTime());
         regAppointmentConsumed.setUpBy(resolvedAuditUserId);
-        regAppointmentConsumed.setUpdDate(DateUtils.parseDateToLocalDateTime(new Date()));
+        regAppointmentConsumed.setUpdDate(DateUtils2.parseDateToLocalDateTime(new Date()));
         boolean added = batchJpaRepositoryImpl.updateConsumedBooking(regAppointmentConsumed);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
                 "Added Reg Appointment consumed in table for pre reg id: " + preRegId + ", added status: " + added);
@@ -212,6 +260,12 @@ public class ApplicationConsumedStatusUpdater {
         
     }
 
+    /**
+     * Performs purge applicant document consumed for MOSIP Pre-Registration.
+     *
+     * @param applicantDocumentList applicant document list used by purge applicant document consumed
+     * @param preRegId pre reg id used by purge applicant document consumed
+     */
     private void purgeApplicantDocumentConsumed(List<DocumentEntity> applicantDocumentList, String preRegId) {
         if (Objects.isNull(applicantDocumentList)) {
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPLICATION_CONSUMED_JOB, 
@@ -226,6 +280,12 @@ public class ApplicationConsumedStatusUpdater {
         });
     }
 
+    /**
+     * Performs resolve user uuid for MOSIP Pre-Registration.
+     *
+     * @param userId user id used by resolve user uuid
+     * @return resolve user uuid result
+     */
     private String resolveUserUuid(String userId) {
         if (Objects.isNull(userId) || userId.trim().isEmpty()) {
             return userId;

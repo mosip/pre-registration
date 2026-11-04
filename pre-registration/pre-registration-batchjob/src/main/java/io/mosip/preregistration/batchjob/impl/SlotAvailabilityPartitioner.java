@@ -5,8 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.batch.core.partition.support.Partitioner;
-import org.springframework.batch.item.ExecutionContext;
+import org.springframework.batch.core.partition.Partitioner;
+import org.springframework.batch.infrastructure.item.ExecutionContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -25,12 +25,26 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class SlotAvailabilityPartitioner implements Partitioner {
     
+    /**
+     * Performs log config for MOSIP Pre-Registration.
+     *
+     * @return log config result
+     */
     private Logger LOGGER = LoggerConfiguration.logConfig(SlotAvailabilityPartitioner.class);
 
     @Autowired
+	/**
+	 * rest helper used by this Pre-Registration type.
+	 */
 	private RestHelper restHelper;
     
     @Override
+	/**
+	 * Performs partition for MOSIP Pre-Registration.
+	 *
+	 * @param gridSize grid size used by partition
+	 * @return partition result
+	 */
 	public Map<String, ExecutionContext> partition(int gridSize) {
         Map<String, ExecutionContext> regCentersMap = new HashMap<String, ExecutionContext>(gridSize);
 
@@ -79,6 +93,13 @@ public class SlotAvailabilityPartitioner implements Partitioner {
         return regCentersMap;
     }
 
+    /**
+     * Returns partition size.
+     *
+     * @param regCentersCount reg centers count used by get partition size
+     * @param gridSize grid size used by get partition size
+     * @return get partition size result
+     */
     private int getPartitionSize(int regCentersCount, int gridSize) {
 
         if (regCentersCount <= gridSize)

@@ -24,18 +24,36 @@ public class UserDetails {
 
     @Id
     @Column(name = "user_id")
+    /**
+     * user id used by this Pre-Registration type.
+     */
     private UUID userId;
 
     @Column(name = "identifier_hash", nullable = false)
+    /**
+     * identifier hash used by this Pre-Registration type.
+     */
     private String identifierHash; // SHA-256 over normalized identifier
 
     @Column(name = "identifier_encrypted", nullable = false)
+    /**
+     * Performs identifier for MOSIP Pre-Registration.
+     *
+     * @param recovery recovery used by identifier
+     * @return identifier result
+     */
     private String identifierEncrypted; // Encrypted identifier (mandatory, used for audit/notification recovery)
 
     @Column(name = "cr_dtimes")
+    /**
+     * cr dtimes used by this Pre-Registration type.
+     */
     private LocalDateTime crDtimes;
 
     @Column(name = "encrypted_dtimes")
+    /**
+     * encrypted dtimes used by this Pre-Registration type.
+     */
     private LocalDateTime encryptedDtimes;
 
 }

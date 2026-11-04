@@ -1,0 +1,520 @@
+package io.mosip.preregistration.application.service.util;
+
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
+
+import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
+import io.mosip.kernel.core.exception.ExceptionUtils;
+import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.kernel.core.util.DateUtils2;
+import io.mosip.preregistration.application.code.DemographicRequestCodes;
+import io.mosip.preregistration.application.dto.ApplicantTypeRequestDTO;
+import io.mosip.preregistration.application.dto.ApplicantValidDocumentDto;
+import io.mosip.preregistration.application.errorcodes.DemographicErrorCodes;
+import io.mosip.preregistration.application.errorcodes.DemographicErrorMessages;
+import io.mosip.preregistration.application.exception.DemographicServiceException;
+import io.mosip.preregistration.application.exception.RecordFailedToUpdateException;
+import io.mosip.preregistration.application.exception.RecordNotFoundException;
+import io.mosip.preregistration.application.exception.util.DemographicExceptionCatcher;
+import io.mosip.preregistration.core.common.repository.DemographicRepository;
+import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
+import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.dto.PreRegistartionStatusDTO;
+import io.mosip.preregistration.core.common.entity.DemographicEntity;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.EncryptionFailedException;
+import io.mosip.preregistration.core.exception.HashingException;
+import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
+import io.mosip.preregistration.core.util.CryptoUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
+import io.mosip.preregistration.core.util.HashUtill;
+import io.mosip.preregistration.core.util.ValidationUtil;
+import io.mosip.preregistration.demographic.exception.system.JsonParseException;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
+
+/**
+ * This class provides the common service implementation for DocumentService and
+ * DemographicService
+ * 
+ * @author Janardhan B S
+ * @since 1.0.0
+ */
+@Component
+@RefreshScope
+public class CommonServiceUtil {
+	/**
+	 * logger instance
+	 */
+	private Logger log = LoggerConfiguration.logConfig(CommonServiceUtil.class);
+
+	@Value("${mosip.utc-datetime-pattern}")
+	/**
+	 * utc date time pattern used by this Pre-Registration type.
+	 */
+	private String utcDateTimePattern;
+
+	/**
+	 * Reference for ${retrieveDetailsId} from property file
+	 */
+	@Value("${mosip.preregistration.demographic.retrieve.details.id}")
+	private String retrieveDetailsId;
+
+	/**
+	 * Reference for ${retrieveStatusId} from property file
+	 */
+	@Value("${mosip.preregistration.demographic.retrieve.status.id}")
+	private String retrieveStatusId;
+
+	/**
+	 * Reference for ${ver} from property file
+	 */
+	@Value("${version}")
+	private String version;
+
+	@Value("${masterdata.resource.url}")
+	/**
+	 * masterdata resourse url used by this Pre-Registration type.
+	 */
+	private String masterdataResourseUrl;
+
+	/**
+	 * Reference for ${updateStatusId} from property file
+	 */
+	@Value("${mosip.preregistration.demographic.update.status.id}")
+	private String updateStatusId;
+
+	@Autowired
+	/**
+	 * validation util used by this Pre-Registration type.
+	 */
+	private ValidationUtil validationUtil;
+
+	@Autowired
+	/**
+	 * crypto util used by this Pre-Registration type.
+	 */
+	private CryptoUtil cryptoUtil;
+
+	@Autowired
+	/**
+	 * demographic service util used by this Pre-Registration type.
+	 */
+	private DemographicServiceUtil demographicServiceUtil;
+
+	@Autowired
+	/**
+	 * user details service used by this Pre-Registration type.
+	 */
+	private UserDetailsService userDetailsService;
+
+	@Value("${mosip.prereg.pii.backward.compatibility}")
+	/**
+	 * pii backward compatibility used by this Pre-Registration type.
+	 */
+	private boolean piiBackwardCompatibility;
+
+	/**
+	 * Autowired reference for {@link #RegistrationRepositary}
+	 */
+	@Autowired
+	private DemographicRepository demographicRepository;
+
+	/**
+	 * Returns demographic data.
+	 *
+	 * @param preRegId pre reg id used by get demographic data
+	 * @return get demographic data result
+	 */
+	public MainResponseDTO<DemographicResponseDTO> getDemographicData(String preRegId) {
+		MainResponseDTO<DemographicResponseDTO> response = new MainResponseDTO<>();
+		Map<String, String> requestParamMap = new HashMap<>();
+		response.setResponsetime(getCurrentResponseTime());
+		response.setId(retrieveDetailsId);
+		response.setVersion(version);
+		try {
+			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
+			if (validationUtil.requstParamValidator(requestParamMap)) {
+				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
+				if (demographicEntity == null) {
+					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
+				}
+				List<String> list = listAuth(authUserDetails().getAuthorities());
+				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"In getDemographicData method of pre-registration service with list  " + list.toString());
+				if (list.contains("ROLE_INDIVIDUAL")) {
+					userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
+				}
+
+				String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
+				if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
+						hashString.getBytes())) {
+
+					DemographicResponseDTO createDto = setterForCreateDTO(demographicEntity);
+					response.setResponse(createDto);
+				} else {
+					throw new HashingException(
+							io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
+							io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
+				}
+			}
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In getDemographicData of pre-registration service- " + ex.getMessage());
+			new DemographicExceptionCatcher().handle(ex, response);
+		}
+
+		response.setErrors(null);
+		return response;
+	}
+
+	/**
+	 * Returns current response time.
+	 *
+	 * @return get current response time result
+	 */
+	public String getCurrentResponseTime() {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getCurrentResponseTime method of document service util");
+		return DateUtils2.formatDate(new Date(System.currentTimeMillis()), utcDateTimePattern);
+	}
+
+	/**
+	 * Performs auth user details for MOSIP Pre-Registration.
+	 *
+	 * @return auth user details result
+	 */
+	public AuthUserDetails authUserDetails() {
+		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
+	/**
+	 * Performs user validation for MOSIP Pre-Registration.
+	 *
+	 * @param authUserId auth user id used by user validation
+	 * @param preregUserId prereg user id used by user validation
+	 */
+	public void userValidation(String authUserId, String preregUserId) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getDemographicData method of userValidation with priid " + GenericUtil.maskIdentifier(preregUserId)
+						+ " and userID " + GenericUtil.maskIdentifier(authUserId));
+		if (!userDetailsService.matchesUser(authUserId, preregUserId, piiBackwardCompatibility)) {
+			throw new PreIdInvalidForUserIdException(DemographicErrorCodes.PRG_PAM_APP_017.getCode(),
+					DemographicErrorMessages.INVALID_PREID_FOR_USER.getMessage());
+		}
+	}
+
+	/**
+	 * Sets ter for create dto.
+	 *
+	 * @param demographicEntity demographic entity used by setter for create dto
+	 * @return setter for create dto result
+	 */
+	public DemographicResponseDTO setterForCreateDTO(DemographicEntity demographicEntity) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In setterForCreateDTO method of pre-registration service util");
+		JSONParser jsonParser = new JSONParser();
+		DemographicResponseDTO createDto = new DemographicResponseDTO();
+		try {
+			createDto.setPreRegistrationId(demographicEntity.getPreRegistrationId());
+			createDto.setDemographicDetails((JSONObject) jsonParser.parse(new String(cryptoUtil
+					.decrypt(demographicEntity.getApplicantDetailJson(), demographicEntity.getEncryptedDateTime()))));
+			createDto.setStatusCode(demographicEntity.getStatusCode());
+			createDto.setLangCode(demographicEntity.getLangCode());
+			// Looked up, not registered: getEffective* returns the column as stored, so an unmigrated
+			// row would otherwise put the applicant's own email or phone on the response.
+			createDto.setCreatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveCreatedBy()));
+			createDto.setCreatedDateTime(getLocalDateString(demographicEntity.getCreateDateTime()));
+			createDto.setUpdatedBy(userDetailsService.findExistingUserId(demographicEntity.getEffectiveUpdatedBy()));
+			createDto.setUpdatedDateTime(getLocalDateString(demographicEntity.getUpdateDateTime()));
+		} catch (ParseException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
+			throw new JsonParseException(DemographicErrorCodes.PRG_PAM_APP_007.getCode(),
+					DemographicErrorMessages.JSON_PARSING_FAILED.getMessage(), ex.getCause());
+		} catch (EncryptionFailedException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In setterForCreateDTO method of pre-registration service- " + ex.getMessage());
+			throw ex;
+		}
+		return createDto;
+	}
+
+	/**
+	 * Returns local date string.
+	 *
+	 * @param date date used by get local date string
+	 * @return get local date string result
+	 */
+	public String getLocalDateString(LocalDateTime date) {
+		DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern(utcDateTimePattern);
+		return date.format(dateTimeFormatter);
+	}
+
+	/**
+	 * This method is used to get the list of authorization role
+	 * 
+	 * @param collection
+	 * @return list of auth role
+	 */
+	public List<String> listAuth(Collection<? extends GrantedAuthority> collection) {
+		List<String> listWORole = new ArrayList<>();
+		for (GrantedAuthority authority : collection) {
+			String s = authority.getAuthority();
+			listWORole.add(s);
+		}
+		return listWORole;
+	}
+
+	/**
+	 * Performs valid mandatory documents for applicant for MOSIP Pre-Registration.
+	 *
+	 * @param demographicEntity demographic entity used by valid mandatory documents for applicant
+	 * @return valid mandatory documents for applicant result
+	 * @throws ParseException when the operation cannot complete
+	 */
+	public List<String> validMandatoryDocumentsForApplicant(DemographicEntity demographicEntity) throws ParseException {
+
+		String applicantTypeCode = null;
+		ApplicantValidDocumentDto applicantValidDocuments = null;
+
+		ApplicantTypeRequestDTO applicantTypeRequest = demographicServiceUtil
+				.createApplicantTypeRequest(demographicEntity);
+
+		applicantTypeCode = demographicServiceUtil.getApplicantypeCode(applicantTypeRequest);
+
+		applicantValidDocuments = demographicServiceUtil.getDocCatAndTypeForApplicantCode(applicantTypeCode,
+				demographicEntity.getLangCode());
+		Set<String> mandatoryDocCat = demographicServiceUtil.getMandatoryDocCatogery();
+
+		log.info("mandatory Docs category --> {}", mandatoryDocCat);
+		if (applicantValidDocuments == null || applicantValidDocuments.getDocumentCategories() == null) {
+			return new ArrayList<>();
+		}
+		return applicantValidDocuments.getDocumentCategories().stream()
+				.filter(docCat -> mandatoryDocCat.contains(docCat.getCode())).map(docCat -> docCat.getCode())
+				.collect(Collectors.toList());
+	}
+
+	/**
+	 * Performs update pre registration status for MOSIP Pre-Registration.
+	 *
+	 * @param preRegId pre reg id used by update pre registration status
+	 * @param status status used by update pre registration status
+	 * @param userId user id used by update pre registration status
+	 * @return update pre registration status result
+	 */
+	public MainResponseDTO<String> updatePreRegistrationStatus(String preRegId, String status, String userId) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In updatePreRegistrationStatus method of pre-registration service ");
+		MainResponseDTO<String> response = new MainResponseDTO<>();
+		Map<String, String> requestParamMap = new HashMap<>();
+		response.setResponsetime(getCurrentResponseTime());
+		response.setId(updateStatusId);
+		response.setVersion(version);
+		try {
+			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
+			requestParamMap.put(DemographicRequestCodes.STATUS_CODE.getCode(), status);
+			if (validationUtil.requstParamValidator(requestParamMap)) {
+				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
+				statusCheck(demographicEntity, status, userId);
+				response.setResponse("STATUS_UPDATED_SUCESSFULLY");
+			}
+		} catch (RecordFailedToUpdateException | RecordNotFoundException ex) {
+			response.setResponse("STATUS_NOT_UPDATED_SUCESSFULLY");
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error in updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
+			ExceptionJSONInfoDTO errorDetails = new ExceptionJSONInfoDTO(ex.getErrorCode(), ex.getErrorText());
+			List<ExceptionJSONInfoDTO> errorList = new ArrayList<>();
+			errorList.add(errorDetails);
+			response.setErrors(errorList);
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Error in updatePreRegistrationStatus method of pre-registration service- " + ex.getMessage());
+			new DemographicExceptionCatcher().handle(ex, response);
+		}
+		return response;
+	}
+
+	/**
+	 * Returns application status.
+	 *
+	 * @param preRegId pre reg id used by get application status
+	 * @param userId user id used by get application status
+	 * @return get application status result
+	 */
+	public MainResponseDTO<PreRegistartionStatusDTO> getApplicationStatus(String preRegId, String userId) {
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+				"In getApplicationStatus method of pre-registration service ");
+		PreRegistartionStatusDTO statusdto = new PreRegistartionStatusDTO();
+		MainResponseDTO<PreRegistartionStatusDTO> response = new MainResponseDTO<>();
+		Map<String, String> requestParamMap = new HashMap<>();
+		response.setId(retrieveStatusId);
+		response.setVersion(version);
+		response.setResponsetime(getCurrentResponseTime());
+		try {
+			requestParamMap.put(DemographicRequestCodes.PRE_REGISTRAION_ID.getCode(), preRegId);
+			if (validationUtil.requstParamValidator(requestParamMap)) {
+				DemographicEntity demographicEntity = demographicRepository.findBypreRegistrationId(preRegId);
+				List<String> list = listAuth(authUserDetails().getAuthorities());
+				if (demographicEntity != null) {
+					if (list.contains("ROLE_INDIVIDUAL")) {
+						userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
+					}
+					String hashString = HashUtill.hashUtill(demographicEntity.getApplicantDetailJson());
+
+					if (HashUtill.isHashEqual(demographicEntity.getDemogDetailHash().getBytes(),
+							hashString.getBytes())) {
+						statusdto.setPreRegistartionId(demographicEntity.getPreRegistrationId());
+						statusdto.setStatusCode(demographicEntity.getStatusCode());
+						response.setResponse(statusdto);
+
+					} else {
+						throw new HashingException(
+								io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_010.name(),
+								io.mosip.preregistration.core.errorcodes.ErrorMessages.HASHING_FAILED.name());
+
+					}
+				} else {
+					throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+							DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
+
+				}
+			}
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"In getApplicationStatus method of pre-registration service - " + ex.getMessage());
+			new DemographicExceptionCatcher().handle(ex, response);
+		}
+		return response;
+	}
+
+	/**
+	 * Performs status check for MOSIP Pre-Registration.
+	 *
+	 * @param demographicEntity demographic entity used by status check
+	 * @param status status used by status check
+	 * @param userId user id used by status check
+	 */
+	public void statusCheck(DemographicEntity demographicEntity, String status, String userId) {
+		if (demographicEntity != null) {
+			if (demographicServiceUtil.isStatusValid(status)) {
+				demographicEntity.setStatusCode(StatusCodes.valueOf(status.toUpperCase()).getCode());
+				List<String> list = listAuth(authUserDetails().getAuthorities());
+				if (list.contains("ROLE_INDIVIDUAL")) {
+					userValidation(authUserDetails().getUserId(), demographicEntity.getEffectiveCreatedBy());
+				}
+				if (status.toLowerCase().equals(StatusCodes.PENDING_APPOINTMENT.getCode().toLowerCase())) {
+					try {
+						if (isupdateStausToPendingAppointmentValid(demographicEntity)) {
+							String prid = demographicEntity.getPreRegistrationId();
+							demographicServiceUtil.updateApplicationStatus(prid, status, userId);
+							log.info("Application booking status updated succesfully --> {}", status);
+							demographicRepository.update(demographicEntity);
+							log.info("demographic booking status updated succesfully --> {}", status);
+
+						} else {
+							throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
+									DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
+						}
+					} catch (Exception e) {
+						throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
+								DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
+					}
+				} else {
+					String prid = demographicEntity.getPreRegistrationId();
+					demographicServiceUtil.updateApplicationStatus(prid, status, userId);
+					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+							"Application booking status updated succesfully --> " + status);
+					demographicRepository.update(demographicEntity);
+					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+							"demographic booking status updated succesfully -->" + status);
+
+				}
+			} else {
+				throw new RecordFailedToUpdateException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+						DemographicErrorMessages.INVALID_STATUS_CODE.getMessage());
+			}
+		} else {
+			throw new RecordNotFoundException(DemographicErrorCodes.PRG_PAM_APP_005.getCode(),
+					DemographicErrorMessages.UNABLE_TO_FETCH_THE_PRE_REGISTRATION.getMessage());
+		}
+	}
+
+	/**
+	 * Indicates whether update staus to pending appointment valid.
+	 *
+	 * @param demographicEntity demographic entity used by isupdate staus to pending appointment valid
+	 * @return isupdate staus to pending appointment valid result
+	 */
+	public boolean isupdateStausToPendingAppointmentValid(DemographicEntity demographicEntity) {
+		boolean isValid = false;
+		try {
+			List<String> validMandatoryDocForApplicant = validMandatoryDocumentsForApplicant(demographicEntity);
+
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"valid mandatory Docs category for applicant-->" + validMandatoryDocForApplicant);
+			List<String> uploadedDocs = demographicEntity.getDocumentEntity() == null ? new ArrayList<>()
+					: demographicEntity.getDocumentEntity().stream().map(doc -> doc.getDocCatCode())
+							.collect(Collectors.toList());
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"uploaded Docs category --> {}" + uploadedDocs.toString());
+
+			isValid = compareUploadedDocListAndValidMandatoryDocList(uploadedDocs, validMandatoryDocForApplicant);
+		} catch (DemographicServiceException ex) {
+			throw ex;
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Exception Docs category -->",
+					ExceptionUtils.getStackTrace(ex));
+			throw new DemographicServiceException(DemographicErrorCodes.PRG_PAM_APP_023.getCode(),
+					DemographicErrorMessages.FAILED_TO_UPDATE_STATUS_PENDING_APPOINTMENT.getMessage());
+		}
+		return isValid;
+	}
+
+	/**
+	 * Performs compare uploaded doc list and valid mandatory doc list for MOSIP Pre-Registration.
+	 *
+	 * @param uploadedDocs uploaded docs used by compare uploaded doc list and valid mandatory doc list
+	 * @param validMandatoryDocForApplicant valid mandatory doc for applicant used by compare uploaded doc list and valid mandatory doc list
+	 * @return compare uploaded doc list and valid mandatory doc list result
+	 */
+	private boolean compareUploadedDocListAndValidMandatoryDocList(List<String> uploadedDocs,
+			List<String> validMandatoryDocForApplicant) {
+		if (validMandatoryDocForApplicant.isEmpty()) {
+			return true;
+		}
+		uploadedDocs.forEach(validMandatoryDocForApplicant::remove);
+		return validMandatoryDocForApplicant.isEmpty();
+	}
+
+}

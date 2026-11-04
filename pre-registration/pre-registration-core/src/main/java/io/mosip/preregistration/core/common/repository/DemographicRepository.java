@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.repository;
 
 import java.time.LocalDateTime;
@@ -43,6 +39,13 @@ public interface DemographicRepository extends BaseRepository<DemographicEntity,
 	public List<DemographicEntity> findByCreatedBy(@Param("userId") String userId,
 			@Param("statusCode") String statusCode);
 
+	/**
+	 * Performs find by created by in and status code for MOSIP Pre-Registration.
+	 *
+	 * @param userIds user ids used by find by created by in and status code
+	 * @param statusCode status code used by find by created by in and status code
+	 * @return find by created by in and status code result
+	 */
 	public List<DemographicEntity> findByCreatedByInAndStatusCode(@Param("userIds") List<String> userIds,
 			@Param("statusCode") String statusCode);
 
@@ -58,6 +61,14 @@ public interface DemographicRepository extends BaseRepository<DemographicEntity,
 	public Page<DemographicEntity> findByCreatedByOrderByCreateDateTime(@Param("userId") String userId,
 			@Param("statusCode") String statusCode, Pageable pageable);
 
+	/**
+	 * Performs find by created by in and status code order by create date time for MOSIP Pre-Registration.
+	 *
+	 * @param userIds user ids used by find by created by in and status code order by create date time
+	 * @param statusCode status code used by find by created by in and status code order by create date time
+	 * @param pageable pageable used by find by created by in and status code order by create date time
+	 * @return find by created by in and status code order by create date time result
+	 */
 	public Page<DemographicEntity> findByCreatedByInAndStatusCodeOrderByCreateDateTime(
 			@Param("userIds") List<String> userIds, @Param("statusCode") String statusCode, Pageable pageable);
 

@@ -51,21 +51,47 @@ import jakarta.annotation.PostConstruct;
 @Service
 public class AnonymousProfileUtil {
 
+	/**
+	 * blank string used by this Pre-Registration type.
+	 */
 	private static final String BLANK_STRING = "";
 
+	/**
+	 * value attribute used by this Pre-Registration type.
+	 */
 	private static final String VALUE_ATTRIBUTE = "value";
 
+	/**
+	 * phone used by this Pre-Registration type.
+	 */
 	private static final String PHONE = "phone";
 
+	/**
+	 * email used by this Pre-Registration type.
+	 */
 	private static final String EMAIL = "email";
 
+	/**
+	 * date format demographic data used by this Pre-Registration type.
+	 */
 	private static final String DATE_FORMAT_DEMOGRAPHIC_DATA = "yyyy/MM/dd";
 
+	/**
+	 * preregistration app name used by this Pre-Registration type.
+	 */
 	private static final String PREREGISTRATION_APP_NAME = "preregistration";
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(AnonymousProfileUtil.class);
 
 	@Value("${mosip.utc-datetime-pattern}")
+	/**
+	 * utc date time pattern used by this Pre-Registration type.
+	 */
 	private String utcDateTimePattern;
 
 	/**

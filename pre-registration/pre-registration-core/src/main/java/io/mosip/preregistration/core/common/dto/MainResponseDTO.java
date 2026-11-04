@@ -34,9 +34,15 @@ public class MainResponseDTO<T> implements Serializable {
 	private String version;
 
 	@ApiModelProperty(value = "Response Time", position = 3)
+	/**
+	 * responsetime used by this Pre-Registration type.
+	 */
 	private String responsetime;
 
 	@ApiModelProperty(value = "Response", position = 4)
+	/**
+	 * response used by this Pre-Registration type.
+	 */
 	private T response;
 
 	/** The error details. */

@@ -1,40 +1,41 @@
-<?xml version="1.0"?>
-<project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
+
 	<parent>
 		<groupId>io.mosip.preregistration</groupId>
 		<artifactId>pre-registration-parent</artifactId>
-		<version>1.4.0-SNAPSHOT</version>
+		<version>1.4.1-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>pre-registration-batchjob</artifactId>
+	<version>1.4.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
 	<name>pre-registration-batchjob</name>
-	<version>1.4.0-SNAPSHOT</version>
-	<url>http://maven.apache.org</url>
+	<description>
+		Scheduled Pre-Registration Job: creates appointment availability slots for registration
+		centres, marks expired applications, archives consumed applications, and reconciles
+		identity after Registration Processor completes. Separate JVM and Helm chart from
+		pre-registration-service. Depends on pre-registration-core. Do not fold this Job into
+		the HTTP service. Do not reintroduce kernel-bom. Port 9097, context /preregistration/v1.
+	</description>
+	<url>https://github.com/mosip/pre-registration</url>
 
-	<properties>
-		<maven.deploy.plugin.version>3.1.1</maven.deploy.plugin.version>
-		<central.publishing.maven.plugin.version>0.7.0</central.publishing.maven.plugin.version>
-	</properties>
-
-	<dependencyManagement>
-		<dependencies>
-			<dependency>
-				<groupId>io.mosip.kernel</groupId>
-				<artifactId>kernel-bom</artifactId>
-				<version>${kernel.bom.version}</version>
-				<type>pom</type>
-				<scope>import</scope>
-			</dependency>
-		</dependencies>
-	</dependencyManagement>
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-batch</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.batch</groupId>
+			<artifactId>spring-batch-infrastructure</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.batch</groupId>
@@ -44,22 +45,36 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-config</artifactId>
-			<version>${spring-cloud-config.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.boot</groupId>
-			<artifactId>spring-boot-devtools</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-webflux</artifactId>
-			<version>${spring.boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>io.mosip.preregistration</groupId>
 			<artifactId>pre-registration-core</artifactId>
-			<version>${pre.registration.core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>io.mosip.kernel</groupId>
+			<artifactId>kernel-auth-adapter</artifactId>
+			<exclusions>
+				<exclusion>
+					<groupId>org.springframework.boot</groupId>
+					<artifactId>spring-boot-starter</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.mosip.kernel</groupId>
+					<artifactId>kernel-logger-logback</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>io.mosip.kernel</groupId>
+					<artifactId>kernel-dataaccess-hibernate</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-jackson2</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>io.micrometer</groupId>
@@ -70,8 +85,8 @@
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.junit.vintage</groupId>
-			<artifactId>junit-vintage-engine</artifactId>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-tracing</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -82,39 +97,43 @@
 			<artifactId>hibernate-validator</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<scope>test</scope>
-		</dependency>
-		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
-	<distributionManagement>
-		<snapshotRepository>
-			<id>ossrh</id>
-			<url>https://central.sonatype.com/repository/maven-snapshots/</url>
-		</snapshotRepository>
-		<repository>
-			<id>ossrh</id>
-			<url>https://central.sonatype.com/api/v1/publisher</url>
-		</repository>
-	</distributionManagement>
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring.boot.maven.plugin.version}</version>
 				<configuration>
-					<executable>true</executable>
+					<mainClass>io.mosip.preregistration.batchjob.PreRegistrationBatchJob</mainClass>
+					<!-- Boot 4 removed the executable flag; ZIP layout supports java -jar -->
 					<layout>ZIP</layout>
 				</configuration>
 				<executions>
 					<execution>
+						<id>build-info</id>
 						<goals>
 							<goal>build-info</goal>
+						</goals>
+						<configuration>
+							<outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
+						</configuration>
+					</execution>
+					<execution>
+						<id>repackage</id>
+						<goals>
 							<goal>repackage</goal>
 						</goals>
 						<configuration>
@@ -122,35 +141,6 @@
 						</configuration>
 					</execution>
 				</executions>
-			</plugin>
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>${maven.deploy.plugin.version}</version>
-				<configuration>
-					<skip>true</skip>
-				</configuration>
-				<executions>
-					<execution>
-						<id>default-deploy</id>
-						<phase>none</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-						<configuration>
-							<skip>true</skip>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.sonatype.central</groupId>
-				<artifactId>central-publishing-maven-plugin</artifactId>
-				<version>${central.publishing.maven.plugin.version}</version>
-				<extensions>true</extensions>
-				<configuration>
-					<publishingServerId>ossrh</publishingServerId>
-					<autoPublish>false</autoPublish>
-				</configuration>
 			</plugin>
 		</plugins>
 	</build>
