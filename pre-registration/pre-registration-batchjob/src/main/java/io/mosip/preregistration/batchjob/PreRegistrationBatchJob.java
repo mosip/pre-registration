@@ -29,6 +29,8 @@ import io.mosip.kernel.dataaccess.hibernate.config.HibernateDaoConfig;
                 "io\\.mosip\\.kernel\\.cryptomanager\\..*",
                 "io\\.mosip\\.kernel\\.crypto\\..*",
                 "io\\.mosip\\.kernel\\.clientcrypto\\..*",
+                "io\\.mosip\\.kernel\\.datamapper\\..*",
+                "io\\.mosip\\.kernel\\.idgenerator\\.mispid\\..*",
                 "io.mosip.kernel.dataaccess.hibernate.config.*",
         }),
         @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, value = { HibernateDaoConfig.class })
