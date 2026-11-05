@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.analytics.event.anonymous.dto;
 
 import java.time.LocalDateTime;

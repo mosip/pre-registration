@@ -1,0 +1,9 @@
+<div class="captcha">
+  <re-captcha
+    id="grecaptcha"
+    class="g-recaptcha"
+    (resolved)="recaptcha($event)"
+    siteKey="{{ captchaSiteKey }}"
+    data-error-callback="recaptchaError($event)"
+  ></re-captcha>
+</div>

@@ -46,7 +46,7 @@ service:
   externalTrafficPolicy: Cluster
 image:
   registry: docker.io
-  repository: mosipqa/pre-registration-application-service
+  repository: mosipqa/pre-registration-service
   tag: develop
   ## Specify a imagePullPolicy
   ## Defaults to 'Always' if image tag is 'latest', else set to 'IfNotPresent'
@@ -121,7 +121,9 @@ resources:
 additionalResources:
   ## Specify any JAVA_OPTS string here. These typically will be specified in conjunction with above resources
   ## Example: java_opts: "-Xms500M -Xmx500M"
-  javaOpts: "-Xms1125M -Xmx1875M"
+  ## Injected as JDK_JAVA_OPTIONS (not Docker CMD).
+  javaOpts: >-
+    -XX:-UseG1GC -XX:+ExplicitGCInvokesConcurrent -XX:-UseParallelGC -XX:+UseZGC -XX:+ZGenerational -XX:-UseShenandoahGC -XX:MaxGCPauseMillis=200 -XX:+UnlockExperimentalVMOptions -XX:+UseStringDeduplication -XX:+HeapDumpOnOutOfMemoryError -Dfile.encoding=UTF-8 -XX:+UseCompressedOops -Xms1125M -Xmx1875M
 ## ref: https://kubernetes.io/docs/tasks/configure-pod-container/security-context/#set-the-security-context-for-a-container
 ## Clamav container already runs as 'mosip' user, so we may not need to enable this
 containerSecurityContext:
@@ -410,6 +412,16 @@ istio:
         prefix: /preregistration/v1/csrf
     - uri:
         prefix: /preregistration/v1/transliteration
+    - uri:
+        prefix: /preregistration/v1/appointment
+    - uri:
+        prefix: /preregistration/v1/sync
+    - uri:
+        prefix: /preregistration/v1/captcha
+    - uri:
+        prefix: /preregistration/v1/swagger-ui
+    - uri:
+        prefix: /preregistration/v1/v3/api-docs
     - uri:
         prefix: /preregistration/v1/application-service/swagger-ui
     - uri:

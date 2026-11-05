@@ -7,9 +7,18 @@ import lombok.ToString;
 @Data
 @NoArgsConstructor
 @ToString
+/**
+ * Data transfer object carrying holiday across Pre-Registration APIs.
+ */
 public class HolidayDto {
+	/**
+	 * holiday id used by this Pre-Registration type.
+	 */
 	private String holidayId;
 
+	/**
+	 * holiday date used by this Pre-Registration type.
+	 */
 	private String holidayDate;
 	
 	/**
@@ -23,11 +32,23 @@ public class HolidayDto {
 	 */
 	private String holidayMonth;
 	
+	/**
+	 * holiday year used by this Pre-Registration type.
+	 */
 	private String holidayYear;
 	
+	/**
+	 * holiday name used by this Pre-Registration type.
+	 */
 	private String holidayName;
 	
+	/**
+	 * language code used by this Pre-Registration type.
+	 */
 	private String languageCode;
 	
+	/**
+	 * is active used by this Pre-Registration type.
+	 */
 	private Boolean isActive;
 }

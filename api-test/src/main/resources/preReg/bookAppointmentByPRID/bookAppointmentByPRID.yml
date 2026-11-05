@@ -1,624 +1,645 @@
 BookAppointmentByPRID:
-   Prereg_BookAppointmentByPRID_All_Valid_Smoke:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_01
-      description: Validate that booking an appointment by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      checkErrorsOnlyInResponse: true
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRIDResult
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-}'
-   Prereg_BookAppointmentByPRID_inValid_preRegistrationId:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_02
-      description: Validate that booking an appointment by Pre Registration ID fails when an invalid pre registration ID is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"1234fgfgdb",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_APP_013"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_blank_preRegistrationId:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_03
-      description: Validate that booking an appointment by Pre Registration ID fails when the pre registration ID is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_APP_013"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_missing_preRegistrationId:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_04
-      description: Validate that booking an appointment by Pre Registration ID fails when the pre registration ID is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$REMOVE$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_APP_013"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_inValid_Id:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_05
-      description: Validate that booking an appointment by Pre Registration ID fails when an invalid ID is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "moe.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_PAM_CORE_001"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Blank_Id:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_06
-      description: Validate that booking an appointment by Pre Registration ID fails when the ID field is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_PAM_CORE_001"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Blank_version:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_07
-      description: Validate that booking an appointment by Pre Registration ID fails when the version field is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Missing_version:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_08
-      description: Validate that booking an appointment by Pre Registration ID fails when the version attribute is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "$REMOVE$",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Invalid_version:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_09
-      description: Validate that booking an appointment by Pre Registration ID fails when an invalid version is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "snsjd73t33ybyh2334@FDh",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Invalid_registration_center_id:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_10
-      description: Validate that booking an appointment by Pre Registration ID fails when an invalid registration center ID is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "363wgbsion_center_id",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "KER-MSD-215"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Missing_registration_center_id:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_11
-      description: Validate that booking an appointment by Pre Registration ID fails when the registration center ID is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$REMOVE$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_007"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Blank_registration_center_id:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_12
-      description: Validate that booking an appointment by Pre Registration ID fails when the registration center ID is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_007"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Blank_appointment_date:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_13
-      description: Validate that booking an appointment by Pre Registration ID fails when the appointment date is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_008"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Missing_appointment_date:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_14
-      description: Validate that booking an appointment by Pre Registration ID fails when the appointment date is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$REMOVE$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_008"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Invalid_appointment_date:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_15
-      description: Validate that booking an appointment by Pre Registration ID fails when an invalid appointment date is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "njdus6w22ybsh",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_031"
-     
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_blank_time_slot_to:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_16
-      description: Validate that booking an appointment by Pre Registration ID fails when the time slot to field is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_003"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_blank_time_slot_from:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_17
-      description: Validate that booking an appointment by Pre Registration ID fails when the time slot from field is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_003"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Missing_time_slot_to:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_18
-      description: Validate that booking an appointment by Pre Registration ID fails when the time slot to value is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$REMOVE$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_003"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Missing_time_slot_from:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_19
-      description: Validate that booking an appointment by Pre Registration ID fails when the time slot from value is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$REMOVE$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_BOOK_RCI_003"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_missing_requesttime:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_20
-      description: Validate that booking an appointment by Pre Registration ID fails when the request time is missing
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$REMOVE$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_003"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Invalid_requesttime:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_21
-      description: Validate that booking an appointment by Pre Registration ID fails when an invalid request time is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "qerwgtgf"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_015"
-      
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_Blank_requesttime:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_22
-      description: Validate that booking an appointment by Pre Registration ID fails when the request time is left blank
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": ""
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_003"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_previous_requesttime:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_23
-      description: Validate that booking an appointment by Pre Registration ID fails when a previous request time is provided
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "2017-02-15T04:31:23.613Z"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_013"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_With_Invalid_PRID_Neg:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_24
-      description: Book an appointment with Invalid PRID
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$INVALID_PRID$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_APP_013"
-    }
-  ]
-}'
-   Prereg_BookAppointmentByPRID_With_Valid_PRID_NotIn_DB_Neg:
-      endPoint: /preregistration/v1/applications/appointment
-      uniqueIdentifier: TC_prereg_BookAppointmentByPRID_25
-      description: Book an appointment with Valid PRID but not present in DB
-      role: batch
-      restMethod: post
-      inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId":"$VALID_PRID_NOTIN_DB$",   
-  "registration_center_id": "$registration_center_id$",
-  "id": "mosip.pre-registration.booking.book",
-  "version": "1.0",
-  "appointment_date": "$appointment_date$",
-  "time_slot_from": "$time_slot_from$",
-  "time_slot_to": "$time_slot_to$",
-  "requesttime": "$TIMESTAMP$"
-}'
-      output: '{
-  "errors": [
-    {
-      "errorCode": "PRG_APP_013"
-    }
-  ]
-}'
+  Prereg_BookAppointmentByPRID_All_Valid_Smoke:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_01
+    description: Validate that booking an appointment by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    checkErrorsOnlyInResponse: true
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRIDResult
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{}'
+
+  Prereg_BookAppointmentByPRID_inValid_preRegistrationId:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_02
+    description: Validate that booking an appointment by Pre Registration ID fails when an invalid pre registration ID is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "1234fgfgdb",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_APP_013"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_blank_preRegistrationId:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_03
+    description: Validate that booking an appointment by Pre Registration ID fails when the pre registration ID is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_APP_013"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_missing_preRegistrationId:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_04
+    description: Validate that booking an appointment by Pre Registration ID fails when the pre registration ID is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$REMOVE$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_APP_013"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_inValid_Id:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_05
+    description: Validate that booking an appointment by Pre Registration ID fails when an invalid ID is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "moe.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_CORE_001"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Blank_Id:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_06
+    description: Validate that booking an appointment by Pre Registration ID fails when the ID field is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_CORE_001"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Blank_version:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_07
+    description: Validate that booking an appointment by Pre Registration ID fails when the version field is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Missing_version:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_08
+    description: Validate that booking an appointment by Pre Registration ID fails when the version attribute is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "$REMOVE$",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Invalid_version:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_09
+    description: Validate that booking an appointment by Pre Registration ID fails when an invalid version is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "snsjd73t33ybyh2334@FDh",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Invalid_registration_center_id:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_10
+    description: Validate that booking an appointment by Pre Registration ID fails when an invalid registration center ID is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "363wgbsion_center_id",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "KER-MSD-215"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Missing_registration_center_id:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_11
+    description: Validate that booking an appointment by Pre Registration ID fails when the registration center ID is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$REMOVE$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_007"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Blank_registration_center_id:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_12
+    description: Validate that booking an appointment by Pre Registration ID fails when the registration center ID is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_007"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Blank_appointment_date:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_13
+    description: Validate that booking an appointment by Pre Registration ID fails when the appointment date is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_008"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Missing_appointment_date:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_14
+    description: Validate that booking an appointment by Pre Registration ID fails when the appointment date is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$REMOVE$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_008"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Invalid_appointment_date:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_15
+    description: Validate that booking an appointment by Pre Registration ID fails when an invalid appointment date is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "njdus6w22ybsh",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_031"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_blank_time_slot_to:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_16
+    description: Validate that booking an appointment by Pre Registration ID fails when the time slot to field is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_003"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_blank_time_slot_from:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_17
+    description: Validate that booking an appointment by Pre Registration ID fails when the time slot from field is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_003"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Missing_time_slot_to:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_18
+    description: Validate that booking an appointment by Pre Registration ID fails when the time slot to value is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$REMOVE$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_003"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Missing_time_slot_from:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_19
+    description: Validate that booking an appointment by Pre Registration ID fails when the time slot from value is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$REMOVE$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_BOOK_RCI_003"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_missing_requesttime:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_20
+    description: Validate that booking an appointment by Pre Registration ID fails when the request time is missing
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$REMOVE$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_003"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Invalid_requesttime:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_21
+    description: Validate that booking an appointment by Pre Registration ID fails when an invalid request time is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "qerwgtgf"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_015"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_Blank_requesttime:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_22
+    description: Validate that booking an appointment by Pre Registration ID fails when the request time is left blank
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": ""
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_003"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_previous_requesttime:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_23
+    description: Validate that booking an appointment by Pre Registration ID fails when a previous request time is provided
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "2017-02-15T04:31:23.613Z"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_013"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_With_Invalid_PRID_Neg:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_24
+    description: Book an appointment with Invalid PRID
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$INVALID_PRID$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_APP_013"
+        }
+      ]
+    }'
+
+  Prereg_BookAppointmentByPRID_With_Valid_PRID_NotIn_DB_Neg:
+    endPoint: /preregistration/v1/applications/appointment
+    uniqueIdentifier: TC_prereg_BookAppointmentByPRID_25
+    description: Book an appointment with Valid PRID but not present in DB
+    role: batch
+    restMethod: post
+    inputTemplate: preReg/bookAppointmentByPRID/bookAppointmentByPRID
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$VALID_PRID_NOTIN_DB$",
+      "registration_center_id": "$registration_center_id$",
+      "id": "mosip.pre-registration.booking.book",
+      "version": "1.0",
+      "appointment_date": "$appointment_date$",
+      "time_slot_from": "$time_slot_from$",
+      "time_slot_to": "$time_slot_to$",
+      "requesttime": "$TIMESTAMP$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_APP_013"
+        }
+      ]
+    }'

@@ -3,9 +3,14 @@ package io.mosip.preregistration.core.common.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Data;
 
 @Data
+/**
+ * Data transfer object carrying crypto manager request across Pre-Registration APIs.
+ */
 public class CryptoManagerRequestDTO implements Serializable {
 	/**
 	 * 
@@ -28,10 +33,13 @@ public class CryptoManagerRequestDTO implements Serializable {
 
 	private String referenceId;
 	/**
-	 * Timestamp
+	 * Timestamp. Keymanager 1.3 parses {@code yyyy-MM-dd'T'HH:mm:ss.SSS'Z'}.
 	 */
-
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
 	private LocalDateTime timeStamp;
 
+	/**
+	 * prepend thumbprint used by this Pre-Registration type.
+	 */
 	private boolean prependThumbprint;
 }

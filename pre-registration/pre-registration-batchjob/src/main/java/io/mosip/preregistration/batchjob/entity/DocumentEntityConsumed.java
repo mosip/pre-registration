@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.entity;
 
 import java.io.Serializable;
@@ -124,6 +120,9 @@ public class DocumentEntityConsumed implements Serializable {
 	private String DocHash;
 	
 	@Column(name = "doc_ref_id")
+	/**
+	 * doc ref id used by this Pre-Registration type.
+	 */
 	private String docRefId;
 
 }

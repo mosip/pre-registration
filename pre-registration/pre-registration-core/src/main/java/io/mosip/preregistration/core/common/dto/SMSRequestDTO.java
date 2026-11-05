@@ -8,7 +8,13 @@ import lombok.Data;
  */
 @Data
 public class SMSRequestDTO {
+	/**
+	 * message used by this Pre-Registration type.
+	 */
 	private String message;
 
+	/**
+	 * number used by this Pre-Registration type.
+	 */
 	private String number;
 }

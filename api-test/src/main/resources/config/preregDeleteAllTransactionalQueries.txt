@@ -1,0 +1,17 @@
+#####  Local / dedicated mosip_prereg: delete leftover test rows at suite setup. One statement per line (DBManager).
+#####  Does not touch prereg.reg_available_slot (booking seed) or Spring batch tables.
+#####  Restore kiosk counts for appointments about to be deleted, then children before parents.
+
+update prereg.reg_available_slot s set available_kiosks = coalesce(s.available_kiosks, 0) + 1 from prereg.reg_appointment a where s.regcntr_id = a.regcntr_id and s.availability_date = a.appointment_date and s.slot_from_time = a.slot_from_time
+delete from prereg.applicant_document
+delete from prereg.applicant_document_consumed
+delete from prereg.reg_appointment
+delete from prereg.reg_appointment_consumed
+delete from prereg.processed_prereg_list
+delete from prereg.intf_processed_prereg_list
+delete from prereg.anonymous_profile
+delete from prereg.applications
+delete from prereg.applicant_demographic
+delete from prereg.applicant_demographic_consumed
+delete from prereg.otp_transaction
+delete from prereg.user_details

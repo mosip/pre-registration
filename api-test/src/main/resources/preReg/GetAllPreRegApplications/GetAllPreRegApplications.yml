@@ -1,40 +1,42 @@
 GetAllPreRegApplications:
-   Prereg_GetAllPreRegApplications_All_Valid_Smoke_sid:
-      endPoint: /preregistration/v1/applications
-      uniqueIdentifier: TC_prereg_GetAllPreRegApplications_01
-      description: Validate that fetching all pre registration applications is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      checkErrorsOnlyInResponse: true
-      restMethod: get
-      inputTemplate: preReg/GetAllPreRegApplications/getAllPreRegApplications
-      outputTemplate: preReg/GetAllPreRegApplications/GetAllPreRegApplicationsResult
-      input: '{}'
-      output: '{
-  "bookingType": "NEW_PREREGISTRATION"
-}'
-   Prereg_GetAllPreRegApplications_LOST_UIN_APPLICATION_sid:
-      endPoint: /preregistration/v1/applications
-      uniqueIdentifier: TC_prereg_GetAllPreRegApplications_02
-      description: Validate that fetching all pre registration applications successfully includes lost UIN applications when all mandatory fields are provided with valid values
-      role: batch
-      checkErrorsOnlyInResponse: true
-      restMethod: get
-      inputTemplate: preReg/GetAllPreRegApplications/getAllPreRegApplications
-      outputTemplate: preReg/GetAllPreRegApplications/GetAllPreRegApplicationsResult
-      input: '{}'
-      output: '{
-  "bookingType": "NEW_PREREGISTRATION"
-}'
-   Prereg_GetAllPreRegApplications_DELETE_UIN_APPLICATION_sid:
-      endPoint: /preregistration/v1/applications
-      uniqueIdentifier: TC_prereg_GetAllPreRegApplications_03
-      description: Validate that fetching all pre registration applications successfully reflects deleted UIN applications when all mandatory fields are provided with valid values
-      role: batch
-      checkErrorsOnlyInResponse: true
-      restMethod: get
-      inputTemplate: preReg/GetAllPreRegApplications/getAllPreRegApplications
-      outputTemplate: preReg/GetAllPreRegApplications/GetAllPreRegApplicationsResult
-      input: '{}'
-      output: '{
-  "bookingType": "NEW_PREREGISTRATION"
-}'
+  Prereg_GetAllPreRegApplications_All_Valid_Smoke_sid:
+    endPoint: /preregistration/v1/applications
+    uniqueIdentifier: TC_prereg_GetAllPreRegApplications_01
+    description: Validate that fetching all pre registration applications is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    checkErrorsOnlyInResponse: true
+    restMethod: get
+    inputTemplate: preReg/GetAllPreRegApplications/getAllPreRegApplications
+    outputTemplate: preReg/GetAllPreRegApplications/GetAllPreRegApplicationsResult
+    input: '{}'
+    output: '{
+      "bookingType": "NEW_PREREGISTRATION"
+    }'
+
+  Prereg_GetAllPreRegApplications_LOST_UIN_APPLICATION_sid:
+    endPoint: /preregistration/v1/applications
+    uniqueIdentifier: TC_prereg_GetAllPreRegApplications_02
+    description: Validate that fetching all pre registration applications successfully includes lost UIN applications when all mandatory fields are provided with valid values
+    role: batch
+    checkErrorsOnlyInResponse: true
+    restMethod: get
+    inputTemplate: preReg/GetAllPreRegApplications/getAllPreRegApplications
+    outputTemplate: preReg/GetAllPreRegApplications/GetAllPreRegApplicationsResult
+    input: '{}'
+    output: '{
+      "bookingType": "NEW_PREREGISTRATION"
+    }'
+
+  Prereg_GetAllPreRegApplications_DELETE_UIN_APPLICATION_sid:
+    endPoint: /preregistration/v1/applications
+    uniqueIdentifier: TC_prereg_GetAllPreRegApplications_03
+    description: Validate that fetching all pre registration applications successfully reflects deleted UIN applications when all mandatory fields are provided with valid values
+    role: batch
+    checkErrorsOnlyInResponse: true
+    restMethod: get
+    inputTemplate: preReg/GetAllPreRegApplications/getAllPreRegApplications
+    outputTemplate: preReg/GetAllPreRegApplications/GetAllPreRegApplicationsResult
+    input: '{}'
+    output: '{
+      "bookingType": "NEW_PREREGISTRATION"
+    }'

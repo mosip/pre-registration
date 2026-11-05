@@ -53,11 +53,23 @@ public class NotificationDTO implements Serializable {
 	 */
 	private Boolean isBatch;
 
+	/**
+	 * language code used by this Pre-Registration type.
+	 */
 	private String languageCode;
 
+	/**
+	 * full name used by this Pre-Registration type.
+	 */
 	private List<KeyValuePairDto<String, String>> fullName;
 
+	/**
+	 * registration center name used by this Pre-Registration type.
+	 */
 	private List<KeyValuePairDto<String, String>> registrationCenterName;
 
+	/**
+	 * address used by this Pre-Registration type.
+	 */
 	private List<KeyValuePairDto<String, String>> address;
 }

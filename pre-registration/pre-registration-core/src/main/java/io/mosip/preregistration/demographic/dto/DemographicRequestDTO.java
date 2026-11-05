@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.demographic.dto;
 
 import java.io.Serializable;

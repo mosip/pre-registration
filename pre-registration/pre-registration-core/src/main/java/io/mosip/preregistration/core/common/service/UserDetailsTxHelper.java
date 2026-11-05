@@ -26,8 +26,16 @@ import io.mosip.preregistration.core.common.repository.UserDetailsRepository;
 @Service
 public class UserDetailsTxHelper {
 
+	/**
+	 * user details repository used by this Pre-Registration type.
+	 */
 	private final UserDetailsRepository userDetailsRepository;
 
+	/**
+	 * Creates a user details tx helper.
+	 *
+	 * @param userDetailsRepository user details repository supplied to this constructor
+	 */
 	public UserDetailsTxHelper(UserDetailsRepository userDetailsRepository) {
 		this.userDetailsRepository = userDetailsRepository;
 	}

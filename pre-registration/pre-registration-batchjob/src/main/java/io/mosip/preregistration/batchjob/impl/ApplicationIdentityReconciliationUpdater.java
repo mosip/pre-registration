@@ -37,14 +37,28 @@ public class ApplicationIdentityReconciliationUpdater {
 	/** Bounded so a large legacy backlog is not loaded/mutated all at once (no config key needed). */
 	private static final int RECONCILIATION_BATCH_SIZE = 500;
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(ApplicationIdentityReconciliationUpdater.class);
 
 	@Autowired
+	/**
+	 * batch jpa repository impl used by this Pre-Registration type.
+	 */
 	private BatchJpaRepositoryImpl batchJpaRepositoryImpl;
 
 	@Autowired
+	/**
+	 * reconciliation tx helper used by this Pre-Registration type.
+	 */
 	private IdentityReconciliationTxHelper reconciliationTxHelper;
 
+	/**
+	 * Performs reconcile raw identity records for MOSIP Pre-Registration.
+	 */
 	public void reconcileRawIdentityRecords() {
 
 		log.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH,

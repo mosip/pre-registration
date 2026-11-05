@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.code;
 
 /**
@@ -52,6 +48,9 @@ public enum StatusCodes {
 		this.code = code;
 	}
 
+	/**
+	 * code used by this Pre-Registration type.
+	 */
 	private final String code;
 
 	/**

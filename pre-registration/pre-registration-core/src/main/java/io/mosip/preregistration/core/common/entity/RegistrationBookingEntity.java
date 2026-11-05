@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.entity;
 
 import java.io.Serializable;
@@ -101,6 +97,11 @@ public class RegistrationBookingEntity implements Serializable {
 	}
 
 	@JsonIgnore
+	/**
+	 * Returns effective upd by.
+	 *
+	 * @return get effective upd by result
+	 */
 	public String getEffectiveUpdBy() {
 		return this.upBy;
 	}

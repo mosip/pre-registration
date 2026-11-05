@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.repository;
 
 import java.time.LocalDate;
@@ -66,6 +62,12 @@ public interface AvailabilityRepository extends BaseRepository<AvailibityEntity,
 	@Query("SELECT DISTINCT e.regDate FROM AvailibityEntity e  WHERE e.regDate>= ?1")
 	public List<LocalDate> findAvaialableDate(LocalDate regDate);
 	
+	/**
+	 * Performs find by regcntr id for MOSIP Pre-Registration.
+	 *
+	 * @param regCenterId reg center id used by find by regcntr id
+	 * @return find by regcntr id result
+	 */
 	public List<AvailibityEntity> findByRegcntrId(String regCenterId);
 	
 	/**

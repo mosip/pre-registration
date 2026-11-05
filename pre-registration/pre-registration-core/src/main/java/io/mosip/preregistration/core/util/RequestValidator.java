@@ -17,6 +17,9 @@ import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 
 @Component
+/**
+ * Class supporting request validator in MOSIP Pre-Registration (io.mosip.preregistration.core.util).
+ */
 public class RequestValidator extends BaseValidator implements Validator {
 
 	/** The Constant REQUEST. */
@@ -56,6 +59,13 @@ public class RequestValidator extends BaseValidator implements Validator {
 		validateRequest(request.getRequest(), errors);
 	}
 
+	/**
+	 * Performs validate id for MOSIP Pre-Registration.
+	 *
+	 * @param operation operation used by validate id
+	 * @param requestId request id used by validate id
+	 * @param errors errors used by validate id
+	 */
 	public void validateId(String operation, String requestId, Errors errors) {
 		if (Objects.nonNull(requestId)) {
 			if (!requestId.equals(id.get(operation))) {
@@ -70,6 +80,12 @@ public class RequestValidator extends BaseValidator implements Validator {
 		}
 	}
 	
+	/**
+	 * Performs validate booking type for MOSIP Pre-Registration.
+	 *
+	 * @param bookingType booking type used by validate booking type
+	 * @param errors errors used by validate booking type
+	 */
 	public void validateBookingType(String bookingType, Errors errors) {
 		if (Objects.nonNull(bookingType)) {
 			List<BookingTypeCodes> bookingTypes = Arrays.asList(BookingTypeCodes.values());

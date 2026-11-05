@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.dto;
 
 import java.io.Serializable;
@@ -54,10 +50,20 @@ public class MainRequestDTO<T> implements Serializable {
 	private T request;
 
 	// Getter and Setter methods for requesttime are overridden manually
+	/**
+	 * Returns requesttime.
+	 *
+	 * @return get requesttime result
+	 */
 	public Date getRequesttime() {
 		return requesttime != null ? new Date(requesttime.getTime()) : null;
 	}
 
+	/**
+	 * Sets requesttime.
+	 *
+	 * @param requesttime requesttime used by set requesttime
+	 */
 	public void setRequesttime(Date requesttime) {
 		this.requesttime = requesttime != null ? new Date(requesttime.getTime()) : null;
 	}

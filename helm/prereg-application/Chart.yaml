@@ -1,6 +1,6 @@
 apiVersion: v2
 name: prereg-application
-description: A Helm chart for MOSIP Pre-registration Application service
+description: Helm chart for the consolidated MOSIP Pre-Registration HTTP service (application, datasync, captcha)
 type: application
 version: 0.0.1-develop
 appVersion: ""

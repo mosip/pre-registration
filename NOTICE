@@ -1,84 +1,80 @@
-MOSIP
-Copyright (c) 2022 Modular Open Source Identity Platform
+MOSIP Pre-Registration
+Copyright (c) 2019-2026 MOSIP
+Modular Open Source Identity Platform (MOSIP)
 
 This product includes software developed at
 The Apache Software Foundation (https://www.apache.org/).
 
-The following third-party components require attribution under their
-respective licenses (Apache License 2.0, JSON License, and CDDL).
+This project also includes third-party software components licensed under
+various open-source licenses. Attribution for these components is provided
+below. The full Maven inventory is THIRD-PARTY-NOTICES.txt (generated
+2026-11-04). License texts are in licenses/.
 
+---
 
-===============================================================================
-Apache License 2.0 Components
-===============================================================================
-This product includes software licensed under the Apache License 2.0.
-Original NOTICE information and copyright statements from the respective
-projects are retained for the following components:
+Third-party attributions (resolved tree):
 
- • Spring Boot
-   (Starter Web, Security, JPA, WebFlux, Cache, Batch, Test, Actuator, Devtools)
+• Spring Boot 4.1.1, Spring Framework 7.0.9, Spring Security 7.1.1
+  Licensed under the Apache License 2.0.
 
- • Spring Cloud
-   (Config, Bootstrap, Dependencies 2020.0.4)
+• Spring Cloud 2025.1.3 (config 5.0.5, commons 5.0.3)
+  Licensed under the Apache License 2.0.
 
- • Spring Batch (Core, Test)
+• Spring Batch 6.0.5
+  Licensed under the Apache License 2.0.
 
- • SpringDoc OpenAPI
-   (WebMVC UI, Maven Plugin)
+• SpringDoc OpenAPI 3.1.1
+  Licensed under the Apache License 2.0.
 
- • Jackson
-   (Core, Databind, Annotations, JSR310)
+• Tomcat Embed 11.0.24, Hibernate ORM 7.4.5.Final, Netty 4.2.17.Final
+  Licensed under the Apache License 2.0.
 
- • Micrometer (Core, Prometheus Registry)
+• Vert.x 3.9.16
+  Licensed under the Eclipse Public License 1.0 / 2.0 and Apache License 2.0.
 
- • Apache PDFBox
+• Jackson 2.21.x (spring-boot-jackson2) and Jackson 3.1.5
+  Licensed under the Apache License 2.0.
 
- • Apache Commons Collections4
+• PostgreSQL JDBC Driver 42.7.5
+  Licensed under the BSD-2-Clause License.
 
- • Apache HttpClient
+• H2 Database 2.3.232
+  Licensed under the Eclipse Public License 1.0 and MPL 2.0.
 
- • Apache Maven Plugins
-   (maven-source-plugin, maven-jar-plugin, maven-war-plugin,
-    maven-compiler-plugin, maven-javadoc-plugin,
-    maven-surefire-plugin, maven-shade-plugin, maven-gpg-plugin)
+• SLF4J 2.0.18 (MIT). Logback 1.5.38 (EPL-2.0 / LGPL-2.1).
 
- • JSON Simple (com.googlecode.json-simple)
+• Lombok 1.18.38, Mockito 5.23.0
+  Licensed under the MIT License.
 
- • Java UUID Generator (com.fasterxml.uuid)
+• JUnit 6.0.3 / JUnit Vintage 6.0.3 (EPL-2.0). JUnit 4.13.2 (EPL-1.0).
 
- • Ehcache
+• Bouncy Castle 1.85
+  Licensed under the Bouncy Castle Licence.
 
- • JWT (io.jsonwebtoken:jjwt)
+• ICU4J 78.3
+  Licensed under Unicode License v3.
 
- • Central Publishing Maven Plugin (Sonatype)
+• Apache PDFBox 3.0.3
+  Licensed under the Apache License 2.0.
 
+• JSON-java 20240303
+  Public Domain / JSON License.
 
-===============================================================================
-JSON License Component
-===============================================================================
-The following component is licensed under the JSON License and requires
-attribution as per its terms:
+• MOSIP kernel-core, kernel-auth-adapter, khazana 1.4.1-SNAPSHOT
+  Licensed under the Mozilla Public License 2.0.
+  PRID `PridGenerator` SPI is `kernel-core`. Impl is source in `pridgenerator-service` (MPL 2.0).
 
- • org.json (json)
-   Copyright © 2002 JSON.org
+• Loader-path SPIs: kernel-ref-idobjectvalidator, kernel-virusscanner-clamav
+  (mosip-ref-impl issue-1633). Licensed under the Mozilla Public License 2.0.
 
+• Pre-Registration UI (Angular 7 SPA, imported from mosip/pre-registration-ui)
+  Angular, Angular Material, ngx-translate, html2pdf.js, ng2-pdf-viewer, ng-recaptcha,
+  Hammer.js, core-js, zone.js, Moment.js: MIT License.
+  RxJS: Apache License 2.0.
+  OpenLayers (ol): BSD-2-Clause.
+  Copyright notices: licenses/NOTICE.
 
-===============================================================================
-CDDL Licensed Component
-===============================================================================
-The following component includes code licensed under the Common
-Development and Distribution License (CDDL), which requires retaining
-copyright notices:
+---
 
- • javax.activation (Activation Framework)
-   (Dual licensed under CDDL + GPL with Classpath Exception)
-
-
-===============================================================================
-Notes
-===============================================================================
-All other third-party software components are licensed under permissive
-licenses (MIT, BSD, PostgreSQL License, MPL, EPL, or similar) and do
-not require inclusion in this NOTICE file. Their full license texts are
-available in the LICENSE directory.
-
+All other included third-party components are listed in THIRD-PARTY-NOTICES.txt.
+Their license texts are in the licenses/ directory.

@@ -19,6 +19,9 @@ import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
 
 @Component
+/**
+ * Class supporting base validator in MOSIP Pre-Registration (io.mosip.preregistration.core.util).
+ */
 public abstract class BaseValidator {
 
 	/** The Constant BASE_ID_REPO_VALIDATOR. */

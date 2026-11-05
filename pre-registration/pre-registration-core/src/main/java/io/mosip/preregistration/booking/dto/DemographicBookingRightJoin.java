@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+/**
+ * Class supporting demographic booking right join in MOSIP Pre-Registration (io.mosip.preregistration.booking.dto).
+ */
 public class DemographicBookingRightJoin implements Serializable {
 	/**
 	 * 

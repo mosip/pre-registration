@@ -19,9 +19,18 @@ public class AuditLogEventCodes implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = -4812141703022119560L;
 
+	/**
+	 * event id used by this Pre-Registration type.
+	 */
 	private String eventId;
 
+	/**
+	 * event type used by this Pre-Registration type.
+	 */
 	private String eventType;
 
+	/**
+	 * event name used by this Pre-Registration type.
+	 */
 	private String eventName;
 }

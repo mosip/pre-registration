@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.entity;
 
 import java.io.Serializable;
@@ -43,6 +39,9 @@ public class DocumentEntity implements Serializable {
 
 	@ManyToOne(fetch = FetchType.EAGER)
 	@JoinColumn(name = "prereg_id", nullable = false)
+	/**
+	 * demographic entity used by this Pre-Registration type.
+	 */
 	private DemographicEntity demographicEntity;
 
 	/**
@@ -130,6 +129,11 @@ public class DocumentEntity implements Serializable {
 	}
 
 	@JsonIgnore
+	/**
+	 * Returns effective upd by.
+	 *
+	 * @return get effective upd by result
+	 */
 	public String getEffectiveUpdBy() {
 		return this.updBy;
 	}

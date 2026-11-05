@@ -209,7 +209,10 @@
     "TC_prereg_UpdateDocRefID_07": ["TC_Prereg_CreatePrereg_03"],
     "TC_prereg_CopyDocument_03": ["TC_Prereg_CreatePrereg_01"],
     "TC_prereg_CopyDocument_02": ["TC_Prereg_CreatePrereg_01"],
-    "TC_prereg_CopyDocument_01": ["TC_Prereg_CreatePrereg_01"],
+    "TC_prereg_CopyDocument_01": [
+        "TC_Prereg_CreatePrereg_01",
+        "TC_prereg_UploadDocument_01"
+    ],
     "TC_prereg_GetPreRegDemographicDataByPrid_01": ["TC_Prereg_CreatePrereg_29"],
     "TC_prereg_UpdateDocRefID_01": [
         "TC_Prereg_CreatePrereg_03",

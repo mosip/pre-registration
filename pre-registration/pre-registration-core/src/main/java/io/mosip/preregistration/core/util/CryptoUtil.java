@@ -6,6 +6,7 @@ import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_S
 
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.exception.ExceptionUtils;
@@ -37,6 +38,11 @@ import io.mosip.preregistration.core.exception.EncryptionFailedException;
 @Service
 public class CryptoUtil {
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(CryptoUtil.class);
 
 	/**
@@ -47,17 +53,36 @@ public class CryptoUtil {
 	RestTemplate restTemplate;
 
 	@Value("${cryptoResource.url}")
+	/**
+	 * crypto resource url used by this Pre-Registration type.
+	 */
 	public String cryptoResourceUrl;
 
 	@Value("${preregistration.crypto.applicationId}")
+	/**
+	 * crypto applcation id used by this Pre-Registration type.
+	 */
 	public String cryptoApplcationId;
 
 	@Value("${preregistration.crypto.referenceId}")
+	/**
+	 * crypto reference id used by this Pre-Registration type.
+	 */
 	public String cryptoReferenceId;
 
 	@Value("${preregistration.crypto.PrependThumbprint}")
+	/**
+	 * crypto prepend thumbprint used by this Pre-Registration type.
+	 */
 	public boolean cryptoPrependThumbprint;
 
+	/**
+	 * Performs encrypt for MOSIP Pre-Registration.
+	 *
+	 * @param originalInput original input used by encrypt
+	 * @param localDateTime local date time used by encrypt
+	 * @return encrypt result
+	 */
 	public byte[] encrypt(byte[] originalInput, LocalDateTime localDateTime) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In encrypt method of CryptoUtil service ");
 
@@ -69,7 +94,7 @@ public class CryptoUtil {
 			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(encodedBytes);
 			dto.setReferenceId(cryptoReferenceId);
-			dto.setTimeStamp(localDateTime);
+			dto.setTimeStamp(localDateTime == null ? null : localDateTime.truncatedTo(ChronoUnit.MILLIS));
 			dto.setPrependThumbprint(cryptoPrependThumbprint);
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);
@@ -101,6 +126,13 @@ public class CryptoUtil {
 
 	}
 
+	/**
+	 * Performs decrypt for MOSIP Pre-Registration.
+	 *
+	 * @param originalInput original input used by decrypt
+	 * @param localDateTime local date time used by decrypt
+	 * @return decrypt result
+	 */
 	public byte[] decrypt(byte[] originalInput, LocalDateTime localDateTime) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In decrypt method of CryptoUtil service ");
 		ResponseEntity<ResponseWrapper<CryptoManagerResponseDTO>> response = null;
@@ -111,7 +143,7 @@ public class CryptoUtil {
 			dto.setApplicationId(cryptoApplcationId);
 			dto.setData(new String(originalInput, StandardCharsets.UTF_8));
 			dto.setReferenceId(cryptoReferenceId);
-			dto.setTimeStamp(localDateTime);
+			dto.setTimeStamp(localDateTime == null ? null : localDateTime.truncatedTo(ChronoUnit.MILLIS));
 			dto.setPrependThumbprint(cryptoPrependThumbprint);
 			RequestWrapper<CryptoManagerRequestDTO> requestKernel = new RequestWrapper<>();
 			requestKernel.setRequest(dto);

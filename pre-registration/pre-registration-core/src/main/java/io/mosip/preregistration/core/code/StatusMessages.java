@@ -1,5 +1,8 @@
 package io.mosip.preregistration.core.code;
 
+/**
+ * Enumerated status messages values used by MOSIP Pre-Registration.
+ */
 public enum StatusMessages {
 	USER_ID_INVALID,
 	

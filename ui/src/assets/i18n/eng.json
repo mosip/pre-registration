@@ -1,0 +1,835 @@
+{
+  "quick_guide": {
+    "breadcrumb": {
+      "home": "Home",
+      "getting_started": "Getting Started"
+    },
+    "headerText": {
+      "line1": "To pre-register for one or more applicants, fill out the demographic details and upload the required documents. To book an appointment, choose your preferred registration center, date and time. On successful pre-registration, you will receive the notification on your provided email id or phone number.",
+      "line2": "Click the following sections for more information about completing the Pre-registration form."
+    },
+    "select_language": {
+      "name": "Select preference language",
+      "list": {
+        "line1": "On the login page, click the language dropdown to see the list of languages",
+        "line2": "Select language of your preference"
+      },
+      "note": "Note: Field and button labels, error and information messages throughout the application will be displayed in the preferred language."
+    },
+    "login": {
+      "name": "Login",
+      "list": {
+        "line1": "On the Login page, enter your valid email ID or mobile number in the Email ID or mobile number text box.",
+        "line2": "Select the captcha field",
+        "line3": "Click Send OTP to receive an One Time Password (OTP) on your provided email address or mobile number.",
+        "line4": "Enter the OTP in the Enter OTP text box and Click Verify button."
+      },
+      "note": "Note: In case you have not received OTP, click Resend to receive an OTP again. Enter the newly received OTP.",
+      "line": "When your OTP is verified, you can create, view, or modify your pre-registration application."
+    },
+    "select_data_capture_language": {
+      "name": "Select data capture language",
+      "list": {
+        "line1": "A user logging in for the first time and having no applications will be prompted with a data capture language pop-up. The same set of languages will be used for the next set of applications created in the same session.",
+        "line2": "The language user selected in login screen will be pre-selected in the data capture language pop-up",
+        "line3": "The user can change this by clicking on the CHANGE DATA CAPTURE LANGUAGES button"
+      },
+      "note": "Note: This choice will be available only if the ID issuer has configured usage of optional languages."
+    },
+    "t&c": {
+      "name": "Accept Terms & Conditions",
+      "list": {
+        "line1": "On the Demographic Details page, you are advised to read the Terms and Conditions and select the check box to agree. This agreement is to provide consent for the storage and processing of your personal information.",
+        "line2": "Click Accept to agree and then fill the demographic details."
+      },
+      "note": "Note: User consent is mandatory for creating/updating applications. The contents will be displayed in all data capture languages"
+    },
+    "demographic": {
+      "name": "Fill Demographic Details",
+      "list": {
+        "line1": "Fill out all your demographic details, which include Name, Age/DOB, Gender, Residential Status, Address, Mobile Number, Email Id, etc.",
+        "line1_note": "Note: You can either enter your Age or enter your Date of Birth (DOB).",
+        "line2": "You can also change or verify your demographic details in the second language on the right side.",
+        "line3": "After you have filled and verified your demographic details, click Continue to upload your documents."
+      },
+      "line": "Note: Field and button labels, error and information messages will be displayed in the user preferred language selected in login screen."
+    },
+    "documents": {
+      "name": "Upload Documents",
+      "list": {
+        "line1": "On the Upload Documents page, select the document (e.g. Passport, Reference Identity Number, etc.) from the document drop-down list per applicable Document Category.",
+        "line2": "Click Browse to open a pop-up window to search the folder on your computer or removable drive where you have saved the scanned document.",
+        "line3": "Select the file that you want to upload.",
+        "line4": "When uploaded successfully, the document will appear on the right side. Verify that you have uploaded the correct document.",
+        "line5": "Repeat steps 1-4 to upload document for each applicable document category.",
+        "line6": "When adding an applicant, if a newly added applicant’s Proof of Address (POA) document is same as the existing user’s POA, who has already uploaded POA document, then click on the Same As option and select the name of the applicant.",
+        "line7": "When you complete upload of all the documents, click Continue to preview your application."
+      }
+    },
+    "preview": {
+      "name": "Preview the Data",
+      "list": {
+        "line1": "On the Preview page, if you want to change your demographic details (Name, Age, etc.), click Modify at the top-right adjacent to the Demographic Details section, to go to the Demographic Details page and change the details as required.",
+        "line2": "To modify your uploaded documents, click Modify at the bottom-right adjacent to the Documents section, to go to the Upload Documents page and modify the uploaded document as required.",
+        "line3": "If you want to add a new applicant, click Add Applicant.",
+        "line3_note": "Note: On clicking the Add Applicant option, you will be navigated to the Demographic Details page to provide Consent and proceed with providing the required demographic data/documents.",
+        "line4": "Click Book Now to book your appointment."
+      }
+    },
+    "CenterSelection": {
+      "name": "Choose a Registration Center",
+      "list": {
+        "line1": "On the Book Appointment page, you can find a registration center through the three options as follows:",
+        "line1_note": "Note:  The recommended registration centers are automatically displayed based on your demographic details (Postal Code)",
+        "subList": {
+          "line1": "Click Nearby Centers to view the registration centers based on your geographical location.",
+          "line2": "Use the search box to find the registration center based on your search criteria.",
+          "line3": "Click Recommended Centers to view registration centers based on your demographic details. (Postal Code)"
+        },
+        "line2": "The map of the selected registration center will be displayed on the right side of your screen.",
+        "line3": "Using any of the three options, select the registration center that you want to visit and click Continue to book an appointment."
+      }
+    },
+    "Booking": {
+      "name": "Book an Appointment",
+      "list": {
+        "line1": "The system displays the list of available calendar days with the number of available bookings. Select your preferred date.",
+        "line2": "The list of available time slots for your selected date is categorized between Morning and Afternoon. Select your preferred option.",
+        "line3": "Select your preferred time slot from the list.",
+        "line4": "Select the particular applicant name to book an appointment.",
+        "line4_note": "Note: A list of applicant name(s) is displayed on the bottom right.",
+        "line5": "Verify the time slot(s) as selected against the applicant name(s).",
+        "line6": "Click Submit to view acknowledgment of your application."
+      }
+    },
+    "Acknowledgement": {
+      "name": "View Acknowledgement",
+      "tablename":"Acknowledgement",
+      "list": {
+        "line1": "After successful completion of the Pre-registration application, you will receive an acknowledgment.",
+        "line2": "You can print, download, email or SMS your acknowledgment.",
+        "subList": {
+          "line1": "To print your acknowledgement, click Print.",
+          "line2": "To download your acknowledgement, click Download PDF.",
+          "line3": "To add the additional recipient(s) to receive the acknowledgment of your application, follow these steps:",
+          "subList": {
+            "line1": "Click Send Email/SMS.",
+            "line2": "Enter the mobile number in the Enter mobile number text box and/or enter the email ID in the Enter email ID text box.",
+            "line3": "Click Send to receive the acknowledgement on your provided e-mail address or mobile number."
+          }
+        }
+      }
+    },
+    "status": {
+      "name": "Status Explanation",
+      "tablename": "Status types",
+      "headers": {
+        "status": "Status",
+        "explanation": "Explanation"
+      },
+      "status": {
+        "pendingAppointment": "Pending Appointment",
+        "booked": "Booked",
+        "expired": "Expired",
+        "canceled": "Cancelled"
+      },
+      "explanation": {
+        "pendingAppointment": {
+          "line1": "Filled only demographic details",
+          "line1_action": "Action: Upload your documents and book an appointment",
+          "line2": "2. Filled demographic details and uploaded documents",
+          "line2_action": "Action: Book an appointment"
+        },
+        "booked": {
+          "line1": "Filled demographic details, uploaded documents, and booked appointment",
+          "line1_action": "Action: Visit the registration center on your appointment date and time"
+        },
+        "cancelled": {
+          "line1": "Appointment has been cancelled"
+        },
+        "expired": {
+          "line1": "Appointment date has passed"
+        }
+      }
+    },
+    "addApplicant": {
+      "name": "Add new Applicant",
+      "line": "In Your Applications page, click Create New Application to generate a new application for the new applicant."
+    },
+    "modify": {
+      "name": "Modify Data",
+      "list": {
+        "line1": "On Your Applications page, click Modify information to go to the Demographic Details page.",
+        "line2": "On the Demographic Details page, you can change the information as necessary and click Continue to go to the Upload Document page",
+        "line3": "On the Upload Document page, you can modify the documents as necessary."
+      }
+    },
+    "rebook": {
+      "name": "Re-book an Appointment",
+      "list": {
+        "line1": "On Your Applications page, select the check box for the applicable applicant.",
+        "line2": "Click Book / Modify Appointment to re-book an appointment.",
+        "line3": "For more information about booking an appointment, see Book an Appointment section."
+      }
+    },
+    "cancelAppointment": {
+      "name": "Cancel an Appointment",
+      "list": {
+        "line1": "On Your Applications page, click on the delete icon against pre-registration application of an applicant, a pop-up window appears on the screen.",
+        "line2": "Select the Cancel appointment and save the details option in the pop-up window. ",
+        "line3": "Click SUBMIT to cancel an appointment."
+      }
+    },
+    "discard": {
+      "name": "Discard an Application",
+      "list": {
+        "line1": "On Your Applications page, click on the delete icon against pre-registration application of an applicant, a pop-up window appears on the screen.",
+        "line2": "Select the Discard entire application option in the pop-up window. ",
+        "line3": "Click SUBMIT to discard your application."
+      }
+    },
+    "Logout": {
+      "name": "Logout",
+      "list": {
+        "line1": "Click Logout at the top right corner.",
+        "line2": "Click OK to logout from Pre-registration application."
+      },
+      "line": "Login with the same mobile number or email id to access the saved applications."
+    }
+  },
+  "faq": {
+    "breadcrumb": {
+      "home": "Home",
+      "getting_started": "FAQ"
+    },
+    "answer": "Answer",
+    "questions": [
+      {
+        "question": "I do not have a mobile number or email ID. How can I create the pre-registration application?",
+        "answer": "You can use a friend or relative’s mobile number or an email ID to login to the pre-registration application."
+      },
+      {
+        "question": "I have lost the mobile number/email ID that I used to create the pre-registration application. What should I do?",
+        "answer": "Create a new account using a new mobile number or email ID."
+      },
+      {
+        "question": "What happens when I select the specific language on the login screen?",
+        "answer": "Select the language that you can easily read and write because the entire form will be displayed in the specific language you have chosen."
+      },
+      {
+        "question": "What if I do not have the required document(s) available while filling the pre-registration application?",
+        "answer": "Fill the demographic data and save the application. You can upload the documents later."
+      },
+      {
+        "question": "Can I only book an appointment for only two people out of five applicants in the pre-registration application?",
+        "answer": "Yes, you can book an appointment for any number of people out of the total applicants."
+      },
+      {
+        "question": "What happens if I miss an appointment date?",
+        "answer": "Try not to miss an appointment date. If you still miss it, reschedule the appointment by using the “Modify” option."
+      },
+      {
+        "question": "I have booked an appointment on 10th of February. Can I change my appointment date to 18th of February?",
+        "answer": "Yes. If your appointment has expired, you can book a new appointment with a future date."
+      },
+      {
+        "question": "I have booked an appointment at Casablanca registration center. Can I change my appointment registration center to Rabat?",
+        "answer": "No, but you can cancel the current appointment and book a new appointment at a new location of your choice."
+      },
+      {
+        "question": "I have modified my information after I received an acknowledgment. Do I have to download or print the acknowledgement again?",
+        "answer": "The acknowledgement page is only a reference document to remember the location and time of appointment, etc. At the registration center, your latest information will be automatically available. Thus, there is no official need to re-print or download"
+      },
+      {
+        "question": "I have rescheduled an appointment after I received an acknowledgment. Do I have to download or print the acknowledgement again?",
+        "answer": "The acknowledgement page is only a reference document to remember the location and time of appointment, etc. You can re-print or download the acknowledgment to help you remember when your appointment is but there is no official need to do so."
+      },
+      {
+        "question": "Can someone else submit an application on my behalf during the registration process?",
+        "answer": "No, the registration process requires biometric and photo capture. Therefore, you must be present in person at the registration center."
+      },
+      {
+        "question": "I am staying away from my permanent residence for two years. What proof of residence do I have to provide?",
+        "answer": "GoM to decide suitability of question and answers"
+      },
+      {
+        "question": "I do not have proof of residence for my present address. What should I do?",
+        "answer": "GoM to decide suitability of question and answers."
+      },
+      {
+        "question": "I do not have any documents. What should I do?",
+        "answer": "GoM to decide suitability of question and answers."
+      },
+      {
+        "question": "How many days before can I cancel or re-book an appointment?",
+        "answer": "GoM to decide suitability of question and answers."
+      },
+      {
+        "question": "Do I have to carry original documents or certified document copies when I visit registration center?",
+        "answer": "GoM to decide suitability of question and answers."
+      }
+    ]
+  },
+  "header": {
+    "link_about": "GETTING STARTED",
+    "link_faq": "FAQ",
+    "link_contact": "CONTACT",
+    "link_applications": "Your Applications",
+    "link_logout": "Logout",
+    "link_login": "LOGIN"
+  },
+  "login": {
+    "text": "Quick & Easy steps",
+    "sub_text": "Pre-register for",
+    "sub_text_UID": "Unique Identification Number",
+    "label_email_num": "Email ID or Phone Number",
+    "label_otp": "Enter OTP",
+    "action_send": "Send OTP",
+    "action_resend": "Resend",
+    "action_verify": "Verify",
+    "logout_msg": "User has to login with the same mobile number/Email id to access the created applications.",
+    "otp_valid_label": "Valid for",
+    "invalidEmail": "You have entered an invalid email id",
+    "invalidMobile": "You have entered an invalid mobile number",
+    "invalidInput": "You have entered an invalid email id or mobile number",
+    "serverUnavailable": "Unable to send Otp. Retry..",
+    "loading": "Sending..."
+  },
+  "stepper": {
+    "link_demographic": "Demographics Details",
+    "link_upload_doc": "Upload Document",
+    "link_book": "Book Appointment",
+    "link_confirm": "Confirmation"
+  },
+  "demographic": {
+    "title": "Demographic Details",
+    "language": "English",
+    "label_name": "Full Name",
+    "label_age": "Age",
+    "date_dd": "DD",
+    "date_mm": "MM",
+    "date_yyyy": "YYYY",
+    "text_or": "OR",
+    "text_years": "Years",
+    "text_gender": "Gender",
+    "button_male": "Male",
+    "button_female": "Female",
+    "text_residence_status": "Residence Status",
+    "button_national": "National",
+    "button_foreigner": "Foreigner",
+    "label_address1": "Address Line 1",
+    "label_address2": "Address Line 2",
+    "label_address3": "Address Line 3",
+    "label_region": "Region",
+    "label_province": "Province",
+    "label_city": "City",
+    "label_zone": "Zone",
+    "label_mob_num": "Mobile Number",
+    "label_postalCode": "Postal Code",
+    "label_email_id": "Email ID",
+    "label_pin": "Reference Identity Number",
+    "action_back": "BACK",
+    "action_continue": "CONTINUE",
+    "action_preview": "PREVIEW",
+    "read_only_message": "** You can no longer edit this application, since you have currently or previously booked an appointment for it. If you still want to make changes, then discard this application and make a new one.",
+    "read_only_message_prefetched": "** You can no longer edit this application, since the application is Prefetched. If you still want to make changes, then discard this application and make a new one.",
+    "lookup_search_message": "Search ",
+    "lookup_no_results_found": "No matching results found.",
+    "change_data_capture_langs": "Change data capture languages",
+    "change_data_capture_langs_msg": "All data entered will be discarded and you will have to restart. Please Confirm.",
+    "consent": {
+      "title": "Terms and Conditions",
+      "subtitle": "Your Agreement",
+      "message": "To provide consent for storage and utilization of personal information as given",
+      "checkCondition": "Click to accept the terms and conditions",
+      "acceptButton": "Accept",
+      "cancelButton": "Cancel",
+      "alertMessageFirst": "You will be logged out due to not accepting Terms & Conditions",
+      "alertMessageSecond": "You will be redirected to ‘Your Application Page’ due to not accepting Terms & Conditions",
+      "alertMessageThird": "You will be redirected to ‘Preview Page’ due to not accepting Terms & Conditions"
+    },
+    "validation": {
+      "DOB_validation": "Enter Valid date of birth or age",
+      "requiredMessage": "Is required",
+      "InvalidMessage": "is invalid"
+    }
+  },
+  "documents": {
+    "title_document": "Upload Documents",
+    "text_filetype": "Allowed file type ",
+    "text_filesize": "and allowed file size",
+    "action_browse": "BROWSE",
+    "action_back": "BACK",
+    "action_skip": "SKIP",
+    "action_continue": "CONTINUE",
+    "label_sameas": "Same as",
+    "text_or": "OR",
+    "action_view": "preiew",
+    "OR": "OR",
+    "text_docrefid": "Document Reference Id",
+    "sameAs": "Same As",
+    "sameAsNone": "None"
+  },
+  "acknowledgement": {
+    "title": "Appointment Confirmed",
+    "message": "The Application ID and Appointment details have been sent to the registered email id and phone number",
+    "label_name": "Name",
+    "label_pre_id": "Application ID",
+    "label_reg_cntr": "Center Name",
+    "label_cntr_contact_number": "Center Contact Number",
+    "label_appointment_date_time": "Appointment Date & Time",
+    "container_guideline": "Important Guidelines",
+    "action_send": "SEND EMAIL/SMS",
+    "action_download": "DOWNLOAD PDF",
+    "action_print": "PRINT",
+    "label_reg_cntr_dtl": "Center Address"
+  },
+  "preview": {
+    "title_preview": "Preview",
+    "language": "English",
+    "subheading_information": "Personal Information",
+    "label_name": "Full Name",
+    "label_age": "Age",
+    "label_DOB": "DOB",
+    "text_years": "Years",
+    "text_gender": "Gender",
+    "text_resident_status": "Resident Status",
+    "subheading_contact": "Contact Details",
+    "label_address": "Address",
+    "label_region": "Region",
+    "label_province": "Province",
+    "label_city": "City",
+    "label_zone": "Zone",
+    "label_mob_num": "Moblie Number",
+    "label_alt_mob_num": "Alternative Moblie Number",
+    "label_email_id": "Email ID",
+    "label_pin": "Reference Identity Number",
+    "title_document": "Documents Uploaded",
+    "text_not_uploaded": "Not Uploaded",
+    "action_modify": "modify",
+    "action_back": "BACK",
+    "action_add_applicant": "ADD APPLICANT",
+    "action_continue": "CONTINUE"
+  },
+  "message": {
+    "login": {
+      "msg1": "Email ID is not valid",
+      "msg2": "Phone number is not valid",
+      "msg3": "OTP entered is not valid",
+      "msg4": "Login Successful"
+    },
+    "demographicDetails": {
+      "msg1": "Blacklisted word entered"
+    },
+    "uploadDocuments": {
+      "msg1": "Document exceeding permitted size",
+      "msg2": "Virus scan failed",
+      "msg3": "File type not supported",
+      "msg4": "File is too big",
+      "msg5": "File name should not be more than 50 characters",
+      "msg6": "Wrong file type, please upload again",
+      "msg7": "The file could not be uploaded, please try again.",
+      "msg8": "Could not copy document",
+      "msg9": "Documents are missing",
+      "msg10": "File could not be deleted.Try Again.",
+      "msg11": "Please confirm that you want to delete file ",
+      "msg12": "Please enter only text or numbers",
+      "msg13": "Please enter only 50 characters or less",
+      "msg14": "Password-protected file is not allowed for upload",
+      "title_confirm": "Delete",
+      "button_cancel": "Cancel",
+      "none": "None"
+    },
+    "appointmentCentreSearch": {
+      "msg1": "No result found",
+      "msg2": "Location not enable"
+    },
+    "bookAppointment": {
+      "msg1": "The Following User has not been selected any time slot",
+      "msg2": "(should provide User name) Do you want to continue Booking?"
+    },
+    "cancelAppointment": {
+      "msg1": "Appointment for the selected application will be cancelled",
+      "msg2": "Appointment for the selected application has been successfully cancelled"
+    }
+  },
+  "dashboard": {
+    "title": "Your Applications",
+    "name" : "Application",
+    "action_modify_information": "Modify Information",
+    "action_modify_appointment": "Book/Modify Appointment",
+    "action_cre_application": "Create Application",
+    "action_lost_uin": "Lost UIN ",
+    "action_update_registration": "Update Registration ",
+    "card": {
+      "text_app_id": "Application ID",
+      "text_name": "Name",
+      "text_type": "Application Type",
+      "text_appoinment_date": "Appointment Date",
+      "text_status": "Status",
+      "action_modify_information": "Modify Information",
+      "action_view_acknowledgement": "View Acknowledgement",
+      "action_view_information": "View Information",
+      "data_capture_langs": "Data Capture Languages"
+    },
+    "discard": {
+      "title_confirm": "Confirm",
+      "title_success": "Success",
+      "title_error": "Error",
+      "cancelAppointment": {
+        "msg_confirm": "Appointment for The selected application will be cancelled.",
+        "msg_deleted": "Appointment for the selected application has been successfully cancelled.",
+        "msg_could_not_deleted": "Appointment for The selected application could not be cancelled"
+      },
+      "deletePreregistration": {
+        "msg_confirm": "The selected application will be deleted. Please confirm.",
+        "msg_deleted": "The selected application has been successfully deleted",
+        "msg_could_not_deleted": "The selected application could not be deleted"
+      },
+      "button_confirm": "Confirm",
+      "button_cancel": "Cancel"
+    },
+    "status": {
+      "pendingAppointment": "Pending Appointment",
+      "booked": "Booked",
+      "expired": "Expired",
+      "cancelled": "Cancelled",
+      "Application_Incomplete": "Application Incomplete",
+      "prefetched": "Prefetched"
+    },
+    "error": {
+      "error": "Internal server error. Please try again after  some time.",
+      "button_ok": "OK"
+    },
+    "dataCaptureLanguage": {
+      "title": "Select Language",
+      "message": [
+        "Please select",
+        "You can select minimum",
+        "and maximum",
+        "languages for data entry.",
+        "is mandatory for the resident to select as per government guidelines.",
+        "The order of selection will lead to page view for demographic data."
+      ],
+      "error_text": ["You can select atmost ", "languages for data entry."],
+      "cancel_btn": "Cancel",
+      "submit_btn": "Submit"
+    }
+  },
+  "timeSelection": {
+    "title_book": "Book Appointment",
+    "text_prev": "Previous",
+    "text_next": "Next",
+    "text_morning": "Morning",
+    "text_afternoon": "Afternoon",
+    "text_available": "Available Applicants",
+    "text_selected": "Selected Applicants",
+    "text_availability": "Available Bookings",
+    "text_slots": "slots",
+    "action_done": "DONE",
+    "action_back": "Back",
+    "action_bookLater": "Book Later",
+    "action_continue": "Continue",
+    "note_text": "Please note that the application details cannot be modified once appointment is booked for it.",
+    "booking": {
+      "title_success": "Success",
+      "msg_success": "Appointment has been booked successfully",
+      "title_failure": "Failure",
+      "msg_failure": "Appointment Booking Failed",
+      "noSlotsSelectedForApplicant": "No Date/Slot has been selected for an application",
+      "noApplicantSelected": "No Applicant has been selected for an application",
+      "deletedApplicant1": [
+        "You have not selected any time slot for following user \r\n",
+        "Do you wish to continue booking"
+      ],
+      "yesButtonText": "Yes",
+      "noButtonText": "No",
+      "applicationLockConfirm": {
+        "title": "Confirmation",
+        "message": "Are you sure you want to submit the details? Once submitted the details cannot be modified",
+        "yesButtonText": "Confirm",
+        "noButtonText": "Cancel"
+      }
+    }
+  },
+  "appointmentCentreSearch": {
+    "title": "Book Appointment",
+    "text_recommended_centres": "Recommended Centres",
+    "text_finding_result": "finding result for",
+    "text_nearBy": "Nearby",
+    "action_back": "BACK",
+    "action_bookLater": "BOOK LATER",
+    "action_continue": "CONTINUE"
+  },
+  "appointmentConfirmed": {
+    "title": "Appointment Confirmed",
+    "text_confirmation": "The Pre-Registarion id and Appointment details have been sent to registered email id and phone number",
+    "action_download": "DOWNLOAD",
+    "action_print": "PRINT"
+  },
+  "dialog": {
+    "title_applicant": "Send Appointment Confirmation",
+    "content_applicant": "Email / SMS Acknowledgement",
+    "text_email": "Enter email ID",
+    "text_mobile": "Enter mobile number",
+    "invalidApplicantNumber": "Invalid Mobile Number",
+    "invalidApplicantEmailId": "Invalid Email ID",
+    "action_ok": "OK",
+    "title_discard": "Discard",
+    "action_discard_app": "Discard entire application",
+    "action_cancel": "Cancel appointment and save the details",
+    "action_submit": "Submit",
+    "action_dismiss": "Ok",
+    "action_add": "Add",
+    "action_close": "Close",
+    "action_add_to_slot": "Add to Slot",
+    "navigation_alert": "There are unsaved changes on this form that will be lost if you decide to navigate away. Would you like to navigate away?"
+  },
+  "centerSelection": {
+    "title": " Book Appointment ",
+    "action_nearBy": "Nearby",
+    "display_recommended": "Recommended Centres",
+    "text_found": "Found",
+    "text_centers": "centers.",
+    "use_search_option": "Please use search option to find a center.",
+    "text_timing": "Timing",
+    "text_open": "Open",
+    "text_select": "Select Location Types",
+    "text_enter": "Enter",
+    "text_search": "Search....",
+    "action_back": "Back",
+    "action_book_later": "Book Later",
+    "action_continue": "Continue",
+    "noResult_found": "No results Found",
+    "lunch_hours": "Lunch"
+  },
+  "autologout": {
+    "preview": "You will be timed out in 60 secs due to inactivity. Please click anywhere to re-activate your session",
+    "post": "You have been logged out due to inactivity."
+  },
+  "helpText": {
+    "applicationId": "Application ID for your pre-registration",
+    "status": {
+      "pendingAppointment": "Appointment is yet to be booked",
+      "booked": "Appointment is booked successfully",
+      "expired": "Appointed date has passed",
+      "cancelled": "Appointment has been Cancelled",
+      "Application_Incomplete": "Application is Incomplete",
+      "prefetched": "Application was prefetched in Registration Center"
+    },
+    "deleteIcon": "You can either discard entire application or cancel the appointment and save the details.",
+    "book/modify_appointment": "You must tick the check box near to pre-registration id for one or multiple applicants to book/modify appointment",
+    "bookAppointment": "First, select the preferred time slot as provided then select the applicable applicant for the time slot selected. For multiple applications, repeat the same for the remaining applicant ",
+    "send_email/sms": "You may add the additional recipient to receive the notification(s).",
+    "modify_at_DemoPreview": "Click on modify to correct the demographic details",
+    "modify_at_DocumentPreview": "Click on modify to correct the uploaded document",
+    "same_as": "If the proof of address is same as already filled applicant POA, you can use the Same As option",
+    "add_applicant": "Click on Add applicant to add more applicant(s).",
+    "recommended_centers": "List of the recommended center as per your postal code",
+    "nearBy": "Registration centers based on your geo-location",
+    "magnifying_glass": "Search based on selection of dropdown.",
+    "preview_continue": "Upload all files to proceed",
+    "lockIcon": "Application details cannot be modified once appointment is Booked, Cancelled or Expired",
+    "prefetchedLockIcon": "Application details cannot be modified once it is Prefetched in Registration Center"
+  },
+  "error": {
+    "error": "A technical error occurred and the operation cannot be completed. Any data provided may not be saved.",
+    "contactInformation": [
+      "\n \nPlease get in touch with the system administrator with email id:",
+      " and contact number: ",
+      "\n\n Error Code: "
+    ],
+    "sessionInvalidLogout": "Your session has expired. Please login again.",
+    "button_ok": "OK",
+    "postalCode": "Entered PIN is invalid",
+    "email": "Entered Email is invalid",
+    "phone": "Entered phone is invalid",
+    "dateOfBirth": "Entered date of birth is invalid",
+    "referenceIdentityNumber": "Entered Reference Identity Number is invalid",
+    "tokenExpiredLogout": "You have been logged out due to inactivity.",
+    "slotNotAvailable": "Appointment booking/re-booking cannot be done as the requested slot is not available. Please select another slot or try again later",
+    "timeExpired_1": "Appointment cannot be rescheduled within ",
+    "timeExpired_2": " hours of booking",
+    "errorLabel": "ERROR",
+    "regCenterNotavailabe": "Registration center is not available.",
+    "centerDetailsNotAvailable": "No Slots Available, Appointment booking/re-booking cannot be done. Please try again later.",
+    "fileUploadDeactivateMsg": "Please upload the required document to continue."
+  },
+  "residentTypesMapping": {
+    "NFR": "National",
+    "FR": "Foreigner"
+  },
+  "sameAs": "Document Uploaded using Same As",
+  "DAYS": [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday"
+  ],
+
+  "recaptcha": {
+    "errorMessage": "Recaptcha Failed. Please Re-try"
+  },
+  "API_ERROR_CODES": {
+    "PRG_MSD_APP_001": "Failed to fetch masterdata information",
+    "KER-MSD-046": "Template not found",
+    "KER-MSD-026": "Location not found",
+    "KER-IOV-004": "Invalid input parameter - identity/residenceStatus",
+    "KER-MSD-150": "Document Category- Document Type mapping not found",
+    "KER-MSD-042": "Registration Center not found",
+    "PRG_PAM_LGN_001": "OTP failed to send through a specified channel",
+    "PRG_PAM_LGN_002": "Authentication failed",
+    "PRG_PAM_LGN_003": "Failed to invalidate the authentication token",
+    "PRG_PAM_LGN_004": "Invalid Request Id received",
+    "PRG_PAM_LGN_005": "Invalid Request version received",
+    "PRG_PAM_LGN_006": "Invalid Request timestamp received",
+    "PRG_PAM_LGN_007": "Invalid Request received",
+    "PRG_PAM_LGN_008": "Invalid Request userId received",
+    "PRG_PAM_LGN_009": "Invalid request language code received",
+    "PRG_PAM_LGN_010": "OTP entered is not valid",
+    "PRG_PAM_LGN_011": "Error while Parsing the kernel response",
+    "PRG_PAM_LGN_012": "Config file not found in the config server",
+    "PRG_PAM_LGN_013": "OTP entered is not valid",
+    "PRG_PAM_LGN_014": "mosip language properties not defined",
+    "PRG_PAM_LGN_015": "mosip language properties not defined",
+    "PRE-REG-OTP-101": "Innumerous OTP requests received",
+    "PRE-REG-OTP-401": "Could not generate/send OTP",
+    "PRE-REG-OTP-402": "Please regenerate OTP and try again after sometime",
+    "PRE-REG-OTP-403": "OTP is invalid. Please provide correct OTP value",
+    "PRE-REG-OTP-404": "Invalid Input Parameter - %s",
+    "PRE-REG-OTP-405": "Missing Input Parameter - %s",
+    "PRE-REG-OTP-406": "Input Data Validation Failed",
+    "PRE-REG-OTP-407": "Token generation failed",
+    "PRE-REG-OTP-408": "OTP has already been generated and sent to your email id / phone number. If you want a new OTP, please try again after sometime.",
+    "PRE-REG-OTP-409": "OTP Validation attempt exceeded, Please regenerate OTP and try again after sometime",
+    "PRG_PAM_APP_001": "Failed to create the pre-registration with demographic data provided",
+    "PRG_PAM_APP_002": "unable to access the pre-registration table ",
+    "PRG_PAM_APP_003": "delete operation is not allowed ",
+    "PRG_PAM_APP_004": "failed to delete the pre-registration data",
+    "PRG_PAM_APP_005": "No data found for the requested pre-registration id , no record found for the requested date range  ",
+    "PRG_PAM_APP_006": "status code is invalid  ",
+    "PRG_PAM_APP_007": "json parsing is failed , json validation is failed , json Http request exception , json validation processing exception , json IO exception , json schema IO exception",
+    "PRG_PAM_APP_008": "Failed to update application details. Please try again later.",
+    "PRG_PAM_APP_009": "file IO exception ,unsupported encoding charset ",
+    "PRG_PAM_APP_011": "Please enter date in valid date format",
+    "PRG_PAM_APP_012": "request parameter is missing ",
+    "PRG_PAM_APP_013": "no record found",
+    "PRG_PAM_APP_014": "Document service rest call failed",
+    "PRG_PAM_APP_015": "Page size must be greater than zero",
+    "PRG_PAM_APP_016": "no record found for the requested page index",
+    "PRG_PAM_APP_017": "Requested preregistration id does not belong to the user",
+    "PRG_PAM_APP_018": "Failed to read the identity json from the server",
+    "PRG_PAM_APP_019": "Invalid page index value",
+    "PRG_PAM_APP_020": "Rest call to get prid failed,Id schema fetch failed",
+    "PRG_PAM_APP_021": "Duplicate key for prid",
+    "PRG_PAM_APP_022 ": "Your application cannot be modified.",
+    "PRG_PAM_DOC_001": "Document failde in quality check",
+    "PRG_PAM_DOC_002": "Document failed to encrypt",
+    "PRG_PAM_DOC_003": "Document failed to decrypt",
+    "PRG_PAM_DOC_004": "Please upload document in format: pdf, jpg",
+    "PRG_PAM_DOC_005": "Document not found for the source pre-registration Id,Failed to fetch from File System server",
+    "PRG_PAM_DOC_006": "Documents failed to delete",
+    "PRG_PAM_DOC_007": "Uploaded document exceeded permitted size limit. Please upload document with size less that $MB.",
+    "PRG_PAM_DOC_008": "Document type not supported",
+    "PRG_PAM_DOC_009": "Document upload failed",
+    "PRG_PAM_DOC_010": "Document virus scan failed",
+    "PRG_PAM_DOC_011": "Document copy failed from source to destination",
+    "PRG_PAM_DOC_012": "Document table not accessible",
+    "PRG_PAM_DOC_013": "Document I/O exception",
+    "PRG_PAM_DOC_014": "Mandatory field not found",
+    "PRG_PAM_DOC_015": "Json exception",
+    "PRG_PAM_DOC_016": "CEPH connection is invalid",
+    "PRG_PAM_DOC_017": "Connection is not available",
+    "PRG_PAM_DOC_018": "Invalid request parameter,PreRegistrationId is invalid,Status code is invalid,Uploaded by is invalid,Updated date and time is invalid",
+    "PRG_PAM_DOC_019": "Demographic data not found for the preRegistrationId,Demographic record failed to fetch",
+    "PRG_PAM_DOC_021": "Document is alredy present",
+    "PRG_PAM_DOC_022": "DocumentId is not belongs to the pre-registration Id",
+    "PRG_PAM_DOC_024": "Document table not able to update by this status",
+    "PRG_PAM_DOC_025": "Password-protected file is not allowed for upload",
+    "PRG_PAM_ACK_001": "Mobile number or Email Id is missing",
+    "PRG_PAM_ACK_002": "Mandatory fields are missing",
+    "PRG_PAM_ACK_003": "Json http request exception",
+    "PRG_PAM_ACK_004": "Json is not able to parse",
+    "PRG_PAM_ACK_005": "INPUT_OUTPUT_EXCEPTION",
+    "PRG_PAM_ACK_006": "Email is not valid",
+    "PRG_PAM_ACK_007": "Phone number is not valid",
+    "PRG_PAM_ACK_008": "Full name is not valid",
+    "PRG_PAM_ACK_009 ": "Appointment date is not valid",
+    "PRG_PAM_ACK_010 ": "Appointment time is not valid",
+    "PRG_PAM_ACK_011 ": "Demographic rest call failed",
+    "PRG_PAM_ACK_012 ": "Booking rest call failed",
+    "PRG_QRC_001": "File input output exception",
+    "PRG_QRC_002": "Failed to generate QR code",
+    "PRG_QRC_004": "Invalid request time format",
+    "PRG_TRL_APP_001": "Failed to transliterate",
+    "PRG_TRL_APP_002": "Incorrect mandatory Fields,Unsupported language",
+    "PRG_TRL_APP_004": "Invalid Json request",
+    "PRG_TRL_APP_005": "PreReg transliteration table is not accessible",
+    "PRG_TRL_APP_006": "Json parsing failed",
+    "PRG_APP_001": "Failed to save the ui spec",
+    "PRG_APP_002": "Failed to update the ui spec",
+    "PRG_APP_003": "Failed to fetch the ui spec",
+    "PRG_APP_004": "Failed to delete the ui spec",
+    "PRG_APP_005": "Failed to publish the ui spec",
+    "PRG_APP_006": "Error while parsing json",
+    "PRG_APP_007": "Audit Failed",
+    "PRG_APP_015": "Requested application id does not belong to the User",
+    "PRG_APP_016": "Invalid booking type",
+    "PRG_DATA_SYNC_001": "no data found for the requested date range",
+    "PRG_DATA_SYNC_005": "Unable to create zip file",
+    "PRG_DATA_SYNC_006": "unable to fetch the document",
+    "PRG_DATA_SYNC_007": "Demographic record failed to fetch",
+    "PRG_DATA_SYNC_009": "registration center id is invalid",
+    "PRG_DATA_SYNC_011": "requested preregistration ids are not valid",
+    "PRG_DATA_SYNC_012 ": "Failed to store prereg id",
+    "PRG_DATA_SYNC_014": "file IO exception",
+    "PRG_DATA_SYNC_016": "booking data not found",
+    "PRG_DATA_SYNC_017": "Error occured while parsing data",
+    "PRG_DATA_SYNC_018": "Failed to fetch the info the preregistration Id",
+    "PRG_DATA_SYNC_019": "Failed to fetch machines encryption publickey",
+    "PRG_PAM_CORE_001": "request parameter is missing,Request id is invalid",
+    "PRG_PAM_CORE_002 ": "Request version is invalid",
+    "PRG_PAM_CORE_003": "Invalid request time",
+    "PRG_PAM_CORE_004": "Request body is invalid",
+    "PRG_PAM_CORE_010": "hashing failed",
+    "PRG_CORE_REQ_013": "Request date should be current date",
+    "PRG_CORE_REQ_014": "Lang code is invalid",
+    "PRG_CORE_REQ_015": "Invalid request input",
+    "PRG_CORE_REQ_016": "Internal server error",
+    "PRG_CORE_REQ_017": "Document Category code is invalid",
+    "PRG_CORE_REQ_018": "Document Category code is invalid + validDoc + langCode",
+    "PRG_CORE_REQ_019": "Please enter date in format: dd/mm/yyyy",
+    "PRG_CORE_REQ_020": "From date is greater than To date",
+    "PRG_CORE_REQ_021": "Error while Parsing the kernel response",
+    "PRG_CORE_REQ_022": "Error while calling masterdata",
+    "PRG_BOOK_RCI_002 ": "Appointment booking/re-booking cannot be done as the requested slot is not available. Please select another slot or try again later",
+    "PRG_BOOK_RCI_003 ": "User has not selected time slot",
+    "PRG_BOOK_RCI_006 ": "Preregistration id not entered",
+    "PRG_BOOK_RCI_007 ": "Registration center id not entered",
+    "PRG_BOOK_RCI_008": "Booking date time not selected",
+    "PRG_BOOK_RCI_015": "No available slots found for specified registration center",
+    "PRG_BOOK_RCI_013": "Booking data not found",
+    "PRG_BOOK_RCI_017": "Availablity table not accessible",
+    "PRG_BOOK_RCI_018": "Your appointment cannot be cancelled. Please discard your application and create a new one.",
+    "PRG_BOOK_RCI_020": "Master data not found",
+    "PRG_BOOK_RCI_021": "Your appointment date could not be modified. Please try again or contact administrator.",
+    "PRG_BOOK_RCI_024": "Availablity update failed",
+    "PRG_BOOK_RCI_026": "Your appointment cannot be cancelled. Please discard your application and create a new one.",
+    "PRG_BOOK_RCI_028": "Failed to delete the pre registration record",
+    "PRG_BOOK_RCI_031": "Invalid Booking Date Time",
+    "PRG_BOOK_RCI_032": "Record not found for date range and reg center id",
+    "PRG_BOOK_RCI_033": "Notification service call failed",
+    "PRG_BOOK_RCI_034": "Json processing exception",
+    "PRG_BOOK_RCI_035": "Registration center id not found",
+    "PRG_BOOK_RCI_036": "Please complete your application before appointmnet booking"
+  },
+  "UI_VALIDATION_ERROR_CODES": {
+    "UI_1000": "Only alphabets are allowed",
+    "UI_1001": "Please enter between 3 to 50 characters",
+    "UI_1003": "Please enter values starting with a character followed by 6 digits and ending with a character",
+    "UI_1004": "Enter only 10 digit numbers"
+  }  
+}

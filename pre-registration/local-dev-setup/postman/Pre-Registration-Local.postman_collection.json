@@ -1,0 +1,2929 @@
+{
+  "info": {
+    "name": "MOSIP Pre-Registration (Local)",
+    "description": "Local-dev Postman collection for Pre-Registration HTTP APIs (`/preregistration/v1` on host :9090).\n\nSetup:\n1. Import this collection + environment `Pre-Registration-Local`.\n2. Start Docker deps (`run-prereg-local.bat up`) and the host app (`run-prereg-local.bat start`).\n3. Run **00 - Auth** \u2192 Client token (optional, for datasync / officer APIs).\n4. Run **01 - Login** \u2192 Send OTP, copy OTP from mock-smtp UI http://localhost:8080 (or set env `otp`), then Validate OTP (saves `accessToken`).\n5. Run **Create Pre-Registration** (saves `preRegistrationId`).\n\nNotes:\n- `preregBaseUrl` = http://localhost:9090 (host JVM)\n- `bookingBaseUrl` = http://localhost:9090 (frozen `/preregistration/v1/appointment/**` on the same HTTP JVM)\n- `wiremockBaseUrl` = http://localhost:8082 (IAM)\n- `pridBaseUrl` = http://localhost:8100 (PRID generator, separate JVM)\n- Applicant APIs use `accessToken` (OTP cookie). Datasync uses `serviceToken` (mosip-prereg-client, no INDIVIDUAL).\n",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "preregBaseUrl",
+      "value": "http://localhost:9090"
+    },
+    {
+      "key": "bookingBaseUrl",
+      "value": "http://localhost:9090"
+    },
+    {
+      "key": "wiremockBaseUrl",
+      "value": "http://localhost:8082"
+    },
+    {
+      "key": "pridBaseUrl",
+      "value": "http://localhost:8100"
+    },
+    {
+      "key": "accessToken",
+      "value": ""
+    },
+    {
+      "key": "serviceToken",
+      "value": ""
+    }
+  ],
+  "item": [
+    {
+      "name": "00 - Auth (WireMock)",
+      "item": [
+        {
+          "name": "Client token (prereg)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{wiremockBaseUrl}}/v1/authmanager/authenticate/clientidsecretkey",
+              "host": [
+                "{{wiremockBaseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "authmanager",
+                "authenticate",
+                "clientidsecretkey"
+              ]
+            },
+            "description": "Officer / PRE_REGISTRATION_ADMIN JWT without INDIVIDUAL. Saves serviceToken.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"string\",\n  \"version\": \"string\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"metadata\": {},\n  \"request\": {\n    \"clientId\": \"mosip-prereg-client\",\n    \"secretKey\": \"local-dev-testrig-secret\",\n    \"appId\": \"preregistration\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {\n",
+                  "  const json = pm.response.json();\n",
+                  "  const t = (json && json.response && json.response.token)\n",
+                  "    || pm.response.headers.get('Authorization')\n",
+                  "    || pm.response.headers.get('authorization');\n",
+                  "  if (t) pm.environment.set('serviceToken', t);\n",
+                  "} catch (e) {}\n"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Health (prereg)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/actuator/health",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Host JVM health. No token.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Health (PRID generator)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{pridBaseUrl}}/v1/pridgenerator/actuator/health",
+              "host": [
+                "{{pridBaseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "pridgenerator",
+                "actuator",
+                "health"
+              ]
+            },
+            "description": "Separate Vert.x JVM on :8100.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 - Login",
+      "item": [
+        {
+          "name": "Login config",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/login/config",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "login",
+                "config"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send OTP (langcode)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/login/sendOtp/langcode",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "login",
+                "sendOtp",
+                "langcode"
+              ]
+            },
+            "description": "OTP is delivered to mock-smtp (UI :8080, WS :8081). Put the code in env `otp`.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.login.sendotp\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"userId\": \"{{loginUser}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send OTP (deprecated)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/login/sendOtp",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "login",
+                "sendOtp"
+              ]
+            },
+            "description": "Often disabled (`mosip.preregistration.sendotp.allowapi=false`). Prefer /sendOtp/langcode.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.login.sendotp\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"userId\": \"{{loginUser}}\" }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Send OTP with captcha",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/login/sendOtpWithCaptcha",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "login",
+                "sendOtpWithCaptcha"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.login.sendotp\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"userId\": \"{{loginUser}}\",\n    \"captchaToken\": \"{{captchaToken}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validate OTP",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/login/validateOtp",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "login",
+                "validateOtp"
+              ]
+            },
+            "description": "Saves Authorization cookie into accessToken.",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.login.useridotp\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"otp\": \"{{otp}}\",\n    \"userId\": \"{{loginUser}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const cookie = pm.response.headers.get('Set-Cookie') || '';\n",
+                  "const m = cookie.match(/Authorization=([^;]+)/i);\n",
+                  "if (m) pm.environment.set('accessToken', m[1]);\n",
+                  "try {\n",
+                  "  const json = pm.response.json();\n",
+                  "  const t = json && json.response && (json.response.token || json.response.jwtToken);\n",
+                  "  if (t) pm.environment.set('accessToken', t);\n",
+                  "} catch (e) {}\n"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Invalidate token",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/login/invalidateToken",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "login",
+                "invalidateToken"
+              ]
+            },
+            "description": "Logs the applicant out. Re-run Validate OTP afterwards."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Applications",
+      "item": [
+        {
+          "name": "Get all applications (current user)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get all applications by type",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications?type=NEW_PREREGISTRATION",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications"
+              ],
+              "query": [
+                {
+                  "key": "type",
+                  "value": "NEW_PREREGISTRATION"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get application by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/{{applicationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "{{applicationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get application status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/status/{{applicationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "status",
+                "{{applicationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get bookings for reg center",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/bookings/{{registrationCenterId}}?appointmentDate={{appointmentDate}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "bookings",
+                "{{registrationCenterId}}"
+              ],
+              "query": [
+                {
+                  "key": "appointmentDate",
+                  "value": "{{appointmentDate}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Log UI audit",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/logAudit",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "logAudit"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.ui.audit\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"actionTimeStamp\": \"{{$isoTimestamp}}\",\n    \"description\": \"postman\",\n    \"eventId\": \"PREREG_POSTMAN\",\n    \"eventName\": \"Postman\",\n    \"eventType\": \"SYSTEM\",\n    \"id\": \"{{preRegistrationId}}\",\n    \"idType\": \"PRE_REGISTRATION_ID\",\n    \"moduleId\": \"PREREG\",\n    \"moduleName\": \"pre-registration\",\n    \"sessionUserId\": \"{{loginUser}}\",\n    \"sessionUserName\": \"{{loginUser}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Demographic",
+      "item": [
+        {
+          "name": "Create Pre-Registration",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg"
+              ]
+            },
+            "description": "Saves preRegistrationId. Identity keys must match the local IdSchema.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"demographicDetails\": {\n      \"identity\": {\n        \"IDSchemaVersion\": 0.1,\n        \"fullName\": [{ \"language\": \"{{langCode}}\", \"value\": \"Postman Test User\" }],\n        \"dateOfBirth\": \"1996/01/01\",\n        \"gender\": [{ \"language\": \"{{langCode}}\", \"value\": \"MLE\" }],\n        \"residenceStatus\": [{ \"language\": \"{{langCode}}\", \"value\": \"NFR\" }],\n        \"addressLine1\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 1\" }],\n        \"addressLine2\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 2\" }],\n        \"region\": [{ \"language\": \"{{langCode}}\", \"value\": \"RSK\" }],\n        \"province\": [{ \"language\": \"{{langCode}}\", \"value\": \"KTA\" }],\n        \"city\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"zone\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"postalCode\": \"14022\",\n        \"phone\": \"8249742850\",\n        \"email\": \"{{loginUser}}\"\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {\n",
+                  "  const json = pm.response.json();\n",
+                  "  const prid = json && json.response && (json.response.preRegistrationId || json.response.applicationId);\n",
+                  "  if (prid) {\n",
+                  "    pm.environment.set('preRegistrationId', prid);\n",
+                  "    if (!pm.environment.get('sourcePreRegistrationId')) {\n",
+                  "      pm.environment.set('sourcePreRegistrationId', prid);\n",
+                  "    }\n",
+                  "  }\n",
+                  "} catch (e) {}\n"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Create Pre-Registration (copy destination)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg"
+              ]
+            },
+            "description": "Second application for Copy Document. Saves destPreRegistrationId.",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"demographicDetails\": {\n      \"identity\": {\n        \"IDSchemaVersion\": 0.1,\n        \"fullName\": [{ \"language\": \"{{langCode}}\", \"value\": \"Postman Test User\" }],\n        \"dateOfBirth\": \"1996/01/01\",\n        \"gender\": [{ \"language\": \"{{langCode}}\", \"value\": \"MLE\" }],\n        \"residenceStatus\": [{ \"language\": \"{{langCode}}\", \"value\": \"NFR\" }],\n        \"addressLine1\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 1\" }],\n        \"addressLine2\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 2\" }],\n        \"region\": [{ \"language\": \"{{langCode}}\", \"value\": \"RSK\" }],\n        \"province\": [{ \"language\": \"{{langCode}}\", \"value\": \"KTA\" }],\n        \"city\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"zone\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"postalCode\": \"14022\",\n        \"phone\": \"8249742850\",\n        \"email\": \"{{loginUser}}\"\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {\n",
+                  "  const json = pm.response.json();\n",
+                  "  const prid = json && json.response && (json.response.preRegistrationId || json.response.applicationId);\n",
+                  "  if (prid) pm.environment.set('destPreRegistrationId', prid);\n",
+                  "} catch (e) {}\n"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get demographic by PRID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update demographic",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.update\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"demographicDetails\": {\n      \"identity\": {\n        \"IDSchemaVersion\": 0.1,\n        \"fullName\": [{ \"language\": \"{{langCode}}\", \"value\": \"Postman Test User Updated\" }],\n        \"dateOfBirth\": \"1996/01/01\",\n        \"gender\": [{ \"language\": \"{{langCode}}\", \"value\": \"MLE\" }],\n        \"residenceStatus\": [{ \"language\": \"{{langCode}}\", \"value\": \"NFR\" }],\n        \"addressLine1\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 1\" }],\n        \"addressLine2\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 2\" }],\n        \"region\": [{ \"language\": \"{{langCode}}\", \"value\": \"RSK\" }],\n        \"province\": [{ \"language\": \"{{langCode}}\", \"value\": \"KTA\" }],\n        \"city\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"zone\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"postalCode\": \"14022\",\n        \"phone\": \"8249742850\",\n        \"email\": \"{{loginUser}}\"\n      }\n    }\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update status",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg/status/{{preRegistrationId}}?statusCode=Pending_Appointment",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg",
+                "status",
+                "{{preRegistrationId}}"
+              ],
+              "query": [
+                {
+                  "key": "statusCode",
+                  "value": "Pending_Appointment"
+                }
+              ]
+            },
+            "description": "Required before booking. YAML uses GET by mistake; the API is PUT."
+          },
+          "response": []
+        },
+        {
+          "name": "Get demographic status",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg/status/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg",
+                "status",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get all demographic applications for user",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get info (demographic + documents)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg/info/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg",
+                "info",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get updated date-time by PRIDs",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg/updatedTime",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg",
+                "updatedTime"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.retrieve.date\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"registartion_center_id\": \"{{registrationCenterId}}\",\n    \"pre_registration_ids\": [\"{{preRegistrationId}}\"]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Pre-Registration",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/prereg/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "prereg",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": "Destructive. Run last."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - Documents",
+      "item": [
+        {
+          "name": "Upload document",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/documents/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "documents",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": "Select a PDF in the file field. Saves documentId.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "Document request",
+                  "type": "text",
+                  "value": "{\"id\":\"mosip.pre-registration.document.upload\",\"version\":\"1.0\",\"requesttime\":\"{{$isoTimestamp}}\",\"request\":{\"docCatCode\":\"POA\",\"docTypCode\":\"RNC\",\"langCode\":\"{{langCode}}\"}}"
+                },
+                {
+                  "key": "file",
+                  "type": "file",
+                  "src": "",
+                  "value": ""
+                }
+              ]
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {\n",
+                  "  const json = pm.response.json();\n",
+                  "  const id = json && json.response && json.response.docId;\n",
+                  "  if (id) pm.environment.set('documentId', id);\n",
+                  "} catch (e) {}\n"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Get all documents for PRID",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/documents/preregistration/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "documents",
+                "preregistration",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get document by id",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/documents/{{documentId}}?preRegistrationId={{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "documents",
+                "{{documentId}}"
+              ],
+              "query": [
+                {
+                  "key": "preRegistrationId",
+                  "value": "{{preRegistrationId}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Update document ref id",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/documents/document/{{documentId}}?preRegistrationId={{preRegistrationId}}&refNumber=REF-001",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "documents",
+                "document",
+                "{{documentId}}"
+              ],
+              "query": [
+                {
+                  "key": "preRegistrationId",
+                  "value": "{{preRegistrationId}}"
+                },
+                {
+                  "key": "refNumber",
+                  "value": "REF-001"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Copy document",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/documents/{{destPreRegistrationId}}?catCode=POA&sourcePreId={{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "documents",
+                "{{destPreRegistrationId}}"
+              ],
+              "query": [
+                {
+                  "key": "catCode",
+                  "value": "POA"
+                },
+                {
+                  "key": "sourcePreId",
+                  "value": "{{preRegistrationId}}"
+                }
+              ]
+            },
+            "description": "Needs a document on source PRID and a second application in destPreRegistrationId."
+          },
+          "response": []
+        },
+        {
+          "name": "Delete document by id",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/documents/{{documentId}}?preRegistrationId={{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "documents",
+                "{{documentId}}"
+              ],
+              "query": [
+                {
+                  "key": "preRegistrationId",
+                  "value": "{{preRegistrationId}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Delete all documents for PRID",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/documents/preregistration/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "documents",
+                "preregistration",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "05 - Appointment (via prereg :9090)",
+      "description": "Host AppointmentController under /applications/appointment. In-process to BookingServiceIntf in the same JVM.",
+      "item": [
+        {
+          "name": "Get slot availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/appointment/slots/availability/{{registrationCenterId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "appointment",
+                "slots",
+                "availability",
+                "{{registrationCenterId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Book appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PostmanRuntime",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/appointment/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "appointment",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.booking.book\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"registration_center_id\": \"{{registrationCenterId}}\",\n    \"appointment_date\": \"{{appointmentDate}}\",\n    \"time_slot_from\": \"{{slotFrom}}\",\n    \"time_slot_to\": \"{{slotTo}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get appointment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/appointment/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "appointment",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel appointment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/appointment/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "appointment",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel appointment (internal)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/internal/applications/appointment/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "internal",
+                "applications",
+                "appointment",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": "Batch-job path."
+          },
+          "response": []
+        },
+        {
+          "name": "Multi book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PostmanRuntime",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/appointment",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "appointment"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.booking.book\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"bookingRequest\": [\n      {\n        \"preRegistrationId\": \"{{preRegistrationId}}\",\n        \"registration_center_id\": \"{{registrationCenterId}}\",\n        \"appointment_date\": \"{{appointmentDate}}\",\n        \"time_slot_from\": \"{{slotFrom}}\",\n        \"time_slot_to\": \"{{slotTo}}\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Discard booking",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/appointment?preRegistrationId={{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "appointment"
+              ],
+              "query": [
+                {
+                  "key": "preRegistrationId",
+                  "value": "{{preRegistrationId}}"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "06 - Booking native (frozen /appointment on :9090)",
+      "description": "Direct booking-native URLs on the HTTP JVM. Do not change these prefixes.",
+      "item": [
+        {
+          "name": "Availability",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/availability/{{registrationCenterId}}",
+              "host": [
+                "{{bookingBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "appointment",
+                "availability",
+                "{{registrationCenterId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get appointment",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/{{preRegistrationId}}",
+              "host": [
+                "{{bookingBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "appointment",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PostmanRuntime",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/{{preRegistrationId}}",
+              "host": [
+                "{{bookingBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "appointment",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.booking.book\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"registration_center_id\": \"{{registrationCenterId}}\",\n    \"appointment_date\": \"{{appointmentDate}}\",\n    \"time_slot_from\": \"{{slotFrom}}\",\n    \"time_slot_to\": \"{{slotTo}}\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Cancel",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/{{preRegistrationId}}",
+              "host": [
+                "{{bookingBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "appointment",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Multi book",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "User-Agent",
+                "value": "PostmanRuntime",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment",
+              "host": [
+                "{{bookingBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "appointment"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.booking.book\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"bookingRequest\": [\n      {\n        \"preRegistrationId\": \"{{preRegistrationId}}\",\n        \"registration_center_id\": \"{{registrationCenterId}}\",\n        \"appointment_date\": \"{{appointmentDate}}\",\n        \"time_slot_from\": \"{{slotFrom}}\",\n        \"time_slot_to\": \"{{slotTo}}\"\n      }\n    ]\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PRIDs for center",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/preRegistrationId/{{registrationCenterId}}?from_date=2020-10-01&to_date=2034-10-13",
+              "host": [
+                "{{bookingBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "appointment",
+                "preRegistrationId",
+                "{{registrationCenterId}}"
+              ],
+              "query": [
+                {
+                  "key": "from_date",
+                  "value": "2020-10-01"
+                },
+                {
+                  "key": "to_date",
+                  "value": "2034-10-13"
+                }
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Availability sync",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/availability/sync",
+              "host": [
+                "{{bookingBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "appointment",
+                "availability",
+                "sync"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "07 - Lost UIN / Update registration",
+      "item": [
+        {
+          "name": "Create Lost UIN application",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/lostuin",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "lostuin"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.lostuin.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"langCode\": \"{{langCode}}\" }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {\n",
+                  "  const json = pm.response.json();\n",
+                  "  const id = json && json.response && json.response.applicationId;\n",
+                  "  if (id) pm.environment.set('applicationId', id);\n",
+                  "} catch (e) {}\n"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Lost UIN application",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/lostuin/{{applicationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "lostuin",
+                "{{applicationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Create Update Registration application",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/updateregistration",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "updateregistration"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.updateregistration.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"langCode\": \"{{langCode}}\" }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": [],
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "try {\n",
+                  "  const json = pm.response.json();\n",
+                  "  const id = json && json.response && json.response.applicationId;\n",
+                  "  if (id) pm.environment.set('applicationId', id);\n",
+                  "} catch (e) {}\n"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "Delete Update Registration application",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/applications/updateregistration/{{applicationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "applications",
+                "updateregistration",
+                "{{applicationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "08 - Notification / Captcha",
+      "item": [
+        {
+          "name": "Notify (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/notification/notify",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "notification",
+                "notify"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "NotificationRequestDTO",
+                  "type": "text",
+                  "value": "{\"name\":\"TEST_FULLNAME\",\"preRegistrationId\":\"{{preRegistrationId}}\",\"appointmentDate\":\"{{appointmentDate}}\",\"appointmentTime\":\"{{slotFrom}}\",\"mobNum\":\"9090872300\",\"emailID\":\"{{loginUser}}\",\"isBatch\":true}"
+                },
+                {
+                  "key": "langCode",
+                  "type": "text",
+                  "value": "{{langCode}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Notification (multipart)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/notification",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "notification"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "NotificationRequestDTO",
+                  "type": "text",
+                  "value": "{\"id\":\"mosip.pre-registration.notification.notify\",\"version\":\"1.0\",\"requesttime\":\"{{$isoTimestamp}}\",\"request\":{\"eng\":{\"name\":\"TEST_FULLNAME\",\"preRegistrationId\":\"{{preRegistrationId}}\",\"appointmentDate\":\"{{appointmentDate}}\",\"appointmentTime\":\"{{slotFrom}}\",\"mobNum\":\"9090872300\",\"emailID\":\"{{loginUser}}\",\"additionalRecipient\":false,\"isBatch\":false}}}"
+                },
+                {
+                  "key": "langCode",
+                  "type": "text",
+                  "value": "{{langCode}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Notification v2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/notification/v2",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "notification",
+                "v2"
+              ]
+            },
+            "description": "Applicant token (INDIVIDUAL) is ownership-checked.",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "NotificationRequestDTO",
+                  "type": "text",
+                  "value": "{\"id\":\"mosip.pre-registration.notification.notify\",\"version\":\"1.0\",\"requesttime\":\"{{$isoTimestamp}}\",\"request\":{\"eng\":{\"name\":\"TEST_FULLNAME\",\"preRegistrationId\":\"{{preRegistrationId}}\",\"appointmentDate\":\"{{appointmentDate}}\",\"appointmentTime\":\"{{slotFrom}}\",\"mobNum\":\"9090872300\",\"emailID\":\"{{loginUser}}\",\"additionalRecipient\":false,\"isBatch\":false}}}"
+                },
+                {
+                  "key": "langCode",
+                  "type": "text",
+                  "value": "{{langCode}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Internal notification",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "{{serviceToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{serviceToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/internal/notification",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "internal",
+                "notification"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "NotificationRequestDTO",
+                  "type": "text",
+                  "value": "{\"name\":\"TEST_FULLNAME\",\"preRegistrationId\":\"{{preRegistrationId}}\",\"appointmentDate\":\"{{appointmentDate}}\",\"appointmentTime\":\"{{slotFrom}}\",\"mobNum\":\"9090872300\",\"emailID\":\"{{loginUser}}\",\"isBatch\":true}"
+                },
+                {
+                  "key": "langCode",
+                  "type": "text",
+                  "value": "{{langCode}}"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Validate captcha",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/captcha/validatecaptcha",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "captcha",
+                "validatecaptcha"
+              ]
+            },
+            "description": "",
+            "auth": {
+              "type": "noauth"
+            },
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.captcha.validate\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"captchaToken\": \"{{captchaToken}}\" }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "09 - Transliteration / QR / UI spec / Proxy",
+      "item": [
+        {
+          "name": "Transliterate",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/transliteration/transliterate",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "transliteration",
+                "transliterate"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.transliteration.transliterate\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"from_field_value\": \"string\",\n    \"from_field_lang\": \"eng\",\n    \"to_field_lang\": \"ara\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Generate QR code",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/qrCode/generate",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "qrCode",
+                "generate"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.qrcode.generate\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": \"{{preRegistrationId}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "UI spec latest",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/uispec/latest",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "uispec",
+                "latest"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "UI spec all",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/uispec/all",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "uispec",
+                "all"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Proxy masterdata (centers)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{accessToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{accessToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/proxy/masterdata/registrationcenters/all",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "proxy",
+                "masterdata",
+                "registrationcenters",
+                "all"
+              ]
+            },
+            "description": "Proxies GET to masterdata (WireMock :8082 locally)."
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10 - Data sync",
+      "description": "Uses serviceToken (mosip-prereg-client / REGISTRATION_OFFICER).",
+      "item": [
+        {
+          "name": "Sync PRIDs by date range",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{serviceToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{serviceToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/sync",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "sync"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.datasync.fetch.ids\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"registrationCenterId\": \"{{registrationCenterId}}\",\n    \"fromDate\": \"2020-05-09\",\n    \"toDate\": \"2030-10-11\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Sync V2",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{serviceToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{serviceToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/syncV2",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "syncV2"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.datasync.fetch.ids\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"registrationCenterId\": \"{{registrationCenterId}}\",\n    \"fromDate\": \"2020-05-09\",\n    \"toDate\": \"2030-10-11\"\n  }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get pre-reg archive",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{serviceToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{serviceToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/sync/{{preRegistrationId}}",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "sync",
+                "{{preRegistrationId}}"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Get pre-reg archive by machine",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{serviceToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{serviceToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/sync/{{preRegistrationId}}/1001",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "sync",
+                "{{preRegistrationId}}",
+                "1001"
+              ]
+            },
+            "description": ""
+          },
+          "response": []
+        },
+        {
+          "name": "Consumed pre-reg ids",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json",
+                "type": "text"
+              },
+              {
+                "key": "Authorization",
+                "value": "{{serviceToken}}",
+                "type": "text"
+              },
+              {
+                "key": "Cookie",
+                "value": "Authorization={{serviceToken}}",
+                "type": "text"
+              }
+            ],
+            "url": {
+              "raw": "{{preregBaseUrl}}/preregistration/v1/sync/consumedPreRegIds",
+              "host": [
+                "{{preregBaseUrl}}"
+              ],
+              "path": [
+                "preregistration",
+                "v1",
+                "sync",
+                "consumedPreRegIds"
+              ]
+            },
+            "description": "",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.datasync.consumed\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"preRegistrationIds\": [\"{{preRegistrationId}}\"] }\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "11 - PRID generator",
+      "item": [
+        {
+          "name": "Get PRID",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{pridBaseUrl}}/v1/pridgenerator/prid",
+              "host": [
+                "{{pridBaseUrl}}"
+              ],
+              "path": [
+                "v1",
+                "pridgenerator",
+                "prid"
+              ]
+            },
+            "description": "Separate service. Do not fold into the HTTP JVM.",
+            "auth": {
+              "type": "noauth"
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}

@@ -14,7 +14,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -82,7 +82,7 @@ public class NotificationUtilTest {
     @Value("${mosip.utc-datetime-pattern}")
     private String dateTimeFormat;
     
-	@MockBean
+	@MockitoBean
 	private RequestValidator validator;
 
 	@Mock
@@ -155,7 +155,18 @@ public class NotificationUtilTest {
 		appEntityResp.setApplicationId("423288662552");
 		appEntityResp.setBookingType(BookingTypeCodes.LOST_FORGOTTEN_UIN.toString());
 		appEntity.setResponse(appEntityResp);
-		
+
+		if (restTemplate == null) {
+			restTemplate = Mockito.mock(RestTemplate.class);
+		}
+		if (templateUtil == null) {
+			templateUtil = Mockito.mock(TemplateUtil.class);
+		}
+		if (notificationUtil == null) {
+			notificationUtil = new NotificationUtil();
+		}
+		ReflectionTestUtils.setField(notificationUtil, "restTemplate", restTemplate);
+		ReflectionTestUtils.setField(notificationUtil, "templateUtil", templateUtil);
 	    ReflectionTestUtils.setField(notificationUtil, "emailResourseUrl", "emailResourseUrl");
 	    ReflectionTestUtils.setField(notificationUtil, "smsResourseUrl", "smsResourseUrl");
 	    ReflectionTestUtils.setField(notificationUtil, "emailAcknowledgement", "emailAcknowledgement");

@@ -10,7 +10,7 @@ import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
@@ -43,10 +43,10 @@ public class CryptoUtilTest {
 	@Autowired
 	CryptoUtil crypto;
 	
-	@MockBean
+	@MockitoBean
 	private RequestValidator validator;
 
-	@MockBean(name="selfTokenRestTemplate")
+	@MockitoBean(name="selfTokenRestTemplate")
 	RestTemplate restTemplate;
 	
 	@Value("${cryptoResource.url}")

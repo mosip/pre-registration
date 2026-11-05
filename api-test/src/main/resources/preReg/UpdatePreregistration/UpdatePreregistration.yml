@@ -1,394 +1,408 @@
 UpdatePreregistration:
-   Prereg_UpdatePrereg_All_Valid_Smoke_sid_pos:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_01
-      description: Validate that updating a pre registration is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-  "langCode": "$1STLANG$"
-}'
-   Prereg_UpdatePrereg_All_Valid_Smoke_BookByPRID_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_02
-      description: Validate that updating a pre registration booked by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-  "langCode": "$1STLANG$"
-}'
-   Prereg_UpdatePrereg_inValid_dateOfBirth_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_03
-      description: Validate that updating a pre registration fails when an invalid date of birth is provided
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "272838SHSH",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "KER-IOV-004"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_missing_Version_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_04
-      description: Validate that updating a pre registration fails when the version field is missing
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@thogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "$REMOVE$",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_invalid_Version_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_05
-      description: Validate that updating a pre registration fails when an invalid version is provided
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "2728SHBSHSH",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_002"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_invalid_email_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_06
-      description: Validate that updating a pre registration fails when an invalid email address is provided
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "soh#w@Scdfvg",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "KER-IOV-004"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_missing_langCode_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_07
-      description: Validate that updating a pre registration fails when the language code langCode field is missing
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "soh#w@Scdfvg",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$REMOVE$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_014"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_INVALID_langCode_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_08
-      description: Validate that updating a pre registration fails when an invalid language code langCode is provided
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "soh#w@Scdfvg",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$2736EBDEB$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_014"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_INVALID_requesttime_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_09
-      description: Validate that updating a pre registration fails when the request time is provided in an invalid format
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "soh#w@Scdfvg",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$47738$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_015"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_Missing_requesttime_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_010
-      description: Validate that updating a pre registration fails when the request time field is missing
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "soh#w@Scdfvg",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$REMOVE$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_003"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_previous_date_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_011
-      description: Validate that updating a pre registration fails when a past date is provided in fields where only current or future dates are allowed
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "2018-02-10T07:28:57.314Z",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_CORE_REQ_013"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_invalid_id_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_012
-      description: Validate that updating a pre registration fails when an invalid Pre Registration ID is provided
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre43DD4@GGGgistration.demographic.update"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_CORE_001"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_missing_id_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_013
-      description: Validate that updating a pre registration fails when the Pre Registration ID field is missing
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "$REMOVE$"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_CORE_001"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_blank_id_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_014
-      description: Validate that updating a pre registration fails when the Pre Registration ID field is left blank
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1996/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": ""
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_PAM_CORE_001"
-    }
-  ]
-}'
-   Prereg_UpdatePrereg_update_date_without_Status_change_sid:
-      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_UpdatePreregistration_015
-      description: Validate that updating a pre registrations date is successfully processed without changing the application status when all mandatory fields are valid
-      role: batch
-      restMethod: put
-      inputTemplate: preReg/UpdatePreregistration/updatePreregistration
-      outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
-      input: '{
-  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_date_verification_sid_preRegistrationId$",
-  "postalCode": "14022",
-  "phone": "8249742850",
-  "email": "goku@hogwarts.co.in",
-  "IDSchemaVersion": 0.7,
-  "dateOfBirth": "1998/01/01",
-  "version": "1.0",
-  "langCode": "$1STLANG$",
-  "requesttime": "$TIMESTAMP$",
-  "id": "mosip.pre-registration.demographic.update"
-}'
-      output: '{
-  "langCode": "$1STLANG$"
-}'
+  Prereg_UpdatePrereg_All_Valid_Smoke_sid_pos:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_01
+    description: Validate that updating a pre registration is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "langCode": "$1STLANG$"
+    }'
+
+  Prereg_UpdatePrereg_All_Valid_Smoke_BookByPRID_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_02
+    description: Validate that updating a pre registration booked by Pre Registration ID is successfully processed when all mandatory fields are provided with valid values
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "langCode": "$1STLANG$"
+    }'
+
+  Prereg_UpdatePrereg_inValid_dateOfBirth_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_03
+    description: Validate that updating a pre registration fails when an invalid date of birth is provided
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "272838SHSH",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "KER-IOV-004"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_missing_Version_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_04
+    description: Validate that updating a pre registration fails when the version field is missing
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@thogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "$REMOVE$",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_invalid_Version_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_05
+    description: Validate that updating a pre registration fails when an invalid version is provided
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "2728SHBSHSH",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_002"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_invalid_email_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_06
+    description: Validate that updating a pre registration fails when an invalid email address is provided
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "soh#w@Scdfvg",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "KER-IOV-004"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_missing_langCode_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_07
+    description: Validate that updating a pre registration fails when the language code langCode field is missing
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "soh#w@Scdfvg",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$REMOVE$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_014"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_INVALID_langCode_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_08
+    description: Validate that updating a pre registration fails when an invalid language code langCode is provided
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "soh#w@Scdfvg",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$2736EBDEB$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_014"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_INVALID_requesttime_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_09
+    description: Validate that updating a pre registration fails when the request time is provided in an invalid format
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "soh#w@Scdfvg",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$47738$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_015"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_Missing_requesttime_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_010
+    description: Validate that updating a pre registration fails when the request time field is missing
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "soh#w@Scdfvg",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$REMOVE$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_003"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_previous_date_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_011
+    description: Validate that updating a pre registration fails when a past date is provided in fields where only current or future dates are allowed
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "2018-02-10T07:28:57.314Z",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_CORE_REQ_013"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_invalid_id_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_012
+    description: Validate that updating a pre registration fails when an invalid Pre Registration ID is provided
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre43DD4@GGGgistration.demographic.update"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_CORE_001"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_missing_id_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_013
+    description: Validate that updating a pre registration fails when the Pre Registration ID field is missing
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "$REMOVE$"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_CORE_001"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_blank_id_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_014
+    description: Validate that updating a pre registration fails when the Pre Registration ID field is left blank
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1996/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": ""
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_PAM_CORE_001"
+        }
+      ]
+    }'
+
+  Prereg_UpdatePrereg_update_date_without_Status_change_sid:
+    endPoint: '/preregistration/v1/applications/prereg/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_UpdatePreregistration_015
+    description: Validate that updating a pre registrations date is successfully processed without changing the application status when all mandatory fields are valid
+    role: batch
+    restMethod: put
+    inputTemplate: preReg/UpdatePreregistration/updatePreregistration
+    outputTemplate: preReg/UpdatePreregistration/updatePreregistrationResult
+    input: '{
+      "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_date_verification_sid_preRegistrationId$",
+      "postalCode": "14022",
+      "phone": "8249742850",
+      "email": "goku@hogwarts.co.in",
+      "IDSchemaVersion": 0.7,
+      "dateOfBirth": "1998/01/01",
+      "version": "1.0",
+      "langCode": "$1STLANG$",
+      "requesttime": "$TIMESTAMP$",
+      "id": "mosip.pre-registration.demographic.update"
+    }'
+    output: '{
+      "langCode": "$1STLANG$"
+    }'

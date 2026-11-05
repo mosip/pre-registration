@@ -11,7 +11,7 @@ import org.springframework.stereotype.Component;
 
 import io.mosip.kernel.core.exception.ExceptionUtils;
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.kernel.core.util.DateUtils2;
 import io.mosip.preregistration.batchjob.code.PreRegBatchContants;
 import io.mosip.preregistration.batchjob.helper.BatchIdentityResolver;
 import io.mosip.preregistration.batchjob.helper.RestHelper;
@@ -34,23 +34,46 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class ApplicationExpiredStatusUpdater {
     
+    /**
+     * Performs log config for MOSIP Pre-Registration.
+     *
+     * @return log config result
+     */
     private Logger LOGGER = LoggerConfiguration.logConfig(ApplicationExpiredStatusUpdater.class);
 
     @Value("${mosip.batch.token.authmanager.userName}")
+	/**
+	 * audit username used by this Pre-Registration type.
+	 */
 	private String auditUsername;
 
 	@Value("${mosip.batch.token.authmanager.appId}")
+	/**
+	 * audit user id used by this Pre-Registration type.
+	 */
 	private String auditUserId;
 
     @Autowired
+	/**
+	 * batch service dao used by this Pre-Registration type.
+	 */
 	private BatchJpaRepositoryImpl batchServiceDAO;
 
     @Autowired
+	/**
+	 * rest helper used by this Pre-Registration type.
+	 */
 	private RestHelper restHelper;
 
     @Autowired
+	/**
+	 * batch identity resolver used by this Pre-Registration type.
+	 */
 	private BatchIdentityResolver batchIdentityResolver;
 
+    /**
+     * Performs update expired status for MOSIP Pre-Registration.
+     */
     public void updateExpiredStatus(){
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EXPIRED_STATUS_JOB, 
@@ -72,6 +95,11 @@ public class ApplicationExpiredStatusUpdater {
 		 			"Total Number of application found to update as Expired: " + bookedPreRegDetailsList.size());
         // Resolved once per run, not per record: the actor is the same for every row this job
         // touches, and writing it raw would leave each updated row as a reconciliation candidate.
+        /**
+         * Performs resolve user uuid for MOSIP Pre-Registration.
+         *
+         * @return resolve user uuid result
+         */
         final String resolvedAuditUserId = batchIdentityResolver.resolveUserUuid(auditUserId,
                 PreRegBatchContants.EXPIRED_STATUS_JOB);
 
@@ -109,6 +137,12 @@ public class ApplicationExpiredStatusUpdater {
     }
 
 
+    /**
+     * Performs update application status for MOSIP Pre-Registration.
+     *
+     * @param preRegId pre reg id used by update application status
+     * @param resolvedAuditUserId resolved audit user id used by update application status
+     */
     private void updateApplicationStatus(String preRegId, String resolvedAuditUserId) {
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EXPIRED_STATUS_JOB, 
 		 			"Updating Expired status in Application for Pre Reg Id: " + preRegId);
@@ -122,12 +156,18 @@ public class ApplicationExpiredStatusUpdater {
 
         applicationEntity.setBookingStatusCode(StatusCodes.EXPIRED.getCode());
         applicationEntity.setUpdBy(resolvedAuditUserId);
-        applicationEntity.setUpdDtime(DateUtils.parseDateToLocalDateTime(new Date()));
+        applicationEntity.setUpdDtime(DateUtils2.parseDateToLocalDateTime(new Date()));
         batchServiceDAO.updateApplicantEntity(applicationEntity);
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EXPIRED_STATUS_JOB, 
             "Application updated as expire status for Pre Reg Id: " + preRegId);
     }
 
+    /**
+     * Performs update applicant demographic status for MOSIP Pre-Registration.
+     *
+     * @param preRegId pre reg id used by update applicant demographic status
+     * @param resolvedAuditUserId resolved audit user id used by update applicant demographic status
+     */
     private void updateApplicantDemographicStatus(String preRegId, String resolvedAuditUserId) {
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EXPIRED_STATUS_JOB, 
 		 			"Updating Expired status in Application Demograhpic for Pre Reg Id: " + preRegId);
@@ -142,7 +182,7 @@ public class ApplicationExpiredStatusUpdater {
         if (demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode())) {
             demographicEntity.setStatusCode(StatusCodes.EXPIRED.getCode());
             demographicEntity.setUpdatedBy(resolvedAuditUserId);
-            demographicEntity.setUpdateDateTime(DateUtils.parseDateToLocalDateTime(new Date()));
+            demographicEntity.setUpdateDateTime(DateUtils2.parseDateToLocalDateTime(new Date()));
             batchServiceDAO.updateApplicantDemographic(demographicEntity);
             LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EXPIRED_STATUS_JOB, 
                 "Applicant Demographic updated as expire status for Pre Reg Id: " + preRegId);

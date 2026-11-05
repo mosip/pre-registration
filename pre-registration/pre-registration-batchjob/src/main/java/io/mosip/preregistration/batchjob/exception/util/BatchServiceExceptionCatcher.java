@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.exception.util;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;

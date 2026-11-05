@@ -14,6 +14,9 @@ import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 
+/**
+ * Helper used by Pre-Registration for data validation util.
+ */
 public final class DataValidationUtil {
 
 	/**

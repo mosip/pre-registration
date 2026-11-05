@@ -10,9 +10,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
@@ -27,6 +27,7 @@ import io.mosip.preregistration.core.code.AuditLogVariables;
 import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.AuditResponseDto;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.TestConfig;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.RequestValidator;
@@ -52,8 +53,11 @@ public class AuditLogUtilTest {
 	
 	private AuditLogUtil auditLogUtilSpy;
 	
-	@MockBean(name="selfTokenRestTemplate")
+	@MockitoBean(name="selfTokenRestTemplate")
 	RestTemplate restTemplate;
+
+	@MockitoBean
+	UserDetailsService userDetailsService;
 	
 	AuditRequestDto auditRequestDto=new AuditRequestDto();
 	AuditResponseDto auditResponseDto=new AuditResponseDto();
@@ -93,5 +97,17 @@ public class AuditLogUtilTest {
 		
 		auditLogUtilSpy.saveAuditDetails(auditRequestDto);
 		assertEquals(respEntity.getBody().getResponse().isStatus(), true);
+	}
+
+	@Test
+	public void saveAuditDetailsResolvesEmailToCanonicalUserId() {
+		String canonical = "11111111-1111-1111-1111-111111111111";
+		Mockito.when(userDetailsService.getOrCreateInternalUserId("user@mosip.net")).thenReturn(canonical);
+		auditRequestDto.setSessionUserId("user@mosip.net");
+		auditRequestDto.setSessionUserName("user@mosip.net");
+		Mockito.doReturn(true).when(auditLogUtilSpy).callAuditManager(Mockito.any());
+		auditLogUtilSpy.saveAuditDetails(auditRequestDto);
+		assertEquals(canonical, auditRequestDto.getSessionUserId());
+		assertEquals(canonical, auditRequestDto.getSessionUserName());
 	}
 }

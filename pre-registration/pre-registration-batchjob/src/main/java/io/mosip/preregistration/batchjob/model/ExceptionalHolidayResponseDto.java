@@ -17,6 +17,9 @@ public class ExceptionalHolidayResponseDto implements Serializable{
 	 */
 	private static final long serialVersionUID = -6008692838467689608L;
 	
+	/**
+	 * exceptional holiday list used by this Pre-Registration type.
+	 */
 	private List<ExceptionalHolidayDto> exceptionalHolidayList;
 
 }

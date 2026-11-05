@@ -1,19 +1,19 @@
 GetApplicationWithPrId:
-   Prereg_GetApplicationWithPrId_inValid_preRegistrationId:
-      endPoint: /preregistration/v1/applications/{preRegistrationId}
-      uniqueIdentifier: TC_prereg_GetApplicationWithPrId_01
-      description: Validate that fetching an application by Pre Registration ID fails when an invalid pre registration ID is provided
-      role: batch
-      restMethod: get
-      inputTemplate: preReg/GetApplicationWithPrId/getApplicationWithPrId
-      outputTemplate: preReg/error
-      input: '{
-  "preRegistrationId": "dhsb3772@Dfvgbgh"
-}'
-      output: '{
-   "errors": [
-    {
-      "errorCode": "PRG_APP_013"
-    }
-  ]
-}'
+  Prereg_GetApplicationWithPrId_inValid_preRegistrationId:
+    endPoint: '/preregistration/v1/applications/{preRegistrationId}'
+    uniqueIdentifier: TC_prereg_GetApplicationWithPrId_01
+    description: Validate that fetching an application by Pre Registration ID fails when an invalid pre registration ID is provided
+    role: batch
+    restMethod: get
+    inputTemplate: preReg/GetApplicationWithPrId/getApplicationWithPrId
+    outputTemplate: preReg/error
+    input: '{
+      "preRegistrationId": "dhsb3772@Dfvgbgh"
+    }'
+    output: '{
+      "errors": [
+        {
+          "errorCode": "PRG_APP_013"
+        }
+      ]
+    }'

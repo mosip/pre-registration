@@ -11,5 +11,8 @@ import lombok.Data;
  */
 @Data
 public class MultiBookingRequest {
+	/**
+	 * booking request used by this Pre-Registration type.
+	 */
 	private List<MultiBookingRequestDTO> bookingRequest;
 }

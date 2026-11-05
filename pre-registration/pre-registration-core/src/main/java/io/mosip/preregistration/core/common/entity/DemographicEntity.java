@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.core.common.entity;
 
 import java.io.Serializable;
@@ -45,12 +41,17 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @NamedQuery(name = "DemographicEntity.findByCreatedByOrderByCreateDateTime", query = "SELECT e FROM DemographicEntity e  WHERE e.createdBy=:userId and e.statusCode <>:statusCode order by e.createDateTime desc")
 @NamedQuery(name = "DemographicEntity.findByCreatedBy", query = "SELECT e FROM DemographicEntity e  WHERE e.createdBy=:userId and e.statusCode <>:statusCode order by e.createDateTime desc")
+@NamedQuery(name = "DemographicEntity.findByCreatedByInAndStatusCodeOrderByCreateDateTime", query = "SELECT e FROM DemographicEntity e  WHERE lower(e.createdBy) IN :userIds and e.statusCode <>:statusCode order by e.createDateTime desc")
+@NamedQuery(name = "DemographicEntity.findByCreatedByInAndStatusCode", query = "SELECT e FROM DemographicEntity e  WHERE lower(e.createdBy) IN :userIds and e.statusCode <>:statusCode order by e.createDateTime desc")
 @NamedQuery(name = "DemographicEntity.findBypreRegistrationId", query = "SELECT r FROM DemographicEntity r  WHERE r.preRegistrationId=:preRegId")
 public class DemographicEntity implements Serializable {
 	/** The Constant serialVersionUID. */
 	private static final long serialVersionUID = 6705845720255847210L;
 
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "demographicEntity")
+	/**
+	 * document entity used by this Pre-Registration type.
+	 */
 	private List<DocumentEntity> documentEntity;
 
 	/** The pre registration id. */
@@ -102,6 +103,11 @@ public class DemographicEntity implements Serializable {
 	}
 
 	@JsonIgnore
+	/**
+	 * Returns effective updated by.
+	 *
+	 * @return get effective updated by result
+	 */
 	public String getEffectiveUpdatedBy() {
 		return this.updatedBy;
 	}
@@ -113,5 +119,8 @@ public class DemographicEntity implements Serializable {
 	private LocalDateTime encryptedDateTime;
 
 	@Column(name = "demog_detail_hash")
+	/**
+	 * demog detail hash used by this Pre-Registration type.
+	 */
 	private String demogDetailHash;
 }

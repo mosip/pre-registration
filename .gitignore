@@ -5,7 +5,8 @@
 hs_err_pid*
 target/
 .springBeans
-.metadata
+.metadata/
+**/.metadata/
 .factorypath
 .classpath
 .project
@@ -24,8 +25,17 @@ local.properties
 test.txt
 .idea/
 .settings/
+*/.settings/
+*/.classpath
+*/.project
+.local/
+**/.local/
 .sonarlint/
+**/.sonarlint/
 .recommenders/
 /.recommenders/
 **/*.iml
 .vscode
+ui/node_modules/
+ui/dist/
+ui/coverage/

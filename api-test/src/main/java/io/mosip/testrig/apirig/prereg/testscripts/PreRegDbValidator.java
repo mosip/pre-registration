@@ -23,7 +23,6 @@ import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
 import io.mosip.testrig.apirig.prereg.utils.PreRegUtil;
 import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
-import io.mosip.testrig.apirig.utils.ConfigManager;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.GlobalMethods;
 import io.mosip.testrig.apirig.utils.OutputValidationUtil;
@@ -107,8 +106,8 @@ public class PreRegDbValidator extends PreRegUtil implements ITest {
 			GlobalMethods.reportRequest(null, input.toString(), url);
 			result.put("value", readActuatorProperty(url, input.getString("key")));
 		} else if ("mailbox".equals(check)) {
-			if (ConfigManager.getUsePreConfiguredOtp().equalsIgnoreCase("yes")) {
-				throw new SkipException("Mailbox check needs the mock SMTP listener (usePreConfiguredOtp=no)");
+			if (PreRegUtil.usePreConfiguredOtp()) {
+				throw new SkipException("Mailbox check needs the mock SMTP listener (usePreConfiguredOtp=false)");
 			}
 			GlobalMethods.reportRequest(null, input.toString(), "mock SMTP mailbox");
 			result.put("received", String.valueOf(receivedNonOtpMail(input.getString("recipient"),

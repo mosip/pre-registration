@@ -33,26 +33,49 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class ApplicationMismatchDataUpdater {
     
+    /**
+     * Performs log config for MOSIP Pre-Registration.
+     *
+     * @return log config result
+     */
     private Logger LOGGER = LoggerConfiguration.logConfig(ApplicationMismatchDataUpdater.class);
 
     /** Actor stamped on rows this job corrects. Not a person, but still resolved before writing. */
     private static final String MISMATCH_JOB_ACTOR = "PRERIGISTRATION_JOB";
 
     @Value("${mosip.batch.token.authmanager.userName}")
+	/**
+	 * audit username used by this Pre-Registration type.
+	 */
 	private String auditUsername;
 
 	@Value("${mosip.batch.token.authmanager.appId}")
+	/**
+	 * audit user id used by this Pre-Registration type.
+	 */
 	private String auditUserId;
 
     @Autowired
+	/**
+	 * batch service dao used by this Pre-Registration type.
+	 */
 	private BatchJpaRepositoryImpl batchServiceDAO;
 
     @Autowired
+	/**
+	 * rest helper used by this Pre-Registration type.
+	 */
 	private RestHelper restHelper;
 
     @Autowired
+	/**
+	 * batch identity resolver used by this Pre-Registration type.
+	 */
 	private BatchIdentityResolver batchIdentityResolver;
 
+    /**
+     * Performs update mismatch data for MOSIP Pre-Registration.
+     */
     public void updateMismatchData() {
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.APPOINTMENT_MISMATCH_JOB, 
@@ -75,6 +98,11 @@ public class ApplicationMismatchDataUpdater {
                     "Total Number of application found to update as Expired: " + regAppointmentDetailsList.size());
         // Resolved once per run, not per record: the actor is the same for every row this job
         // corrects, and writing it raw would leave each corrected row as a reconciliation candidate.
+        /**
+         * Performs resolve user uuid for MOSIP Pre-Registration.
+         *
+         * @return resolve user uuid result
+         */
         final String resolvedJobActor = batchIdentityResolver.resolveUserUuid(MISMATCH_JOB_ACTOR,
                 PreRegBatchContants.APPOINTMENT_MISMATCH_JOB);
 
@@ -114,6 +142,13 @@ public class ApplicationMismatchDataUpdater {
                     AuditLogVariables.PREREGISTRATION.toString());
     }
 
+    /**
+     * Indicates whether appointment data mismatch.
+     *
+     * @param regAppointment reg appointment used by is appointment data mismatch
+     * @param application application used by is appointment data mismatch
+     * @return is appointment data mismatch result
+     */
     private boolean isAppointmentDataMismatch(RegistrationBookingEntity regAppointment, ApplicationEntity application) {
 
         if (Objects.isNull(application.getAppointmentDate()) || 
@@ -131,6 +166,13 @@ public class ApplicationMismatchDataUpdater {
         return false;
     }
 
+    /**
+     * Performs update mismatch data for MOSIP Pre-Registration.
+     *
+     * @param regAppointment reg appointment used by update mismatch data
+     * @param application application used by update mismatch data
+     * @param resolvedJobActor resolved job actor used by update mismatch data
+     */
     private void updateMismatchData(RegistrationBookingEntity regAppointment, ApplicationEntity application,
             String resolvedJobActor) {
         application.setBookingDate(regAppointment.getUpdDate().toLocalDate());

@@ -1,0 +1,289 @@
+<div class="spinner" *ngIf="spinner">
+  <mat-spinner></mat-spinner>
+</div>
+<mat-card
+  [dir]="textDir"
+  style="padding: 0; border-radius: 0; margin:0 2vw;"
+  *ngIf="availabilityData.length !== 0"
+>
+  <mat-card-header class="time-selection__title-card">
+    <p class="time-selection__title-card-text">
+      {{ "timeSelection.title_book" | translate }}
+      <mat-icon
+        class="icon"
+        matTooltip="{{ 'helpText.bookAppointment' | translate }}"
+        [inline]="true"
+        >help_outline</mat-icon
+      >
+    </p>
+    <span *ngIf="showNote" class="time-selection__note-text">{{ "timeSelection.note_text" | translate }}</span>
+  </mat-card-header>
+  
+</mat-card>
+<div *ngIf="!spinner" [dir]="textDir">
+  <mat-card
+    class="time-selection__date-card"
+    *ngIf="availabilityData.length !== 0"
+  >
+    <div>
+      <div class="container">
+        <div class="time-selection__arrow-text">
+          <a role="button" (click)="scrollLeft()" (keydown.enter)="scrollLeft()" (keydown.space)="scrollLeft()" tabindex="0" >
+            {{ "timeSelection.text_prev" | translate }}
+          </a>
+        </div>
+        <div class="left-button">
+          <a (click)="scrollLeft()"><img src="assets/left.png" alt="Left"/></a>
+        </div>
+        <div #widgetsContent class="middle">
+          <mat-card
+            *ngFor="let data of availabilityData | slice: 0:days; let i = index"
+            [ngClass]="
+              data.holiday
+                ? 'sizing disabled'
+                : selectedTile === i
+                ? 'sizing selected'
+                : 'sizing'
+            "
+            [tabindex]="i + 1"
+            (click)="dateSelected(i)"
+            (keydown.enter)="dateSelected(i)"
+            (keydown.space)="dateSelected(i)"
+          >
+            <mat-card-content class="time-selection__date">
+              <p class="time-selection__tile-date">{{ data.displayDate }}</p>
+              <p class="time-selection__tile-date-text">
+                {{ data.displayDay }}
+              </p>
+              <p class="time-selection__tile-availability-text">
+                {{ data.TotalAvailable }}
+              </p>
+              <p class="time-selection__tile-availability-text">
+                {{ "timeSelection.text_availability" | translate }}
+              </p>
+            </mat-card-content>
+          </mat-card>
+        </div>
+        <div class="right-button">
+          <a (click)="scrollRight()"><img src="assets/right.png" alt="Right" /></a>
+        </div>
+        <div class="time-selection__arrow-text">
+          <a role="button"  (click)="scrollRight()" (keydown.enter)="scrollRight()" (keydown.space)="scrollRight()" tabindex="0">
+            {{ "timeSelection.text_next" | translate }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+  <div
+    class="time-seelection__slot-groups-div"
+    *ngIf="availabilityData.length !== 0"
+  >
+    <a
+      *ngIf="morningSlotAvailable"
+      (click)="tabSelected('morning')"
+      [ngClass]="
+        activeTab === 'morning'
+          ? 'time-seelection__slot-groups-div-selected'
+          : 'time-seelection__slot-groups-div a'
+      "
+      >{{ "timeSelection.text_morning" | translate }}</a
+    >
+    <a
+      *ngIf="afternoonSlotAvailable"
+      (click)="tabSelected('afternoon')"
+      [ngClass]="
+        activeTab === 'afternoon'
+          ? 'time-seelection__slot-groups-div-selected'
+          : 'time-seelection__slot-groups-div a'
+      "
+      >{{ "timeSelection.text_afternoon" | translate }}</a
+    >
+  </div>
+  <div class="time-selection__slots-div">
+    <mat-card class="time-selection__time-slots-container">
+      <div class="container-card">
+        <div
+          *ngIf="availabilityData[selectedTile] !== undefined"
+          #cardsContent
+          class="middle-card"
+        >
+          <div
+            *ngFor="
+              let data of availabilityData[selectedTile].timeSlots;
+              let i = index
+            "
+          >
+            <mat-card
+              *ngIf="data.tag === activeTab"
+              [ngClass]="
+                selectedCard === i
+                  ? 'card card-content selected-card'
+                  : 'card card-content'
+              "
+              [tabindex]="i + 1"
+              (click)="cardSelected(i)"
+              (keydown.enter)="cardSelected(i)"
+              (keydown.space)="cardSelected(i)"
+            >
+              <mat-card-content style="width: 100%">
+                <p class="card-time-text">
+                  {{ data.displayTime }}
+                </p>
+                <p
+                  [ngClass]="
+                    selectedCard === i
+                      ? 'card-slot-text-selected'
+                      : 'card-slot-text'
+                  "
+                >
+                  {{ data.availability }}
+                  {{ "timeSelection.text_slots" | translate }}
+                  &nbsp;&nbsp;
+                  <span
+                    *ngIf="data.names.length !== 0"
+                    class="card-slot-text-span-number circleBase"
+                    >{{ data.names.length
+                    }}<img
+                        src="assets/slots.png"
+                        height="15px"
+                        width="15px" alt="Slots" /></span>
+                </p>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </div>
+      </div>
+    </mat-card>
+    <mat-card
+      class="time-selection__names-container"
+      *ngIf="availabilityData.length > 0 && showsNamesContainer"
+    >
+      <div>
+        <div
+          *ngIf="
+            availabilityData[selectedTile] !== undefined &&
+            selectedCard !== undefined
+          "
+          class="time-selection__name-list-header"
+        >
+          <span class="time-selection__names-header-date-text">{{
+            availabilityData[selectedTile].displayDate
+          }}</span
+          >,
+          <span class="time-selection__names-header-date-text">{{
+            availabilityData[selectedTile].displayDay
+          }}</span>
+          <p></p>
+          <span class="time-selection__names-header-time-text">{{
+            availabilityData[selectedTile].timeSlots[selectedCard].displayTime
+          }}</span
+          >,
+          <span
+            *ngIf="activeTab === 'morning'"
+            class="time-selection__names-header-day-text"
+            >{{ "timeSelection.text_morning" | translate }}</span
+          >
+          <span
+            *ngIf="activeTab === 'afternoon'"
+            class="time-selection__names-header-day-text"
+            >{{ "timeSelection.text_afternoon" | translate }}</span
+          >
+        </div>
+        <div
+          *ngIf="
+            availabilityData[selectedTile] !== undefined &&
+            selectedCard !== undefined
+          "
+        >
+          <table class="time-selection__name-list" aria-describedby="time-selection-name-list" role="presentation">
+            <tr
+              class="time-selection__name-list-item"
+              *ngFor="
+                let item of availabilityData[selectedTile].timeSlots[
+                  selectedCard
+                ].names;
+                let j = index
+              "
+            >
+              <td>{{ item.fullName }}</td>
+              <td>
+                <mat-icon role="button"
+                          (click)="itemDelete(j)"
+                          (keydown.enter)="itemDelete(j)"
+                          (keydown.space)="itemDelete(j)"
+                          [tabIndex]="j"
+                          class="name-delete-button">
+                    close
+                </mat-icon>
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div *ngIf="deletedNames.length !== 0">
+        <div class="time-selection__name-list-header">
+          <p></p>
+          {{ "timeSelection.text_available" | translate }}
+        </div>
+        <div>
+          <table class="time-selection__name-list" aria-describedby="time-selection-name-list" role="presentation">
+            <tr
+              class="time-selection__name-list-item"
+              *ngFor="let item of deletedNames; let k = index"
+            >
+              <td>{{ item.fullName }}</td>
+              <td>
+                <mat-icon
+                  (click)="addItem(k)"
+                  (keydown.enter)="addItem(k)"
+                  (keydown.space)="addItem(k)"
+                  role="button"
+                  [tabindex]="k"
+                  [ngClass]="
+                    disableAddButton
+                      ? 'name-delete-button disable_add'
+                      : 'name-delete-button'
+                  "
+                  >add</mat-icon
+                >
+              </td>
+            </tr>
+          </table>
+        </div>
+      </div>
+      <div *ngIf="selectedNames.length !== 0">
+        <div class="time-selection__name-list-header">{{ "timeSelection.text_selected" | translate }}</div>
+        <div
+          class="selected-name-list-item"
+          *ngFor="let item of selectedNames; let k = index"
+        >
+          <div>{{ item.name }}</div><p></p>
+          <div>({{ item.bookingData.date }}
+            {{ item.bookingData.displayTime }}
+            {{ item.bookingData.tagLabel }} )
+          </div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <div *ngIf="!spinner" [dir]="textDir">
+    <mat-card class="time-selection__button-container">
+      <button (click)="navigateBack()" class="user__btn user__btn-back">
+        {{ "timeSelection.action_back" | translate }}
+      </button>
+      <span class="spacer"></span>
+      <button (click)="navigateDashboard()" class="user__btn user__btn-action">
+        {{ "timeSelection.action_bookLater" | translate }}
+      </button>
+      <button
+        [disabled]="disableContinueButton"
+        (click)="makeBooking()"
+        class="user__btn"
+      >
+        {{ "timeSelection.action_continue" | translate }}
+      </button>
+    </mat-card>
+  </div>
+</div>

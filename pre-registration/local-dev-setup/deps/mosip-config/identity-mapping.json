@@ -1,0 +1,169 @@
+{
+	"identity": {
+		"IDSchemaVersion": {
+			"value": "IDSchemaVersion"
+		},
+	"selectedHandles" : { 
+		"value" : "selectedHandles"
+	},		
+		"name": {
+			"value": "fullName"
+		},
+		"gender": {
+			"value": "gender"
+		},
+		"dob": {
+			"value": "dateOfBirth"
+		},
+		"age": {
+			"value": "age"
+		},
+		"introducerRID": {
+			"value": "introducerRID"
+		},
+		"introducerUIN": {
+			"value": "introducerUIN"
+		},
+		"introducerVID": {
+			"value": "introducerVID"
+		},
+		"introducerName": {
+			"value": "introducerName"
+		},
+		"phone": {
+			"value": "phone"
+		},
+		"phoneNumber": {
+			"value": "phone"
+		},
+		"email": {
+			"value": "email"
+		},
+		"emailId": {
+			"value": "email"
+		},
+		"uin": {
+			"value": "UIN"
+		},
+		"vid": {
+			"value": "VID"
+		},
+		"individualBiometrics": {
+			"value": "individualBiometrics"
+		},
+		"introducerBiometrics": {
+			"value": "introducerBiometrics"
+		},
+		"individualAuthBiometrics": {
+			"value": "individualAuthBiometrics"
+		},
+		"officerBiometricFileName": {
+			"value": "officerBiometricFileName"
+		},
+		"supervisorBiometricFileName": {
+			"value": "supervisorBiometricFileName"
+		},
+		"residenceStatus": {
+			"value": "residenceStatus"
+		},
+		"preferredLanguage": {
+			"value": "preferredLang"
+		},
+		"locationHierarchyForProfiling": {
+			"value": "zone,postalCode"
+		},
+		"addressLine1": {
+			"value": "addressLine1"
+		},
+		"addressLine2": {
+			"value": "addressLine2"
+		},
+		"addressLine3": {
+			"value": "addressLine3"
+		},
+		"location1": {
+			"value": "city"
+		},
+		"location2": {
+			"value": "region"
+		},
+		"location3": {
+			"value": "province"
+		},
+		"postalCode": {
+			"value": "postalCode"
+		},
+		"location4": {
+			"value": "zone"
+		},
+		"fullAddress": {
+			"value": "addressLine1,addressLine2,addressLine3,city,region,province,postalCode"
+		},
+		"bestTwoFingers": {
+			"value": "bestTwoFingers"
+		},
+		"birthdate": {
+		    "value": "dateOfBirth"
+		},
+		"picture": {
+		    "value": "face"
+		},
+		"address": {
+		   "value": "addressLine1,addressLine2,addressLine3,city,region,province,postalCode"
+		},
+		"attributes": {
+		   "value": "fln,ad1,ad2,ad3,cit,reg,pro,poc,cph,em,ph,gen,dob"
+		},
+		"phone_number": {
+			"value": "phone"
+		},
+    "individual_id": {
+			"value": "individual_id"
+		},    
+    "street_address": {
+       "value":  "addressLine1,addressLine2,addressLine3"
+    },
+    "locality": {
+       "value":  "city"
+    },
+    "region": {
+       "value":  "region"
+    },
+    "postal_code": {
+       "value":  "postalCode"
+    },
+    "country": {
+       "value":  "province"
+    },
+    "password": {
+    	 "value": "password"
+    }
+	},
+	"metaInfo": {
+		"value": "metaInfo"
+	},
+	"audits": {
+		"value": "audits"
+	},
+	"documents": {
+		"poa": {
+			"value": "proofOfAddress"
+		},
+		"poi": {
+			"value": "proofOfIdentity"
+		},
+		"por": {
+			"value": "proofOfRelationship"
+		},
+		"pob": {
+			"value": "proofOfDateOfBirth"
+		},
+		"poe": {
+			"value": "proofOfException"
+		}
+	},
+	"attributeUpdateCountLimit": {
+		"fullName": 3,
+		"gender": 10
+	}
+}

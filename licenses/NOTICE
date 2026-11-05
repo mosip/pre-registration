@@ -3,86 +3,252 @@ THIRD-PARTY COPYRIGHT NOTICES
 
 This file contains copyright notices for third-party libraries used in this
 project. These notices must be preserved as required by the respective licenses.
+Versions match the Maven tree resolved 2026-11-04 (see THIRD-PARTY-NOTICES.txt).
 
 ================================================================================
 MIT LICENSE COMPONENTS
 ================================================================================
 
-Lombok (org.projectlombok:lombok) version 1.18.30
-Copyright (c) 2009-2021 The Project Lombok Authors
+Lombok (org.projectlombok:lombok) version 1.18.38
+Copyright (c) 2009-2025 The Project Lombok Authors
 License: MIT License
 
-Mockito Core (org.mockito:mockito-core) version 3.4.3
+Mockito (org.mockito:mockito-core) version 5.23.0
 Copyright (c) 2007 Mockito contributors
+License: MIT License
+
+SLF4J API (org.slf4j:slf4j-api) version 2.0.18
+Copyright (c) 2004-2025 QOS.ch
+License: MIT License
+
+java-jwt (com.auth0:java-jwt) version 3.19.4
+Copyright (c) Auth0 Inc.
+License: MIT License
+
+jsoup (org.jsoup:jsoup) version 1.23.2
+Copyright (c) 2009-2025 Jonathan Hedley
 License: MIT License
 
 ================================================================================
 BSD 2-CLAUSE LICENSE COMPONENTS
 ================================================================================
 
-PostgreSQL JDBC Driver version 42.2.2
+PostgreSQL JDBC Driver version 42.7.5
 Copyright (c) 1997, PostgreSQL Global Development Group
 License: BSD 2-Clause License
+
+HdrHistogram version 2.2.2
+Copyright (c) Gil Tene, Michael Barker, and Matt Warren
+License: BSD-2-Clause / CC0-1.0
+
+================================================================================
+BSD 3-CLAUSE LICENSE COMPONENTS
+================================================================================
+
+Hamcrest version 3.0
+Copyright (c) Hamcrest contributors
+License: BSD-3-Clause
+
+ANTLR 4 Runtime version 4.13.2
+Copyright (c) 2012-2024 The ANTLR Project
+License: BSD-3-Clause
+
+jai-imageio-core version 1.4.0
+Copyright (c) Sun Microsystems / jai-imageio
+License: BSD-3-Clause-No-Nuclear-License
 
 ================================================================================
 APACHE LICENSE 2.0 COMPONENTS
 ================================================================================
 
-Spring Boot version 3.2.3
-Copyright (c) 2012-2024 VMware, Inc.
+Spring Boot version 4.1.1
+Copyright (c) 2012-2026 Broadcom / VMware, Inc.
+License: Apache License 2.0
+
+Spring Framework version 7.0.9
+Copyright (c) 2002-2026 Broadcom / VMware, Inc.
+License: Apache License 2.0
+
+Spring Security version 7.1.1
+Copyright (c) 2004-2026 Broadcom / VMware, Inc.
+License: Apache License 2.0
+
+Spring Cloud 2025.1.3 (config 5.0.5)
+Copyright (c) 2015-2026 Broadcom / VMware, Inc.
+License: Apache License 2.0
+
+Spring Batch version 6.0.5
+Copyright (c) 2006-2026 Broadcom / VMware, Inc.
+License: Apache License 2.0
+
+SpringDoc OpenAPI version 3.1.1
+Copyright (c) springdoc.org
+License: Apache License 2.0
+
+Jackson 2.21.x and Jackson 3.1.5
+Copyright (c) FasterXML, LLC
+License: Apache License 2.0
+
+Netty version 4.2.17.Final
+Copyright (c) The Netty Project
+License: Apache License 2.0
+
+Hibernate ORM version 7.4.5.Final
+Copyright (c) 2001-2026 Red Hat, Inc.
 License: Apache License 2.0
 
 Apache PDFBox version 3.0.3
 Copyright 2002-2024 The Apache Software Foundation
 License: Apache License 2.0
 
-Apache Maven Plugins
-Copyright 2001-2024 The Apache Software Foundation
-(Various plugins - see THIRD-PARTY-NOTICES.txt for details)
+Apache Tomcat Embed version 11.0.24
+Copyright 1999-2026 The Apache Software Foundation
 License: Apache License 2.0
 
-Sonatype Central Publishing Maven Plugin version 0.7.0
-Copyright (c) 2022-present Sonatype, Inc.
+Apache Maven Plugins / Sonatype Central Publishing Maven Plugin version 0.11.0
+Copyright 2001-2026 The Apache Software Foundation / Sonatype, Inc.
+License: Apache License 2.0
+
+Git Commit ID Maven Plugin version 4.9.10
 License: Apache License 2.0
 
 ================================================================================
 ECLIPSE PUBLIC LICENSE COMPONENTS
 ================================================================================
 
-JUnit 4 version 4.12
+JUnit 4 version 4.13.2
 Copyright (c) 2002-present JUnit contributors
 License: Eclipse Public License 1.0
 
-JUnit Vintage Engine (JUnit 5)
-Copyright (c) 2017-2025 The JUnit Team
+JUnit 6 (Jupiter / Vintage / Platform) version 6.0.3
+Copyright (c) 2015-2026 The JUnit Team
 License: Eclipse Public License 2.0
 
-JaCoCo Maven Plugin version 0.8.11
-Copyright (c) 2009, 2023 Mountainminds GmbH & Co. KG and Contributors
+Logback Classic / Core version 1.5.38
+Copyright (c) 1999-2026 QOS.ch Sarl
+License: Eclipse Public License 2.0 / LGPL-2.1
+
+H2 Database version 2.3.232
+Copyright (c) 2004-present H2 Group
+License: Eclipse Public License 1.0 OR Mozilla Public License 2.0
+
+JaCoCo Maven Plugin version 0.8.15
+Copyright (c) 2009, 2024 Mountainminds GmbH & Co. KG and Contributors
 License: Eclipse Public License 2.0
 
-H2 Database version 1.4.197
-Copyright (c) 2004-present Thomas Müller and contributors
-License: Eclipse Public License 1.0 OR Mozilla Public License 2.0 (Dual Licensed)
+Vert.x version 3.9.16
+Copyright (c) 2011-2024 the original author or authors
+License: Eclipse Public License 1.0 / 2.0 and Apache License 2.0
 
-JAXB Runtime and API
+================================================================================
+ECLIPSE DISTRIBUTION LICENSE COMPONENTS
+================================================================================
+
+Jakarta XML Binding API version 4.0.5 / JAXB Runtime 2.3.9
 Copyright (c) 2018-present Eclipse Foundation
-License: Eclipse Public License 2.0
+License: Eclipse Distribution License 1.0
+
+Jakarta Activation API version 2.1.4
+Copyright (c) Eclipse Foundation
+License: Eclipse Distribution License 1.0
 
 ================================================================================
 CDDL LICENSE COMPONENTS
 ================================================================================
 
-Activation Framework (javax.activation) version 1.1.1
+JavaBeans Activation Framework (javax.activation) version 1.1.1
 Copyright (c) 2004-present Eclipse Foundation / Oracle
 License: Common Development and Distribution License 1.1
 
+JavaMail API (com.sun.mail:mailapi) version 1.6.2
+Copyright (c) Oracle
+License: CDDL 1.1 + GPLv2 with Classpath Exception
+
 ================================================================================
-JSON LICENSE COMPONENTS
+BOUNCY CASTLE LICENCE COMPONENTS
 ================================================================================
 
-org.json (JSON-java) version 20080701
+Bouncy Castle Provider (bcprov-jdk18on) version 1.85.2
+Copyright (c) 2000-2025 The Legion of the Bouncy Castle Inc.
+License: Bouncy Castle Licence
+
+================================================================================
+UNICODE LICENSE V3 COMPONENTS
+================================================================================
+
+ICU4J version 78.3
+Copyright © 2016-2025 Unicode, Inc.
+License: Unicode License v3
+
+================================================================================
+PUBLIC DOMAIN / JSON LICENSE
+================================================================================
+
+org.json (JSON-java) version 20240303
 Copyright (c) 2002 JSON.org
-License: JSON License
+License: Public Domain / JSON License
+
+reactive-streams version 1.0.4
+License: MIT-0
 
 ================================================================================
+MOZILLA PUBLIC LICENSE 2.0 COMPONENTS
+================================================================================
+
+MOSIP kernel-core, kernel-auth-adapter, khazana version 1.4.1-SNAPSHOT
+PRID PridGenerator SPI is kernel-core; impl is source in pridgenerator-service
+kernel-ref-idobjectvalidator / kernel-virusscanner-clamav (loader.path, mosip-ref-impl issue-1633)
+Copyright (c) MOSIP
+License: Mozilla Public License 2.0
+
+================================================================================
+PRE-REGISTRATION UI (Angular SPA, imported from mosip/pre-registration-ui)
+================================================================================
+
+Angular Framework 7.2
+Copyright (c) 2010-2018 Google, Inc.
+License: MIT License
+
+Angular Material / CDK
+Copyright (c) Google, Inc.
+License: MIT License
+
+ngx-translate
+Copyright (c) 2016 Olivier Combe
+License: MIT License
+
+RxJS
+Copyright (c) 2015-2018 Google, Inc., Netflix, Inc., Microsoft Corp. and contributors
+License: Apache License 2.0
+
+Moment.js
+Copyright (c) JS Foundation and other contributors
+License: MIT License
+
+html2pdf.js
+Copyright (c) 2017 Erik Koopmans
+License: MIT License
+
+ng2-pdf-viewer
+Copyright (c) 2016 Vadym Yatsyuk
+License: MIT License
+
+ng-recaptcha
+Copyright (c) 2016 Dmitriy Shekhovtsov
+License: MIT License
+
+OpenLayers (ol)
+Copyright (c) OpenLayers contributors
+License: BSD-2-Clause License
+
+core-js
+Copyright (c) 2014-2018 Denis Pushkarev
+License: MIT License
+
+zone.js
+Copyright (c) 2016 Google Inc.
+License: MIT License
+
+Hammer.js
+Copyright (c) 2014 Jorik Tangelder
+License: MIT License

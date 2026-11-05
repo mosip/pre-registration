@@ -6,14 +6,14 @@ if [ $# -ge 1 ] ; then
   export KUBECONFIG=$1
 fi
 
+SCRIPT_DIR=$(cd "$(dirname "$0")" && pwd)
 NS=prereg
 CHART_VERSION=0.0.1-develop
-PREREG_BOOKING_CHART_VERSION=0.0.1-develop
 
-COPY_UTIL=../copy_cm_func.sh
+COPY_UTIL=$SCRIPT_DIR/../copy_cm_func.sh
 
 echo Create $NS namespace
-kubectl create ns $NS
+kubectl get ns $NS >/dev/null 2>&1 || kubectl create ns $NS
 
 function installing_prereg() {
   echo Istio label
@@ -27,17 +27,17 @@ function installing_prereg() {
   $COPY_UTIL configmap artifactory-share artifactory $NS
   $COPY_UTIL configmap config-server-share config-server $NS
 
-  echo Installing prereg-application
+  echo Installing prereg-application (consolidated HTTP service, includes booking)
   helm -n $NS install prereg-application mosip/prereg-application --version $CHART_VERSION
-
-  echo Installing prereg-booking
-  helm -n $NS install prereg-booking mosip/prereg-booking --version $PREREG_BOOKING_CHART_VERSION
-
-  echo Installing prereg-datasync
-  helm -n $NS install prereg-datasync mosip/prereg-datasync --version $CHART_VERSION
 
   echo Installing prereg-batchjob
   helm -n $NS install prereg-batchjob mosip/prereg-batchjob --version $CHART_VERSION
+
+  echo Installing pridgenerator
+  helm -n $NS install pridgenerator mosip/pridgenerator --version $CHART_VERSION
+
+  echo Installing prereg-ui
+  "$SCRIPT_DIR/../prereg-ui/install.sh"
 
   kubectl -n $NS  get deploy -o name |  xargs -n1 -t  kubectl -n $NS rollout status
 

@@ -1,0 +1,7 @@
+# Host-app file logs (run-prereg-local.* writes logging.file.path=.local/logs)
+.local/
+logs/
+keys/.km-local-ready
+deps/additional_jars/*.jar
+deps/keymanager/keys-generator.jar
+deps/booking/*.jar

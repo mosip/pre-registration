@@ -237,7 +237,7 @@ public class UserDetailsServiceTest {
 
         List<String> lookupIds = userDetailsService.getUserLookupIds("TestUser", true);
 
-        assertIterableEquals(List.of(mapped.getUserId().toString(), "TestUser"), lookupIds);
+        assertIterableEquals(List.of(mapped.getUserId().toString(), "testuser"), lookupIds);
     }
 
     @Test

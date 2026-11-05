@@ -50,6 +50,11 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class TemplateUtil {
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(TemplateUtil.class);
 	/**
 	 * Reference for ${resource.template.url} from property file
@@ -59,6 +64,9 @@ public class TemplateUtil {
 	private String resourceUrl;
 
 	@Value("${mosip.notification.timezone}")
+	/**
+	 * time zone used by this Pre-Registration type.
+	 */
 	private String timeZone;
 
 	/**
@@ -69,9 +77,15 @@ public class TemplateUtil {
 	RestTemplate restTemplate;
 
 	@Autowired
+	/**
+	 * template manager used by this Pre-Registration type.
+	 */
 	private TemplateManager templateManager;
 
 	@Autowired
+	/**
+	 * env used by this Pre-Registration type.
+	 */
 	private Environment env;
 
 	/**

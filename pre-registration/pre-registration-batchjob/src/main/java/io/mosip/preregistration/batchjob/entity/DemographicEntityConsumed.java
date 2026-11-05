@@ -1,7 +1,3 @@
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.entity;
 
 import java.io.Serializable;
@@ -52,6 +48,11 @@ public class DemographicEntityConsumed implements Serializable {
 	private byte[] applicantDetailJson;
 
 	// Setter methods for requesttime are overridden manually
+	/**
+	 * Sets applicant detail json.
+	 *
+	 * @param applicantDetailJson applicant detail json used by set applicant detail json
+	 */
 	public void setApplicantDetailJson(byte[] applicantDetailJson) {
 		this.applicantDetailJson = applicantDetailJson != null ? applicantDetailJson.clone() : null;
 	}
@@ -91,5 +92,8 @@ public class DemographicEntityConsumed implements Serializable {
 	private LocalDateTime encryptedDateTime;
 
 	@Column(name = "demog_detail_hash")
+	/**
+	 * demog detail hash used by this Pre-Registration type.
+	 */
 	private String demogDetailHash;
 }

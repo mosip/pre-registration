@@ -1,8 +1,3 @@
-
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.audit;
 
 import java.util.Collections;

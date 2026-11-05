@@ -31,10 +31,20 @@ public class DeleteBookingDTO implements Serializable {
 	private Date deletedDateTime;
 
 	// Getter and Setter methods for requesttime are overridden manually
+	/**
+	 * Returns deleted date time.
+	 *
+	 * @return get deleted date time result
+	 */
 	public Date getDeletedDateTime() {
 		return deletedDateTime != null ? new Date(deletedDateTime.getTime()) : null;
 	}
 
+	/**
+	 * Sets deleted date time.
+	 *
+	 * @param deletedDateTime deleted date time used by set deleted date time
+	 */
 	public void setDeletedDateTime(Date deletedDateTime) {
 		this.deletedDateTime = deletedDateTime != null ? new Date(deletedDateTime.getTime()) : null;
 	}

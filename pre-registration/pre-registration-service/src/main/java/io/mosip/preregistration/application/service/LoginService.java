@@ -1,0 +1,596 @@
+package io.mosip.preregistration.application.service;
+
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+
+/**
+ * This class provides different methods for login called by the controller 
+ * 
+ * @author M1050360
+ * @since 1.0.0
+ */
+
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+import jakarta.annotation.PostConstruct;
+
+import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jws;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.impl.TextCodec;
+import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.constant.PreRegLoginConstant;
+import io.mosip.preregistration.application.dto.CaptchaResposneDTO;
+import io.mosip.preregistration.application.dto.OTPRequestWithLangCodeAndCaptchaToken;
+import io.mosip.preregistration.application.dto.OtpRequestDTO;
+import io.mosip.preregistration.application.dto.User;
+import io.mosip.preregistration.application.errorcodes.LoginErrorCodes;
+import io.mosip.preregistration.application.errorcodes.LoginErrorMessages;
+import io.mosip.preregistration.application.exception.InvalidOtpOrUseridException;
+import io.mosip.preregistration.application.exception.LoginServiceException;
+import io.mosip.preregistration.application.exception.PreRegLoginException;
+import io.mosip.preregistration.application.exception.util.LoginExceptionCatcher;
+import io.mosip.preregistration.application.util.LoginCommonUtil;
+import io.mosip.preregistration.core.code.AuditLogVariables;
+import io.mosip.preregistration.core.code.EventId;
+import io.mosip.preregistration.core.code.EventName;
+import io.mosip.preregistration.core.code.EventType;
+import io.mosip.preregistration.core.common.dto.AuditRequestDto;
+import io.mosip.preregistration.core.common.dto.AuthNResponse;
+import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
+import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
+import io.mosip.preregistration.core.exception.UserLookupException;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.util.AuditLogUtil;
+import io.mosip.preregistration.core.util.GenericUtil;
+
+@Service
+/**
+ * Business service for login service in MOSIP Pre-Registration.
+ */
+public class LoginService {
+
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
+	private Logger log = LoggerConfiguration.logConfig(LoginService.class);
+
+	/** Well-known sample from MOSIP public config; forging HS256 session JWTs is trivial with it. */
+	private static final String PUBLISHED_MOSIP_JWT_SECRET = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
+
+	/**
+	 * Autowired reference for {@link #authCommonUtil}
+	 */
+	@Autowired
+	private LoginCommonUtil loginCommonUtil;
+
+	@Value("${ui.config.params}")
+	/**
+	 * ui config params used by this Pre-Registration type.
+	 */
+	private String uiConfigParams;
+
+	@Value("${mosip.preregistration.login.id.invalidatetoken}")
+	/**
+	 * invalidate token id used by this Pre-Registration type.
+	 */
+	private String invalidateTokenId;
+
+	@Value("${mosip.preregistration.login.id.config}")
+	/**
+	 * config id used by this Pre-Registration type.
+	 */
+	private String configId;
+
+	@Value("${mosip.preregistration.login.service.version}")
+	/**
+	 * version used by this Pre-Registration type.
+	 */
+	private String version;
+	/**
+	 * Reference for ${sendOtp.resource.url} from property file
+	 */
+	@Value("${sendOtp.resource.url}")
+	private String sendOtpResourceUrl;
+
+	@Value("${validationStatus}")
+	/**
+	 * status used by this Pre-Registration type.
+	 */
+	private String status;
+
+	/**
+	 * otp channel used by this Pre-Registration type.
+	 */
+	private List<String> otpChannel;
+
+	@Value("${userIdType}")
+	/**
+	 * useridtype used by this Pre-Registration type.
+	 */
+	private String useridtype;
+
+	@Value("${context}")
+	/**
+	 * context used by this Pre-Registration type.
+	 */
+	private String context;
+
+	@Autowired
+	AuditLogUtil auditLogUtil;
+
+	@Value("${prereg.auth.jwt.secret}")
+	/**
+	 * jwt secret used by this Pre-Registration type.
+	 */
+	private String jwtSecret;
+
+	@Value("${prereg.auth.jwt.token.expiration}")
+	/**
+	 * jwt token expiry time used by this Pre-Registration type.
+	 */
+	private String jwtTokenExpiryTime;
+
+	@Value("${prereg.auth.jwt.token.roles}")
+	/**
+	 * jwt token roles used by this Pre-Registration type.
+	 */
+	private String jwtTokenRoles;
+
+	@Value("${prereg.auth.jwt.scope}")
+	/**
+	 * jwt scope used by this Pre-Registration type.
+	 */
+	private String jwtScope;
+
+	@Value("${prereg.auth.jwt.audience}")
+	/**
+	 * jwt audience used by this Pre-Registration type.
+	 */
+	private String jwtAudience;
+
+	@Value("${mosip.kernel.otp.expiry-time}")
+	/**
+	 * otp expiry time used by this Pre-Registration type.
+	 */
+	private int otpExpiryTime;
+
+	@Value("${mosip.preregistration.captcha.enable}")
+	/**
+	 * is captcha enabled used by this Pre-Registration type.
+	 */
+	private boolean isCaptchaEnabled;
+
+	@Autowired
+	OTPManager otpmanager;
+
+	@Autowired
+	/**
+	 * user details service used by this Pre-Registration type.
+	 */
+	private UserDetailsService userDetailsService;
+
+	@Autowired
+	/**
+	 * env used by this Pre-Registration type.
+	 */
+	private Environment env;
+
+	@PostConstruct
+	void rejectPublishedJwtSecret() {
+		if (jwtSecret == null || jwtSecret.isBlank() || PUBLISHED_MOSIP_JWT_SECRET.equals(jwtSecret.trim())) {
+			throw new IllegalStateException(
+					"prereg.auth.jwt.secret must be a unique value; the published MOSIP sample secret is not allowed");
+		}
+	}
+
+	/**
+	 * It will fetch otp from Kernel auth service and send to the userId provided
+	 * 
+	 * @param userOtpRequest
+	 * @return MainResponseDTO<AuthNResponse>
+	 */
+	@SuppressWarnings("unchecked")
+	public MainResponseDTO<AuthNResponse> sendOTP(MainRequestDTO<OtpRequestDTO> userOtpRequest, String language) {
+		MainResponseDTO<AuthNResponse> response = new MainResponseDTO<>();
+		String userid = null;
+		boolean isSuccess = false;
+
+		log.info("In callsendOtp method of login service with userID: {} and langCode: {}",
+				GenericUtil.maskIdentifier(userOtpRequest.getRequest().getUserId()), language);
+
+		try {
+			response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userOtpRequest);
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Response after loginCommonUtil " + response.toString());
+
+			userid = userOtpRequest.getRequest().getUserId();
+			otpChannel = loginCommonUtil.validateUserId(userid);
+			boolean otpSent = otpmanager.sendOtp(userOtpRequest, otpChannel.get(0), language);
+			AuthNResponse authNResponse = null;
+			if (otpSent) {
+				if (otpChannel.get(0).equalsIgnoreCase(PreRegLoginConstant.PHONE_NUMBER))
+					authNResponse = new AuthNResponse(PreRegLoginConstant.SMS_SUCCESS, PreRegLoginConstant.SUCCESS);
+				else
+					authNResponse = new AuthNResponse(PreRegLoginConstant.EMAIL_SUCCESS, PreRegLoginConstant.SUCCESS);
+				response.setResponse(authNResponse);
+				isSuccess = true;
+			} else
+				isSuccess = false;
+
+			response.setResponsetime(GenericUtil.getCurrentResponseTime());
+		} catch (HttpServerErrorException | HttpClientErrorException ex) {
+			log.error("In callsendOtp method of login service- ", ex.getResponseBodyAsString());
+			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
+		} catch (Exception ex) {
+			log.error("In callsendOtp method of login service- ", ex);
+			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
+		} finally {
+			if (isSuccess) {
+				setAuditValues(EventId.PRE_410.toString(), EventName.AUTHENTICATION.toString(),
+						EventType.BUSINESS.toString(), "Otp send sucessfully", AuditLogVariables.NO_ID.toString(),
+						userid, userid);
+			} else {
+
+				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(LoginErrorCodes.PRG_AUTH_001.getCode(),
+						LoginErrorMessages.SEND_OTP_FAILED.getMessage());
+				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
+				lst.add(errors);
+				response.setErrors(lst);
+				response.setResponse(null);
+				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
+						"Otp fail to send", AuditLogVariables.NO_ID.toString(), userid, userid);
+			}
+		}
+		return response;
+	}
+
+	@SuppressWarnings({ "unchecked" })
+	/**
+	 * Performs validate captcha and send otp for MOSIP Pre-Registration.
+	 *
+	 * @param request request used by validate captcha and send otp
+	 * @return validate captcha and send otp result
+	 */
+	public MainResponseDTO<AuthNResponse> validateCaptchaAndSendOtp(
+			MainRequestDTO<OTPRequestWithLangCodeAndCaptchaToken> request) {
+
+		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method with userId "
+				+ GenericUtil.maskIdentifier(request.getRequest().getUserId()) + " and langCode " + request.getRequest().getLangCode());
+		MainResponseDTO<AuthNResponse> response = (MainResponseDTO<AuthNResponse>) loginCommonUtil
+				.getMainResponseDto(request);
+
+		String captchaToken = request.getRequest().getCaptchaToken();
+		String langCode = request.getRequest().getLangCode();
+		String userId = request.getRequest().getUserId();
+
+		OtpRequestDTO otpRequest = new OtpRequestDTO();
+		otpRequest.setUserId(userId);
+		MainRequestDTO<OtpRequestDTO> userOtpRequest = new MainRequestDTO<OtpRequestDTO>();
+		userOtpRequest.setRequest(otpRequest);
+		CaptchaResposneDTO captchaResponse = null;
+		AuthNResponse authRes = new AuthNResponse();
+		try {
+			if (isCaptchaEnabled) {
+				captchaResponse = this.loginCommonUtil.validateCaptchaToken(captchaToken);
+				authRes.setMessage(captchaResponse.getMessage().concat(" and "));
+			}
+
+			MainResponseDTO<AuthNResponse> sendOtpResponse = this.sendOTP(userOtpRequest, langCode);
+
+			if (sendOtpResponse.getErrors() != null) {
+				throw new PreRegLoginException(sendOtpResponse.getErrors().get(0).getErrorCode(),
+						sendOtpResponse.getErrors().get(0).getMessage());
+			}
+
+			if (Objects.isNull(authRes.getMessage()))
+				authRes.setMessage(sendOtpResponse.getResponse().getMessage());
+			else
+				authRes.setMessage(authRes.getMessage().concat(sendOtpResponse.getResponse().getMessage()));
+			authRes.setStatus(PreRegLoginConstant.SUCCESS);
+			response.setResponse(authRes);
+
+		} catch (PreRegLoginException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method of login service- " + ExceptionUtils.getStackTrace(ex));
+			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In validateCaptchaAndSendOtp method of login service- " + ExceptionUtils.getStackTrace(ex));
+			new LoginExceptionCatcher().handle(ex, "sendOtp", response);
+		}
+		response.setResponsetime(LocalDateTime.now().toString());
+		return response;
+	}
+
+	/**
+	 * It will validate userId & otp and provide with a access token
+	 * 
+	 * @param userIdOtpRequest
+	 * @return MainResponseDTO<AuthNResponse>
+	 */
+	@SuppressWarnings("unchecked")
+	public MainResponseDTO<AuthNResponse> validateWithUserIdOtp(MainRequestDTO<User> userIdOtpRequest) {
+		log.info("In calluserIdOtp method of login service ");
+		MainResponseDTO<AuthNResponse> response = null;
+		response = (MainResponseDTO<AuthNResponse>) loginCommonUtil.getMainResponseDto(userIdOtpRequest);
+		String userid = null;
+		boolean isSuccess = false;
+
+		try {
+			User user = userIdOtpRequest.getRequest();
+			userid = user.getUserId().toString();
+
+			loginCommonUtil.validateOtpAndUserid(user);
+			boolean validated = otpmanager.validateOtp(user.getOtp(), user.getUserId());
+			AuthNResponse authresponse = new AuthNResponse();
+			if (validated) {
+				authresponse.setMessage(PreRegLoginConstant.VALIDATION_SUCCESS);
+				authresponse.setStatus(PreRegLoginConstant.SUCCESS);
+
+			} else {
+				throw new InvalidOtpOrUseridException(LoginErrorCodes.PRG_AUTH_013.getCode(),
+						PreRegLoginConstant.VALIDATION_UNSUCCESS, response);
+
+			}
+			response.setResponse(authresponse);
+			isSuccess = true;
+		} catch (PreRegLoginException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In calluserIdOtp method of login service- " + ExceptionUtils.getStackTrace(ex));
+			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
+		} catch (RuntimeException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In calluserIdOtp method of login service- " + ExceptionUtils.getStackTrace(ex));
+			new LoginExceptionCatcher().handle(ex, "userIdOtp", response);
+		} finally {
+			response.setResponsetime(GenericUtil.getCurrentResponseTime());
+
+			if (isSuccess) {
+				setAuditValues(EventId.PRE_410.toString(), EventName.AUTHENTICATION.toString(),
+						EventType.BUSINESS.toString(), "User sucessfully logged-in", AuditLogVariables.NO_ID.toString(),
+						userid, userid);
+			} else {
+				ExceptionJSONInfoDTO errors = new ExceptionJSONInfoDTO(PreRegLoginConstant.VALIDATE_ERROR_CODE,
+						PreRegLoginConstant.VALIDATE_ERROR_MESSAGE);
+				List<ExceptionJSONInfoDTO> lst = new ArrayList<>();
+				lst.add(errors);
+				response.setErrors(lst);
+				response.setResponse(null);
+				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
+						"User failed to logged-in", AuditLogVariables.NO_ID.toString(), userid, userid);
+			}
+
+		}
+		return response;
+	}
+
+	/**
+	 * This method will invalidate the access token
+	 * 
+	 * @param authHeader
+	 * @return AuthNResponse
+	 */
+	public MainResponseDTO<String> invalidateToken(String token) {
+		log.info("In calluserIdOtp method of login service ");
+		MainResponseDTO<String> response = new MainResponseDTO<>();
+		response.setId(invalidateTokenId);
+		response.setVersion(version);
+		String userId = null;
+		boolean isSuccess = false;
+		try {
+			byte[] secret = TextCodec.BASE64.decode(jwtSecret);
+			String jwtToken = token.replace("Authorization=", "").split(";")[0];
+
+			log.info("Token to be reset {}", jwtToken);
+			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
+			userId = clamis.getBody().get("userId").toString();
+			response.setResponse("Loggedout successfully");
+			isSuccess = true;
+		} catch (JwtException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "JwtException, logout failed " + ExceptionUtils.getStackTrace(ex));
+			MainResponseDTO<String> res = new MainResponseDTO<>();
+			res.setResponse("Failed to invalidate the auth token");
+			new LoginExceptionCatcher().handle(ex, "invalidateToken", res);
+		} catch (Exception ex) {
+			log.error("In call invalidateToken method of login service- ", ex);
+			new LoginExceptionCatcher().handle(ex, "invalidateToken", response);
+		} finally {
+			response.setResponsetime(GenericUtil.getCurrentResponseTime());
+
+			if (isSuccess) {
+				setAuditValues(EventId.PRE_410.toString(), EventName.AUTHENTICATION.toString(),
+						EventType.BUSINESS.toString(), "User sucessfully logged-out",
+						AuditLogVariables.NO_ID.toString(), userId, userId);
+			} else {
+				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
+						"User failed to logged-out", AuditLogVariables.NO_ID.toString(), userId, userId);
+			}
+
+		}
+		return response;
+	}
+
+	/**
+	 * This method is used to audit all the Authentication events
+	 * 
+	 * @param eventId
+	 * @param eventName
+	 * @param eventType
+	 * @param description
+	 * @param idType
+	 * @param userName
+	 */
+	public void setAuditValues(String eventId, String eventName, String eventType, String description, String idType,
+			String userId, String userName) {
+		String resolvedUserId = resolveAuditUserId(userId);
+		String resolvedUserName = resolveAuditUserId(userName);
+		try {
+			AuditRequestDto auditRequestDto = new AuditRequestDto();
+			auditRequestDto.setEventId(eventId);
+			auditRequestDto.setEventName(eventName);
+			auditRequestDto.setEventType(eventType);
+			auditRequestDto.setDescription(description);
+			auditRequestDto.setId(idType);
+			auditRequestDto.setSessionUserId(resolvedUserId);
+			auditRequestDto.setSessionUserName(resolvedUserName);
+			auditRequestDto.setModuleId(AuditLogVariables.AUTHENTICATION.toString());
+			auditRequestDto.setModuleName(AuditLogVariables.AUTHENTICATION_SERVICE.toString());
+			auditLogUtil.saveAuditDetails(auditRequestDto);
+		} catch (LoginServiceException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + StringUtils.join(ex.getValidationErrorList(), ","));
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In setAuditvalue of login service: " + ExceptionUtils.getStackTrace(ex));
+		}
+	}
+
+	/**
+	 * Performs resolve audit user id for MOSIP Pre-Registration.
+	 *
+	 * @param userId user id used by resolve audit user id
+	 * @return resolve audit user id result
+	 */
+	private String resolveAuditUserId(String userId) {
+		if (userId == null || userId.isBlank()) {
+			return userId;
+		}
+		try {
+			return userDetailsService.getOrCreateInternalUserId(userId);
+		} catch (UserLookupException ex) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Failed to resolve UUID for audit user " + GenericUtil.maskIdentifier(userId));
+			return GenericUtil.maskIdentifier(userId);
+		}
+	}
+
+	/**
+	 * This will return UI related configurations
+	 * 
+	 * @return response
+	 */
+	@Cacheable(value = "login-cache", key = "'configCache'")
+	public MainResponseDTO<Map<String, String>> getConfig() {
+		log.info("In login service of getConfig ");
+		MainResponseDTO<Map<String, String>> res = new MainResponseDTO<>();
+		res.setId(configId);
+		res.setVersion(version);
+		Map<String, String> responseParamsMap = new HashMap<>();
+		try {
+			loginCommonUtil.validateLanguageProperties(responseParamsMap);
+			String[] uiParams = uiConfigParams.split(",");
+			for (String uiParam : uiParams) {
+				if (env.getProperty(uiParam) != null) {
+					responseParamsMap.put(uiParam, env.getProperty(uiParam));
+				}
+			}
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In login service of getConfig " + ExceptionUtils.getStackTrace(ex));
+			new LoginExceptionCatcher().handle(ex, "config", res);
+		}
+		res.setResponse(responseParamsMap);
+		res.setResponsetime(GenericUtil.getCurrentResponseTime());
+		return res;
+	}
+
+	/**
+	 * Performs generate jwt token for MOSIP Pre-Registration.
+	 *
+	 * @param userId user id used by generate jwt token
+	 * @param issuerUrl issuer url used by generate jwt token
+	 * @param jwtTokenExpiryTime jwt token expiry time used by generate jwt token
+	 * @return generate jwt token result
+	 */
+	private String generateJWTToken(String userId, String issuerUrl, String jwtTokenExpiryTime) {
+		log.info("In generateJWTToken method of loginservice:{} {}", GenericUtil.maskIdentifier(userId), issuerUrl);
+		Map<String, Object> claims = new HashMap<>();
+		claims.put("userId", userId);
+		claims.put("scope", jwtScope);
+		claims.put("user_name", userId);
+		claims.put("roles", jwtTokenRoles);
+
+		String jws = null;
+		if (jwtTokenExpiryTime != null) {
+			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
+					.setSubject(userId)
+					.setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt(jwtTokenExpiryTime))))
+					.setAudience(jwtAudience).signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret))
+					.compact();
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Auth token generarted");
+		} else {
+			jws = Jwts.builder().setClaims(claims).setIssuer(issuerUrl).setIssuedAt(Date.from(Instant.now()))
+					.setSubject(userId).setExpiration(Date.from(Instant.now().plusSeconds(Integer.parseInt("0"))))
+					.setAudience(jwtAudience).signWith(SignatureAlgorithm.HS256, TextCodec.BASE64.decode(jwtSecret))
+					.compact();
+			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Auth token generarted:");
+		}
+
+		return jws;
+	}
+
+	/**
+	 * Returns login token.
+	 *
+	 * @param userId user id used by get login token
+	 * @param issuerUrl issuer url used by get login token
+	 * @return get login token result
+	 */
+	public String getLoginToken(String userId, String issuerUrl) {
+		return this.generateJWTToken(userId, issuerUrl, jwtTokenExpiryTime);
+	}
+
+	/**
+	 * Returns logout token.
+	 *
+	 * @param token token used by get logout token
+	 * @return get logout token result
+	 */
+	public String getLogoutToken(String token) {
+		byte[] secret = TextCodec.BASE64.decode(jwtSecret);
+		String jwtToken = token.replace("Authorization=", "").split(";")[0];
+		String userId = null;
+		String issuer = null;
+		try {
+			Jws<Claims> clamis = Jwts.parser().setSigningKey(secret).parseClaimsJws(jwtToken);
+			userId = clamis.getBody().get("userId").toString();
+			issuer = clamis.getBody().getIssuer();
+		} catch (JwtException ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Failed to generate logout token:" + ExceptionUtils.getStackTrace(ex));
+			MainResponseDTO<String> res = new MainResponseDTO<String>();
+			res.setResponse("Failed to generate logout token");
+			new LoginExceptionCatcher().handle(ex, "invalidateToken", res);
+		}
+		return this.generateJWTToken(userId, issuer, null);
+	}
+
+	/**
+	 * Performs send otp success jwt token for MOSIP Pre-Registration.
+	 *
+	 * @param userId user id used by send otp success jwt token
+	 * @return send otp success jwt token result
+	 */
+	public String sendOTPSuccessJwtToken(String userId) {
+		return this.loginCommonUtil.sendOtpJwtToken(userId);
+	}
+
+}

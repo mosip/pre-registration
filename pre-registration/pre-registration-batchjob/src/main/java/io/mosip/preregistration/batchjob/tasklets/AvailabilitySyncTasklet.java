@@ -1,17 +1,12 @@
-
-/* 
- * Copyright
- * 
- */
 package io.mosip.preregistration.batchjob.tasklets;
 
 import java.util.List;
 
 import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.StepContribution;
+import org.springframework.batch.core.step.StepContribution;
 import org.springframework.batch.core.scope.context.ChunkContext;
 import org.springframework.batch.core.step.tasklet.Tasklet;
-import org.springframework.batch.repeat.RepeatStatus;
+import org.springframework.batch.infrastructure.repeat.RepeatStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import io.mosip.kernel.core.logger.spi.Logger;
@@ -28,14 +23,34 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 public class AvailabilitySyncTasklet implements Tasklet {
 
 	@Autowired
+	/**
+	 * availability generator used by this Pre-Registration type.
+	 */
 	private SlotAvailabilityGenerator availabilityGenerator;
 	
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(AvailabilitySyncTasklet.class);
 
+	/**
+	 * part reg centers list used by this Pre-Registration type.
+	 */
 	private List<String> partRegCentersList;
 
+	/**
+	 * name used by this Pre-Registration type.
+	 */
 	private String name;
 
+	/**
+	 * Creates a availability sync tasklet.
+	 *
+	 * @param name name supplied to this constructor
+	 * @param partRegCentersList part reg centers list supplied to this constructor
+	 */
 	public AvailabilitySyncTasklet(String name, List<String> partRegCentersList) {
 		this.name = name;
 		this.partRegCentersList = partRegCentersList;

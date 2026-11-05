@@ -1,7 +1,3 @@
-/* 
- * 
- * Copyright
- */
 package io.mosip.preregistration.core.common.repository;
 
 import java.util.List;
@@ -68,6 +64,12 @@ public interface DocumentRepository extends BaseRepository<DocumentEntity, Strin
 	public int deleteAllByDemographicEntityPreRegistrationId(String preregId);
 
 	@Query("SELECT d.demographicEntity FROM DocumentEntity d WHERE d.demographicEntity.preRegistrationId= ?1")
+	/**
+	 * Returns demographic entity for pre registration id.
+	 *
+	 * @param preregId prereg id used by get demographic entity for pre registration id
+	 * @return get demographic entity for pre registration id result
+	 */
 	public DemographicEntity getDemographicEntityForPreRegistrationId(String preregId);
 
 }

@@ -27,6 +27,11 @@ import io.mosip.preregistration.core.config.LoggerConfiguration;
 @Component
 public class PurgeExpiredRegCentersSlots {
 
+    /**
+     * Performs log config for MOSIP Pre-Registration.
+     *
+     * @return log config result
+     */
     private Logger LOGGER = LoggerConfiguration.logConfig(PurgeExpiredRegCentersSlots.class);
 
     /** 
@@ -36,12 +41,21 @@ public class PurgeExpiredRegCentersSlots {
 	private BatchJpaRepositoryImpl batchServiceDAO;
 
     @Autowired
+	/**
+	 * rest helper used by this Pre-Registration type.
+	 */
 	private RestHelper restHelper;
 
     @Autowired
+	/**
+	 * cancel and notify helper used by this Pre-Registration type.
+	 */
 	private CancelAndNotifyHelper cancelAndNotifyHelper;
 
     // Deleting all the added slots for the expired registration centers. 
+    /**
+     * Performs purge slots for MOSIP Pre-Registration.
+     */
     public void purgeSlots(){
 
         LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 
@@ -70,6 +84,13 @@ public class PurgeExpiredRegCentersSlots {
                                      "Completed deleting Expired Registration Centers slots.");
     }
 
+    /**
+     * Performs purge expired reg center slots for MOSIP Pre-Registration.
+     *
+     * @param regCenterId reg center id used by purge expired reg center slots
+     * @param cancelledTracker cancelled tracker used by purge expired reg center slots
+     * @param notifierTracker notifier tracker used by purge expired reg center slots
+     */
     private void purgeExpiredRegCenterSlots(String regCenterId,  Map<String, Boolean> cancelledTracker,	
 					Map<String, Boolean> notifierTracker) {
 		LOGGER.info(PreRegBatchContants.SESSIONID, PreRegBatchContants.PRE_REG_BATCH, PreRegBatchContants.EMPTY, 

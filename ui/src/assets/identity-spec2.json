@@ -1,0 +1,708 @@
+{
+  "id": null,
+  "version": "1.0",
+  "responsetime": "2021-12-07T10:00:47.480Z",
+  "response": {
+    "id": "a5719e12-4dc6-44f7-9add-c4b278aad1d8",
+    "version": 0.5,
+    "title": "Pre-Registration UI Specification",
+    "description": "QA triple with new field country",
+    "identitySchemaId": "805baea4-28eb-4d4a-b418-dbe218dcd49b",
+    "idSchemaVersion": 0.2,
+    "jsonSpec": {
+      "identity": {
+        "identity": [
+          {
+            "id": "IDSchemaVersion",
+            "description": "ID Schema Version",
+            "type": "number",
+            "controlType": null,
+            "fieldType": "default",
+            "inputRequired": false,
+            "validators": [],
+            "required": true
+          },
+          {
+            "id": "title",
+            "description": "Title",
+            "labelName": {
+              "eng": "Title",
+              "hin": "पशीर्षक",
+              "kan": "ಶೀರ್ಷಿಕೆ",
+              "tam": "தலைப்பு"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "dynamic",
+            "type": "simpleType",
+            "validators": [],
+            "required": true
+          },
+          {
+            "id": "fullName",
+            "description": "Enter Full Name",
+            "labelName": {
+              "eng": "Full Name",
+              "ara": "الاسم الكامل",
+              "fra": "Nom complet",
+              "hin": "पूरा नाम",
+              "kan": "ಪೂರ್ಣ ಹೆಸರು",
+              "tam": "முழு பெயர்"
+            },
+            "controlType": "textbox",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": true,
+            "transliteration": true
+          },
+          {
+            "id": "printedName",
+            "description": "Enter Name on ID",
+            "labelName": {
+              "eng": "Name on ID",
+              "hin": "आईडी पर नाम",
+              "kan": "ID ಯಲ್ಲಿ ಹೆಸರು",
+              "tam": "ஐடியில் பெயர்"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": true
+          },
+          {
+            "id": "shortenedPrintedName",
+            "description": "Shortened Name on ID",
+            "labelName": {
+              "eng": "Shortened Name on ID",
+              "hin": "पआईडी पर संक्षिप्त नाम",
+              "kan": "ID ಯಲ್ಲಿ ಸಂಕ್ಷಿಪ್ತ ಹೆಸರು",
+              "tam": "ஐடியில் சுருக்கப்பட்ட பெயர்"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": false
+          },
+          {
+            "id": "layName",
+            "description": "Enter lay name/surname",
+            "labelName": {
+              "eng": "Lay Name/Surname",
+              "hin": "लेट नाम/उपनाम",
+              "kan": "ಲೇ ಹೆಸರು / ಉಪನಾಮ",
+              "tam": "லே பெயர் / குடும்பப்பெயர்"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": true
+          },
+          {
+            "id": "dateOfBirth",
+            "description": "Enter DOB",
+            "labelName": {
+              "eng": "Date Of Birth",
+              "ara": "تاريخ الولادة",
+              "fra": "Date de naissance",
+              "hin": "जन्म की तारीख",
+              "kan": "ಹುಟ್ತಿದ ದಿನ",
+              "tam": "பிறந்த தேதி"
+            },
+            "controlType": "ageDate",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "string",
+            "validators": [],
+            "required": true
+          },
+          {
+            "id": "gender",
+            "description": "Enter Gender",
+            "labelName": {
+              "eng": "Gender",
+              "ara": "جنس",
+              "fra": "Le genre",
+              "hin": "लिंग",
+              "kan": "ಲಿಂಗ",
+              "tam": "பாலினம்"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "dynamic",
+            "type": "simpleType",
+            "validators": [],
+            "required": true
+          },
+          {
+            "id": "maritalStatus",
+            "description": "Civil Status (Marital Status)",
+            "labelName": {
+              "eng": "Civil Status (Marital Status)",
+              "hin": "नागरिक स्थिति (वैवाहिक स्थिति)",
+              "kan": "ನಾಗರಿಕ ಸ್ಥಿತಿ (ವೈವಾಹಿಕ ಸ್ಥಿತಿ)",
+              "tam": "சிவில் நிலை (திருமண நிலை)"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "dynamic",
+            "type": "simpleType",
+            "validators": [],
+            "required": true
+          },
+          {
+            "id": "applicantLanguage",
+            "description": "Applicant's Language",
+            "labelName": {
+              "eng": "Applicant's Language",
+              "hin": "आवेदक की भाषा",
+              "kan": "ಅರ್ಜಿದಾರರ ಭಾಷೆ",
+              "tam": "விண்ணப்பதாரரின் மொழி"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "dynamic",
+            "type": "simpleType",
+            "validators": [],
+            "required": true
+          },
+          {
+            "id": "residenceStatus",
+            "description": "Quartier/Résidence/Douar",
+            "labelName": {
+              "fra": "Quartier/Résidence/Douar",
+              "ara": "الحي / السكن / الدوار",
+              "eng": "Residence Status",
+              "hin": "निवास स्थान",
+              "kan": "ನಿವಾಸ",
+              "tam": "குடியிருப்பு"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "dynamic",
+            "type": "simpleType",
+            "validators": [],
+            "required": true,
+            "visible": true,
+            "group": "address_info",
+            "preview": true
+          },
+          {
+            "id": "nationalIdentityNumber",
+            "description": "nationalIdentityNumber",
+            "labelName": {
+              "eng": "National Identity Number",
+              "hin": "राष्ट्रीय पहचान नंबर",
+              "kan": "ರಾಷ್ಟ್ರೀಯ ಗುರುತಿನ ಸಂಖ್ಯೆ",
+              "tam": "தேசிய அடையாள எண்"
+            },
+            "controlType": "textbox",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "string",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^([0-9]{9}[x|X|v|V]|[0-9]{12})$",
+                "arguments": []
+              }
+            ],
+            "required": true
+          },
+          {
+            "id": "modeOfdelivery",
+            "description": "Mode of Delivery",
+            "labelName": {
+              "eng": "Mode of Delivery",
+              "hin": "वितरण की प्रणाली",
+              "kan": "ವಿತರಣಾ ವಿಧಾನ",
+              "tam": "விநியோக முறை"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "dynamic",
+            "type": "simpleType",
+            "validators": [],
+            "required": false
+          },
+          {
+            "id": "profession",
+            "description": "Profession/Occupation",
+            "labelName": {
+              "eng": "Profession/Occupation",
+              "hin": "पेशा कमाई का जरिया",
+              "kan": "ವೃತ್ತಿ / ಉದ್ಯೋಗ",
+              "tam": "தொழில் / தொழில்"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "dynamic",
+            "type": "simpleType",
+            "validators": [],
+            "required": false
+          },
+          {
+            "id": "permanentAddress",
+            "description": "Permanent Address",
+            "labelName": {
+              "eng": "Permanent Address",
+              "hin": "स्थायी पता",
+              "kan": "ಶಾಶ್ವತ ವಿಳಾಸ",
+              "tam": "நிரந்தர முகவரி"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": true
+          },
+          {
+            "id": "temporaryAddress",
+            "description": "Temporary Address",
+            "labelName": {
+              "eng": "Temporary Address",
+              "hin": "अस्थायी पता",
+              "kan": "ತಾತ್ಕಾಲಿಕ ವಿಳಾಸ",
+              "tam": "தற்காலிக முகவரி"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": false
+          },
+          {
+            "id": "region",
+            "description": "region",
+            "labelName": {
+              "eng": "Region",
+              "ara": "منطقة",
+              "fra": "Région",
+              "hin": "ऊपरी क्षेत्र",
+              "kan": "ಪ್ರದೇಶ",
+              "tam": "பிராந்தியம்"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "parentLocCode": "MOR",
+				    "locationHierarchyLevel": 2,
+            "required": true
+          },
+          {
+            "id": "province",
+            "description": "province",
+            "labelName": {
+              "eng": "Province",
+              "ara": "المحافظة",
+              "fra": "Province",
+              "hin": "प्रांत",
+              "kan": "ಪ್ರಾಂತ್ಯ",
+              "tam": "மாகாணம்"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "parentLocCode": "RSK",
+				    "locationHierarchyLevel": 3,
+            "required": true
+          },
+          {
+            "id": "city",
+            "description": "city",
+            "labelName": {
+              "eng": "City",
+              "ara": "مدينة",
+              "fra": "Ville",
+              "hin": "शहर",
+              "kan": "ನಗರ",
+              "tam": "நகரம்"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "locationHierarchyLevel": 4,
+            "required": true
+          },
+          {
+            "id": "zone",
+            "description": "zone",
+            "labelName": {
+              "eng": "Zone",
+              "ara": "منطقة",
+              "fra": "Zone",
+              "hin": "क्षेत्र",
+              "kan": "ವಲಯ",
+              "tam": "மண்டலம்"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [],
+            "locationHierarchyLevel": 5,
+            "required": true
+          },
+          {
+            "id": "postalCode",
+            "description": "postalCode",
+            "labelName": {
+              "eng": "Postal Code",
+              "ara": "الكود البريدى",
+              "fra": "code postal",
+              "hin": "डाक कोड",
+              "kan": "ಅಂಚೆ ಕೋಡ್",
+              "tam": "அஞ்சல் குறியீடு"
+            },
+            "controlType": "dropdown",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "string",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^[(?i)A-Z0-9]{5}$|^NA$",
+                "arguments": []
+              }
+            ],
+            "locationHierarchyLevel": 6,
+            "required": true
+          },
+          {
+            "id": "phone",
+            "description": "phone",
+            "labelName": {
+              "eng": "Phone",
+              "ara": "هاتف",
+              "fra": "Téléphone",
+              "hin": "फ़ोन",
+              "kan": "ದೂರವಾಣಿ",
+              "tam": "தொலைபேசி"
+            },
+            "controlType": "textbox",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "string",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^[+]*([0-9]{1})([0-9]{9})$",
+                "arguments": []
+              }
+            ],
+            "required": true
+          },
+          {
+            "id": "rNumber",
+            "description": "Resident Phone Number",
+            "labelName": {
+              "eng": "Resident Phone Number",
+              "hin": "निवासी फोन नंबर",
+              "kan": "ನಿವಾಸಿ ದೂರವಾಣಿ ಸಂಖ್ಯೆ",
+              "tam": "குடியுரிமை தொலைபேசி எண்"
+            },
+            "controlType": "textbox",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "string",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^[+]*([0-9]{1})([0-9]{9})$",
+                "arguments": []
+              }
+            ],
+            "required": false
+          },
+          {
+            "id": "fatherName",
+            "description": "Enter Father's Full Name",
+            "labelName": {
+              "eng": "Full Name of Father",
+              "hin": "पिता का पूरा नाम",
+              "kan": "ತಂದೆಯ ಪೂರ್ಣ ಹೆಸರು",
+              "tam": "தந்தையின் முழு பெயர்"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": false
+          },
+          {
+            "id": "motherName",
+            "description": "Enter Mother's Name",
+            "labelName": {
+              "eng": "Full Name of Mother",
+              "hin": "माता का पूरा नाम",
+              "kan": "ತಾಯಿಯ ಪೂರ್ಣ ಹೆಸರು",
+              "tam": "தாயின் முழு பெயர்"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": false
+          },
+          {
+            "id": "introducerName",
+            "description": "Enter introducer's Name",
+            "labelName": {
+              "eng": "Full Name of Introducer",
+              "hin": "परिचयकर्ता का पूरा नाम",
+              "kan": "ಪರಿಚಯಿಸುವವರ ಪೂರ್ಣ ಹೆಸರು",
+              "tam": "அறிமுகப்படுத்துபவரின் முழு பெயர்"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": false
+          },
+          {
+            "id": "spouseName",
+            "description": "Enter Spouse's Full Name",
+            "labelName": {
+              "eng": "Full Name of Spouse",
+              "hin": "जीवनसाथी का पूरा नाम",
+              "kan": "ಸಂಗಾತಿಯ ಪೂರ್ಣ ಹೆಸರು",
+              "tam": "மனைவியின் முழு பெயர்"
+            },
+            "controlType": "textbox",
+            "transliteration": true,
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "simpleType",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^(?=.{3,50}$).*",
+                "arguments": []
+              }
+            ],
+            "required": false
+          },
+          {
+            "id": "email",
+            "description": "email",
+            "labelName": {
+              "eng": "Email",
+              "ara": "البريد الإلكتروني",
+              "fra": "Email",
+              "hin": "ईमेल",
+              "kan": "ಇಮೇಲ್",
+              "tam": "மின்னஞ்சல்"
+            },
+            "controlType": "textbox",
+            "inputRequired": true,
+            "fieldType": "default",
+            "type": "string",
+            "validators": [
+              {
+                "type": "regex",
+                "validator": "^[\\w-\\+]+(\\.[\\w]+)*@[\\w-]+(\\.[\\w]+)*(\\.[a-zA-Z]{2,})$",
+                "arguments": []
+              }
+            ],
+            "required": true
+          },
+          {
+            "id": "proofOfAddress",
+            "description": "proofOfAddress",
+            "labelName": {
+              "ara": "إثبات العنوان",
+              "fra": "Address Proof",
+              "eng": "Address Proof",
+              "hin": "निवास प्रमाण पत्र",
+              "kan": "ವಿಳಾಸ ಪುರಾವೆ",
+              "tam": "முகவரி சான்று"
+            },
+            "controlType": "fileupload",
+            "inputRequired": true,
+            "validators": [],
+            "subType": "POA",
+            "required": false
+          },
+          {
+            "id": "proofOfIdentity",
+            "description": "proofOfIdentity",
+            "labelName": {
+              "ara": "إثبات الهوية",
+              "fra": "Identity Proof",
+              "eng": "Identity Proof",
+              "hin": "पहचान प्रमाण",
+              "kan": "ಗುರುತಿನ ಪುರಾವೆ",
+              "tam": "அடையாள சான்று"
+            },
+            "controlType": "fileupload",
+            "inputRequired": true,
+            "validators": [],
+            "subType": "POI",
+            "required": true
+          },
+          {
+            "id": "proofOfRelationship",
+            "description": "proofOfRelationship",
+            "labelName": {
+              "ara": "إثبات العلاقة",
+              "fra": "Relationship Proof",
+              "eng": "Relationship Proof",
+              "hin": "संबंध प्रमाण",
+              "kan": "ಸಂಬಂಧ ಪುರಾವೆ",
+              "tam": "உறவு சான்று"
+            },
+            "controlType": "fileupload",
+            "inputRequired": true,
+            "validators": [],
+            "subType": "POR",
+            "required": true
+          },
+          {
+            "id": "proofOfDateOfBirth",
+            "description": "proofOfDateOfBirth",
+            "labelName": {
+              "ara": "دليل DOB",
+              "fra": "DOB Proof",
+              "eng": "DOB Proof",
+              "hin": "जन्मतिथि प्रमाण",
+              "kan": "DOB ಪ್ರೂಫ್",
+              "tam": "DOB ஆதாரம்"
+            },
+            "controlType": "fileupload",
+            "inputRequired": true,
+            "validators": [],
+            "subType": "POB",
+            "required": true
+          },
+          {
+            "id": "proofOfException",
+            "description": "proofOfException",
+            "labelName": {
+              "ara": "إثبات الاستثناء",
+              "fra": "Exception Proof",
+              "eng": "Exception Proof",
+              "hin": "अपवाद प्रमाण",
+              "kan": "ಎಕ್ಸೆಪ್ಶನ್ ಪ್ರೂಫ್",
+              "tam": "விதிவிலக்கு சான்று"
+            },
+            "controlType": "fileupload",
+            "inputRequired": true,
+            "validators": [],
+            "subType": "POE",
+            "required": true
+          }
+        ],
+        "locationHierarchy": [
+          "region",
+          "province",
+          "city",
+          "zone",
+          "postalCode"
+        ]
+      }
+    },
+    "status": "PUBLISHED",
+    "effectiveFrom": "2021-10-26T11:29:42.057",
+    "createdOn": "2021-10-26T11:29:42.056",
+    "updatedOn": "2021-10-26T11:30:47.134"
+  },
+  "errors": null
+}

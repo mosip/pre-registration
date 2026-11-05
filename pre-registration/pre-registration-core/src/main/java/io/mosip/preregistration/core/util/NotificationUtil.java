@@ -25,7 +25,7 @@ import org.springframework.web.client.RestTemplate;
 import org.springframework.web.multipart.MultipartFile;
 
 import io.mosip.kernel.core.logger.spi.Logger;
-import io.mosip.kernel.core.util.DateUtils;
+import io.mosip.kernel.core.util.DateUtils2;
 import io.mosip.preregistration.core.code.RequestCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.KeyValuePairDto;
@@ -45,33 +45,65 @@ import io.mosip.preregistration.core.exception.RestCallException;
 @Component
 public class NotificationUtil {
 
+	/**
+	 * Performs log config for MOSIP Pre-Registration.
+	 *
+	 * @return log config result
+	 */
 	private Logger log = LoggerConfiguration.logConfig(NotificationUtil.class);
 
 	@Value("${emailResourse.url}")
+	/**
+	 * email resourse url used by this Pre-Registration type.
+	 */
 	private String emailResourseUrl;
 
 	@Value("${smsResourse.url}")
+	/**
+	 * sms resourse url used by this Pre-Registration type.
+	 */
 	private String smsResourseUrl;
 
 	@Value("${email.acknowledgement.template}")
+	/**
+	 * email acknowledgement used by this Pre-Registration type.
+	 */
 	private String emailAcknowledgement;
 
 	@Value("${email.acknowledgement.subject.template}")
+	/**
+	 * email acknowledgement subject used by this Pre-Registration type.
+	 */
 	private String emailAcknowledgementSubject;
 
 	@Value("${cancel.appointment.email.subject}")
+	/**
+	 * cancel appointment email subject used by this Pre-Registration type.
+	 */
 	private String cancelAppointmentEmailSubject;
 
 	@Value("${sms.acknowledgement.template}")
+	/**
+	 * sms acknowledgement used by this Pre-Registration type.
+	 */
 	private String smsAcknowledgement;
 
 	@Value("${cancel.appoinment.template}")
+	/**
+	 * cancel appoinment used by this Pre-Registration type.
+	 */
 	private String cancelAppoinment;
 
 	@Value("${booking.resource.url}")
+	/**
+	 * get appointment resourse url used by this Pre-Registration type.
+	 */
 	private String getAppointmentResourseUrl;
 
 	@Autowired
+	/**
+	 * template util used by this Pre-Registration type.
+	 */
 	private TemplateUtil templateUtil;
 
 	@Qualifier("selfTokenRestTemplate")
@@ -79,8 +111,21 @@ public class NotificationUtil {
 	RestTemplate restTemplate;
 
 	@Value("${mosip.utc-datetime-pattern}")
+	/**
+	 * date time format used by this Pre-Registration type.
+	 */
 	private String dateTimeFormat;
 
+	/**
+	 * Performs notify for MOSIP Pre-Registration.
+	 *
+	 * @param notificationType notification type used by notify
+	 * @param acknowledgementDTO acknowledgement dto used by notify
+	 * @param file file used by notify
+	 * @param bookingType booking type used by notify
+	 * @return notify result
+	 * @throws IOException when the operation cannot complete
+	 */
 	public MainResponseDTO<NotificationResponseDTO> notify(String notificationType, NotificationDTO acknowledgementDTO,
 			MultipartFile file, String bookingType) throws IOException {
 
@@ -257,6 +302,12 @@ public class NotificationUtil {
 		return response;
 	}
 
+	/**
+	 * Returns appointment details.
+	 *
+	 * @param preRegId pre reg id used by get appointment details
+	 * @return get appointment details result
+	 */
 	public MainResponseDTO<BookingRegistrationDTO> getAppointmentDetails(String preRegId) {
 		MainResponseDTO<BookingRegistrationDTO> response = new MainResponseDTO<>();
 		ResponseEntity<MainResponseDTO<BookingRegistrationDTO>> responseEntity = null;
@@ -290,9 +341,14 @@ public class NotificationUtil {
 		return response;
 	}
 
+	/**
+	 * Returns current response time.
+	 *
+	 * @return get current response time result
+	 */
 	public String getCurrentResponseTime() {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In getCurrentResponseTime method of NotificationUtil service");
-		return DateUtils.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
+		return DateUtils2.formatDate(new Date(System.currentTimeMillis()), dateTimeFormat);
 	}
 }

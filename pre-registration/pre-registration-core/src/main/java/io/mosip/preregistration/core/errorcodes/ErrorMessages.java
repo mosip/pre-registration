@@ -35,10 +35,18 @@ public enum ErrorMessages {
 	INVALID_BOOKING_TYPE("Booking Type is invalid"), // PRG_CORE_REQ_023
 	USER_LOOKUP_FAILED("Failed to resolve internal user ID"); // PRG_CORE_REQ_024
 	
+	/**
+	 * Creates a error messages.
+	 *
+	 * @param message message supplied to this constructor
+	 */
 	private ErrorMessages(String message) {
 		this.message = message;
 	}
 
+	/**
+	 * message used by this Pre-Registration type.
+	 */
 	private final String message;
 
 	/**
