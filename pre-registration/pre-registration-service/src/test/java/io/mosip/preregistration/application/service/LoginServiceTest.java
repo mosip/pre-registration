@@ -167,6 +167,7 @@ public class LoginServiceTest {
 		ReflectionTestUtils.setField(authService, "jwtTokenExpiryTime", "1800");
 		ReflectionTestUtils.setField(authService, "jwtAudience", "adad");
 		ReflectionTestUtils.setField(authService, "jwtSecret", "Azcds");
+		ReflectionTestUtils.setField(authService, "jwtTokenRoles", "INDIVIDUAL");
 		ReflectionTestUtils.setField(authService, "uiConfigParams", "test1,test2");
 
 	}
@@ -523,5 +524,18 @@ public class LoginServiceTest {
 		assertEquals("value1", response.getResponse().get("param1"));
 		assertEquals("value2", response.getResponse().get("param2"));
 		assertEquals("eng", response.getResponse().get("mosip.mandatory.languages"));
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void rejectPublishedJwtSecretTest() {
+		ReflectionTestUtils.setField(authService, "jwtSecret",
+				"Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=");
+		ReflectionTestUtils.invokeMethod(authService, "rejectPublishedJwtSecret");
+	}
+
+	@Test(expected = IllegalStateException.class)
+	public void rejectBlankJwtSecretTest() {
+		ReflectionTestUtils.setField(authService, "jwtSecret", "  ");
+		ReflectionTestUtils.invokeMethod(authService, "rejectPublishedJwtSecret");
 	}
 }

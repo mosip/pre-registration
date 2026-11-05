@@ -17,7 +17,9 @@ public enum PRIDGeneratorErrorCode {
 	 * INTERNAL_SERVER_ERROR
 	 */
 	INTERNAL_SERVER_ERROR("KER-PRID-005", "Internal Server Error"),
-	CONFIG_SERVER_FETCH_FAILED("KER-PRID-006", "Error in retrieving from config server");
+	CONFIG_SERVER_FETCH_FAILED("KER-PRID-006", "Error in retrieving from config server"),
+
+	UNAUTHORIZED("KER-PRID-007", "Unauthorized");
 
 	/**
 	 * The error code

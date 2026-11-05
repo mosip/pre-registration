@@ -10,7 +10,9 @@ import io.mosip.kernel.pridgenerator.constant.EventType;
 import io.mosip.kernel.pridgenerator.constant.PRIDGeneratorConstant;
 import io.mosip.kernel.pridgenerator.router.PridFetcherRouter;
 import io.vertx.core.AbstractVerticle;
+import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.http.HttpServer;
 import io.vertx.core.logging.Logger;
 import io.vertx.core.logging.LoggerFactory;
@@ -73,7 +75,9 @@ public class PridFetcherVerticle extends AbstractVerticle {
 				pridFetcherRouter.createRouter(vertx));
 
 		httpServer.requestHandler(parentRouter);
-		httpServer.listen(Integer.parseInt(environment.getProperty(PRIDGeneratorConstant.SERVER_PORT)), result -> {
+		int port = Integer.parseInt(environment.getProperty(PRIDGeneratorConstant.SERVER_PORT));
+		String bindAddress = environment.getProperty(PRIDGeneratorConstant.SERVER_ADDRESS);
+		Handler<AsyncResult<HttpServer>> listenHandler = result -> {
 			if (result.succeeded()) {
 				LOGGER.debug("prid fetcher verticle deployed");
 				vertx.eventBus().publish(EventType.CHECKPOOL, EventType.CHECKPOOL);
@@ -82,6 +86,11 @@ public class PridFetcherVerticle extends AbstractVerticle {
 				LOGGER.error("prid fetcher verticle deployment failed with cause ", result.cause());
 				future.fail(result.cause());
 			}
-		});
+		};
+		if (bindAddress == null || bindAddress.isBlank()) {
+			httpServer.listen(port, listenHandler);
+		} else {
+			httpServer.listen(port, bindAddress, listenHandler);
+		}
 	}
 }

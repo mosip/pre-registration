@@ -267,6 +267,15 @@ public class BookingServiceCoverageTest {
 		bookingService.bookAppointment(mainBookingRequest(), PRE_ID);
 	}
 
+	@Test(expected = PreRegistrationException.class)
+	public void bookAppointmentRejectsMismatchedOwner() {
+		org.mockito.Mockito.doThrow(new io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException(
+				"PRG_APP_015", "Requested application id does not belong to the user")).when(serviceUtil)
+				.assertAppointmentOwner(PRE_ID);
+
+		bookingService.bookAppointment(mainBookingRequest(), PRE_ID);
+	}
+
 	@Test(expected = DemographicGetStatusException.class)
 	public void bookAppointmentRejectsPrefetchedApplication() {
 		when(serviceUtil.validateAppointmentDate(anyMap())).thenReturn(true);

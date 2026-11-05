@@ -149,6 +149,9 @@ public class DemographicServiceUtil {
 	 */
 	private String pridURl;
 
+	@Value("${mosip.kernel.prid.fetch.secret:}")
+	private String pridFetchSecret;
+
 	@Value("${mosip.preregistration.id-schema}")
 	/**
 	 * id schema config used by this Pre-Registration type.
@@ -708,6 +711,9 @@ public class DemographicServiceUtil {
 			UriComponentsBuilder regbuilder = UriComponentsBuilder.fromUriString(pridURl);
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
+			if (pridFetchSecret != null && !pridFetchSecret.isBlank()) {
+				headers.set("X-PRID-Fetch-Secret", pridFetchSecret);
+			}
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
 			String uriBuilder = regbuilder.build().encode().toUriString();
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,

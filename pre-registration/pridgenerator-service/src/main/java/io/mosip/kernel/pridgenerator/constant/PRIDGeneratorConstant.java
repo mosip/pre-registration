@@ -33,6 +33,16 @@ public final class PRIDGeneratorConstant {
 	public static final String SERVER_PORT = "server.port";
 
 	/**
+	 * Bind address for the Vert.x HTTP server (empty = all interfaces).
+	 */
+	public static final String SERVER_ADDRESS = "server.address";
+
+	/**
+	 * Request header that must match {@code mosip.kernel.prid.fetch.secret} when that property is set.
+	 */
+	public static final String PRID_FETCH_SECRET_HEADER = "X-PRID-Fetch-Secret";
+
+	/**
 	 * The string field SERVER_SERVLET_PATH
 	 */
 	public static final String SERVER_SERVLET_PATH = "server.servlet.path";

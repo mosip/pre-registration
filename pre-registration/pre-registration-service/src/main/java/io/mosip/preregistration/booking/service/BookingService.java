@@ -290,6 +290,7 @@ public class BookingService implements BookingServiceIntf {
 
 			BookingStatusDTO response = new BookingStatusDTO();
 			try {
+				serviceUtil.assertAppointmentOwner(preRegistrationId);
 
 				BookingRequestDTO bookingRequestDTO = bookingRequestDTOs.getRequest();
 				Map<String, String> dateMap = new HashMap<>();
@@ -424,6 +425,7 @@ public class BookingService implements BookingServiceIntf {
 			List<BookingStatusDTO> respList = new ArrayList<>();
 			try {
 				for (MultiBookingRequestDTO bookingRequestDTO : bookingRequestDTOs.getRequest().getBookingRequest()) {
+					serviceUtil.assertAppointmentOwner(bookingRequestDTO.getPreRegistrationId());
 					Map<String, String> dateMap = new HashMap<>();
 					dateMap.put(RequestCodes.REG_DATE.getCode(), bookingRequestDTO.getRegDate());
 					dateMap.put(RequestCodes.FROM_SLOT_TIME.getCode(), bookingRequestDTO.getSlotFromTime());
@@ -558,7 +560,7 @@ public class BookingService implements BookingServiceIntf {
 		RegistrationBookingEntity entity = null;
 		try {
 			this.applicationIdValidation(preRegID);
-			// This call will check if the PRID belongs to the logged in user or not
+			serviceUtil.assertAppointmentOwner(preRegID);
 			serviceUtil.checkApplicationStatus(preRegID);
 			entity = bookingDAO.findByPreRegistrationId(preRegID);
 
@@ -723,6 +725,9 @@ public class BookingService implements BookingServiceIntf {
 		AvailibityEntity availableEntity;
 		RegistrationBookingEntity bookingEntity;
 		try {
+			if (!isBatchUser) {
+				serviceUtil.assertAppointmentOwner(preRegistrationId);
+			}
 			if (serviceUtil.mandatoryParameterCheckforCancel(preRegistrationId)) {
 				if (serviceUtil.getDemographicStatusForCancel(preRegistrationId)) {
 					/* Getting Booking details */
@@ -813,6 +818,7 @@ public class BookingService implements BookingServiceIntf {
 		boolean isSaveSuccess = false;
 		try {
 			requestParamMap.put(RequestCodes.PRE_REGISTRAION_ID.getCode(), preregId);
+			serviceUtil.assertAppointmentOwner(preregId);
 			if (validationUtil.requstParamValidator(requestParamMap)
 					&& serviceUtil.checkApplicationStatus(preregId)) {
 				RegistrationBookingEntity registrationEntityList = bookingDAO.findByPreRegistrationId(preregId);

@@ -379,7 +379,10 @@ metrics:
     #     labels:
     #       severity: error
     rules: []
-## Only internal access
+## Only internal access. Do not point this gateway at a public ingress; GET /prid
+## hands out identifiers from the pool. ClusterIP plus this internal gateway is the
+## network boundary; set mosip.kernel.prid.fetch.secret when the pod is reachable
+## more widely.
 istio:
   enabled: true
   gateway: istio-system/internal

@@ -31,6 +31,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
@@ -61,9 +62,12 @@ import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
+import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.RequestValidator;
 
@@ -77,7 +81,8 @@ import io.mosip.preregistration.core.util.RequestValidator;
 		"notification.url=http://localhost/preregistration/v1/internal/notification",
 		"demographic.resource.url=http://localhost/preregistration/v1",
 		"mosip.utc-datetime-pattern=yyyy-MM-dd'T'HH:mm:ss.SSS'Z'",
-		"mosip.notification.timezone=GMT+05:30"
+		"mosip.notification.timezone=GMT+05:30",
+		"mosip.prereg.pii.backward.compatibility=true"
 })
 public class BookingServiceUtilTest {
 
@@ -104,6 +109,9 @@ public class BookingServiceUtilTest {
 
 	@MockitoBean
 	private UserDetailsService userDetailsService;
+
+	@MockitoBean
+	private ApplicationRepostiory applicationRepostiory;
 
 	@MockitoBean
 	private io.mosip.preregistration.pipeline.InProcessApplicationClient applicationClient;
@@ -741,6 +749,40 @@ public class BookingServiceUtilTest {
 	public void timeSpanCheckForRebook1() {
 		LocalDateTime time = LocalDateTime.now().plusDays(3);
 		serviceUtil.timeSpanCheckForRebook(time, new Date());
+	}
+
+	@Test
+	public void assertAppointmentOwnerSkipsWhenNotIndividual() {
+		serviceUtil.assertAppointmentOwner("23587986034785");
+		Mockito.verify(applicationRepostiory, Mockito.never()).findByApplicationId(Mockito.anyString());
+	}
+
+	@Test
+	public void assertAppointmentOwnerAllowsMatchingIndividual() {
+		AuthUserDetails user = (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Mockito.doReturn(List.of(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"))).when(user).getAuthorities();
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("23587986034785");
+		applicationEntity.setCrBy("00000000-0000-0000-0000-000000000001");
+		Mockito.when(applicationRepostiory.findByApplicationId("23587986034785")).thenReturn(applicationEntity);
+		Mockito.when(userDetailsService.matchesUser(Mockito.eq("test-user"), Mockito.anyString(), Mockito.eq(true)))
+				.thenReturn(true);
+
+		serviceUtil.assertAppointmentOwner("23587986034785");
+	}
+
+	@Test(expected = PreIdInvalidForUserIdException.class)
+	public void assertAppointmentOwnerRejectsMismatchedIndividual() {
+		AuthUserDetails user = (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Mockito.doReturn(List.of(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"))).when(user).getAuthorities();
+		ApplicationEntity applicationEntity = new ApplicationEntity();
+		applicationEntity.setApplicationId("23587986034785");
+		applicationEntity.setCrBy("someone-else");
+		Mockito.when(applicationRepostiory.findByApplicationId("23587986034785")).thenReturn(applicationEntity);
+		Mockito.when(userDetailsService.matchesUser(Mockito.anyString(), Mockito.anyString(), Mockito.anyBoolean()))
+				.thenReturn(false);
+
+		serviceUtil.assertAppointmentOwner("23587986034785");
 	}
 
 }

@@ -10,6 +10,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -34,6 +35,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -79,9 +81,14 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorCodes;
+import io.mosip.preregistration.application.errorcodes.ApplicationErrorMessages;
+import io.mosip.preregistration.core.common.entity.ApplicationEntity;
 import io.mosip.preregistration.core.common.entity.RegistrationBookingEntity;
+import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.MasterDataNotAvailableException;
+import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
 import io.mosip.preregistration.core.exception.NotificationException;
 import io.mosip.preregistration.core.exception.RestCallException;
 import io.mosip.preregistration.core.util.UUIDGeneratorUtil;
@@ -110,8 +117,14 @@ public class BookingServiceUtil {
 	private UserDetailsService userDetailsService;
 
 	@Autowired
+	private ApplicationRepostiory applicationRepostiory;
+
+	@Autowired
 	@Lazy
 	private io.mosip.preregistration.pipeline.InProcessApplicationClient applicationClient;
+
+	@Value("${mosip.prereg.pii.backward.compatibility:true}")
+	private boolean piiBackwardCompatibility;
 
 	/**
 	 * Reference for ${regCenter.url} from property file
@@ -300,6 +313,46 @@ public class BookingServiceUtil {
 					getApplicationStatus.getErrors().get(0).getMessage());
 		}
 		return true;
+	}
+
+	/**
+	 * Residents with {@code ROLE_INDIVIDUAL} may only book, read, cancel, or delete
+	 * appointments for applications they created. Staff roles skip this check.
+	 *
+	 * @param preId pre-registration / application id
+	 */
+	public void assertAppointmentOwner(String preId) {
+		AuthUserDetails user = authUserDetails();
+		if (user == null || !hasIndividualRole(user)) {
+			return;
+		}
+		ApplicationEntity applicationEntity = applicationRepostiory.findByApplicationId(preId);
+		if (applicationEntity == null) {
+			throw new BookingPreIdNotFoundException(ErrorCodes.PRG_BOOK_RCI_006.getCode(),
+					ErrorMessages.PREREGISTRATION_ID_NOT_ENTERED.getMessage());
+		}
+		String expectedCrBy = applicationEntity.getEffectiveCrBy() == null ? ""
+				: applicationEntity.getEffectiveCrBy().trim();
+		if (!userDetailsService.matchesUser(user.getUserId(), expectedCrBy, piiBackwardCompatibility)) {
+			log.warn("sessionId", "idType", "id",
+					"Appointment ownership validation failed for preId " + preId + " and masked user "
+							+ GenericUtil.maskIdentifier(user.getUserId()));
+			throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
+					ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
+		}
+	}
+
+	private boolean hasIndividualRole(AuthUserDetails user) {
+		Collection<? extends GrantedAuthority> authorities = user.getAuthorities();
+		if (authorities == null) {
+			return false;
+		}
+		for (GrantedAuthority authority : authorities) {
+			if ("ROLE_INDIVIDUAL".equals(authority.getAuthority())) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public boolean timeSpanCheckForCancle(LocalDateTime bookedDateTime) {

@@ -21,6 +21,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import jakarta.annotation.PostConstruct;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -77,6 +79,9 @@ public class LoginService {
 	 * @return log config result
 	 */
 	private Logger log = LoggerConfiguration.logConfig(LoginService.class);
+
+	/** Well-known sample from MOSIP public config; forging HS256 session JWTs is trivial with it. */
+	private static final String PUBLISHED_MOSIP_JWT_SECRET = "Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=";
 
 	/**
 	 * Autowired reference for {@link #authCommonUtil}
@@ -195,6 +200,14 @@ public class LoginService {
 	 * env used by this Pre-Registration type.
 	 */
 	private Environment env;
+
+	@PostConstruct
+	void rejectPublishedJwtSecret() {
+		if (jwtSecret == null || jwtSecret.isBlank() || PUBLISHED_MOSIP_JWT_SECRET.equals(jwtSecret.trim())) {
+			throw new IllegalStateException(
+					"prereg.auth.jwt.secret must be a unique value; the published MOSIP sample secret is not allowed");
+		}
+	}
 
 	/**
 	 * It will fetch otp from Kernel auth service and send to the userId provided
