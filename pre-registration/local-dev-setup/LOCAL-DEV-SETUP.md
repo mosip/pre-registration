@@ -26,7 +26,7 @@ run-prereg-local.bat   (same verbs on Windows cmd)
 ./run-local-stack.sh up | prep | down | wipe | status | logs
 ```
 
-Host JVM logs and PIDs: `local-dev-setup/.local/` (gitignored), same layout as id-repository. `run-prereg-local.*` sets `LOCAL_DIR` and `-Dlogging.file.path=.local/logs`. Console stays in `prereg-service.log`; Spring rolling file is `spring.log`.
+Host JVM logs and PIDs: `local-dev-setup/.local/` (gitignored). `run-prereg-local.*` sets `LOCAL_DIR` and `-Dlogging.file.path=.local/logs`. Console stays in `prereg-service.log`; Spring rolling file is `spring.log`.
 
 Module runners (override `LOCAL_DIR` or default to the module `.local/`):
 
@@ -43,7 +43,7 @@ The virus-scanner jar is required so Spring can create `VirusScannerImpl`. It do
 
 ## Database
 
-Init SQL is one file, `deps/init.sql`, same layout as id-repository: create `mosip_prereg`, `mosip_audit`, and `mosip_keymgr`, `\i` the official [db_scripts](https://github.com/mosip/pre-registration/tree/master/db_scripts) DDL (`reg_appointment`, `reg_available_slot`, …) plus `deps/keymanager/ddl` and [audit-manager issue-1633](https://github.com/mosip/audit-manager/tree/issue-1633/db_scripts) `app_audit_log`, then inline the local slot rows (centre `10003`) and the key seed. Users `prereguser`, `audituser`, and `keymgruser`, password `mosip123`. Wipe volumes to re-apply it. An already-initialized volume can run `deps/audit/apply-existing.sql` instead of wiping.
+Init SQL is one file, `deps/init.sql`: create `mosip_prereg`, `mosip_audit`, and `mosip_keymgr`, `\i` the official [db_scripts](https://github.com/mosip/pre-registration/tree/master/db_scripts) DDL (`reg_appointment`, `reg_available_slot`, …) plus `deps/keymanager/ddl` and [audit-manager issue-1633](https://github.com/mosip/audit-manager/tree/issue-1633/db_scripts) `app_audit_log`, then inline the local slot rows (centre `10003`) and the key seed. Users `prereguser`, `audituser`, and `keymgruser`, password `mosip123`. Wipe volumes to re-apply it. An already-initialized volume can run `deps/audit/apply-existing.sql` instead of wiping.
 
 Audit HTTP is WireMock on `:8082` (`POST /v1/auditmanager/audits` in `deps/wiremock/mappings/prereg.json`). Host `audit.url` is `http://localhost:8082/v1/auditmanager/audits`. WireMock does not write Postgres; the host `local` profile inserts into `mosip_audit.audit.app_audit_log` from `application-local.properties` (`preregistration.audit.jdbc.url`). api-test `db:mosip_audit` uses `postgres` / `mosip123` against `localhost:5455/mosip_audit`. Recreate `mock-service` after editing that stub.
 
@@ -60,7 +60,7 @@ Booking runs in the host HTTP JVM. Source was imported from [mosip-ref-impl issu
 | MinIO (`localhost:9000`, bucket `prereg`) | No | Documents (`S3Adapter`) | Yes |
 | Keymanager (`localhost:8088`) | No | Encrypt/decrypt demographics and files; datasync `jwtSign` | Yes |
 
-`CryptoUtil` calls `PRE_REGISTRATION` / `INDIVIDUAL`. The SQL seed has the `PRE_REGISTRATION` base key; `deps/keymanager/bootstrap.sh` calls `getCertificate` for `INDIVIDUAL`, which creates that keypair. The PKCS12 is `keys/mosip-prereg-ks.p12` (password `1234`), a copy of id-repository `keys/mosip-idrepo-ks.p12`, and must stay paired with the key seed inlined in `deps/init.sql`. Do not add a dummy `/v1/keymanager/encrypt` stub. Host config sets `mosip.kernel.keymanager.url=http://localhost:8088`.
+`CryptoUtil` calls `PRE_REGISTRATION` / `INDIVIDUAL`. Those aliases (plus `KERNEL` / `SIGN` and the other keymgr rows) are inlined in `deps/init.sql`. `keys-generator` is not in Compose. The PKCS12 is `keys/mosip-prereg-ks.p12` (password `1234`) and must stay paired with that seed. Do not add a dummy `/v1/keymanager/encrypt` stub. Host config sets `mosip.kernel.keymanager.url=http://localhost:8088`. After changing `init.sql`, `wipe` Postgres so it re-runs.
 
 Mailbox UI: http://localhost:8080/. `GET /sendsms` is on the same port. Compose `notifier` (`:8083`) POSTs `/v1/notifier/email/send` into mock-smtp SMTP. api-test `mockSmtpWebSocketUrl=ws://localhost:8081`.
 

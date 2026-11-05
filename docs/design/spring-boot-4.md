@@ -18,7 +18,7 @@ Parent POM: `pre-registration/pom.xml`. Do not parent `kernel-bom`. Maven from `
 | Tests | `@MockBean` | `@MockitoBean` (`org.springframework.test.context.bean.override.mockito`) |
 | SpringDoc | 1.x / 2.x grouped UI | 3.1.1, **one** `/v3/api-docs` document |
 
-Public URLs stay `/preregistration/v1` on **9090**. Batchjob stays **9097**. PRID stays Vert.x **8100**.
+Public URLs stay `/preregistration/v1` on **9090**. The batch job stays on **9097**. PRID stays Vert.x **8100**.
 
 ---
 
@@ -35,10 +35,10 @@ Public URLs stay `/preregistration/v1` on **9090**. Batchjob stays **9097**. PRI
 </parent>
 ```
 
-2. Pin Java 21: `java.version`, `maven.compiler.source`, `maven.compiler.target`.
-3. Import Spring Cloud BOM in `dependencyManagement` (`spring-cloud.version`).
-4. Pin MOSIP artifacts (`kernel-core`, auth adapter, …) **explicitly**. Do not reintroduce `kernel-bom`.
-5. Keep module packaging: `pre-registration-core` is a library (`spring-boot:repackage` off). The three deployables use `spring-boot-maven-plugin`.
+1. Pin Java 21: `java.version`, `maven.compiler.source`, `maven.compiler.target`.
+2. Import Spring Cloud BOM in `dependencyManagement` (`spring-cloud.version`).
+3. Pin MOSIP artifacts (`kernel-core`, auth adapter, …) **explicitly**. Do not reintroduce `kernel-bom`.
+4. Keep module packaging: `pre-registration-core` is a library (`spring-boot:repackage` off). The three deployables use `spring-boot-maven-plugin`.
 
 ---
 
@@ -84,7 +84,7 @@ If Jackson 3 types leak onto the compile classpath, `ObjectMapper` construction 
    - `${mosip.auth.adapter.impl.basepackage}`
    - `${mosip.lang.traslate.adapter.impl.basepackage}`
 5. Import `HibernateDaoConfig` for the DataSource. Do not scan `io.mosip.kernel` as a whole.
-6. Batchjob packages stay out of the HTTP scan.
+6. Batch job packages stay out of the HTTP scan.
 
 Virus-scanner / ID-object-validator jars on `-Dloader.path` are not Boot 4 auto-configs (`spring.factories` is ignored). They are picked up because those packages are in the scan list.
 
@@ -107,7 +107,7 @@ Boot 4 uses SpringDoc 3. Multiple `GroupedOpenApi` beans produced a **Select a d
 
 1. One `OpenAPI` `@Bean` in `PreregOpenApiConfig` (title, license, `Authorization` API-key header).
 2. No `GroupedOpenApi` beans.
-3. Do not inject `openapi.service.servers[]` into the document. SpringDoc fills the server from the request (**Generated server url**), so Try it out hits `127.0.0.1:9090` locally and the gateway host in cluster.
+3. Do not set `openapi.service.servers[]`. SpringDoc fills the server from the request (**Generated server url**), so Try it out hits `127.0.0.1:9090` locally and the gateway host in cluster.
 4. `bootstrap.properties`:
    - `springdoc.api-docs.path=/v3/api-docs`
    - `springdoc.swagger-ui.disable-swagger-default-url=true`
@@ -129,10 +129,10 @@ OTP tokens are signed in `LoginService` (JJWT HS256).
 prereg.auth.jwt.secret=${prereg.auth.jwt.secret.override}
 ```
 
-2. Local config-server (`pre-registration-default.properties`) sets `prereg.auth.jwt.secret.override=…`.
-3. Cluster must set `prereg.auth.jwt.secret.override` (or replace `prereg.auth.jwt.secret`). Missing override → the process does not start.
-4. `LoginService.rejectPublishedJwtSecret()` (`@PostConstruct`) rejects a blank secret and the published MOSIP sample `Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=`.
-5. OTP roles: `prereg.auth.jwt.token.roles=INDIVIDUAL` only. Staff roles come from Keycloak, not from OTP.
+1. Local config-server (`pre-registration-default.properties`) sets `prereg.auth.jwt.secret.override=…`.
+2. Cluster must set `prereg.auth.jwt.secret.override` (or replace `prereg.auth.jwt.secret`). Missing override → the process does not start.
+3. `LoginService.rejectPublishedJwtSecret()` (`@PostConstruct`) rejects a blank secret and the published MOSIP sample `Yn2kjibddFAWtnPJ2AFlL8WXmohJMCvigQggaEypa5E=`.
+4. OTP roles: `prereg.auth.jwt.token.roles=INDIVIDUAL` only. Staff roles come from Keycloak, not from OTP.
 
 ---
 
@@ -170,7 +170,7 @@ PowerShell: pass Maven `-D` flags after `--%`.
 
 - Parent `kernel-bom` or a MOSIP Boot 2 parent.
 - Scan `io.mosip.kernel` as a whole.
-- Fold batchjob or PRID into the HTTP JVM.
+- Fold the batch job or PRID into the HTTP JVM.
 - Put a JWT secret constant in `src/main/resources/application.properties`.
 - Re-add `GroupedOpenApi` (brings the definition dropdown back).
 - Switch this codebase to Jackson 3 until `kernel-core` does.

@@ -37,6 +37,7 @@ RUN apt-get -y update \
 && curl -LO "https://storage.googleapis.com/kubernetes-release/release/v${KUBECTL_VERSION}/bin/linux/amd64/kubectl" \
 && chmod +x kubectl \
 && mv kubectl /usr/local/bin/ \
+&& chown ${container_user}:${container_user_group} ${work_dir} \
 && chown ${container_user}:${container_user} /etc/ssl/certs/java/cacerts \
 && chmod 644 /etc/ssl/certs/java/cacerts
 
