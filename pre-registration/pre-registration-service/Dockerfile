@@ -51,6 +51,12 @@ ARG container_user_uid=1002
 # can be passed during Docker build as build time environment for github branch to pickup configuration from.
 ARG container_user_gid=1001
 
+# Create user before COPY --chown so the jar is not duplicated by a later chown -R.
+# wget only: configure_start.sh fetches loader.path jars. No apk index left in the image.
+RUN apk add --no-cache wget \
+&& addgroup -g ${container_user_gid} ${container_user_group} \
+&& adduser -s /bin/sh -u ${container_user_uid} -G ${container_user_group} -h /home/${container_user} --disabled-password ${container_user}
+
 # set working directory for the user
 WORKDIR /home/${container_user}
 
@@ -62,19 +68,14 @@ ENV loader_path_env=${loader_path}
 
 ENV current_module_env=pre-registration-service
 
-ADD target/${current_module_env}-*.jar ${current_module_env}.jar
+RUN mkdir -p ${loader_path} \
+&& chown ${container_user}:${container_user} ${work_dir} ${loader_path}
 
-ADD configure_start.sh configure_start.sh
+COPY --chown=${container_user_uid}:${container_user_gid} target/${current_module_env}-*.jar ${current_module_env}.jar
+COPY --chown=${container_user_uid}:${container_user_gid} configure_start.sh configure_start.sh
 
-# install packages and create user
-RUN apk -q update \
-&& apk add -q unzip wget \
-&& addgroup -g ${container_user_gid} ${container_user_group} \
-&& adduser -s /bin/sh -u ${container_user_uid} -G ${container_user_group} -h /home/${container_user} --disabled-password ${container_user} \
-&& mkdir -p ${loader_path} \
-&& sed -i 's/\r$//' configure_start.sh \
-&& chmod +x configure_start.sh \
-&& chown -R ${container_user}:${container_user} ${work_dir}
+RUN sed -i 's/\r$//' configure_start.sh \
+&& chmod +x configure_start.sh
 
 # select container user for all tasks
 USER ${container_user_uid}:${container_user_gid}

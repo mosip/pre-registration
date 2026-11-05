@@ -31,25 +31,21 @@ ARG preregistration_i18n_bundle_url_arg=http://artifactory-service/artifactory/l
 # environment variable to pass artifactory url, at docker runtime
 ENV preregistration_i18n_bundle_url_env=${preregistration_i18n_bundle_url_arg}
 
-# install packages and create user
+# wget + unzip are used at runtime for the i18n bundle. Create the user before COPY --chown.
 RUN apt-get -y update \
-&& apt-get install -y unzip wget \
+&& apt-get install -y --no-install-recommends unzip wget \
+&& rm -rf /var/lib/apt/lists/* \
 && groupadd -g ${container_user_gid} ${container_user_group} \
 && useradd -u ${container_user_uid} -g ${container_user_group} -s /bin/sh -m ${container_user} \
-&& mkdir -p /var/run/nginx /var/tmp/nginx \
+&& mkdir -p /var/run/nginx /var/tmp/nginx ${i18n_path} \
 && chown -R ${container_user}:${container_user} /usr/share/nginx /var/run/nginx /var/tmp/nginx
 
 # set working directory for the user
 WORKDIR /home/${container_user}
 
-ADD ./nginx.conf /etc/nginx/nginx.conf
-
-ADD default.conf /etc/nginx/conf.d/
-
-ADD dist ${base_path}
-
-# change permissions of file inside working dir
-RUN chown -R ${container_user}:${container_user} ${base_path}/assets/i18n
+COPY nginx.conf /etc/nginx/nginx.conf
+COPY default.conf /etc/nginx/conf.d/
+COPY --chown=${container_user_uid}:${container_user_gid} dist ${base_path}
 
 # select container user for all tasks
 USER ${container_user_uid}:${container_user_gid}

@@ -56,9 +56,8 @@ ARG container_user_uid=1002
 # can be passed during Docker build as build time environment for github branch to pickup configuration from.
 ARG container_user_gid=1001
 
-# install packages and create user
-RUN apk -q update \
-&& apk add -q unzip wget \
+# wget only: configure_start.sh fetches the IAM adapter. Create the user before COPY --chown.
+RUN apk add --no-cache wget \
 && addgroup -g ${container_user_gid} ${container_user_group} \
 && adduser -s /bin/sh -u ${container_user_uid} -G ${container_user_group} -h /home/${container_user} --disabled-password ${container_user}
 
@@ -69,20 +68,18 @@ ENV work_dir=/home/${container_user}
 
 ARG loader_path=${work_dir}/additional_jars/
 
-RUN mkdir -p ${loader_path}
-
 ENV loader_path_env=${loader_path}
 
 ENV current_module_env=pridgenerator-service
 
-ADD target/${current_module_env}-*.jar ${current_module_env}.jar
+RUN mkdir -p ${loader_path} \
+&& chown ${container_user}:${container_user} ${work_dir} ${loader_path}
 
-COPY configure_start.sh ${work_dir}/configure_start.sh
+COPY --chown=${container_user_uid}:${container_user_gid} target/${current_module_env}-*.jar ${current_module_env}.jar
+COPY --chown=${container_user_uid}:${container_user_gid} configure_start.sh ${work_dir}/configure_start.sh
 
-# change permissions of file inside working dir
 RUN sed -i 's/\r$//' ${work_dir}/configure_start.sh \
-    && chmod +x ${work_dir}/configure_start.sh \
-    && chown -R ${container_user}:${container_user} ${work_dir}
+&& chmod +x ${work_dir}/configure_start.sh
 
 # select container user for all tasks
 USER ${container_user_uid}:${container_user_gid}
