@@ -1,10 +1,11 @@
 -- Pre-Registration local-dev-setup init (single init.sql).
--- Creates mosip_prereg, mosip_keymgr, and mosip_audit, applies DDL via \i, and inlines the keymgr seed.
--- Each is its own database. They are not merged into each other or into mosip_kernel (PRID).
+-- Creates mosip_prereg, mosip_keymgr, mosip_audit, and mosip_kernel (PRID only).
+-- Each is its own database. They are not merged.
 
 CREATE ROLE prereguser WITH LOGIN PASSWORD 'mosip123';
 CREATE ROLE keymgruser WITH LOGIN PASSWORD 'mosip123';
 CREATE ROLE audituser WITH LOGIN PASSWORD 'mosip123';
+CREATE ROLE kerneluser WITH LOGIN PASSWORD 'mosip123';
 
 CREATE DATABASE mosip_prereg
 	ENCODING = 'UTF8'
@@ -11342,4 +11343,29 @@ ghiOsLjt6jIxHK7y1wSPZnWHbXNPiymlIn7pW4OEHGjNfI1zEUSQL9eMnvuEeKrt
 v3mFWv8ssNuJEw==
 -----END CERTIFICATE-----
 ', 'SYSTEM', '2026-10-16 14:43:20.110272', NULL, NULL, false, NULL);
+
+-- ===================== mosip_kernel (PRID) =====================
+\c postgres
+
+CREATE DATABASE mosip_kernel
+	ENCODING = 'UTF8'
+	TABLESPACE = pg_default
+	OWNER = postgres
+	TEMPLATE  = template0;
+COMMENT ON DATABASE mosip_kernel IS 'PRID pool (kernel.prid). Other kernel tables stay out of this database.';
+
+\c mosip_kernel
+
+CREATE SCHEMA kernel;
+ALTER SCHEMA kernel OWNER TO postgres;
+ALTER DATABASE mosip_kernel SET search_path TO kernel,pg_catalog,public;
+SET search_path TO kernel,pg_catalog,public;
+GRANT CONNECT ON DATABASE mosip_kernel TO kerneluser;
+GRANT USAGE ON SCHEMA kernel TO kerneluser;
+ALTER DEFAULT PRIVILEGES IN SCHEMA kernel GRANT SELECT,INSERT,UPDATE,DELETE,REFERENCES ON TABLES TO kerneluser;
+
+\i /db_scripts/mosip_kernel/ddl/kernel-prid.sql
+ALTER TABLE kernel.prid OWNER TO kerneluser;
+
+GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON ALL TABLES IN SCHEMA kernel TO kerneluser;
 
