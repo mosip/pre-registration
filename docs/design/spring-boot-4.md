@@ -36,9 +36,10 @@ Public URLs stay `/preregistration/v1` on **9090**. The batch job stays on **909
 ```
 
 2. Pin Java 21: `java.version`, `maven.compiler.source`, `maven.compiler.target`.
-3. Import Spring Cloud BOM in `dependencyManagement` (`spring-cloud.version`). Use **2025.1.4** with Boot 4.1: `2025.1.3` still calls the Boot 4.0 `ApplicationEnvironmentPreparedEvent.getBootstrapContext()` signature and the JVM dies in `BootstrapApplicationListener` before config-server load.
-4. Pin MOSIP artifacts (`kernel-core`, auth adapter, …) **explicitly**. Do not reintroduce `kernel-bom`.
-5. Keep module packaging: `pre-registration-core` is a library (`spring-boot:repackage` off). The three deployables use `spring-boot-maven-plugin`.
+3. Import Spring Cloud BOM in `dependencyManagement` (`spring-cloud.version`). Use **2025.1.4** with Boot 4.1.
+4. Do **not** use `spring-cloud-starter-bootstrap`. Boot 4.1 `EnvironmentPostProcessorApplicationListener` calls `ApplicationEnvironmentPreparedEvent.getBootstrapContext()` with the 4.1 type; the bootstrap child context dies with `NoSuchMethodError` before config-server load. Set `spring.cloud.bootstrap.enabled=false` and `spring.config.import=optional:configserver:${spring.cloud.config.uri}`. Helm already passes `-Dspring.cloud.config.uri`.
+5. Pin MOSIP artifacts (`kernel-core`, auth adapter, …) **explicitly**. Do not reintroduce `kernel-bom`.
+6. Keep module packaging: `pre-registration-core` is a library (`spring-boot:repackage` off). The three deployables use `spring-boot-maven-plugin`.
 
 ---
 
