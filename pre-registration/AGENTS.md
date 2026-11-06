@@ -1,6 +1,6 @@
 # pre-registration (Maven parent)
 
-Boot 4.1.2, Java 21, no kernel-bom. How-to: README.md.
+Boot 4.1.1, Java 21, no kernel-bom. How-to: README.md.
 
 ```text
 core/                    library (no repackage)

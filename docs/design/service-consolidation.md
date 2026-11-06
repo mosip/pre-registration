@@ -1,6 +1,6 @@
 # Consolidating Pre-Registration into one HTTP service
 
-This branch folds the three HTTP services on `develop` plus booking from [mosip-ref-impl issue-1633](https://github.com/mosip/mosip-ref-impl/tree/issue-1633/pre-registration-booking-service) into one JVM. Callers keep the same URLs. The batch Job stays its own process. PRID generation moved here from [mosip/commons](https://github.com/mosip/commons) as a **separate** Vert.x service (`pridgenerator-service`); it is not folded into the HTTP JVM. The Angular SPA lives in [`ui/`](../../ui/) (imported from [mosip/pre-registration-ui](https://github.com/mosip/pre-registration-ui) `develop`). Platform move (Boot 4.1.2 / Java 21 / Jakarta / Jackson 2): [spring-boot-4.md](spring-boot-4.md).
+This branch folds the three HTTP services on `develop` plus booking from [mosip-ref-impl issue-1633](https://github.com/mosip/mosip-ref-impl/tree/issue-1633/pre-registration-booking-service) into one JVM. Callers keep the same URLs. The batch Job stays its own process. PRID generation moved here from [mosip/commons](https://github.com/mosip/commons) as a **separate** Vert.x service (`pridgenerator-service`); it is not folded into the HTTP JVM. The Angular SPA lives in [`ui/`](../../ui/) (imported from [mosip/pre-registration-ui](https://github.com/mosip/pre-registration-ui) `develop`). Platform move (Boot 4.1.1 / Java 21 / Jakarta / Jackson 2): [spring-boot-4.md](spring-boot-4.md).
 
 ---
 

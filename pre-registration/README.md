@@ -1,6 +1,6 @@
 # pre-registration (Maven parent)
 
-Parent reactor for MOSIP Pre-Registration. Spring Boot **4.1.2**, Java **21**, no `kernel-bom`. How-to for the whole git repo: [root README](../README.md). Layout: [docs/design/service-consolidation.md](../docs/design/service-consolidation.md).
+Parent reactor for MOSIP Pre-Registration. Spring Boot **4.1.1**, Java **21**, no `kernel-bom`. How-to for the whole git repo: [root README](../README.md). Layout: [docs/design/service-consolidation.md](../docs/design/service-consolidation.md).
 
 ```text
 pre-registration/

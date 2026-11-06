@@ -1,6 +1,6 @@
 # Spring Boot 4 changes in Pre-Registration
 
-This is the how-to for moving MOSIP Pre-Registration from Spring Boot 2.x / Java 11 onto **Spring Boot 4.1.2** and **Java 21**, then the Boot-related follow-ups on this branch (scan, Jackson 2, tests, OpenAPI, JWT). Layout and frozen URLs are in [service-consolidation.md](service-consolidation.md). How to run locally is in the root [README](../../README.md).
+This is the how-to for moving MOSIP Pre-Registration from Spring Boot 2.x / Java 11 onto **Spring Boot 4.1.1** and **Java 21**, then the Boot-related follow-ups on this branch (scan, Jackson 2, tests, OpenAPI, JWT). Layout and frozen URLs are in [service-consolidation.md](service-consolidation.md). How to run locally is in the root [README](../../README.md).
 
 Parent POM: `pre-registration/pom.xml`. Do not parent `kernel-bom`. Maven from `pre-registration/` only.
 
@@ -11,8 +11,8 @@ Parent POM: `pre-registration/pom.xml`. Do not parent `kernel-bom`. Maven from `
 | Item | Before (`develop`) | This branch |
 |---|---|---|
 | JDK | 11 | 21 |
-| Spring Boot | 2.x via MOSIP parent / kernel-bom | `org.springframework.boot:spring-boot-starter-parent` 4.1.2 |
-| Spring Cloud | Hoxton / 2021 line | 2025.1.4 |
+| Spring Boot | 2.x via MOSIP parent / kernel-bom | `org.springframework.boot:spring-boot-starter-parent` 4.1.1 |
+| Spring Cloud | Hoxton / 2021 line | 2025.1.3 |
 | Servlet / JPA / inject | `javax.*` | `jakarta.*` |
 | JSON | Jackson 2 on the Boot 2 classpath | Boot 4 defaults to Jackson 3; this repo **keeps Jackson 2** with `spring-boot-jackson2` |
 | Tests | `@MockBean` | `@MockitoBean` (`org.springframework.test.context.bean.override.mockito`) |
@@ -30,16 +30,15 @@ Public URLs stay `/preregistration/v1` on **9090**. The batch job stays on **909
 <parent>
   <groupId>org.springframework.boot</groupId>
   <artifactId>spring-boot-starter-parent</artifactId>
-  <version>4.1.2</version>
+  <version>4.1.1</version>
   <relativePath />
 </parent>
 ```
 
-2. Pin Java 21: `java.version`, `maven.compiler.source`, `maven.compiler.target`.
-3. Import Spring Cloud BOM in `dependencyManagement` (`spring-cloud.version`). Use **2025.1.4** with Boot 4.1.
-4. Do **not** use `spring-cloud-starter-bootstrap`. Boot 4.1 `EnvironmentPostProcessorApplicationListener` calls `ApplicationEnvironmentPreparedEvent.getBootstrapContext()` with the 4.1 type; the bootstrap child context dies with `NoSuchMethodError` before config-server load. Set `spring.cloud.bootstrap.enabled=false` and `spring.config.import=optional:configserver:${spring.cloud.config.uri}`. Helm already passes `-Dspring.cloud.config.uri`.
-5. Pin MOSIP artifacts (`kernel-core`, auth adapter, …) **explicitly**. Do not reintroduce `kernel-bom`.
-6. Keep module packaging: `pre-registration-core` is a library (`spring-boot:repackage` off). The three deployables use `spring-boot-maven-plugin`.
+1. Pin Java 21: `java.version`, `maven.compiler.source`, `maven.compiler.target`.
+2. Import Spring Cloud BOM in `dependencyManagement` (`spring-cloud.version`).
+3. Pin MOSIP artifacts (`kernel-core`, auth adapter, …) **explicitly**. Do not reintroduce `kernel-bom`.
+4. Keep module packaging: `pre-registration-core` is a library (`spring-boot:repackage` off). The three deployables use `spring-boot-maven-plugin`.
 
 ---
 

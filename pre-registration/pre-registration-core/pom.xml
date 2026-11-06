@@ -22,7 +22,7 @@
 		Other MOSIP services may depend on this JAR. It is NOT a deployable — do not bind
 		spring-boot:repackage, do not scan io.mosip.kernel as a whole from a consumer Boot app,
 		and do not reintroduce kernel-bom. Versions are inherited from pre-registration-parent
-		(Boot 4.1.2, kernel-core 1.4.1-SNAPSHOT).
+		(Boot 4.1.1, kernel-core 1.4.1-SNAPSHOT).
 	</description>
 	<url>https://github.com/mosip/pre-registration</url>
 
@@ -77,6 +77,10 @@
 			<groupId>commons-collections</groupId>
 			<artifactId>commons-collections</artifactId>
 			<version>3.2.2</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-bootstrap</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
