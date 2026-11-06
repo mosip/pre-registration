@@ -35,7 +35,7 @@ PRID generation stays a **separate** deployable (`pridgenerator-service`). Calle
 
 Booking (`io.mosip.preregistration.booking`) was imported from [mosip-ref-impl issue-1633](https://github.com/mosip/mosip-ref-impl/tree/issue-1633/pre-registration-booking-service) into `pre-registration-service`. Git history of that subdirectory is the `booking-hist` remote (`issue-1633`, git-filter-repo). Callers keep `/preregistration/v1/appointment/**`.
 
-Version **1.4.1-SNAPSHOT**. Parent: `org.springframework.boot:spring-boot-starter-parent:4.1.2`. Java 21. No `kernel-bom`. Detailed Boot 4 steps: [docs/design/spring-boot-4.md](docs/design/spring-boot-4.md).
+Version **1.4.1-SNAPSHOT**. Parent: `org.springframework.boot:spring-boot-starter-parent:4.1.1`. Java 21. No `kernel-bom`. Detailed Boot 4 steps: [docs/design/spring-boot-4.md](docs/design/spring-boot-4.md).
 
 ## Database
 

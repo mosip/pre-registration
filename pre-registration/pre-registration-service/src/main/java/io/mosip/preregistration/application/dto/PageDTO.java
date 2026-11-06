@@ -22,11 +22,11 @@ public class PageDTO<T> {
 	/**
 	 * page no used by this Pre-Registration type.
 	 */
-	private int pageNo;
+	private Integer pageNo;
 	/**
 	 * page size used by this Pre-Registration type.
 	 */
-	private int pageSize;
+	private Integer pageSize;
 	/**
 	 * sort used by this Pre-Registration type.
 	 */
@@ -34,11 +34,11 @@ public class PageDTO<T> {
 	/**
 	 * total items used by this Pre-Registration type.
 	 */
-	private long totalItems;
+	private Long totalItems;
 	/**
 	 * total pages used by this Pre-Registration type.
 	 */
-	private int totalPages;
+	private Integer totalPages;
 	/**
 	 * data used by this Pre-Registration type.
 	 */

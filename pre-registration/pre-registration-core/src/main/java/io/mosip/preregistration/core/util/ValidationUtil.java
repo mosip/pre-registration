@@ -454,10 +454,14 @@ public class ValidationUtil {
 								body.getErrors().get(0).getMessage());
 					}
 					PageDTO<ValidDocumentsResponseDTO> resp = body.getResponse();
-					if (resp  != null) {
-						totalPage = resp.getTotalPages();
-						resp.getData().stream().filter(docs -> docs.getIsActive()).forEach(activeDocs -> validDocsMap
-								.put(activeDocs.getDocCategoryCode(), activeDocs.getDocTypeCode()));	
+					if (resp != null) {
+						if (resp.getTotalPages() != null) {
+							totalPage = resp.getTotalPages();
+						}
+						if (resp.getData() != null) {
+							resp.getData().stream().filter(docs -> docs.getIsActive()).forEach(activeDocs -> validDocsMap
+									.put(activeDocs.getDocCategoryCode(), activeDocs.getDocTypeCode()));
+						}
 					}
 				}
 				pageNo++;

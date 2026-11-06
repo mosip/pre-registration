@@ -118,7 +118,8 @@ public class UISpecService {
 			fetchedSchema.setData(filterPreRegSpec(res.getData()));
 			fetchedSchema.setPageNo(res.getPageNo());
 			fetchedSchema.setPageSize(res.getPageSize());
-			fetchedSchema.setTotalItems(fetchedSchema.getData().size());
+			fetchedSchema.setTotalItems(
+					fetchedSchema.getData() == null ? 0L : Long.valueOf(fetchedSchema.getData().size()));
 			fetchedSchema.setTotalPages(res.getTotalPages());
 			fetchedSchema.setSort(res.getSort());
 			response.setResponse(fetchedSchema);

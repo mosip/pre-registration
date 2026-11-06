@@ -6,13 +6,13 @@
 
 	<!--
 		MOSIP Pre-Registration parent. Aligns with bio-utils / id-repository engineering:
-		Spring Boot 4.1.2 is the BOM; kernel-bom is banned. Pin MOSIP artifacts explicitly.
+		Spring Boot 4.1.1 is the BOM; kernel-bom is banned. Pin MOSIP artifacts explicitly.
 		Do NOT parent io.mosip.biometrics:biometrics — that reactor is biometric libraries only.
 	-->
 	<parent>
 		<groupId>org.springframework.boot</groupId>
 		<artifactId>spring-boot-starter-parent</artifactId>
-		<version>4.1.2</version>
+		<version>4.1.1</version>
 		<relativePath />
 	</parent>
 
@@ -29,7 +29,7 @@
 		booking APIs on port 9090 under /preregistration/v1), pre-registration-batchjob
 		(scheduled Job for appointment slots and archival), and pridgenerator-service
 		(separate Vert.x JVM on port 8100 under /v1/pridgenerator). Java 21, Spring Boot
-		4.1.2, no kernel-bom. Callers keep the same public URLs as before.
+		4.1.1, no kernel-bom. Callers keep the same public URLs as before.
 	</description>
 	<url>https://github.com/mosip/pre-registration</url>
 
@@ -50,8 +50,8 @@
 		<argLine />
 		<skipTests>false</skipTests>
 
-		<!-- ── Spring (Boot parent is 4.1.2; Cloud + docs pinned here) ─────── -->
-		<spring-cloud.version>2025.1.4</spring-cloud.version>
+		<!-- ── Spring (Boot parent is 4.1.1; Cloud + docs pinned here) ─────── -->
+		<spring-cloud.version>2025.1.3</spring-cloud.version>
 		<springdoc.openapi.starter.webmvc.ui.version>3.1.1</springdoc.openapi.starter.webmvc.ui.version>
 		<springdoc.openapi.maven.plugin>0.2</springdoc.openapi.maven.plugin>
 
