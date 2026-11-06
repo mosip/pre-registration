@@ -58,7 +58,7 @@ public class UISpecServiceTest {
 		res.setPageSize(1);
 		Sort sort = null;
 		res.setSort(sort);
-		res.setTotalItems(1);
+		res.setTotalItems(1L);
 		res.setTotalPages(1);
 		List<UISpecResponseDTO> data=new ArrayList<UISpecResponseDTO>();
 		UISpecResponseDTO uISpecResponseDTO=new UISpecResponseDTO();
@@ -75,7 +75,7 @@ public class UISpecServiceTest {
 		res.setData(data);
 		Mockito.when(serviceUtil.getAllUISchema(1,1)).thenReturn(res);
 		MainResponseDTO<PageDTO<UISpecMetaDataDTO>> response = uISpecService.getAllUISpec(1, 1);
-		assertEquals(response.getResponse().getPageNo(),1);
+		assertEquals(Integer.valueOf(1), response.getResponse().getPageNo());
 
 	}
 
