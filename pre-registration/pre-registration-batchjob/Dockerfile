@@ -51,10 +51,8 @@ ARG container_user_uid=1002
 # can be passed during Docker build as build time environment for github branch to pickup configuration from.
 ARG container_user_gid=1001
 
-# install packages and create user
-RUN apk -q update \
-&& apk add -q unzip wget \
-&& addgroup -g ${container_user_gid} ${container_user_group} \
+# No wget/unzip: this image only runs the jar. Create the user before COPY --chown.
+RUN addgroup -g ${container_user_gid} ${container_user_group} \
 && adduser -s /bin/sh -u ${container_user_uid} -G ${container_user_group} -h /home/${container_user} --disabled-password ${container_user}
 
 # set working directory for the user
@@ -64,14 +62,12 @@ ENV work_dir=/home/${container_user}
 
 ARG loader_path=${work_dir}/additional_jars
 
-RUN mkdir -p ${loader_path}
-
 ENV loader_path_env=${loader_path}
 
-COPY ./target/pre-registration-batchjob-*.jar pre-registration-batchjob.jar
+RUN mkdir -p ${loader_path} \
+&& chown ${container_user}:${container_user} ${work_dir} ${loader_path}
 
-# change permissions of file inside working dir
-RUN chown -R ${container_user}:${container_user} /home/${container_user}
+COPY --chown=${container_user_uid}:${container_user_gid} ./target/pre-registration-batchjob-*.jar pre-registration-batchjob.jar
 
 # select container user for all tasks
 USER ${container_user_uid}:${container_user_gid}

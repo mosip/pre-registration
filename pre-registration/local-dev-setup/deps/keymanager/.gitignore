@@ -1,2 +1,2 @@
-# Optional fallback only when KM_STATIC_SEED=false
+# Not used. Keep ignored if a leftover jar is present.
 keys-generator.jar

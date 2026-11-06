@@ -12,7 +12,7 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=mosip123
     volumes:
-      # Single init.sql (+ DDL mounts), same layout as id-repository local-dev.
+      # Single init.sql (+ DDL mounts).
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
       - ./keymanager:/keymanager:ro
       - ./audit:/audit:ro
@@ -112,8 +112,8 @@ services:
       exit 0
       "
 
-  # Encrypt/decrypt for demographics and documents. PKCS12 in ../keys, seed inlined in init.sql.
-  # Bootstrap verifies PRE_REGISTRATION and creates the INDIVIDUAL reference key via getCertificate.
+  # Encrypt/decrypt. PKCS12 in ../keys. All aliases + key_store come from deps/init.sql.
+  # No keys-generator. bootstrap.sh only starts KM and verifies getCertificate.
   keymanager-service:
     image: mosipid/kernel-keymanager-service:1.3.0
     container_name: prereg_local_keymanager
@@ -133,7 +133,6 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: develop
       KM_CONFIG_DIR: /home/mosip/config
       KM_URL: http://127.0.0.1:8088
-      KM_STATIC_SEED: "true"
     entrypoint: ["/bin/bash", "/bootstrap/bootstrap.sh"]
     healthcheck:
       test:

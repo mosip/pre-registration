@@ -19,10 +19,7 @@ public class OpenApiProperties {
 	/** Info block shown in Swagger UI. */
 	private InfoProperty info;
 
-	/** Server list advertised in the OpenAPI document. */
-	private Service service;
-
-	/** Legacy single-group settings (still bound; grouped APIs are defined in Java). */
+	/** Legacy group keys still bound from bootstrap; unused after the single-document OpenAPI change. */
 	private Group group;
 
 	/** OpenAPI info section. */
@@ -44,22 +41,6 @@ public class OpenApiProperties {
 		/** License display name. */
 		private String name;
 		/** License URL. */
-		private String url;
-	}
-
-	/** Wrapper for the servers list. */
-	@Data
-	public static class Service {
-		/** Advertised OpenAPI servers. */
-		private List<Server> servers;
-	}
-
-	/** One OpenAPI server entry. */
-	@Data
-	public static class Server {
-		/** Server description. */
-		private String description;
-		/** Server URL (usually includes the servlet context). */
 		private String url;
 	}
 

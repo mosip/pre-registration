@@ -35,7 +35,7 @@ PRID generation stays a **separate** deployable (`pridgenerator-service`). Calle
 
 Booking (`io.mosip.preregistration.booking`) was imported from [mosip-ref-impl issue-1633](https://github.com/mosip/mosip-ref-impl/tree/issue-1633/pre-registration-booking-service) into `pre-registration-service`. Git history of that subdirectory is the `booking-hist` remote (`issue-1633`, git-filter-repo). Callers keep `/preregistration/v1/appointment/**`.
 
-Version **1.4.1-SNAPSHOT**. Parent: `org.springframework.boot:spring-boot-starter-parent:4.1.1`. Java 21. No `kernel-bom`.
+Version **1.4.1-SNAPSHOT**. Parent: `org.springframework.boot:spring-boot-starter-parent:4.1.1`. Java 21. No `kernel-bom`. Detailed Boot 4 steps: [docs/design/spring-boot-4.md](docs/design/spring-boot-4.md).
 
 ## Database
 
@@ -84,9 +84,7 @@ mvn clean install -Dmaven.javadoc.skip=true -Dgpg.skip=true
 java -jar pre-registration-service/target/pre-registration-service-1.4.1-SNAPSHOT.jar
 ```
 
-Swagger: http://localhost:9090/preregistration/v1/swagger-ui/index.html
-
-**Authorize:** click Authorize and put the bearer token in header `Authorization` (API key scheme). Grouped docs exist for application, datasync (`/sync/**`), and captcha (`/captcha/**`).
+Swagger: http://localhost:9090/preregistration/v1/swagger-ui/index.html — one spec (`/v3/api-docs`), Authorize header `Authorization`.
 
 ### Docker Hub
 
