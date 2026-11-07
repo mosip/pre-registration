@@ -98,6 +98,12 @@
 			<groupId>io.micrometer</groupId>
 			<artifactId>micrometer-registry-prometheus</artifactId>
 		</dependency>
+		<!-- Vert.x 3.9 micrometer still loads io.micrometer.prometheus.PrometheusMeterRegistry.
+		     Boot 4's micrometer-registry-prometheus moved that class to prometheusmetrics. -->
+		<dependency>
+			<groupId>io.micrometer</groupId>
+			<artifactId>micrometer-registry-prometheus-simpleclient</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>
@@ -146,9 +152,6 @@
 						<goals>
 							<goal>build-info</goal>
 						</goals>
-						<configuration>
-							<outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
-						</configuration>
 					</execution>
 					<execution>
 						<id>repackage</id>

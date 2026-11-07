@@ -259,4 +259,72 @@ public class UserDetailsServiceTest {
         assertFalse(userDetailsService.matchesUser("TestUser", "AnotherUser", true));
     }
 
+    @Test
+    public void findExistingUserIdReturnsNullForBlankAndUuidAsIs() {
+        assertNull(userDetailsService.findExistingUserId(null));
+        assertNull(userDetailsService.findExistingUserId("  "));
+        String uuid = UUID.randomUUID().toString();
+        assertEquals(uuid, userDetailsService.findExistingUserId(" " + uuid + " "));
+        verifyNoInteractions(userDetailsRepository);
+    }
+
+    @Test
+    public void findExistingUserIdReturnsCanonicalWhenHashMatches() {
+        UserDetails mapped = storedUser(UUID.randomUUID());
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.of(mapped));
+
+        assertEquals(mapped.getUserId().toString(), userDetailsService.findExistingUserId("TestUser"));
+    }
+
+    @Test
+    public void findExistingUserIdReturnsNullWhenLookupThrows() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenThrow(new RuntimeException("db"));
+
+        assertNull(userDetailsService.findExistingUserId("TestUser"));
+    }
+
+    @Test
+    public void getOrCreateInternalUserIdReturnsNullForBlank() {
+        assertNull(userDetailsService.getOrCreateInternalUserId(null));
+        assertNull(userDetailsService.getOrCreateInternalUserId(" "));
+    }
+
+    @Test
+    public void getUserLookupIdsReturnsEmptyForBlank() {
+        assertTrue(userDetailsService.getUserLookupIds(null, true).isEmpty());
+        assertTrue(userDetailsService.getUserLookupIds("  ", false).isEmpty());
+    }
+
+    @Test
+    public void getUserLookupIdsSkipsCanonicalWhenLookupFails() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenThrow(new RuntimeException("db"));
+
+        assertIterableEquals(List.of("testuser"), userDetailsService.getUserLookupIds("TestUser", true));
+    }
+
+    @Test
+    public void matchesUserReturnsFalseForBlankInputsAndDisabledCompat() {
+        assertFalse(userDetailsService.matchesUser(null, "x", true));
+        assertFalse(userDetailsService.matchesUser("x", " ", true));
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        assertFalse(userDetailsService.matchesUser("TestUser", "legacy-id", false));
+    }
+
+    @Test
+    public void recoverIdentifierReturnsNullWhenDecryptYieldsEmpty() {
+        UUID canonicalId = UUID.randomUUID();
+        when(userDetailsRepository.findById(canonicalId)).thenReturn(Optional.of(storedUser(canonicalId)));
+        when(cryptoUtil.decrypt(any(), any())).thenReturn(new byte[0]);
+
+        assertNull(userDetailsService.recoverIdentifier(canonicalId.toString()));
+    }
+
+    @Test
+    public void encryptFailureOnCreateIsWrappedAsUserLookupException() {
+        when(userDetailsRepository.findByIdentifierHash(any())).thenReturn(Optional.empty());
+        when(cryptoUtil.encrypt(any(), any())).thenThrow(new RuntimeException("kms down"));
+
+        assertThrows(UserLookupException.class, () -> userDetailsService.getOrCreateInternalUserId("TestUser"));
+    }
+
 }

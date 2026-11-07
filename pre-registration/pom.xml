@@ -418,27 +418,11 @@
 						<phase>validate</phase>
 						<configuration>
 							<generateGitPropertiesFile>true</generateGitPropertiesFile>
-							<generateGitPropertiesFilename>${project.build.outputDirectory}/git.properties</generateGitPropertiesFilename>
+							<generateGitPropertiesFilename>${project.build.outputDirectory}/META-INF/git.properties</generateGitPropertiesFilename>
 							<includeOnlyProperties>
 								<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
 								<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
-							</includeOnlyProperties>
-							<commitIdGenerationMode>full</commitIdGenerationMode>
-							<dotGitDirectory>${maven.multiModuleProjectDirectory}/../.git</dotGitDirectory>
-						</configuration>
-					</execution>
-					<execution>
-						<id>service-git-properties</id>
-						<goals>
-							<goal>revision</goal>
-						</goals>
-						<phase>validate</phase>
-						<configuration>
-							<generateGitPropertiesFile>true</generateGitPropertiesFile>
-							<generateGitPropertiesFilename>${project.build.outputDirectory}/service-git.properties</generateGitPropertiesFilename>
-							<includeOnlyProperties>
-								<includeOnlyProperty>^git.build.(time|version)$</includeOnlyProperty>
-								<includeOnlyProperty>^git.commit.id.(abbrev|full)$</includeOnlyProperty>
+								<includeOnlyProperty>^git.commit.id$</includeOnlyProperty>
 							</includeOnlyProperties>
 							<commitIdGenerationMode>full</commitIdGenerationMode>
 							<dotGitDirectory>${maven.multiModuleProjectDirectory}/../.git</dotGitDirectory>

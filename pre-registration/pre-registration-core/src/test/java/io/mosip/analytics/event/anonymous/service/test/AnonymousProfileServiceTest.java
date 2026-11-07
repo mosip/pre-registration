@@ -105,9 +105,18 @@ public class AnonymousProfileServiceTest {
 		requestEntity.setIsDeleted(false);
 		requestDto.setProfileDetails(profile);
 
-		AnonymousProfileEntity responseEntity = new AnonymousProfileEntity();
-		Mockito.when(anonymousProfileRepostiory.save(Mockito.any())).thenReturn(responseEntity);
+		Mockito.when(anonymousProfileRepostiory.save(Mockito.any())).thenThrow(new RuntimeException("db down"));
 		assertNotNull(anonymousProfileService.saveAnonymousProfile(requestDto));
+	}
+
+	@Test
+	public void getLocalDateStringUsesNowWhenDateIsNull() {
+		assertNotNull(anonymousProfileService.getLocalDateString(null));
+	}
+
+	@Test
+	public void authUserDetailsReadsSecurityContextPrincipal() {
+		assertNotNull(anonymousProfileService.authUserDetails());
 	}
 
 }
