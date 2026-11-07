@@ -5,7 +5,7 @@ REM Linux / macOS / Git Bash: use run-local.sh
 REM
 REM   run-local.bat init | start | smoke | stop | test | all | docker
 REM Optional: SPRING_CLOUD_CONFIG_URI SPRING_CLOUD_CONFIG_LABEL PORT JDK_JAVA_OPTIONS
-REM          loader_path_env SPRING_PROFILES_ACTIVE IMAGE
+REM          loader_path_env SPRING_PROFILES_ACTIVE DOCKER_PROFILE IMAGE
 
 set "MODULE_DIR=%~dp0"
 if "%MODULE_DIR:~-1%"=="\" set "MODULE_DIR=%MODULE_DIR:~0,-1%"
@@ -20,6 +20,7 @@ set "MODULE=pre-registration-batchjob"
 
 if not defined PORT set "PORT=9097"
 if not defined SPRING_PROFILES_ACTIVE set "SPRING_PROFILES_ACTIVE=local"
+if not defined DOCKER_PROFILE set "DOCKER_PROFILE=default"
 if not defined IMAGE set "IMAGE=pre-registration-batchjob"
 if not defined loader_path_env set "loader_path_env=."
 set "CONTEXT=/preregistration/v1"
@@ -53,7 +54,7 @@ echo   run-local.bat all      init + test + start + smoke
 echo   run-local.bat docker   package, docker build, run
 echo.
 echo Port: %PORT% ^(override with set PORT=...^)
-echo Optional: SPRING_CLOUD_CONFIG_URI SPRING_CLOUD_CONFIG_LABEL JDK_JAVA_OPTIONS IMAGE loader_path_env
+echo Optional: SPRING_CLOUD_CONFIG_URI SPRING_CLOUD_CONFIG_LABEL JDK_JAVA_OPTIONS IMAGE loader_path_env DOCKER_PROFILE
 echo.
 call :print_endpoints
 exit /b 1
@@ -378,5 +379,5 @@ echo ==^> docker build %IMAGE%
 docker build -t %IMAGE% "%MODULE_DIR%"
 if errorlevel 1 exit /b 1
 call :print_endpoints
-docker run --rm -p %PORT%:9097 --name pre-registration-batchjob -e active_profile_env=%SPRING_PROFILES_ACTIVE% -e spring_config_url_env=%SPRING_CLOUD_CONFIG_URI% -e spring_config_label_env=%SPRING_CLOUD_CONFIG_LABEL% -e JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% %IMAGE%
+docker run --rm -p %PORT%:9097 --name pre-registration-batchjob -e active_profile_env=%DOCKER_PROFILE% -e spring_config_url_env=%SPRING_CLOUD_CONFIG_URI% -e spring_config_label_env=%SPRING_CLOUD_CONFIG_LABEL% -e JDK_JAVA_OPTIONS=%JDK_JAVA_OPTIONS% %IMAGE%
 exit /b %ERRORLEVEL%

@@ -4,7 +4,7 @@
 #
 #   ./run-local.sh init | start | smoke | stop | test | all | docker
 # Optional: SPRING_CLOUD_CONFIG_URI SPRING_CLOUD_CONFIG_LABEL PORT JDK_JAVA_OPTIONS
-#           loader_path_env SPRING_PROFILES_ACTIVE IMAGE
+#           loader_path_env SPRING_PROFILES_ACTIVE DOCKER_PROFILE IMAGE
 set -euo pipefail
 
 MODULE_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -16,6 +16,7 @@ PID_FILE="${PID_DIR}/prereg-batchjob.pid"
 LOG_FILE="${LOG_DIR}/prereg-batchjob.log"
 MODULE="pre-registration-batchjob"
 PROFILE="${SPRING_PROFILES_ACTIVE:-local}"
+DOCKER_PROFILE="${DOCKER_PROFILE:-default}"
 CONFIG_URI="${SPRING_CLOUD_CONFIG_URI:-}"
 CONFIG_LABEL="${SPRING_CLOUD_CONFIG_LABEL:-}"
 LOADER_PATH="${loader_path_env:-.}"
@@ -40,7 +41,7 @@ Local pre-registration-batchjob (${PROFILE} profile, :${PORT} ${CONTEXT})
   Windows cmd:
     run-local.bat init | start | smoke | stop | test | all | docker
 
-Optional: SPRING_CLOUD_CONFIG_URI SPRING_CLOUD_CONFIG_LABEL PORT JDK_JAVA_OPTIONS IMAGE loader_path_env
+Optional: SPRING_CLOUD_CONFIG_URI SPRING_CLOUD_CONFIG_LABEL PORT JDK_JAVA_OPTIONS IMAGE loader_path_env DOCKER_PROFILE
 
   all = init + test + start + smoke
 EOF
@@ -328,7 +329,7 @@ cmd_docker() {
   # shellcheck disable=SC2046
   exec docker run --rm -p "${PORT}:9097" --name pre-registration-batchjob \
     $(docker_host_args) \
-    -e "active_profile_env=${PROFILE}" \
+    -e "active_profile_env=${DOCKER_PROFILE}" \
     -e "spring_config_url_env=${CONFIG_URI}" \
     -e "spring_config_label_env=${CONFIG_LABEL}" \
     -e "JDK_JAVA_OPTIONS=${JDK_JAVA_OPTIONS:-}" \
