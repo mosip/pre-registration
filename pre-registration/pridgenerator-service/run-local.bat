@@ -19,7 +19,7 @@ set "ERR_FILE=%LOG_DIR%\pridgenerator.err.log"
 set "MODULE=pridgenerator-service"
 
 if not defined PORT set "PORT=8100"
-if not defined SPRING_PROFILES_ACTIVE set "SPRING_PROFILES_ACTIVE=default"
+if not defined SPRING_PROFILES_ACTIVE set "SPRING_PROFILES_ACTIVE=local"
 if not defined IMAGE set "IMAGE=pridgenerator-service"
 if not defined loader_path_env set "loader_path_env=."
 set "CONTEXT=/v1/pridgenerator"

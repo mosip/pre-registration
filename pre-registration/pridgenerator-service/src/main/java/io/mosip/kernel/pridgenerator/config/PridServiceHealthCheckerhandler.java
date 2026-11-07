@@ -204,12 +204,22 @@ public class PridServiceHealthCheckerhandler implements HealthCheckHandler {
 				if (ar.failed()) {
 					rc.response().setStatusCode(403).end();
 				} else {
-					healthChecks.invoke(id, this.healthSummaryHandler(rc));
+					invokeHealth(id, rc);
 				}
 			});
 		} else {
-			healthChecks.invoke(id, this.healthSummaryHandler(rc));
+			invokeHealth(id, rc);
 		}
+	}
+
+	private void invokeHealth(String id, RoutingContext rc) {
+		Handler<AsyncResult<JsonObject>> summary = this.healthSummaryHandler(rc);
+		if (id == null || id.isBlank() || "/".equals(id) || id.endsWith("actuator/health")) {
+			healthChecks.invoke(json -> summary.handle(Future.succeededFuture(json)));
+			return;
+		}
+		String checkId = id.startsWith("/") ? id.substring(1) : id;
+		healthChecks.invoke(checkId, summary);
 	}
 
 	/**
@@ -252,11 +262,6 @@ public class PridServiceHealthCheckerhandler implements HealthCheckHandler {
 
 		JsonArray checks = json.getJsonArray(PRIDHealthConstants.CHECKS);
 
-		if (status == 200 && checks.isEmpty()) {
-			// Special case, no procedure installed.
-			response.setStatusCode(204).end();
-			return;
-		}
 		if (checks != null && !checks.isEmpty()) {
 			createResponse(json, checks);
 		}

@@ -23,6 +23,7 @@ import io.mosip.preregistration.core.common.dto.CancelBookingResponseDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.kernel.core.exception.BaseCheckedException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 
 /**
@@ -59,6 +60,19 @@ public class InProcessBookingClientTest {
 
 		assertEquals("PRG_BOOK_RCI_007", actual.getErrors().get(0).getErrorCode());
 		assertEquals("center missing", actual.getErrors().get(0).getMessage());
+	}
+
+	@Test
+	public void bookAppointmentMapsCheckedExceptionToErrorEnvelope() {
+		MainRequestDTO<BookingRequestDTO> request = new MainRequestDTO<>();
+		when(bookingService.bookAppointment(request, PRE_ID)).thenAnswer(invocation -> {
+			throw new BaseCheckedException("PRG_BOOK_RCI_032", "no appointment");
+		});
+
+		MainResponseDTO<BookingStatusDTO> actual = client.bookAppointment(request, PRE_ID);
+
+		assertEquals("PRG_BOOK_RCI_032", actual.getErrors().get(0).getErrorCode());
+		assertEquals("no appointment", actual.getErrors().get(0).getMessage());
 	}
 
 	@Test

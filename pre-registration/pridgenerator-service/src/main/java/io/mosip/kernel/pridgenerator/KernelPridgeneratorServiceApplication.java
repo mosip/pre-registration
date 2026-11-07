@@ -23,6 +23,7 @@ import io.mosip.kernel.pridgenerator.config.ConfigUrlsBuilder;
 import io.mosip.kernel.pridgenerator.config.HibernateDaoConfig;
 import io.mosip.kernel.pridgenerator.constant.EventType;
 import io.mosip.kernel.pridgenerator.constant.PRIDGeneratorConstant;
+import io.mosip.kernel.pridgenerator.verticle.PridFetcherVerticle;
 import io.mosip.kernel.pridgenerator.verticle.PridPoolCheckerVerticle;
 import io.mosip.kernel.pridgenerator.verticle.PridPopulatorVerticle;
 import io.mosip.kernel.templatemanager.velocity.builder.TemplateManagerBuilderImpl;
@@ -166,6 +167,7 @@ public class KernelPridgeneratorServiceApplication {
 		vertx = Vertx.vertx(options);
 		Verticle[] workerVerticles = { new PridPoolCheckerVerticle(context), new PridPopulatorVerticle(context) };
 		Stream.of(workerVerticles).forEach(verticle -> deploy(verticle, workerOptions, vertx));
+		deploy(new PridFetcherVerticle(context), new DeploymentOptions(), vertx);
 		vertx.setTimer(1000, handler -> initPool());
 	}
 

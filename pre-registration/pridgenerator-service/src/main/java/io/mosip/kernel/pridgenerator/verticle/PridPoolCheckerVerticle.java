@@ -11,9 +11,7 @@ import io.mosip.kernel.pridgenerator.constant.PRIDHealthConstants;
 import io.mosip.kernel.pridgenerator.constant.PridLifecycleStatus;
 import io.mosip.kernel.pridgenerator.service.PridService;
 import io.vertx.core.AbstractVerticle;
-import io.vertx.core.DeploymentOptions;
 import io.vertx.core.Future;
-import io.vertx.core.Verticle;
 import io.vertx.core.eventbus.DeliveryOptions;
 import io.vertx.core.eventbus.EventBus;
 import io.vertx.core.eventbus.MessageConsumer;
@@ -82,8 +80,7 @@ public class PridPoolCheckerVerticle extends AbstractVerticle {
 				eventBus.send(EventType.GENERATEPOOL, noOfFreeprids, deliveryOptions, replyHandler -> {
 					if (replyHandler.succeeded()) {
 						locked.set(false);
-						deployHttpVerticle(start);
-						LOGGER.info("population of init pool done");
+						LOGGER.info("population of init pool done in {} ms", System.currentTimeMillis() - start);
 					} else if (replyHandler.failed()) {
 						locked.set(false);
 						LOGGER.error("population failed with cause ", replyHandler.cause());
@@ -91,24 +88,9 @@ public class PridPoolCheckerVerticle extends AbstractVerticle {
 					}
 				});
 			} else {
-				deployHttpVerticle(start);
+				LOGGER.info("pool already at threshold, skip generation");
 			}
 		});
-	}
-
-	private void deployHttpVerticle(long start) {
-		Verticle httpVerticle = new PridFetcherVerticle(context);
-		DeploymentOptions opts = new DeploymentOptions();
-		vertx.deployVerticle(httpVerticle, opts, res -> {
-			if (res.failed()) {
-				LOGGER.info("Failed to deploy verticle " + httpVerticle.getClass().getSimpleName() + " " + res.cause());
-			} else if (res.succeeded()) {
-				LOGGER.info("population of pool is done starting fetcher verticle");
-				LOGGER.info("Starting pridgenerator service... ");
-				LOGGER.info("service took {} ms to pool and start", (System.currentTimeMillis() - start));
-				LOGGER.info("Deployed verticle " + httpVerticle.getClass().getSimpleName());
-			}
-		});
-
+		startFuture.complete();
 	}
 }

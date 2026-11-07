@@ -127,9 +127,6 @@
 						<goals>
 							<goal>build-info</goal>
 						</goals>
-						<configuration>
-							<outputFile>${project.build.outputDirectory}/build-info.properties</outputFile>
-						</configuration>
 					</execution>
 					<execution>
 						<id>repackage</id>
