@@ -19,7 +19,7 @@ set "ERR_FILE=%LOG_DIR%\prereg-batchjob.err.log"
 set "MODULE=pre-registration-batchjob"
 
 if not defined PORT set "PORT=9097"
-if not defined SPRING_PROFILES_ACTIVE set "SPRING_PROFILES_ACTIVE=default"
+if not defined SPRING_PROFILES_ACTIVE set "SPRING_PROFILES_ACTIVE=local"
 if not defined IMAGE set "IMAGE=pre-registration-batchjob"
 if not defined loader_path_env set "loader_path_env=."
 set "CONTEXT=/preregistration/v1"
