@@ -18,6 +18,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestContext;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -109,5 +114,30 @@ public class AuditLogUtilTest {
 		auditLogUtilSpy.saveAuditDetails(auditRequestDto);
 		assertEquals(canonical, auditRequestDto.getSessionUserId());
 		assertEquals(canonical, auditRequestDto.getSessionUserName());
+	}
+
+	@Test(expected = HttpServerErrorException.class)
+	public void callAuditManagerPropagatesHttpServerError() {
+		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
+				Mockito.any(ParameterizedTypeReference.class)))
+				.thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+		auditUtil.callAuditManager(auditRequestDto);
+	}
+
+	@Test
+	public void callAuditManagerSwallowsHttpClientError() {
+		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
+				Mockito.any(ParameterizedTypeReference.class)))
+				.thenThrow(HttpClientErrorException.create(HttpStatus.BAD_REQUEST, "Bad Request", HttpHeaders.EMPTY,
+						new byte[0], null));
+		assertEquals(false, auditUtil.callAuditManager(auditRequestDto));
+	}
+
+	@Test(expected = HttpServerErrorException.class)
+	public void callAuditManagerWithHeadersPropagatesHttpServerError() {
+		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.POST), Mockito.any(),
+				Mockito.any(ParameterizedTypeReference.class)))
+				.thenThrow(new HttpServerErrorException(HttpStatus.INTERNAL_SERVER_ERROR));
+		auditUtil.callAuditManager(auditRequestDto, new HttpHeaders());
 	}
 }

@@ -61,5 +61,6 @@ public class PridPopulatorVerticle extends AbstractVerticle {
 
 			LOGGER.info("No of prids persisted are {}", count);
 		});
+		startFuture.complete();
 	}
 }

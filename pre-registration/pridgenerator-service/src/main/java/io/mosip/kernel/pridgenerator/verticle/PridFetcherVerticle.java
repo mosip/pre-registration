@@ -38,7 +38,6 @@ public class PridFetcherVerticle extends AbstractVerticle {
 	 * @param context context
 	 */
 	public PridFetcherVerticle(final ApplicationContext context) {
-		// authHandler = (AuthHandler) context.getBean("authHandler");
 		pridFetcherRouter = (PridFetcherRouter) context.getBean("pridFetcherRouter");
 		environment = context.getEnvironment();
 	}
@@ -64,15 +63,12 @@ public class PridFetcherVerticle extends AbstractVerticle {
 		healthCheckHandler.register("db", healthCheckHandler::databaseHealthChecker);
 		healthCheckHandler.register("diskspace", healthCheckHandler::dispSpaceHealthChecker);
 		healthCheckHandler.register("pridgenerator", f -> healthCheckHandler.verticleHealthHandler(f, vertx));
-		// giving the root to parent router
 		parentRouter.route().consumes(PRIDGeneratorConstant.APPLICATION_JSON)
 				.produces(PRIDGeneratorConstant.APPLICATION_JSON);
-		// mount all the routers to parent router
-		parentRouter.mountSubRouter(environment.getProperty(PRIDGeneratorConstant.SERVER_SERVLET_PATH), metricRouter);
-		parentRouter.get(environment.getProperty(PRIDGeneratorConstant.SERVER_SERVLET_PATH)+PRIDGeneratorConstant.HEALTH_ENDPOINT).handler(healthCheckHandler);
-		parentRouter.mountSubRouter(
-				environment.getProperty(PRIDGeneratorConstant.SERVER_SERVLET_PATH) + PRIDGeneratorConstant.PRID,
-				pridFetcherRouter.createRouter(vertx));
+		String servletPath = environment.getProperty(PRIDGeneratorConstant.SERVER_SERVLET_PATH);
+		parentRouter.mountSubRouter(servletPath, metricRouter);
+		parentRouter.get(servletPath + PRIDGeneratorConstant.HEALTH_ENDPOINT).handler(healthCheckHandler);
+		parentRouter.mountSubRouter(servletPath + PRIDGeneratorConstant.PRID, pridFetcherRouter.createRouter(vertx));
 
 		httpServer.requestHandler(parentRouter);
 		int port = Integer.parseInt(environment.getProperty(PRIDGeneratorConstant.SERVER_PORT));
