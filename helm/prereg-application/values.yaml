@@ -419,6 +419,10 @@ istio:
     - uri:
         prefix: /preregistration/v1/captcha
     - uri:
+        prefix: /preregistration/v1/actuator/info
+    - uri:
+        prefix: /preregistration/v1/actuator/health
+    - uri:
         prefix: /preregistration/v1/swagger-ui
     - uri:
         prefix: /preregistration/v1/v3/api-docs
