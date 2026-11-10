@@ -426,7 +426,3 @@ istio:
         prefix: /preregistration/v1/swagger-ui
     - uri:
         prefix: /preregistration/v1/v3/api-docs
-    - uri:
-        prefix: /preregistration/v1/application-service/swagger-ui
-    - uri:
-        prefix: /preregistration/v1/application-service/v3/api-docs
