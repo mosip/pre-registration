@@ -33,6 +33,9 @@ import io.mosip.preregistration.core.PreRegistartionCoreApplication;
 		"io.mosip.kernel.idvalidator.mispid.impl.MispIdValidatorImpl",
 		"io.mosip.kernel.pdfgenerator.impl.PDFGeneratorImpl",
 		"io.mosip.kernel.applicanttype.api.impl.ApplicantTypeImpl",
+		// Config-server sets referenceValidator to the loader.path SPI. This job does not
+		// validate identity JSON, and the batch image does not fetch that jar.
+		"io.mosip.kernel.idobjectvalidator.config.IdObjectValidatorConfig",
 		"io.mosip.kernel.websub.api.config.IntentVerificationConfig",
 		"io.mosip.kernel.websub.api.config.WebSubClientConfig",
 		"io.mosip.kernel.websub.api.config.publisher.WebSubPublisherClientConfig",
