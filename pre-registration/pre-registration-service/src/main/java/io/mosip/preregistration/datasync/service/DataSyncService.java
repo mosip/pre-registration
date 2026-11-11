@@ -171,21 +171,6 @@ public class DataSyncService {
 		responseDto.setId(fetchAllId);
 		responseDto.setVersion(version);
 		requiredRequestMap.put("id", fetchAllId);
-		String actorUserId = null;
-		String actorUsername = null;
-		try {
-			AuthUserDetails user = authUserDetails();
-			if (user != null) {
-				actorUserId = user.getUserId();
-				actorUsername = user.getUsername();
-			}
-		} catch (Exception ex) {
-			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Auth context unavailable while resolving the datasync actor", ex);
-		}
-		String refId = dataSyncRequest != null && dataSyncRequest.getRequest() != null
-				? dataSyncRequest.getRequest().getRegistrationCenterId()
-				: null;
 		try {
 			validationUtil.requestValidator(dataSyncRequest);
 			if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(dataSyncRequest), requiredRequestMap)) {
@@ -205,7 +190,9 @@ public class DataSyncService {
 				responseDto.setResponse(preRegistrationIdsDTO);
 			}
 			isRetrieveAllSuccess = true;
-		} catch (Exception ex) {
+		} catch (
+
+		Exception ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In retrieveAllPreRegIds method of datasync service - " + ex.getMessage());
@@ -214,11 +201,13 @@ public class DataSyncService {
 			if (isRetrieveAllSuccess) {
 				setAuditValues(EventId.PRE_406.toString(), EventName.SYNC.toString(), EventType.BUSINESS.toString(),
 						"Retrieval of all the Preregistration Id is successful",
-						AuditLogVariables.MULTIPLE_ID.toString(), actorUserId, actorUsername, refId);
+						AuditLogVariables.MULTIPLE_ID.toString(), authUserDetails().getUserId(),
+						authUserDetails().getUsername(), dataSyncRequest.getRequest().getRegistrationCenterId());
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
 						"Retrieval of all the Preregistration Id is unsuccessful", AuditLogVariables.NO_ID.toString(),
-						actorUserId, actorUsername, refId);
+						authUserDetails().getUserId(), authUserDetails().getUsername(),
+						dataSyncRequest.getRequest().getRegistrationCenterId());
 			}
 		}
 		return responseDto;

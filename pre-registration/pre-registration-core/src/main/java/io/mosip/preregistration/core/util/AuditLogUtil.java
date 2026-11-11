@@ -31,7 +31,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.HttpServerErrorException;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -212,12 +212,11 @@ public class AuditLogUtil {
 			AuditResponseDto responseDTO = (AuditResponseDto) requestBodyExchangeObject(
 					responseToString(response.getResponse()), AuditResponseDto.class);
 			auditFlag = responseDTO.isStatus();
-		} catch (HttpServerErrorException ex) {
-			throw ex;
-		} catch (Exception ex) {
+		} catch (HttpClientErrorException ex) {
 			log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"In callAuditManager method of AugitLogUtil Util - " + ex.getMessage());
+					"In callAuditManager method of AugitLogUtil Util for HttpClientErrorException- "
+							+ ex.getResponseBodyAsString());
 		}
 		return auditFlag;
 	}
@@ -417,11 +416,10 @@ public class AuditLogUtil {
 			if (body != null) {
 				auditFlag = body.getResponse().isStatus();
 			}
-		} catch (HttpServerErrorException ex) {
-			throw ex;
-		} catch (Exception ex) {
+		} catch (HttpClientErrorException ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"In callAuditManager method of AugitLogUtil Util - " + ex.getMessage());
+					"In callAuditManager method of AugitLogUtil Util for HttpClientErrorException- "
+							+ ex.getResponseBodyAsString());
 		}
 		return auditFlag;
 	}

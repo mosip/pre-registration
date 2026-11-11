@@ -41,14 +41,15 @@ public class PreregApiPathConfig implements WebMvcConfigurer {
 	}
 
 	/**
-	 * Serves both MOSIP swagger entry points under {@code /preregistration/v1}:
-	 * {@code /swagger-ui.html} and {@code /swagger-ui/index.html}.
+	 * Short URL {@code /swagger-ui} → real UI {@code /swagger-ui/index.html}.
+	 * {@code /swagger-ui.html} stays Springdoc's welcome page (do not map that path
+	 * here; {@code springdoc.swagger-ui.path=/swagger-ui/index.html} doubles the
+	 * folder to {@code /swagger-ui/swagger-ui/index.html}).
 	 *
 	 * @param registry MVC view-controller registry supplied by Spring Boot
 	 */
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addRedirectViewController("/swagger-ui.html", "/swagger-ui/index.html");
 		registry.addRedirectViewController("/swagger-ui", "/swagger-ui/index.html");
 	}
 }
