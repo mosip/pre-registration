@@ -771,6 +771,20 @@ public class BookingServiceUtilTest {
 		serviceUtil.assertAppointmentOwner("23587986034785");
 	}
 
+	@Test
+	public void assertAppointmentOwnerUnknownApplicationReturnsApp013() {
+		AuthUserDetails user = (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		Mockito.doReturn(List.of(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"))).when(user).getAuthorities();
+		Mockito.when(applicationRepostiory.findByApplicationId("ggfr3567ugg")).thenReturn(null);
+
+		try {
+			serviceUtil.assertAppointmentOwner("ggfr3567ugg");
+			throw new AssertionError("expected RecordNotFoundException");
+		} catch (RecordNotFoundException ex) {
+			assertEquals("PRG_APP_013", ex.getErrorCode());
+		}
+	}
+
 	@Test(expected = PreIdInvalidForUserIdException.class)
 	public void assertAppointmentOwnerRejectsMismatchedIndividual() {
 		AuthUserDetails user = (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
