@@ -7,7 +7,7 @@ Docker runs Postgres, config-server, WireMock, MinIO, keymanager (`:8088`), [moc
 ./run-prereg-local.sh run     # or run-prereg-local.bat on Windows cmd
 ```
 
-Swagger: http://localhost:9090/preregistration/v1/swagger-ui/index.html — Authorize, header `Authorization`.
+Swagger: http://localhost:9090/preregistration/v1/application-service/swagger-ui.html — Authorize, header `Authorization`.
 
 Postman (all local APIs): import [`postman/Pre-Registration-Local.postman_collection.json`](postman/Pre-Registration-Local.postman_collection.json) and [`postman/Pre-Registration-Local.postman_environment.json`](postman/Pre-Registration-Local.postman_environment.json). How-to: [`postman/README.md`](postman/README.md).
 

@@ -43,7 +43,7 @@ java -jar pre-registration-service/target/pre-registration-service-*.jar
 
 Or from `local-dev-setup/`: `./run-prereg-local.sh run` (Windows: `run-prereg-local.bat run`).
 
-Swagger: http://localhost:9090/preregistration/v1/swagger-ui/index.html — Authorize uses header `Authorization`.
+Swagger: http://localhost:9090/preregistration/v1/application-service/swagger-ui.html (also `/sync/datasync-service`, `/captcha-service`, `/appointment/booking-service`). Authorize uses header `Authorization`.
 
 ## Configuration
 

@@ -84,7 +84,7 @@ mvn clean install -Dmaven.javadoc.skip=true -Dgpg.skip=true
 java -jar pre-registration-service/target/pre-registration-service-1.4.1-SNAPSHOT.jar
 ```
 
-Swagger: http://localhost:9090/preregistration/v1/swagger-ui/index.html — one spec (`/v3/api-docs`), Authorize header `Authorization`.
+Swagger: http://localhost:9090/preregistration/v1/application-service/swagger-ui.html — four catalog UIs (`/application-service`, `/sync/datasync-service`, `/captcha-service`, `/appointment/booking-service`). Authorize header `Authorization`.
 
 ### Docker Hub
 
