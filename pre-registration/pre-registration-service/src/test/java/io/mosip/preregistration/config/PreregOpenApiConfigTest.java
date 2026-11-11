@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.redirectedUrl;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Before;
@@ -22,7 +23,7 @@ public class PreregOpenApiConfigTest {
 
 	@Before
 	public void setUp() {
-		mockMvc = MockMvcBuilders.standaloneSetup(new PreregOpenApiConfig.PerServiceSwaggerUiController()).build();
+		mockMvc = MockMvcBuilders.standaloneSetup(new PreregSwaggerUiController()).build();
 	}
 
 	@Test
@@ -59,5 +60,20 @@ public class PreregOpenApiConfigTest {
 						.contextPath("/preregistration/v1"))
 				.andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
 		assertTrue(html.contains("'urls.primaryName': 'MOSIP Pre-Registration Booking'"));
+	}
+
+	@Test
+	public void datasyncSwaggerHtmlRedirectsToIndex() throws Exception {
+		mockMvc.perform(get("/preregistration/v1/sync/datasync-service/swagger-ui.html")
+				.contextPath("/preregistration/v1"))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/preregistration/v1/sync/datasync-service/swagger-ui/index.html"));
+	}
+
+	@Test
+	public void rootSwaggerHtmlStaysOnSwaggerUiPrefix() throws Exception {
+		mockMvc.perform(get("/preregistration/v1/swagger-ui.html").contextPath("/preregistration/v1"))
+				.andExpect(status().is3xxRedirection())
+				.andExpect(redirectedUrl("/preregistration/v1/swagger-ui/index.html"));
 	}
 }

@@ -63,11 +63,18 @@ ensure_dirs() {
 print_endpoints() {
   echo
   echo "prereg-service  profile=${PROFILE}  port=${PORT}  context=${CONTEXT}"
-  echo "  health      ${BASE}/actuator/health"
-  echo "  swagger     ${BASE}/swagger-ui/index.html"
-  echo "  swagger-ui  ${BASE}/swagger-ui.html"
-  echo "  openapi     ${BASE}/v3/api-docs"
-  echo "  convert     POST ${BASE}/convert"
+  echo "  health           ${BASE}/actuator/health"
+  echo "  swagger          ${BASE}/swagger-ui/index.html"
+  echo "  swagger-ui       ${BASE}/swagger-ui.html"
+  echo "  application      ${BASE}/application-service/swagger-ui.html"
+  echo "  application-api  ${BASE}/application-service/v3/api-docs"
+  echo "  datasync         ${BASE}/sync/datasync-service/swagger-ui.html"
+  echo "  datasync-api     ${BASE}/sync/datasync-service/v3/api-docs"
+  echo "  captcha          ${BASE}/captcha-service/swagger-ui.html"
+  echo "  captcha-api      ${BASE}/captcha-service/v3/api-docs"
+  echo "  booking          ${BASE}/appointment/booking-service/swagger-ui.html"
+  echo "  booking-api      ${BASE}/appointment/booking-service/v3/api-docs"
+  echo "  convert          POST ${BASE}/convert"
   echo
 }
 

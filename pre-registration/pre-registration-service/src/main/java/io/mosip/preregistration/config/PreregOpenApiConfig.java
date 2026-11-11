@@ -13,10 +13,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -28,7 +24,6 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.info.License;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
-import jakarta.servlet.http.HttpServletRequest;
 
 /**
  * OpenAPI 3 / SpringDoc for the consolidated Pre-Registration deployable.
@@ -116,30 +111,24 @@ public class PreregOpenApiConfig implements WebMvcConfigurer {
 	 */
 	@Override
 	public void addResourceHandlers(ResourceHandlerRegistry registry) {
+		registry.addResourceHandler("/swagger-ui/**")
+				.addResourceLocations(SWAGGER_UI_WEBJAR_LOCATION)
+				.resourceChain(false);
 		for (SwaggerMount mount : SWAGGER_MOUNTS) {
 			registry.addResourceHandler(mount.uiBasePath() + "/swagger-ui/**")
 					.addResourceLocations(SWAGGER_UI_WEBJAR_LOCATION)
-					.resourceChain(true);
+					.resourceChain(false);
 		}
 	}
 
 	@Override
 	public void addViewControllers(ViewControllerRegistry registry) {
 		for (SwaggerMount mount : SWAGGER_MOUNTS) {
-			String index = mount.swaggerUiIndexPath();
-			registry.addRedirectViewController(mount.uiBasePath() + "/swagger-ui.html", index);
-			registry.addRedirectViewController(mount.uiBasePath() + "/swagger-ui", index);
-			registry.addRedirectViewController(mount.uiBasePath() + "/swagger-ui/", index);
 			registry.addViewController(mount.uiBasePath() + "/v3/api-docs")
 					.setViewName("forward:" + mount.springDocGroupPath());
 			registry.addViewController(mount.uiBasePath() + "/v3/api-docs/")
 					.setViewName("forward:" + mount.springDocGroupPath());
 		}
-		String applicationIndex = SWAGGER_MOUNTS.get(0).swaggerUiIndexPath();
-		registry.addRedirectViewController("/swagger-ui.html", applicationIndex);
-		registry.addRedirectViewController("/swagger-ui", applicationIndex);
-		registry.addRedirectViewController("/swagger-ui/", applicationIndex);
-		registry.addRedirectViewController("/swagger-ui/index.html", applicationIndex);
 	}
 
 	/**
@@ -241,109 +230,15 @@ public class PreregOpenApiConfig implements WebMvcConfigurer {
 					.getResources("classpath*:/META-INF/resources/webjars/swagger-ui/*/swagger-ui.css");
 			if (resources.length > 0) {
 				String url = resources[0].getURL().toExternalForm();
-				int marker = url.lastIndexOf("/swagger-ui.css");
-				if (marker > 0) {
-					String dir = url.substring(0, marker + 1);
-					if (dir.startsWith("jar:")) {
-						int bang = dir.indexOf("!/");
-						if (bang >= 0) {
-							return "classpath:" + dir.substring(bang + 1);
-						}
-					}
-					if (dir.contains("META-INF/resources/webjars/swagger-ui/")) {
-						return "classpath:/" + dir.substring(dir.indexOf("META-INF/"));
-					}
+				int meta = url.indexOf("META-INF/resources/webjars/swagger-ui/");
+				int css = url.lastIndexOf("/swagger-ui.css");
+				if (meta >= 0 && css > meta) {
+					return "classpath:/" + url.substring(meta, css + 1);
 				}
 			}
 		} catch (IOException ignored) {
 			// fall through to default
 		}
 		return "classpath:/META-INF/resources/webjars/swagger-ui/";
-	}
-
-	/**
-	 * Dedicated Swagger UI HTML under each legacy catalog prefix. Asset hrefs are relative
-	 * so the browser requests {@code {prefix}/swagger-ui/swagger-ui.css}, which Istio already
-	 * routes when the prefix is {@code /appointment/**} or {@code /sync/**}.
-	 */
-	@Controller
-	public static class PerServiceSwaggerUiController {
-
-		@GetMapping(path = {
-				APPLICATION_SWAGGER_PREFIX + "/swagger-ui/index.html",
-				DATASYNC_SWAGGER_PREFIX + "/swagger-ui/index.html",
-				CAPTCHA_SWAGGER_PREFIX + "/swagger-ui/index.html",
-				BOOKING_SWAGGER_PREFIX + "/swagger-ui/index.html"
-		}, produces = MediaType.TEXT_HTML_VALUE)
-		@ResponseBody
-		public String swaggerUiIndex(HttpServletRequest request) {
-			SwaggerMount mount = resolveMount(request.getRequestURI())
-					.orElse(SWAGGER_MOUNTS.get(0));
-			return renderSwaggerHtml(mount, request.getContextPath());
-		}
-
-		private static java.util.Optional<SwaggerMount> resolveMount(String requestUri) {
-			String path = requestUri == null ? "" : requestUri;
-			return SWAGGER_MOUNTS.stream()
-					.sorted((a, b) -> Integer.compare(b.uiBasePath().length(), a.uiBasePath().length()))
-					.filter(m -> path.contains(m.uiBasePath() + "/swagger-ui"))
-					.findFirst();
-		}
-
-		private static String renderSwaggerHtml(SwaggerMount mount, String contextPath) {
-			String title = escape(mount.title());
-			String urls = swaggerDefinitionUrls(contextPath == null ? "" : contextPath);
-			String primaryName = escape(mount.title());
-			return """
-					<!DOCTYPE html>
-					<html lang="en">
-					<head>
-					  <meta charset="UTF-8">
-					  <title>%s</title>
-					  <link rel="stylesheet" type="text/css" href="swagger-ui.css">
-					  <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
-					</head>
-					<body>
-					  <div id="swagger-ui"></div>
-					  <script src="swagger-ui-bundle.js"></script>
-					  <script src="swagger-ui-standalone-preset.js"></script>
-					  <script>
-					    window.onload = function() {
-					      window.ui = SwaggerUIBundle({
-					        urls: %s,
-					        'urls.primaryName': '%s',
-					        dom_id: '#swagger-ui',
-					        deepLinking: true,
-					        queryConfigEnabled: true,
-					        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
-					        plugins: [SwaggerUIBundle.plugins.DownloadUrl],
-					        layout: 'StandaloneLayout',
-					        persistAuthorization: true,
-					        validatorUrl: ''
-					      });
-					    };
-					  </script>
-					</body>
-					</html>
-					""".formatted(title, urls, primaryName);
-		}
-
-		private static String swaggerDefinitionUrls(String contextPath) {
-			StringBuilder urls = new StringBuilder("[");
-			for (int i = 0; i < SWAGGER_MOUNTS.size(); i++) {
-				SwaggerMount mount = SWAGGER_MOUNTS.get(i);
-				if (i > 0) {
-					urls.append(',');
-				}
-				urls.append("{url:'").append(escape(contextPath + mount.apiDocsPath()))
-						.append("',name:'").append(escape(mount.title())).append("'}");
-			}
-			urls.append(']');
-			return urls.toString();
-		}
-
-		private static String escape(String value) {
-			return value.replace("'", "\\'").replace("<", "&lt;").replace(">", "&gt;");
-		}
 	}
 }
