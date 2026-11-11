@@ -4,7 +4,6 @@ import static io.mosip.preregistration.common.constant.PreregApiPathConstants.CA
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.PathMatchConfigurer;
-import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import io.mosip.preregistration.captcha.controller.CaptchaController;
@@ -38,17 +37,5 @@ public class PreregApiPathConfig implements WebMvcConfigurer {
 	@Override
 	public void configurePathMatch(PathMatchConfigurer configurer) {
 		configurer.addPathPrefix(CAPTCHA_PATH_PREFIX, CaptchaController.class::isAssignableFrom);
-	}
-
-	/**
-	 * Serves both MOSIP swagger entry points under {@code /preregistration/v1}:
-	 * {@code /swagger-ui.html} and {@code /swagger-ui/index.html}.
-	 *
-	 * @param registry MVC view-controller registry supplied by Spring Boot
-	 */
-	@Override
-	public void addViewControllers(ViewControllerRegistry registry) {
-		registry.addRedirectViewController("/swagger-ui.html", "/swagger-ui/index.html");
-		registry.addRedirectViewController("/swagger-ui", "/swagger-ui/index.html");
 	}
 }

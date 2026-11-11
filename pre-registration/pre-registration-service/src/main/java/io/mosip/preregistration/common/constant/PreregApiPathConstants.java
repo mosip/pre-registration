@@ -21,6 +21,29 @@ public final class PreregApiPathConstants {
 	 */
 	public static final String CAPTCHA_PATH_PREFIX = "/captcha";
 
+	/**
+	 * Legacy application swagger prefix (relative to {@code /preregistration/v1}).
+	 * Catalog: {@code /application-service/swagger-ui.html}.
+	 */
+	public static final String APPLICATION_SWAGGER_PREFIX = "/application-service";
+
+	/**
+	 * Legacy datasync swagger prefix. Catalog:
+	 * {@code /sync/datasync-service/swagger-ui.html}.
+	 */
+	public static final String DATASYNC_SWAGGER_PREFIX = "/sync/datasync-service";
+
+	/**
+	 * Legacy captcha swagger prefix. Catalog: {@code /captcha-service/swagger-ui.html}.
+	 */
+	public static final String CAPTCHA_SWAGGER_PREFIX = "/captcha-service";
+
+	/**
+	 * Legacy booking swagger prefix. Catalog:
+	 * {@code /appointment/booking-service/swagger-ui.html}.
+	 */
+	public static final String BOOKING_SWAGGER_PREFIX = "/appointment/booking-service";
+
 	/** Hidden constructor — constants only. */
 	private PreregApiPathConstants() {
 	}

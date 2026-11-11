@@ -17,7 +17,7 @@ cd pre-registration/local-dev-setup
 
 Optional: PRID generator on `:8100` for folder **11 - PRID generator**.
 
-Swagger (same APIs): http://localhost:9090/preregistration/v1/swagger-ui/index.html — Authorize uses header `Authorization`.
+Swagger (same APIs): http://localhost:9090/preregistration/v1/application-service/swagger-ui.html — Authorize uses header `Authorization`.
 
 ## Suggested order
 

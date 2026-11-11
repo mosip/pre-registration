@@ -328,8 +328,8 @@ public class BookingServiceUtil {
 		}
 		ApplicationEntity applicationEntity = applicationRepostiory.findByApplicationId(preId);
 		if (applicationEntity == null) {
-			throw new RecordNotFoundException(ApplicationErrorCodes.PRG_APP_013.getCode(),
-					ApplicationErrorMessages.NO_RECORD_FOUND.getMessage());
+			throw new BookingPreIdNotFoundException(ErrorCodes.PRG_BOOK_RCI_006.getCode(),
+					ErrorMessages.PREREGISTRATION_ID_NOT_ENTERED.getMessage());
 		}
 		String expectedCrBy = applicationEntity.getEffectiveCrBy() == null ? ""
 				: applicationEntity.getEffectiveCrBy().trim();

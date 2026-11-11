@@ -427,6 +427,10 @@ istio:
     - uri:
         prefix: /preregistration/v1/v3/api-docs
     - uri:
-        prefix: /preregistration/v1/application-service/swagger-ui
+        prefix: /preregistration/v1/application-service
     - uri:
-        prefix: /preregistration/v1/application-service/v3/api-docs
+        prefix: /preregistration/v1/sync/datasync-service
+    - uri:
+        prefix: /preregistration/v1/captcha-service
+    - uri:
+        prefix: /preregistration/v1/appointment/booking-service
