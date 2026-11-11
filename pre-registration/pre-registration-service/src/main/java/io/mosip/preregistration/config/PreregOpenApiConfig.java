@@ -8,6 +8,8 @@ import static io.mosip.preregistration.common.constant.PreregApiPathConstants.DA
 import java.io.IOException;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springdoc.core.models.GroupedOpenApi;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -52,6 +54,8 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
  */
 @Configuration
 public class PreregOpenApiConfig implements WebMvcConfigurer {
+
+	private static final Logger LOGGER = LoggerFactory.getLogger(PreregOpenApiConfig.class);
 
 	/** Mount points: UI base path (no trailing slash), SpringDoc group id, page title. */
 	public static final List<SwaggerMount> SWAGGER_MOUNTS = List.of(
@@ -224,6 +228,12 @@ public class PreregOpenApiConfig implements WebMvcConfigurer {
 						.url(openApiProperties.getInfo().getLicense().getUrl()));
 	}
 
+	/**
+	 * Locates the versioned swagger-ui webjar folder on the classpath.
+	 * Falls back to the unversioned META-INF path when discovery fails.
+	 *
+	 * @return classpath location with a trailing slash
+	 */
 	private static String resolveSwaggerUiWebJarLocation() {
 		try {
 			Resource[] resources = new PathMatchingResourcePatternResolver()
@@ -236,8 +246,8 @@ public class PreregOpenApiConfig implements WebMvcConfigurer {
 					return "classpath:/" + url.substring(meta, css + 1);
 				}
 			}
-		} catch (IOException ignored) {
-			// fall through to default
+		} catch (IOException exception) {
+			LOGGER.warn("Cannot resolve Swagger UI webjar location; using fallback", exception);
 		}
 		return "classpath:/META-INF/resources/webjars/swagger-ui/";
 	}

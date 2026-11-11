@@ -22,11 +22,24 @@ import jakarta.servlet.http.HttpServletRequest;
 @Controller
 public class PreregSwaggerUiController {
 
+	/**
+	 * Redirects the root catalog landing pages onto {@code /swagger-ui/index.html}
+	 * so they stay on the existing Istio {@code /swagger-ui} prefix.
+	 *
+	 * @return Spring MVC redirect view name
+	 */
 	@GetMapping(path = { "/swagger-ui.html", "/swagger-ui", "/swagger-ui/" })
 	public String redirectRootSwaggerUi() {
 		return "redirect:/swagger-ui/index.html";
 	}
 
+	/**
+	 * Redirects a per-service {@code swagger-ui.html} landing URL to that catalog's
+	 * {@code index.html}. Literal mappings beat DataSync {@code /sync/{id}/{machineId}}.
+	 *
+	 * @param request inbound catalog request (URI selects the mount)
+	 * @return Spring MVC redirect view name
+	 */
 	@GetMapping(path = {
 			APPLICATION_SWAGGER_PREFIX + "/swagger-ui.html",
 			APPLICATION_SWAGGER_PREFIX + "/swagger-ui",
@@ -46,6 +59,12 @@ public class PreregSwaggerUiController {
 		return "redirect:" + mount.swaggerUiIndexPath();
 	}
 
+	/**
+	 * Serves the catalog Swagger UI HTML (relative webjar assets + grouped OpenAPI URLs).
+	 *
+	 * @param request inbound index request (URI selects the mount)
+	 * @return HTML document for Swagger UI
+	 */
 	@GetMapping(path = {
 			"/swagger-ui/index.html",
 			APPLICATION_SWAGGER_PREFIX + "/swagger-ui/index.html",
@@ -59,6 +78,12 @@ public class PreregSwaggerUiController {
 		return renderSwaggerHtml(mount, request.getContextPath());
 	}
 
+	/**
+	 * Picks the longest catalog prefix contained in {@code requestUri}.
+	 *
+	 * @param requestUri servlet URI, possibly {@code null}
+	 * @return matching mount, or empty when the URI is not a catalog swagger path
+	 */
 	static java.util.Optional<SwaggerMount> resolveMount(String requestUri) {
 		String path = requestUri == null ? "" : requestUri;
 		return SWAGGER_MOUNTS.stream()
@@ -67,6 +92,14 @@ public class PreregSwaggerUiController {
 				.findFirst();
 	}
 
+	/**
+	 * Builds the catalog HTML. {@code queryConfigEnabled} is false so a crafted
+	 * {@code ?url=} cannot replace the OpenAPI document (and leak Authorize).
+	 *
+	 * @param mount       catalog whose title and docs URL are primary
+	 * @param contextPath servlet context, possibly {@code null}
+	 * @return HTML for Swagger UI
+	 */
 	static String renderSwaggerHtml(SwaggerMount mount, String contextPath) {
 		String title = escape(mount.title());
 		String urls = swaggerDefinitionUrls(contextPath == null ? "" : contextPath);
@@ -91,7 +124,7 @@ public class PreregSwaggerUiController {
 				        'urls.primaryName': '%s',
 				        dom_id: '#swagger-ui',
 				        deepLinking: true,
-				        queryConfigEnabled: true,
+				        queryConfigEnabled: false,
 				        presets: [SwaggerUIBundle.presets.apis, SwaggerUIStandalonePreset],
 				        plugins: [SwaggerUIBundle.plugins.DownloadUrl],
 				        layout: 'StandaloneLayout',
@@ -105,6 +138,12 @@ public class PreregSwaggerUiController {
 				""".formatted(title, urls, primaryName);
 	}
 
+	/**
+	 * JSON array of {@code {url,name}} entries for the four catalog OpenAPI documents.
+	 *
+	 * @param contextPath servlet context, never {@code null} (use {@code ""} )
+	 * @return JavaScript array literal
+	 */
 	private static String swaggerDefinitionUrls(String contextPath) {
 		StringBuilder urls = new StringBuilder("[");
 		for (int i = 0; i < SWAGGER_MOUNTS.size(); i++) {

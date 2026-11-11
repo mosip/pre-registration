@@ -50,6 +50,7 @@ public class PreregOpenApiConfigTest {
 		assertTrue(html.contains("href=\"swagger-ui.css\""));
 		assertTrue(html.contains("/preregistration/v1/application-service/v3/api-docs"));
 		assertTrue(html.contains("/preregistration/v1/appointment/booking-service/v3/api-docs"));
+		assertTrue(html.contains("queryConfigEnabled: false"));
 		assertTrue(!html.contains("/swagger-ui/swagger-ui/index.html"));
 	}
 

@@ -157,6 +157,37 @@ public class DataSyncService {
 	}
 
 	/**
+	 * Resolves the current user for audit without throwing when the security context
+	 * is empty. Used before finally-block audit so a missing principal cannot replace
+	 * the request outcome.
+	 *
+	 * @return authenticated user, or {@code null} when the context has no principal
+	 */
+	private AuthUserDetails resolveAuditActor() {
+		try {
+			return authUserDetails();
+		} catch (Exception ex) {
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Auth context unavailable while resolving the datasync actor", ex);
+			return null;
+		}
+	}
+
+	/**
+	 * Registration-center id for audit, or {@code null} when the request was rejected
+	 * before a nested body existed.
+	 *
+	 * @param dataSyncRequest inbound wrapper, possibly {@code null}
+	 * @return center id, or {@code null}
+	 */
+	private static String auditRegistrationCenterId(MainRequestDTO<DataSyncRequestDTO> dataSyncRequest) {
+		if (dataSyncRequest == null || dataSyncRequest.getRequest() == null) {
+			return null;
+		}
+		return dataSyncRequest.getRequest().getRegistrationCenterId();
+	}
+
+	/**
 	 * This method is use to retrieve all the preRegistratioId
 	 * 
 	 * @param dataSyncRequest
@@ -168,6 +199,10 @@ public class DataSyncService {
 		MainResponseDTO<PreRegistrationIdsDTO> responseDto = new MainResponseDTO<>();
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In retrieveAllPreRegIds method of datasync service ");
 		boolean isRetrieveAllSuccess = false;
+		AuthUserDetails actor = resolveAuditActor();
+		String actorUserId = actor == null ? null : actor.getUserId();
+		String actorUsername = actor == null ? null : actor.getUsername();
+		String registrationCenterId = auditRegistrationCenterId(dataSyncRequest);
 		responseDto.setId(fetchAllId);
 		responseDto.setVersion(version);
 		requiredRequestMap.put("id", fetchAllId);
@@ -201,13 +236,11 @@ public class DataSyncService {
 			if (isRetrieveAllSuccess) {
 				setAuditValues(EventId.PRE_406.toString(), EventName.SYNC.toString(), EventType.BUSINESS.toString(),
 						"Retrieval of all the Preregistration Id is successful",
-						AuditLogVariables.MULTIPLE_ID.toString(), authUserDetails().getUserId(),
-						authUserDetails().getUsername(), dataSyncRequest.getRequest().getRegistrationCenterId());
+						AuditLogVariables.MULTIPLE_ID.toString(), actorUserId, actorUsername, registrationCenterId);
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
 						"Retrieval of all the Preregistration Id is unsuccessful", AuditLogVariables.NO_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername(),
-						dataSyncRequest.getRequest().getRegistrationCenterId());
+						actorUserId, actorUsername, registrationCenterId);
 			}
 		}
 		return responseDto;
@@ -227,6 +260,10 @@ public class DataSyncService {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 				"In retrieveAllAppointmentsSyncV2 method of datasync service ");
 		boolean isRetrieveAllSuccess = false;
+		AuthUserDetails actor = resolveAuditActor();
+		String actorUserId = actor == null ? null : actor.getUserId();
+		String actorUsername = actor == null ? null : actor.getUsername();
+		String registrationCenterId = auditRegistrationCenterId(dataSyncRequest);
 		responseDto.setId(fetchAllId);
 		responseDto.setVersion(version);
 		requiredRequestMap.put("id", fetchAllId);
@@ -267,13 +304,11 @@ public class DataSyncService {
 			if (isRetrieveAllSuccess) {
 				setAuditValues(EventId.PRE_406.toString(), EventName.SYNC.toString(), EventType.BUSINESS.toString(),
 						"Retrieval of all the Application Ids is successfull", AuditLogVariables.MULTIPLE_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername(),
-						dataSyncRequest.getRequest().getRegistrationCenterId());
+						actorUserId, actorUsername, registrationCenterId);
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
 						"Retrieval of all the Application Ids is unsuccessfull", AuditLogVariables.NO_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername(),
-						dataSyncRequest.getRequest().getRegistrationCenterId());
+						actorUserId, actorUsername, registrationCenterId);
 			}
 		}
 		return responseDto;
@@ -338,6 +373,9 @@ public class DataSyncService {
 		PreRegArchiveDTO preRegArchiveDTO = null;
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In getPreRegistrationData method of datasync service ");
 		boolean isRetrieveSuccess = false;
+		AuthUserDetails actor = resolveAuditActor();
+		String actorUserId = actor == null ? null : actor.getUserId();
+		String actorUsername = actor == null ? null : actor.getUsername();
 		responseDto.setId(fetchId);
 		responseDto.setVersion(version);
 		try {
@@ -358,11 +396,11 @@ public class DataSyncService {
 			if (isRetrieveSuccess) {
 				setAuditValues(EventId.PRE_406.toString(), EventName.SYNC.toString(), EventType.BUSINESS.toString(),
 						"Retrieval of the Preregistration data is successful", AuditLogVariables.MULTIPLE_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername(), null);
+						actorUserId, actorUsername, null);
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
 						"Retrieval of the Preregistration data is unsuccessful", AuditLogVariables.NO_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername(), null);
+						actorUserId, actorUsername, null);
 			}
 		}
 		return responseDto;
@@ -380,6 +418,9 @@ public class DataSyncService {
 		PreRegArchiveDTO preRegArchiveDTO = null;
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In fetchPreRegistrationData method of datasync service ");
 		boolean isRetrieveSuccess = false;
+		AuthUserDetails actor = resolveAuditActor();
+		String actorUserId = actor == null ? null : actor.getUserId();
+		String actorUsername = actor == null ? null : actor.getUsername();
 		responseDto.setId(fetchId);
 		responseDto.setVersion(version);
 		try {
@@ -420,11 +461,11 @@ public class DataSyncService {
 			if (isRetrieveSuccess) {
 				setAuditValues(EventId.PRE_406.toString(), EventName.SYNC.toString(), EventType.BUSINESS.toString(),
 						"Retrieval of the Preregistration data is successful", AuditLogVariables.MULTIPLE_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername(), null);
+						actorUserId, actorUsername, null);
 			} else {
 				setAuditValues(EventId.PRE_405.toString(), EventName.EXCEPTION.toString(), EventType.SYSTEM.toString(),
 						"Retrieval of the Preregistration data is unsuccessful", AuditLogVariables.NO_ID.toString(),
-						authUserDetails().getUserId(), authUserDetails().getUsername(), null);
+						actorUserId, actorUsername, null);
 			}
 		}
 		return responseDto;
@@ -449,21 +490,9 @@ public class DataSyncService {
 		responseDto.setVersion(version);
 		requiredRequestMap.put("id", storeId);
 
-		// Resolved once, up front, so the audit in the finally block can reuse it rather than calling
-		// authUserDetails() again. A second call there throws when the security context is absent, and
-		// an exception raised in a finally block discards the real failure that was already in flight.
-		String actorUserId = null;
-		String actorUsername = null;
-		try {
-			AuthUserDetails user = authUserDetails();
-			if (user != null) {
-				actorUserId = user.getUserId();
-				actorUsername = user.getUsername();
-			}
-		} catch (Exception ex) {
-			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
-					"Auth context unavailable while resolving the reverse datasync actor", ex);
-		}
+		AuthUserDetails actor = resolveAuditActor();
+		String actorUserId = actor == null ? null : actor.getUserId();
+		String actorUsername = actor == null ? null : actor.getUsername();
 
 		try {
 			if (validationUtil.requestValidator(reverseDataSyncRequest)

@@ -300,6 +300,17 @@ public class DataSyncServiceTest {
 		dataSyncService.retrieveAllPreRegIds(datasyncReqDto);
 	}
 
+	@Test(expected = InvalidRequestParameterException.class)
+	public void retrieveAllPreRegIdsKeepsValidationFailureWhenSecurityContextAbsent() throws Exception {
+		SecurityContextHolder.clearContext();
+		InvalidRequestParameterException ex = new InvalidRequestParameterException(
+				ErrorCodes.PRG_DATA_SYNC_009.toString(), ErrorMessages.INVALID_REGISTRATION_CENTER_ID.toString(), null);
+		when(serviceUtil.validateDataSyncRequest(Mockito.any(), Mockito.any())).thenThrow(ex);
+		Mockito.doNothing().when(dataSyncService).setAuditValues(Mockito.any(), Mockito.any(), Mockito.any(),
+				Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any());
+		dataSyncService.retrieveAllPreRegIds(datasyncReqDto);
+	}
+
 	@Test
 	public void successStoreConsumedPreRegistrationsTest() throws Exception {
 		when(serviceUtil.validateReverseDataSyncRequest(Mockito.any(), Mockito.any())).thenReturn(true);
