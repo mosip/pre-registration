@@ -86,7 +86,6 @@
 					<groupId>org.hibernate.orm</groupId>
 					<artifactId>hibernate-hikaricp</artifactId>
 				</exclusion>
-				<!-- Biometric MDS mock; unused here. SNAPSHOT resolve hits central 429. -->
 				<exclusion>
 					<groupId>io.mosip.mock.mds</groupId>
 					<artifactId>mock-mds</artifactId>
