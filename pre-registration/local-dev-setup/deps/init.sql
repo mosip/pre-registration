@@ -51,6 +51,7 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA prereg GRANT SELECT,INSERT,UPDATE,DELETE,REFE
 \i /db_scripts/mosip_prereg/ddl/anonymous_profile.sql
 
 -- Local slots so getAvailability works without batchjob. Centre 10003 matches api-test.
+-- Ten-year window: existing volumes stay bookable without a wipe.
 INSERT INTO prereg.reg_available_slot (
 	regcntr_id, availability_date, slot_from_time, slot_to_time,
 	available_kiosks, cr_by, cr_dtimes, is_deleted)
@@ -63,13 +64,17 @@ SELECT
 	'local-dev',
 	now(),
 	false
-FROM generate_series(CURRENT_DATE + 2, CURRENT_DATE + 16, interval '1 day') AS d
+FROM generate_series(
+	CURRENT_DATE + 2,
+	(CURRENT_DATE + INTERVAL '10 years')::date,
+	INTERVAL '1 day') AS d
 CROSS JOIN (
 	VALUES
 		(time '09:00:00', time '09:15:00'),
 		(time '09:15:00', time '09:30:00'),
 		(time '09:30:00', time '09:45:00')
-) AS t(from_t, to_t);
+) AS t(from_t, to_t)
+ON CONFLICT ON CONSTRAINT pk_ravlslt_id DO NOTHING;
 
 GRANT SELECT,INSERT,UPDATE,DELETE,TRUNCATE,REFERENCES ON ALL TABLES IN SCHEMA prereg TO prereguser;
 

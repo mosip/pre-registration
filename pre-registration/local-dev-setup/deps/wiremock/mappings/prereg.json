@@ -529,6 +529,53 @@
       "name": "auth-validate-token-prereg-client"
     },
     {
+      "priority": 1,
+      "request": {
+        "method": "POST",
+        "urlPathPattern": "/v1/authmanager/authorize/admin/validateToken",
+        "headers": {
+          "Authorization": {
+            "contains": "c2VydmljZS1hY2NvdW50LW1vc2lwLWFkbWluLWNsaWVud"
+          }
+        }
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json",
+          "authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJzZXJ2aWNlLWFjY291bnQtbW9zaXAtYWRtaW4tY2xpZW50IiwidXNlcl9uYW1lIjoic2VydmljZS1hY2NvdW50LW1vc2lwLWFkbWluLWNsaWVudCIsInJvbGVzIjoiUkVHSVNUUkFUSU9OX09GRklDRVIsUkVHSVNUUkFUSU9OX1NVUEVSVklTT1IsUkVHSVNUUkFUSU9OX0FETUlOLFBSRV9SRUdJU1RSQVRJT05fQURNSU4sUkVHSVNUUkFUSU9OX1BST0NFU1NPUiIsInNjb3BlIjoiUFJFLVJFR0lTVFJBVElPTiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4Mi9hdXRoL3JlYWxtcy9tb3NpcCIsInN1YiI6InNlcnZpY2UtYWNjb3VudC1tb3NpcC1hZG1pbi1jbGllbnQiLCJhdWQiOiJhY2NvdW50IiwiaWF0IjoxNzg3MTU2MzUyLCJleHAiOjIxMDI1MTYzNTJ9.Lq0_MfIQNbnR5-OiT5t0t6gAsVoUiTfjOzYxxgg-abE",
+          "Authorization": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJzZXJ2aWNlLWFjY291bnQtbW9zaXAtYWRtaW4tY2xpZW50IiwidXNlcl9uYW1lIjoic2VydmljZS1hY2NvdW50LW1vc2lwLWFkbWluLWNsaWVudCIsInJvbGVzIjoiUkVHSVNUUkFUSU9OX09GRklDRVIsUkVHSVNUUkFUSU9OX1NVUEVSVklTT1IsUkVHSVNUUkFUSU9OX0FETUlOLFBSRV9SRUdJU1RSQVRJT05fQURNSU4sUkVHSVNUUkFUSU9OX1BST0NFU1NPUiIsInNjb3BlIjoiUFJFLVJFR0lTVFJBVElPTiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4Mi9hdXRoL3JlYWxtcy9tb3NpcCIsInN1YiI6InNlcnZpY2UtYWNjb3VudC1tb3NpcC1hZG1pbi1jbGllbnQiLCJhdWQiOiJhY2NvdW50IiwiaWF0IjoxNzg3MTU2MzUyLCJleHAiOjIxMDI1MTYzNTJ9.Lq0_MfIQNbnR5-OiT5t0t6gAsVoUiTfjOzYxxgg-abE",
+          "set-cookie": "Authorization=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJzZXJ2aWNlLWFjY291bnQtbW9zaXAtYWRtaW4tY2xpZW50IiwidXNlcl9uYW1lIjoic2VydmljZS1hY2NvdW50LW1vc2lwLWFkbWluLWNsaWVudCIsInJvbGVzIjoiUkVHSVNUUkFUSU9OX09GRklDRVIsUkVHSVNUUkFUSU9OX1NVUEVSVklTT1IsUkVHSVNUUkFUSU9OX0FETUlOLFBSRV9SRUdJU1RSQVRJT05fQURNSU4sUkVHSVNUUkFUSU9OX1BST0NFU1NPUiIsInNjb3BlIjoiUFJFLVJFR0lTVFJBVElPTiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4Mi9hdXRoL3JlYWxtcy9tb3NpcCIsInN1YiI6InNlcnZpY2UtYWNjb3VudC1tb3NpcC1hZG1pbi1jbGllbnQiLCJhdWQiOiJhY2NvdW50IiwiaWF0IjoxNzg3MTU2MzUyLCJleHAiOjIxMDI1MTYzNTJ9.Lq0_MfIQNbnR5-OiT5t0t6gAsVoUiTfjOzYxxgg-abE; Path=/; HttpOnly"
+        },
+        "jsonBody": {
+          "id": "mosip.local.validate",
+          "version": "1.0",
+          "responsetime": "2026-01-01T00:00:00.000Z",
+          "response": {
+            "userId": "service-account-mosip-admin-client",
+            "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJzZXJ2aWNlLWFjY291bnQtbW9zaXAtYWRtaW4tY2xpZW50IiwidXNlcl9uYW1lIjoic2VydmljZS1hY2NvdW50LW1vc2lwLWFkbWluLWNsaWVudCIsInJvbGVzIjoiUkVHSVNUUkFUSU9OX09GRklDRVIsUkVHSVNUUkFUSU9OX1NVUEVSVklTT1IsUkVHSVNUUkFUSU9OX0FETUlOLFBSRV9SRUdJU1RSQVRJT05fQURNSU4sUkVHSVNUUkFUSU9OX1BST0NFU1NPUiIsInNjb3BlIjoiUFJFLVJFR0lTVFJBVElPTiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4Mi9hdXRoL3JlYWxtcy9tb3NpcCIsInN1YiI6InNlcnZpY2UtYWNjb3VudC1tb3NpcC1hZG1pbi1jbGllbnQiLCJhdWQiOiJhY2NvdW50IiwiaWF0IjoxNzg3MTU2MzUyLCJleHAiOjIxMDI1MTYzNTJ9.Lq0_MfIQNbnR5-OiT5t0t6gAsVoUiTfjOzYxxgg-abE",
+            "expiryTime": "2099-01-01T00:00:00.000Z",
+            "roles": [
+              "GLOBAL_ADMIN",
+              "ZONAL_ADMIN",
+              "REGISTRATION_PROCESSOR",
+              "CREDENTIAL_ISSUANCE",
+              "CREDENTIAL_REQUEST",
+              "ID_REPOSITORY",
+              "CREATE_SHARE",
+              "POLICYMANAGER",
+              "REGISTRATION_OFFICER",
+              "REGISTRATION_SUPERVISOR",
+              "REGISTRATION_ADMIN",
+              "PRE_REGISTRATION_ADMIN"
+            ]
+          },
+          "errors": null
+        }
+      },
+      "name": "auth-validate-token-admin-client"
+    },
+    {
       "request": {
         "method": "POST",
         "urlPathPattern": "/v1/authmanager/authorize/admin/validateToken"
