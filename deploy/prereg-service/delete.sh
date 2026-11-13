@@ -7,7 +7,8 @@ function deleting_prereg() {
         then
           kubectl -n prereg delete -f ../prereg-ui/rate-control-envoyfilter.yaml
           helm -n prereg delete prereg-gateway
-          helm -n prereg delete prereg-application
+          helm -n prereg delete prereg-service
+           helm -n prereg delete prereg-application
           helm -n prereg delete prereg-batchjob
           helm -n prereg delete pridgenerator
           helm -n prereg delete prereg-ui
