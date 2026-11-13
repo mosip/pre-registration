@@ -27,8 +27,8 @@ function installing_prereg() {
   $COPY_UTIL configmap artifactory-share artifactory $NS
   $COPY_UTIL configmap config-server-share config-server $NS
 
-  echo Installing prereg-application (consolidated HTTP service, includes booking)
-  helm -n $NS install prereg-application mosip/prereg-application --version $CHART_VERSION
+  echo Installing prereg-service (consolidated HTTP service, includes booking)
+  helm -n $NS install prereg-service mosip/prereg-application --version $CHART_VERSION
 
   echo Installing prereg-batchjob
   helm -n $NS install prereg-batchjob mosip/prereg-batchjob --version $CHART_VERSION

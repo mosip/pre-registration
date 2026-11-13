@@ -2,7 +2,7 @@
 
 Helm chart for the MOSIP PRID generator. The service lives in this pre-registration repository as a **separate** JVM (`pridgenerator-service`, port 8100). Public prefix `/v1/pridgenerator` is unchanged. Image: `mosipqa/pridgenerator-service`. Kubernetes Service name stays `kernel-pridgenerator-service` so `mosip.io.prid.url` keeps resolving.
 
-Do not fold this chart into `prereg-application`.
+Do not fold this chart into `prereg-service`.
 
 ## Install
 
