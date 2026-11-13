@@ -10,7 +10,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -33,7 +33,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_BookByPRID_sid_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -56,7 +56,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "272838SHSH",
@@ -83,7 +83,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@thogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -110,7 +110,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -137,7 +137,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "soh#w@Scdfvg",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -164,7 +164,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "soh#w@Scdfvg",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -191,7 +191,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "soh#w@Scdfvg",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -218,7 +218,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "soh#w@Scdfvg",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -245,7 +245,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "soh#w@Scdfvg",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -272,7 +272,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -299,7 +299,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -326,7 +326,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -353,7 +353,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1996/01/01",
@@ -380,7 +380,7 @@ UpdatePreregistration:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_date_verification_sid_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": 0.7,
   "dateOfBirth": "1998/01/01",

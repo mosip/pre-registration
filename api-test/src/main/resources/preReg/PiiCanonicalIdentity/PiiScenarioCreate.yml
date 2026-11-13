@@ -7,7 +7,7 @@ PiiScenarioCreate:
       restMethod: post
       input: '{
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",
@@ -34,7 +34,7 @@ PiiScenarioCreate:
       restMethod: post
       input: '{
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",
@@ -61,7 +61,7 @@ PiiScenarioCreate:
       restMethod: post
       input: '{
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",
@@ -88,7 +88,7 @@ PiiScenarioCreate:
       restMethod: post
       input: '{
   "postalCode": "14022",
-  "phone": "8249742850",
+  "phone": "$PHONENUMBERFORIDENTITY$",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",

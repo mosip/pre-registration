@@ -30,7 +30,6 @@ import io.mosip.testrig.apirig.prereg.utils.PreRegConfigManager;
 import io.mosip.testrig.apirig.prereg.utils.PreRegUtil;
 import io.mosip.testrig.apirig.testrunner.HealthChecker;
 import io.mosip.testrig.apirig.utils.AdminTestException;
-import io.mosip.testrig.apirig.utils.AdminTestUtil;
 import io.mosip.testrig.apirig.utils.GlobalConstants;
 import io.mosip.testrig.apirig.utils.GlobalMethods;
 import io.mosip.testrig.apirig.utils.KernelAuthentication;
@@ -141,7 +140,7 @@ public class PreRegPiiRequest extends PreRegUtil implements ITest {
 	private String buildBody(JSONObject input, String template, String inputTemplate, Map<String, String> pathParams) {
 		String body;
 		if ("prereg-create".equals(template) || "prereg-update".equals(template)) {
-			String generated = AdminTestUtil.generateHbsForPrereg("prereg-update".equals(template));
+			String generated = PreRegUtil.generatePreregTemplate("prereg-update".equals(template));
 			body = replaceIdentityContactKeywords(getJsonFromTemplate(input.toString(), generated, false),
 					testCaseName);
 		} else if (inputTemplate != null && !inputTemplate.isBlank()) {
