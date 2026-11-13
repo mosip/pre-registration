@@ -88,7 +88,7 @@ public class CreatePreReg extends PreRegUtil implements ITest {
 			throw new SkipException(
 					GlobalConstants.TARGET_ENV_HEALTH_CHECK_FAILED + HealthChecker.healthCheckFailureMapS);
 		}
-		testCaseDTO.setInputTemplate(PreRegUtil.generatePreregTemplate(false));
+		testCaseDTO.setInputTemplate(AdminTestUtil.generateHbsForPrereg(false));
 		String[] templateFields = testCaseDTO.getTemplateFields();
 
 		String jsonInput = testCaseDTO.getInput();

@@ -80,7 +80,7 @@ public class UpdatePrereg extends PreRegUtil implements ITest {
 	public void test(TestCaseDTO testCaseDTO) throws AuthenticationTestException, AdminTestException, SecurityXSSException {
 		testCaseName = testCaseDTO.getTestCaseName();
 		testCaseName = PreRegUtil.isTestCaseValidForExecution(testCaseDTO);
-		testCaseDTO.setInputTemplate(PreRegUtil.generatePreregTemplate(true));
+		testCaseDTO.setInputTemplate(AdminTestUtil.generateHbsForPrereg(true));
 		String[] templateFields = testCaseDTO.getTemplateFields();
 		if (HealthChecker.signalTerminateExecution) {
 			throw new SkipException(

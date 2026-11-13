@@ -471,45 +471,6 @@ public class PreRegUtil extends AdminTestUtil {
 	}
 
 	/**
-	 * Pre-registration create/update request template from the live ID schema (commons generateHbsForPrereg), with
-	 * residenceStatus added as commons 1.6 did. Commons 1.8 adds it only when the schema marks it required; without it
-	 * the application stays Application_Incomplete and booking fails (PRG_BOOK_RCI_036).
-	 */
-	public static String generatePreregTemplate(boolean isItUpdate) {
-		return addResidenceStatus(AdminTestUtil.generateHbsForPrereg(isItUpdate));
-	}
-
-	/**
-	 * Adds residenceStatus (one entry per language, value from valueMapping.properties) to the template's identity
-	 * and requiredFields when the schema defines it and the template does not have it yet.
-	 */
-	static String addResidenceStatus(String template) {
-		String field = GlobalConstants.RESIDENCESTATUS;
-		try {
-			JSONObject json = new JSONObject(template);
-			JSONObject request = json.getJSONObject("request");
-			JSONObject identity = request.getJSONObject("demographicDetails").getJSONObject("identity");
-			if (identity.has(field) || !getIdentitySchemaProperties().has(field))
-				return template;
-			String value = (propsMap == null || propsMap.getProperty(field) == null) ? "TEST_" + field
-					: propsMap.getProperty(field);
-			JSONArray values = new JSONArray();
-			for (String language : BaseTestCase.getLanguageList()) {
-				if (language != null && !language.isEmpty())
-					values.put(new JSONObject().put("language", language).put(GlobalConstants.VALUE, value));
-			}
-			identity.put(field, values);
-			JSONArray requiredFields = request.optJSONArray("requiredFields");
-			if (requiredFields != null && !requiredFields.toList().contains(field))
-				requiredFields.put(field);
-			return json.toString();
-		} catch (Exception e) {
-			logger.error("Could not add " + field + " to the prereg template", e);
-			return template;
-		}
-	}
-
-	/**
 	 * Fills $PHONENUMBERFORIDENTITY$ (ID schema phone format) and $EMAILVALUE$ (unique per test case) in an
 	 * identity JSON.
 	 */

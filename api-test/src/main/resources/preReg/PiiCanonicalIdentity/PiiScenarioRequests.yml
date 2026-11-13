@@ -115,7 +115,7 @@ PiiScenarioRequests:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "$PHONENUMBERFORIDENTITY$",
+  "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",
@@ -139,7 +139,7 @@ PiiScenarioRequests:
       input: '{
   "preRegistrationId": "$ID:CreatePrereg_PiiLegacy_Smoke_sid_preRegistrationId$",
   "postalCode": "14022",
-  "phone": "$PHONENUMBERFORIDENTITY$",
+  "phone": "8249742850",
   "email": "goku@hogwarts.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",
@@ -210,7 +210,7 @@ PiiScenarioRequests:
       additionalDependencies: TC_prereg_PiiScenario_05
       input: '{
   "postalCode": "14022",
-  "phone": "$PHONENUMBERFORIDENTITY$",
+  "phone": "8249742850",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",
@@ -238,7 +238,7 @@ PiiScenarioRequests:
       additionalDependencies: TC_prereg_PiiScenario_07
       input: '{
   "postalCode": "14022",
-  "phone": "$PHONENUMBERFORIDENTITY$",
+  "phone": "8249742850",
   "email": "goku@technoforte.co.in",
   "IDSchemaVersion": $SCHEMAVERSION$,
   "dateOfBirth": "1996/01/01",
