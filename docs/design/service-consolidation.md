@@ -18,7 +18,7 @@ This branch folds the three HTTP services on `develop` plus booking from [mosip-
 
 `pre-registration-core` is a library, not a service.
 
-Helm charts on `develop`: `prereg-application`, `prereg-datasync`, `prereg-captcha`, `prereg-batchjob`. PRID chart lived in commons: `helm/pridgenerator`.
+Helm charts on `develop`: `prereg-service`, `prereg-datasync`, `prereg-captcha`, `prereg-batchjob`. PRID chart lived in commons: `helm/pridgenerator`.
 
 ---
 
@@ -38,7 +38,7 @@ pridgenerator (commons) :8100        pridgenerator-service :8100
 pre-registration-ui (separate repo)  ui/ (this repo)
 ```
 
-Maven reactor modules are `pre-registration-core`, `pre-registration-service`, `pre-registration-batchjob`, and `pridgenerator-service`. The Angular SPA is `ui/` (not a Maven module). Helm charts that remain are `helm/prereg-application` (the HTTP service), `helm/prereg-batchjob`, `helm/pridgenerator`, and `helm/prereg-ui`. `deploy/prereg/install.sh` installs application + batchjob + pridgenerator + UI.
+Maven reactor modules are `pre-registration-core`, `pre-registration-service`, `pre-registration-batchjob`, and `pridgenerator-service`. The Angular SPA is `ui/` (not a Maven module). Helm charts that remain are `../../helm/prereg-service` (the HTTP service), `helm/prereg-batchjob`, `helm/pridgenerator`, and `helm/prereg-ui`. `../../deploy/prereg-service/install.sh` installs application + batchjob + pridgenerator + UI.
 
 ---
 
@@ -86,12 +86,12 @@ A key that appears in more than one of those documents has a single value in thi
 ### 5. Deploy order
 
 1. Database (`db_scripts` / `db_upgrade_scripts`).
-2. `helm/prereg-application` — one Deployment, port 9090 (application + datasync + captcha + booking).
+2. `../../helm/prereg-service` — one Deployment, port 9090 (application + datasync + captcha + booking).
 3. `helm/prereg-batchjob`.
 4. `helm/pridgenerator` (Service `kernel-pridgenerator-service`, probes `/v1/pridgenerator/actuator/health`).
 5. `helm/prereg-ui`.
 
-`deploy/prereg/install.sh` runs those four charts. Probes use `/preregistration/v1/actuator/health`. The old health URLs on 9089, 9094, and 9095 are gone.
+`../../deploy/prereg-service/install.sh` runs those four charts. Probes use `/preregistration/v1/actuator/health`. The old health URLs on 9089, 9094, and 9095 are gone.
 
 ---
 

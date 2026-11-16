@@ -113,7 +113,7 @@ A key that used to differ per JVM now has **one** value in this process.
 
 ## Helm / deploy
 
-Charts: `helm/prereg-application` (HTTP, Istio prefixes include `/appointment`, `/sync`, and `/captcha`), `helm/prereg-batchjob`, `helm/pridgenerator` (Istio prefix `/v1/pridgenerator`, Service `kernel-pridgenerator-service`), and `helm/prereg-ui`. `deploy/prereg/install.sh` installs application + batchjob + pridgenerator + UI.
+Charts: `helm/prereg-service` (HTTP, Istio prefixes include `/appointment`, `/sync`, and `/captcha`), `helm/prereg-batchjob`, `helm/pridgenerator` (Istio prefix `/v1/pridgenerator`, Service `kernel-pridgenerator-service`), and `helm/prereg-ui`. `deploy/prereg-service/install.sh` installs application + batchjob + pridgenerator + UI.
 
 ## Testing
 
