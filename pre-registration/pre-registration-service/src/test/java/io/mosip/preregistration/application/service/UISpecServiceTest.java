@@ -19,7 +19,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import tools.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.JsonNode;
 
 import io.mosip.preregistration.application.dto.PageDTO;
 import io.mosip.preregistration.application.dto.UISpecKeyValuePair;
