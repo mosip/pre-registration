@@ -26,6 +26,9 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.codec.json.Jackson2JsonDecoder;
+import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -148,6 +151,14 @@ public class RestHelper {
 	 * Performs init for MOSIP Pre-Registration.
 	 */
 	public void init() {
+		webClient = webClient.mutate()
+				.codecs(codecs -> {
+					codecs.defaultCodecs().jacksonJsonDecoder(new Jackson2JsonDecoder(objectMapper));
+					codecs.defaultCodecs().jacksonJsonEncoder(new Jackson2JsonEncoder(objectMapper));
+				})
+				.build();
+		restTemplate.getMessageConverters().add(0,
+				new MappingJackson2HttpMessageConverter(objectMapper));
 		hostIP = getServerIp();
 		hostName = getServerName();
         if(Objects.isNull(dayCodesMap)){
