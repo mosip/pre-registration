@@ -6,15 +6,20 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Collections;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.hc.client5.http.impl.classic.HttpClientBuilder;
 import org.apache.hc.client5.http.impl.classic.HttpClients;
 import org.apache.hc.client5.http.impl.io.PoolingHttpClientConnectionManagerBuilder;
+import org.springframework.beans.factory.SmartInitializingSingleton;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
+import org.springframework.http.converter.json.JacksonJsonHttpMessageConverter;
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -26,6 +31,22 @@ import org.springframework.web.client.RestTemplate;
 @Configuration
 @ConfigurationProperties("mosip")
 public class Config {
+
+	@Bean
+	SmartInitializingSingleton configureHttpClientsJackson2(
+			@Qualifier("selfTokenRestTemplate") RestTemplate selfTokenClient,
+			@Qualifier("plainRestTemplate") RestTemplate plainClient,
+			@Qualifier("restTemplateBean") RestTemplate captchaClient,
+			ObjectMapper objectMapper) {
+		return () -> {
+			for (RestTemplate client : java.util.List.of(selfTokenClient, plainClient, captchaClient)) {
+				client.getMessageConverters().replaceAll(converter ->
+						converter instanceof JacksonJsonHttpMessageConverter
+								? new MappingJackson2HttpMessageConverter(objectMapper)
+								: converter);
+			}
+		};
+	}
 
 	@Value("${preregistration.appservice.httpclient.connections.max.per.host:20}")
 	/**

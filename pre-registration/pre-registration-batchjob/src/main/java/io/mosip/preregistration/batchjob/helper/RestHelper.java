@@ -28,6 +28,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.codec.json.Jackson2JsonDecoder;
 import org.springframework.http.codec.json.Jackson2JsonEncoder;
+import org.springframework.http.converter.HttpMessageConverters;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.stereotype.Component;
 import org.springframework.util.LinkedMultiValueMap;
@@ -157,8 +158,11 @@ public class RestHelper {
 					codecs.defaultCodecs().jacksonJsonEncoder(new Jackson2JsonEncoder(objectMapper));
 				})
 				.build();
-		restTemplate.getMessageConverters().add(0,
-				new MappingJackson2HttpMessageConverter(objectMapper));
+		var converters = HttpMessageConverters.forClient().registerDefaults()
+				.withJsonConverter(new MappingJackson2HttpMessageConverter(objectMapper))
+				.build();
+		restTemplate.getMessageConverters().clear();
+		converters.forEach(restTemplate.getMessageConverters()::add);
 		hostIP = getServerIp();
 		hostName = getServerName();
         if(Objects.isNull(dayCodesMap)){
