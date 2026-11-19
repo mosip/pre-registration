@@ -3,7 +3,6 @@ package io.mosip.preregistration.application.dto;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Data;
 
@@ -52,7 +51,6 @@ public class UISpecResponseDTO {
 	/**
 	 * effective from used by this Pre-Registration type.
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
 	private LocalDateTime effectiveFrom;
 	/**
 	 * created by used by this Pre-Registration type.
@@ -65,12 +63,10 @@ public class UISpecResponseDTO {
 	/**
 	 * created on used by this Pre-Registration type.
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
 	private LocalDateTime createdOn;
 	/**
 	 * updated on used by this Pre-Registration type.
 	 */
-	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
 	private LocalDateTime updatedOn;
 
 }
