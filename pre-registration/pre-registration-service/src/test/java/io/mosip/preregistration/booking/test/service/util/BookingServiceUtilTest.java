@@ -2,6 +2,7 @@ package io.mosip.preregistration.booking.test.service.util;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URI;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -411,7 +412,7 @@ public class BookingServiceUtilTest {
 		ResponseWrapper<RegistrationCenterResponseDto> resp = new ResponseWrapper<>();
 		resp.setResponse(preRegResponse);
 		ResponseEntity<ResponseWrapper<RegistrationCenterResponseDto>> res = new ResponseEntity<>(resp, HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
+		Mockito.when(restTemplate.exchange(Mockito.any(URI.class), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 				}))).thenReturn(res);
 
@@ -426,7 +427,7 @@ public class BookingServiceUtilTest {
 		resp.setErrors(List.of(new io.mosip.kernel.core.exception.ServiceError("KER-MSD-215",
 				"Registration Center not found")));
 		ResponseEntity<ResponseWrapper<RegistrationCenterResponseDto>> res = new ResponseEntity<>(resp, HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
+		Mockito.when(restTemplate.exchange(Mockito.any(URI.class), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 				}))).thenReturn(res);
 		try {
@@ -435,14 +436,13 @@ public class BookingServiceUtilTest {
 		} catch (MasterDataNotAvailableException ex) {
 			assertEquals("KER-MSD-215", ex.getErrorCode());
 		}
-		org.mockito.ArgumentCaptor<String> uriCaptor = org.mockito.ArgumentCaptor.forClass(String.class);
+		org.mockito.ArgumentCaptor<URI> uriCaptor = org.mockito.ArgumentCaptor.forClass(URI.class);
 		Mockito.verify(restTemplate).exchange(uriCaptor.capture(), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 				}));
-		String uri = uriCaptor.getValue();
-		org.junit.Assert.assertFalse("center id '#' must not be treated as a URI fragment", uri.contains("#"));
-		org.junit.Assert.assertTrue(uri.contains("%23"));
-		org.junit.Assert.assertTrue(uri.endsWith("/all"));
+		URI uri = uriCaptor.getValue();
+		org.junit.Assert.assertNull("center ID must not create a URI fragment", uri.getRawFragment());
+		org.junit.Assert.assertTrue(uri.getRawPath().endsWith("/@%23@$W%23/all"));
 	}
 
 	@Test
@@ -451,7 +451,7 @@ public class BookingServiceUtilTest {
 		HttpClientErrorException ex = HttpClientErrorException.create(HttpStatus.NOT_FOUND, "Not Found",
 				HttpHeaders.EMPTY, body.getBytes(java.nio.charset.StandardCharsets.UTF_8),
 				java.nio.charset.StandardCharsets.UTF_8);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
+		Mockito.when(restTemplate.exchange(Mockito.any(URI.class), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 				}))).thenThrow(ex);
 		try {
@@ -466,7 +466,7 @@ public class BookingServiceUtilTest {
 	@Test(expected = RestCallException.class)
 	public void HttpClientErrorExceptionTest() {
 		HttpClientErrorException ex = new HttpClientErrorException(HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
+		Mockito.when(restTemplate.exchange(Mockito.any(URI.class), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 				}))).thenThrow(ex);
 
@@ -563,7 +563,7 @@ public class BookingServiceUtilTest {
 		ResponseWrapper<RegistrationCenterResponseDto> resp = new ResponseWrapper<>();
 		resp.setResponse(regCenDto);
 		ResponseEntity<ResponseWrapper<RegistrationCenterResponseDto>> res = new ResponseEntity<>(resp, HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
+		Mockito.when(restTemplate.exchange(Mockito.any(URI.class), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 				}))).thenReturn(res);
 		serviceUtil.isValidRegCenter("10001");
@@ -575,7 +575,7 @@ public class BookingServiceUtilTest {
 		regCenDto.getRegistrationCenters().get(0).setId("1");
 		resp.setResponse(regCenDto);
 		ResponseEntity<ResponseWrapper<RegistrationCenterResponseDto>> res = new ResponseEntity<>(resp, HttpStatus.OK);
-		Mockito.when(restTemplate.exchange(Mockito.anyString(), Mockito.eq(HttpMethod.GET), Mockito.any(),
+		Mockito.when(restTemplate.exchange(Mockito.any(URI.class), Mockito.eq(HttpMethod.GET), Mockito.any(),
 				Mockito.eq(new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 				}))).thenReturn(res);
 		serviceUtil.isValidRegCenter("10001");

@@ -24,6 +24,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import io.mosip.kernel.core.http.ResponseWrapper;
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.PageDTO;
@@ -46,6 +49,9 @@ public class UISpecServiceUtil {
 	 * rest template used by this Pre-Registration type.
 	 */
 	private RestTemplate restTemplate;
+
+	@Autowired
+	private ObjectMapper objectMapper;
 
 	@Value("${masterdata.resource.url}")
 	/**
@@ -73,7 +79,6 @@ public class UISpecServiceUtil {
 	public List<UISpecResponseDTO> getUISchema(Double version, Double idSchemaVersion) {
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In  UISpec serviceutil getUIschema method");
 		List<UISpecResponseDTO> response = null;
-		ResponseEntity<ResponseWrapper<List<UISpecResponseDTO>>> responseEntity = null;
 		ResponseWrapper<List<UISpecResponseDTO>> body = null;
 		try {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Calling masterdata service to get ui spec");
@@ -88,16 +93,16 @@ public class UISpecServiceUtil {
 
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
+			headers.setAccept(List.of(MediaType.APPLICATION_JSON));
 			HttpEntity<?> entity = new HttpEntity<>(headers);
 
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"masterdata service to get ui spec uri  " + uriBuilder);
 
-			responseEntity = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity,
-					new ParameterizedTypeReference<ResponseWrapper<List<UISpecResponseDTO>>>() {
-					});
-
-			body = responseEntity.getBody();
+			byte[] json = restTemplate.exchange(uriBuilder, HttpMethod.GET, entity, byte[].class).getBody();
+			if (json != null) {
+				body = objectMapper.readValue(json, new TypeReference<ResponseWrapper<List<UISpecResponseDTO>>>() {});
+			}
 			if (body != null) {
 				if (body.getErrors() != null && !body.getErrors().isEmpty()) {
 					log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,

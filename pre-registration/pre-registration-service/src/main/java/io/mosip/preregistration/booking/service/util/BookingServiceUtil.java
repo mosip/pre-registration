@@ -1,5 +1,6 @@
 package io.mosip.preregistration.booking.service.util;
 
+import java.net.URI;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
@@ -188,15 +189,15 @@ public class BookingServiceUtil {
 			HttpHeaders headers = new HttpHeaders();
 			headers.setContentType(MediaType.APPLICATION_JSON);
 			HttpEntity<RequestWrapper<RegistrationCenterResponseDto>> entity = new HttpEntity<>(headers);
-			String uriBuilder = UriComponentsBuilder.fromUriString(regCenterUrl)
+			URI uri = UriComponentsBuilder.fromUriString(regCenterUrl)
 					.pathSegment(regCenterId, "all")
 					.build()
 					.encode()
-					.toUriString();
+					.toUri();
 			log.info("sessionId", "idType", "id",
-					"In callRegCenterDateRestService method of Booking Service URL- " + uriBuilder);
+					"In callRegCenterDateRestService method of Booking Service URL- " + uri);
 			ResponseEntity<ResponseWrapper<RegistrationCenterResponseDto>> responseEntity = selfTokenRestTemplate.exchange(
-					uriBuilder, HttpMethod.GET, entity,
+					uri, HttpMethod.GET, entity,
 					new ParameterizedTypeReference<ResponseWrapper<RegistrationCenterResponseDto>>() {
 					});
 			ResponseWrapper<RegistrationCenterResponseDto> body = responseEntity.getBody();
