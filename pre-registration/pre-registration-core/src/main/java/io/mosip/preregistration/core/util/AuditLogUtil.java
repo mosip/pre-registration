@@ -14,6 +14,7 @@ import java.time.ZoneId;
 import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -38,9 +39,11 @@ import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.AuditResponseDto;
 import io.mosip.preregistration.core.common.dto.RequestWrapper;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
+import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.errorcodes.ErrorMessages;
+import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.exception.util.ParseResponseException;
 
 /**
@@ -73,6 +76,10 @@ public class AuditLogUtil {
 
 	@Autowired
 	private ObjectMapper objectMapper;
+
+	/** Optional: not every module that loads core defines this bean; resolved per call, null when absent. */
+	@Autowired
+	private ObjectProvider<UserDetailsService> userDetailsServiceProvider;
 
 	@Value("${audit.url}")
 	private String auditUrl;
@@ -134,6 +141,8 @@ public class AuditLogUtil {
 			auditRequestDto.setSessionUserName(AuditLogVariables.SYSTEM.toString());
 		}
 		auditRequestDto.setIdType(AuditLogVariables.PRE_REGISTRATION_ID.toString());
+		auditRequestDto.setSessionUserId(resolveSessionUser(auditRequestDto.getSessionUserId()));
+		auditRequestDto.setSessionUserName(resolveSessionUser(auditRequestDto.getSessionUserName()));
 		callAuditManager(auditRequestDto);
 	}
 
@@ -229,7 +238,34 @@ public class AuditLogUtil {
 			auditRequestDto.setSessionUserName(AuditLogVariables.SYSTEM.toString());
 		}
 		auditRequestDto.setIdType(AuditLogVariables.PRE_REGISTRATION_ID.toString());
+		auditRequestDto.setSessionUserId(resolveSessionUser(auditRequestDto.getSessionUserId()));
+		auditRequestDto.setSessionUserName(resolveSessionUser(auditRequestDto.getSessionUserName()));
 		callAuditManager(auditRequestDto, header);
+	}
+
+	/**
+	 * Keeps raw login identifiers (email/phone) out of the audit log: returns the canonical user UUID,
+	 * or a masked value when it cannot be resolved. SYSTEM, blank and UUID values are returned as-is.
+	 */
+	private String resolveSessionUser(String sessionUser) {
+		if (sessionUser == null || sessionUser.isBlank()
+				|| AuditLogVariables.SYSTEM.toString().equals(sessionUser)
+				|| GenericUtil.isUuid(sessionUser)) {
+			return sessionUser;
+		}
+		UserDetailsService userDetailsService = userDetailsServiceProvider.getIfAvailable();
+		if (userDetailsService != null) {
+			try {
+				String canonicalUserId = userDetailsService.getOrCreateInternalUserId(sessionUser);
+				if (canonicalUserId != null && !canonicalUserId.isBlank()) {
+					return canonicalUserId;
+				}
+			} catch (UserLookupException ex) {
+				log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+						"Failed to resolve UUID for audit user " + GenericUtil.maskIdentifier(sessionUser));
+			}
+		}
+		return GenericUtil.maskIdentifier(sessionUser);
 	}
 
 	/**

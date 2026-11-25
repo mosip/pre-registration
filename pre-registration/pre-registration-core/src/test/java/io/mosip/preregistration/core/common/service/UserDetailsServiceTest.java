@@ -228,6 +228,15 @@ public class UserDetailsServiceTest {
     }
 
     @Test
+    public void testGetUserLookupIdsLowerCasesUppercaseUuidLogin() {
+        String uppercaseUuid = UUID.randomUUID().toString().toUpperCase();
+
+        List<String> lookupIds = userDetailsService.getUserLookupIds(uppercaseUuid, false);
+
+        assertIterableEquals(List.of(uppercaseUuid.toLowerCase()), lookupIds);
+    }
+
+    @Test
     public void testGetUserLookupIdsReturnsCanonicalAndLegacyInCompatibilityMode() {
         UserDetails mapped = new UserDetails();
         mapped.setUserId(UUID.randomUUID());
@@ -237,7 +246,8 @@ public class UserDetailsServiceTest {
 
         List<String> lookupIds = userDetailsService.getUserLookupIds("TestUser", true);
 
-        assertIterableEquals(List.of(mapped.getUserId().toString(), "TestUser"), lookupIds);
+        // Legacy id is lower-cased: lookup queries compare lower(cr_by).
+        assertIterableEquals(List.of(mapped.getUserId().toString(), "testuser"), lookupIds);
     }
 
     @Test
@@ -250,6 +260,13 @@ public class UserDetailsServiceTest {
 
         assertTrue(userDetailsService.matchesUser("TestUser", mapped.getUserId().toString(), true));
         assertTrue(userDetailsService.matchesUser("TestUser", "TestUser", true));
+    }
+
+    @Test
+    public void testMatchesUserComparesCanonicalUuidIgnoringCase() {
+        String storedUuid = UUID.randomUUID().toString();
+
+        assertTrue(userDetailsService.matchesUser(storedUuid.toUpperCase(), storedUuid, false));
     }
 
     @Test

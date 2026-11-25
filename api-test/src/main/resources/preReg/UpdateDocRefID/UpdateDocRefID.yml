@@ -67,6 +67,7 @@ UpdateDocRefID:
       endPoint: /preregistration/v1/documents/document/{documentId}?preRegistrationId={preRegistrationId}&refNumber={refNumber}
       uniqueIdentifier: TC_prereg_UpdateDocRefID_05
       description: Validate that updating the document reference ID fails when an invalid document ID is provided
+      role: batch
       restMethod: put
       inputTemplate: preReg/UpdateDocRefID/updateDocRefID
       outputTemplate: preReg/error

@@ -526,7 +526,8 @@ public class ApplicationService implements ApplicationServiceIntf {
 					}
 					serviceUtil.deleteApplicationFromApplications(applicationId);
 					deleteDto.setPreRegistrationId(applicationId);
-					deleteDto.setDeletedBy(authUserDetails().getUserId());
+					String deletedBy = userDetailsService.findExistingUserId(authUserId);
+					deleteDto.setDeletedBy(deletedBy != null ? deletedBy : authUserId);
 					deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
 				}
 			} else {

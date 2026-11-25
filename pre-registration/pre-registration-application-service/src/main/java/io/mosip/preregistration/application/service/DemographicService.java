@@ -718,11 +718,12 @@ public class DemographicService implements DemographicServiceIntf {
 							if ((demographicEntity.getStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
 								getBookingServiceToDeleteAllByPreId(preregId);
 							}
+							String deletedBy = userDetailsService.findExistingUserId(userId);
 							try {
 								this.demographicRepository.delete(demographicEntity);
 								serviceUtil.deleteApplicationFromApplications(preregId);
 								deleteDto.setPreRegistrationId(preregId);
-								deleteDto.setDeletedBy(userId);
+								deleteDto.setDeletedBy(deletedBy != null ? deletedBy : userId);
 								deleteDto.setDeletedDateTime(new Date(System.currentTimeMillis()));
 							} catch (Exception e) {
 								throw new RecordFailedToDeleteException(DemographicErrorCodes.PRG_PAM_APP_004.getCode(),

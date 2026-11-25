@@ -95,6 +95,7 @@ import io.mosip.preregistration.core.exception.DatabaseOperationException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.RecordFailedToDeleteException;
 import io.mosip.preregistration.core.exception.RestCallException;
+import io.mosip.preregistration.core.exception.UserLookupException;
 import io.mosip.preregistration.core.util.CryptoUtil;
 import io.mosip.preregistration.core.util.GenericUtil;
 import io.mosip.preregistration.core.util.HashUtill;
@@ -1020,6 +1021,9 @@ public class DemographicServiceUtil {
 		try {
 			return applicationIdentityMigrationService.resolveEffectiveUserId(userId);
 		} catch (IllegalStateException ex) {
+			if (ex.getCause() instanceof UserLookupException userLookupException) {
+				throw userLookupException;
+			}
 			throw new RecordFailedToUpdateException(ApplicationErrorCodes.PRG_APP_010.getCode(),
 					ApplicationErrorMessages.STATUS_UPDATE_FOR_APPLICATIONS_FAILED.getMessage());
 		}
