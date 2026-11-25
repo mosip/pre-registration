@@ -45,6 +45,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @NamedQuery(name = "DemographicEntity.findByCreatedByOrderByCreateDateTime", query = "SELECT e FROM DemographicEntity e  WHERE e.createdBy=:userId and e.statusCode <>:statusCode order by e.createDateTime desc")
 @NamedQuery(name = "DemographicEntity.findByCreatedBy", query = "SELECT e FROM DemographicEntity e  WHERE e.createdBy=:userId and e.statusCode <>:statusCode order by e.createDateTime desc")
+@NamedQuery(name = "DemographicEntity.findByCreatedByInAndStatusCodeOrderByCreateDateTime", query = "SELECT e FROM DemographicEntity e  WHERE lower(e.createdBy) IN :userIds and e.statusCode <>:statusCode order by e.createDateTime desc")
+@NamedQuery(name = "DemographicEntity.findByCreatedByInAndStatusCode", query = "SELECT e FROM DemographicEntity e  WHERE lower(e.createdBy) IN :userIds and e.statusCode <>:statusCode order by e.createDateTime desc")
 @NamedQuery(name = "DemographicEntity.findBypreRegistrationId", query = "SELECT r FROM DemographicEntity r  WHERE r.preRegistrationId=:preRegId")
 public class DemographicEntity implements Serializable {
 	/** The Constant serialVersionUID. */
