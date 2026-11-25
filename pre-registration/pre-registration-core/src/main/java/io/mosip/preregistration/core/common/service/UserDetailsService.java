@@ -5,6 +5,7 @@ import java.security.NoSuchAlgorithmException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.slf4j.Logger;
@@ -198,14 +199,16 @@ public class UserDetailsService {
         try {
             String internalUserId = getOrCreateInternalUserId(trimmedUserId);
             if (internalUserId != null && !internalUserId.isBlank()) {
-                lookupIds.add(internalUserId);
+                // Lower-cased to match lower(cr_by) in the lookup queries (a UUID login id is returned as given).
+                lookupIds.add(internalUserId.toLowerCase(Locale.ROOT));
             }
         } catch (UserLookupException ex) {
             LOGGER.warn("UUID resolution failed for lookup, piiBackwardCompatibility={}. maskedUser={}",
                     piiBackwardCompatibility, GenericUtil.maskIdentifier(userId));
         }
         if (piiBackwardCompatibility) {
-            lookupIds.add(trimmedUserId);
+            // Lower-cased: the lookup queries compare lower(cr_by), so legacy rows match any login casing.
+            lookupIds.add(trimmedUserId.toLowerCase(Locale.ROOT));
         }
         return lookupIds.stream().distinct().toList();
     }
@@ -257,9 +260,9 @@ public class UserDetailsService {
         if (internalAuthUserId == null) {
             return false;
         }
-        // New records store internal UUID — direct compare
+        // New records store internal UUID — compare ignoring case, consistent with the lower(cr_by) lookups
         if (GenericUtil.isUuid(storedUserId)) {
-            return internalAuthUserId.equals(storedUserId.trim());
+            return internalAuthUserId.equalsIgnoreCase(storedUserId.trim());
         }
         // Legacy raw userId — only check if backward compat is enabled
         if (!piiBackwardCompatibility) {
@@ -268,7 +271,7 @@ public class UserDetailsService {
         try {
             String internalStoredUserId = getOrCreateInternalUserId(storedUserId);
             if (internalStoredUserId != null) {
-                return internalAuthUserId.equals(internalStoredUserId);
+                return internalAuthUserId.equalsIgnoreCase(internalStoredUserId);
             }
         } catch (UserLookupException ex) {
             LOGGER.warn("UUID resolution failed for stored user during match for masked user {}", GenericUtil.maskIdentifier(storedUserId));
