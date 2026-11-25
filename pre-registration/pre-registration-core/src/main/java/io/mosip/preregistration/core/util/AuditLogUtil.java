@@ -14,10 +14,10 @@ import java.time.ZoneId;
 import jakarta.annotation.PostConstruct;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -77,10 +77,9 @@ public class AuditLogUtil {
 	@Autowired
 	private ObjectMapper objectMapper;
 
-	/** Optional: not every module that loads core defines this bean. */
-	@Lazy
-	@Autowired(required = false)
-	private UserDetailsService userDetailsService;
+	/** Optional: not every module that loads core defines this bean; resolved per call, null when absent. */
+	@Autowired
+	private ObjectProvider<UserDetailsService> userDetailsServiceProvider;
 
 	@Value("${audit.url}")
 	private String auditUrl;
@@ -254,6 +253,7 @@ public class AuditLogUtil {
 				|| GenericUtil.isUuid(sessionUser)) {
 			return sessionUser;
 		}
+		UserDetailsService userDetailsService = userDetailsServiceProvider.getIfAvailable();
 		if (userDetailsService != null) {
 			try {
 				String canonicalUserId = userDetailsService.getOrCreateInternalUserId(sessionUser);
