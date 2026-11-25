@@ -33,3 +33,108 @@ FetchApplicationByPrid:
     }
   ]
 }'
+   Prereg_FetchApplicationByPrid_Without_Auth_Cookie_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_Prereg_FetchApplicationByPrid_03
+      description: Validate that fetching an application by Pre Registration ID is rejected with KER-ATH-401 when the request carries no Authorization cookie
+      role: noauth
+      restMethod: get
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "KER-ATH-401"
+    }
+  ]
+}'
+   Prereg_FetchApplicationByPrid_Without_Auth_Cookie_StatusCode_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_Prereg_FetchApplicationByPrid_11
+      description: Validate that fetching an application by Pre Registration ID without an Authorization cookie is rejected with HTTP 401
+      role: noauth
+      restMethod: get
+      checkOnlyStatusCodeInResponse: true
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/responseCode
+      input: '{
+  "preRegistrationId": "$ID:CreatePrereg_All_Valid_Smoke_sid_pos_preRegistrationId$"
+}'
+      output: '{
+      "responseCode": "401"
+}'
+   Prereg_FetchApplicationByPrid_Special_Chars_preRegistrationId_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_Prereg_FetchApplicationByPrid_05
+      description: Validate that fetching an application fails with PRG_PAM_APP_005 when the Pre Registration ID contains letters and symbols
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "ab@c!12"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
+   Prereg_FetchApplicationByPrid_13_Digit_preRegistrationId_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_Prereg_FetchApplicationByPrid_06
+      description: Validate that fetching an application fails with PRG_PAM_APP_005 when the Pre Registration ID is one digit shorter than a real ID (13 digits)
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "1234567890123"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
+   Prereg_FetchApplicationByPrid_15_Digit_preRegistrationId_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_Prereg_FetchApplicationByPrid_09
+      description: Validate that fetching an application fails with PRG_PAM_APP_005 when the Pre Registration ID is one digit longer than a real ID (15 digits)
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "123456789012345"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
+   Prereg_FetchApplicationByPrid_Unknown_14_Digit_preRegistrationId_Neg:
+      endPoint: /preregistration/v1/applications/prereg/{preRegistrationId}
+      uniqueIdentifier: TC_Prereg_FetchApplicationByPrid_10
+      description: Validate that fetching an application fails with PRG_PAM_APP_005 when a well-formed 14 digit Pre Registration ID was never created
+      role: batch
+      restMethod: get
+      inputTemplate: preReg/FetchApplicationByPrid/fetchApplicationByPrid
+      outputTemplate: preReg/error
+      input: '{
+  "preRegistrationId": "12345678901234"
+}'
+      output: '{
+   "errors": [
+    {
+      "errorCode": "PRG_PAM_APP_005"
+    }
+  ]
+}'
