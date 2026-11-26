@@ -7,6 +7,7 @@ import java.time.LocalDateTime;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,5 +94,20 @@ public class AuditLogUtilTest {
 		
 		auditLogUtilSpy.saveAuditDetails(auditRequestDto);
 		assertEquals(respEntity.getBody().getResponse().isStatus(), true);
+	}
+
+	/** No UserDetailsService bean in this context: a login id must be masked, not throw. */
+	@Test
+	public void should_maskLoginId_when_userDetailsServiceIsAbsent() {
+		auditRequestDto.setSessionUserId("resident@example.com");
+		auditRequestDto.setSessionUserName("resident@example.com");
+		Mockito.doReturn(true).when(auditLogUtilSpy).callAuditManager(Mockito.any());
+
+		auditLogUtilSpy.saveAuditDetails(auditRequestDto);
+
+		ArgumentCaptor<AuditRequestDto> sent = ArgumentCaptor.forClass(AuditRequestDto.class);
+		Mockito.verify(auditLogUtilSpy).callAuditManager(sent.capture());
+		assertEquals("r***@example.com", sent.getValue().getSessionUserId());
+		assertEquals("r***@example.com", sent.getValue().getSessionUserName());
 	}
 }
