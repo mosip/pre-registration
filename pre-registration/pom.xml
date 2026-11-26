@@ -78,7 +78,7 @@
 		<mockito-version>3.4.3</mockito-version>
 
 		<!-- Lombok -->
-		<lombok.version>1.18.30</lombok.version>
+		<lombok.version>1.18.42</lombok.version>
 
 		<!-- Json Simple -->
 		<jsonsimple.version>1.1.1</jsonsimple.version>
