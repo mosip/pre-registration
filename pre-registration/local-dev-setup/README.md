@@ -96,8 +96,6 @@ Grouped OpenAPI (Authorize header `Authorization`):
 - http://localhost:9090/preregistration/v1/application-service/swagger-ui.html
 - `/v3/api-docs/application` `/v3/api-docs/datasync` `/v3/api-docs/captcha` `/v3/api-docs/booking`
 
-Export: [`docs/openapi/README.md`](../../docs/openapi/README.md).
-
 Postman: import [`postman/Pre-Registration-Local.postman_collection.json`](postman/Pre-Registration-Local.postman_collection.json) and [`postman/Pre-Registration-Local.postman_environment.json`](postman/Pre-Registration-Local.postman_environment.json). How-to: [`postman/README.md`](postman/README.md). Happy path: Auth → Login (OTP `111111`) → Create → Upload `postman/sample/IDProof.pdf` → Update status → Availability → Book.
 
 ## api-test
