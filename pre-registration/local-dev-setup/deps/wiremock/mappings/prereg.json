@@ -6079,8 +6079,49 @@
                 "id": "local-prereg-uispec",
                 "version": 0.1,
                 "title": "pre-registration",
+                "description": "local-dev UI spec: POA is required so UpdatePreRegStatus succeeds after UploadDocument and _09 stays PRG_PAM_APP_023",
+                "identitySchemaId": "local-identity-schema",
+                "idSchemaVersion": 0.1,
                 "domain": "pre-registration",
-                "jsonSpec": []
+                "jsonSpec": [
+                  {
+                    "type": "schema",
+                    "spec": {
+                      "identity": {
+                        "identity": [
+                          {
+                            "id": "proofOfAddress",
+                            "controlType": "fileupload",
+                            "required": true,
+                            "subType": "POA"
+                          },
+                          {
+                            "id": "proofOfIdentity",
+                            "controlType": "fileupload",
+                            "required": false,
+                            "subType": "POI"
+                          },
+                          {
+                            "id": "proofOfDateOfBirth",
+                            "controlType": "fileupload",
+                            "required": false,
+                            "subType": "POB"
+                          },
+                          {
+                            "id": "proofOfRelationship",
+                            "controlType": "fileupload",
+                            "required": false,
+                            "subType": "POR"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                ],
+                "status": "PUBLISHED",
+                "effectiveFrom": "2020-01-01T00:00:00.000",
+                "createdOn": "2020-01-01T00:00:00.000",
+                "updatedOn": "2020-01-01T00:00:00.000"
               }
             ]
           }
