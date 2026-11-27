@@ -50,6 +50,7 @@ import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
 import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
+import io.mosip.preregistration.core.exception.PreRegistrationException;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
@@ -446,12 +447,7 @@ public class AppointmentServiceImpl implements AppointmentService {
 			}
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In appointment cancelled successfully for ID: " + preRegistrationId + ", updating the applications and demographic tables");
-			ApplicationEntity applicationEntity = this.updateApplicationEntity(preRegistrationId, null,
-					StatusCodes.CANCELLED.getCode());
-			if (applicationEntity.getBookingType().equals(BookingTypeCodes.NEW_PREREGISTRATION.toString())) {
-				this.demographicService.updatePreRegistrationStatus(preRegistrationId,
-						StatusCodes.CANCELLED.getCode(), authUserDetails().getUserId());
-			}
+			markAppointmentCancelled(preRegistrationId);
 			cancelResponse.setResponse(response);
 
 		} catch (AppointmentExecption ex) {
@@ -461,6 +457,20 @@ public class AppointmentServiceImpl implements AppointmentService {
 		}
 
 		return cancelResponse;
+	}
+
+	@Override
+	public void markAppointmentCancelled(String preRegistrationId) {
+		ApplicationEntity application = updateApplicationEntity(
+				preRegistrationId, null, StatusCodes.CANCELLED.getCode());
+		if (BookingTypeCodes.NEW_PREREGISTRATION.toString().equals(application.getBookingType())) {
+			MainResponseDTO<String> status = demographicService.updatePreRegistrationStatus(
+					preRegistrationId, StatusCodes.CANCELLED.getCode(), authUserDetails().getUserId());
+			if (status.getErrors() != null && !status.getErrors().isEmpty()) {
+				ExceptionJSONInfoDTO error = status.getErrors().get(0);
+				throw new PreRegistrationException(error.getErrorCode(), error.getMessage(), status);
+			}
+		}
 	}
 
 	@Override

@@ -637,6 +637,8 @@ public class DataSyncServiceUtil {
 			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile), encryptionPublickey));
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
+		} catch (ZipFileCreationException ex) {
+			throw ex;
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -1054,7 +1056,7 @@ public class DataSyncServiceUtil {
 						});
 				MainResponseDTO<ClientPublickeyDTO> body = respEntity.getBody();
 				if (body != null) {
-					if (body.getErrors() != null) {
+					if (body.getErrors() != null && !body.getErrors().isEmpty()) {
 						log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 								"In callGetMachinePublickey method of datasync service util - unable to get envryption publickey for the machineID");
 					} else {
@@ -1070,6 +1072,10 @@ public class DataSyncServiceUtil {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
 					"In callGetMachinePublickey method of datasync service util - {}" + ex.getMessage());
 
+			throw new ZipFileCreationException(ErrorCodes.PRG_DATA_SYNC_018.getCode(),
+					ErrorMessages.FAILED_TO_FETCH_MACHINE_ENCRYPTION_PUBLICKEY.getMessage(), null);
+		}
+		if (machineId != null && (encryptionPublickey == null || encryptionPublickey.isBlank())) {
 			throw new ZipFileCreationException(ErrorCodes.PRG_DATA_SYNC_018.getCode(),
 					ErrorMessages.FAILED_TO_FETCH_MACHINE_ENCRYPTION_PUBLICKEY.getMessage(), null);
 		}

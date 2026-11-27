@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 import jakarta.annotation.Resource;
 import jakarta.servlet.http.HttpServletRequest;
@@ -24,8 +26,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
+import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
@@ -601,9 +606,26 @@ public class PreRegistrationExceptionHandler {
 			final HttpServletRequest httpServletRequest, final HttpMessageNotReadableException e) throws IOException {
 		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
 		String errorMessage = StringUtils.substringBefore(e.getMessage(), ":");
+		if (e.getCause() instanceof JsonMappingException mappingException) {
+			String fieldPath = mappingException.getPath().stream()
+					.map(JsonMappingException.Reference::getFieldName)
+					.filter(Objects::nonNull)
+					.collect(Collectors.joining("."));
+			if (!fieldPath.isEmpty()) {
+				errorMessage += " at " + fieldPath;
+			}
+		}
 		ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_015.getCode(), errorMessage);
 		errorResponse.getErrors().add(error);
 		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+	}
+
+	@ExceptionHandler({NoResourceFoundException.class, NoHandlerFoundException.class})
+	public ResponseEntity<ResponseWrapper<ServiceError>> handleRouteNotFound() {
+		ResponseWrapper<ServiceError> response = new ResponseWrapper<>();
+		response.setResponsetime(LocalDateTime.now(ZoneId.of("UTC")));
+		response.getErrors().add(new ServiceError(ErrorCodes.PRG_CORE_REQ_025.getCode(), "Route not found"));
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
 	}
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })

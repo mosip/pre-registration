@@ -29,6 +29,8 @@ public interface AppointmentService {
 
 	MainResponseDTO<CancelBookingResponseDTO> cancelAppointment(String preRegistrationId);
 
+	void markAppointmentCancelled(String preRegistrationId);
+
 	MainResponseDTO<BookingStatus> makeMultiAppointment(MainRequestDTO<MultiBookingRequest> bookingRequest, String userAgent);
 
 }

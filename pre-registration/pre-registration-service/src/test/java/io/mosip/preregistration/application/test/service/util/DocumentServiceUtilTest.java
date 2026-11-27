@@ -12,8 +12,10 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.never;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.net.URI;
@@ -35,6 +37,10 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.entity.DemographicEntity;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.encryption.AccessPermission;
+import org.apache.pdfbox.pdmodel.encryption.StandardProtectionPolicy;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.jupiter.api.Assertions;
@@ -498,6 +504,26 @@ public class DocumentServiceUtilTest {
 
 		assertFalse(result);
 		verify(mockFile, never()).getInputStream();
+	}
+
+	@Test
+	public void detectsPasswordProtectedPdf() throws IOException {
+		DocumentServiceUtil util = new DocumentServiceUtil();
+		ReflectionTestUtils.setField(util, "fileExtension", "PDF");
+		ByteArrayOutputStream normal = new ByteArrayOutputStream();
+		ByteArrayOutputStream protectedPdf = new ByteArrayOutputStream();
+
+		try (PDDocument document = new PDDocument()) {
+			document.addPage(new PDPage());
+			document.save(normal);
+			document.protect(new StandardProtectionPolicy("owner", "required", new AccessPermission()));
+			document.save(protectedPdf);
+		}
+
+		assertFalse(util.isPasswordProtectedFile(
+				new MockMultipartFile("file", "normal.pdf", "application/pdf", normal.toByteArray())));
+		assertTrue(util.isPasswordProtectedFile(
+				new MockMultipartFile("file", "protected.pdf", "application/pdf", protectedPdf.toByteArray())));
 	}
 
 }

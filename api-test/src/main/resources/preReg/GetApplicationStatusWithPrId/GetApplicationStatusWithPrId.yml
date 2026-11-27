@@ -46,5 +46,5 @@ GetApplicationStatusWithPrId:
       "preRegistrationId": ""
     }'
     output: '{
-      "responseCode": "500"
+      "responseCode": "404"
     }'

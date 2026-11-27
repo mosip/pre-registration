@@ -39,6 +39,7 @@ import io.mosip.preregistration.application.service.util.AppointmentUtil;
 import io.mosip.preregistration.core.common.service.UserDetailsService;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.DateTimeDto;
+import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.CancelBookingResponseDTO;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
@@ -191,6 +192,11 @@ public class AppointmentServiceTest {
 		Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
 		SecurityContextHolder.setContext(securityContext);
 		Mockito.when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
+		Mockito.when(applicationUser.getUserId()).thenReturn("test-user");
+		MainResponseDTO<String> status = new MainResponseDTO<>();
+		status.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		Mockito.when(demographicService.updatePreRegistrationStatus(
+				prid, StatusCodes.CANCELLED.getCode(), "test-user")).thenReturn(status);
 
 		ApplicationEntity appEntity2 = applicationRepostiory.save(applicationEntity);
 

@@ -81,7 +81,7 @@
 		<commons-lang3>3.17.0</commons-lang3>
 		<commons-collections4.version>4.5.0</commons-collections4.version>
 		<apache.httpclient.version>4.5.14</apache.httpclient.version>
-		<pdfbox.version>3.0.3</pdfbox.version>
+		<pdfbox.version>2.0.37</pdfbox.version>
 		<org.ehcache.version>3.10.8</org.ehcache.version>
 		<jaxb.runtime.version>2.3.9</jaxb.runtime.version>
 		<jaxb-api-version>2.3.1</jaxb-api-version>

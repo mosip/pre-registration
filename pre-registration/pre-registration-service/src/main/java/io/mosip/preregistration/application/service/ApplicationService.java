@@ -564,7 +564,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
-					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
+					if (StatusCodes.BOOKED.getCode().equals(applicationEntity.getBookingStatusCode())) {
 						MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
 						deleteBooking = serviceUtil.deleteBooking(applicationId);
 						if (deleteBooking.getErrors() != null) {
