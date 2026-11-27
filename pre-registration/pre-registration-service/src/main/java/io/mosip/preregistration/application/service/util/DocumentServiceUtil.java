@@ -539,17 +539,126 @@ public class DocumentServiceUtil {
 	}
 
 	/**
-	 * Encrypted PDFs declare {@code /Encrypt} in the trailer. Used when PDFBox 3
-	 * {@code Loader.loadPDF} cannot run because {@code loader.path} virus-scanner
-	 * jars shadow PDFBox 2 {@code IOUtils}.
+	 * Encrypted PDFs declare {@code /Encrypt} in the last trailer or the last
+	 * cross-reference stream dictionary. Used when PDFBox 3 {@code Loader.loadPDF}
+	 * cannot run because {@code loader.path} virus-scanner jars shadow PDFBox 2
+	 * {@code IOUtils}. Only those structural dictionaries are inspected so
+	 * {@code /Encrypt} in page content does not count.
 	 */
 	public static boolean pdfTrailerHasEncrypt(byte[] pdf) {
 		if (pdf == null || pdf.length == 0) {
 			return false;
 		}
-		int from = Math.max(0, pdf.length - 4096);
-		String tail = new String(pdf, from, pdf.length - from, StandardCharsets.ISO_8859_1);
-		return tail.contains("/Encrypt");
+		String text = new String(pdf, StandardCharsets.ISO_8859_1);
+		int startxref = text.lastIndexOf("startxref");
+		if (startxref < 0) {
+			return false;
+		}
+		if (dictHasEncryptName(trailerDictionaryBefore(text, startxref))) {
+			return true;
+		}
+		int offset = parseStartxrefOffset(text, startxref + "startxref".length());
+		if (offset < 0 || offset >= text.length()) {
+			return false;
+		}
+		return dictHasEncryptName(xrefStreamDictionary(text, offset));
+	}
+
+	private static String trailerDictionaryBefore(String text, int startxref) {
+		int from = Math.max(0, startxref - 16384);
+		String before = text.substring(from, startxref);
+		int trailer = before.lastIndexOf("trailer");
+		if (trailer < 0) {
+			return "";
+		}
+		return extractFirstDict(before.substring(trailer));
+	}
+
+	private static String xrefStreamDictionary(String text, int offset) {
+		int end = Math.min(text.length(), offset + 32768);
+		String window = text.substring(offset, end);
+		int streamAt = indexOfPdfKeyword(window, "stream");
+		if (streamAt >= 0) {
+			window = window.substring(0, streamAt);
+		}
+		return extractFirstDict(window);
+	}
+
+	private static int parseStartxrefOffset(String text, int from) {
+		int i = from;
+		while (i < text.length() && Character.isWhitespace(text.charAt(i))) {
+			i++;
+		}
+		int begin = i;
+		while (i < text.length() && text.charAt(i) >= '0' && text.charAt(i) <= '9') {
+			i++;
+		}
+		if (begin == i) {
+			return -1;
+		}
+		try {
+			return Integer.parseInt(text.substring(begin, i));
+		} catch (NumberFormatException ex) {
+			return -1;
+		}
+	}
+
+	private static String extractFirstDict(String text) {
+		int open = text.indexOf("<<");
+		if (open < 0) {
+			return "";
+		}
+		int depth = 0;
+		for (int i = open; i < text.length() - 1; i++) {
+			if (text.charAt(i) == '<' && text.charAt(i + 1) == '<') {
+				depth++;
+				i++;
+			} else if (text.charAt(i) == '>' && text.charAt(i + 1) == '>') {
+				depth--;
+				i++;
+				if (depth == 0) {
+					return text.substring(open, i + 1);
+				}
+			}
+		}
+		return text.substring(open);
+	}
+
+	private static boolean dictHasEncryptName(String dict) {
+		if (dict == null || dict.isEmpty()) {
+			return false;
+		}
+		int i = 0;
+		while ((i = dict.indexOf("/Encrypt", i)) >= 0) {
+			int after = i + "/Encrypt".length();
+			if (after >= dict.length() || !isPdfNameChar(dict.charAt(after))) {
+				return true;
+			}
+			i = after;
+		}
+		return false;
+	}
+
+	private static int indexOfPdfKeyword(String text, String keyword) {
+		int from = 0;
+		while (from < text.length()) {
+			int at = text.indexOf(keyword, from);
+			if (at < 0) {
+				return -1;
+			}
+			boolean startOk = at == 0 || Character.isWhitespace(text.charAt(at - 1));
+			int after = at + keyword.length();
+			boolean endOk = after >= text.length() || Character.isWhitespace(text.charAt(after));
+			if (startOk && endOk) {
+				return at;
+			}
+			from = at + 1;
+		}
+		return -1;
+	}
+
+	private static boolean isPdfNameChar(char c) {
+		return c > ' ' && "/%()<>[]{}".indexOf(c) < 0;
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)

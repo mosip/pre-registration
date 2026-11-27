@@ -81,6 +81,11 @@ public class DocumentController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			required = true,
+			content = @Content(
+					mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+					schema = @Schema(implementation = DocumentUploadForm.class)))
 	/**
 	 * Performs file upload for MOSIP Pre-Registration.
 	 *
@@ -125,6 +130,15 @@ public class DocumentController {
 			return asField;
 		}
 		throw new MissingServletRequestPartException("Document request");
+	}
+
+	@Schema(requiredProperties = { "file", "Document request" })
+	static class DocumentUploadForm {
+		@Schema(type = "string", format = "binary")
+		public String file;
+
+		@com.fasterxml.jackson.annotation.JsonProperty("Document request")
+		public String documentRequest;
 	}
 
 	/**

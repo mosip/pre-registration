@@ -110,6 +110,9 @@ public class BookingServiceIdentityMigrationTest {
 		Mockito.when(serviceUtil.bookingEntitySetter(anyString(), any())).thenReturn(bookingEntity);
 		Mockito.when(bookingDAO.saveRegistrationEntityForBooking(any())).thenReturn(bookingEntity);
 		Mockito.when(bookingDAO.updateAvailibityEntity(any())).thenReturn(availabilityEntity);
+		MainResponseDTO<String> statusOk = new MainResponseDTO<>();
+		statusOk.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		Mockito.when(serviceUtil.updateDemographicStatus(anyString(), anyString())).thenReturn(statusOk);
 	}
 
 	private void givenIdentityMigrationFails() {

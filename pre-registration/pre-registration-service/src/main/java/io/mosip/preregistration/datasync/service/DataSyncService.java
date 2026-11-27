@@ -506,20 +506,22 @@ public class DataSyncService {
 		boolean isSaveSuccess = false;
 		responseDto.setId(storeId);
 		responseDto.setVersion(version);
-		String requestId = reverseDataSyncRequest.getId();
-		if (!acceptedConsumedIds().contains(requestId)) {
-			throw new InvalidRequestException(
-					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_001.getCode(),
-					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_ID.getMessage(),
-					responseDto);
-		}
-		requiredRequestMap.put("id", requestId);
 
 		AuthUserDetails actor = resolveAuditActor();
 		String actorUserId = actor == null ? null : actor.getUserId();
 		String actorUsername = actor == null ? null : actor.getUsername();
 
 		try {
+			String requestId = reverseDataSyncRequest.getId();
+			if (!acceptedConsumedIds().contains(requestId)) {
+				throw new InvalidRequestException(
+						io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_001.getCode(),
+						io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_ID.getMessage(),
+						responseDto);
+			}
+			Map<String, String> requiredRequestMap = new HashMap<>();
+			requiredRequestMap.put("version", version);
+			requiredRequestMap.put("id", requestId);
 			if (validationUtil.requestValidator(reverseDataSyncRequest)
 					&& serviceUtil.validateReverseDataSyncRequest(reverseDataSyncRequest.getRequest(), responseDto)) {
 				if (validationUtil.requestValidator(serviceUtil.prepareRequestMap(reverseDataSyncRequest),

@@ -42,6 +42,7 @@ import io.mosip.preregistration.booking.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.errorcodes.ErrorMessages;
 import io.mosip.preregistration.booking.exception.AvailablityNotFoundException;
 import io.mosip.preregistration.booking.exception.DemographicGetStatusException;
+import io.mosip.preregistration.booking.exception.DemographicStatusUpdationException;
 import io.mosip.preregistration.booking.exception.RecordNotFoundException;
 import io.mosip.preregistration.booking.exception.util.BookingExceptionCatcher;
 import io.mosip.preregistration.booking.repository.impl.BookingDAO;
@@ -691,7 +692,7 @@ public class BookingService implements BookingServiceIntf {
 						" and Date and Time " + availableUpdate.getRegDate() + " " + availableUpdate.getFromTime());
 
 				/* Updating demographic */
-				serviceUtil.updateDemographicStatus(preRegistrationId, StatusCodes.BOOKED.getCode());
+				updateDemographicStatusOrFail(preRegistrationId, StatusCodes.BOOKED.getCode());
 				bookingStatusDTO.setBookingMessage("Appointment booked successfully");
 
 			}
@@ -764,7 +765,7 @@ public class BookingService implements BookingServiceIntf {
 					bookingDAO.deleteByPreRegistrationId(preRegistrationId);
 
 					/* Update the status to Canceled in demographic Table */
-					serviceUtil.updateDemographicStatus(preRegistrationId, StatusCodes.CANCELLED.getCode());
+					updateDemographicStatusOrFail(preRegistrationId, StatusCodes.CANCELLED.getCode());
 
 					/* No. of Availability. update */
 					availableEntity.setAvailableKiosks(availableEntity.getAvailableKiosks() + 1);
@@ -1103,5 +1104,19 @@ public class BookingService implements BookingServiceIntf {
 		response.setErrors(null);
 		return response;
 
+	}
+
+	private void updateDemographicStatusOrFail(String preRegistrationId, String status) {
+		MainResponseDTO<String> statusResponse = serviceUtil.updateDemographicStatus(preRegistrationId, status);
+		if (statusResponse != null
+				&& (statusResponse.getErrors() == null || statusResponse.getErrors().isEmpty())) {
+			return;
+		}
+		String message = ErrorMessages.DEMOGRAPHIC_STATUS_UPDATION_FAILED.getMessage();
+		if (statusResponse != null && statusResponse.getErrors() != null && !statusResponse.getErrors().isEmpty()
+				&& statusResponse.getErrors().get(0).getMessage() != null) {
+			message = statusResponse.getErrors().get(0).getMessage();
+		}
+		throw new DemographicStatusUpdationException(ErrorCodes.PRG_BOOK_RCI_011.getCode(), message);
 	}
 }

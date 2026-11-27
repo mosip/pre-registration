@@ -309,7 +309,13 @@ cmd_stop() {
   local extra
   for extra in $(port_pids); do
     if [[ "$extra" != "$pid" ]]; then
-      stop_pid "$extra"
+      if command -v powershell.exe >/dev/null 2>&1; then
+        [[ "$extra" =~ ^[1-9][0-9]*$ ]] || continue
+        powershell.exe -NoProfile -Command \
+          "Stop-Process -Id ${extra} -ErrorAction Stop" || true
+      else
+        stop_pid "$extra"
+      fi
     fi
   done
   rm -f "$PID_FILE"

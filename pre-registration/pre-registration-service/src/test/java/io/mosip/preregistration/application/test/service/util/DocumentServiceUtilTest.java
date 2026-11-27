@@ -502,17 +502,38 @@ public class DocumentServiceUtilTest {
 
 	@Test
 	public void pdfTrailerHasEncryptDetectsEncryptDict() {
-		byte[] pdf = "%PDF-1.4\ntrailer\n<</Size 1 /Encrypt 2 0 R>>\n%%EOF"
+		byte[] pdf = "%PDF-1.4\ntrailer\n<</Size 1 /Encrypt 2 0 R>>\nstartxref\n9\n%%EOF"
 				.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1);
 		assertTrue(DocumentServiceUtil.pdfTrailerHasEncrypt(pdf));
 	}
 
 	@Test
 	public void pdfTrailerHasEncryptFalseForPlainPdf() {
-		byte[] pdf = "%PDF-1.4\ntrailer\n<</Size 1>>\n%%EOF"
+		byte[] pdf = "%PDF-1.4\ntrailer\n<</Size 1>>\nstartxref\n9\n%%EOF"
 				.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1);
 		assertFalse(DocumentServiceUtil.pdfTrailerHasEncrypt(pdf));
 		assertFalse(DocumentServiceUtil.pdfTrailerHasEncrypt(new byte[0]));
+	}
+
+	@Test
+	public void pdfTrailerHasEncryptDetectsXrefStreamDictBeforeLargeStream() {
+		StringBuilder pdf = new StringBuilder();
+		pdf.append("%PDF-1.5\n");
+		pdf.append("2 0 obj\n<< /Type /XRef /Size 2 /Root 1 0 R /Encrypt 3 0 R /Length 5000 >>\nstream\n");
+		pdf.append("x".repeat(5000));
+		pdf.append("\nendstream\nendobj\nstartxref\n9\n%%EOF");
+		assertTrue(DocumentServiceUtil.pdfTrailerHasEncrypt(
+				pdf.toString().getBytes(java.nio.charset.StandardCharsets.ISO_8859_1)));
+	}
+
+	@Test
+	public void pdfTrailerHasEncryptIgnoresEncryptInPageContent() {
+		StringBuilder pdf = new StringBuilder();
+		pdf.append("%PDF-1.4\n");
+		pdf.append("1 0 obj\n<< /Length 20 >>\nstream\n/Encrypt\nendstream\nendobj\n");
+		pdf.append("trailer\n<</Size 1 /Root 1 0 R>>\nstartxref\n9\n%%EOF");
+		assertFalse(DocumentServiceUtil.pdfTrailerHasEncrypt(
+				pdf.toString().getBytes(java.nio.charset.StandardCharsets.ISO_8859_1)));
 	}
 
 }

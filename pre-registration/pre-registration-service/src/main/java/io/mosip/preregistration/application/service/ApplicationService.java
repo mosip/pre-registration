@@ -6,6 +6,8 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -227,12 +229,12 @@ public class ApplicationService implements ApplicationServiceIntf {
 
 	private LocalDateTime parseAuditTimestamp(String value) {
 		if (value == null || value.isBlank()) {
-			return LocalDateTime.now();
+			return LocalDateTime.now(ZoneOffset.UTC);
 		}
 		try {
 			return LocalDateTime.parse(value);
 		} catch (DateTimeParseException ignored) {
-			return java.time.OffsetDateTime.parse(value).toLocalDateTime();
+			return OffsetDateTime.parse(value).withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
 		}
 	}
 
@@ -579,7 +581,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
-					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
+					if (StatusCodes.BOOKED.getCode().equals(applicationEntity.getBookingStatusCode())) {
 						MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
 						deleteBooking = serviceUtil.deleteBooking(applicationId);
 						if (deleteBooking.getErrors() != null) {

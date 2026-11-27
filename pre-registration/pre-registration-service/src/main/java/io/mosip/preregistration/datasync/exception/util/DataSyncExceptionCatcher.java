@@ -1,11 +1,19 @@
 package io.mosip.preregistration.datasync.exception.util;
 
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_ID;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.core.constant.PreRegCoreConstant.LOGGER_SESSIONID;
+
 import java.io.IOException;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import io.mosip.kernel.core.dataaccess.exception.DataAccessLayerException;
 import io.mosip.kernel.core.exception.BaseCheckedException;
 import io.mosip.kernel.core.exception.BaseUncheckedException;
+import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreRegistrationException;
@@ -29,6 +37,9 @@ import io.mosip.preregistration.datasync.exception.system.SystemFileIOException;
  *
  */
 public class DataSyncExceptionCatcher {
+
+	private static final Logger log = LoggerConfiguration.logConfig(DataSyncExceptionCatcher.class);
+
 	/**
 	 * Method to handle the respective exceptions
 	 * 
@@ -82,10 +93,8 @@ public class DataSyncExceptionCatcher {
 			throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
 					((BaseCheckedException) ex).getErrorText(), mainResponsedto);
 		} else {
-			String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
-			throw new PreRegistrationException(
-					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(), message,
-					mainResponsedto);
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Unhandled datasync exception: " + ExceptionUtils.getStackTrace(ex));
 		}
 	}
 }

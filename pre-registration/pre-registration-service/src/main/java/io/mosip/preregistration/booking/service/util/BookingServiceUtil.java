@@ -73,6 +73,7 @@ import io.mosip.preregistration.booking.exception.BookingRegistrationCenterIdNot
 import io.mosip.preregistration.booking.exception.BookingTimeSlotNotSeletectedException;
 import io.mosip.preregistration.booking.exception.AppointmentBookingFailedException;
 import io.mosip.preregistration.booking.exception.DemographicGetStatusException;
+import io.mosip.preregistration.booking.exception.DemographicStatusUpdationException;
 import io.mosip.preregistration.booking.exception.InvalidDateTimeFormatException;
 import io.mosip.preregistration.booking.exception.RecordNotFoundException;
 import io.mosip.preregistration.booking.exception.TimeSpanException;
@@ -797,7 +798,17 @@ public class BookingServiceUtil {
 
 	public MainResponseDTO<String> updateDemographicStatus(String preRegistrationId, String status) {
 		String userId = authUserDetails().getUserId();
-		return commonServiceUtil.updatePreRegistrationStatus(preRegistrationId, status, userId);
+		MainResponseDTO<String> response = commonServiceUtil.updatePreRegistrationStatus(preRegistrationId, status,
+				userId);
+		if (response != null && (response.getErrors() == null || response.getErrors().isEmpty())) {
+			return response;
+		}
+		String message = ErrorMessages.DEMOGRAPHIC_STATUS_UPDATION_FAILED.getMessage();
+		if (response != null && response.getErrors() != null && !response.getErrors().isEmpty()
+				&& response.getErrors().get(0).getMessage() != null) {
+			message = response.getErrors().get(0).getMessage();
+		}
+		throw new DemographicStatusUpdationException(ErrorCodes.PRG_BOOK_RCI_011.getCode(), message);
 	}
 
 //	public MainResponseDTO<String> updatePreRegistrationStatus(String preRegId, String status) {

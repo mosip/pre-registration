@@ -38,7 +38,7 @@
         "exec": [
           "const d = new Date();",
           "d.setUTCDate(d.getUTCDate() + 7);",
-          "pm.environment.set('appointmentDate', d.toISOString().slice(0, 10));"
+          "pm.variables.set('appointmentDate', pm.environment.get('appointmentDate') || d.toISOString().slice(0, 10));"
         ]
       }
     }

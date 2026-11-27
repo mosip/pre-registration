@@ -29,4 +29,4 @@ See [Module Configuration](https://docs.mosip.io/1.2.0/id-lifecycle-management/s
 | `preregistration.recommended.centers.locCode` | Location hierarchy code for recommended centres (UI `ui.config.params`) |
 | `preregistration.contact.email` | Support email on the Pre-registration portal (UI) |
 | `preregistration.contact.phone` | Support phone on the Pre-registration portal (UI) |
-| `mosip.id.validate` | Request id accepted by `POST /captcha/validatecaptcha` |
+| `mosip.preregistration.captcha.id.validate` | ID returned in the `id` field of `POST /captcha/validatecaptcha` responses (default `mosip.pre-registration.captcha.id.validate`) |

@@ -1,5 +1,8 @@
 package io.mosip.preregistration.application.test.controller;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.io.File;
@@ -27,6 +30,7 @@ import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.multipart.MultipartFile;
 
 import io.mosip.preregistration.application.controller.DocumentController;
 import io.mosip.preregistration.application.dto.DocumentRequestDTO;
@@ -126,12 +130,14 @@ public class DocumentControllerTest {
 		File file = new File(classLoader.getResource("Doc.pdf").getFile());
 		mockMultipartFile = new MockMultipartFile("file", "Doc.pdf", "mixed/multipart", new FileInputStream(file));
 
-		Mockito.when(service.uploadDocument(mockMultipartFile, docJson, preRegistrationId)).thenReturn(responseMain);
+		Mockito.when(service.uploadDocument(any(MultipartFile.class), eq(docJson), eq(preRegistrationId)))
+				.thenReturn(responseMain);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.multipart("/documents/{preRegistrationId}", preRegistrationId).file(jsonMultiPart)
 				.file(mockMultipartFile).contentType(MediaType.MULTIPART_FORM_DATA);
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
+		verify(service).uploadDocument(any(MultipartFile.class), eq(docJson), eq(preRegistrationId));
 	}
 
 	@Test
@@ -140,11 +146,13 @@ public class DocumentControllerTest {
 		ClassLoader classLoader = getClass().getClassLoader();
 		File file = new File(classLoader.getResource("Doc.pdf").getFile());
 		mockMultipartFile = new MockMultipartFile("file", "Doc.pdf", "mixed/multipart", new FileInputStream(file));
-		Mockito.when(service.uploadDocument(mockMultipartFile, docJson, preRegistrationId)).thenReturn(responseMain);
+		Mockito.when(service.uploadDocument(any(MultipartFile.class), eq(docJson), eq(preRegistrationId)))
+				.thenReturn(responseMain);
 		RequestBuilder requestBuilder = MockMvcRequestBuilders
 				.multipart("/documents/{preRegistrationId}", preRegistrationId).file(mockMultipartFile)
 				.param("Document request", docJson).contentType(MediaType.MULTIPART_FORM_DATA);
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
+		verify(service).uploadDocument(any(MultipartFile.class), eq(docJson), eq(preRegistrationId));
 	}
 
 	/**

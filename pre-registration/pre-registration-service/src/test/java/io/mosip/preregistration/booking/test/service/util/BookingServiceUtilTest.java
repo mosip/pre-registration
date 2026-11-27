@@ -120,6 +120,9 @@ public class BookingServiceUtilTest {
 	@MockitoBean
 	private io.mosip.preregistration.pipeline.InProcessApplicationClient applicationClient;
 
+	@MockitoBean
+	private io.mosip.preregistration.application.service.util.CommonServiceUtil commonServiceUtil;
+
 	@Mock
 	private AuthUserDetails authUserDetails;
 
@@ -560,6 +563,23 @@ public class BookingServiceUtilTest {
 	 * 
 	 * }
 	 */
+
+	@Test
+	public void updateDemographicStatusThrowsWhenErrorsPresent() {
+		MainResponseDTO<String> failed = new MainResponseDTO<>();
+		io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO err =
+				new io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO("PRG_PAM_APP_005",
+						"status not updated");
+		failed.setErrors(java.util.List.of(err));
+		Mockito.when(commonServiceUtil.updatePreRegistrationStatus(Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(failed);
+		try {
+			serviceUtil.updateDemographicStatus("23587986034785", StatusCodes.BOOKED.getCode());
+			org.junit.Assert.fail("expected DemographicStatusUpdationException");
+		} catch (DemographicStatusUpdationException ex) {
+			assertEquals(ErrorCodes.PRG_BOOK_RCI_011.getCode(), ex.getErrorCode());
+		}
+	}
 
 	@Test
 	public void getDemographicStatusForCancelAlreadyCancelledThrows017() {
