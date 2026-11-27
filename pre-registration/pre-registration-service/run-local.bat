@@ -281,7 +281,7 @@ if exist "%LOG_FILE%" (
   )
 )
 echo     ... still starting ^(!WAIT_ELAPSED!s / !WAIT_MAX!s^)
-timeout /t 2 /nobreak >nul
+ping -n 3 127.0.0.1 >nul
 set /a WAIT_ELAPSED+=2
 goto :wait_ready_loop
 
@@ -296,8 +296,6 @@ if exist "%PID_FILE%" (
   set /p KILL_PID=<"%PID_FILE%"
   if defined KILL_PID taskkill /PID !KILL_PID! /T /F >nul 2>&1
 )
-call :pid_on_port
-if defined PORT_PID taskkill /PID !PORT_PID! /T /F >nul 2>&1
 del /q "%PID_FILE%" >nul 2>&1
 exit /b 0
 
