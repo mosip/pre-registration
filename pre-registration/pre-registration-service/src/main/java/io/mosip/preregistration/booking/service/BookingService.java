@@ -691,8 +691,7 @@ public class BookingService implements BookingServiceIntf {
 						" and Date and Time " + availableUpdate.getRegDate() + " " + availableUpdate.getFromTime());
 
 				/* Updating demographic */
-				// serviceUtil.updateDemographicStatus(preRegistrationId,
-				// StatusCodes.BOOKED.getCode());
+				serviceUtil.updateDemographicStatus(preRegistrationId, StatusCodes.BOOKED.getCode());
 				bookingStatusDTO.setBookingMessage("Appointment booked successfully");
 
 			}
@@ -765,8 +764,7 @@ public class BookingService implements BookingServiceIntf {
 					bookingDAO.deleteByPreRegistrationId(preRegistrationId);
 
 					/* Update the status to Canceled in demographic Table */
-					// serviceUtil.updateDemographicStatus(preRegistrationId,
-					// StatusCodes.CANCELLED.getCode());
+					serviceUtil.updateDemographicStatus(preRegistrationId, StatusCodes.CANCELLED.getCode());
 
 					/* No. of Availability. update */
 					availableEntity.setAvailableKiosks(availableEntity.getAvailableKiosks() + 1);

@@ -9,9 +9,11 @@ import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +41,7 @@ import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.SlotTimeDto;
 import io.mosip.preregistration.core.config.LoggerConfiguration;
+import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.util.AuditLogUtil;
 import io.mosip.preregistration.core.util.ValidationUtil;
@@ -122,6 +125,9 @@ public class DataSyncService {
 	@Value("${mosip.id.preregistration.datasync.store}")
 	private String storeId;
 
+	@Value("${mosip.preregistration.batchjob.service.consumed.id:mosip.pre-registration.batchjob.service.consumed}")
+	private String consumedId;
+
 	/**
 	 * Reference for ${mosip.id.preregistration.datasync.fetch} from property file
 	 */
@@ -154,6 +160,18 @@ public class DataSyncService {
 	 */
 	public AuthUserDetails authUserDetails() {
 		return (AuthUserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}
+
+	private Set<String> acceptedConsumedIds() {
+		Set<String> ids = new HashSet<>();
+		if (storeId != null && !storeId.isBlank()) {
+			ids.add(storeId);
+		}
+		if (consumedId != null && !consumedId.isBlank()) {
+			ids.add(consumedId);
+		}
+		ids.add("mosip.pre-registration.datasync.consumed");
+		return ids;
 	}
 
 	/**
@@ -488,7 +506,14 @@ public class DataSyncService {
 		boolean isSaveSuccess = false;
 		responseDto.setId(storeId);
 		responseDto.setVersion(version);
-		requiredRequestMap.put("id", storeId);
+		String requestId = reverseDataSyncRequest.getId();
+		if (!acceptedConsumedIds().contains(requestId)) {
+			throw new InvalidRequestException(
+					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_001.getCode(),
+					io.mosip.preregistration.core.errorcodes.ErrorMessages.INVALID_REQUEST_ID.getMessage(),
+					responseDto);
+		}
+		requiredRequestMap.put("id", requestId);
 
 		AuthUserDetails actor = resolveAuditActor();
 		String actorUserId = actor == null ? null : actor.getUserId();

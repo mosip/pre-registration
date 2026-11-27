@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import io.mosip.preregistration.config.PreregOpenApiConfig.SwaggerMount;
+import io.swagger.v3.oas.annotations.Hidden;
 import jakarta.servlet.http.HttpServletRequest;
 
 /**
@@ -20,6 +21,7 @@ import jakarta.servlet.http.HttpServletRequest;
  * already exist ({@code /swagger-ui}, {@code /sync}, {@code /appointment}, {@code /captcha}).
  */
 @Controller
+@Hidden
 public class PreregSwaggerUiController {
 
 	/**

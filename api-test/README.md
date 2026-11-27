@@ -190,7 +190,7 @@ On `smoke`, most YAML cases are skipped (not failed). A large skip count with a 
 | Preflight: `:8082` down | `run-prereg-local.bat up` (WireMock) |
 | `Unknown lifecycle phase ".skip=true"` | PowerShell split `-D`; quote `"-Dgpg.skip=true"` or use `run-local-smoke.bat` |
 | Runner hits QA hosts | You used green ▶ on `MosipTestRunner` or omitted `prereg-local.properties` |
-| YAML change not picked up | `run-local-smoke` rebuilds when resources are newer than the jar |
+| YAML change not picked up | `run-local-smoke.bat` and `.sh` rebuild when `src/main/java`, `src/main/resources`, or the pom is newer than the jar |
 | Auth / token failures | Recreate WireMock; testrig secret is `local-dev-testrig-secret` |
 | Slack / `/home/mosip/testrig/report` errors | Cluster-only; ignore on a laptop |
 
@@ -198,4 +198,4 @@ On `smoke`, most YAML cases are skipped (not failed). A large skip count with a 
 
 ## License
 
-[Mozilla Public License 2.0](https://github.com/mosip/mosip-platform/blob/master/LICENSE)
+[Mozilla Public License 2.0](../LICENSE)

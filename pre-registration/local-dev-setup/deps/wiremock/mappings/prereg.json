@@ -6025,6 +6025,93 @@
       }
     },
     {
+      "name": "masterdata-documenttypes",
+      "priority": 1,
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/v1/masterdata/documenttypes/[^/]+/[^/]+"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "mosip.masterdata.documenttypes",
+          "version": "1.0",
+          "responsetime": "2026-01-01T00:00:00.000Z",
+          "errors": null,
+          "response": {
+            "documents": [
+              { "code": "RNC", "name": "Rental contract", "langCode": "eng", "isActive": true },
+              { "code": "CIN", "name": "CIN", "langCode": "eng", "isActive": true },
+              { "code": "COR", "name": "Certificate of Residence", "langCode": "eng", "isActive": true },
+              { "code": "COB", "name": "Certificate of Birth", "langCode": "eng", "isActive": true }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "masterdata-uispec-all",
+      "priority": 1,
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/v1/masterdata/uispec/all"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "mosip.masterdata.uispec.all",
+          "version": "1.0",
+          "responsetime": "2026-01-01T00:00:00.000Z",
+          "errors": null,
+          "response": {
+            "pageNo": 0,
+            "pageSize": 10,
+            "totalItems": 1,
+            "totalPages": 1,
+            "data": [
+              {
+                "id": "local-prereg-uispec",
+                "version": 0.1,
+                "title": "pre-registration",
+                "domain": "pre-registration",
+                "jsonSpec": []
+              }
+            ]
+          }
+        }
+      }
+    },
+    {
+      "name": "syncdata-tpm-publickey",
+      "priority": 1,
+      "request": {
+        "method": "GET",
+        "urlPathPattern": "/v1/syncdata/tpm/publickey/[^/]+"
+      },
+      "response": {
+        "status": 200,
+        "headers": {
+          "Content-Type": "application/json"
+        },
+        "jsonBody": {
+          "id": "mosip.syncdata.tpm.publickey",
+          "version": "1.0",
+          "responsetime": "2026-01-01T00:00:00.000Z",
+          "errors": null,
+          "response": {
+            "machineId": "1001",
+            "encryptionPublicKey": null
+          }
+        }
+      }
+    },
+    {
       "name": "masterdata-proxy",
       "priority": 10,
       "request": {

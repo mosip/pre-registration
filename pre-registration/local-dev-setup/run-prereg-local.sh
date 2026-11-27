@@ -24,14 +24,16 @@ print_help() {
 $0 [command]
 
 Docker deps:
-  up               Start Postgres, config-server, WireMock
+  up               Start Postgres, config-server, WireMock, MinIO, keymanager, mock-smtp, notifier
+  build            docker compose build (needs network)
   wipe             compose down -v then up
 
 App (host JVM on ${BASE}):
   prep             Fetch loader.path jars (idobjectvalidator + virusscanner)
-  run              Rebuild jar, then start with profiles default,local
+  rebuild          Maven package the service jar only (no Docker)
+  run              rebuild + start (does not touch Docker)
   start            Start existing jar, no Maven
-  stop             Stop the host JVM
+  stop             Stop the host JVM (also any process on :${PORT})
   smoke            GET health + swagger
   wipe-run         wipe, then rebuild + start
   test             mvn test on pre-registration-service
@@ -76,10 +78,12 @@ shift || true
 case "$cmd" in
   -h|--help|help) print_help ;;
   up) "$STACK" up ;;
+  build) "$STACK" build ;;
   prep) "$STACK" prep ;;
   down) "$STACK" down ;;
   wipe) stop_app; "$STACK" wipe ;;
-  run) "$STACK" up; rebuild; start_app ;;
+  rebuild) rebuild ;;
+  run) rebuild; start_app ;;
   start) start_app ;;
   stop) stop_app ;;
   smoke) smoke ;;
@@ -88,6 +92,5 @@ case "$cmd" in
     (cd "$MAVEN_PARENT" && unset SPRING_PROFILES_ACTIVE || true
      mvn -pl pre-registration-service -am test -Dgpg.skip=true -Dmaven.javadoc.skip=true)
     ;;
-  rebuild) rebuild ;;
   *) echo "unknown command '$cmd'" >&2; print_help; exit 1 ;;
 esac

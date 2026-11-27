@@ -75,14 +75,17 @@ public class DataSyncExceptionCatcher {
 			throw new ParseResponseException(((ParseResponseException) ex).getErrorCode(), 
 					((ParseResponseException) ex).getErrorText(), mainResponsedto);
 		}
-		else {
-			if (ex instanceof BaseUncheckedException) {
-				throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
-						((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
-			} else if (ex instanceof BaseCheckedException) {
-				throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
-						((BaseCheckedException) ex).getErrorText(), mainResponsedto);
-			}
+		else if (ex instanceof BaseUncheckedException) {
+			throw new PreRegistrationException(((BaseUncheckedException) ex).getErrorCode(),
+					((BaseUncheckedException) ex).getErrorText(), mainResponsedto);
+		} else if (ex instanceof BaseCheckedException) {
+			throw new PreRegistrationException(((BaseCheckedException) ex).getErrorCode(),
+					((BaseCheckedException) ex).getErrorText(), mainResponsedto);
+		} else {
+			String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+			throw new PreRegistrationException(
+					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(), message,
+					mainResponsedto);
 		}
 	}
 }

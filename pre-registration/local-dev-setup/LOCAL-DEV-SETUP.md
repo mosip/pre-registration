@@ -43,7 +43,7 @@ The virus-scanner jar is required so Spring can create `VirusScannerImpl`. It do
 
 ## Database
 
-Init SQL is one file, `deps/init.sql`: create `mosip_prereg`, `mosip_audit`, `mosip_keymgr`, and `mosip_kernel` (PRID only), `\i` the official [db_scripts](https://github.com/mosip/pre-registration/tree/master/db_scripts) DDL (`reg_appointment`, `reg_available_slot`, `kernel.prid`, …) plus `deps/keymanager/ddl` and [audit-manager issue-1633](https://github.com/mosip/audit-manager/tree/issue-1633/db_scripts) `app_audit_log`, then inline the local slot rows (centre `10003`) and the key seed. Users `prereguser`, `audituser`, `keymgruser`, and `kerneluser`, password `mosip123`. Wipe volumes to re-apply it. An already-initialized volume can run `deps/audit/apply-existing.sql` instead of wiping.
+Init SQL is one file, `deps/init.sql`: create `mosip_prereg`, `mosip_audit`, `mosip_keymgr`, and `mosip_kernel` (PRID only), `\i` this branch's [`db_scripts`](../../db_scripts) DDL (`reg_appointment`, `reg_available_slot`, `kernel.prid`, …) plus `deps/keymanager/ddl` and audit-manager `app_audit_log`, then inline the local slot rows (centre `10003`) and the key seed. Users `prereguser`, `audituser`, `keymgruser`, and `kerneluser`, password `mosip123`. Wipe volumes to re-apply it. An already-initialized volume can run `deps/audit/apply-existing.sql` instead of wiping.
 
 Audit HTTP is WireMock on `:8082` (`POST /v1/auditmanager/audits` in `deps/wiremock/mappings/prereg.json`). Host `audit.url` is `http://localhost:8082/v1/auditmanager/audits`. WireMock does not write Postgres; the host `local` profile inserts into `mosip_audit.audit.app_audit_log` from `application-local.properties` (`preregistration.audit.jdbc.url`). api-test `db:mosip_audit` uses `postgres` / `mosip123` against `localhost:5455/mosip_audit`. Recreate `mock-service` after editing that stub.
 
@@ -51,7 +51,7 @@ Audit HTTP is WireMock on `:8082` (`POST /v1/auditmanager/audits` in `deps/wirem
 
 Booking runs in the host HTTP JVM. Source was imported from [mosip-ref-impl issue-1633](https://github.com/mosip/mosip-ref-impl/tree/issue-1633/pre-registration-booking-service) into `pre-registration-service` (`io.mosip.preregistration.booking`) with git history. Frozen prefixes stay `/preregistration/v1/appointment/**` on `:9090`. Batchjob still HTTP-calls that URL. WireMock does not stub `/appointment/**`. After changing `init.sql`, `wipe` so it re-runs.
 
-`deps/wiremock/mappings/prereg.json` also stubs api-test health (`/v1/*/actuator/health|info`), signed IAM tokens (`mosip-admin-client`, `mosip-prereg-client`, `mosip-regproc-client`, `mosip-testrig-client`, `mosip-resident-client`), JWKS, `validateToken` (includes `INDIVIDUAL` / `REGISTRATION_*` / `PRE_REGISTRATION_ADMIN`), PRID, OTP generate, and `POST /v1/auditmanager/audits`. Recreate `mock-service` after editing that file.
+`deps/wiremock/mappings/prereg.json` also stubs api-test health (`/v1/*/actuator/health|info`), signed IAM tokens (`mosip-admin-client`, `mosip-prereg-client`, `mosip-regproc-client`, `mosip-testrig-client`, `mosip-resident-client`), JWKS, `validateToken` (includes `INDIVIDUAL` / `REGISTRATION_*` / `PRE_REGISTRATION_ADMIN`), PRID, OTP generate, `POST /v1/auditmanager/audits`, `GET /v1/masterdata/documenttypes/{cat}/{lang}`, `GET /v1/masterdata/uispec/all`, and `GET /v1/syncdata/tpm/publickey/{machineId}`. Recreate `mock-service` after editing that file.
 
 ## MinIO and keymanager
 

@@ -189,6 +189,9 @@ cmd_start() {
   if [[ -n "${CONFIG_LABEL}" ]]; then
     java_args+=("-Dspring.cloud.config.label=${CONFIG_LABEL}")
   fi
+  if [[ "$UNAME_S" == MINGW* || "$UNAME_S" == MSYS* || "$UNAME_S" == CYGWIN* ]]; then
+    java_args+=("-Djdk.net.unixdomain.tmpdir=${LOCAL_DIR}")
+  fi
   java_args+=(
     "--add-modules=ALL-SYSTEM"
     "--add-opens" "java.xml/jdk.xml.internal=ALL-UNNAMED"
@@ -206,7 +209,11 @@ cmd_start() {
   echo $! >"$PID_FILE"
   echo "pid $(cat "$PID_FILE")  log ${LOG_FILE}"
   echo "==> waiting for Spring Boot startup on port ${PORT} (up to 90s) ..."
-  wait_ready 90
+  if ! wait_ready 90; then
+    stop_pid "$(cat "$PID_FILE" 2>/dev/null || true)"
+    rm -f "$PID_FILE"
+    return 1
+  fi
   echo
   echo "prereg-service ready"
   echo "  port    ${PORT}"
@@ -269,16 +276,9 @@ except Exception:
   printf '%s' "000"
 }
 
-cmd_stop() {
-  ensure_dirs
-  if ! is_running; then
-    rm -f "$PID_FILE"
-    echo "prereg-service is not running"
-    return 0
-  fi
-  local pid
-  pid="$(cat "$PID_FILE")"
-  echo "==> stopping prereg-service (${pid}) on port ${PORT}"
+stop_pid() {
+  local pid="$1"
+  [[ -n "$pid" ]] || return 0
   kill "$pid" 2>/dev/null || true
   local i
   for i in 1 2 3 4 5 6 7 8 9 10; do
@@ -288,6 +288,30 @@ cmd_stop() {
   if kill -0 "$pid" 2>/dev/null; then
     kill -9 "$pid" 2>/dev/null || true
   fi
+}
+
+port_pids() {
+  if command -v powershell.exe >/dev/null 2>&1; then
+    powershell.exe -NoProfile -Command "Get-NetTCPConnection -LocalPort ${PORT} -ErrorAction SilentlyContinue | Select-Object -ExpandProperty OwningProcess -Unique" 2>/dev/null | tr -d '\r' || true
+  elif command -v lsof >/dev/null 2>&1; then
+    lsof -t -iTCP:"${PORT}" -sTCP:LISTEN 2>/dev/null || true
+  fi
+}
+
+cmd_stop() {
+  ensure_dirs
+  local pid=""
+  if [[ -f "$PID_FILE" ]]; then
+    pid="$(cat "$PID_FILE")"
+  fi
+  echo "==> stopping prereg-service on port ${PORT}"
+  stop_pid "$pid"
+  local extra
+  for extra in $(port_pids); do
+    if [[ "$extra" != "$pid" ]]; then
+      stop_pid "$extra"
+    fi
+  done
   rm -f "$PID_FILE"
   echo "stopped."
 }

@@ -356,8 +356,7 @@ public class DemographicService implements DemographicServiceIntf {
 
 			log.info("IDENTITY KEYS: {}", identityKeys);
 
-			List<String> requiredFields = demographicRequest.getRequiredFields().stream()
-					.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
+			List<String> requiredFields = requiredFieldsForSchema(demographicRequest, identityKeys);
 
 			JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
 					demographicRequest.getDemographicDetails());
@@ -466,8 +465,7 @@ public class DemographicService implements DemographicServiceIntf {
 
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"IDENTITY KEYS: " + identityKeys.toString());
 
-				List<String> requiredFields = demographicRequest.getRequiredFields().stream()
-						.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
+				List<String> requiredFields = requiredFieldsForSchema(demographicRequest, identityKeys);
 
 				JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
 						demographicRequest.getDemographicDetails());
@@ -1042,6 +1040,18 @@ public class DemographicService implements DemographicServiceIntf {
 					"In pre-registration service util of getPreregistrationIdentityJson- " + ex.getMessage());
 		}
 		return null;
+	}
+
+	/**
+	 * {@code requiredFields} is optional on create/update. A missing list used to
+	 * NPE and return HTTP 200 with both {@code response} and {@code errors} null.
+	 */
+	private List<String> requiredFieldsForSchema(DemographicRequestDTO demographicRequest, List<String> identityKeys) {
+		List<String> requested = demographicRequest.getRequiredFields();
+		if (requested == null || requested.isEmpty()) {
+			return List.of();
+		}
+		return requested.stream().filter(identityKeys::contains).collect(Collectors.toList());
 	}
 
 	/**

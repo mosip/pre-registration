@@ -134,6 +134,19 @@ public class DocumentControllerTest {
 		mockMvc.perform(requestBuilder).andExpect(status().isOk());
 	}
 
+	@Test
+	public void successFileuploadDocumentRequestAsFormField() throws Exception {
+		String preRegistrationId = "123546987412563";
+		ClassLoader classLoader = getClass().getClassLoader();
+		File file = new File(classLoader.getResource("Doc.pdf").getFile());
+		mockMultipartFile = new MockMultipartFile("file", "Doc.pdf", "mixed/multipart", new FileInputStream(file));
+		Mockito.when(service.uploadDocument(mockMultipartFile, docJson, preRegistrationId)).thenReturn(responseMain);
+		RequestBuilder requestBuilder = MockMvcRequestBuilders
+				.multipart("/documents/{preRegistrationId}", preRegistrationId).file(mockMultipartFile)
+				.param("Document request", docJson).contentType(MediaType.MULTIPART_FORM_DATA);
+		mockMvc.perform(requestBuilder).andExpect(status().isOk());
+	}
+
 	/**
 	 * @throws Exception
 	 */

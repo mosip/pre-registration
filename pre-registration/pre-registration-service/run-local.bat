@@ -204,6 +204,7 @@ call :print_endpoints
 set "LAUNCH_PS1=%LOCAL_DIR%\launch-prereg-service.ps1"
 > "%LAUNCH_PS1%" echo $ErrorActionPreference = 'Stop'
 >> "%LAUNCH_PS1%" echo $argList = New-Object System.Collections.Generic.List[string]
+>> "%LAUNCH_PS1%" echo $argList.Add^('-Djdk.net.unixdomain.tmpdir=%LOCAL_DIR%'^)
 >> "%LAUNCH_PS1%" echo $argList.Add^('-Dloader.path=%loader_path_env%'^)
 >> "%LAUNCH_PS1%" echo $argList.Add^('-Dspring.profiles.active=%SPRING_PROFILES_ACTIVE%'^)
 >> "%LAUNCH_PS1%" echo $argList.Add^('-Dserver.port=%PORT%'^)
@@ -240,7 +241,10 @@ if errorlevel 1 (
 
 echo ==^> waiting for Spring Boot startup on port %PORT% ^(up to 90s^) ...
 call :wait_ready 90
-if errorlevel 1 exit /b 1
+if errorlevel 1 (
+  call :kill_started
+  exit /b 1
+)
 
 if exist "%PID_FILE%" (
   set /p STARTED_PID=<"%PID_FILE%"
@@ -266,15 +270,8 @@ if "!WAIT_MAX!"=="" set /a WAIT_MAX=90
 set /a WAIT_ELAPSED=0
 :wait_ready_loop
 if !WAIT_ELAPSED! GEQ !WAIT_MAX! goto :wait_ready_fail
-
-call :port_in_use
-if not errorlevel 1 (
-  if exist "%LOG_FILE%" (
-    findstr /C:"Started PreRegistrationBootApplication" "%LOG_FILE%" >nul 2>&1
-    if not errorlevel 1 exit /b 0
-  )
-)
-
+call :http_ok "%BASE%/actuator/health"
+if "!HTTP_CODE!"=="200" exit /b 0
 if exist "%LOG_FILE%" (
   findstr /C:"APPLICATION FAILED TO START" /C:"Port %PORT% was already in use" "%LOG_FILE%" >nul 2>&1
   if not errorlevel 1 (
@@ -283,9 +280,8 @@ if exist "%LOG_FILE%" (
     exit /b 1
   )
 )
-
 echo     ... still starting ^(!WAIT_ELAPSED!s / !WAIT_MAX!s^)
-ping -n 3 127.0.0.1 >nul
+timeout /t 2 /nobreak >nul
 set /a WAIT_ELAPSED+=2
 goto :wait_ready_loop
 
@@ -294,6 +290,16 @@ echo error: Spring Boot did not become ready within !WAIT_MAX!s on port %PORT%
 if exist "%LOG_FILE%" type "%LOG_FILE%"
 if exist "%ERR_FILE%" type "%ERR_FILE%"
 exit /b 1
+
+:kill_started
+if exist "%PID_FILE%" (
+  set /p KILL_PID=<"%PID_FILE%"
+  if defined KILL_PID taskkill /PID !KILL_PID! /T /F >nul 2>&1
+)
+call :pid_on_port
+if defined PORT_PID taskkill /PID !PORT_PID! /T /F >nul 2>&1
+del /q "%PID_FILE%" >nul 2>&1
+exit /b 0
 
 :missing_loader_jars
 echo error: missing loader.path jars under %loader_path_env%
@@ -306,16 +312,10 @@ exit /b 1
 call :ensure_dirs
 set "STOP_PID="
 if exist "%PID_FILE%" set /p STOP_PID=<"%PID_FILE%"
-if not defined STOP_PID (
-  call :pid_on_port
-  set "STOP_PID=!PORT_PID!"
-)
-if not defined STOP_PID (
-  echo prereg-service is not running
-  exit /b 0
-)
-echo ==^> stopping prereg-service ^(%STOP_PID%^) on port %PORT%
-taskkill /PID %STOP_PID% /T /F >nul 2>&1
+call :pid_on_port
+echo ==^> stopping prereg-service on port %PORT%
+if defined STOP_PID taskkill /PID !STOP_PID! /T /F >nul 2>&1
+if defined PORT_PID if not "!PORT_PID!"=="!STOP_PID!" taskkill /PID !PORT_PID! /T /F >nul 2>&1
 del /q "%PID_FILE%" >nul 2>&1
 echo stopped.
 exit /b 0

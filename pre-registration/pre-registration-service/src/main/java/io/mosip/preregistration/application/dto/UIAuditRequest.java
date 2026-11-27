@@ -2,9 +2,13 @@ package io.mosip.preregistration.application.dto;
 
 import jakarta.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonAlias;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import lombok.Data;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 /**
  * Class supporting ui audit request in MOSIP Pre-Registration (io.mosip.preregistration.application.dto).
  */
@@ -29,6 +33,7 @@ public class UIAuditRequest {
 	private String actionTimeStamp;
 
 	@NotNull
+	@JsonAlias({ "sessionUserId", "actionUserId" })
 	/**
 	 * action user id used by this Pre-Registration type.
 	 */

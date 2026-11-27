@@ -14,7 +14,7 @@ Parent POM: `pre-registration/pom.xml`. Do not parent `kernel-bom`. Maven from `
 | Spring Boot | 2.x via MOSIP parent / kernel-bom | `org.springframework.boot:spring-boot-starter-parent` 4.1.1 |
 | Spring Cloud | Hoxton / 2021 line | 2025.1.3 |
 | Servlet / JPA / inject | `javax.*` | `jakarta.*` |
-| JSON | Jackson 2 on the Boot 2 classpath | Boot 4 defaults to Jackson 3; this repo **keeps Jackson 2** with `spring-boot-jackson2` |
+| JSON | Jackson 2 on the Boot 2 classpath | Boot 4 defaults to Jackson 3; this repo **uses Jackson 2 only** (`spring-boot-jackson2`, Jackson 3 starter excluded) |
 | Tests | `@MockBean` | `@MockitoBean` (`org.springframework.test.context.bean.override.mockito`) |
 | SpringDoc | 1.x / 2.x grouped UI | 3.1.1, **one** `/v3/api-docs` document |
 
@@ -58,13 +58,15 @@ Boot 4 does not load `javax.servlet` / `javax.persistence` APIs.
 
 ## 4. Jackson 2 on Boot 4
 
-Boot 4’s web starter pulls Jackson 3. MOSIP `kernel-core` and this code still use Jackson 2 (`ObjectMapper`, `JavaTimeModule`, afterburner).
+Boot 4’s web and webflux starters pull Jackson 3 (`spring-boot-starter-jackson` / `tools.jackson`). MOSIP `kernel-core` and this code use Jackson 2 (`com.fasterxml.jackson`: `ObjectMapper`, `JavaTimeModule`, afterburner). This reactor keeps **Jackson 2 only**.
 
-1. Add `org.springframework.boot:spring-boot-jackson2` to every deployable that serializes JSON (`pre-registration-service`, `pre-registration-batchjob`, `pridgenerator-service`, and `pre-registration-core` if it builds mappers).
-2. Keep explicit Jackson 2 artifacts where needed (`jackson-databind`, `jackson-annotations`, `jackson-module-afterburner`).
-3. Call `io.mosip.kernel.core.util.DateUtils2` (not the old `DateUtils`) so date helpers match Jackson 2 + `kernel-core`.
+1. Exclude `org.springframework.boot:spring-boot-starter-jackson` from `spring-boot-starter-web`, `spring-boot-starter-webflux`, `spring-boot-starter-webmvc`, and `spring-boot-starter-webmvc-test`. Exclude `spring-boot-jackson` from springdoc and Jackson 3 (`tools.jackson`) from Spring Cloud Config and `kernel-auth-adapter` (they otherwise reintroduce Jackson 3).
+2. Add `org.springframework.boot:spring-boot-jackson2` to every module that serializes JSON (`pre-registration-service`, `pre-registration-batchjob`, `pridgenerator-service`, `pre-registration-core`).
+3. Keep `jackson-module-afterburner` where mappers call `AfterburnerModule`. Jackson 2 versions come from Boot’s `jackson-2-bom`.
+4. Set `spring.http.converters.preferred-json-mapper=jackson2` and `spring.http.codecs.preferred-json-mapper=jackson2`.
+5. Call `io.mosip.kernel.core.util.DateUtils2` (not the old `DateUtils`) so date helpers match Jackson 2 + `kernel-core`.
 
-If Jackson 3 types leak onto the compile classpath, `ObjectMapper` construction fails at runtime with method-not-found errors. Prefer `spring-boot-jackson2` over fighting the default.
+The parent `maven-enforcer-plugin` bans `tools.jackson.*`, `spring-boot-starter-jackson`, and `spring-boot-jackson`. Do not put both Jackson 2 and Jackson 3 on the classpath. `kernel-core`’s `logstash-logback-encoder` 9.x pulls Jackson 3; this reactor pins the encoder to the last Jackson 2 line.
 
 ---
 

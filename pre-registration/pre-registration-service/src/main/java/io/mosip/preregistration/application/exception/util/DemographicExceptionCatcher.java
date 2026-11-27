@@ -153,12 +153,15 @@ public class DemographicExceptionCatcher {
 			throw new io.mosip.preregistration.application.exception.DuplicatePridKeyException(
 					DemographicErrorCodes.PRG_PAM_APP_021.getCode(),
 					DemographicErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
+		} else if (ex instanceof BaseUncheckedException ex1) {
+			throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof BaseCheckedException ex1) {
+			throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 		} else {
-			if (ex instanceof BaseUncheckedException ex1) {
-				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
-			} else if (ex instanceof BaseCheckedException ex1) {
-				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
-			}
+			String message = ex.getMessage() == null ? ex.getClass().getSimpleName() : ex.getMessage();
+			throw new PreRegistrationException(
+					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(), message,
+					mainResponsedto);
 		}
 	}
 }

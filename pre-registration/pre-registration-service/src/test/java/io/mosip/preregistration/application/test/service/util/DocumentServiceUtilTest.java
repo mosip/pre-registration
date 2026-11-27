@@ -500,4 +500,19 @@ public class DocumentServiceUtilTest {
 		verify(mockFile, never()).getInputStream();
 	}
 
+	@Test
+	public void pdfTrailerHasEncryptDetectsEncryptDict() {
+		byte[] pdf = "%PDF-1.4\ntrailer\n<</Size 1 /Encrypt 2 0 R>>\n%%EOF"
+				.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1);
+		assertTrue(DocumentServiceUtil.pdfTrailerHasEncrypt(pdf));
+	}
+
+	@Test
+	public void pdfTrailerHasEncryptFalseForPlainPdf() {
+		byte[] pdf = "%PDF-1.4\ntrailer\n<</Size 1>>\n%%EOF"
+				.getBytes(java.nio.charset.StandardCharsets.ISO_8859_1);
+		assertFalse(DocumentServiceUtil.pdfTrailerHasEncrypt(pdf));
+		assertFalse(DocumentServiceUtil.pdfTrailerHasEncrypt(new byte[0]));
+	}
+
 }

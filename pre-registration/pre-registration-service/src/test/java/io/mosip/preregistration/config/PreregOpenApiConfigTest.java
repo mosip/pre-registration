@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import io.mosip.preregistration.config.PreregOpenApiConfig.SwaggerMount;
+import io.swagger.v3.oas.annotations.Hidden;
 
 /**
  * Unit tests for legacy per-service Swagger mounts ({@link PreregOpenApiConfig}).
@@ -24,6 +25,11 @@ public class PreregOpenApiConfigTest {
 	@Before
 	public void setUp() {
 		mockMvc = MockMvcBuilders.standaloneSetup(new PreregSwaggerUiController()).build();
+	}
+
+	@Test
+	public void swaggerUiControllerIsHiddenFromOpenApi() {
+		assertTrue(PreregSwaggerUiController.class.isAnnotationPresent(Hidden.class));
 	}
 
 	@Test

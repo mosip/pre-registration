@@ -58,9 +58,12 @@ import io.mosip.preregistration.booking.entity.AvailibityEntity;
 import io.mosip.preregistration.booking.repository.BookingAvailabilityRepository;
 import io.mosip.preregistration.booking.repository.RegistrationBookingRepository;
 import io.mosip.preregistration.booking.repository.impl.BookingDAO;
+import io.mosip.preregistration.booking.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.service.util.BookingServiceUtil;
+import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
@@ -557,6 +560,19 @@ public class BookingServiceUtilTest {
 	 * 
 	 * }
 	 */
+
+	@Test
+	public void getDemographicStatusForCancelAlreadyCancelledThrows017() {
+		MainResponseDTO<String> status = new MainResponseDTO<>();
+		status.setResponse(StatusCodes.CANCELLED.getCode());
+		Mockito.when(applicationClient.getApplicationStatus("23587986034785")).thenReturn(status);
+		try {
+			serviceUtil.getDemographicStatusForCancel("23587986034785");
+			org.junit.Assert.fail("expected AppointmentAlreadyCanceledException");
+		} catch (AppointmentAlreadyCanceledException ex) {
+			assertEquals(ErrorCodes.PRG_BOOK_RCI_017.getCode(), ex.getErrorCode());
+		}
+	}
 
 	@Test
 	public void isValidRegCenterTest() {

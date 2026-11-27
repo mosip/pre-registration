@@ -62,6 +62,7 @@ import io.mosip.preregistration.booking.dto.SlotDto;
 import io.mosip.preregistration.booking.entity.AvailibityEntity;
 import io.mosip.preregistration.booking.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.errorcodes.ErrorMessages;
+import io.mosip.preregistration.booking.exception.AppointmentAlreadyCanceledException;
 import io.mosip.preregistration.booking.exception.AppointmentCannotBeCanceledException;
 import io.mosip.preregistration.booking.exception.AppointmentReBookingFailedException;
 import io.mosip.preregistration.booking.exception.AvailablityNotFoundException;
@@ -123,6 +124,10 @@ public class BookingServiceUtil {
 	@Autowired
 	@Lazy
 	private io.mosip.preregistration.pipeline.InProcessApplicationClient applicationClient;
+
+	@Autowired
+	@Lazy
+	private io.mosip.preregistration.application.service.util.CommonServiceUtil commonServiceUtil;
 
 	@Value("${mosip.prereg.pii.backward.compatibility:true}")
 	private boolean piiBackwardCompatibility;
@@ -286,9 +291,10 @@ public class BookingServiceUtil {
 					|| statusCode.equals(StatusCodes.APPLICATION_INCOMPLETE.getCode())) {
 				throw new BookingDataNotFoundException(ErrorCodes.PRG_BOOK_RCI_013.getCode(),
 						ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
-			}
-
-			else {
+			} else if (statusCode.equals(StatusCodes.CANCELLED.getCode())) {
+				throw new AppointmentAlreadyCanceledException(ErrorCodes.PRG_BOOK_RCI_017.getCode(),
+						ErrorMessages.APPOINTMENT_TIME_SLOT_IS_ALREADY_CANCELED.getMessage());
+			} else {
 				throw new AppointmentCannotBeCanceledException(ErrorCodes.PRG_BOOK_RCI_018.getCode(),
 						ErrorMessages.APPOINTMENT_CANNOT_BE_CANCELED.getMessage());
 			}
@@ -787,6 +793,11 @@ public class BookingServiceUtil {
 
 	public MainResponseDTO<String> getApplicationStatus(String applicationId) {
 		return applicationClient.getApplicationStatus(applicationId);
+	}
+
+	public MainResponseDTO<String> updateDemographicStatus(String preRegistrationId, String status) {
+		String userId = authUserDetails().getUserId();
+		return commonServiceUtil.updatePreRegistrationStatus(preRegistrationId, status, userId);
 	}
 
 //	public MainResponseDTO<String> updatePreRegistrationStatus(String preRegId, String status) {

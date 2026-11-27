@@ -178,14 +178,18 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		try {
 			String description = auditRequest.getDescription();
-			mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
-			mapper.registerModule(new JavaTimeModule());
-			JsonNode node = mapper.readTree(description);
-			String template = node.get("template").toString();
-			String hashedDescription = node.get("description").asText().concat("  ")
-					.concat("Request_url :" + node.get("url").asText()).concat("  ")
-					.concat("Consent_Text: " + HMACUtils2.digestAsPlainText(template.getBytes()));
-			auditRequest.setDescription(hashedDescription);
+			if (description != null && description.trim().startsWith("{")) {
+				mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+				mapper.registerModule(new JavaTimeModule());
+				JsonNode node = mapper.readTree(description);
+				if (node.hasNonNull("template") && node.hasNonNull("description") && node.hasNonNull("url")) {
+					String template = node.get("template").toString();
+					String hashedDescription = node.get("description").asText().concat("  ")
+							.concat("Request_url :" + node.get("url").asText()).concat("  ")
+							.concat("Consent_Text: " + HMACUtils2.digestAsPlainText(template.getBytes()));
+					auditRequest.setDescription(hashedDescription);
+				}
+			}
 			AuditRequestDto auditRequestDto = setAuditValues(auditRequest);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In saveUIEventAudit method saving audit  details "+ auditRequestDto);
 			auditUtil.saveAuditDetails(auditRequestDto);
@@ -217,8 +221,19 @@ public class ApplicationService implements ApplicationServiceIntf {
 		auditRequestDto.setSessionUserName(auditRequest.getActionUserId());
 		auditRequestDto.setModuleId(auditRequest.getModuleId());
 		auditRequestDto.setModuleName(auditRequest.getModuleName());
-		auditRequestDto.setActionTimeStamp(LocalDateTime.parse(auditRequest.getActionTimeStamp()));
+		auditRequestDto.setActionTimeStamp(parseAuditTimestamp(auditRequest.getActionTimeStamp()));
 		return auditRequestDto;
+	}
+
+	private LocalDateTime parseAuditTimestamp(String value) {
+		if (value == null || value.isBlank()) {
+			return LocalDateTime.now();
+		}
+		try {
+			return LocalDateTime.parse(value);
+		} catch (DateTimeParseException ignored) {
+			return java.time.OffsetDateTime.parse(value).toLocalDateTime();
+		}
 	}
 
 	/**

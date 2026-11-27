@@ -6,6 +6,7 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
 
 import java.io.BufferedInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
@@ -512,21 +513,44 @@ public class DocumentServiceUtil {
 	public boolean isPasswordProtectedFile(MultipartFile file) throws java.io.IOException {
 		String contentType = file.getContentType();
 		List<String> supportedExtensions = Arrays.asList(fileExtension.split(","));
-		if (supportedExtensions.contains("PDF") && "application/pdf".equals(contentType)) {
-			PDDocument document = null;
-			try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
-				document = Loader.loadPDF(inputStream.readAllBytes());
-			} catch (InvalidPasswordException e) {
-				log.error("Invalid password for PDF", file.getOriginalFilename(), e);
-				return true;
-			} finally {
-				if (document != null){
-					document.close();
-				}
+		if (!supportedExtensions.contains("PDF") || !"application/pdf".equals(contentType)) {
+			return false;
+		}
+		byte[] bytes;
+		try (InputStream inputStream = new BufferedInputStream(file.getInputStream())) {
+			bytes = inputStream.readAllBytes();
+		}
+		PDDocument document = null;
+		try {
+			document = Loader.loadPDF(bytes);
+			return document.isEncrypted();
+		} catch (InvalidPasswordException e) {
+			log.error("Invalid password for PDF", file.getOriginalFilename(), e);
+			return true;
+		} catch (NoSuchMethodError | NoClassDefFoundError e) {
+			log.warn(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"PDFBox 3 APIs unavailable (loader.path PDFBox 2); using trailer /Encrypt check");
+			return pdfTrailerHasEncrypt(bytes);
+		} finally {
+			if (document != null) {
+				document.close();
 			}
 		}
-		return false;
-    }
+	}
+
+	/**
+	 * Encrypted PDFs declare {@code /Encrypt} in the trailer. Used when PDFBox 3
+	 * {@code Loader.loadPDF} cannot run because {@code loader.path} virus-scanner
+	 * jars shadow PDFBox 2 {@code IOUtils}.
+	 */
+	public static boolean pdfTrailerHasEncrypt(byte[] pdf) {
+		if (pdf == null || pdf.length == 0) {
+			return false;
+		}
+		int from = Math.max(0, pdf.length - 4096);
+		String tail = new String(pdf, from, pdf.length - from, StandardCharsets.ISO_8859_1);
+		return tail.contains("/Encrypt");
+	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW, isolation = Isolation.READ_COMMITTED)
 	/**
