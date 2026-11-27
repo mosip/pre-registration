@@ -30,6 +30,19 @@
       "value": ""
     }
   ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const d = new Date();",
+          "d.setUTCDate(d.getUTCDate() + 7);",
+          "pm.variables.set('appointmentDate', pm.environment.get('appointmentDate') || d.toISOString().slice(0, 10));"
+        ]
+      }
+    }
+  ],
   "item": [
     {
       "name": "00 - Auth (WireMock)",
@@ -115,7 +128,7 @@
           "response": []
         },
         {
-          "name": "Health (PRID generator)",
+          "name": "Health (PRID generator, optional :8100)",
           "request": {
             "method": "GET",
             "header": [],
@@ -667,7 +680,7 @@
             "description": "Saves preRegistrationId. Identity keys must match the local IdSchema.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"demographicDetails\": {\n      \"identity\": {\n        \"IDSchemaVersion\": 0.1,\n        \"fullName\": [{ \"language\": \"{{langCode}}\", \"value\": \"Postman Test User\" }],\n        \"dateOfBirth\": \"1996/01/01\",\n        \"gender\": [{ \"language\": \"{{langCode}}\", \"value\": \"MLE\" }],\n        \"residenceStatus\": [{ \"language\": \"{{langCode}}\", \"value\": \"NFR\" }],\n        \"addressLine1\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 1\" }],\n        \"addressLine2\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 2\" }],\n        \"region\": [{ \"language\": \"{{langCode}}\", \"value\": \"RSK\" }],\n        \"province\": [{ \"language\": \"{{langCode}}\", \"value\": \"KTA\" }],\n        \"city\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"zone\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"postalCode\": \"14022\",\n        \"phone\": \"8249742850\",\n        \"email\": \"{{loginUser}}\"\n      }\n    }\n  }\n}",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"requiredFields\": [\"fullName\",\"dateOfBirth\",\"gender\",\"residenceStatus\",\"addressLine1\",\"region\",\"province\",\"city\",\"zone\",\"postalCode\",\"phone\",\"email\"],\n    \"demographicDetails\": {\n      \"identity\": {\n        \"IDSchemaVersion\": 0.1,\n        \"fullName\": [{ \"language\": \"{{langCode}}\", \"value\": \"Postman Test User\" }],\n        \"dateOfBirth\": \"1996/01/01\",\n        \"gender\": [{ \"language\": \"{{langCode}}\", \"value\": \"MLE\" }],\n        \"residenceStatus\": [{ \"language\": \"{{langCode}}\", \"value\": \"NFR\" }],\n        \"addressLine1\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 1\" }],\n        \"addressLine2\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 2\" }],\n        \"region\": [{ \"language\": \"{{langCode}}\", \"value\": \"RSK\" }],\n        \"province\": [{ \"language\": \"{{langCode}}\", \"value\": \"KTA\" }],\n        \"city\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"zone\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"postalCode\": \"14022\",\n        \"phone\": \"8249742850\",\n        \"email\": \"{{loginUser}}\"\n      }\n    }\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -685,8 +698,12 @@
                   "try {\n",
                   "  const json = pm.response.json();\n",
                   "  const prid = json && json.response && (json.response.preRegistrationId || json.response.applicationId);\n",
+                  "  pm.test('preRegistrationId is returned', function () {\n",
+                  "    pm.expect(prid).to.be.ok;\n",
+                  "  });\n",
                   "  if (prid) {\n",
                   "    pm.environment.set('preRegistrationId', prid);\n",
+                  "    pm.environment.set('applicationId', prid);\n",
                   "    if (!pm.environment.get('sourcePreRegistrationId')) {\n",
                   "      pm.environment.set('sourcePreRegistrationId', prid);\n",
                   "    }\n",
@@ -733,7 +750,7 @@
             "description": "Second application for Copy Document. Saves destPreRegistrationId.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"demographicDetails\": {\n      \"identity\": {\n        \"IDSchemaVersion\": 0.1,\n        \"fullName\": [{ \"language\": \"{{langCode}}\", \"value\": \"Postman Test User\" }],\n        \"dateOfBirth\": \"1996/01/01\",\n        \"gender\": [{ \"language\": \"{{langCode}}\", \"value\": \"MLE\" }],\n        \"residenceStatus\": [{ \"language\": \"{{langCode}}\", \"value\": \"NFR\" }],\n        \"addressLine1\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 1\" }],\n        \"addressLine2\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 2\" }],\n        \"region\": [{ \"language\": \"{{langCode}}\", \"value\": \"RSK\" }],\n        \"province\": [{ \"language\": \"{{langCode}}\", \"value\": \"KTA\" }],\n        \"city\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"zone\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"postalCode\": \"14022\",\n        \"phone\": \"8249742850\",\n        \"email\": \"{{loginUser}}\"\n      }\n    }\n  }\n}",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.demographic.create\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"langCode\": \"{{langCode}}\",\n    \"requiredFields\": [\"fullName\",\"dateOfBirth\",\"gender\",\"residenceStatus\",\"addressLine1\",\"region\",\"province\",\"city\",\"zone\",\"postalCode\",\"phone\",\"email\"],\n    \"demographicDetails\": {\n      \"identity\": {\n        \"IDSchemaVersion\": 0.1,\n        \"fullName\": [{ \"language\": \"{{langCode}}\", \"value\": \"Postman Test User\" }],\n        \"dateOfBirth\": \"1996/01/01\",\n        \"gender\": [{ \"language\": \"{{langCode}}\", \"value\": \"MLE\" }],\n        \"residenceStatus\": [{ \"language\": \"{{langCode}}\", \"value\": \"NFR\" }],\n        \"addressLine1\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 1\" }],\n        \"addressLine2\": [{ \"language\": \"{{langCode}}\", \"value\": \"Line 2\" }],\n        \"region\": [{ \"language\": \"{{langCode}}\", \"value\": \"RSK\" }],\n        \"province\": [{ \"language\": \"{{langCode}}\", \"value\": \"KTA\" }],\n        \"city\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"zone\": [{ \"language\": \"{{langCode}}\", \"value\": \"BNMR\" }],\n        \"postalCode\": \"14022\",\n        \"phone\": \"8249742850\",\n        \"email\": \"{{loginUser}}\"\n      }\n    }\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -1121,7 +1138,7 @@
                 "{{preRegistrationId}}"
               ]
             },
-            "description": "Select a PDF in the file field. Saves documentId.",
+            "description": "Uploads postman/sample/IDProof.pdf as application/pdf. Saves documentId. Run Update status after this.",
             "body": {
               "mode": "formdata",
               "formdata": [
@@ -1133,8 +1150,8 @@
                 {
                   "key": "file",
                   "type": "file",
-                  "src": "",
-                  "value": ""
+                  "src": "sample/IDProof.pdf",
+                  "contentType": "application/pdf"
                 }
               ]
             }
@@ -1988,9 +2005,9 @@
           "response": []
         },
         {
-          "name": "Availability sync",
+          "name": "Availability (GET slots)",
           "request": {
-            "method": "POST",
+            "method": "GET",
             "header": [
               {
                 "key": "Content-Type",
@@ -2009,7 +2026,7 @@
               }
             ],
             "url": {
-              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/availability/sync",
+              "raw": "{{bookingBaseUrl}}/preregistration/v1/appointment/availability/{{registrationCenterId}}",
               "host": [
                 "{{bookingBaseUrl}}"
               ],
@@ -2018,19 +2035,10 @@
                 "v1",
                 "appointment",
                 "availability",
-                "sync"
+                "{{registrationCenterId}}"
               ]
             },
-            "description": "",
-            "body": {
-              "mode": "raw",
-              "raw": "{}",
-              "options": {
-                "raw": {
-                  "language": "json"
-                }
-              }
-            }
+            "description": "Native booking availability. There is no POST /appointment/availability/sync on the consolidated service."
           },
           "response": []
         }
@@ -2458,7 +2466,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"mosip.pre-registration.captcha.validate\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"captchaToken\": \"{{captchaToken}}\" }\n}",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.captcha.id.validate\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"captchaToken\": \"{{captchaToken}}\" }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2885,7 +2893,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"mosip.pre-registration.datasync.consumed\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"preRegistrationIds\": [\"{{preRegistrationId}}\"] }\n}",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.datasync.store\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"preRegistrationIds\": [\"{{preRegistrationId}}\"] }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2898,7 +2906,7 @@
       ]
     },
     {
-      "name": "11 - PRID generator",
+      "name": "11 - PRID generator (optional :8100)",
       "item": [
         {
           "name": "Get PRID",

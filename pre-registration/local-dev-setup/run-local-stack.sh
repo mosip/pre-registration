@@ -101,7 +101,8 @@ usage() {
   cat <<EOF
 $0 [command]
 
-  up       Start Postgres :5455, config-server :51100, WireMock :8082, keymanager :8088, mock-smtp :8080/:8025/:8081, notifier :8083
+  up       Start Postgres :5455, config-server :51100, WireMock :8082, MinIO :9000, keymanager :8088, mock-smtp :8080/:8025/:8081, notifier :8083
+  build    docker compose build (needs network)
   prep     Fetch loader jars (idobjectvalidator + virusscanner)
   down     Stop containers, keep volumes
   wipe     down -v then up (re-runs init SQL)
@@ -117,11 +118,12 @@ cmd_up() {
   need_docker
   cmd_prep
   log "==> starting prereg local deps"
-  compose up -d --build
+  compose up -d
   compose ps
   log "Postgres     localhost:5455  mosip_prereg / prereguser / mosip123"
   log "config-server http://localhost:51100/config"
   log "WireMock      http://localhost:8082"
+  log "MinIO         http://localhost:9000  console :9001  bucket prereg"
   log "keymanager    http://localhost:8088/v1/keymanager"
   log "mock-smtp     http://localhost:8080  SMTP :8025  WS :8081"
   log "notifier      http://localhost:8083/v1/notifier"
@@ -133,6 +135,7 @@ shift || true
 case "$cmd" in
   -h|--help|help) usage ;;
   up) cmd_up ;;
+  build) need_docker; compose build ;;
   prep|prepare) cmd_prep ;;
   down) need_docker; compose down ;;
   wipe) need_docker; compose down -v; cmd_up ;;

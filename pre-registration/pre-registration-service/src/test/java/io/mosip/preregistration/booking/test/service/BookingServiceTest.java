@@ -384,6 +384,9 @@ public class BookingServiceTest {
 		centerDto.setLunchEndTime(LunchEndTime);
 		centerDto.setNumberOfKiosks((short) 4);
 		centerList.add(centerDto);
+		MainResponseDTO<String> statusOk = new MainResponseDTO<>();
+		statusOk.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		Mockito.when(serviceUtil.updateDemographicStatus(Mockito.anyString(), Mockito.anyString())).thenReturn(statusOk);
 	}
 
 	@Test

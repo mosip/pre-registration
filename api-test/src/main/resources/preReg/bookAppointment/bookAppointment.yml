@@ -108,7 +108,7 @@ BookAppointment:
       "requesttime": "$TIMESTAMP$"
     }'
     output: '{
-      "responseCode": "500"
+      "responseCode": "404"
     }'
 
   Prereg_BookAppointment_Invalid_Id:

@@ -12,9 +12,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.support.MissingServletRequestPartException;
+
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.preregistration.application.dto.DocumentResponseDTO;
@@ -77,6 +81,11 @@ public class DocumentController {
 			@ApiResponse(responseCode = "401", description = "Unauthorized", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "403", description = "Forbidden", content = @Content(schema = @Schema(hidden = true))),
 			@ApiResponse(responseCode = "404", description = "Not Found", content = @Content(schema = @Schema(hidden = true))) })
+	@io.swagger.v3.oas.annotations.parameters.RequestBody(
+			required = true,
+			content = @Content(
+					mediaType = MediaType.MULTIPART_FORM_DATA_VALUE,
+					schema = @Schema(implementation = DocumentUploadForm.class)))
 	/**
 	 * Performs file upload for MOSIP Pre-Registration.
 	 *
@@ -89,8 +98,12 @@ public class DocumentController {
 	 */
 	public ResponseEntity<MainResponseDTO<DocumentResponseDTO>> fileUpload(
 			@PathVariable(value = "preRegistrationId") String preRegistrationId,
-			@RequestPart(value = "Document request", required = true) String reqDto,
-			@RequestPart(value = "file", required = true) MultipartFile file) {
+			MultipartHttpServletRequest request) throws IOException, MissingServletRequestPartException {
+		String reqDto = readDocumentRequestJson(request);
+		MultipartFile file = request.getFile("file");
+		if (file == null) {
+			throw new MissingServletRequestPartException("file");
+		}
 		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In doc controller ");
 		log.debug(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "Pre-id " + preRegistrationId);
 		log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
@@ -99,6 +112,33 @@ public class DocumentController {
 
 		return ResponseEntity.status(HttpStatus.OK)
 				.body(documentUploadService.uploadDocument(file, reqDto, preRegistrationId));
+	}
+
+	/**
+	 * UI and RestAssured send {@code Document request} as a form field (no
+	 * filename). curl {@code -F name=@file} and MockMvc {@code .file(...)} send a
+	 * file part. {@code @RequestPart MultipartFile} only sees the latter.
+	 */
+	private static String readDocumentRequestJson(MultipartHttpServletRequest request)
+			throws IOException, MissingServletRequestPartException {
+		MultipartFile asFile = request.getFile("Document request");
+		if (asFile != null) {
+			return new String(asFile.getBytes(), StandardCharsets.UTF_8);
+		}
+		String asField = request.getParameter("Document request");
+		if (asField != null) {
+			return asField;
+		}
+		throw new MissingServletRequestPartException("Document request");
+	}
+
+	@Schema(requiredProperties = { "file", "Document request" })
+	static class DocumentUploadForm {
+		@Schema(type = "string", format = "binary")
+		public String file;
+
+		@com.fasterxml.jackson.annotation.JsonProperty("Document request")
+		public String documentRequest;
 	}
 
 	/**

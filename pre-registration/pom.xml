@@ -85,9 +85,9 @@
 		<org.ehcache.version>3.10.8</org.ehcache.version>
 		<jaxb.runtime.version>2.3.9</jaxb.runtime.version>
 		<jaxb-api-version>2.3.1</jaxb-api-version>
-		<jackson.annotations.version>2.21</jackson.annotations.version>
-		<jackson.databind.version>2.21.4</jackson.databind.version>
 		<org.hamcrest.version>2.2</org.hamcrest.version>
+		<!-- logstash-logback-encoder 9.x (from kernel-core) depends on Jackson 3 -->
+		<logstash.logback.encoder.version>8.1</logstash.logback.encoder.version>
 
 		<!-- ── MOSIP artifacts — no kernel-bom ──────────────────────────────── -->
 		<!-- Logger, Hibernate, Velocity, QR, ICU transliteration, and PDF are folded
@@ -137,28 +137,63 @@
 				<scope>import</scope>
 			</dependency>
 
-			<!-- Jackson 2.x: Boot 4 defaults to Jackson 3; MOSIP/kernel still use Jackson 2 -->
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-annotations</artifactId>
-				<version>${jackson.annotations.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.fasterxml.jackson.core</groupId>
-				<artifactId>jackson-databind</artifactId>
-				<version>${jackson.databind.version}</version>
-			</dependency>
+			<!-- Jackson 2 only. Boot 4 web/webflux pull spring-boot-starter-jackson (Jackson 3 /
+			     tools.jackson). MOSIP kernel-core and this code use com.fasterxml.jackson.
+			     Jackson 2 versions come from Boot's jackson-2-bom. Modules exclude the
+			     Jackson 3 starter and add spring-boot-jackson2. Do not redeclare Boot
+			     starters here without a version — that drops Boot BOM version management. -->
 
 			<!-- MOSIP kernel — pinned here, never via kernel-bom -->
 			<dependency>
 				<groupId>io.mosip.kernel</groupId>
 				<artifactId>kernel-core</artifactId>
 				<version>${kernel.core.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-jackson</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-jackson</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>tools.jackson.core</groupId>
+						<artifactId>jackson-databind</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>tools.jackson.core</groupId>
+						<artifactId>jackson-core</artifactId>
+					</exclusion>
+				</exclusions>
+			</dependency>
+			<dependency>
+				<groupId>net.logstash.logback</groupId>
+				<artifactId>logstash-logback-encoder</artifactId>
+				<version>${logstash.logback.encoder.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>io.mosip.kernel</groupId>
 				<artifactId>kernel-auth-adapter</artifactId>
 				<version>${kernel.auth.adapter.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-jackson</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-jackson</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>tools.jackson.core</groupId>
+						<artifactId>jackson-databind</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>tools.jackson.core</groupId>
+						<artifactId>jackson-core</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>io.mosip.commons</groupId>
@@ -175,6 +210,16 @@
 				<groupId>org.springdoc</groupId>
 				<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
 				<version>${springdoc.openapi.starter.webmvc.ui.version}</version>
+				<exclusions>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-jackson</artifactId>
+					</exclusion>
+					<exclusion>
+						<groupId>org.springframework.boot</groupId>
+						<artifactId>spring-boot-starter-jackson</artifactId>
+					</exclusion>
+				</exclusions>
 			</dependency>
 			<dependency>
 				<groupId>org.projectlombok</groupId>
@@ -267,6 +312,35 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-enforcer-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>ban-jackson3</id>
+						<goals>
+							<goal>enforce</goal>
+						</goals>
+						<configuration>
+							<rules>
+								<bannedDependencies>
+									<excludes>
+										<exclude>tools.jackson.core:*</exclude>
+										<exclude>tools.jackson.databind:*</exclude>
+										<exclude>tools.jackson.dataformat:*</exclude>
+										<exclude>tools.jackson.datatype:*</exclude>
+										<exclude>tools.jackson.module:*</exclude>
+										<exclude>org.springframework.boot:spring-boot-starter-jackson</exclude>
+										<exclude>org.springframework.boot:spring-boot-starter-jackson-test</exclude>
+										<exclude>org.springframework.boot:spring-boot-jackson</exclude>
+									</excludes>
+									<message>This reactor uses Jackson 2 (com.fasterxml.jackson / spring-boot-jackson2) only. Do not add Boot 4's Jackson 3 starter (spring-boot-starter-jackson / tools.jackson).</message>
+								</bannedDependencies>
+							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>

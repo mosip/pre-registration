@@ -114,6 +114,9 @@ public class UISpecService {
 		try {
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "fetching the All published UiSpec");
 			PageDTO<UISpecResponseDTO> res = serviceUtil.getAllUISchema(pageNumber, pageSize);
+			if (res == null) {
+				res = new PageDTO<>();
+			}
 			PageDTO<UISpecMetaDataDTO> fetchedSchema = new PageDTO<>();
 			fetchedSchema.setData(filterPreRegSpec(res.getData()));
 			fetchedSchema.setPageNo(res.getPageNo());
@@ -183,8 +186,11 @@ public class UISpecService {
 	 */
 	private List<UISpecMetaDataDTO> filterPreRegSpec(List<UISpecResponseDTO> data) {
 		List<UISpecResponseDTO> filteredData = new ArrayList<>();
+		if (data == null) {
+			return prepareResponse(filteredData);
+		}
 		data.forEach(spec -> {
-			if (spec.getDomain().equals(domain)) {
+			if (spec != null && domain.equals(spec.getDomain())) {
 				filteredData.add(spec);
 			}
 		});

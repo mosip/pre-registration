@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -49,6 +50,7 @@ import io.mosip.preregistration.core.common.repository.ApplicationRepostiory;
 import io.mosip.preregistration.application.service.util.DemographicServiceUtil;
 import io.mosip.preregistration.core.code.BookingTypeCodes;
 import io.mosip.preregistration.core.code.StatusCodes;
+import io.mosip.preregistration.core.common.dto.AuditRequestDto;
 import io.mosip.preregistration.core.common.dto.DeleteBookingDTO;
 import io.mosip.preregistration.core.common.dto.DemographicResponseDTO;
 import io.mosip.preregistration.core.common.dto.DocumentsMetaData;
@@ -140,7 +142,21 @@ public class ApplicationServiceTest {
 	@Test(expected = AuditFailedException.class)
 	public void testsaveUIEventAuditAuditFailedException() {
 		UIAuditRequest auditRequest = new UIAuditRequest();
+		auditRequest.setActionTimeStamp(LocalDateTime.now(ZoneId.of("UTC")).toString());
+		auditRequest.setDescription("{\"template\":\"\",\"description\":\"\",\"url\":\"\"}");
+		Mockito.doThrow(new RuntimeException("audit sink failed")).when(auditUtil)
+				.saveAuditDetails(Mockito.any(AuditRequestDto.class));
 		applicationService.saveUIEventAudit(auditRequest);
+	}
+
+	@Test
+	public void testsaveUIEventAuditEmptyRequestSucceeds() {
+		UIAuditRequest auditRequest = new UIAuditRequest();
+		MainResponseDTO<String> response = applicationService.saveUIEventAudit(auditRequest);
+		Assert.assertEquals("Audit Logged Successfully", response.getResponse());
+		ArgumentCaptor<AuditRequestDto> captor = ArgumentCaptor.forClass(AuditRequestDto.class);
+		Mockito.verify(auditUtil).saveAuditDetails(captor.capture());
+		Assert.assertNotNull(captor.getValue().getActionTimeStamp());
 	}
 
 	// @Test
@@ -167,6 +183,18 @@ public class ApplicationServiceTest {
 		auditRequest.setDescription("{\"template\":\"\",\"description\":\"\",\"url\":\"\"}");
 		MainResponseDTO<String> response = applicationService.saveUIEventAudit(auditRequest);
 		Assert.assertEquals("Audit Logged Successfully", response.getResponse());
+	}
+
+	@Test
+	public void testsaveUIEventAuditConvertsOffsetTimestampToUtc() {
+		UIAuditRequest auditRequest = new UIAuditRequest();
+		auditRequest.setActionTimeStamp("2026-11-01T10:00:00+05:30");
+		auditRequest.setDescription("{\"template\":\"\",\"description\":\"\",\"url\":\"\"}");
+		MainResponseDTO<String> response = applicationService.saveUIEventAudit(auditRequest);
+		Assert.assertEquals("Audit Logged Successfully", response.getResponse());
+		ArgumentCaptor<AuditRequestDto> captor = ArgumentCaptor.forClass(AuditRequestDto.class);
+		Mockito.verify(auditUtil).saveAuditDetails(captor.capture());
+		Assert.assertEquals(LocalDateTime.of(2026, 11, 1, 4, 30), captor.getValue().getActionTimeStamp());
 	}
 
 	@Test

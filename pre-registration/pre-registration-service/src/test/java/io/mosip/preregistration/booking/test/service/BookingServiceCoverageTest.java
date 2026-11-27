@@ -45,6 +45,7 @@ import io.mosip.preregistration.booking.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.errorcodes.ErrorMessages;
 import io.mosip.preregistration.booking.exception.AvailablityNotFoundException;
 import io.mosip.preregistration.booking.exception.DemographicGetStatusException;
+import io.mosip.preregistration.booking.exception.DemographicStatusUpdationException;
 import io.mosip.preregistration.booking.exception.RecordNotFoundException;
 import io.mosip.preregistration.booking.repository.impl.BookingDAO;
 import io.mosip.preregistration.booking.service.BookingService;
@@ -52,6 +53,7 @@ import io.mosip.preregistration.booking.service.util.BookingLock;
 import io.mosip.preregistration.booking.service.util.BookingServiceUtil;
 import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
+import io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO;
 import io.mosip.preregistration.core.common.dto.CancelBookingResponseDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
@@ -256,6 +258,26 @@ public class BookingServiceCoverageTest {
 		MainResponseDTO<BookingStatusDTO> response = bookingService.bookAppointment(mainBookingRequest(), PRE_ID);
 
 		assertEquals("Appointment booked successfully", response.getResponse().getBookingMessage());
+	}
+
+	@Test(expected = DemographicStatusUpdationException.class)
+	public void bookFailsWhenDemographicStatusUpdateReturnsErrors() {
+		stubSuccessfulBookPath(StatusCodes.PENDING_APPOINTMENT.getCode());
+		MainResponseDTO<String> failed = new MainResponseDTO<>();
+		failed.setErrors(List.of(new ExceptionJSONInfoDTO("PRG_PAM_APP_005", "status not updated")));
+		when(serviceUtil.updateDemographicStatus(anyString(), anyString())).thenReturn(failed);
+
+		bookingService.book(PRE_ID, bookingRequestDTO);
+	}
+
+	@Test(expected = DemographicStatusUpdationException.class)
+	public void cancelBookingFailsWhenDemographicStatusUpdateReturnsErrors() {
+		stubCancelSuccess(true);
+		MainResponseDTO<String> failed = new MainResponseDTO<>();
+		failed.setErrors(List.of(new ExceptionJSONInfoDTO("PRG_PAM_APP_005", "status not updated")));
+		when(serviceUtil.updateDemographicStatus(anyString(), anyString())).thenReturn(failed);
+
+		bookingService.cancelBooking(PRE_ID, true);
 	}
 
 	@Test(expected = DemographicGetStatusException.class)
@@ -565,6 +587,9 @@ public class BookingServiceCoverageTest {
 		when(serviceUtil.bookingEntitySetter(anyString(), any())).thenReturn(bookingEntity);
 		when(bookingDAO.saveRegistrationEntityForBooking(any())).thenReturn(bookingEntity);
 		when(bookingDAO.updateAvailibityEntity(any())).thenReturn(availabilityEntity);
+		MainResponseDTO<String> statusOk = new MainResponseDTO<>();
+		statusOk.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		when(serviceUtil.updateDemographicStatus(anyString(), anyString())).thenReturn(statusOk);
 	}
 
 	private void stubCancelSuccess(boolean batch) {
@@ -574,6 +599,9 @@ public class BookingServiceCoverageTest {
 		when(bookingDAO.findFirstByRegDateAndRegcntrIdAndFromTimeAndToTime(any(), anyString(), any(), any()))
 				.thenReturn(availabilityEntity);
 		when(bookingDAO.updateAvailibityEntity(any())).thenReturn(availabilityEntity);
+		MainResponseDTO<String> statusOk = new MainResponseDTO<>();
+		statusOk.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		when(serviceUtil.updateDemographicStatus(anyString(), anyString())).thenReturn(statusOk);
 		if (!batch) {
 			when(serviceUtil.timeSpanCheckForCancle(any())).thenReturn(true);
 		}

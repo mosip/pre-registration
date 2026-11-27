@@ -637,6 +637,8 @@ public class DataSyncServiceUtil {
 			preRegArchiveDTO.setZipBytes(encryptFile(getCompressed(inputFile), encryptionPublickey));
 			preRegArchiveDTO.setFileName(preRegistrationDTO.getPreRegistrationId());
 
+		} catch (ZipFileCreationException ex) {
+			throw ex;
 		} catch (Exception ex) {
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, ExceptionUtils.getStackTrace(ex));
 			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,

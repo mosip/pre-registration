@@ -1,5 +1,10 @@
 package io.mosip.preregistration.application.exception.util;
 
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_ID;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_IDTYPE;
+import static io.mosip.preregistration.application.constant.PreRegApplicationConstant.LOGGER_SESSIONID;
+
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -17,10 +22,12 @@ import io.mosip.kernel.core.exception.BaseUncheckedException;
 import io.mosip.kernel.core.exception.IOException;
 import io.mosip.kernel.core.exception.NoSuchAlgorithmException;
 import io.mosip.kernel.core.exception.ParseException;
+import io.mosip.kernel.core.logger.spi.Logger;
 import io.mosip.kernel.core.idobjectvalidator.exception.IdObjectIOException;
 import io.mosip.kernel.core.idobjectvalidator.exception.IdObjectValidationFailedException;
 import io.mosip.kernel.core.util.exception.JsonMappingException;
 import io.mosip.preregistration.core.common.dto.MainResponseDTO;
+import io.mosip.preregistration.core.config.LoggerConfiguration;
 import io.mosip.preregistration.core.exception.DecryptionFailedException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
@@ -62,6 +69,9 @@ import io.mosip.preregistration.demographic.exception.system.SystemUnsupportedEn
  *
  */
 public class DemographicExceptionCatcher {
+
+	private static final Logger log = LoggerConfiguration.logConfig(DemographicExceptionCatcher.class);
+
 	/**
 	 * Handles exceptions and throws specific exceptions based on the type of the original exception.
 	 * 
@@ -153,12 +163,13 @@ public class DemographicExceptionCatcher {
 			throw new io.mosip.preregistration.application.exception.DuplicatePridKeyException(
 					DemographicErrorCodes.PRG_PAM_APP_021.getCode(),
 					DemographicErrorMessages.DUPLICATE_KEY.getMessage(), mainResponsedto);
+		} else if (ex instanceof BaseUncheckedException ex1) {
+			throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
+		} else if (ex instanceof BaseCheckedException ex1) {
+			throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 		} else {
-			if (ex instanceof BaseUncheckedException ex1) {
-				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
-			} else if (ex instanceof BaseCheckedException ex1) {
-				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
-			}
+			log.error(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,
+					"Unhandled demographic exception: " + ExceptionUtils.getStackTrace(ex));
 		}
 	}
 }

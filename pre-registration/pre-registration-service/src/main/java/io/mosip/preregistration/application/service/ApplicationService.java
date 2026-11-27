@@ -6,6 +6,8 @@ import static io.mosip.preregistration.application.constant.PreRegApplicationCon
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
@@ -178,14 +180,18 @@ public class ApplicationService implements ApplicationServiceIntf {
 		response.setVersion(version);
 		try {
 			String description = auditRequest.getDescription();
-			mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
-			mapper.registerModule(new JavaTimeModule());
-			JsonNode node = mapper.readTree(description);
-			String template = node.get("template").toString();
-			String hashedDescription = node.get("description").asText().concat("  ")
-					.concat("Request_url :" + node.get("url").asText()).concat("  ")
-					.concat("Consent_Text: " + HMACUtils2.digestAsPlainText(template.getBytes()));
-			auditRequest.setDescription(hashedDescription);
+			if (description != null && description.trim().startsWith("{")) {
+				mapper = JsonMapper.builder().addModule(new AfterburnerModule()).build();
+				mapper.registerModule(new JavaTimeModule());
+				JsonNode node = mapper.readTree(description);
+				if (node.hasNonNull("template") && node.hasNonNull("description") && node.hasNonNull("url")) {
+					String template = node.get("template").toString();
+					String hashedDescription = node.get("description").asText().concat("  ")
+							.concat("Request_url :" + node.get("url").asText()).concat("  ")
+							.concat("Consent_Text: " + HMACUtils2.digestAsPlainText(template.getBytes()));
+					auditRequest.setDescription(hashedDescription);
+				}
+			}
 			AuditRequestDto auditRequestDto = setAuditValues(auditRequest);
 			log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID, "In saveUIEventAudit method saving audit  details "+ auditRequestDto);
 			auditUtil.saveAuditDetails(auditRequestDto);
@@ -217,8 +223,19 @@ public class ApplicationService implements ApplicationServiceIntf {
 		auditRequestDto.setSessionUserName(auditRequest.getActionUserId());
 		auditRequestDto.setModuleId(auditRequest.getModuleId());
 		auditRequestDto.setModuleName(auditRequest.getModuleName());
-		auditRequestDto.setActionTimeStamp(LocalDateTime.parse(auditRequest.getActionTimeStamp()));
+		auditRequestDto.setActionTimeStamp(parseAuditTimestamp(auditRequest.getActionTimeStamp()));
 		return auditRequestDto;
+	}
+
+	private LocalDateTime parseAuditTimestamp(String value) {
+		if (value == null || value.isBlank()) {
+			return LocalDateTime.now(ZoneOffset.UTC);
+		}
+		try {
+			return LocalDateTime.parse(value);
+		} catch (DateTimeParseException ignored) {
+			return OffsetDateTime.parse(value).withOffsetSameInstant(ZoneOffset.UTC).toLocalDateTime();
+		}
 	}
 
 	/**
@@ -564,7 +581,7 @@ public class ApplicationService implements ApplicationServiceIntf {
 				throw new PreIdInvalidForUserIdException(ApplicationErrorCodes.PRG_APP_015.getCode(),
 						ApplicationErrorMessages.INVALID_APPLICATION_ID_FOR_USER.getMessage());
 			}	
-					if ((applicationEntity.getBookingStatusCode().equals(StatusCodes.BOOKED.getCode()))) {
+					if (StatusCodes.BOOKED.getCode().equals(applicationEntity.getBookingStatusCode())) {
 						MainResponseDTO<DeleteBookingDTO> deleteBooking = null;
 						deleteBooking = serviceUtil.deleteBooking(applicationId);
 						if (deleteBooking.getErrors() != null) {

@@ -62,6 +62,7 @@ import io.mosip.preregistration.booking.dto.SlotDto;
 import io.mosip.preregistration.booking.entity.AvailibityEntity;
 import io.mosip.preregistration.booking.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.errorcodes.ErrorMessages;
+import io.mosip.preregistration.booking.exception.AppointmentAlreadyCanceledException;
 import io.mosip.preregistration.booking.exception.AppointmentCannotBeCanceledException;
 import io.mosip.preregistration.booking.exception.AppointmentReBookingFailedException;
 import io.mosip.preregistration.booking.exception.AvailablityNotFoundException;
@@ -72,6 +73,7 @@ import io.mosip.preregistration.booking.exception.BookingRegistrationCenterIdNot
 import io.mosip.preregistration.booking.exception.BookingTimeSlotNotSeletectedException;
 import io.mosip.preregistration.booking.exception.AppointmentBookingFailedException;
 import io.mosip.preregistration.booking.exception.DemographicGetStatusException;
+import io.mosip.preregistration.booking.exception.DemographicStatusUpdationException;
 import io.mosip.preregistration.booking.exception.InvalidDateTimeFormatException;
 import io.mosip.preregistration.booking.exception.RecordNotFoundException;
 import io.mosip.preregistration.booking.exception.TimeSpanException;
@@ -123,6 +125,10 @@ public class BookingServiceUtil {
 	@Autowired
 	@Lazy
 	private io.mosip.preregistration.pipeline.InProcessApplicationClient applicationClient;
+
+	@Autowired
+	@Lazy
+	private io.mosip.preregistration.application.service.util.CommonServiceUtil commonServiceUtil;
 
 	@Value("${mosip.prereg.pii.backward.compatibility:true}")
 	private boolean piiBackwardCompatibility;
@@ -286,9 +292,10 @@ public class BookingServiceUtil {
 					|| statusCode.equals(StatusCodes.APPLICATION_INCOMPLETE.getCode())) {
 				throw new BookingDataNotFoundException(ErrorCodes.PRG_BOOK_RCI_013.getCode(),
 						ErrorMessages.BOOKING_DATA_NOT_FOUND.getMessage());
-			}
-
-			else {
+			} else if (statusCode.equals(StatusCodes.CANCELLED.getCode())) {
+				throw new AppointmentAlreadyCanceledException(ErrorCodes.PRG_BOOK_RCI_017.getCode(),
+						ErrorMessages.APPOINTMENT_TIME_SLOT_IS_ALREADY_CANCELED.getMessage());
+			} else {
 				throw new AppointmentCannotBeCanceledException(ErrorCodes.PRG_BOOK_RCI_018.getCode(),
 						ErrorMessages.APPOINTMENT_CANNOT_BE_CANCELED.getMessage());
 			}
@@ -787,6 +794,21 @@ public class BookingServiceUtil {
 
 	public MainResponseDTO<String> getApplicationStatus(String applicationId) {
 		return applicationClient.getApplicationStatus(applicationId);
+	}
+
+	public MainResponseDTO<String> updateDemographicStatus(String preRegistrationId, String status) {
+		String userId = authUserDetails().getUserId();
+		MainResponseDTO<String> response = commonServiceUtil.updatePreRegistrationStatus(preRegistrationId, status,
+				userId);
+		if (response != null && (response.getErrors() == null || response.getErrors().isEmpty())) {
+			return response;
+		}
+		String message = ErrorMessages.DEMOGRAPHIC_STATUS_UPDATION_FAILED.getMessage();
+		if (response != null && response.getErrors() != null && !response.getErrors().isEmpty()
+				&& response.getErrors().get(0).getMessage() != null) {
+			message = response.getErrors().get(0).getMessage();
+		}
+		throw new DemographicStatusUpdationException(ErrorCodes.PRG_BOOK_RCI_011.getCode(), message);
 	}
 
 //	public MainResponseDTO<String> updatePreRegistrationStatus(String preRegId, String status) {

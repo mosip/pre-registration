@@ -4,7 +4,7 @@ name: prereg-local
 services:
 
   postgres:
-    image: 'postgres:bookworm'
+    image: 'postgres:16-bookworm'
     container_name: prereg_local_postgres
     ports:
       - 5455:5432
@@ -83,7 +83,7 @@ services:
   # Document object store (S3Adapter). Boot does not need MinIO; upload/download does.
   # Credentials match s3.accesskey / s3.secretkey in local mosip-config.
   minio:
-    image: minio/minio:RELEASE.2024-12-18T13-15-44Z
+    image: pgsty/minio:latest
     container_name: prereg_local_minio
     ports:
       - "9000:9000"
@@ -100,7 +100,7 @@ services:
       start_period: 10s
 
   minio-init:
-    image: minio/mc:latest
+    image: pgsty/mc:latest
     container_name: prereg_local_minio_init
     depends_on:
       minio:
@@ -133,7 +133,8 @@ services:
       SPRING_CLOUD_CONFIG_LABEL: develop
       KM_CONFIG_DIR: /home/mosip/config
       KM_URL: http://127.0.0.1:8088
-    entrypoint: ["/bin/bash", "/bootstrap/bootstrap.sh"]
+    # /bootstrap is :ro — strip CR into /tmp instead of sed -i.
+    entrypoint: ["/bin/bash", "-c", "sed 's/\\r$//' /bootstrap/bootstrap.sh > /tmp/bootstrap.sh && exec /bin/bash /tmp/bootstrap.sh"]
     healthcheck:
       test:
         [

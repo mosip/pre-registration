@@ -24,12 +24,12 @@ Swagger (same APIs): http://localhost:9090/preregistration/v1/application-servic
 1. **00 - Auth** → `Health (prereg)` then `Client token (prereg)` (saves `serviceToken` for datasync)
 2. **01 - Login** → `Send OTP (langcode)` → set env `otp` to `111111` → `Validate OTP` (saves `accessToken`)
 3. **03 - Demographic** → `Create Pre-Registration` (saves `preRegistrationId`)
-4. **04 - Documents** → `Upload document` (attach a PDF)
-5. **03** → `Update status` (`Pending_Appointment`)
+4. **04 - Documents** → `Upload document` (`postman/sample/IDProof.pdf`)
+5. **03** → `Update status` (`Pending_Appointment`) — after upload, not before
 6. **05 - Appointment** → `Get slot availability` then `Book appointment`
 7. Other folders as needed. **Copy document** needs a second create (`Create Pre-Registration (copy destination)`).
 
-Do not run `Delete Pre-Registration` / `Invalidate token` until you are finished with that PRID / session.
+Do not run `Delete Pre-Registration` / `Invalidate token` until you are finished with that PRID / session. Do not run **Send OTP with captcha** in the same collection run as **Send OTP** (OTP cooldown `PRE-REG-OTP-408`). Folder **11** needs the PRID generator on `:8100`.
 
 ## Variables
 

@@ -21,7 +21,9 @@ if "%CMD%"=="" goto :help
 if /I "%CMD%"=="help" goto :help
 if /I "%CMD%"=="-h" goto :help
 if /I "%CMD%"=="up" goto :up
+if /I "%CMD%"=="build" goto :build
 if /I "%CMD%"=="prep" goto :prep
+if /I "%CMD%"=="rebuild" goto :rebuild
 if /I "%CMD%"=="run" goto :run
 if /I "%CMD%"=="start" goto :start
 if /I "%CMD%"=="stop" goto :stop
@@ -34,11 +36,13 @@ goto :help
 
 :help
 echo %~nx0 [command]
-echo   up          Start Docker deps (also runs prep)
-echo   prep        Fetch loader jars (idobjectvalidator + virusscanner)
-echo   run         Rebuild + start host JVM
+echo   up          Start Docker deps (also runs prep^; no --build^)
+echo   build       docker compose build
+echo   prep        Fetch loader jars (idobjectvalidator + virusscanner^)
+echo   rebuild     Maven package the service jar only
+echo   run         rebuild + start host JVM (no Docker^)
 echo   start       Start existing jar
-echo   stop        Stop host JVM
+echo   stop        Stop host JVM (also any process on :%PORT%^)
 echo   smoke       Health + swagger
 echo   wipe        compose down -v then up
 echo   wipe-run    wipe then rebuild + start
@@ -64,8 +68,18 @@ exit /b 1
 :up
 call :prep
 if errorlevel 1 exit /b 1
-docker compose -f "%SCRIPT_DIR%\deps\docker-compose.yml" up -d --build
-exit /b %ERRORLEVEL%
+pushd "%SCRIPT_DIR%\deps"
+docker compose up -d
+set "RC=%ERRORLEVEL%"
+popd
+exit /b %RC%
+
+:build
+pushd "%SCRIPT_DIR%\deps"
+docker compose build
+set "RC=%ERRORLEVEL%"
+popd
+exit /b %RC%
 
 :stop
 call "%SERVICE_DIR%\run-local.bat" stop
@@ -89,9 +103,7 @@ echo Run: %~nx0 prep
 echo See deps\additional_jars\README.md
 exit /b 1
 
-:run
-call :up
-if errorlevel 1 exit /b 1
+:rebuild
 pushd "%MAVEN_PARENT%"
 set "SAVED=%SPRING_PROFILES_ACTIVE%"
 set "SPRING_PROFILES_ACTIVE="
@@ -99,7 +111,11 @@ call mvn -pl pre-registration-service -am clean package -DskipTests "-Dgpg.skip=
 set "RC=%ERRORLEVEL%"
 set "SPRING_PROFILES_ACTIVE=%SAVED%"
 popd
-if not "%RC%"=="0" exit /b %RC%
+exit /b %RC%
+
+:run
+call :rebuild
+if errorlevel 1 exit /b 1
 call :start
 exit /b %ERRORLEVEL%
 
@@ -109,7 +125,9 @@ exit /b %ERRORLEVEL%
 
 :wipe
 call :stop
-docker compose -f "%SCRIPT_DIR%\deps\docker-compose.yml" down -v
+pushd "%SCRIPT_DIR%\deps"
+docker compose down -v
+popd
 call :up
 exit /b %ERRORLEVEL%
 

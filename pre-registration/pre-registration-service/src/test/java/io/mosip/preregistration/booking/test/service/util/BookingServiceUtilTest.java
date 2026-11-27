@@ -58,9 +58,12 @@ import io.mosip.preregistration.booking.entity.AvailibityEntity;
 import io.mosip.preregistration.booking.repository.BookingAvailabilityRepository;
 import io.mosip.preregistration.booking.repository.RegistrationBookingRepository;
 import io.mosip.preregistration.booking.repository.impl.BookingDAO;
+import io.mosip.preregistration.booking.errorcodes.ErrorCodes;
 import io.mosip.preregistration.booking.service.util.BookingServiceUtil;
+import io.mosip.preregistration.core.code.StatusCodes;
 import io.mosip.preregistration.core.common.dto.BookingRegistrationDTO;
 import io.mosip.preregistration.core.common.dto.MainRequestDTO;
+import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.common.dto.NotificationDTO;
 import io.mosip.preregistration.core.common.dto.ResponseWrapper;
 import io.mosip.preregistration.core.common.entity.ApplicationEntity;
@@ -116,6 +119,9 @@ public class BookingServiceUtilTest {
 
 	@MockitoBean
 	private io.mosip.preregistration.pipeline.InProcessApplicationClient applicationClient;
+
+	@MockitoBean
+	private io.mosip.preregistration.application.service.util.CommonServiceUtil commonServiceUtil;
 
 	@Mock
 	private AuthUserDetails authUserDetails;
@@ -557,6 +563,36 @@ public class BookingServiceUtilTest {
 	 * 
 	 * }
 	 */
+
+	@Test
+	public void updateDemographicStatusThrowsWhenErrorsPresent() {
+		MainResponseDTO<String> failed = new MainResponseDTO<>();
+		io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO err =
+				new io.mosip.preregistration.core.common.dto.ExceptionJSONInfoDTO("PRG_PAM_APP_005",
+						"status not updated");
+		failed.setErrors(java.util.List.of(err));
+		Mockito.when(commonServiceUtil.updatePreRegistrationStatus(Mockito.anyString(), Mockito.anyString(),
+				Mockito.anyString())).thenReturn(failed);
+		try {
+			serviceUtil.updateDemographicStatus("23587986034785", StatusCodes.BOOKED.getCode());
+			org.junit.Assert.fail("expected DemographicStatusUpdationException");
+		} catch (DemographicStatusUpdationException ex) {
+			assertEquals(ErrorCodes.PRG_BOOK_RCI_011.getCode(), ex.getErrorCode());
+		}
+	}
+
+	@Test
+	public void getDemographicStatusForCancelAlreadyCancelledThrows017() {
+		MainResponseDTO<String> status = new MainResponseDTO<>();
+		status.setResponse(StatusCodes.CANCELLED.getCode());
+		Mockito.when(applicationClient.getApplicationStatus("23587986034785")).thenReturn(status);
+		try {
+			serviceUtil.getDemographicStatusForCancel("23587986034785");
+			org.junit.Assert.fail("expected AppointmentAlreadyCanceledException");
+		} catch (AppointmentAlreadyCanceledException ex) {
+			assertEquals(ErrorCodes.PRG_BOOK_RCI_017.getCode(), ex.getErrorCode());
+		}
+	}
 
 	@Test
 	public void isValidRegCenterTest() {

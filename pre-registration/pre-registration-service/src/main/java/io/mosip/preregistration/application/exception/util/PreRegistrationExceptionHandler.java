@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartException;
+import org.springframework.web.servlet.NoHandlerFoundException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 import org.springframework.web.util.ContentCachingRequestWrapper;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -604,6 +606,16 @@ public class PreRegistrationExceptionHandler {
 		ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_015.getCode(), errorMessage);
 		errorResponse.getErrors().add(error);
 		return new ResponseEntity<>(errorResponse, HttpStatus.OK);
+	}
+
+	@ExceptionHandler(value = { NoResourceFoundException.class, NoHandlerFoundException.class })
+	public ResponseEntity<ResponseWrapper<ServiceError>> notFoundHandler(
+			final HttpServletRequest httpServletRequest, Exception e) throws IOException {
+		ResponseWrapper<ServiceError> errorResponse = setErrors(httpServletRequest);
+		ServiceError error = new ServiceError(ErrorCodes.PRG_CORE_REQ_016.getCode(),
+				e.getMessage() == null ? "No resource found" : e.getMessage());
+		errorResponse.getErrors().add(error);
+		return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
 	}
 
 	@ExceptionHandler(value = { Exception.class, RuntimeException.class })
