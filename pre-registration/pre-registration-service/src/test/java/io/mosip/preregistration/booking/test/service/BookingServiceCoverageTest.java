@@ -32,6 +32,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
+import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.BookingDataByRegIdDto;
 import io.mosip.preregistration.booking.dto.BookingRequestDTO;
@@ -76,6 +77,9 @@ public class BookingServiceCoverageTest {
 
 	@Mock
 	private BookingServiceUtil serviceUtil;
+
+	@Mock
+	private AppointmentService appointmentService;
 
 	@Mock
 	private ApplicationIdentityMigrationService applicationIdentityMigrationService;
@@ -392,6 +396,7 @@ public class BookingServiceCoverageTest {
 
 		assertTrue(response.getResponse().getMessage().contains("cancelled"));
 		verify(serviceUtil, never()).timeSpanCheckForCancle(any());
+		verify(appointmentService).markAppointmentCancelled(PRE_ID);
 	}
 
 	@Test

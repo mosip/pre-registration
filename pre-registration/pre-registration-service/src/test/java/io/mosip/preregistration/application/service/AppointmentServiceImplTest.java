@@ -299,6 +299,10 @@ public class AppointmentServiceImplTest {
 		SecurityContextHolder.setContext(securityContext);
 		when(SecurityContextHolder.getContext().getAuthentication().getPrincipal()).thenReturn(applicationUser);
 		when(applicationUser.getUserId()).thenReturn("test-user");
+		MainResponseDTO<String> status = new MainResponseDTO<>();
+		status.setResponse("STATUS_UPDATED_SUCESSFULLY");
+		when(demographicService.updatePreRegistrationStatus(
+				prid, StatusCodes.CANCELLED.getCode(), "test-user")).thenReturn(status);
 		List<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(new SimpleGrantedAuthority("ROLE_INDIVIDUAL"));
 		when(applicationUser.getAuthorities()).thenReturn((Collection) authorities);

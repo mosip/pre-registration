@@ -418,6 +418,7 @@ public class ApplicationServiceTest {
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
+		Mockito.verify(serviceUtil).deleteApplicationFromApplications(applicationId);
 	}
 
 	@Test
@@ -441,6 +442,7 @@ public class ApplicationServiceTest {
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.LOST_FORGOTTEN_UIN.toString()));
+		Mockito.verify(serviceUtil).deleteApplicationFromApplications(applicationId);
 	}
 
 	@Test(expected = PreIdInvalidForUserIdException.class)
@@ -488,6 +490,7 @@ public class ApplicationServiceTest {
 		Mockito.when(validationUtil.requstParamValidator(Mockito.any())).thenReturn(true);
 		assertNotNull(applicationService.deleteLostOrUpdateApplication(applicationId,
 				BookingTypeCodes.UPDATE_REGISTRATION.toString()));
+		Mockito.verify(serviceUtil).deleteApplicationFromApplications(applicationId);
 	}
 
 	@Test(expected = PreRegistrationException.class)

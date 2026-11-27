@@ -182,6 +182,9 @@ public class UISpecService {
 	 * @return filter pre reg spec result
 	 */
 	private List<UISpecMetaDataDTO> filterPreRegSpec(List<UISpecResponseDTO> data) {
+		if (data == null) {
+			return List.of();
+		}
 		List<UISpecResponseDTO> filteredData = new ArrayList<>();
 		data.forEach(spec -> {
 			if (spec.getDomain().equals(domain)) {

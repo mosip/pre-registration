@@ -19,6 +19,7 @@ import jakarta.annotation.PostConstruct;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Propagation;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import io.mosip.kernel.core.authmanager.authadapter.model.AuthUserDetails;
 import io.mosip.kernel.core.logger.spi.Logger;
+import io.mosip.preregistration.application.service.AppointmentService;
 import io.mosip.preregistration.booking.codes.RequestCodes;
 import io.mosip.preregistration.booking.dto.AvailabilityDto;
 import io.mosip.preregistration.booking.dto.BookingDataByRegIdDto;
@@ -127,6 +129,10 @@ public class BookingService implements BookingServiceIntf {
 
 	@Autowired
 	private BookingLock bookingLock;
+
+	@Autowired
+	@Lazy
+	private AppointmentService appointmentService;
 
 	@Value("${version}")
 	String versionUrl;
@@ -627,7 +633,11 @@ public class BookingService implements BookingServiceIntf {
 		boolean isBatchUser = true;
 		responseDto.setId(idUrlCancel);
 		responseDto.setVersion(versionUrl);
-		responseDto.setResponse(cancelBooking(preRegistrationId, isBatchUser));
+		CancelBookingResponseDTO cancelled = cancelBooking(preRegistrationId, isBatchUser);
+		if (cancelled.getTransactionId() != null) {
+			appointmentService.markAppointmentCancelled(preRegistrationId);
+		}
+		responseDto.setResponse(cancelled);
 
 		responseDto.setResponsetime(serviceUtil.getCurrentResponseTime());
 

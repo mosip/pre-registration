@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -356,7 +357,8 @@ public class DemographicService implements DemographicServiceIntf {
 
 			log.info("IDENTITY KEYS: {}", identityKeys);
 
-			List<String> requiredFields = demographicRequest.getRequiredFields().stream()
+			List<String> requiredFields = Optional.ofNullable(demographicRequest.getRequiredFields())
+					.orElseGet(List::of).stream()
 					.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
 
 			JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,
@@ -466,7 +468,8 @@ public class DemographicService implements DemographicServiceIntf {
 
 				log.info(LOGGER_SESSIONID, LOGGER_IDTYPE, LOGGER_ID,"IDENTITY KEYS: " + identityKeys.toString());
 
-				List<String> requiredFields = demographicRequest.getRequiredFields().stream()
+				List<String> requiredFields = Optional.ofNullable(demographicRequest.getRequiredFields())
+						.orElseGet(List::of).stream()
 						.filter(field -> identityKeys.contains(field)).collect(Collectors.toList());
 
 				JSONObject constructedObject = serviceUtil.constructNewDemographicRequest(identityKeys,

@@ -583,6 +583,17 @@
         },
         {
           "name": "Log UI audit",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.variables.set('auditActionTime', new Date().toISOString().slice(0, -1));"
+                ]
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [
@@ -616,7 +627,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"mosip.pre-registration.ui.audit\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"actionTimeStamp\": \"{{$isoTimestamp}}\",\n    \"description\": \"postman\",\n    \"eventId\": \"PREREG_POSTMAN\",\n    \"eventName\": \"Postman\",\n    \"eventType\": \"SYSTEM\",\n    \"id\": \"{{preRegistrationId}}\",\n    \"idType\": \"PRE_REGISTRATION_ID\",\n    \"moduleId\": \"PREREG\",\n    \"moduleName\": \"pre-registration\",\n    \"sessionUserId\": \"{{loginUser}}\",\n    \"sessionUserName\": \"{{loginUser}}\"\n  }\n}",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.ui.audit\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": {\n    \"actionTimeStamp\": \"{{auditActionTime}}\",\n    \"actionUserId\": \"{{loginUser}}\",\n    \"description\": \"{\\\"description\\\":\\\"Postman UI audit\\\",\\\"url\\\":\\\"/preregistration/v1/logAudit\\\",\\\"template\\\":\\\"Sample consent text\\\"}\",\n    \"eventName\": \"Postman\",\n    \"moduleId\": \"PREREG\",\n    \"moduleName\": \"pre-registration\"\n  }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2458,7 +2469,7 @@
             },
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"mosip.pre-registration.captcha.validate\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"captchaToken\": \"{{captchaToken}}\" }\n}",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.captcha.id.validate\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"captchaToken\": \"{{captchaToken}}\" }\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -2885,7 +2896,7 @@
             "description": "",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"id\": \"mosip.pre-registration.datasync.consumed\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"preRegistrationIds\": [\"{{preRegistrationId}}\"] }\n}",
+              "raw": "{\n  \"id\": \"mosip.pre-registration.datasync.store\",\n  \"version\": \"1.0\",\n  \"requesttime\": \"{{$isoTimestamp}}\",\n  \"request\": { \"preRegistrationIds\": [\"{{preRegistrationId}}\"] }\n}",
               "options": {
                 "raw": {
                   "language": "json"

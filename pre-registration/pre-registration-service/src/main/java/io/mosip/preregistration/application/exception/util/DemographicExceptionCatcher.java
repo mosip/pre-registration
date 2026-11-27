@@ -24,6 +24,7 @@ import io.mosip.preregistration.core.common.dto.MainResponseDTO;
 import io.mosip.preregistration.core.exception.DecryptionFailedException;
 import io.mosip.preregistration.core.exception.EncryptionFailedException;
 import io.mosip.preregistration.core.exception.HashingException;
+import io.mosip.preregistration.core.errorcodes.ErrorCodes;
 import io.mosip.preregistration.core.exception.InvalidRequestException;
 import io.mosip.preregistration.core.exception.InvalidRequestParameterException;
 import io.mosip.preregistration.core.exception.PreIdInvalidForUserIdException;
@@ -121,7 +122,7 @@ public class DemographicExceptionCatcher {
 			throw new EncryptionFailedException(ex1.getValidationErrorList(), mainResponsedto);
 		} else if (ex instanceof BeanCreationException) {
 			throw new SchemaValidationException(
-					io.mosip.preregistration.core.errorcodes.ErrorCodes.PRG_CORE_REQ_016.getCode(),
+					ErrorCodes.PRG_CORE_REQ_016.getCode(),
 					ex.getLocalizedMessage(), mainResponsedto);
 		} else if (ex instanceof SystemFileIOException ex1) {
 			throw new SystemFileIOException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
@@ -160,5 +161,7 @@ public class DemographicExceptionCatcher {
 				throw new PreRegistrationException(ex1.getErrorCode(), ex1.getErrorText(), mainResponsedto);
 			}
 		}
+		throw new PreRegistrationException(ErrorCodes.PRG_CORE_REQ_016.getCode(),
+				"Unexpected pre-registration error", mainResponsedto);
 	}
 }
